@@ -1,0 +1,243 @@
+﻿@{
+    int i = 0;
+}
+@model IEnumerable<Barragem.Models.Jogo>
+    @Html.Partial("_PartialTabs")
+
+    <div class="tab-content">
+        <div class="tab-pane fade" id="tabCadastro"></div>
+        <div class="tab-pane fade" id="tabClasses"></div>
+        <div class="tab-pane fade" id="tabInscritos"></div>
+        <div class="tab-pane fade" id="tabEditClasses"></div>
+        <div class="tab-pane fade" id="tabDuplas"></div>
+        <div class="tab-pane fade in active" id="tabJogos">
+            <br>
+            <p>
+                <button class="btn btn-primary btn-small confirm"><span class="glyphicon glyphicon-plus"></span> Criar Tabela</button>
+                <a href="@Url.Action("Tabela", new { torneioId = ViewBag.torneioId })" target="_blank" class="btn btn-success btn-small">Ver Tabela</a>
+            </p>
+            <div class="form-row">
+                <div class="form-group col-sm-2">
+                    <select name="fClasse" id="fClasse" class="form-control">
+                        <option value="1">Todas classes</option>
+                        @foreach (var item2 in ViewBag.Classes)
+                            {
+                            <option value="@item2.Id" @if (ViewBag.fClasse == item2.Id) { @Html.Raw("selected")     }>@item2.nome</option>
+                            }
+                    </select>
+                    <input type="hidden" value="@ViewBag.TorneioId" name="torneioId" id="torneioId">
+                </div>
+                <div class="form-group col-sm-2">
+                    <div class="input-group date" data-date-format="dd/mm/yyyy">
+                        <input id="fData" name="fData" value="@ViewBag.fData" type="text" class="form-control col-md-5 date" placeholder="Data" />
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar">
+                            </span>
+                        </span>
+                    </div>
+                </div>
+                <div class="form-group col-sm-2">
+                    <input type="text" name="fHora" id="fHora" value="@ViewBag.fHora" placeholder="Hora" class="form-control hora">
+                </div>
+                <div class="form-group col-sm-2">
+                    <select name="fQuadra" id="fQuadra" class="form-control">
+                        <option value="0" @if (ViewBag.fQuadra == 0) { @Html.Raw("selected")      }>Quadras</option>
+                        <option value="1" @if (ViewBag.fQuadra == 1) { @Html.Raw("selected")       }>quadra 1</option>
+                        <option value="2" @if (ViewBag.fQuadra == 2) { @Html.Raw("selected")       }>quadra 2</option>
+                        <option value="3" @if (ViewBag.fQuadra == 3) { @Html.Raw("selected")       }>quadra 3</option>
+                        <option value="4" @if (ViewBag.fQuadra == 4) { @Html.Raw("selected")       }>quadra 4</option>
+                        <option value="5" @if (ViewBag.fQuadra == 5) { @Html.Raw("selected")       }>quadra 5</option>
+                        <option value="6" @if (ViewBag.fQuadra == 6) { @Html.Raw("selected")       }>quadra 6</option>
+                        <option value="7" @if (ViewBag.fQuadra == 7) { @Html.Raw("selected")       }>quadra 7</option>
+                        <option value="8" @if (ViewBag.fQuadra == 8) { @Html.Raw("selected")       }>quadra 8</option>
+                        <option value="9" @if (ViewBag.fQuadra == 9) { @Html.Raw("selected")       }>quadra 9</option>
+                        <option value="10" @if (ViewBag.fQuadra == 10) { @Html.Raw("selected")       }>quadra 10</option>
+                        <option value="11" @if (ViewBag.fQuadra == 11) { @Html.Raw("selected")       }>quadra 11</option>
+                        <option value="12" @if (ViewBag.fQuadra == 12) { @Html.Raw("selected")       }>quadra 12</option>
+                        <option value="13" @if (ViewBag.fQuadra == 13) { @Html.Raw("selected")       }>quadra 13</option>
+                        <option value="14" @if (ViewBag.fQuadra == 14) { @Html.Raw("selected")       }>quadra 14</option>
+                        <option value="15" @if (ViewBag.fQuadra == 15) { @Html.Raw("selected")       }>quadra 15</option>
+                    </select>
+                </div>
+                <div class="form-group col-sm-2">
+                    <input type="button" value="filtrar" class="btn btn-primary" onclick="Pesquisar()">
+                </div>
+            </div>
+        </div>
+            <table class="table table-striped table-condensed table-bordered">
+                <tr>
+                    <th>
+                        <b>#</b>
+                    </th>
+                    <th>
+                        @Html.DisplayName("Jogador 1")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Jogador 2")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Fase")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Data")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Horário")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Quadra")
+                    </th>
+                    <th></th>
+                </tr>
+                @foreach (var item in Model)
+                {
+                    i++;
+                    <tr>
+                        <td>
+                            @i
+                        </td>
+                        <td>
+                            <select name="@Html.Raw("jogador1_" + i)" id="@Html.Raw("jogador1_" + i)" class="form-control">
+                                <option value="0">aguardando adversário</option>
+                                <option value="10" @if (item.desafiante_id == 10) { @Html.Raw("selected")   }>bye</option>
+                                @foreach (var item2 in ViewBag.Inscritos)
+                                {
+                                    <option value="@item2.userId" @if (item.desafiante_id == item2.userId) { @Html.Raw("selected")     }>@item2.participante.nome</option>
+                                }
+                            </select>
+                        </td>
+                        <td>
+                            <select name="@Html.Raw("jogador2_" + i)" id="@Html.Raw("jogador2_" + i)" class="form-control">
+                                <option value="0">aguardando adversário</option>
+                                @foreach (var item2 in ViewBag.Inscritos)
+                                {
+                                    <option value="@item2.userId" @if (item.desafiado_id == item2.userId) { @Html.Raw("selected")      }>@item2.participante.nome</option>
+                                }
+                            </select>
+                        </td>
+                        <td>
+                            @Html.Raw(item.descricaoFaseTorneio)
+                        </td>
+                        <td>
+                            <div class="input-group date" data-date-format="dd/mm/yyyy">
+                                <input id="@Html.Raw("dataJogo" + i)" name="@Html.Raw("dataJogo" + i)" value="@Html.Raw(String.Format("{0:dd/MM/yyyy}", item.dataJogo))" placeholder="dd/mm/yyyy" type="text" class="form-control col-md-5 date" />
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar">
+                                    </span>
+                                </span>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="input-group">
+                                <div class="form-group">
+                                    <input id="@Html.Raw("horaJogo" + i)" name="@Html.Raw("horaJogo" + i)" value="@Html.Raw(item.horaJogo)" placeholder="hh:mm" type="text" class="form-control col-sm-4 hora" />
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <select name="@Html.Raw("quadra" + i)" id="@Html.Raw("quadra" + i)" class="form-control">
+                                <option value="100" @if (item.quadra == 100) { @Html.Raw("selected")     }></option>
+                                <option value="1" @if (item.quadra == 1) { @Html.Raw("selected")      }>quadra 1</option>
+                                <option value="2" @if (item.quadra == 2) { @Html.Raw("selected")      }>quadra 2</option>
+                                <option value="3" @if (item.quadra == 3) { @Html.Raw("selected")      }>quadra 3</option>
+                                <option value="4" @if (item.quadra == 4) { @Html.Raw("selected")      }>quadra 4</option>
+                                <option value="5" @if (item.quadra == 5) { @Html.Raw("selected")      }>quadra 5</option>
+                                <option value="6" @if (item.quadra == 6) { @Html.Raw("selected")      }>quadra 6</option>
+                                <option value="7" @if (item.quadra == 7) { @Html.Raw("selected")      }>quadra 7</option>
+                                <option value="8" @if (item.quadra == 8) { @Html.Raw("selected")      }>quadra 8</option>
+                                <option value="9" @if (item.quadra == 9) { @Html.Raw("selected")      }>quadra 9</option>
+                                <option value="10" @if (item.quadra == 10) { @Html.Raw("selected")      }>quadra 10</option>
+                                <option value="11" @if (item.quadra == 11) { @Html.Raw("selected")      }>quadra 11</option>
+                                <option value="12" @if (item.quadra == 12) { @Html.Raw("selected")      }>quadra 12</option>
+                                <option value="13" @if (item.quadra == 13) { @Html.Raw("selected")      }>quadra 13</option>
+                                <option value="14" @if (item.quadra == 14) { @Html.Raw("selected")      }>quadra 14</option>
+                                <option value="15" @if (item.quadra == 15) { @Html.Raw("selected")      }>quadra 15</option>
+                            </select>
+                        </td>
+                        <td align="center">
+                            <form method="post" enctype="multipart/form-data" action="#" name="@Html.Raw("form"+i)" id="@Html.Raw("form"+i)" class="form">
+                                <input type="hidden" name="Id" id="Id" value="@item.Id">
+                                <button title="salvar" data-valor="@Html.Raw(i)" name="@Html.Raw("button"+i)" id="@Html.Raw("button"+i)" class="btn btn-default btn-xs inscricaoButton">
+                                    Salvar
+                                </button><br>
+                                <a href="@Url.Action("LancarResultado", new {id=item.Id })" title="placar" class="btn btn-default btn-xs inscricaoButton">
+                                    Placar
+                                </a>
+                            </form>
+                        </td>
+
+                    </tr>
+                }
+            </table>
+        </div>
+    </div>
+    @section Scripts {
+        @Scripts.Render("~/bundles/jqueryval")
+        @Scripts.Render("~/bundles/jqueryform")
+        <script type="text/javascript">
+            $(".date").datepicker({
+                language: 'pt-BR',
+                pickTime: false
+            });
+
+            $(document).ready(function () {
+                $(".hora").mask("99:99");
+
+                $(".inscricaoButton").click(function (event) {
+                    var i = $(this).data("valor");
+                    var Id = $("#form" + i).find("input[name=Id]").val();
+                    var jogador1 = document.getElementById("jogador1_" + i).value;
+                    var jogador2 = document.getElementById("jogador2_" + i).value;
+                    var dataJogo = document.getElementById("dataJogo" + i).value;
+                    var horaJogo = document.getElementById("horaJogo" + i).value;
+                    var quadra = document.getElementById("quadra" + i).value;
+                    event.preventDefault();
+                    //var data1 = $(this).closest('.form');
+                    //console.log(data1);
+                    $.ajax({
+                        type: "POST",
+                        url: "/Torneio/EditJogos",
+                        dataType: "json",
+                        data: "{'Id':'" + Id + "', 'jogador1':'" + jogador1 + "', 'jogador2':'" + jogador2 + "', 'dataJogo':'" + dataJogo + "', 'horaJogo':'" + horaJogo + "', 'quadra':'" + quadra + "'}",
+                        contentType: "application/json; charset=utf-8",
+                        success: function (response) {
+                            if (typeof response == "object") {
+                                if (response.retorno === 0) {
+                                    toastr.error(response.erro, "Erro");
+                                } else {
+                                    toastr.success("Atualização realizada com sucesso.", "Aviso");
+                                }
+                            }
+                        },
+                        error: function (jqXHR, textStatus, errorThrown) {
+                            location.reload(true);
+                        }
+                    });
+                });
+
+                $(".confirm").confirm({
+                    title: "Confirmação",
+                    text: "Tem certeza que deseja gerar os jogos? Caso já existam jogos eles serão excluídos!",
+                    confirm: function (button) {
+                        window.location.href = "/Torneio/MontarChaveamento?torneioId=@ViewBag.TorneioId";
+                    },
+                    cancel: function (button) {
+
+                    },
+                    confirmButton: "Sim",
+                    cancelButton: "Não"
+                });
+            
+            });
+
+            function Pesquisar() {
+                var torneioId = document.getElementById('torneioId').value;
+                var classeId = document.getElementById('fClasse').value;
+                var data = document.getElementById('fData').value;
+                var hora = document.getElementById('fHora').value;
+                var quadra = document.getElementById('fQuadra').value;
+                window.location = "EditJogos?torneioId=" + torneioId + "&fClasse=" + classeId + "&fData=" + data + "&fHora=" + hora + "&fQuadra=" + quadra;
+            }
+
+        </script>
+    }

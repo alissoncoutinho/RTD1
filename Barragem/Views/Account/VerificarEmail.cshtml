@@ -1,0 +1,50 @@
+﻿@{
+    Layout = "~/Views/Shared/_LayoutLogin.cshtml";
+}
+
+@model Barragem.Models.VerificacaoCadastro
+@{
+    ViewBag.Title = "Validar Email";
+
+}
+<section class="content">
+    @if ((ViewBag.Msg != "") && (ViewBag.Msg != null))
+    {
+        <div class="alert alert-success alert-dismissable">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            <strong>@ViewBag.Msg</strong>
+        </div>
+    }
+    <div class="row">
+        <div class="col-md-4">
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h4 class="box-title">Digite o seu email ou usuário</h4>
+                </div>
+                <div class="box-body">
+                    <div class="row">
+                        @using (Html.BeginForm("VerificarEmail", "Account", FormMethod.Post))
+                        {
+                            @Html.AntiForgeryToken()
+                            @Html.ValidationSummary(true)
+                            <div class="form-horizontal">
+                                <div class="col-md-12 col-xs-12 input-group input-group-sm">
+                                    <input type="text" class="form-control" name="email" placeholder="email ou usuário">
+                                    <input type="hidden" value="@Model.returnUrl" name="returnUrl">
+                                    <input type="hidden" name="torneioId" value="@Model.torneioId">
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <div class="box-footer">
+                    <button class="col-md-12 col-xs-12 btn btn-small btn-success" type="submit">Continuar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</section>
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

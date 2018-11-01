@@ -1,0 +1,53 @@
+﻿@model Barragem.Models.ClasseTorneio
+
+@{
+    ViewBag.Title = "Create";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <legend>Criar Classe</legend>
+
+    <div class="row">
+        <div class="col-sm-4">
+            @Html.LabelFor(model => model.nome)
+            <div class="input-group">
+                @Html.TextBoxFor(model => model.nome, new { @class = "form-control" })
+            </div>
+            @Html.ValidationMessageFor(model => model.nome)
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-2">
+            <label>
+                @Html.CheckBoxFor(model => model.isSegundaOpcao) Segunda Opção
+            </label>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-2">
+            <label>
+                @Html.CheckBoxFor(model => model.isDupla) Dupla
+            </label>
+        </div>
+    </div>
+
+    <br />
+    <div class="row">
+        <div class="col-xs-2">
+            <input type="hidden" name="nivel" value="1">
+            <input type="hidden" name="torneioId" value="@ViewBag.torneioId">
+            <input type="submit" class="btn btn-primary" value="Criar" />
+        </div>
+    </div>
+}
+
+
+@section Scripts {
+
+
+}
+

@@ -1,0 +1,7 @@
+﻿<ul class="nav nav-tabs" id="myTab">
+    <li @if (@ViewBag.flag == "edit") { @Html.Raw("class='active'")  }><a href="@Url.Action("Edit", new { id = @ViewBag.TorneioId })"><b>Torneio</b></a></li>
+    <li @if (@ViewBag.flag == "classes") { @Html.Raw("class='active'")  }><a href="@Url.Action("EditClasse", new { torneioId = @ViewBag.TorneioId })"><b>Classes</b></a></li>
+    <li @if (@ViewBag.flag == "inscritos") { @Html.Raw("class='active'")   }><a href="@Url.Action("EditInscritos", new { torneioId = @ViewBag.TorneioId })"><b>Inscritos</b></a></li>
+    <li @if (@ViewBag.flag == "jogos") { @Html.Raw("class='active'")      }><a href="@Url.Action("EditJogos", new { torneioId = @ViewBag.TorneioId })"><b>Jogos</b></a>
+    <li @if (@ViewBag.flag == "duplas") { @Html.Raw("class='active'")      }><a href="@Url.Action("EditDuplas", new { torneioId = @ViewBag.TorneioId })"><b>Duplas</b></a>
+</ul>

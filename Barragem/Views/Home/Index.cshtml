@@ -1,0 +1,182 @@
+﻿@{
+    ViewBag.Title = "Barragem do cerrado - Tênis Ranking";
+    Layout = "~/Views/Shared/_LayoutTenisRanking.cshtml";
+}
+    <div class="bg-slider-wrapper">
+        <div class="flexslider bg-slider">
+            <ul class="slides">
+                <li class="slide slide-1"></li>
+                <!--li class="slide slide-2"></li-->
+                <!--li class="slide slide-3"></li-->
+            </ul>
+        </div>
+    </div><!--//bg-slider-wrapper-->
+
+    <section class="promo section section-on-bg">
+    <div class="container text-center">
+        @if ((ViewBag.Msg != "") && (ViewBag.Msg != null))
+        {
+            <div class="alert alert-info alert-dismissable">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                <strong>@ViewBag.Msg</strong>
+            </div>
+        }
+        <h2 class="title">Gerencie seu ranking e seus torneios como um profissional.</h2>
+        <p class="intro" id="formulario">Feito para clubes, condomínios, academias e para todos os amantes de tênis.</p>
+        <div class="row">
+            <div class="col-xs-12 col-sm-6">
+                <video class="img-responsive" width="500" height="240" controls poster="/Content/image/postervideo1.jpg">
+                    <source src="Content/image/VID-20171202-WA0008.mp4" type="video/mp4">
+                </video>
+                <!--button type="button" class="play-trigger btn-link " data-toggle="modal" data-target="#modal-video"><i class="fa fa-youtube-play"></i> Assista o vídeo</button-->
+            </div>
+            <div class="step text-center col-xs-12 col-sm-6">
+                <form class="form-horizontal" name="formul" id="formul" style="width: 350px; margin: 0 auto;" method="post" action="/Home/EnviarEmail">
+                    <fieldset>
+                        <h4 class="titleForm">Ganhe 6 meses grátis<br>Deixe seu telefone e entraremos em contato</h4>
+                        <div class="form-group col-xs-12">
+                            <input type="text" class="form-control" id="nome" name="nome" placeholder="* nome">
+                        </div>
+                        <div class="form-group col-xs-12">
+                            <input type="text" class="form-control" placeholder="* celular (ddd) + número" id="fone" name="fone">
+                        </div>
+                        <button type="submit" class="btn btn-cta btn-cta-primary">Cadastrar</button>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+        <!--p><a class="btn btn-cta btn-cta-primary" href="Url.Action("FaleConosco", "Home")">Entre Em Contato</a></p-->
+        <!--button type="button" class="play-trigger btn-link " data-toggle="modal" data-target="#modal-video"><i class="fa fa-youtube-play"></i> Assista o vídeo</!--button-->
+
+    </div><!--//container-->
+</section><!--//promo-->
+
+    <div class="sections-wrapper">
+        <section class="steps section">
+            <div class="container">
+                <h2 class="title text-center">Porque utilizar o rankingdetenis.com</h2>
+                <div class="row">
+                    <div class="step text-center col-xs-12 col-sm-4">
+                        <h3 class="title"><span class="number">1</span><br><span class="text">Site exclusivo</span></h3>
+                        <p>Tenha um site exclusivo com a logo do seu clube, academia, condomínio e etc...</p>
+                    </div><!--//step-->
+                    <div class="step text-center col-xs-12 col-sm-4">
+                        <h3 class="title"><span class="number">2</span><br><span class="text">Inspirado no ranking da ATP</span></h3>
+                        <p>Sistema de defesa de pontos, estimulando o tenista a estar sempre jogando para defender seus pontos.</p>
+                    </div><!--//step-->
+                    <div class="step text-center col-xs-12 col-sm-4">
+                        <h3 class="title"><span class="number">3</span><br><span class="text">Sistema com divisão por classe</span></h3>
+                        <p>Crie um ranking único ou por classes, de acordo com a necessidade do seu grupo.</p>
+                    </div><!--//step-->
+                </div><!--//row-->
+                <div class="row">
+                    <div class="step text-center col-xs-12 col-sm-4">
+                        <h3 class="title"><span class="number">4</span><br><span class="text">Gerenciamento de torneios</span></h3>
+                        <p>Promova torneios totalmente automatizados divididos por classe, com opção de repescagem.</p>
+                    </div><!--//step-->
+                    <div class="step text-center col-xs-12 col-sm-4">
+                        <h3 class="title"><span class="number">5</span><br><span class="text">Opção de licenciamento</span></h3>
+                        <p>Flexibilidade para o tenista se licenciar quando for necessário.</p>
+                    </div><!--//step-->
+                    <div class="step text-center col-xs-12 col-sm-4">
+                        <h3 class="title"><span class="number">6</span><br><span class="text">Gerenciamento de pagamentos</span></h3>
+                        <p>Gerencie o pagamento dos ranqueados e dos torneios.</p>
+                    </div><!--//step-->
+                </div><!--//row-->
+                <div class="text-center"><a class="btn btn-cta btn-cta-primary scrollSuave" href="#formulario">Ganhe 6 meses grátis</a></div>
+            </div><!--//container-->
+        </section>
+
+        <!-- ******Testimonials Section****** -->
+        <section class="section testimonials">
+            <div class="container">
+                <h2 class="title text-center">O que as pessoas estão dizendo sobre o Ranking de Tênis?</h2>
+                <div id="testimonials-carousel" class="carousel slide" data-ride="carousel">
+                    <ol class="carousel-indicators">
+                        <li data-target="#testimonials-carousel" data-slide-to="0" class="active"></li>
+                        <li data-target="#testimonials-carousel" data-slide-to="1"></li>
+                        <li data-target="#testimonials-carousel" data-slide-to="2"></li>
+                    </ol><!--//carousel-indicators-->
+                    <div class="carousel-inner">
+                        <div class="item active">
+                            <figure class="profile"><img src="/Images/people/profile-m-1.png" alt="" /></figure>
+                            <div class="content">
+                                <blockquote>
+                                    <i class="fa fa-quote-left"></i>
+                                    <p>Estou impressionado como meu jogo evoluiu depois que entrei para o Ranking de Tênis. Jogando regurlamente com vários tenistas diferente conseguimos melhorar muito o nosso jogo.</p>
+                                </blockquote>
+                                <p class="source">Cleverson Estrada<br /><span class="title">Analista de Sistemas</span></p>
+                            </div><!--//content-->
+                        </div><!--//item-->
+                        <div class="item">
+                            <figure class="profile"><img src="~/Images/people/profile-m-2.png" alt="" /></figure>
+                            <div class="content">
+                                <blockquote>
+                                    <i class="fa fa-quote-left"></i>
+                                    <p>Agora ficou muito mais divertido jogar tênis no meu clube. Fiz novas amizades e conheci novos parceiros de treino.</p>
+                                </blockquote>
+                                <p class="source">Marcelo Rodrigues<br /><span class="title">Empresário</span></p>
+                            </div><!--//content-->
+                        </div><!--//item-->
+                        <div class="item">
+                            <figure class="profile"><img src="~/Images/people/profile-m-3.png" alt="" /></figure>
+                            <div class="content">
+                                <blockquote>
+                                    <i class="fa fa-quote-left"></i>
+                                    <p>O Ranking de tênis é muito organizado, melhor sistema de pontuação que já vi, te estimula a estar sempre jogando. Flexibilidade para entrar de licença quando necessário. O sistema organiza torneios também. Excelente!!!</p>
+                                </blockquote>
+                                <p class="source">Ana Beatriz<br /><span class="title">Advogada.</span></p>
+                            </div><!--//content-->
+                        </div><!--//item-->
+                    </div><!--//carousel-inner-->
+
+                </div><!--//carousel-->
+            </div><!--//container-->
+        </section><!--//testimonials-->
+        
+        <section class="steps section">
+            <div class="container">
+                <h2 class="title text-center">Alguns de Nossos Clientes</h2>
+                <div class="row">
+                    <div class="step text-center col-xs-12 col-sm-4">
+                        <h3 class="title"><img width="126" height="100" src="/Content/image/logoasbac.png"><br><br><span class="text">Clube Asbac</span></h3>
+                    </div><!--//step-->
+                    <div class="step text-center col-xs-12 col-sm-4">
+                        <h3 class="title"><img width="100" height="100" src="/Content/image/logo_bdc.png"><br><br><span class="text">Barragem do Cerrado</span></h3>
+                    </div><!--//step-->
+                    <div class="step text-center col-xs-12 col-sm-4">
+                        <h3 class="title"><img width="100" height="100" src="/Content/image/logo1018.png"><br><br><span class="text">GH Tennis Team</span></h3>
+                    </div><!--//step-->
+                </div><!--//row-->
+                <div class="row">
+                    <div class="step text-center col-xs-12 col-sm-4">
+                        <h3 class="title"><img width="100" height="100" src="/Content/image/logo1021.png"><br><br><span class="text">Ranking Aracajú</span></h3>
+                    </div><!--//step-->
+                    <div class="step text-center col-xs-12 col-sm-4">
+                        <h3 class="title"><img width="100" height="100" src="/Content/image/logo5.png"><br><br><span class="text">Clube Umuarama</span></h3>
+                    </div><!--//step-->
+                    <div class="step text-center col-xs-12 col-sm-4">
+                        <h3 class="title"><img width="100" height="100" src="/Content/image/logo1020.png"><br><br><span class="text">Nipo Monte Alto</span></h3>
+                    </div><!--//step-->
+                </div><!--//row-->
+            </div><!--//container-->
+        </section>
+        <!-- ******CTA Section****** -->
+        <section id="cta-section" class="section cta-section text-center home-cta-section">
+            <div class="container">
+                <h2 class="title">Não fique sozinho. Venha promover este esporte conosco.</h2>
+                <p class="intro">Mais de <span class="counting">5000</span> jogos já realizados.</p>
+                
+            <div class="text-center"><a class="btn btn-cta btn-cta-primary scrollSuave" href="#formulario">Ganhe 6 meses grátis</a></div>
+</div><!--//container-->
+        </section><!--//cta-section-->
+
+    </div><!--//section-wrapper-->
+    @section Scripts {
+    @Scripts.Render("~/bundles/jqueryform")
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#fone").mask("(99) 99999-9999");
+        })
+    </script>
+    }

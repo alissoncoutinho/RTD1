@@ -1,0 +1,10 @@
+﻿@model Barragem.Models.Barragens
+@{
+    ViewBag.Title = "Fale Conosco";
+    //Layout = "~/Views/Shared/_LayoutExterno.cshtml";
+}
+<h2 class="title">Fale Conosco</h2>
+<div class="desc text-left">
+    @Html.Raw(Model.contato)
+    <br><br><br>
+</div><!--//desc-->

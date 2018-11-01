@@ -1,0 +1,155 @@
+﻿@{
+    int i = 0;
+}
+@model IEnumerable<Barragem.Models.ClasseTorneio>
+    @Html.Partial("_PartialTabs")
+
+    <div class="tab-content">
+        <div class="tab-pane fade" id="tabCadastro"></div>
+        <div class="tab-pane fade" id="tabInscritos"></div>
+        <div class="tab-pane fade" id="tabJogos"></div>
+        <div class="tab-pane fade" id="tabDuplas"></div>
+        <div class="tab-pane fade in active" id="tabEditClasses">
+            <br>
+            <p>
+                <a href="@Url.Action("CreateClasse", new {torneioId = ViewBag.TorneioId })" class="btn btn-primary btn-small"><span class="glyphicon glyphicon-plus"></span> Nova</a>
+            </p>
+            <table class="table table-striped table-condensed table-bordered">
+                <tr>
+                    <th>
+                        <b>#</b>
+                    </th>
+                    <th>
+                        @Html.DisplayName("nome")
+                    </th>
+                    <th>
+                        @Html.DisplayName("primeira opção")
+                    </th>
+                    <th>
+                        @Html.DisplayName("segunda opção")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Dupla")
+                    </th>
+                    <th></th>
+                </tr>
+                @foreach (var item in Model)
+                {
+                    i++;
+                    <tr id="@item.Id">
+                        <td>
+                            @i
+                        </td>
+                        <td>
+                            <input type="text" class="col-md-6 form-control" name="@Html.Raw("nome" + i)" id="@Html.Raw("nome" + i)" value="@item.nome">
+                        </td>
+                        <td>
+                            @if (item.isPrimeiraOpcao){
+                                <input type="checkbox" checked value="true" name="@Html.Raw("isPrimeiraOpcao" + i)" id="@Html.Raw("isPrimeiraOpcao" + i)" />
+                            }
+                            else
+                            {
+                                <input type="checkbox" value="true" name="@Html.Raw("isPrimeiraOpcao" + i)" id="@Html.Raw("isPrimeiraOpcao" + i)" />
+                            }
+                        </td>
+                        <td>
+                            @if (item.isSegundaOpcao)
+                            {
+                                <input type="checkbox" checked value="true" name="@Html.Raw("isSegundaOpcao" + i)" id="@Html.Raw("isSegundaOpcao" + i)" />
+                            }
+                            else
+                            {
+                                <input type="checkbox" value="true" name="@Html.Raw("isSegundaOpcao" + i)" id="@Html.Raw("isSegundaOpcao" + i)" />
+                            }
+                        </td>
+                        <td>
+                            @if (item.isDupla)
+                            {
+                                <input type="checkbox" checked value="true" name="@Html.Raw("isDupla" + i)" id="@Html.Raw("isDupla" + i)" />
+                            }
+                            else
+                            {
+                                <input type="checkbox" value="true" name="@Html.Raw("isDupla" + i)" id="@Html.Raw("isDupla" + i)" />
+                            }
+                        </td>
+                        <td align="center">
+                            <form method="post" enctype="multipart/form-data" action="#" name="@Html.Raw("form"+i)" id="@Html.Raw("form"+i)" class="form">
+                                <input type="hidden" name="Id" id="Id" value="@item.Id">
+                                <button title="salvar" data-valor="@Html.Raw(i)" name="@Html.Raw("button"+i)" id="@Html.Raw("button"+i)" class="btn btn-default btn-xs inscricaoButton">
+                                    Salvar
+                                </button>
+                                <button title="excluir" data-valor="@item.Id" name="@Html.Raw("buttonEx"+i)" id="@Html.Raw("buttonEx"+i)" class="btn btn-danger btn-xs excluirButton">
+                                    Excluir
+                                </button>
+                            </form>
+                        </td>
+
+                    </tr>
+                }
+            </table>
+        </div>
+    </div>
+    @section Scripts {
+        <script type="text/javascript">
+            $(document).ready(function () {
+                $(".inscricaoButton").click(function (event) {
+                    var i = $(this).data("valor");
+                    var Id = $("#form"+i).find("input[name=Id]").val();
+                    var nome = document.getElementById("nome"+i).value;
+                    var isSegundaOpcao = document.getElementById("isSegundaOpcao" + i).checked;
+                    var isPrimeiraOpcao = document.getElementById("isPrimeiraOpcao" + i).checked;
+                    var isDupla = document.getElementById("isDupla" + i).checked;
+                    event.preventDefault();
+                    $.ajax({
+                        type: "POST",
+                        url: "/Torneio/EditClasse",
+                        dataType: "json",
+                        data: "{'Id':'" + Id + "', 'nome':'" + nome + "', 'isSegundaOpcao':'" + isSegundaOpcao + "', 'isDupla':'" + isDupla + "', 'isPrimeiraOpcao':'" + isPrimeiraOpcao + "'}",
+                        contentType: "application/json; charset=utf-8",
+                        success: function (response) {
+                            if (typeof response == "object") {
+                                if (response.retorno === 0) {
+                                    toastr.error(response.erro, "Erro");
+                                } else {
+                                    toastr.success("Atualização realizada com sucesso.", "Aviso");
+                                }
+                            }
+                        },
+                        error: function (jqXHR, textStatus, errorThrown) {
+                            location.reload(true);
+                        }
+                    });
+                });
+                
+                $(".excluirButton").confirm({
+                    title: "Confirmação",
+                    text: "Tem certeza que deseja excluir esta classe?",
+                    confirm: function (button) {
+                        var Id = button.data("valor");
+                        event.preventDefault();
+                        $.ajax({
+                            url: "/Torneio/ExcluirClasse?Id="+Id,
+                            dataType: "json",
+                            contentType: "application/json; charset=utf-8",
+                            success: function (response) {
+                                if (typeof response == "object") {
+                                    if (response.retorno === 0) {
+                                        toastr.error(response.erro, "Erro");
+                                    } else {
+                                        $("#"+Id).remove();
+                                        toastr.success("Exlusão realizada com sucesso.", "Aviso");
+                                    }
+                                }
+                            },
+                            error: function (jqXHR, textStatus, errorThrown) {
+                                toastr.error(textStatus, "Erro");
+                            }
+                        });
+                    },
+                    cancel: function (button) { },
+                    confirmButton: "Sim",
+                    cancelButton: "Não"
+                });
+            });
+        </script>
+    }

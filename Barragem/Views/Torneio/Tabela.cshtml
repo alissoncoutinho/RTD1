@@ -1,0 +1,100 @@
+﻿@model IEnumerable<Barragem.Models.Jogo>
+@{
+    Layout = "~/Views/Shared/_LayoutTorneio2.cshtml";
+
+    ViewBag.Title = "Tabela Torneio";
+    int? faseTorneio = 0;
+    string faseId = "";
+}
+
+    <legend>Tabela de Jogos</legend>
+
+    <div class="box-body table-responsive no-padding no-border table-hover">
+    @if ((!ViewBag.tabelaLiberada) && !((Roles.IsUserInRole("admin")) || (Roles.IsUserInRole("organizador")))){
+        <p>Aguarde. Tabela ainda não liberada.</p>
+    }else{
+            <div class="form-horizontal">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">Classes</label>
+                    <div class="col-sm-4">
+                        <select name="filtroClasse" id="filtroClasse" class="form-control" onchange="Selecionar()">
+                            @foreach (var item2 in ViewBag.Classes){
+                            <option value="@item2.Id" @if (ViewBag.filtroClasse == item2.Id) { @Html.Raw("selected") }>@item2.nome</option>
+                            }
+                        </select>
+                        <input type="hidden" value="@ViewBag.TorneioId" name="torneioId" id="torneioId">
+                    </div>
+                </div>
+            </div>
+            if (ViewBag.temRepescagem){
+                <ul class="nav nav-tabs" id="myTab">
+                    <li class="active"><a href="#tabFase1" data-toggle="tab">1ª Fase / Repescagem</a></li>
+                    <li><a href="#tabFase2" data-toggle="tab">2ª Fase</a></li>
+                </ul>
+            }
+            <div class="tab-content">
+                @if (ViewBag.temRepescagem)
+                {
+                    <div class="tab-pane fade in active" id="tabFase1">
+                        <div id="conteudo_tabela_jogos">
+                            <div class="display_jogos">
+                                <div class="mover_esquerda"><img src="~/Images/seta.png"></div>
+                                <div class="mover_direita"><img src="~/Images/seta.png"></div>
+                                @foreach (var item in ViewBag.JogosRepescagem)
+                                {
+                                    if (faseTorneio != item.faseTorneio)
+                                    {
+                                        faseId = "times" + item.faseTorneio;
+                                        if (faseTorneio != 0)
+                                        {
+                                            @Html.Raw("</div>");
+                                        }
+                                        faseTorneio = item.faseTorneio;
+                                        @Html.Raw("<div id='" + faseId + "' class='col-xs-2 box_rodada'>");
+                                    <div class="titulo">@item.descricaoFaseTorneio</div>
+                                    }
+                                    @Html.Partial("_PartialJogoTabela", (Barragem.Models.Jogo)item)
+                                }
+                            </div>
+                        </div>
+                    </div>
+                 }
+                    <div class="tab-pane fade @if (!ViewBag.temRepescagem){ @Html.Raw("in active")}" id="tabFase2">
+                        <div id="conteudo_tabela_jogos">
+                            <div class="display_jogos">
+                                <div class="mover_esquerda"><img src="~/Images/seta.png"></div>
+                                <div class="mover_direita"><img src="~/Images/seta.png"></div>
+                                @{
+                                    faseTorneio = 0;
+                                }
+                                @foreach (var item in Model){
+                                    if(faseTorneio!=item.faseTorneio){
+                                        faseId = "times" + item.faseTorneio;
+                                        if (faseTorneio != 0) {
+                                            @Html.Raw("</div>");
+                                        }
+                                        faseTorneio = item.faseTorneio;
+                                        if (faseTorneio == 1) {
+                                            faseId = "time" + item.faseTorneio;
+                                        }
+                                        @Html.Raw("<div id='" + faseId + "' class='col-xs-2 box_rodada'>");
+                                                <div class="titulo">@item.descricaoFaseTorneio</div>
+                                    }
+                                    @Html.Partial("_PartialJogoTabela", (Barragem.Models.Jogo)item)
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+             }
+         </div>
+    @section Scripts {
+        <script type="text/javascript">
+            function Selecionar() {
+                var torneioId = document.getElementById('torneioId').value;
+                var classeId = document.getElementById('filtroClasse').value;
+                window.location = "Tabela?torneioId=" + torneioId + "&filtroClasse=" + classeId;
+            }
+
+        </script>
+    }

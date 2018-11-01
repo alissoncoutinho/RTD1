@@ -1,0 +1,371 @@
+﻿@model Barragem.Models.Torneio
+@{
+    Layout = "~/Views/Shared/_LayoutTorneio2.cshtml";
+    Barragem.Models.InscricaoTorneio inscricao = null;
+    if (ViewBag.inscricao!=null){
+        inscricao = ViewBag.inscricao;
+    }
+}
+<section class="content-header">
+    <h1>Torneio</h1>
+</section>
+<section class="content">
+    <div class="row">
+        <!-- left column -->
+        <div class="col-md-6">
+            <!-- general form elements -->
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Detalhes</h3>
+                </div>
+                <div class="box-body">
+                    <div class="row">
+                        @Html.LabelFor(m => m.nome, new { @class = "col-sm-3" })
+                        <div class="col-sm-8 info-box-text">
+                            @Html.Raw(Model.nome)
+                        </div>
+                    </div>
+                    <div class="row">
+                        @Html.Label("Período", new { @class = "col-sm-3" })
+                        <div class="col-sm-8 info-box-text">
+                            @Html.Raw(Model.dataInicio.ToShortDateString()) a @Html.Raw(Model.dataFim.ToShortDateString())
+                        </div>
+                    </div>
+                    <div class="row">
+                        @Html.Label("Jogos", new { @class = "col-sm-3" })
+                        <div class="col-sm-8 info-box-text">
+                            De @Html.Raw(Model.periodicidadeJogos) em @Html.Raw(Model.periodicidadeJogos) dias
+                        </div>
+                    </div>
+                    <!--div class="row">
+                        Html.Label("Classes", new { class = "col-sm-3" })
+                        <div class="col-sm-8 info-box-text">
+                            Html.Raw(Model.qtddClasses)
+                        </div>
+                    </div-->
+                    <div class="row">
+                        @Html.Label("Repescagem", new { @class = "col-sm-3" })
+                        <div class="col-sm-8 info-box-text">
+                            @if (Model.temRepescagem)
+                            { @Html.Raw("Sim") }
+                            else
+                            { @Html.Raw("Não")}
+                        </div>
+                    </div>
+                    <div class="row">
+                        @Html.Label("Premiação", new { @class = "col-sm-3" })
+                        <div class="col-sm-8 info-box-text">
+                            @Html.Raw(Model.premiacao)
+                        </div>
+                    </div>
+                </div>
+                <div class="box-footer">
+                    <a href="@Url.Action("InscricoesTorneio2", new { torneioId = Model.Id })" class="btn btn-default" data-id="Model.Id" title="Inscritos">Ver Inscritos</a>
+                </div>
+
+            </div>
+            <!-- /.box -->
+        </div>
+        <div class="col-md-6">
+            <!-- Horizontal Form -->
+            <div class="box box-info">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Inscrição</h3>
+                </div>
+                <!-- /.box-header -->
+                <!-- form start -->
+                @using (Html.BeginForm("Inscricao", "Torneio", FormMethod.Post, new { @class = "form-horizontal", @name = "formInscricao" }))
+                {
+                    @Html.Hidden("operacao", "inscricao")
+                    @Html.Hidden("torneioId", Model.Id)
+                    @Html.Hidden("vrInscricao", Model.valor);
+                    <div class="box-body">
+                        <div class="row">
+                            @Html.Label("Valor", new { @class = "col-sm-4" })
+                            <div class="col-sm-8 info-box-text">
+                                @if (inscricao==null){
+                                    if ((Model.valor == 0)||(ViewBag.isGratuito)){
+                                        @Html.Raw("gratuito")
+                                    }else{
+                                        @Html.Raw("R$ " + Model.valor + ",00")
+                                    }
+                                }else{
+                                    if ((Model.valor != 0)&&(!ViewBag.isGratuito)){
+                                        @Html.Raw("R$ " + inscricao.valor + ",00")
+                                    }else {
+                                        @Html.Raw("gratuito")
+                                    }
+                                }
+                            </div>
+                        </div>
+                        @if (inscricao!=null){
+                            <div class="row">
+                                @Html.Label("Status Inscrição", new { @class = "col-sm-4" })
+                                <div class="col-sm-8 info-box-text">
+                                @if ((Model.valor != 0)&&(!ViewBag.isGratuito)){
+                                    @Html.Raw(inscricao.descricaoStatusPag)
+                                    if (inscricao.isAtivo){ 
+                                        @Html.Raw(" Ativa")
+                                    }else{
+                                        @Html.Raw(" Pendente")
+                                    }
+                                }
+                                </div>
+                            </div>
+                        }
+                        @if (inscricao==null){
+                            if ((bool)Model.isMaisUmaClasse){
+                                <div class="row">
+                                    @Html.Label("Valor para 2 classe", new { @class = "col-sm-4" })
+                                    <div class="col-sm-8 info-box-text">
+                                        @if ((Model.valor == 0)||(ViewBag.isGratuito)){
+                                            @Html.Raw("gratuito")
+                                        }else{
+                                            @Html.Raw("R$ " + Model.valorMaisClasses + ",00")
+                                        }
+                                    </div>
+                                </div>
+                            }
+                            <div class="row">
+                                @Html.Label("Inscrições até", new { @class = "col-sm-4" })
+                                <div class="col-sm-8 info-box-text">
+                                    @Html.Raw(Model.dataFimInscricoes.ToShortDateString())
+                                </div>
+                            </div>
+                            <div class="row">
+                                @Html.Label("Classe", new { @class = "col-sm-4" })
+                                <div class="col-sm-8 info-box-text">
+                                    <select name="classeInscricao" id="classeInscricao" data-classe2="@Model.isMaisUmaClasse" class="form-control escolherSegundaOpcaoClasse">
+                                        <option value="0">Selecione uma classe...</option>
+                                        @foreach (var item in ViewBag.Classes)
+                                        {
+                                            <option value="@item.Id" @if (ViewBag.ClasseInscricao == item.Id) { @Html.Raw("selected")       }>@item.nome</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            if ((bool)Model.isMaisUmaClasse){
+                                <div class="form-group">
+                                    <div class="col-sm-8">
+                                        <div class="checkbox">
+                                            <label>
+                                                <input type="checkbox" value="true" name="isMaisDeUmaClasse" id="isMaisDeUmaClasse" onclick="segundaOpcaoDeClasse()" /> @Html.Raw("Quero escolher mais uma categoria")
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="segundaOpcaoClasse" class="row">
+                                    @Html.Label("2ª Classe", new { @class = "col-sm-4" })
+                                    <div class="col-sm-8 info-box-text">
+                                        <select name="classeInscricao2" class="form-control">
+                                            <option value="0">Selecione uma classe...</option>
+                                            @foreach (var item in ViewBag.Classes2){
+                                                <option value="@item.Id" @if ((!String.IsNullOrEmpty(ViewBag.ClasseInscricao2)) && (ViewBag.ClasseInscricao2 == item.Id) ) { @Html.Raw("selected")      }>@item.nome</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+
+                            }
+                        }else{
+                            <div class="row">
+                                @Html.Label("Classe", new { @class = "col-sm-4" })
+                                <div class="col-sm-8 info-box-text">
+                                    <select name="classeInscricao" id="classeInscricao" class="form-control">
+                                        <option value="0">Selecione uma classe...</option>
+                                        @foreach (var item in ViewBag.Classes)
+                                        {
+                                            <option value="@item.Id" @if (ViewBag.ClasseInscricao == item.Id) { @Html.Raw("selected")      }>@item.nome</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            if(!String.IsNullOrEmpty(ViewBag.ClasseInscricao2)){
+                                <div class="row">
+                                    <input type="hidden" value="true" name="isMaisDeUmaClasse" id="isMaisDeUmaClasse" />
+                                    @Html.Label("2ª Classe", new { @class = "col-sm-4" })
+                                    <div class="col-sm-8 info-box-text">
+                                        <select name="classeInscricao2" class="form-control">
+                                            <option value="0">Selecione uma classe...</option>
+                                            @foreach (var item in ViewBag.Classes2){
+                                                <option value="@item.Id" @if ((!String.IsNullOrEmpty(ViewBag.ClasseInscricao2)) && (ViewBag.ClasseInscricao2 == item.nome) ) { @Html.Raw("selected")      }>@item.nome</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                            } else {
+                                <input type="hidden" name="classeInscricao2" value="0"/>
+                            }
+                       }
+                        @if (!String.IsNullOrEmpty(Model.observacao)) {
+                            <br>
+                            <div class="boxPadrao">
+                                <div class="row">
+                                    <div class="col-sm-12">@Html.Raw(Model.observacao)</div>
+                                </div>
+                                <div class="row form-group">
+                                    @if (inscricao==null){
+                                        <div class="col-sm-12"><input type="text" placeholder="Responda aqui..." name="observacao" class="form-control"></div>
+                        }else{
+                                        <div class="col-sm-12">@Html.Raw(inscricao.observacao)</div>
+                        }
+                                </div>
+                            </div>
+                        }
+                       </div>
+                    <!-- /.box-body -->
+                    <div class="box-footer">
+                        @if (Model.dataFimInscricoes.AddDays(1) >= DateTime.Now)
+                        {
+                            if (inscricao != null)
+                            {
+                                <!--a href="Url.Action("AlterarClasse", new { torneioId = Model.Id })" class="btn btn-info" title="Alterar Classe">Alterar Classe</a-->
+                                <div class="btn-group-vertical col-xs-12 col-sm-6">
+                                    @if ((String.IsNullOrEmpty(inscricao.statusPagamento) && !inscricao.isAtivo) && Model.valor != 0 && (!ViewBag.isGratuito))
+                                    {
+                                        if (ViewBag.isAceitaCartao) { 
+                                            <a href="@Url.Action("EfetuarPagamento", new { inscricaoId = inscricao.Id })" class="btn btn-success" title="Efetuar Pagamento">Cartão ou Boleto</a>
+                                        }
+                                        <button class="btn btn-success transferenciaButton" title="Transferência bancária">Transferência</button>
+                                    }
+                                    </div>
+                                    <div class="col-xs-12 col-sm-4 pull-right">
+                                        @if ((String.IsNullOrEmpty(inscricao.statusPagamento) && !inscricao.isAtivo)){    
+                                            <button type="button" class="btn btn-danger col-xs-12 pull-right confirmCancel">Cancelar</button>
+                                        }
+                                        <a href="@Url.Action("AlterarClasse", new { torneioId = Model.Id })" data-classe1="@ViewBag.ClasseInscricao" data-classe2="@ViewBag.ClasseInsc2" class="btn btn-info col-xs-12 confirmAlterarClasse" title="Alterar Classe">Alterar Classe</a>
+                                    </div>
+                            }
+                            else
+                            {
+                                <button type="submit" class="btn btn-info pull-right confirmInscricao">Inscrever-me</button>
+                            }
+                        }
+                        else
+                        {
+                            if (Model.liberarTabela)
+                            {
+                                <a class="btn btn-default" href="@Url.Action("Tabela", "Torneio", new { torneioId = Model.Id })">Tabela</a>
+                                <a class="btn btn-default pull-right" href="@Url.Action("LancarResultado", "Torneio")">Lançar Resultado</a>
+                            }
+                            else
+                            {
+                                @Html.Raw("Inscrições Encerradas.")
+                            }
+
+                        }
+                    </div>
+                    <!-- /.box-footer -->
+                }
+            </div>
+            <!-- /.box -->
+        </div>
+        <!--/.col (right) -->
+    </div>
+    <!-- /.row -->
+    <div class="row exibir-dadosbancarios" id="dadosBancarios">
+        <div class="box box-warning">
+            <div class="box-header with-border">
+                <h3 class="box-title">Transferência</h3>
+            </div>
+            <div class="box-body">
+                @if (inscricao!=null){
+                    <p><b>Valor:</b> R$ @inscricao.valor ,00</p>
+                }
+                @Html.Raw(Model.dadosBancarios)
+            </div>
+
+        </div>
+    </div>
+</section>
+
+</div>
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $(".confirmCancel").confirm({
+                title: "Confirmação",
+                text: "Aperte SIM para confirmar o cancelamento da inscrição!",
+                confirm: function (button) {
+                    //window.location.href = button.data("link");
+                    document.formInscricao.operacao.value = "cancelar";
+                    document.formInscricao.submit();
+                },
+                cancel: function (button) {
+
+                },
+                confirmButton: "Sim",
+                cancelButton: "Não"
+            });
+
+            $(".escolherSegundaOpcaoClasse").change(function (event) {
+                event.preventDefault();
+                var classe2 = $(this).data("classe2");
+                if (classe2=="True") {
+                    $.confirm({
+                        title: "",
+                        text: "Deseja jogar em mais de uma classe?",
+                        confirm: function (button) {
+                            document.getElementById('isMaisDeUmaClasse').checked=true;
+                            segundaOpcaoDeClasse();
+                        },
+                        cancel: function (button) {
+
+                        },
+                        confirmButton: "Sim",
+                        cancelButton: "Não"
+                    });
+                }
+            });
+            
+        });
+
+
+        $(".confirmAlterarClasse").click(function (event) {
+            event.preventDefault();
+            var classe1 = $(this).data("classe1");
+            var classe2 = $(this).data("classe2");
+            var classe1Nova = document.formInscricao.classeInscricao.value;
+            var classe2Nova = document.formInscricao.classeInscricao2.value;
+            if ((classe1 == classe1Nova) && (classe2 == classe2Nova)) {
+                //if(true){
+                toastr.success("Selecione uma nova classe na caixa de seleção de classe.", "Aviso");
+            } else {
+                $.confirm({
+                    title: "Confirmação",
+                    text: "Aperte SIM para confirmar a alteração de classe!",
+                    confirm: function (button) {
+                        document.formInscricao.operacao.value = "alterarClasse";
+                        document.formInscricao.submit();
+                    },
+                    cancel: function (button) {
+
+                    },
+                    confirmButton: "Sim",
+                    cancelButton: "Não"
+                });
+            }
+        });
+            
+
+        $(".transferenciaButton").click(function (event) {
+            event.preventDefault();
+            var element = document.getElementById("dadosBancarios");
+            element.classList.add("show");
+        });
+        
+        function segundaOpcaoDeClasse() {
+            if (document.getElementById('isMaisDeUmaClasse').checked) {
+                document.getElementById('segundaOpcaoClasse').style.opacity = "1";
+                document.getElementById('segundaOpcaoClasse').style.display = "block";
+            } else {
+                document.getElementById('segundaOpcaoClasse').style.opacity = "0 !important";
+                document.getElementById('segundaOpcaoClasse').style.display = "none";
+            }
+        }
+        document.getElementById('segundaOpcaoClasse').style.opacity = "0";
+        document.getElementById('segundaOpcaoClasse').style.display = "none";
+
+    </script>
+}

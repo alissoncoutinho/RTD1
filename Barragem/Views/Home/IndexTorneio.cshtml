@@ -1,0 +1,55 @@
+﻿@model Barragem.Models.Torneio
+@{
+    ViewBag.Title = "Torneio de Tênis";
+    Layout = "~/Views/Shared/_LayoutTorneio.cshtml";
+}
+<div class="bg-slider-wrapper">
+    <div class="flexslider bg-slider">
+        <ul class="slides">
+            <li class="slide slide-1"></li>
+        </ul>
+    </div>
+</div>
+<section class="promo section section-on-bg">
+    <div class="container text-center">
+        <br><br>
+        <h2 class="title">@Html.Raw(Model.nome)</h2>
+        <p class="intro">De @Html.Raw(String.Format("{0:dd/MM/yyyy}", Model.dataInicio)) até @Html.Raw(String.Format("{0:dd/MM/yyyy}", Model.dataFim))
+        <br>Local: @Html.Raw(Model.local) - @Html.Raw(Model.cidade)</p>
+        @if ((Model.liberarEscolhaDuplas)&&(Model.dataInicio.AddDays(1)>DateTime.Now)){
+            <p class="intro">Escolha de dupla até @Html.Raw(String.Format("{0:dd/MM/yyyy}", Model.dataInicio))</p>
+            <p><a class="btn btn-cta btn-cta-primary" href="@Url.Action("Login", "Account", new { returnUrl = "EscolherDupla",torneioId=Model.Id })">Escolha sua dupla</a></p>
+        }else if (Model.dataFimInscricoes.AddDays(1)>DateTime.Now){
+            <p><a class="btn btn-cta btn-cta-primary" href="@Url.Action("Login", "Account", new { returnUrl = "torneio", torneioId = Model.Id })">Inscreva-se</a> <a class="btn btn-cta btn-cta-secondary" href="#informacao">Informações</a></p>
+        }else{
+            <h3 class="title">Inscrições Encerradas</h3>
+        }
+    </div>
+</section>
+<div class="sections-wrapper">
+    <section class="steps section" id="informacao">
+        <div class="container">
+            <div class="row">
+                <div class="step text-center col-xs-12 col-sm-4">
+                    <h3 class="title"><span class="number"><span class="glyphicon glyphicon-list"></span></span><br><span class="text">Inscrições</span></h3>
+                    <p>
+                        @if(Model.valor==0){ @Html.Raw("Inscrições Gratuitas.")<br> 
+                        }else{ @Html.Raw("O valor da inscrição é R$ " + Model.valor + ",00")}
+                        As inscrições do Torneio vão até o dia @Html.Raw(String.Format("{0:dd/MM/yyyy}", Model.dataFimInscricoes)).
+                    </p>
+                </div><!--//step-->
+                <div class="step text-center col-xs-12 col-sm-4">
+                    <h3 class="title"><span class="number"><img style="padding-bottom:15px" src="/Content/image/trophy_win.png" width="40" height="50"></span><br><span class="text">Premiação</span></h3>
+                    <p>@Html.Raw(Model.premiacao)</p>
+                </div><!--//step-->
+                <div class="step text-center col-xs-12 col-sm-4">
+                    <h3 class="title"><span class="number"><span class="glyphicon glyphicon-phone"></span></span><br><span class="text">Contato</span></h3>
+                    <p>@Html.Raw(ViewBag.contato)</p>
+                </div><!--//step-->
+            </div><!--//row-->
+        @if (Model.dataFimInscricoes>DateTime.Now){
+            <div class="text-center"><p><a class="btn btn-cta btn-cta-primary" href="@Url.Action("Login", "Account", new { returnUrl = "torneio", torneioId = Model.Id })">Inscreva-se</a></div>
+        }
+        </div><!--//container-->
+    </section>
+</div>

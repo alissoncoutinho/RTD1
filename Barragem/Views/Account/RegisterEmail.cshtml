@@ -1,0 +1,90 @@
+﻿@model Barragem.Models.LoginModel
+@{
+    ViewBag.Title = "Register";
+
+}
+<section class="content-header">
+    <h1>Login</h1>
+</section>
+<section class="content">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h4 class="box-title">Não lembro meu login</h4>
+                </div>
+                <div class="box-body">
+                    <div class="row">
+                        @using (Html.BeginForm("VerificarEmail", "Account", FormMethod.Post))
+                        {
+                            <div class="form-horizontal">
+                                <label class="control-label col-md-2" for="Email">Email</label>
+                                <div class="input-group input-group-sm col-md-6">
+                                    <input type="text" class="form-control" name="email" placeholder="Esqueceu seu login? Informe o email cadastrado">
+                                    <span class="input-group-btn">
+                                        <button type="button" class="btn btn-info btn-flat">Verificar</button>
+                                    </span>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <!-- Horizontal Form -->
+            <div class="box box-info">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Já possuo login</h3>
+                </div>
+                <div class="box-body">
+                    @using (Html.BeginForm(new { ReturnUrl = ViewBag.ReturnUrl }))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.ValidationSummary(true)
+                        <div class="form">
+                            <div class="form-group">
+                                <div class="input-group col-md-6">
+                                    <span class="input-group-addon"><span class="glyphicon glyphicon-user"></span></span>
+                                    <input type="text" class="form-control" value="@ViewBag.userName" placeholder="Usuário" id="UserName" name="UserName" required autofocus>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="input-group col-md-6">
+                                    <span class="input-group-addon"><span class="glyphicon glyphicon-lock"></span></span>
+                                    <input type="password" class="form-control" placeholder="Senha" id="Password" name="Password" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="input-group col-md-6">
+                                    @Html.LabelFor(m => m.RememberMe, new { @class = "" })&nbsp;&nbsp;
+                                    @Html.CheckBoxFor(m => m.RememberMe)
+                                </div>
+                            </div>
+                            <div class="box-footer">
+                                <button class="btn btn-small btn-success" type="submit">Entrar</button>
+                                <a href="/Account/ResetarSenha" class="btn btn-small btn-info" role="button">Esqueci a senha</a>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Ainda não possuo Cadastro</h3>
+                </div>
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-sm-8">
+                            <a href="" class="btn btn-small btn-info" data-id="" title="cadastre-se">Cadastre-se</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,45 @@
+﻿@{
+    ViewBag.Title = "Index";
+    int i = 0;
+    if (ViewBag.Torneio != null) {
+        Layout = "~/Views/Shared/_LayoutTorneio2.cshtml"; 
+    }
+}
+@model IEnumerable<Barragem.Models.InscricaoTorneio>
+    <legend>Inscrições</legend>
+    <div class="box-body table-responsive no-padding no-border">
+        @if(ViewBag.liberaTabelaInscricao){
+        <table class="table table-striped table-condensed table-bordered">
+            <tr>
+                <th>
+                    <b>#</b>
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.participante.nome)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.classe)
+                </th>
+            </tr>
+            @foreach (var item in Model)
+            {
+                i++;
+                <tr>
+                    <td>
+                        @i
+                    </td>
+                    <td>
+                        <a href="@Url.Action("../Account/Detalhes", new { userId = item.userId })" title="Detalhes do jogador">
+                            @Html.DisplayFor(modelItem => item.participante.nome)
+                        </a>
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.classeTorneio.nome)
+                    </td>
+                </tr>
+            }
+        </table>
+        }else{
+            <p>Aguarde. Tabela de inscrições ainda não liberada.</p>
+        }
+    </div>

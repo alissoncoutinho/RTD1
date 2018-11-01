@@ -1,0 +1,255 @@
+﻿@model Barragem.Models.RegisterInscricao
+@{
+    Layout = "~/Views/Shared/_LayoutTorneio2.cshtml";
+    ViewBag.Title = "Inscrição Torneio ";
+    Barragem.Models.Torneio torneio = ViewBag.Torneio;
+}
+<section class="content-header">
+    <h1>Inscrição Torneio</h1>
+</section>
+<section class="content">
+    @if ((ViewBag.Msg != "") && (ViewBag.Msg != null))
+    {
+        <div class="alert alert-success alert-dismissable">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            <strong>@ViewBag.Msg</strong>
+        </div>
+    }
+
+    <div class="row">
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(true)
+            <div class="col-md-6">
+                <!-- Horizontal Form -->
+                <div class="box box-info">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Dados Pessoais</h3>
+                    </div>
+                    <div class="box-body">
+                        <div class="form">
+                            <input type="hidden" name="register.barragemId" id="register_barragemId" value="@torneio.barragemId">
+                            <div class="row form-group">
+                                @Html.LabelFor(m => m.register.email, new { @class = "control-label col-md-4" })*
+                                <div class="col-md-6 input-group-sm">
+                                    @Html.TextBoxFor(m => m.register.email, new { @class = "form-control", Value = ViewBag.email })
+                                    @Html.ValidationMessageFor(m => m.register.email, "", new { @class = "alert-danger" })
+                                </div>
+                            </div>
+                            <div class="row form-group">
+                                @Html.LabelFor(m => m.register.UserName, new { @class = "control-label col-md-4" })*
+                                <div class="col-md-6 input-group-sm">
+                                    @Html.TextBoxFor(m => m.register.UserName, new { @class = "form-control", placeholder = "ex.: nome.sobrenome ou email", Value = ViewBag.login })
+                                    @Html.ValidationMessageFor(m => m.register.UserName, "", new { @class = "alert-danger" })
+                                </div>
+                            </div>
+                            <div class="row form-group">
+                                @Html.LabelFor(m => m.register.Password, new { @class = "control-label col-md-4" })
+                                <div class="col-md-6 input-group-sm">
+                                    @Html.PasswordFor(m => m.register.Password, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(m => m.register.Password)
+                                </div>
+                            </div>
+                            <div class="row form-group">
+                                @Html.LabelFor(m => m.register.ConfirmPassword, new { @class = "control-label col-md-4" })
+                                <div class="col-md-6 input-group-sm">
+                                    @Html.PasswordFor(m => m.register.ConfirmPassword, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(m => m.register.ConfirmPassword)
+                                </div>
+                            </div>
+                            <div class="row form-group">
+                                @Html.LabelFor(m => m.register.nome, new { @class = "control-label col-md-4" })*
+                                <div class="col-md-6 input-group-sm">
+                                    @Html.TextBoxFor(m => m.register.nome, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(m => m.register.nome, "", new { @class = "alert-danger" })
+                                </div>
+                            </div>
+                            <div class="row form-group">
+                                @Html.LabelFor(model => model.register.dataNascimento, new { @class = "control-label col-md-4" })*
+                                <div class="col-md-5 input-group-sm">
+                                    <input type="text" name="register.dataNascimento" id="register_dataNascimento" class="form-control" placeholder="dd/mm/yyyy">
+                                    @Html.ValidationMessageFor(model => model.register.dataNascimento, "", new { @class = "alert-danger" })
+                                </div>
+                            </div>
+                            <div class="row form-group">
+                                @Html.LabelFor(m => m.register.altura2, new { @class = "control-label col-md-4" })*
+                                <div class="col-md-3 input-group-sm">
+                                    @Html.TextBoxFor(m => m.register.altura2, new { @class = "form-control", placeholder = "ex.: 1,80" })
+                                    @Html.ValidationMessageFor(m => m.register.altura2, "", new { @class = "alert-danger" })
+                                </div>
+                            </div>
+                            <div class="row form-group">
+                                @Html.LabelFor(m => m.register.lateralidade, new { @class = "control-label col-md-4" })
+                                <div class="col-md-4 input-group-sm">
+                                    <select id="register.lateralidade" name="register.lateralidade" class="form-control">
+                                        <option value="destro">destro</option>
+                                        <option value="canhoto">canhoto</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row form-group">
+                                @Html.LabelFor(m => m.register.telefoneCelular, new { @class = "control-label col-md-4" })*
+                                <div class="col-md-6 input-group-sm">
+                                    @Html.TextBoxFor(m => m.register.telefoneCelular, new { @class = "form-control", placeholder = "ex.:(61)99999-9999/vivo" })
+                                    @Html.ValidationMessageFor(m => m.register.telefoneCelular, "", new { @class = "alert-danger" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="box box-primary">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Dados da Inscrição</h3>
+                    </div>
+                    <div class="box-body">
+                        <div class="row">
+                            @Html.Label("Valor", new { @class = "col-sm-4" })
+                            <div class="col-sm-8 info-box-text">
+                                @Html.Hidden("inscricao.torneioId", torneio.Id)
+                                @if (torneio.valor == 0)
+                                {
+                                    @Html.Raw("Gratuito")
+                                    @Html.Hidden("inscricao.valor", "0");
+                                }
+                                else
+                                {
+                                    @Html.Raw("R$ " + torneio.valor + ",00")
+                                    @Html.Hidden("inscricao.valor", torneio.valor);
+                                }
+                            </div>
+                        </div>
+                        @if ((torneio.isMaisUmaClasse) && (torneio.valor!=0)){
+                            <div class="row">
+                                @Html.Label("Valor para 2 classes", new { @class = "col-sm-4" })
+                                <div class="col-sm-8 info-box-text">
+                                    @Html.Raw("R$ " + torneio.valorMaisClasses + ",00")
+                                </div>
+                            </div>
+                        }
+                        <div class="row">
+                            @Html.Label("Inscrições até", new { @class = "col-sm-4" })
+                            <div class="col-sm-8 info-box-text">
+                                @Html.Raw(torneio.dataFimInscricoes.ToShortDateString())
+                            </div>
+                        </div>
+                        <div class="row">
+                            @Html.Label("Categoria", new { @class = "col-sm-4" })
+                            <div class="col-sm-8 input-group-sm">
+                                <select name="inscricao.classe" data-classe2="@torneio.isMaisUmaClasse" class="form-control escolherSegundaOpcaoClasse">
+                                    <option value="0">Selecione uma categoria...</option>
+                                    @foreach (var item in ViewBag.Classes)
+                                    {
+                                        <option value="@item.Id" @if (ViewBag.ClasseInscricao == item.Id) { @Html.Raw("selected")           }>@item.nome</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        @if (torneio.isMaisUmaClasse)
+                        {
+                            <div class="form-group">
+                                <div class="col-sm-10">
+                                    <div class="checkbox">
+                                        <label>
+                                            <input type="checkbox" value="true" name="isMaisDeUmaClasse" id="isMaisDeUmaClasse" onclick="segundaOpcaoDeClasse()" /> @Html.Raw("Quero escolher mais uma categoria")
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="segundaOpcaoClasse" class="row">
+                                @Html.Label("2ª Categoria", new { @class = "col-sm-4" })
+                                <div class="col-sm-8 input-group-sm">
+                                    <select name="classeInscricao2" class="form-control">
+                                        <option value="0">Selecione uma categoria...</option>
+                                        @foreach (var item in ViewBag.Classes2Opcao)
+                                        {
+                                            <option value="@item.Id" @if (ViewBag.ClasseInscricao2 == item.Id) { @Html.Raw("selected")         }>@item.nome</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                        }
+                        @if (!String.IsNullOrEmpty(torneio.observacao))
+                        {
+                            <br>
+                            <div class="boxPadrao">
+                                <div class="row">
+                                    <div class="col-sm-12">@Html.Raw(torneio.observacao)</div>
+                                </div>
+                                <div class="row form-group input-group-sm">
+                                    <div class="col-sm-12"><input type="text" placeholder="Responda aqui..." name="inscricao.observacao" class="form-control"></div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <!-- /.box-body -->
+                    <div class="box-footer">
+                        @if (torneio.dataFimInscricoes.AddDays(1) >= DateTime.Now)
+                        {
+                            if (!String.IsNullOrEmpty(ViewBag.statusPagamento))
+                            {
+                                <a href="@Url.Action("EfetuarPagamento", "Torneio",new { inscricaoId = ViewBag.inscricaoId })" class="btn btn-default" data-id="@ViewBag.inscricaoId" title="Efetuar Pagamento">Efetuar Pagamento</a>
+                            }
+                            else
+                            {
+                                <button type="submit" class="btn btn-primary pull-right confirmInscricao">Inscrever-me</button>
+                            }
+                        }
+                        else
+                        {
+                            @Html.Raw("Inscrições Encerradas.")
+                        }
+                    </div>
+                    <!-- /.box-footer -->
+                </div>
+            </div>
+        }
+    </div>
+</section>
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#register_dataNascimento").mask("99/99/9999");
+            $("#register_altura2").mask("9,99");
+            $("#register_telefoneCelular").mask("(99) 99999-9999/AAAAAA");
+
+            $(".escolherSegundaOpcaoClasse").change(function (event) {
+                event.preventDefault();
+                var classe2 = $(this).data("classe2");
+                if (classe2 == "True") {
+                    $.confirm({
+                        title: "",
+                        text: "Deseja jogar em mais de uma classe?",
+                        confirm: function (button) {
+                            document.getElementById('isMaisDeUmaClasse').checked = true;
+                            segundaOpcaoDeClasse();
+                        },
+                        cancel: function (button) {
+
+                        },
+                        confirmButton: "Sim",
+                        cancelButton: "Não"
+                    });
+                }
+            });
+
+        })
+
+        function segundaOpcaoDeClasse() {
+            if (document.getElementById('isMaisDeUmaClasse').checked) {
+                document.getElementById('segundaOpcaoClasse').style.opacity = "1";
+                document.getElementById('segundaOpcaoClasse').style.display = "block";
+            } else {
+                document.getElementById('segundaOpcaoClasse').style.opacity = "0 !important";
+                document.getElementById('segundaOpcaoClasse').style.display = "none";
+            }
+        }
+        document.getElementById('segundaOpcaoClasse').style.opacity = "0";
+        document.getElementById('segundaOpcaoClasse').style.display = "none";
+    </script>
+}
+
+
