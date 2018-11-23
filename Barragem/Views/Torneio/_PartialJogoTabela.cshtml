@@ -2,7 +2,11 @@
 
 <div class="alinhamento">
     <div class="bloco_jogo">
-        <p class="data">@Html.Raw(Model.dataHorarioQuadra)</p>
+        @if (Model.isRepescagem!=null){
+            <p class="data">Repescagem</p>
+        }else{
+            <p class="data">@Html.Raw(Model.dataHorarioQuadra)</p>
+        }
         <p class="nome">
             @if (Model.desafiado_id != 0){
                 <a href="@Url.Action("../Account/Detalhes", new { userId = @Model.desafiado.UserId })" title="Detalhes do jogador">

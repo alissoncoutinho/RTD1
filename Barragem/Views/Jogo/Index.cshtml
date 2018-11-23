@@ -62,9 +62,9 @@
                 <tr>
                     <td>
                         @if (item.desafiado.foto != null){
-                            <img id='imgFoto' src="@Url.Action("BuscaFoto", "Account", new { id = @item.desafiado_id })" class="profile-image img-circle" style="width:40px;height:40px;">
+                            <!--img id='imgFoto' src="Url.Action("BuscaFoto", "Account", new { id = item.desafiado_id })" class="profile-image img-circle" style="width:40px;height:40px;"-->
                             }else{
-                            <img id="imgFoto" src="/Content/image/bolatenis.jpg" class="profile-image img-circle" style="width:40px;height:40px;">
+                            <!--img id="imgFoto" src="/Content/image/bolatenis.jpg" class="profile-image img-circle" style="width:40px;height:40px;"-->
                             }
                         <a href="@Url.Action("../Account/Detalhes", new { userId = @item.desafiado.UserId })" title="Detalhes do jogador">
                             @Html.DisplayFor(modelItem => item.desafiado.nome)
@@ -72,9 +72,9 @@
                     </td>
                     <td>
                         @if (item.desafiante.foto != null){
-                            <img id='imgFoto' src="@Url.Action("BuscaFoto", "Account", new { id = @item.desafiante_id })" class="profile-image img-circle" style="width:40px;height:40px;">
+                            <!--img id='imgFoto' src="Url.Action("BuscaFoto", "Account", new { id = item.desafiante_id })" class="profile-image img-circle" style="width:40px;height:40px;"-->
                             }else{
-                            <img id="imgFoto" src="/Content/image/bolatenis.jpg" class="profile-image img-circle" style="width:40px;height:40px;">
+                            <!--img id="imgFoto" src="/Content/image/bolatenis.jpg" class="profile-image img-circle" style="width:40px;height:40px;"-->
                             }
                         <a href="@Url.Action("../Account/Detalhes", new { userId = @item.desafiante.UserId })" title="Detalhes do jogador">
                             @Html.DisplayFor(modelItem => item.desafiante.nome)
