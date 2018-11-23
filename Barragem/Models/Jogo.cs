@@ -88,6 +88,10 @@ namespace Barragem.Models
 
         public int? torneioId { get; set; }
 
+        public bool? isPrimeiroJogoTorneio { get; set; }
+
+        public bool? isRepescagem { get; set; }
+
         public int? faseTorneio { get; set; }
 
         public virtual string descricaoFaseTorneio

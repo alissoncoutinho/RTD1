@@ -19,6 +19,8 @@ namespace Barragem.Models
 
         public int chaveamento { get; set; }
 
+        public bool? temRepescagem { get; set; }
+
 
     }
 }
