@@ -21,22 +21,7 @@
                 {
                     <a class="btn btn-primary btn-danger" href="@Url.Action("../Account/SolicitarAtivacao", new { uName = Model.UserName })">Solicitar Ativação</a><br><br>
         }
-        <div class="form-group">
-
-            <div class="col-md-3">
-                <div id="divFoto" class="img-thumbnail" title="Clique na foto para alterar" style="width:155px;height:205px; cursor:pointer;">
-                    @if (Model.foto != null)
-                    {
-                        <img id="imgFoto" src="@Url.Action("BuscaFoto","Account", new { id = Model.UserId})" style="width:148px;height:198px; cursor:pointer;" />
-                    }
-                    else
-                    {
-                        <img id="imgFoto" src="/Content/image/sem-foto.jpg" style="width:148px;height:198px; cursor:pointer;" />
-                    }
-                </div>
-            </div>
-            <input type="file" id="inputfoto" name="inputfoto" accept=".jpg,.png" style="display:none">
-        </div>
+        
         <div class="form-group">
             @Html.HiddenFor(m => m.UserId)
             @Html.HiddenFor(m => m.isRanckingGerado)
@@ -164,8 +149,6 @@
                 @Html.ValidationMessageFor(m => m.bairro, "", new { @class = "alert-danger" })
             </div>
         </div>
-
-
         @if ((Roles.IsUserInRole("admin")) || (Roles.IsUserInRole("organizador"))){
             <div class="form-group">
                 @Html.LabelFor(model => model.classeId, new { @class = "col-md-2" })
@@ -186,6 +169,36 @@
                 @Html.TextBoxFor(m => m.matriculaClube, new { @class = "form-control" })
             </div>
         </div>
+
+        <div class="form-group">
+            <input type="file" id="flPhoto" name="upload" />
+            <table>
+                <tr>
+                    <td>
+                        Width: <label id="lblWidth">200px</label>
+                        Height: <label id="lblHeight">200px</label>
+                    </td>
+                    <td>
+                        <a href="#" id="hlcropImage" style="vertical-align:top;">Crop Image</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div style="height:400px; width:400px; overflow:auto;">
+                            <img id="imgEmpPhoto" src="@Model.fotoURL" alt="Perfil Image" />
+                        </div>
+                    </td>
+                    <td>
+                        <canvas id="canvas" height="5" width="5" style="vertical-align:top;"></canvas>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <p>
+            <img id="imgCropped" src="#" style="display:none;" />
+        </p>
+        <input type="hidden" name="avatarCropped" id="avatarCropped" />
+
         @if ((Roles.IsUserInRole("admin")) || (Roles.IsUserInRole("organizador")) || (User.Identity.Name.ToLower().Equals(Model.UserName.ToLower())))
         {
             <input type="submit" value="Salvar" />
@@ -200,7 +213,6 @@
 }
 
 @section Scripts {
-    @Scripts.Render("~/bundles/load-image")
     @Scripts.Render("~/bundles/jqueryform")
     <script type="text/javascript">
         $(document).ready(function () {
@@ -215,29 +227,113 @@
             $("#divFoto").click(function () {
                 $("#inputfoto").click();
             });
-            var currentFile;
-            $("#inputfoto").change(function (e) {
-                var fileName = $(this).val();
-                var input = $(this);
-                currentFile = e.target.files[0];
-                loadImage(currentFile,
-                        mostraFoto,
-                        { maxWidth: 148, maxHeight: 189, }
-                    );
-            });
-
-            var mostraFoto = function (img) {
-                if (!(img.src || img instanceof HTMLCanvasElement)) {
-                    alert("Erro na imagem");
-                    return;
-                } else {
-                    $("#divFoto").empty();
-                    $("#divFoto").append(img).show();
-                }
-            }
         })
-    </script>
 
+
+        var imageCropWidth = 0;
+        var imageCropHeight = 0;
+        var cropPointX = 0;
+        var cropPointY = 0;
+        var jcropApi;
+
+        $(document).ready(function () {
+            //initCrop();
+        });
+
+        $("#hlcropImage").on("click", function (e) {
+            /*
+            The event.preventDefault() method stops the default action of
+            an element from happening. For example: Prevent a submit button
+            from submitting a form. Prevent a link from following the URL
+            */
+            e.preventDefault();
+            cropImage();
+        });
+
+        function initCrop() {
+            $('#imgEmpPhoto').Jcrop({
+                onChange: setCoordsAndImgSize,
+                aspectRatio: 0, // 1 means will be same for height and weight
+                onSelect: setCoordsAndImgSize
+            }, function () { jcropApi = this });
+        }
+
+        function showCoordinate() {
+            $("#lblWidth").text(imageCropWidth + "px");
+            $("#lblHeight").text(imageCropHeight + "px");
+        }
+
+        function setCoordsAndImgSize(e) {
+            imageCropWidth = e.w;
+            imageCropHeight = e.h;
+            cropPointX = e.x;
+            cropPointY = e.y;
+
+            $("#lblWidth").text(imageCropWidth + "px");
+            $("#lblHeight").text(imageCropHeight + "px");
+        }
+
+        function cropImage() {
+
+            if (imageCropWidth == 0 && imageCropHeight == 0) {
+                alert("Please select crop area.");
+                return;
+            }
+
+            var img = $("#imgEmpPhoto").attr("src");
+            /*Show cropped image*/
+            showCroppedImage();
+        }
+
+        function showCroppedImage() {
+            var x1 = cropPointX;
+            var y1 = cropPointY;
+            var width = imageCropWidth;
+            var height = imageCropHeight;
+            var canvas = $("#canvas")[0];
+            var context = canvas.getContext('2d');
+            var img = new Image();
+            img.onload = function () {
+                canvas.height = height;
+                canvas.width = width;
+                context.drawImage(img, x1, y1, width, height, 0, 0, width, height);
+                $('#avatarCropped').val(canvas.toDataURL());
+            };
+
+            img.src = $('#imgEmpPhoto').attr("src");
+
+        }
+
+        function readFile(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                /*Destroy jcrop initialization other wise it will hold it previous image in img tag*/
+                if (jcropApi != null) {
+                    jcropApi.destroy();
+                }
+
+                reader.onload = function (e) {
+                    $('#imgEmpPhoto').attr('src', "");
+                    var img = $('#imgEmpPhoto').attr('src', e.target.result);
+
+                    /*Current uploaded image size*/
+                    var width = img[0].height;
+                    var height = img[0].width;
+                    $("#lblWidth").text(width + "px");
+                    $("#lblHeight").text(height + "px");
+                    //InitCrop must call here otherwise it will not work
+                    initCrop();
+
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        $('#flPhoto').change(function () {
+            readFile(this);
+            //initCrop();
+        });
+    </script>
 
 }
 

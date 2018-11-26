@@ -7,6 +7,7 @@ using Microsoft.Web.WebPages.OAuth;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Linq;
 using System.Transactions;
 using System.Web;
@@ -306,7 +307,7 @@ namespace Barragem.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public ActionResult Register(RegisterModel model, HttpPostedFileBase inputfoto)
+        public ActionResult Register(RegisterModel model, string avatarCropped)
         {
             if (ModelState.IsValid)
             {
@@ -322,56 +323,29 @@ namespace Barragem.Controllers
                             ViewBag.classeId = new SelectList(db.Classe.Where(c => c.barragemId == model.barragemId).ToList(), "Id", "nome");
                             return View(model);
                         }
-                        if (inputfoto != null)
+                        string filePath = ProcessImage(avatarCropped);
+                        
+                        WebSecurity.CreateUserAndAccount(model.UserName, model.Password, new
                         {
-                            int length = inputfoto.ContentLength;
-                            byte[] buffer = new byte[length];
-                            inputfoto.InputStream.Read(buffer, 0, length);
-                            model.foto = buffer;
-
-                            WebSecurity.CreateUserAndAccount(model.UserName, model.Password, new
-                            {
-                                nome = model.nome,
-                                dataNascimento = model.dataNascimento,
-                                altura2 = model.altura2,
-                                altura = model.altura,
-                                telefoneFixo = model.telefoneFixo,
-                                telefoneCelular = model.telefoneCelular,
-                                telefoneCelular2 = model.telefoneCelular2,
-                                email = model.email,
-                                situacao = Tipos.Situacao.pendente.ToString(),
-                                bairro = model.bairro,
-                                dataInicioRancking = DateTime.Now,
-                                naturalidade = model.naturalidade,
-                                lateralidade = model.lateralidade,
-                                nivelDeJogo = model.nivelDeJogo,
-                                barragemId = model.barragemId,
-                                classeId = model.classeId,
-                                foto = model.foto
-                            });
-                        }
-                        else
-                        {
-                            WebSecurity.CreateUserAndAccount(model.UserName, model.Password, new
-                            {
-                                nome = model.nome,
-                                dataNascimento = model.dataNascimento,
-                                altura2 = model.altura2,
-                                altura = model.altura,
-                                telefoneFixo = model.telefoneFixo,
-                                telefoneCelular = model.telefoneCelular,
-                                telefoneCelular2 = model.telefoneCelular2,
-                                email = model.email,
-                                situacao = Tipos.Situacao.pendente.ToString(),
-                                bairro = model.bairro,
-                                dataInicioRancking = DateTime.Now,
-                                naturalidade = model.naturalidade,
-                                lateralidade = model.lateralidade,
-                                nivelDeJogo = model.nivelDeJogo,
-                                barragemId = model.barragemId,
-                                classeId = model.classeId
-                            });
-                        }
+                            nome = model.nome,
+                            dataNascimento = model.dataNascimento,
+                            altura2 = model.altura2,
+                            altura = model.altura,
+                            telefoneFixo = model.telefoneFixo,
+                            telefoneCelular = model.telefoneCelular,
+                            telefoneCelular2 = model.telefoneCelular2,
+                            email = model.email,
+                            situacao = Tipos.Situacao.pendente.ToString(),
+                            bairro = model.bairro,
+                            dataInicioRancking = DateTime.Now,
+                            naturalidade = model.naturalidade,
+                            lateralidade = model.lateralidade,
+                            nivelDeJogo = model.nivelDeJogo,
+                            barragemId = model.barragemId,
+                            classeId = model.classeId,
+                            FotoURL = filePath
+                    });
+                        
                         if (model.organizador) {
                             Roles.AddUserToRole(model.UserName, "organizador");
                         }else{
@@ -405,6 +379,24 @@ namespace Barragem.Controllers
             ViewBag.classeId = new SelectList(db.Classe.Where(c => c.barragemId == model.barragemId).ToList(), "Id", "nome");
             // If we got this far, something failed, redisplay form
             return View(model);
+        }
+
+        private string ProcessImage(string croppedImage){
+
+            string filePath = String.Empty;
+
+            try{
+                string base64 = croppedImage;
+                byte[] bytes = Convert.FromBase64String(base64.Split(',')[1]);
+                filePath = "/Content/images/Photo/Pf-" + Guid.NewGuid() + ".png";
+                using (FileStream stream = new FileStream(Server.MapPath(filePath), FileMode.Create)){
+                    stream.Write(bytes, 0, bytes.Length);
+                    stream.Flush();
+                }
+            }catch (Exception ex){
+                string st = ex.Message;
+            }
+            return filePath;
         }
 
         private void notificarOrganizadorCadastro(string nome, int idBarragem, string telefoneCelular)
@@ -873,7 +865,7 @@ namespace Barragem.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "admin,organizador,usuario")]
-        public ActionResult EditaUsuario(UserProfile model, HttpPostedFileBase inputfoto)
+        public ActionResult EditaUsuario(UserProfile model, string avatarCropped)
         {
             ViewBag.solicitarAtivacao = "";
             string perfil = Roles.GetRolesForUser(User.Identity.Name)[0];
@@ -894,18 +886,8 @@ namespace Barragem.Controllers
                         ViewBag.classeId = new SelectList(db.Classe.Where(c => c.barragemId == model.barragemId).ToList(), "Id", "nome");
                         return View(model);
                     }
-                    //}
-                    if (inputfoto != null)
-                    {
-                        int length = inputfoto.ContentLength;
-                        byte[] buffer = new byte[length];
-                        inputfoto.InputStream.Read(buffer, 0, length);
-                        model.foto = buffer;
-                    }
-                    else
-                    {
-                        model.foto = (from up in db.UserProfiles where up.UserId == model.UserId select up.foto).Single();
-                    }
+                    string filePath = ProcessImage(avatarCropped);
+                    model.fotoURL = filePath;
                     model.dataInicioRancking = (from up in db.UserProfiles where up.UserId == model.UserId select up.dataInicioRancking).Single();
                     db.Entry(model).State = EntityState.Modified;
                     db.SaveChanges();
