@@ -175,8 +175,8 @@
             <table>
                 <tr>
                     <td>
-                        Width: <label id="lblWidth">200px</label>
-                        Height: <label id="lblHeight">200px</label>
+                        Largura: <label id="lblWidth">148px</label>
+                        Altura: <label id="lblHeight">198px</label>
                     </td>
                     <td>
                         <a href="#" id="hlcropImage" style="vertical-align:top;">Crop Image</a>
@@ -213,6 +213,7 @@
 }
 
 @section Scripts {
+    @Scripts.Render("~/bundles/jcrop")
     @Scripts.Render("~/bundles/jqueryform")
     <script type="text/javascript">
         $(document).ready(function () {
@@ -224,14 +225,12 @@
             $("#telefoneFixo").mask("(99) 99999-9999");
             $("#telefoneCelular").mask("(99) 99999-9999/AAAAAA");
             $("#telefoneCelular2").mask("(99) 99999-9999/AAAAAA");
-            $("#divFoto").click(function () {
-                $("#inputfoto").click();
-            });
+            
         })
 
 
-        var imageCropWidth = 0;
-        var imageCropHeight = 0;
+        var imageCropWidth = 148;
+        var imageCropHeight = 198;
         var cropPointX = 0;
         var cropPointY = 0;
         var jcropApi;
@@ -252,6 +251,9 @@
 
         function initCrop() {
             $('#imgEmpPhoto').Jcrop({
+                setSelect: [100, 130, 480, 230],
+                minSize: [148, 198],
+                maxSize: [148, 198],
                 onChange: setCoordsAndImgSize,
                 aspectRatio: 0, // 1 means will be same for height and weight
                 onSelect: setCoordsAndImgSize
@@ -315,10 +317,14 @@
                 reader.onload = function (e) {
                     $('#imgEmpPhoto').attr('src', "");
                     var img = $('#imgEmpPhoto').attr('src', e.target.result);
+                    $('#imgEmpPhoto').attr('width', img[0].naturalWidth);
+                    $('#imgEmpPhoto').attr('height', img[0].naturalHeight);
+                    $('#imgEmpPhoto').attr('src', "");
+                    img = $('#imgEmpPhoto').attr('src', e.target.result);
 
                     /*Current uploaded image size*/
-                    var width = img[0].height;
-                    var height = img[0].width;
+                    var width = img[0].width;
+                    var height = img[0].height;
                     $("#lblWidth").text(width + "px");
                     $("#lblHeight").text(height + "px");
                     //InitCrop must call here otherwise it will not work
