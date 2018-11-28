@@ -25,7 +25,7 @@ namespace Barragem
                             .Include("~/Content/chosen.min.css")
                             .Include("~/Content/bootstrap-chosen.css")
                             .Include("~/Content/flexslider/flexslider.css")
-                            .Include("~/Content/jquery.Jcrop.min.css")
+                            .Include("~/Content/jquery.Jcrop.css")
                             .Include("~/Content/font-awesome/css/font-awesome.css")
                             .Include("~/Content/AdminLTE.min.css")
                             .Include("~/Content/toastr.min.css"));
@@ -100,6 +100,8 @@ namespace Barragem
 
             bundles.Add(new ScriptBundle("~/bundles/tabela")
                             .Include("~/Scripts/tabela.js"));
+            bundles.Add(new ScriptBundle("~/bundles/jcrop")
+                            .Include("~/Scripts/jquery.Jcrop.js"));
 
 
         }

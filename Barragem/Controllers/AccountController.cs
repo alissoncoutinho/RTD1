@@ -323,7 +323,7 @@ namespace Barragem.Controllers
                             ViewBag.classeId = new SelectList(db.Classe.Where(c => c.barragemId == model.barragemId).ToList(), "Id", "nome");
                             return View(model);
                         }
-                        string filePath = ProcessImage(avatarCropped);
+                        string filePath = ProcessImage(avatarCropped,0);
                         
                         WebSecurity.CreateUserAndAccount(model.UserName, model.Password, new
                         {
@@ -381,10 +381,9 @@ namespace Barragem.Controllers
             return View(model);
         }
 
-        private string ProcessImage(string croppedImage){
+        private string ProcessImage(string croppedImage, int userId){
 
             string filePath = String.Empty;
-
             try{
                 string base64 = croppedImage;
                 byte[] bytes = Convert.FromBase64String(base64.Split(',')[1]);
@@ -396,6 +395,17 @@ namespace Barragem.Controllers
             }catch (Exception ex){
                 string st = ex.Message;
             }
+            if (userId != 0) { 
+                string fotoURL = (from up in db.UserProfiles where up.UserId == userId select up.fotoURL).Single();
+                if ((fotoURL!=null) && (System.IO.File.Exists(Server.MapPath(fotoURL)))){
+                    try{
+                        System.IO.File.Delete(Server.MapPath(fotoURL));
+                    }catch (System.IO.IOException e){
+                        Console.WriteLine(e.Message);
+                    }
+                }
+             }
+
             return filePath;
         }
 
@@ -886,7 +896,7 @@ namespace Barragem.Controllers
                         ViewBag.classeId = new SelectList(db.Classe.Where(c => c.barragemId == model.barragemId).ToList(), "Id", "nome");
                         return View(model);
                     }
-                    string filePath = ProcessImage(avatarCropped);
+                    string filePath = ProcessImage(avatarCropped, model.UserId);
                     model.fotoURL = filePath;
                     model.dataInicioRancking = (from up in db.UserProfiles where up.UserId == model.UserId select up.dataInicioRancking).Single();
                     db.Entry(model).State = EntityState.Modified;
@@ -1083,7 +1093,7 @@ namespace Barragem.Controllers
 
         }
         [AllowAnonymous]
-        public FileContentResult BuscaFoto(int id = 0, string userName = "")
+        public FilePathResult BuscaFoto(int id = 0, string userName = "")
         {
             UserProfile usuario = null;
             if (id == 0)
@@ -1094,11 +1104,12 @@ namespace Barragem.Controllers
             {
                 usuario = db.UserProfiles.Find(id);
             }
-            if (usuario.foto != null)
-            {
-                return File(usuario.foto, "image/png");
+            if (!String.IsNullOrEmpty(usuario.fotoURL)) { 
+                return File(usuario.fotoURL, "image/png");
             }
-            return null;
+            return File("/Content/images/Photo/Pf-51153416-5e84-4309-aaa3-df79da0cb7de.png", "image/png");
+
+
         }
 
         public ActionResult ListarUsuarios(String filtroSituacao = "", int filtroBarragem = 0)
