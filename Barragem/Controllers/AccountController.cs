@@ -484,20 +484,26 @@ namespace Barragem.Controllers
             }
             try
             {
-                user = db.UserProfiles.Where(u => u.UserName.ToLower() == userName.ToLower()).FirstOrDefault();
-                if (user != null)
-                {
+                user = db.UserProfiles.Find(WebSecurity.GetUserId(User.Identity.Name));
 
-                    user.situacao = "Ativamento solicitado";
-                    user.dataAlteracao = DateTime.Now;
-                    user.logAlteracao = User.Identity.Name;
-                    db.Entry(user).State = EntityState.Modified;
-                    db.SaveChanges();
-                    notificarOrganizadorSolicitacaoAtivar(user.nome, user.barragemId, user.telefoneCelular);
+                if (user != null) {
+                    var situacaoAnterior = user.situacao;
+                    if ((user.situacao == "pendente") && (!user.isRanckingGerado)) {
+                        user.situacao = "Ativamento solicitado";
+                        db.Entry(user).State = EntityState.Modified;
+                        db.SaveChanges();
+                        notificarOrganizadorSolicitacaoAtivar(user.nome, user.barragemId, user.telefoneCelular);
+                    } else if (user.isRanckingGerado){
+                        user.situacao = "ativo";
+                        user.dataAlteracao = DateTime.Now;
+                        user.logAlteracao = situacaoAnterior + " " + User.Identity.Name;
+                        db.Entry(user).State = EntityState.Modified;
+                        db.SaveChanges();
+                        notificarJogador(" Solicitacao ativacao erro ", "coutinho.alisson@gmail.com", user.barragemId);
+                    }
                     return View("SolicitarAtivacao");
                 }
-                else
-                {
+                else{
                     ViewBag.MsgErro = "Este usuário não existe.";
                     return View();
                 }
