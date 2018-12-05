@@ -901,8 +901,12 @@ namespace Barragem.Controllers
                         ViewBag.classeId = new SelectList(db.Classe.Where(c => c.barragemId == model.barragemId).ToList(), "Id", "nome");
                         return View(model);
                     }
-                    string filePath = ProcessImage(avatarCropped, model.UserId);
-                    model.fotoURL = filePath;
+                    if (!String.IsNullOrEmpty(avatarCropped)){
+                        string filePath = ProcessImage(avatarCropped, model.UserId);
+                        model.fotoURL = filePath;
+                    } else {
+                        model.fotoURL = (from up in db.UserProfiles where up.UserId == model.UserId select up.fotoURL).Single();
+                    }
                     model.dataInicioRancking = (from up in db.UserProfiles where up.UserId == model.UserId select up.dataInicioRancking).Single();
                     db.Entry(model).State = EntityState.Modified;
                     db.SaveChanges();

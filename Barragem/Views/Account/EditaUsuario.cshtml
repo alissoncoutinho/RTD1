@@ -252,13 +252,13 @@
                 @Scripts.Render("~/bundles/compress")
                 <script type="text/javascript">
 
-                    @if (ViewBag.isAlterarFoto){
+                    @if ((ViewBag.isAlterarFoto!=null) && (ViewBag.isAlterarFoto)){
                         @Html.Raw("$('.nav-tabs a:last').tab('show');");
                     }
 
                     $(document).ready(function () {
                         $("#dataNascimento").datepicker({
-                            language: 'pt-BR',
+        language: 'pt-BR',
                             pickTime: false
                         });
                         $("#altura2").mask("9,99");
