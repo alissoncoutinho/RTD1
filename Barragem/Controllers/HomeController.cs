@@ -305,6 +305,10 @@ namespace Barragem.Controllers
             ViewBag.IdBarragem = barragemId;
             ViewBag.solicitarAtivacao = "";
             ViewBag.Torneio = getTorneioAberto(barragemId);
+            ViewBag.TemFotoPerfil = true;
+            if (String.IsNullOrEmpty(usuario.fotoURL)) {
+                ViewBag.TemFotoPerfil = false;
+            }
 
             Jogo jogo = null;
             if (idJogo == 0){

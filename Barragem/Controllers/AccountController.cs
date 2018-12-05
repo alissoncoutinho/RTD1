@@ -307,7 +307,7 @@ namespace Barragem.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public ActionResult Register(RegisterModel model, string avatarCropped)
+        public ActionResult Register(RegisterModel model)
         {
             if (ModelState.IsValid)
             {
@@ -323,7 +323,6 @@ namespace Barragem.Controllers
                             ViewBag.classeId = new SelectList(db.Classe.Where(c => c.barragemId == model.barragemId).ToList(), "Id", "nome");
                             return View(model);
                         }
-                        string filePath = ProcessImage(avatarCropped,0);
                         
                         WebSecurity.CreateUserAndAccount(model.UserName, model.Password, new
                         {
@@ -342,8 +341,7 @@ namespace Barragem.Controllers
                             lateralidade = model.lateralidade,
                             nivelDeJogo = model.nivelDeJogo,
                             barragemId = model.barragemId,
-                            classeId = model.classeId,
-                            FotoURL = filePath
+                            classeId = model.classeId
                     });
                         
                         if (model.organizador) {
@@ -840,8 +838,9 @@ namespace Barragem.Controllers
 
         [HttpGet]
         [Authorize(Roles = "admin,organizador,usuario")]
-        public ActionResult EditaUsuario(string UserName)
+        public ActionResult EditaUsuario(string UserName, bool isAlterarFoto=false)
         {
+            ViewBag.isAlterarFoto = isAlterarFoto;
             var usuario = db.UserProfiles.Find(WebSecurity.GetUserId(UserName));
             ViewBag.solicitarAtivacao = "";
             ViewBag.classeId = new SelectList(db.Classe.Where(c => c.barragemId == usuario.barragemId).ToList(), "Id", "nome", usuario.classeId);
@@ -1107,7 +1106,7 @@ namespace Barragem.Controllers
             if (!String.IsNullOrEmpty(usuario.fotoURL)) { 
                 return File(usuario.fotoURL, "image/png");
             }
-            return File("/Content/images/Photo/Pf-51153416-5e84-4309-aaa3-df79da0cb7de.png", "image/png");
+            return File("/Content/image/sem-foto.png", "image/png");
 
 
         }

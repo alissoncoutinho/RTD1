@@ -102,6 +102,8 @@ namespace Barragem
                             .Include("~/Scripts/tabela.js"));
             bundles.Add(new ScriptBundle("~/bundles/jcrop")
                             .Include("~/Scripts/jquery.Jcrop.js"));
+            bundles.Add(new ScriptBundle("~/bundles/compress")
+                            .Include("~/Scripts/compress.js"));
 
 
         }

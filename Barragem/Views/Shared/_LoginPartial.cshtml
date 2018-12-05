@@ -8,6 +8,7 @@
         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
             <img id="imgFoto" src="@Url.Action("BuscaFoto", "Account", new { id = 0, userName = User.Identity.Name })" class="profile-image img-circle" style="width:40px;height:40px;">&nbsp;@User.Identity.Name<strong class="caret"></strong></a>
         <ul class="dropdown-menu">
+            <li>@Html.ActionLink("Inserir Foto", "../Account/EditaUsuario", new { UserName = User.Identity.Name, isAlterarFoto = true })</li>
             <li>@Html.ActionLink("Alterar Dados", "../Account/EditaUsuario", new { UserName = User.Identity.Name })</li>
             <li>@Html.ActionLink("Perfil", "../Account/Detalhes", new { userId = WebSecurity.GetUserId(User.Identity.Name) })</li>
             <li>@Html.ActionLink("Meus Jogos", "ListarJogosJogador", "Jogo")</li>

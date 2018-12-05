@@ -3769,3 +3769,20 @@ p#set {
     opacity: 0;
     filter: alpha(opacity=0);
 }
+
+#imgPerfilScrollbar::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+    background: #e3e0d6;
+    border-radius: 10px;
+}
+
+#imgPerfilScrollbar::-webkit-scrollbar-track {
+    background: rgba(0,0,0,0.1);
+    border-radius: 10px;
+}
+
+#imgPerfilScrollbar::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background: #8b8778;
+}

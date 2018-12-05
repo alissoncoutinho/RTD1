@@ -4,15 +4,15 @@
     ViewBag.Title = "Dados do Usuário";
 }
 
-@using (Html.BeginForm("EditaUsuario", "Account", FormMethod.Post, new { @enctype = "multipart/form-data" }))
+@using (Html.BeginForm("EditaUsuario", "Account", FormMethod.Post, new { @enctype = "multipart/form-data", @id = "formEdit" }))
 {
     @Html.AntiForgeryToken()
     @Html.ValidationSummary("", new { @class = "alert-danger" })
 
     <div class="form-horizontal">
         <ul class="nav nav-tabs" id="myTab">
-            <li class="active"><a href="#tabDados" data-toggle="tab">Dados do Jogador</a></li>
-            <li><a href="#tabFoto" data-toggle="tab">Foto Perfil</a></li>
+            <li class="active" id="myTabDados"><a href="#tabDados" data-toggle="tab">Dados do Jogador</a></li>
+            <li id="myTabFoto"><a href="#tabFoto" data-toggle="tab">Alterar foto do Perfil</a></li>
         </ul>
         <div class="tab-content">
             <div class="tab-pane fade in active" id="tabDados">
@@ -23,6 +23,13 @@
                     <br>
                 }
                 <br>
+                <div class="form-group">
+                    <div class="col-md-3">
+                        <div id="divFoto" class="img-thumbnail" title="Clique na foto para alterar" style="width:155px;height:205px; cursor:pointer;">
+                            <a href="#tabFoto" data-toggle="tab"><img id="imgFoto" src="@Url.Action("BuscaFoto","Account", new { id = Model.UserId})" style="width:148px;height:198px; cursor:pointer;" /></a>
+                        </div>
+                    </div>
+                </div>
                 <div class="form-group">
                     @Html.HiddenFor(m => m.UserId)
                     @Html.HiddenFor(m => m.isRanckingGerado)
@@ -171,6 +178,15 @@
                         @Html.TextBoxFor(m => m.matriculaClube, new { @class = "form-control" })
                     </div>
                 </div>
+                @if ((Roles.IsUserInRole("admin")) || (Roles.IsUserInRole("organizador")) || (User.Identity.Name.ToLower().Equals(Model.UserName.ToLower())))
+                {
+                    <input type="submit" value="Salvar" class="btn btn-info" />
+
+                    if (Model.situacao == "pendente")
+                    {
+                        <a class="btn btn-primary btn-danger" href="/Account/Excluir?Id=@Model.UserId">Excluir</a>
+                    }
+                }
             </div>
             <div class="tab-pane fade" id="tabFoto">
                 <br>
@@ -178,30 +194,43 @@
                     <div class="col-md-12">
                         <div class="row">
                             <div class="fileUpload btn btn-primary">
-                                <span>Selecione uma nova foto</span>
+                                <span>Selecionar foto do perfil</span>
                                 <input type="file" id="flPhoto" name="upload" class="upload" />
                             </div>
-                            @if (Model.fotoURL != null){
-                                <img id="imgCropped" src="@Model.fotoURL" />
-                            }else{
+                        </div>
+                        <div class="row">
+                            @if (Model.fotoURL != null)
+                            {
+                                <img id="imgCropped" src="@Model.fotoURL" style="display:none;" />
+                            }
+                            else
+                            {
                                 <img id="imgCropped" src="#" style="display:none;" />
                             }
                             <canvas id="canvas" height="5" width="5" style="vertical-align:top;"></canvas>
                         </div>
+                        <br>
+                            <div class="row">
+                                <div class="col-md-2 col-xs-6">
+                                    <input type="submit" style="display:none" class="btn btn-info" value="Salvar" id="salvarFoto" />
+                                </div>
+                            </div>
+
                         <table>
                             <tr>
-                                <td colspan="2">
-                                    <a href="#" id="hlcropImage" style="vertical-align:top;">Recortar Foto</a>
+                                <td>
+                                    <p id="informacao" style="font-size:12px;display:none">Para alterar foto, arraste a região abaixo e clique em "Recortar" e depois em "Salvar"</p>
+                                    @if ((Roles.IsUserInRole("admin")) || (Roles.IsUserInRole("organizador")) || (User.Identity.Name.ToLower().Equals(Model.UserName.ToLower()))){
+                                        <input type="button" style="display:none" value="Recortar foto" class="btn btn-default col-xs-6" id="hlcropImage" />
+                                        <br>
+                                    }
                                 </td>
                             </tr>
                             <tr>
-                                <td>
-                                    <div style="height:400px; width:400px; overflow:auto; border:dashed">
-                                       <img id="imgEmpPhoto" src="#" alt="Perfil Image" />
+                                <td> 
+                                    <div id="imgPerfilScrollbar" style="height:413px; width:318px; overflow:auto; border:dashed">
+                                       <img id="imgEmpPhoto" src="@Model.fotoURL" alt="Perfil Image" />
                                     </div>
-                                </td>
-                                <td>
-                                    
                                 </td>
                             </tr>
                         </table>
@@ -212,15 +241,7 @@
                 
 
             </div>
-            @if ((Roles.IsUserInRole("admin")) || (Roles.IsUserInRole("organizador")) || (User.Identity.Name.ToLower().Equals(Model.UserName.ToLower())))
-                {
-                <input type="submit" value="Salvar" />
-
-                if (Model.situacao == "pendente")
-                {
-                    <a class="btn btn-primary btn-danger" href="/Account/Excluir?Id=@Model.UserId">Excluir</a>
-                }
-            }
+            
         </div>
     </div>
             }
@@ -228,7 +249,13 @@
             @section Scripts {
                 @Scripts.Render("~/bundles/jcrop")
                 @Scripts.Render("~/bundles/jqueryform")
+                @Scripts.Render("~/bundles/compress")
                 <script type="text/javascript">
+
+                    @if (ViewBag.isAlterarFoto){
+                        @Html.Raw("$('.nav-tabs a:last').tab('show');");
+                    }
+
                     $(document).ready(function () {
                         $("#dataNascimento").datepicker({
                             language: 'pt-BR',
@@ -238,7 +265,10 @@
                         $("#telefoneFixo").mask("(99) 99999-9999");
                         $("#telefoneCelular").mask("(99) 99999-9999/AAAAAA");
                         $("#telefoneCelular2").mask("(99) 99999-9999/AAAAAA");
-
+                        $("#divFoto").click(function () {
+                            $("#myTabDados").attr('class', '');
+                            $("#myTabFoto").attr('class','active');
+                        });
                     })
 
 
@@ -253,39 +283,28 @@
                     });
 
                     $("#hlcropImage").on("click", function (e) {
-                        /*
-                        The event.preventDefault() method stops the default action of
-                        an element from happening. For example: Prevent a submit button
-                        from submitting a form. Prevent a link from following the URL
-                        */
                         e.preventDefault();
                         cropImage();
+                        document.getElementById('salvarFoto').style.display = 'block';
                     });
 
                     function initCrop() {
                         $('#imgEmpPhoto').Jcrop({
-                            setSelect: [100, 130, 480, 230],
-                            minSize: [148, 198],
-                            maxSize: [148, 198],
+                            setSelect: [100, 100, 50, 50],
+                            minSize: [159, 207],
+                            maxSize: [318, 413],
+                            bgColor: 'black',
                             onChange: setCoordsAndImgSize,
-                            aspectRatio: 0, // 1 means will be same for height and weight
+                            aspectRatio: 9 / 12, // 1 means will be same for height and weight
                             onSelect: setCoordsAndImgSize
                         }, function () { jcropApi = this });
                     }
-
-                    //function showCoordinate() {
-                    //    $("#lblWidth").text(imageCropWidth + "px");
-                    //    $("#lblHeight").text(imageCropHeight + "px");
-                    //}
 
                     function setCoordsAndImgSize(e) {
                         imageCropWidth = e.w;
                         imageCropHeight = e.h;
                         cropPointX = e.x;
                         cropPointY = e.y;
-
-                        //$("#lblWidth").text(imageCropWidth + "px");
-                        //$("#lblHeight").text(imageCropHeight + "px");
                     }
 
                     function cropImage() {
@@ -312,11 +331,14 @@
                             canvas.height = height;
                             canvas.width = width;
                             context.drawImage(img, x1, y1, width, height, 0, 0, width, height);
-                            $('#avatarCropped').val(canvas.toDataURL());
+                            //$('#avatarCropped').val(canvas.toDataURL());
+                            document.getElementById('avatarCropped').value = canvas.toDataURL();
+                            $("#canvas").attr('class', 'col-xs-8 col-md-2');
                         };
 
                         img.src = $('#imgEmpPhoto').attr("src");
                         document.getElementById('imgCropped').style.display = 'none';
+
 
                     }
 
@@ -333,12 +355,6 @@
                                 $('#imgEmpPhoto').attr('src', "");
                                 var img = $('#imgEmpPhoto').attr('src', e.target.result);
 
-                                /*Current uploaded image size*/
-                                //var width = img[0].width;
-                                //var height = img[0].height;
-                                //$("#lblWidth").text(width + "px");
-                                //$("#lblHeight").text(height + "px");
-                                //InitCrop must call here otherwise it will not work
                                 initCrop();
 
                             }
@@ -346,10 +362,39 @@
                         }
                     }
 
-                    $('#flPhoto').change(function () {
-                        readFile(this);
-                        //initCrop();
-                    });
+                    'use strict'
+
+                    const compress = new Compress()
+                    const preview = document.getElementById('imgEmpPhoto')
+                    const upload = document.getElementById('flPhoto')
+
+                    upload.addEventListener('change', (evt) => {
+                        const files = [...evt.target.files]
+                        compress.compress(files, {
+                            size: 4, // the max size in MB, defaults to 2MB
+                            quality: 0.75, // the quality of the image, max is 1,
+                            maxWidth: 480, // the max width of the output image, defaults to 1920px
+                            maxHeight: 640, // the max height of the output image, defaults to 1920px
+                            resize: true // defaults to true, set false if you do not want to resize the image width and height
+                        }).then((images) => {
+                            console.log(images)
+                            const img = images[0]
+                            // returns an array of compressed images
+                            if (jcropApi != null) {
+                                jcropApi.destroy();
+                                $('#imgEmpPhoto').removeAttr('style');
+                            }
+                            preview.src = `${img.prefix}${img.data}`
+                            initCrop();
+                            document.getElementById('informacao').style.display = 'block';
+                            document.getElementById('hlcropImage').style.display = 'block';
+                            console.log(img)
+                            const { endSizeInMb, initialSizeInMb, iterations, sizeReducedInPercent, elapsedTimeInSeconds, alt } = img
+                            //output.innerHTML = `<b>Start Size:</b> ${initialSizeInMb} MB <br/><b>End Size:</b> ${endSizeInMb} MB <br/><b>Compression Cycles:</b> ${iterations} <br/><b>Size Reduced:</b> ${sizeReducedInPercent} % <br/><b>File Name:</b> ${alt}`
+                        })
+                    }, false)
+
+
                 </script>
 
             }
