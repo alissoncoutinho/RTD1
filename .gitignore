@@ -9,6 +9,7 @@ Barragem.v12.suo
 /Barragem/App_Data/ASPNETDB.MDF
 /Barragem/App_Data/aspnetdb_log.ldf
 *.dll
+/Barragem/bin/Uol.PagSeguro.pdb
 /Barragem/bin/Barragem.dll.config
 /Barragem/bin/Barragem.pdb
 /Barragem/bin/DotNetOpenAuth.AspNet.xml
@@ -39,6 +40,7 @@ Barragem.v12.suo
 /Barragem/obj/Debug/Barragem.csproj.FileListAbsolute.txt
 /Barragem/obj/Debug/Barragem.csprojResolveAssemblyReference.cache
 /Barragem/obj/Debug/Barragem.pdb
+/Barragem/obj/Debug/Barragem.csproj.CoreCompileInputs.cache
 /Barragem/obj/Debug/DesignTimeResolveAssemblyReferences.cache
 /Barragem/obj/Debug/DesignTimeResolveAssemblyReferencesInput.cache
 /Barragem/obj/Debug/TemporaryGeneratedFile_036C0B5B-1481-4323-8D20-8F5ADCB23D92.cs

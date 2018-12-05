@@ -92,13 +92,13 @@
                     <img class="img-responsive center-block" src="/Content/image/tennis-game.png">
                 </div>
                 <div class="col-md-4 col-xs-6">
-                    @if ((Model.desafiado_id != 0) && (Model.desafiado.foto != null))
+                    @if ((Model.desafiado_id != 0) && (Model.desafiado.fotoURL != null))
                     {
                         <img class="img-responsive center-block" src="@Url.Action("BuscaFoto","Account", new { id = Model.desafiado_id})" style="width: 148px; height: 198px;" />
                     }
                     else
                     {
-                        <img class="img-responsive center-block" src="/Content/image/sem-foto.jpg" style="width: 148px; height: 198px;" />
+                        <img class="img-responsive center-block" src="/Content/image/sem-foto.png" style="width: 148px; height: 198px;" />
                     }
                     <center>
                         <p id='jogo'>
@@ -120,13 +120,13 @@
                     @Html.HiddenFor(model => model.desafiado_id)
                 </div>
                 <div class="col-md-4 col-xs-6">
-                    @if ((Model.desafiante_id != 0) && (Model.desafiante_id != 10) && (Model.desafiante.foto != null))
+                    @if ((Model.desafiante_id != 0) && (Model.desafiante_id != 10) && (Model.desafiante.fotoURL != null))
                     {
                         <img class="img-responsive center-block" src="@Url.Action("BuscaFoto","Account", new { id = Model.desafiante_id})" style="width:148px;height:198px;" />
                     }
                     else
                     {
-                        <img class="img-responsive center-block" src="/Content/image/sem-foto.jpg" style="width: 148px; height: 198px;" />
+                        <img class="img-responsive center-block" src="/Content/image/sem-foto.png" style="width: 148px; height: 198px;" />
                     }
                     <center>
                         <p id='jogo'>

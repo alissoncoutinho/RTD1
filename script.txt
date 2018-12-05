@@ -1,0 +1,18 @@
+ALTER TABLE dbo.JogoCabecaChave ADD temRepescagem bit NULL; 
+
+--update JogoCabecaChave set temRepescagem=0 where temRepescagem is null;
+
+--INSERT INTO JogoCabecaChave (ordemJogo,cabecaChave,chaveamento,temRepescagem) VALUES (1, 1 ,8, 1);
+--INSERT INTO JogoCabecaChave (ordemJogo,cabecaChave,chaveamento,temRepescagem) VALUES (3, 4 ,8, 1);
+--INSERT INTO JogoCabecaChave (ordemJogo,cabecaChave,chaveamento,temRepescagem) VALUES (4, 3, 8, 1);
+--INSERT INTO JogoCabecaChave (ordemJogo,cabecaChave,chaveamento,temRepescagem) VALUES (5, 2 ,8, 1);
+--INSERT INTO JogoCabecaChave (ordemJogo,cabecaChave,chaveamento,temRepescagem) VALUES (1, 1 ,16, 1);
+--INSERT INTO JogoCabecaChave (ordemJogo,cabecaChave,chaveamento,temRepescagem) VALUES (3, 6 ,16, 1);
+--INSERT INTO JogoCabecaChave (ordemJogo,cabecaChave,chaveamento,temRepescagem) VALUES (5, 4, 16, 1);
+--INSERT INTO JogoCabecaChave (ordemJogo,cabecaChave,chaveamento,temRepescagem) VALUES (7, 3 ,16, 1);
+--INSERT INTO JogoCabecaChave (ordemJogo,cabecaChave,chaveamento,temRepescagem) VALUES (9, 5 ,16, 1);
+--INSERT INTO JogoCabecaChave (ordemJogo,cabecaChave,chaveamento,temRepescagem) VALUES (11,2 ,16, 1);
+
+ALTER TABLE dbo.Jogo ADD isPrimeiroJogoTorneio bit NULL, isRepescagem bit NULL; 
+
+ALTER TABLE dbo.UserProfile ADD fotoURL [nvarchar](300) NULL;

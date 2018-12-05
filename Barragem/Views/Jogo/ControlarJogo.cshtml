@@ -69,22 +69,22 @@
             <td></td>
             <td>
                 <div id="divFoto" class="img-thumbnail" style="width:158px;height:208px; cursor:pointer;">
-                @if (Model.desafiado.foto != null)
+                @if (Model.desafiado.fotoURL != null)
                 {
                     <img id="imgFoto" src="@Url.Action("BuscaFoto","Account", new { id = Model.desafiado_id})" style="width: 148px; height: 198px;" />
                 }
                 else
                 {
-                    <img id="imgFoto" src="/Content/image/sem-foto.jpg" style="width: 148px; height: 198px;" />
+                    <img id="imgFoto" src="/Content/image/sem-foto.png" style="width: 148px; height: 198px;" />
                 }
                 </div>
             </td>
             <td>
                 <div id="divFoto" class="img-thumbnail" style="width:158px;height:208px; cursor:pointer;">
-                @if (Model.desafiante.foto != null){
+                @if (Model.desafiante.fotoURL != null){
                     <img id="imgFoto" src="@Url.Action("BuscaFoto","Account", new { id = Model.desafiante_id})" style="width:148px;height:198px;" />
                 }else{
-                    <img id="imgFoto" src="/Content/image/sem-foto.jpg" style="width: 148px; height: 198px;" />
+                    <img id="imgFoto" src="/Content/image/sem-foto.png" style="width: 148px; height: 198px;" />
                 }
                 </div>
             </td>
