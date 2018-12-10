@@ -1,0 +1,471 @@
+﻿@model Barragem.Models.Jogo
+@{
+    ViewBag.Title = "Controlar Jogo";
+
+}
+@if ((ViewBag.solicitarAtivacao == "solicitar ativacao") && (!ViewBag.SoTorneio))
+{
+    <div class="container-dashboard">
+        <legend>@Html.Raw("Ranking")</legend>
+        <a class="btn btn-primary btn-danger" href="@Url.Action("../Account/SolicitarAtivacao", new { uName = User.Identity.Name })">
+            Solicitar Ativação no Ranking
+        </a>
+    </div>
+}
+@if ((ViewBag.solicitarAtivacao == "Ativamento solicitado") && (!String.IsNullOrEmpty(ViewBag.linkPagSeguro + "")))
+{
+    <div class="container-dashboard">
+        <legend>@Html.Raw("Ranking")</legend>
+        <a class="btn btn-primary btn-danger" href="@ViewBag.linkPagSeguro" target="_blank">
+            Efetuar Pagamento
+        </a>
+    </div>
+}
+
+@if (ViewBag.Torneio != null)
+{
+    Barragem.Models.Torneio torneio = ViewBag.Torneio;
+    <div class="container-dashboard">
+        <legend>@Html.Raw("Torneios Abertos")</legend>
+        <div class="row">
+            <div class="col-md-8">
+                <div class="row">
+                    <div class="col-sm-8 info-box-text">
+                        @Html.Raw(torneio.nome) De @Html.Raw(torneio.dataInicio.ToShortDateString()) a @Html.Raw(torneio.dataFim.ToShortDateString())
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-8 info-box-text">
+                        @Html.Raw("Local: " + torneio.local + " - " + torneio.cidade) Inscrição até @Html.Raw(torneio.dataFimInscricoes.ToShortDateString())
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="col-sm-12 pull-right">
+                    <a class="btn btn-primary" href="/Torneio/Detalhes/@torneio.Id">
+                        Saiba mais
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+@if (Model != null)
+{
+
+    <div class="container-dashboard">
+
+
+        <h4>
+            @if (Model.rodada != null)
+            {
+                if (Model.rodada.temporadaId != null)
+                {
+                    @Html.Raw(ViewBag.Temporada + " - até " + Model.rodada.dataFim.ToShortDateString())
+                }
+                else
+                {
+                    @Html.Raw("Rodada:" + Model.rodada.codigoSeq + "")
+                }
+            }
+            @if (ViewBag.NomeTorneio != null)
+            {
+                @Html.Raw(ViewBag.NomeTorneio)
+            }
+        </h4>
+        <h4>
+            <label>Situação do jogo:</label> @Html.Raw(Model.situacao.descricao)
+        </h4>
+
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-5">
+                    @if ((Model.desafiado_id != 0) && (Model.desafiado.foto != null))
+                    {
+                        <img class="img-responsive center-block" src="@Url.Action("BuscaFoto", "Account", new { id = Model.desafiado_id })" style="width: 148px; height: 198px;" />
+                    }
+                    else
+                    {
+                        <img class="img-responsive center-block" src="/Content/image/sem-foto.jpg" style="width: 148px; height: 198px;" />
+                    }
+                    <center>
+                        <p id='jogo'>
+                            Desafiado <br>(@ViewBag.ptDefendidosDesafiado):<br>
+                            @if (Model.desafiado_id == 0)
+                            {
+                                @Html.Raw("Aguardando Adversário");
+                            }
+                            else
+                            {
+                                <a href="@Url.Action("../Account/Detalhes", new { userId = Model.desafiado_id })" title="Detalhes do jogador">
+                                    @Model.desafiado.nome
+                                </a>
+                                <a href="@Model.desafiado.linkwhatsapp">
+                                    <img width="25" height="25" src="/Content/image/whatsapp.png">
+                                </a>
+                            }
+                        </p>
+                    </center>
+                    @Html.HiddenFor(model => model.desafiado_id)
+                </div>
+                <div class="col-sm-2">
+                    <center><h1 class="box-title">X</h1></center>
+                </div>
+                <div class="col-sm-5">
+                    @if ((Model.desafiante_id != 0) && (Model.desafiante.foto != null))
+                    {
+                        <img class="img-responsive center-block" src="@Url.Action("BuscaFoto", "Account", new { id = Model.desafiante_id })" style="width:148px;height:198px;" />
+                    }
+                    else
+                    {
+                        <img class="img-responsive center-block" src="/Content/image/sem-foto.jpg" style="width: 148px; height: 198px;" />
+                    }
+                    <center>
+                        <p id='jogo'>
+                            Desafiante<br> (@ViewBag.ptDefendidosDesafiante):<br>
+                            @if (Model.desafiante_id == 0)
+                            {
+                                if (Model.faseTorneio == 1)
+                                {
+                                    @Html.Raw("Bye");
+                                }
+                                else
+                                {
+                                    @Html.Raw("Aguardando Adversário");
+                                }
+                            }
+                            else
+                            {
+                                <a href="@Url.Action("../Account/Detalhes", new { userId = Model.desafiante_id })" title="Detalhes do jogador">
+                                    @Model.desafiante.nome
+                                </a>
+                                <a href="@Model.desafiante.linkwhatsapp">
+                                    <img width="25" height="25" src="/Content/image/whatsapp.png">
+                                </a>
+                            }
+                        </p>
+                    </center>
+                    @Html.HiddenFor(model => model.desafiante_id)
+                </div>
+            </div>
+        </div>
+
+        <div>
+            <h3 class="box-title">Ações</h3>
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-3">
+                        <button class="btn btn-success btn-block" id="botaomarcarJogo" onclick="mostrarMarcarJogo()">Marcar jogo</button>
+                    </div>
+                    <div class="col-sm-3">
+                        <button class="btn btn-success btn-block" id="botaoinserirResultado" onclick="mostrarInserirResultado()">Inserir resultado</button>
+                    </div>
+                    <div class="col-sm-3">
+                        <button class="btn btn-success btn-block" id="botaolancarWO" onclick="mostrarLancarWO()">Lançar WO</button>
+                    </div>
+                    <div class="col-sm-3">
+                        <button class="btn btn-success btn-block" id="botaolancarWO" onclick="">Head 2 Head</button>
+                    </div>
+                </div>
+            </div>
+
+            @using (Html.BeginForm("MarcarJogo", "Jogo", FormMethod.Post, new { @enctype = "multipart/form-data" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary(true)
+                @Html.HiddenFor(model => model.Id)
+                @Html.HiddenFor(model => model.rodada_id)
+
+                @Html.HiddenFor(model => model.dataLimiteJogo)
+                @Html.HiddenFor(model => model.faseTorneio)
+                @Html.HiddenFor(model => model.classeTorneio)
+                @Html.HiddenFor(model => model.ordemJogo)
+                @Html.HiddenFor(model => model.torneioId)
+                <input type="hidden" name="userId" value="@Html.Raw(ViewBag.userId)">
+
+                <div class="row exibir-inserirResultados" id="divMarcarJogo">
+                    <div class="box box-warning">
+                        <div class="box-header with-border">
+                            <h3 class="box-title">Marcar horário</h3>
+                        </div>
+                        <div class="box-body">
+                            <div id="placar" class="form-horizontal form-inline">
+                                <span id="dadosJogo">
+                                    <div class="form-group">
+                                        @Html.LabelFor(model => model.dataJogo, new { @class = "control-label col-sm-4" })
+                                        <div class="col-sm-6">
+                                            <div class="input-group date" id="dataJogo" data-date-format="dd/mm/yyyy">
+                                                <input id="dataJogo" name="dataJogo" value="@Html.Raw(Model.dataJogo)" placeholder="dd/mm/yyyy" type="text" class="form-control col-md-5" />
+                                                <span class="input-group-addon">
+                                                    <span class="glyphicon glyphicon-calendar">
+                                                    </span>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-3">Hora</label>
+                                        <div class="col-sm-2">
+                                            <div class="input-group">
+                                                <div class="form-group col-sm-2">
+                                                    <input id="horaJogo" name="horaJogo" value="@Html.Raw(Model.horaJogo)" placeholder="hh:mm" type="text" class="form-control col-sm-2" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </span>
+                            </div>
+                        </div>
+                        <input type="submit" class="btn btn-primary btn-small" id="button_marcarJogo" value="Salvar" />
+                    </div>
+                </div>
+
+            }
+
+            @using (Html.BeginForm("InserirResultado", "Jogo", FormMethod.Post, new { @enctype = "multipart/form-data" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary(true)
+                @Html.HiddenFor(model => model.Id)
+                @Html.HiddenFor(model => model.rodada_id)
+
+                @Html.HiddenFor(model => model.dataLimiteJogo)
+                @Html.HiddenFor(model => model.faseTorneio)
+                @Html.HiddenFor(model => model.classeTorneio)
+                @Html.HiddenFor(model => model.ordemJogo)
+                @Html.HiddenFor(model => model.torneioId)
+                <div class="container-dashboard.hide" id="divAcoes">
+                    <div class="row exibir-inserirResultados" id="divInserirResultado">
+                        <div class="box box-warning">
+                            <div class="box-header with-border">
+                                <h3 class="box-title">Inserir resultado</h3>
+                            </div>
+                            <div class="box-body">
+                                <div class="row clearfix">
+                                    <div id="labelset1" class="col-md-8">
+                                        <center><p id="set">1º set</p></center>
+                                    </div>
+                                </div>
+                                <div class="row clearfix">
+                                    <div id="set1" class="form-group col-md-4 col-xs-6 pull-right">
+                                        @Html.TextBoxFor(model => model.qtddGames1setDesafiante, new { @class = "form-control input-lg", @placeholder = "1º set" })
+                                        @Html.ValidationMessageFor(model => model.qtddGames1setDesafiante)
+                                    </div>
+                                    <div id="set1_2" class="form-group col-md-4 col-xs-6 pull-right">
+                                        @Html.TextBoxFor(model => model.qtddGames1setDesafiado, new { @class = "form-control input-lg", @placeholder = "1º set" })
+                                        @Html.ValidationMessageFor(model => model.qtddGames1setDesafiado)
+                                    </div>
+                                </div>
+                                <div class="row clearfix">
+                                    <div id="labelset2" class="col-md-8">
+                                        <center><p id="set">2º set</p></center>
+                                    </div>
+                                </div>
+                                <div class="row clearfix">
+                                    <div id="set2" class="form-group col-md-4 col-xs-6 pull-right">
+                                        @Html.TextBoxFor(model => model.qtddGames2setDesafiante, new { @class = "form-control input-lg", @placeholder = "2º set" })
+                                        @Html.ValidationMessageFor(model => model.qtddGames2setDesafiante)
+                                    </div>
+                                    <div id="set2_2" class="form-group col-md-4 col-xs-6 pull-right">
+                                        @Html.TextBoxFor(model => model.qtddGames2setDesafiado, new { @class = "form-control input-lg", @placeholder = "2º set" })
+                                        @Html.ValidationMessageFor(model => model.qtddGames2setDesafiado)
+                                    </div>
+                                </div>
+                                <div class="row clearfix">
+                                    <div id="labelset3" class="col-md-8">
+                                        <center><p id="set">3º set</p></center>
+                                    </div>
+                                </div>
+                                <div class="row clearfix">
+                                    <div id="set3" class="form-group col-md-4 col-xs-6 pull-right">
+                                        @Html.TextBoxFor(model => model.qtddGames3setDesafiante, new { @class = "form-control input-lg", @placeholder = "3º set" })
+                                        @Html.ValidationMessageFor(model => model.qtddGames2setDesafiante)
+                                    </div>
+                                    <div id="set3_2" class="form-group col-md-4 col-xs-6 pull-right">
+                                        @Html.TextBoxFor(model => model.qtddGames3setDesafiado, new { @class = "form-control input-lg", @placeholder = "3º set" })
+                                        @Html.ValidationMessageFor(model => model.qtddGames3setDesafiado)
+                                    </div>
+
+                                </div>
+                            </div>
+                            <p>
+                                @if ((Model.desafiante_id != 0) && (Model.desafiado_id != 0))
+                                {
+                                    if ((ViewBag.Editar == null) || (ViewBag.Editar))
+                                    {
+                                        <input type="submit" class="btn btn-primary btn-small" id="submeter" value="Salvar" />
+                                    }
+                                    else
+                                    {
+                                        @Html.Raw("<b>Rodada Já Encerrada.</b>")
+                                    }
+                                }
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            @using (Html.BeginForm("LancarWO", "Jogo", FormMethod.Post, new { @enctype = "multipart/form-data" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.ValidationSummary(true)
+                @Html.HiddenFor(model => model.Id)
+                @Html.HiddenFor(model => model.rodada_id)
+
+                @Html.HiddenFor(model => model.dataLimiteJogo)
+                @Html.HiddenFor(model => model.faseTorneio)
+                @Html.HiddenFor(model => model.classeTorneio)
+                @Html.HiddenFor(model => model.ordemJogo)
+                @Html.HiddenFor(model => model.torneioId)
+                <input type="hidden" name="userId" value="@Html.Raw(ViewBag.userId)">
+
+                <div class="row exibir-inserirResultados" id="divLancarWO">
+                    <div class="box box-warning">
+                        <div class="box-header with-border">
+                            <h3 class="box-title">Lançar WO</h3>
+                        </div>
+                        <div class="box-body">
+                            <p>Escolha o vencedor da partida</p>
+                            <br>
+                            <input type="radio" name="vencedorWO" value=@Html.Raw(Model.desafiado_id) checked> @Html.Raw(Model.desafiado.nome)<br>
+                            <br>
+                            <input type="radio" name="vencedorWO" value=@Html.Raw(Model.desafiante_id)> @Html.Raw(Model.desafiante.nome)<br>
+                        </div>
+                        <input type="submit" class="btn btn-primary btn-small" id="button_lancarWO" value="Salvar" />
+                    </div>
+                </div>
+
+            }
+        </div>
+    </div>
+}
+
+
+
+
+
+
+
+@using (Html.BeginForm("AtualizaStatus", "Account", FormMethod.Post, new { @enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    <div class="container-dashboard">
+        <div class="box box-success">
+            <div class="box-header with-border">
+                <h3 class="box-title">Status Atual</h3>
+            </div>
+            <div class="box-body">
+                <select id="situacao" name="situacao">
+                    <option value="ativo" @if (ViewBag.situacaoJogador.Equals("ativo")) { @Html.Raw("selected") }>
+                        ativo
+                    </option>
+                    <option value="licenciado" @if (ViewBag.situacaoJogador.Equals("licenciado")) { @Html.Raw("selected") }>
+                        licenciado
+                    </option>
+                </select>
+                <input type="hidden" name="userId" value="@Html.Raw(ViewBag.userId)">
+                <input type="submit" class="btn btn-primary btn-small" id="submeter" value="Salvar" />
+            </div>
+        </div>
+    </div>
+}
+
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/jqueryform")
+
+    <script type="text/javascript">
+        @if (ViewBag.Sucesso)
+        {
+            @Html.Raw("toastr.success('"+ViewBag.MsgAlerta+"');");
+        }
+        function mostrarMarcarJogo() {
+            var element = document.getElementById("divMarcarJogo")
+            if (element.classList.contains("show")) {
+                element.classList.remove("show");
+            } else {
+                document.getElementById("divInserirResultado").classList.remove("show");
+                document.getElementById("divLancarWO").classList.remove("show");
+                document.getElementById("divAcoes").classList.remove("hide");
+                document.getElementById("divAcoes").classList.remove("container-dashboard");
+                element.classList.add("show");
+            }
+        }
+        function mostrarInserirResultado() {
+            var element = document.getElementById("divInserirResultado");
+            if (element.classList.contains("show")) {
+                element.classList.remove("show");
+            } else {
+                document.getElementById("divMarcarJogo").classList.remove("show");
+                document.getElementById("divLancarWO").classList.remove("show");
+                document.getElementById("divAcoes").classList.remove("hide");
+                element.classList.add("show");
+            }
+        }
+        function mostrarLancarWO() {
+            var element = document.getElementById("divLancarWO");
+            if (element.classList.contains("show")) {
+                element.classList.remove("show");
+            } else {
+                document.getElementById("divMarcarJogo").classList.remove("show");
+                document.getElementById("divInserirResultado").classList.remove("show");
+                document.getElementById("divAcoes").classList.remove("hide");
+                element.classList.add("show");
+            }
+        }
+    </script>
+    <script type="text/javascript">
+        $("#dataJogo").datepicker({
+            language: 'pt-BR',
+            pickTime: false
+        });
+
+        $("select").change(function () {
+            var str = "";
+            str = $("select option:selected").text();
+            if (str != "pendente") {
+                $("#dadosJogo").show();
+                $("#submeter").show();
+            } else {
+                $("#dadosJogo").hide();
+                $("#submeter").hide();
+            }
+            if (str == "pendente" || str == "marcado" || str == "WO") {
+                $("#labelset1").hide();
+                $("#labelset2").hide();
+                $("#labelset3").hide();
+                $("#set1").hide();
+                $("#set1_2").hide();
+                $("#set2").hide();
+                $("#set2_2").hide();
+                $("#set3").hide();
+                $("#set3_2").hide();
+                $("#1set").hide();
+                $("#2set").hide();
+                $("#3set").hide();
+
+            } else {
+                $("#labelset1").show();
+                $("#labelset2").show();
+                $("#labelset3").show();
+                $("#set1").show();
+                $("#set1_2").show();
+                $("#set2").show();
+                $("#set2_2").show();
+                $("#set3").show();
+                $("#set3_2").show();
+                $("#1set").show();
+                $("#2set").show();
+                $("#3set").show();
+
+
+            }
+        })
+            .change();
+    </script>
+}

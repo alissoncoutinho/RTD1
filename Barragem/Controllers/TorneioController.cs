@@ -965,6 +965,7 @@ namespace Barragem.Controllers
         [Authorize(Roles = "admin,usuario,organizador")]
         public ActionResult ConfirmacaoInscricao(int torneioId, string msg = "", string msgErro = "")
         {
+            torneioId = 1;
             ViewBag.Msg = msg;
             ViewBag.MsgErro = msgErro;
             var userId = WebSecurity.GetUserId(User.Identity.Name);

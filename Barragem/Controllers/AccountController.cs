@@ -1051,9 +1051,33 @@ namespace Barragem.Controllers
             }
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "admin,organizador,usuario")]
+        public ActionResult AtualizaStatus(String situacao, int userId)
+        {
+            try{
+                ViewBag.MsgStatusSucesso = false;
+                var user = db.UserProfiles.Where(u => u.UserId == userId).FirstOrDefault();
+                if (user != null){
+                    user.situacao = situacao;
+                    user.logAlteracao = User.Identity.Name;
+                    db.Entry(user).State = EntityState.Modified;
+                    db.SaveChanges();
+                    ModelState.AddModelError(String.Empty, "You must complete.");
+                    ViewBag.Sucesso = true;
+                    ViewBag.MsgAlerta = "Status atualizado com sucesso";
+                }
+            }
+            catch
+            {
 
-        #region Helpers
-        private ActionResult RedirectToLocal(string returnUrl)
+            }
+            return RedirectToAction("Index3", "Home", new { ViewBag.Sucesso, ViewBag.MsgAlerta });
+        }
+
+            #region Helpers
+            private ActionResult RedirectToLocal(string returnUrl)
         {
             if (Url.IsLocalUrl(returnUrl))
             {
