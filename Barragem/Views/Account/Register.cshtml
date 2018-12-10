@@ -12,15 +12,6 @@
     <legend>Cadastro</legend>
 
     <div class="form-group">
-        @Html.LabelFor(model => model.foto, new { @class = "control-label col-md-2" })
-        <div class="col-md-3">
-            <div id="divFoto" class="img-thumbnail" title="Clique na foto para alterar" style="width:154px;height:204px; cursor:pointer;">
-                <img id="imgFoto" src="/Content/image/sem-foto.jpg" style="width:148px;height:198px; cursor:pointer;" />
-            </div>
-        </div>
-        <input type="file" id="inputfoto" name="inputfoto" accept=".jpg,.png" style="display:none">
-    </div>
-    <div class="form-group">
         @Html.LabelFor(m => m.UserName, new { @class = "control-label col-md-2" })*
         <div class="col-md-5">
             @Html.TextBoxFor(m => m.UserName,new { @class = "form-control", placeholder = "ex.: nome.sobrenome ou email" })
@@ -141,7 +132,6 @@
 </div>
 }
             @section Scripts {
-                @Scripts.Render("~/bundles/load-image")
                 @Scripts.Render("~/bundles/jqueryval")
                 <script type="text/javascript">
                     $(document).ready(function () {
@@ -150,30 +140,7 @@
                         $("#telefoneFixo").mask("(99) 9999-9999");
                         $("#telefoneCelular").mask("(99) 99999-9999/AAAAAA");
                         $("#telefoneCelular2").mask("(99) 99999-9999/AAAAAA");
-
-                        $("#divFoto").click(function () {
-                            $("#inputfoto").click();
-                        });
-                        var currentFile;
-                        $("#inputfoto").change(function (e) {
-                            var fileName = $(this).val();
-                            var input = $(this);
-                            currentFile = e.target.files[0];
-                            loadImage(currentFile,
-                                    mostraFoto,
-                                    { maxWidth: 148, maxHeight: 189, }
-                                );
-                        });
-
-                        var mostraFoto = function (img) {
-                            if (!(img.src || img instanceof HTMLCanvasElement)) {
-                                alert("Erro na imagem");
-                                return;
-                            } else {
-                                $("#divFoto").empty();
-                                $("#divFoto").append(img).show();
-                            }
-                        }
+                                                
                     })
                 </script>
             }

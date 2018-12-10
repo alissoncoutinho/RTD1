@@ -15,9 +15,9 @@
     <div class="row">
         <div class="col-sm-3">
             <div id="divFoto" class="img-thumbnail" style="width:158px;height:208px; cursor:pointer;">
-                @if (Model.foto != null)
+                @if (Model.fotoURL != null)
                 {
-                    <img id="imgFoto" src="@Url.Action("BuscaFoto","Account", new { id = Model.UserId})" style="width:148px;height:198px; cursor:pointer;" />
+                    <img id="imgFoto" src="@Model.fotoURL" style="width:148px;height:198px; cursor:pointer;" />
                 }
                 else
                 {

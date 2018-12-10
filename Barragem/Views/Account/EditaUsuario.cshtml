@@ -4,240 +4,398 @@
     ViewBag.Title = "Dados do Usuário";
 }
 
-@using (Html.BeginForm("EditaUsuario", "Account", FormMethod.Post, new { @enctype = "multipart/form-data" }))
+@using (Html.BeginForm("EditaUsuario", "Account", FormMethod.Post, new { @enctype = "multipart/form-data", @id = "formEdit" }))
 {
     @Html.AntiForgeryToken()
     @Html.ValidationSummary("", new { @class = "alert-danger" })
 
     <div class="form-horizontal">
-        <legend>
-            Dados do Jogador
-            @if (ViewBag.solicitarAtivacao != "")
-            {
-                @Html.Raw("<font color=red> - Seu cadastro está pendente ou desativado. Para ativar clique no botão abaixo.</font>")
-            }
-        </legend>
-                @if (ViewBag.solicitarAtivacao != "")
-                {
-                    <a class="btn btn-primary btn-danger" href="@Url.Action("../Account/SolicitarAtivacao", new { uName = Model.UserName })">Solicitar Ativação</a><br><br>
-        }
-        <div class="form-group">
-
-            <div class="col-md-3">
-                <div id="divFoto" class="img-thumbnail" title="Clique na foto para alterar" style="width:155px;height:205px; cursor:pointer;">
-                    @if (Model.foto != null)
-                    {
-                        <img id="imgFoto" src="@Url.Action("BuscaFoto","Account", new { id = Model.UserId})" style="width:148px;height:198px; cursor:pointer;" />
-                    }
-                    else
-                    {
-                        <img id="imgFoto" src="/Content/image/sem-foto.jpg" style="width:148px;height:198px; cursor:pointer;" />
-                    }
+        <ul class="nav nav-tabs" id="myTab">
+            <li class="active" id="myTabDados"><a href="#tabDados" data-toggle="tab">Dados do Jogador</a></li>
+            <li id="myTabFoto"><a href="#tabFoto" data-toggle="tab">Alterar foto do Perfil</a></li>
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane fade in active" id="tabDados">
+                @if (ViewBag.solicitarAtivacao != ""){
+                    @Html.Raw("<font color=red> - Seu cadastro está pendente ou desativado. Para ativar clique no botão abaixo.</font>")
+                    <a class="btn btn-primary btn-danger" href="@Url.Action("../Account/SolicitarAtivacao", new { uName = Model.UserName })">Solicitar Ativação</a>
+                    <br>
+                    <br>
+                }
+                <br>
+                <div class="form-group">
+                    <div class="col-md-3">
+                        <div id="divFoto" class="img-thumbnail" title="Clique na foto para alterar" style="width:155px;height:205px; cursor:pointer;">
+                            <a href="#tabFoto" data-toggle="tab"><img id="imgFoto" src="@Url.Action("BuscaFoto","Account", new { id = Model.UserId})" style="width:148px;height:198px; cursor:pointer;" /></a>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <input type="file" id="inputfoto" name="inputfoto" accept=".jpg,.png" style="display:none">
-        </div>
-        <div class="form-group">
-            @Html.HiddenFor(m => m.UserId)
-            @Html.HiddenFor(m => m.isRanckingGerado)
-            @Html.HiddenFor(m => m.UserName)
-            @Html.HiddenFor(m => m.barragemId)
-            @Html.LabelFor(m => m.UserName, new { @class = "col-md-2" })
-            <div class="col-md-5">
-                @Html.Raw(Model.UserName)
-            </div>
-        </div>
-        <div class="form-group">
-            @Html.LabelFor(m => m.situacao, new { @class = "col-md-2" })
-            <div class="col-md-3">
-                @if (!Model.situacao.Equals("pendente") && !Model.situacao.Equals("suspenso") &&
-                    !Model.situacao.Equals("desativado") && !Model.situacao.Equals("Ativamento solicitado"))
-                {
-                    <select id="situacao" name="situacao" class="form-control">
-                        <option value="ativo" @if (Model.situacao.Equals("ativo")) { @Html.Raw("selected")    }>ativo</option>
-                        <!--option value="desativado" if (Model.situacao.Equals("desativado")) { Html.Raw("selected")     }>desativado</option-->
-                        <option value="licenciado" @if (Model.situacao.Equals("licenciado")) { @Html.Raw("selected")      }>licenciado</option>
-                        @if ((Roles.IsUserInRole("admin")) || (Roles.IsUserInRole("organizador")))
+                <div class="form-group">
+                    @Html.HiddenFor(m => m.UserId)
+                    @Html.HiddenFor(m => m.isRanckingGerado)
+                    @Html.HiddenFor(m => m.UserName)
+                    @Html.HiddenFor(m => m.barragemId)
+                    @Html.LabelFor(m => m.UserName, new { @class = "col-md-2" })
+                    <div class="col-md-5">
+                        @Html.Raw(Model.UserName)
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.situacao, new { @class = "col-md-2" })
+                    <div class="col-md-3">
+                        @if (!Model.situacao.Equals("pendente") && !Model.situacao.Equals("suspenso") &&
+        !Model.situacao.Equals("desativado") && !Model.situacao.Equals("Ativamento solicitado"))
                         {
-                            <option value="pendente" @if (Model.situacao.Equals("pendente")) { @Html.Raw("selected")     }>pendente</option>
-                            <option value="suspenso" @if (Model.situacao.Equals("suspenso")) { @Html.Raw("selected")     }>suspenso</option>
-                            <option value="desativado" @if (Model.situacao.Equals("desativado")) { @Html.Raw("selected")     }>desativado</option>
-                            <option value="inativo" @if (Model.situacao.Equals("inativo")) { @Html.Raw("selected")      }>inativo</option>
+                            <select id="situacao" name="situacao" class="form-control">
+                                <option value="ativo" @if (Model.situacao.Equals("ativo")) { @Html.Raw("selected")      }>ativo</option>
+                                <!--option value="desativado" if (Model.situacao.Equals("desativado")) { Html.Raw("selected")     }>desativado</option-->
+                                <option value="licenciado" @if (Model.situacao.Equals("licenciado")) { @Html.Raw("selected")        }>licenciado</option>
+                                @if ((Roles.IsUserInRole("admin")) || (Roles.IsUserInRole("organizador")))
+                                {
+                                    <option value="pendente" @if (Model.situacao.Equals("pendente")) { @Html.Raw("selected")       }>pendente</option>
+                                    <option value="suspenso" @if (Model.situacao.Equals("suspenso")) { @Html.Raw("selected")       }>suspenso</option>
+                                    <option value="desativado" @if (Model.situacao.Equals("desativado")) { @Html.Raw("selected")       }>desativado</option>
+                                    <option value="inativo" @if (Model.situacao.Equals("inativo")) { @Html.Raw("selected")        }>inativo</option>
+                                }
+                            </select>
                         }
-                    </select>
+                        else
+                        {
+                            if ((Roles.IsUserInRole("admin")) || (Roles.IsUserInRole("organizador")))
+                            {
+                                <select id="situacao" name="situacao" class="form-control">
+                                    <option value="ativo">ativo</option>
+                                    <option value="pendente" @if (Model.situacao.Equals("pendente")) { @Html.Raw("selected")        }>pendente</option>
+                                    <option value="suspenso" @if (Model.situacao.Equals("suspenso")) { @Html.Raw("selected")        }>suspenso</option>
+                                    <option value="desativado" @if (Model.situacao.Equals("desativado")) { @Html.Raw("selected")        }>desativado</option>
+                                    <option value="Ativamento solicitado" @if (Model.situacao.Equals("Ativamento solicitado")) { @Html.Raw("selected")         }>Ativamento solicitado</option>
+                                </select>
+                            }
+                            else
+                            {
+                                @Html.Raw(Model.situacao)
+                                <input type="hidden" name="situacao" value="@Html.Raw(Model.situacao)">
+                            }
+                        }
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(m => m.nome, new { @class = "col-md-2" })*
+                    <div class="col-md-6">
+                        @Html.TextBoxFor(m => m.nome, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.nome, "", new { @class = "alert-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.dataNascimento, new { @class = "col-md-2" })*
+                    <div class="col-md-2">
+                        <div class="input-group date" id="dataNascimento" data-date-format="dd/mm/yyyy">
+                            <input id="dataNascimento" name="dataNascimento" value="@Html.Raw(Model.dataNascimento)" type="text" class="form-control" />
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar">
+                                </span>
+                            </span>
+                            @Html.ValidationMessageFor(model => model.dataNascimento, "", new { @class = "alert-danger" })
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.naturalidade, new { @class = "col-md-2" })
+                    <div class="col-md-6">
+                        @Html.TextBoxFor(m => m.naturalidade, new { @class = "form-control" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.altura2, new { @class = "col-md-2" })*
+                    <div class="col-md-2">
+                        @Html.TextBoxFor(m => m.altura2, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.altura2, "", new { @class = "alert-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.lateralidade, new { @class = "col-md-2" })
+                    <div class="col-md-2">
+                        <select id="lateralidade" name="lateralidade" class="form-control">
+                            <option value="destro" @if (Model.lateralidade.Equals("destro")) { @Html.Raw("selected")     }>destro</option>
+                            <option value="canhoto" @if (Model.lateralidade.Equals("canhoto")) { @Html.Raw("selected")     }>canhoto</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.email, new { @class = "col-md-2" })*
+                    <div class="col-md-4">
+                        @Html.TextBoxFor(m => m.email, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.email, "", new { @class = "alert-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.telefoneFixo, new { @class = "col-md-2" })
+                    <div class="col-md-2">
+                        @Html.TextBoxFor(m => m.telefoneFixo, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.telefoneFixo, "", new { @class = "alert-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.telefoneCelular, new { @class = "col-md-2" })*
+                    <div class="col-md-2">
+                        @Html.TextBoxFor(m => m.telefoneCelular, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.telefoneCelular, "", new { @class = "alert-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.telefoneCelular2, new { @class = "col-md-2" })
+                    <div class="col-md-2">
+                        @Html.TextBoxFor(m => m.telefoneCelular2, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.telefoneCelular2, "", new { @class = "alert-danger" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(m => m.bairro, new { @class = "col-md-2" })*
+                    <div class="col-md-2">
+                        @Html.TextBoxFor(m => m.bairro, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(m => m.bairro, "", new { @class = "alert-danger" })
+                    </div>
+                </div>
+                @if ((Roles.IsUserInRole("admin")) || (Roles.IsUserInRole("organizador")))
+                {
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.classeId, new { @class = "col-md-2" })
+                        <div class="col-md-4">
+                            @Html.DropDownList("classeId", null, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(model => model.classeId)
+                        </div>
+                    </div>
+
                 }
                 else
                 {
-                    if ((Roles.IsUserInRole("admin")) || (Roles.IsUserInRole("organizador")))
+                    @Html.HiddenFor(m => m.classeId)
+                }
+                <div class="form-group">
+                    @Html.LabelFor(m => m.matriculaClube, new { @class = "col-md-2" })
+                    <div class="col-md-2">
+                        @Html.TextBoxFor(m => m.matriculaClube, new { @class = "form-control" })
+                    </div>
+                </div>
+                @if ((Roles.IsUserInRole("admin")) || (Roles.IsUserInRole("organizador")) || (User.Identity.Name.ToLower().Equals(Model.UserName.ToLower())))
+                {
+                    <input type="submit" value="Salvar" class="btn btn-info" />
+
+                    if (Model.situacao == "pendente")
                     {
-                        <select id="situacao" name="situacao" class="form-control">
-                            <option value="ativo">ativo</option>
-                            <option value="pendente" @if (Model.situacao.Equals("pendente")) { @Html.Raw("selected")      }>pendente</option>
-                            <option value="suspenso" @if (Model.situacao.Equals("suspenso")) { @Html.Raw("selected")      }>suspenso</option>
-                            <option value="desativado" @if (Model.situacao.Equals("desativado")) { @Html.Raw("selected")      }>desativado</option>
-                            <option value="Ativamento solicitado" @if (Model.situacao.Equals("Ativamento solicitado")) { @Html.Raw("selected")       }>Ativamento solicitado</option>
-                        </select>
-                    }
-                    else
-                    {
-                        @Html.Raw(Model.situacao)
-                        <input type="hidden" name="situacao" value="@Html.Raw(Model.situacao)">
+                        <a class="btn btn-primary btn-danger" href="/Account/Excluir?Id=@Model.UserId">Excluir</a>
                     }
                 }
             </div>
-        </div>
-        
-        <div class="form-group">
-            @Html.LabelFor(m => m.nome, new { @class = "col-md-2" })*
-            <div class="col-md-6">
-                @Html.TextBoxFor(m => m.nome, new { @class = "form-control" })
-                @Html.ValidationMessageFor(m => m.nome, "", new { @class = "alert-danger" })
-            </div>
-        </div>
-        <div class="form-group">
-            @Html.LabelFor(model => model.dataNascimento, new { @class = "col-md-2" })*
-            <div class="col-md-2">
-                <div class="input-group date" id="dataNascimento" data-date-format="dd/mm/yyyy">
-                    <input id="dataNascimento" name="dataNascimento" value="@Html.Raw(Model.dataNascimento)" type="text" class="form-control" />
-                    <span class="input-group-addon">
-                        <span class="glyphicon glyphicon-calendar">
-                        </span>
-                    </span>
-                    @Html.ValidationMessageFor(model => model.dataNascimento, "", new { @class = "alert-danger" })
+            <div class="tab-pane fade" id="tabFoto">
+                <br>
+                <div class="form-group">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="fileUpload btn btn-primary">
+                                <span>Selecionar foto do perfil</span>
+                                <input type="file" id="flPhoto" name="upload" class="upload" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            @if (Model.fotoURL != null)
+                            {
+                                <img id="imgCropped" src="@Model.fotoURL" style="display:none;" />
+                            }
+                            else
+                            {
+                                <img id="imgCropped" src="#" style="display:none;" />
+                            }
+                            <canvas id="canvas" height="5" width="5" style="vertical-align:top;"></canvas>
+                        </div>
+                        <br>
+                            <div class="row">
+                                <div class="col-md-2 col-xs-6">
+                                    <input type="submit" style="display:none" class="btn btn-info" value="Salvar" id="salvarFoto" />
+                                </div>
+                            </div>
+
+                        <table>
+                            <tr>
+                                <td>
+                                    <p id="informacao" style="font-size:12px;display:none">Para alterar foto, arraste a região abaixo e clique em "Recortar" e depois em "Salvar"</p>
+                                    @if ((Roles.IsUserInRole("admin")) || (Roles.IsUserInRole("organizador")) || (User.Identity.Name.ToLower().Equals(Model.UserName.ToLower()))){
+                                        <input type="button" style="display:none" value="Recortar foto" class="btn btn-default col-xs-6" id="hlcropImage" />
+                                        <br>
+                                    }
+                                </td>
+                            </tr>
+                            <tr>
+                                <td> 
+                                    <div id="imgPerfilScrollbar" style="height:413px; width:318px; overflow:auto; border:dashed">
+                                       <img id="imgEmpPhoto" src="@Model.fotoURL" alt="Perfil Image" />
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                        <input type="hidden" name="avatarCropped" id="avatarCropped" />
+                    </div>
+
                 </div>
-            </div>
-        </div>
-        <div class="form-group">
-            @Html.LabelFor(m => m.naturalidade, new { @class = "col-md-2" })
-            <div class="col-md-6">
-                @Html.TextBoxFor(m => m.naturalidade, new { @class = "form-control" })
-            </div>
-        </div>
-        <div class="form-group">
-            @Html.LabelFor(m => m.altura2, new { @class = "col-md-2" })*
-            <div class="col-md-2">
-                @Html.TextBoxFor(m => m.altura2, new { @class = "form-control" })
-                @Html.ValidationMessageFor(m => m.altura2, "", new { @class = "alert-danger" })
-            </div>
-        </div>
-        <div class="form-group">
-            @Html.LabelFor(m => m.lateralidade, new { @class = "col-md-2" })
-            <div class="col-md-2">
-                <select id="lateralidade" name="lateralidade" class="form-control">
-                    <option value="destro" @if (Model.lateralidade.Equals("destro")) { @Html.Raw("selected")   }>destro</option>
-                    <option value="canhoto" @if (Model.lateralidade.Equals("canhoto")) { @Html.Raw("selected")   }>canhoto</option>
-                </select>
-            </div>
-        </div>
-        <div class="form-group">
-            @Html.LabelFor(m => m.email, new { @class = "col-md-2" })*
-            <div class="col-md-4">
-                @Html.TextBoxFor(m => m.email, new { @class = "form-control" })
-                @Html.ValidationMessageFor(m => m.email, "", new { @class = "alert-danger" })
-            </div>
-        </div>
-        <div class="form-group">
-            @Html.LabelFor(m => m.telefoneFixo, new { @class = "col-md-2" })
-            <div class="col-md-2">
-                @Html.TextBoxFor(m => m.telefoneFixo, new { @class = "form-control" })
-                @Html.ValidationMessageFor(m => m.telefoneFixo, "", new { @class = "alert-danger" })
-            </div>
-        </div>
-        <div class="form-group">
-            @Html.LabelFor(m => m.telefoneCelular, new { @class = "col-md-2" })*
-            <div class="col-md-2">
-                @Html.TextBoxFor(m => m.telefoneCelular, new { @class = "form-control" })
-                @Html.ValidationMessageFor(m => m.telefoneCelular, "", new { @class = "alert-danger" })
-            </div>
-        </div>
-        <div class="form-group">
-            @Html.LabelFor(m => m.telefoneCelular2, new { @class = "col-md-2" })
-            <div class="col-md-2">
-                @Html.TextBoxFor(m => m.telefoneCelular2, new { @class = "form-control" })
-                @Html.ValidationMessageFor(m => m.telefoneCelular2, "", new { @class = "alert-danger" })
-            </div>
-        </div>
-        <div class="form-group">
-            @Html.LabelFor(m => m.bairro, new { @class = "col-md-2" })*
-            <div class="col-md-2">
-                @Html.TextBoxFor(m => m.bairro, new { @class = "form-control" })
-                @Html.ValidationMessageFor(m => m.bairro, "", new { @class = "alert-danger" })
-            </div>
-        </div>
+                
 
-
-        @if ((Roles.IsUserInRole("admin")) || (Roles.IsUserInRole("organizador"))){
-            <div class="form-group">
-                @Html.LabelFor(model => model.classeId, new { @class = "col-md-2" })
-                <div class="col-md-4">
-                    @Html.DropDownList("classeId", null, new { @class = "form-control" })
-                    @Html.ValidationMessageFor(model => model.classeId)
-                </div>
             </div>
-
-        }
-        else
-        {
-            @Html.HiddenFor(m => m.classeId)
-        }
-        <div class="form-group">
-            @Html.LabelFor(m => m.matriculaClube, new { @class = "col-md-2" })
-            <div class="col-md-2">
-                @Html.TextBoxFor(m => m.matriculaClube, new { @class = "form-control" })
-            </div>
+            
         </div>
-        @if ((Roles.IsUserInRole("admin")) || (Roles.IsUserInRole("organizador")) || (User.Identity.Name.ToLower().Equals(Model.UserName.ToLower())))
-        {
-            <input type="submit" value="Salvar" />
-
-            if (Model.situacao == "pendente")
-            {
-                <a class="btn btn-primary btn-danger" href="/Account/Excluir?Id=@Model.UserId">Excluir</a>
-            }
-        }
     </div>
-
-}
-
-@section Scripts {
-    @Scripts.Render("~/bundles/load-image")
-    @Scripts.Render("~/bundles/jqueryform")
-    <script type="text/javascript">
-        $(document).ready(function () {
-            $("#dataNascimento").datepicker({
-                language: 'pt-BR',
-                pickTime: false
-            });
-            $("#altura2").mask("9,99");
-            $("#telefoneFixo").mask("(99) 99999-9999");
-            $("#telefoneCelular").mask("(99) 99999-9999/AAAAAA");
-            $("#telefoneCelular2").mask("(99) 99999-9999/AAAAAA");
-            $("#divFoto").click(function () {
-                $("#inputfoto").click();
-            });
-            var currentFile;
-            $("#inputfoto").change(function (e) {
-                var fileName = $(this).val();
-                var input = $(this);
-                currentFile = e.target.files[0];
-                loadImage(currentFile,
-                        mostraFoto,
-                        { maxWidth: 148, maxHeight: 189, }
-                    );
-            });
-
-            var mostraFoto = function (img) {
-                if (!(img.src || img instanceof HTMLCanvasElement)) {
-                    alert("Erro na imagem");
-                    return;
-                } else {
-                    $("#divFoto").empty();
-                    $("#divFoto").append(img).show();
-                }
             }
-        })
-    </script>
+
+            @section Scripts {
+                @Scripts.Render("~/bundles/jcrop")
+                @Scripts.Render("~/bundles/jqueryform")
+                @Scripts.Render("~/bundles/compress")
+                <script type="text/javascript">
+
+                    @if ((ViewBag.isAlterarFoto!=null) && (ViewBag.isAlterarFoto)){
+                        @Html.Raw("$('.nav-tabs a:last').tab('show');");
+                    }
+
+                    $(document).ready(function () {
+                        $("#dataNascimento").datepicker({
+        language: 'pt-BR',
+                            pickTime: false
+                        });
+                        $("#altura2").mask("9,99");
+                        $("#telefoneFixo").mask("(99) 99999-9999");
+                        $("#telefoneCelular").mask("(99) 99999-9999/AAAAAA");
+                        $("#telefoneCelular2").mask("(99) 99999-9999/AAAAAA");
+                        $("#divFoto").click(function () {
+                            $("#myTabDados").attr('class', '');
+                            $("#myTabFoto").attr('class','active');
+                        });
+                    })
 
 
-}
+                    var imageCropWidth = 148;
+                    var imageCropHeight = 198;
+                    var cropPointX = 0;
+                    var cropPointY = 0;
+                    var jcropApi;
+
+                    $(document).ready(function () {
+                        //initCrop();
+                    });
+
+                    $("#hlcropImage").on("click", function (e) {
+                        e.preventDefault();
+                        cropImage();
+                        document.getElementById('salvarFoto').style.display = 'block';
+                    });
+
+                    function initCrop() {
+                        $('#imgEmpPhoto').Jcrop({
+                            setSelect: [100, 100, 50, 50],
+                            minSize: [159, 207],
+                            maxSize: [318, 413],
+                            bgColor: 'black',
+                            onChange: setCoordsAndImgSize,
+                            aspectRatio: 9 / 12, // 1 means will be same for height and weight
+                            onSelect: setCoordsAndImgSize
+                        }, function () { jcropApi = this });
+                    }
+
+                    function setCoordsAndImgSize(e) {
+                        imageCropWidth = e.w;
+                        imageCropHeight = e.h;
+                        cropPointX = e.x;
+                        cropPointY = e.y;
+                    }
+
+                    function cropImage() {
+
+                        if (imageCropWidth == 0 && imageCropHeight == 0) {
+                            alert("Please select crop area.");
+                            return;
+                        }
+
+                        var img = $("#imgEmpPhoto").attr("src");
+                        /*Show cropped image*/
+                        showCroppedImage();
+                    }
+
+                    function showCroppedImage() {
+                        var x1 = cropPointX;
+                        var y1 = cropPointY;
+                        var width = imageCropWidth;
+                        var height = imageCropHeight;
+                        var canvas = $("#canvas")[0];
+                        var context = canvas.getContext('2d');
+                        var img = new Image();
+                        img.onload = function () {
+                            canvas.height = height;
+                            canvas.width = width;
+                            context.drawImage(img, x1, y1, width, height, 0, 0, width, height);
+                            //$('#avatarCropped').val(canvas.toDataURL());
+                            document.getElementById('avatarCropped').value = canvas.toDataURL();
+                            $("#canvas").attr('class', 'col-xs-8 col-md-2');
+                        };
+
+                        img.src = $('#imgEmpPhoto').attr("src");
+                        document.getElementById('imgCropped').style.display = 'none';
+
+
+                    }
+
+                    function readFile(input) {
+                        if (input.files && input.files[0]) {
+                            var reader = new FileReader();
+                            /*Destroy jcrop initialization other wise it will hold it previous image in img tag*/
+                            if (jcropApi != null) {
+                                jcropApi.destroy();
+                                $('#imgEmpPhoto').removeAttr('style');
+                            }
+
+                            reader.onload = function (e) {
+                                $('#imgEmpPhoto').attr('src', "");
+                                var img = $('#imgEmpPhoto').attr('src', e.target.result);
+
+                                initCrop();
+
+                            }
+                            reader.readAsDataURL(input.files[0]);
+                        }
+                    }
+
+                    'use strict'
+
+                    const compress = new Compress()
+                    const preview = document.getElementById('imgEmpPhoto')
+                    const upload = document.getElementById('flPhoto')
+
+                    upload.addEventListener('change', (evt) => {
+                        const files = [...evt.target.files]
+                        compress.compress(files, {
+                            size: 4, // the max size in MB, defaults to 2MB
+                            quality: 0.75, // the quality of the image, max is 1,
+                            maxWidth: 480, // the max width of the output image, defaults to 1920px
+                            maxHeight: 640, // the max height of the output image, defaults to 1920px
+                            resize: true // defaults to true, set false if you do not want to resize the image width and height
+                        }).then((images) => {
+                            console.log(images)
+                            const img = images[0]
+                            // returns an array of compressed images
+                            if (jcropApi != null) {
+                                jcropApi.destroy();
+                                $('#imgEmpPhoto').removeAttr('style');
+                            }
+                            preview.src = `${img.prefix}${img.data}`
+                            initCrop();
+                            document.getElementById('informacao').style.display = 'block';
+                            document.getElementById('hlcropImage').style.display = 'block';
+                            console.log(img)
+                            const { endSizeInMb, initialSizeInMb, iterations, sizeReducedInPercent, elapsedTimeInSeconds, alt } = img
+                            //output.innerHTML = `<b>Start Size:</b> ${initialSizeInMb} MB <br/><b>End Size:</b> ${endSizeInMb} MB <br/><b>Compression Cycles:</b> ${iterations} <br/><b>Size Reduced:</b> ${sizeReducedInPercent} % <br/><b>File Name:</b> ${alt}`
+                        })
+                    }, false)
+
+
+                </script>
+
+            }
 

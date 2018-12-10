@@ -83,6 +83,8 @@ namespace Barragem.Models
         [Display(Name = "Foto")]
         public byte[] foto { get; set; }
 
+        public string fotoURL { get; set; }
+
         [Display(Name = "Já possui rancking")]
         public bool isRanckingGerado { get; set; }
 
@@ -215,6 +217,8 @@ namespace Barragem.Models
         public string email { get; set; }
         [Display(Name = "Foto")]
         public byte[] foto { get; set; }
+
+        public string fotoURL { get; set; }
 
         public DateTime dataInicioRancking { get; set; }
         

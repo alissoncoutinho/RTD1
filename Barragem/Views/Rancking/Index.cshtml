@@ -57,10 +57,10 @@
                         }
                         </td>
                         <td>
-                            @if (item.userProfile.foto != null){
-                            <img id="imgFoto" src="@Url.Action("BuscaFoto", "Account", new { id = @item.userProfile.UserId })" class="profile-image img-circle" style="width:40px;height:40px;">
+                            @if (item.userProfile.fotoURL != null){
+                            <img id="imgFoto" src="@item.userProfile.fotoURL" class="profile-image img-circle" style="width:40px;height:40px;">
                         }else{
-                            <img id="imgFoto" src="/Content/image/bolatenis.jpg" class="profile-image img-circle" style="width:40px;height:40px;">
+                            <img id="imgFoto" src="/Content/image/sem-foto.png" class="profile-image img-circle" style="width:40px;height:40px;">
                         }
                             <a href="@Url.Action("../Account/Detalhes", new { userId = @item.userProfile.UserId })" title="Detalhes do jogador">
                                 @item.userProfile.nome
@@ -110,10 +110,10 @@
                     @Html.DisplayFor(modelItem => item.posicao)º
                 </td>
                 <td>
-                    @if (item.userProfile.foto != null){
-                        <img id="imgFoto" src="@Url.Action("BuscaFoto", "Account", new { id = @item.userProfile.UserId })" class="profile-image img-circle" style="width:40px;height:40px;">
+                    @if (item.userProfile.fotoURL != null){
+                        <img id="imgFoto" src="@item.userProfile.fotoURL" class="profile-image img-circle" style="width:50px;height:50px;">
                     }else{
-                        <img id="imgFoto" src="/Content/image/bolatenis.jpg" class="profile-image img-circle" style="width:40px;height:40px;">
+                        <img id="imgFoto" src="/Content/image/sem-foto.png" class="profile-image img-circle" style="width:40px;height:40px;">
                     }
                     <a href="@Url.Action("../Account/Detalhes", new { userId = @item.userProfile.UserId })" title="Detalhes do jogador">
                         @item.userProfile.nome

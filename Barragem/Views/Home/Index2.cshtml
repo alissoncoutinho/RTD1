@@ -21,6 +21,19 @@
         </a>
     </div>
 }
+@if (!ViewBag.TemFotoPerfil) { 
+    <div class="alert alert-info alert-dismissable">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="col-sm-12">
+                        Criamos uma nova funcionalidade para melhorar a foto do seu perfil. <a class="btn btn-primary" href="@Url.Action("../Account/EditaUsuario", new { UserName = User.Identity.Name, isAlterarFoto = true })">Clique aqui</a> e insira uma nova foto no seu perfil.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
 
     @if (ViewBag.Torneio != null){
         Barragem.Models.Torneio torneio = ViewBag.Torneio;
@@ -115,10 +128,12 @@
                         <img class="img-responsive center-block" src="/Content/image/tennis-game.png">
                     </div>
                     <div class="col-md-4 col-xs-6">
-                    @if ((Model.desafiado_id!=0)&&(Model.desafiado.foto != null)){
+                    @if ((Model.desafiado_id!=0)&&(Model.desafiado.fotoURL != null)){
                         <img class="img-responsive center-block" src="@Url.Action("BuscaFoto","Account", new { id = Model.desafiado_id})" style="width: 148px; height: 198px;" />
                     }else{
-                        <img class="img-responsive center-block" src="/Content/image/sem-foto.jpg" style="width: 148px; height: 198px;" />
+                        <a href="@Url.Action("../Account/EditaUsuario", new { UserName = Model.desafiado.UserName, isAlterarFoto = true  })">
+                            <img class="img-responsive center-block" src="/Content/image/sem-foto.png" style="width: 148px; height: 198px;" />
+                        </a>
                     }
                         <center><p id='jogo'>
                             Desafiado <br>(@ViewBag.ptDefendidosDesafiado):<br>
@@ -136,39 +151,43 @@
                         @Html.HiddenFor(model => model.desafiado_id)
                     </div>
                     <div class="col-md-4 col-xs-6">
-                        @if ((Model.desafiante_id != 0) && (Model.desafiante.foto != null))
+                        @if ((Model.desafiante_id != 0) && (Model.desafiante.fotoURL != null))
                         {
                             <img class="img-responsive center-block" src="@Url.Action("BuscaFoto","Account", new { id = Model.desafiante_id})" style="width:148px;height:198px;" />
                         }
                         else
                         {
-                            <img class="img-responsive center-block" src="/Content/image/sem-foto.jpg" style="width: 148px; height: 198px;" />
-                        }
-                        <center><p id='jogo'>
-                            Desafiante<br> (@ViewBag.ptDefendidosDesafiante):<br>
-                            @if (Model.desafiante_id == 0)
-                            {
-                                if (Model.faseTorneio == 1)
-                                {
-                                    @Html.Raw("Bye");
+                            <a href="@Url.Action("../Account/EditaUsuario", new { UserName = Model.desafiante.UserName })">
+                                <img class="img-responsive center-block" src="/Content/image/sem-foto.png" style="width: 148px; height: 198px;" />
+                            </a>
                                 }
-                                else
-                                {
-                                    @Html.Raw("Aguardando Adversário");
-                                }
-                            }
-                            else
-                            {
-                                <a href="@Url.Action("../Account/Detalhes", new { userId = Model.desafiante_id })" title="Detalhes do jogador">
-                                    @Model.desafiante.nome
-                                </a>
-                                <a href="@Model.desafiante.linkwhatsapp">
-                                    <img width="25" height="25" src="/Content/image/whatsapp.png">
-                                </a>
-                            }
-                        </p></center>
-                        @Html.HiddenFor(model => model.desafiante_id)
-                    </div>
+                                <center>
+                                    <p id='jogo'>
+                                        Desafiante<br> (@ViewBag.ptDefendidosDesafiante):<br>
+                                        @if (Model.desafiante_id == 0)
+                                        {
+                                            if (Model.faseTorneio == 1)
+                                            {
+                                                @Html.Raw("Bye");
+                                            }
+                                            else
+                                            {
+                                                @Html.Raw("Aguardando Adversário");
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <a href="@Url.Action("../Account/Detalhes", new { userId = Model.desafiante_id })" title="Detalhes do jogador">
+                                                @Model.desafiante.nome
+                                            </a>
+                                            <a href="@Model.desafiante.linkwhatsapp">
+                                                <img width="25" height="25" src="/Content/image/whatsapp.png">
+                                            </a>
+                                        }
+                                    </p>
+                                </center>
+                                @Html.HiddenFor(model => model.desafiante_id)
+</div>
                 </div>
                 <div class="row clearfix">
                     <div id="labelset1" class="col-md-8">
