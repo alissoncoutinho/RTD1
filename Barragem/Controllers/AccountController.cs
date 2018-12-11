@@ -91,7 +91,7 @@ namespace Barragem.Controllers
         {
             WebSecurity.Logout();
 
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("IndexBarragens", "Home");
         }
 
         //
