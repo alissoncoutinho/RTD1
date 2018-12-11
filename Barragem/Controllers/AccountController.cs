@@ -937,12 +937,18 @@ namespace Barragem.Controllers
                         ViewBag.MsgErro = "Erro ao gerar a pontuação inicial do usuário: " + e.Message + ", " + e.InnerException.Message;
                         ViewBag.DetalheErro = e.InnerException.StackTrace;
                     }
+                    ViewBag.classeId = new SelectList(db.Classe.Where(c => c.barragemId == model.barragemId).ToList(), "Id", "nome");
+                    return View(model);
 
                 }
 
             }
+            if (((perfil.Equals("admin")) || (!perfil.Equals("organizador"))) && (WebSecurity.GetUserId(User.Identity.Name) != model.UserId)){
+                return RedirectToAction("ListarUsuarios", "Account", new { filtroSituacao = "todos", filtroBarragem= model.barragemId, msg = "ok" });
+            }
             ViewBag.classeId = new SelectList(db.Classe.Where(c => c.barragemId == model.barragemId).ToList(), "Id", "nome");
             return View(model);
+
 
         }
 
@@ -1121,8 +1127,11 @@ namespace Barragem.Controllers
 
         }
 
-        public ActionResult ListarUsuarios(String filtroSituacao = "", int filtroBarragem = 0)
+        public ActionResult ListarUsuarios(String filtroSituacao = "", int filtroBarragem = 0, string msg="")
         {
+            if (msg == "ok") {
+                ViewBag.Ok = "ok";
+            }
             UserProfile usu = db.UserProfiles.Find(WebSecurity.GetUserId(User.Identity.Name));
             ViewBag.situacao = usu.situacao;
             ViewBag.filtro = filtroSituacao;

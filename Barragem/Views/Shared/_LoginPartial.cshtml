@@ -16,7 +16,7 @@
             
             @if ((Roles.IsUserInRole("admin"))||(Roles.IsUserInRole("organizador")))
             {
-                <li>@Html.ActionLink("Barragens", "Index", "Barragens")</li>
+                <li>@Html.ActionLink("Rankings", "Index", "Barragens")</li>
                 <li>@Html.ActionLink("Temporada", "Index", "Temporada")</li>
                 <li>@Html.ActionLink("Torneio", "Index", "Torneio")</li>
             }
