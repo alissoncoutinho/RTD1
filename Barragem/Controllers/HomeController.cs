@@ -447,7 +447,8 @@ namespace Barragem.Controllers
                     var qtddRodada = db.Rodada.Where(r => r.temporadaId == temporadaId && r.Id <= rodadaId && r.barragemId == barragemId).Count();
                     if (temporadaId > 0)
                     {
-                        ViewBag.Temporada = jogo.rodada.temporada.nome + " - Rodada " + qtddRodada + " de " + jogo.rodada.temporada.qtddRodadas;
+                        ViewBag.Temporada = jogo.rodada.temporada.nome;
+                        ViewBag.NumeroRodada = "Rodada " + qtddRodada + " de " + jogo.rodada.temporada.qtddRodadas;
                     }
                 }
             }
