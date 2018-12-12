@@ -661,6 +661,7 @@ namespace Barragem.Controllers
             var jogos = db.Jogo.Where(r => r.torneioId == torneioId && r.classeTorneio == filtroClasse && r.faseTorneio!=100 && r.faseTorneio!=101).OrderByDescending(r => r.faseTorneio).ThenBy(r => r.ordemJogo).ToList();
             ViewBag.Classes = db.ClasseTorneio.Where(c => c.torneioId == torneioId).ToList();
             ViewBag.torneioId = torneioId;
+            ViewBag.nomeTorneio = torneio.nome;
             ViewBag.filtroClasse = filtroClasse;
 
             mensagem(Msg);

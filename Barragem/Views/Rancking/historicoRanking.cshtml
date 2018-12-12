@@ -7,45 +7,47 @@
 
     @if (Model != null)
     {
-        <table class="table table-striped table-condensed table-bordered">
-            <tr>
-                <th>
-                    Rodada
-                </th>
-                <th>
-                    @Html.DisplayName("Data")
-                </th>
-                <th>
-                    @Html.DisplayName("Pontos")
-                </th>
-                <th>
-                    @Html.DisplayName("Total")
-                </th>
-                <th>
-                    @Html.DisplayName("Posição")
-                </th>
-            </tr>
-
-            @foreach (var item in Model)
-            {
+        <div class="box-body table-responsive no-padding">
+            <table border="0" class="table table-striped">
                 <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.rodada.codigoSeq)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.rodada.dataFim)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.pontuacao, 2)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.totalAcumulado, 2)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.posicao)º
-                    </td>
+                    <th>
+                        Rodada
+                    </th>
+                    <th>
+                        @Html.DisplayName("Data")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Pontos")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Total")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Posição")
+                    </th>
                 </tr>
-            }
 
-        </table>
-    }
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.rodada.codigoSeq)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.rodada.dataFim)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.pontuacao, 2)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.totalAcumulado, 2)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.posicao)º
+                        </td>
+                    </tr>
+                }
+
+            </table>
+            </div>
+            }
