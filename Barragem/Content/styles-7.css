@@ -3716,6 +3716,38 @@ p#jogo {
   pointer-events: none;
 }
 
+.exibir-inserirResultados {
+    overflow: hidden;
+    max-height: 0px;
+    pointer-events: none;
+    transition: max-height 1s ease-in-out;
+}
+
+.exibir-inserirResultados.show {
+    max-height: 400px;
+    pointer-events: auto;
+    padding-left: 10px;
+    padding-top: 10px;
+    padding-bottom: 20px;
+    padding-right: 5px;
+    margin: 5px;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    position: relative;
+ }
+
+.container-dashboard.hide {
+    overflow: hidden;
+    max-height: 0px;
+}
+
+.row-eq-height {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+}
+
 @media (max-width: 767px) {
 
     .exibir-imagem {
