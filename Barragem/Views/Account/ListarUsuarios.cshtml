@@ -15,36 +15,33 @@
         using (Html.BeginForm())
         {
             <div class="form-horizontal">
-                <div class="form-group form-inline">
-                    <div class="form-group">
-                        <label class="control-label col-sm-3">Situação</label>
-                        <div class="col-lg-5">
-                            <select name="filtroSituacao" class="form-control input-sm" onchange="this.form.submit()">
-                                <option value="">ativos - licenc. - susp.</option>
-                                <option value="ativo" @if (filtro=="ativo"){@Html.Raw("selected")}>ativos</option>
-                                <option value="licenciado" @if (filtro == "licenciado"){ @Html.Raw("selected") }>licenciados</option>
-                                <option value="suspenso" @if (filtro == "suspenso"){ @Html.Raw("selected") }>suspensos</option>
-                                <option value="desativado" @if (filtro == "desativado"){ @Html.Raw("selected") }>desativados</option>
-                                <option value="Ativamento solicitado" @if (filtro == "Ativamento solicitado"){ @Html.Raw("selected") }>solicitações de ativamento</option>
-                                <option value="pendente" @if (filtro == "pendente"){ @Html.Raw("selected") }>pendentes</option>
-                                <option value="inativo" @if (filtro == "inativo") { @Html.Raw("selected")  }>inativos</option>
-                                <option value="todos" @if (filtro == "todos") { @Html.Raw("selected") }>todos</option>
-                            </select>
-                        </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-2">Situação</label>
+                    <div class="col-lg-3">
+                        <select name="filtroSituacao" class="form-control input-sm" onchange="this.form.submit()">
+                            <option value="">ativos - licenc. - susp.</option>
+                            <option value="ativo" @if (filtro=="ativo"){@Html.Raw("selected")}>ativos</option>
+                            <option value="licenciado" @if (filtro == "licenciado"){ @Html.Raw("selected") }>licenciados</option>
+                            <option value="suspenso" @if (filtro == "suspenso"){ @Html.Raw("selected") }>suspensos</option>
+                            <option value="desativado" @if (filtro == "desativado"){ @Html.Raw("selected") }>desativados</option>
+                            <option value="Ativamento solicitado" @if (filtro == "Ativamento solicitado"){ @Html.Raw("selected") }>solicitações de ativamento</option>
+                            <option value="pendente" @if (filtro == "pendente"){ @Html.Raw("selected") }>pendentes</option>
+                            <option value="inativo" @if (filtro == "inativo") { @Html.Raw("selected")  }>inativos</option>
+                            <option value="todos" @if (filtro == "todos") { @Html.Raw("selected") }>todos</option>
+                        </select>
                     </div>
-                    <div class="form-group">
+                </div>
+                <div class="form-group">
                         @if (Roles.IsUserInRole("admin")) {
-                            <label class="control-label col-sm-5">Barragens</label>
-                            <div class="col-lg-5">
+                            <label class="control-label col-sm-2">Barragens</label>
+                            <div class="col-lg-3">
                                 @Html.DropDownList("filtroBarragem", (SelectList)ViewBag.filtroBarragem,"Todos", new { @class = "form-control input-sm", @onchange = "form.submit();" })
                             </div>
                         } else {
                             <input type="hidden" name="filtroBarragem" value="0" />
                         }
-                        
-                    </div>
                 </div>
-             </div>
+            </div>
          }
       }  
                       <div class="box-body table-responsive no-padding">
@@ -57,6 +54,9 @@
                                       @Html.DisplayNameFor(model => model.nome)
                                   </th>
                                   <th>
+                                      @Html.DisplayNameFor(model => model.telefoneCelular)
+                                  </th>
+                                  <th>
                                       @Html.DisplayNameFor(model => model.situacao)
                                   </th>
                                   @if (Roles.IsUserInRole("admin"))
@@ -66,13 +66,7 @@
                                       </th>
                                   }
                                   <th>
-                                      @Html.DisplayNameFor(model => model.telefoneCelular)
-                                  </th>
-                                  <th>
                                       @Html.DisplayNameFor(model => model.email)
-                                  </th>
-                                  <th>
-                                      @Html.DisplayNameFor(model => model.bairro)
                                   </th>
                                   @if ((Roles.IsUserInRole("admin")) || (Roles.IsUserInRole("organizador")))
                                   {
@@ -102,6 +96,14 @@
                                           }
                                       </td>
                                       <td>
+                                          @if ((ViewBag.situacao == "ativo") || (ViewBag.situacao == "licenciado")
+  || (ViewBag.situacao == "suspenso") || (Roles.IsUserInRole("admin")) || (Roles.IsUserInRole("organizador")))
+                                          {
+                                              @Html.DisplayFor(modelItem => item.telefoneCelular)
+                                          }
+                                      </td>
+
+                                      <td>
                                           @if (item.situacao == "Ativamento solicitado")
                                           {
                                               @Html.Raw("<font color=red>")
@@ -118,18 +120,8 @@
                                           @if ((ViewBag.situacao == "ativo") || (ViewBag.situacao == "licenciado")
                             || (ViewBag.situacao == "suspenso") || (Roles.IsUserInRole("admin")) || (Roles.IsUserInRole("organizador")))
                                           {
-                                              @Html.DisplayFor(modelItem => item.telefoneCelular)
-                                          }
-                                      </td>
-                                      <td>
-                                          @if ((ViewBag.situacao == "ativo") || (ViewBag.situacao == "licenciado")
-                            || (ViewBag.situacao == "suspenso") || (Roles.IsUserInRole("admin")) || (Roles.IsUserInRole("organizador")))
-                                          {
                                               @Html.DisplayFor(modelItem => item.email)
                                           }
-                                      </td>
-                                      <td>
-                                          @Html.DisplayFor(modelItem => item.bairro)
                                       </td>
                                       @if ((Roles.IsUserInRole("admin")) || (Roles.IsUserInRole("organizador")))
                                       {
