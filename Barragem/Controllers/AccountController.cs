@@ -7,6 +7,7 @@ using Microsoft.Web.WebPages.OAuth;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Transactions;
@@ -379,30 +380,43 @@ namespace Barragem.Controllers
             return View(model);
         }
 
-        private string ProcessImage(string croppedImage, int userId){
+        private string ProcessImage(string croppedImage, int userId)
+        {
 
             string filePath = String.Empty;
-            try{
+            try
+            {
                 string base64 = croppedImage;
                 byte[] bytes = Convert.FromBase64String(base64.Split(',')[1]);
-                filePath = "/Content/images/Photo/Pf-" + Guid.NewGuid() + ".png";
-                using (FileStream stream = new FileStream(Server.MapPath(filePath), FileMode.Create)){
-                    stream.Write(bytes, 0, bytes.Length);
-                    stream.Flush();
-                }
-            }catch (Exception ex){
+                filePath = "/Content/images/Photo/Pf-" + Guid.NewGuid() + ".jpg";
+                MemoryStream stream = new MemoryStream(bytes);
+                Image png = Image.FromStream(stream);
+                png.Save(Server.MapPath(filePath), System.Drawing.Imaging.ImageFormat.Jpeg);
+                png.Dispose();
+                //using (FileStream stream = new FileStream(Server.MapPath(filePath), FileMode.Create)){
+                //    stream.Write(bytes, 0, bytes.Length);
+                //    stream.Flush();
+                //}
+            }
+            catch (Exception ex)
+            {
                 string st = ex.Message;
             }
-            if (userId != 0) { 
+            if (userId != 0)
+            {
                 string fotoURL = (from up in db.UserProfiles where up.UserId == userId select up.fotoURL).Single();
-                if ((fotoURL!=null) && (System.IO.File.Exists(Server.MapPath(fotoURL)))){
-                    try{
+                if ((fotoURL != null) && (System.IO.File.Exists(Server.MapPath(fotoURL))))
+                {
+                    try
+                    {
                         System.IO.File.Delete(Server.MapPath(fotoURL));
-                    }catch (System.IO.IOException e){
+                    }
+                    catch (System.IO.IOException e)
+                    {
                         Console.WriteLine(e.Message);
                     }
                 }
-             }
+            }
 
             return filePath;
         }
@@ -876,6 +890,25 @@ namespace Barragem.Controllers
         }
 
 
+        public ActionResult ConverterImagem()
+        {
+            
+            string filePath = "/Content/images/Photo";
+            foreach (string file in System.IO.Directory.GetFiles(Server.MapPath(filePath)))
+            {
+                string extension = System.IO.Path.GetExtension(file);
+                if (extension == ".png")
+                {
+                    string name = System.IO.Path.GetFileNameWithoutExtension(file);
+                    string path = System.IO.Path.GetDirectoryName(file);
+                    Image png = Image.FromFile(file);
+                    png.Save(Server.MapPath(filePath + "/" + name + ".jpg"), System.Drawing.Imaging.ImageFormat.Jpeg);
+                    png.Dispose();
+                }
+            }
+        
+            return null;
+        }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -1120,7 +1153,7 @@ namespace Barragem.Controllers
                 usuario = db.UserProfiles.Find(id);
             }
             if (!String.IsNullOrEmpty(usuario.fotoURL)) { 
-                return File(usuario.fotoURL, "image/png");
+                return File(usuario.fotoURL, "image/jpg");
             }
             return File("/Content/image/sem-foto.png", "image/png");
 
