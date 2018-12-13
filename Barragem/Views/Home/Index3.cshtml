@@ -57,32 +57,48 @@
 
     <div class="container-dashboard">
 
+        <div class="container-fluid">
+            <div class="row" align="left">
 
-        <h4>
-            @if (Model.rodada != null)
-            {
-                if (Model.rodada.temporadaId != null)
+
+                @if (Model.rodada != null)
                 {
-                    @Html.Raw(ViewBag.Temporada + " - até " + Model.rodada.dataFim.ToShortDateString())
+                    if (Model.rodada.temporadaId != null)
+                    {
+                        <div class="col-sm-3" align="left">
+                            <h4>@Html.Raw(ViewBag.Temporada)</h4>
+                        </div>
+                        <div class="col-sm-2" align="left">
+                            <h4>@Html.Raw(ViewBag.NumeroRodada)</h4>
+                        </div>
+                        <div class="col-sm-2" align="left">
+                            <h4>@Html.Raw("Até " + Model.rodada.dataFim.ToShortDateString())</h4>
+                        </div>
+                    }
+                    else
+                    {
+                        @Html.Raw("Rodada:" + Model.rodada.codigoSeq + "")
+                    }
                 }
-                else
+                @if (ViewBag.NomeTorneio != null)
                 {
-                    @Html.Raw("Rodada:" + Model.rodada.codigoSeq + "")
+                    @Html.Raw(ViewBag.NomeTorneio)
                 }
-            }
-            @if (ViewBag.NomeTorneio != null)
-            {
-                @Html.Raw(ViewBag.NomeTorneio)
-            }
-        </h4>
-        <h4>
-            <label>Situação do jogo:</label> @Html.Raw(Model.situacao.descricao)
-        </h4>
+
+
+
+            </div>
+            <h5>
+                <label>Situação do jogo:</label> @Html.Raw(Model.situacao.descricao)
+            </h5>
+        </div>
+
+
 
         <div class="container-fluid">
             <div class="row">
                 <div class="col-sm-5">
-                    @if ((Model.desafiado_id != 0) && (Model.desafiado.fotoURL != null))
+                    @if ((Model.desafiado_id != 0) && (Model.desafiado.foto != null))
                     {
                         <img class="img-responsive center-block" src="@Url.Action("BuscaFoto", "Account", new { id = Model.desafiado_id })" style="width: 148px; height: 198px;" />
                     }
@@ -114,7 +130,7 @@
                     <center><h1 class="box-title">X</h1></center>
                 </div>
                 <div class="col-sm-5">
-                    @if ((Model.desafiante_id != 0) && (Model.desafiante.fotoURL != null))
+                    @if ((Model.desafiante_id != 0) && (Model.desafiante.foto != null))
                     {
                         <img class="img-responsive center-block" src="@Url.Action("BuscaFoto", "Account", new { id = Model.desafiante_id })" style="width:148px;height:198px;" />
                     }
@@ -153,8 +169,9 @@
         </div>
 
         <div>
-            <h4>Ações</h4>
+
             <div class="container-fluid">
+                <h5><label>Ações</label></h5>
                 <div class="row">
                     <div class="col-sm-3">
                         <button class="btn btn-success btn-block" id="botaomarcarJogo" onclick="mostrarMarcarJogo()">Marcar jogo</button>
@@ -166,7 +183,7 @@
                         <button class="btn btn-success btn-block" id="botaolancarWO" onclick="mostrarLancarWO()">Lançar WO</button>
                     </div>
                     <div class="col-sm-3">
-                        <button class="btn btn-success btn-block" id="botaolancarWO" onclick="">Head 2 Head</button>
+                        <button class="btn btn-success btn-block" id="botaolancarWO" onclick="mostrarHead2Head()">Head 2 Head</button>
                     </div>
                 </div>
             </div>
@@ -339,6 +356,57 @@
                 </div>
 
             }
+
+            <div class="row exibir-inserirResultados" id="divHead2Head">
+                <div class="box box-warning">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Head 2 Head</h3>
+                    </div>
+                    <div class="box-body">
+                        <table class="table-bordered">
+                            <thead>
+                                <tr>
+                                    <th style="text-align:center">@Html.Raw(Model.desafiado.nome)</th>
+                                    <th></th>
+                                    <th style="text-align:center">@Html.Raw(Model.desafiante.nome)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="col-md-2" style="text-align:center">@Html.Raw(DateTime.Now.Year - Model.desafiado.dataNascimento.Year)</td>
+                                    <td class="col-md-2" style="text-align:center">Idade</td>
+                                    <td class="col-md-2" style="text-align:center">@Html.Raw(DateTime.Now.Year - Model.desafiante.dataNascimento.Year)</td>
+                                </tr>
+                                <tr style="background-color:#e6e5e5;">
+                                    <td style="text-align:center;">@Html.Raw(Model.desafiado.naturalidade)</td>
+                                    <td style="text-align:center">Naturalidade</td>
+                                    <td style="text-align:center">@Html.Raw(Model.desafiante.naturalidade)</td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align:center">@Html.Raw(Model.desafiado.lateralidade)</td>
+                                    <td style="text-align:center">Lateralidade</td>
+                                    <td style="text-align:center">@Html.Raw(Model.desafiante.lateralidade)</td>
+                                </tr>
+                                <tr style="background-color:#e6e5e5;">
+                                    <td style="text-align:center">@Html.Raw(Model.desafiado.altura2)</td>
+                                    <td style="text-align:center">Altura</td>
+                                    <td style="text-align:center">@Html.Raw(Model.desafiante.altura2)</td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align:center">@Html.Raw(Model.desafiado.classe.nome)</td>
+                                    <td style="text-align:center">Classe</td>
+                                    <td style="text-align:center">@Html.Raw(Model.desafiante.classe.nome)</td>
+                                </tr>
+                                <tr style="background-color:#e6e5e5;">
+                                    <td style="text-align:center">@Html.Raw(Model.desafiado.dataInicioRancking.Month + "/" + Model.desafiado.dataInicioRancking.Year)</td>
+                                    <td style="text-align:center">Início no ranking</td>
+                                    <td style="text-align:center">@Html.Raw(Model.desafiante.dataInicioRancking.Month + "/" + Model.desafiante.dataInicioRancking.Year)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 }
@@ -393,6 +461,7 @@
                 document.getElementById("divLancarWO").classList.remove("show");
                 document.getElementById("divAcoes").classList.remove("hide");
                 document.getElementById("divAcoes").classList.remove("container-dashboard");
+                document.getElementById("divHead2Head").classList.remove("show");
                 element.classList.add("show");
             }
         }
@@ -404,6 +473,7 @@
                 document.getElementById("divMarcarJogo").classList.remove("show");
                 document.getElementById("divLancarWO").classList.remove("show");
                 document.getElementById("divAcoes").classList.remove("hide");
+                document.getElementById("divHead2Head").classList.remove("show");
                 element.classList.add("show");
             }
         }
@@ -414,6 +484,19 @@
             } else {
                 document.getElementById("divMarcarJogo").classList.remove("show");
                 document.getElementById("divInserirResultado").classList.remove("show");
+                document.getElementById("divAcoes").classList.remove("hide");
+                document.getElementById("divHead2Head").classList.remove("show");
+                element.classList.add("show");
+            }
+        }
+        function mostrarHead2Head() {
+            var element = document.getElementById("divHead2Head");
+            if (element.classList.contains("show")) {
+                element.classList.remove("show");
+            } else {
+                document.getElementById("divMarcarJogo").classList.remove("show");
+                document.getElementById("divInserirResultado").classList.remove("show");
+                document.getElementById("divLancarWO").classList.remove("show");
                 document.getElementById("divAcoes").classList.remove("hide");
                 element.classList.add("show");
             }
