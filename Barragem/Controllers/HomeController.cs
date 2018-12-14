@@ -411,6 +411,7 @@ namespace Barragem.Controllers
                 {
                     jogo = db.Jogo.Where(u => (u.desafiado_id == usuario.UserId || u.desafiante_id == usuario.UserId) && u.torneioId == null)
                              .OrderByDescending(u => u.Id).Take(1).Single();
+                    ViewBag.isRodadaAtual = true;
                 }
                 catch (System.InvalidOperationException e)
                 {
@@ -420,6 +421,7 @@ namespace Barragem.Controllers
             else
             {
                 jogo = db.Jogo.Find(idJogo);
+                ViewBag.isRodadaAtual = false;
             }
             if (jogo != null)
             {
@@ -476,9 +478,39 @@ namespace Barragem.Controllers
 
 
             // últimos jogos já finalizados
-            var ultimosJogosFinalizados = db.Jogo.Where(u => (u.desafiado_id == usuario.UserId || u.desafiante_id == usuario.UserId) && !u.rodada.isAberta
-                && (u.situacao_Id == 4 || u.situacao_Id == 5)).OrderByDescending(u => u.Id).Take(5).ToList();
-            ViewBag.JogosFinalizados = ultimosJogosFinalizados;
+            //var ultimosJogosFinalizados = db.Jogo.Where(u => (u.desafiado_id == usuario.UserId || u.desafiante_id == usuario.UserId) && !u.rodada.isAberta
+            //    && (u.situacao_Id == 4 || u.situacao_Id == 5)).OrderByDescending(u => u.Id).Take(5).ToList();
+            //ViewBag.JogosFinalizados = ultimosJogosFinalizados;
+
+            List<Rancking> ranckingJogadorDesafiado = db.Rancking.Where(r => r.userProfile_id == jogo.desafiado_id).OrderByDescending(r => r.rodada_id).ToList();
+            ViewBag.RanckingDesafiado = ranckingJogadorDesafiado;
+            List<Rancking> ranckingJogadorDesafiante = db.Rancking.Where(r => r.userProfile_id == jogo.desafiante_id).OrderByDescending(r => r.rodada_id).ToList();
+            ViewBag.RanckingDesafiante = ranckingJogadorDesafiante;
+            //List<Jogo> jogosJogador = db.Jogo.Where(r => r.desafiante_id == userId || r.desafiado_id == userId)
+            //    .OrderByDescending(r => r.rodada_id).ToList();
+            //ViewBag.jogosJogador = jogosJogador;
+
+            if (ranckingJogadorDesafiado.Count > 0)
+            {
+                ViewBag.posicaoDesafiado = ranckingJogadorDesafiado[0].posicao + "º";
+                //ViewBag.pontos = Math.Round(ranckingJogador[0].totalAcumulado, 2);
+            }
+            else
+            {
+                //ViewBag.pontos = 0;
+                ViewBag.posicaoDesafiado = "sem ranking";
+            }
+
+            if (ranckingJogadorDesafiante.Count > 0)
+            {
+                ViewBag.posicaoDesafiante = ranckingJogadorDesafiante[0].posicao + "º";
+                //ViewBag.pontos = Math.Round(ranckingJogador[0].totalAcumulado, 2);
+            }
+            else
+            {
+                //ViewBag.pontos = 0;
+                ViewBag.posicaoDesafiante = "sem ranking";
+            }
 
             return View(jogo);
 

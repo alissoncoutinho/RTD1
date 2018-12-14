@@ -58,6 +58,12 @@
     <div class="container-dashboard">
 
         <div class="container-fluid">
+            
+            @if (ViewBag.isRodadaAtual)
+            {
+                <h3><b>Rodada Atual</b></h3>
+            }
+            
             <div class="row" align="left">
 
 
@@ -95,9 +101,9 @@
 
 
 
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-sm-5">
+        <div class="container-dashboard">
+            <div class="row clearfix">
+                <div class="col-md-5 col-xs-6">
                     @if ((Model.desafiado_id != 0) && (Model.desafiado.foto != null))
                     {
                         <img class="img-responsive center-block" src="@Url.Action("BuscaFoto", "Account", new { id = Model.desafiado_id })" style="width: 148px; height: 198px;" />
@@ -108,7 +114,7 @@
                     }
                     <center>
                         <p id='jogo'>
-                            Desafiado <br>(@ViewBag.ptDefendidosDesafiado):<br>
+                            Desafiado <br>(@ViewBag.ptDefendidosDesafiado)<br>#@ViewBag.posicaoDesafiado<br>
                             @if (Model.desafiado_id == 0)
                             {
                                 @Html.Raw("Aguardando Adversário");
@@ -126,10 +132,10 @@
                     </center>
                     @Html.HiddenFor(model => model.desafiado_id)
                 </div>
-                <div class="col-sm-2">
-                    <center><h1 class="box-title">X</h1></center>
+                <div class="col-md-2 exibir-imagem">
+                    <center><h1>X</h1></center>
                 </div>
-                <div class="col-sm-5">
+                <div class="col-md-5 col-xs-6">
                     @if ((Model.desafiante_id != 0) && (Model.desafiante.foto != null))
                     {
                         <img class="img-responsive center-block" src="@Url.Action("BuscaFoto", "Account", new { id = Model.desafiante_id })" style="width:148px;height:198px;" />
@@ -140,7 +146,7 @@
                     }
                     <center>
                         <p id='jogo'>
-                            Desafiante<br> (@ViewBag.ptDefendidosDesafiante):<br>
+                            Desafiante<br> (@ViewBag.ptDefendidosDesafiante)<br>#@ViewBag.posicaoDesafiante<br>
                             @if (Model.desafiante_id == 0)
                             {
                                 if (Model.faseTorneio == 1)
@@ -177,7 +183,14 @@
                         <button class="btn btn-success btn-block" id="botaomarcarJogo" onclick="mostrarMarcarJogo()">Marcar jogo</button>
                     </div>
                     <div class="col-sm-3">
-                        <button class="btn btn-success btn-block" id="botaoinserirResultado" onclick="mostrarInserirResultado()">Inserir resultado</button>
+                        @if (Model.situacao_Id == 4)
+                        {
+                            <button class="btn btn-success btn-block" id="botaoinserirResultado" onclick="mostrarInserirResultado()">Alterar resultado</button>
+                        }
+                        else
+                        {
+                            <button class="btn btn-success btn-block" id="botaoinserirResultado" onclick="mostrarInserirResultado()">Inserir resultado</button>
+                        }
                     </div>
                     <div class="col-sm-3">
                         <button class="btn btn-success btn-block" id="botaolancarWO" onclick="mostrarLancarWO()">Lançar WO</button>
@@ -235,7 +248,8 @@
                                 </span>
                             </div>
                         </div>
-                        <input type="submit" class="btn btn-primary btn-small" id="button_marcarJogo" value="Salvar" />
+                        <center><input type="submit" class="btn btn-primary" id="button_marcarJogo" value="Salvar" /></center>
+
                     </div>
                 </div>
 
@@ -257,7 +271,14 @@
                     <div class="row exibir-inserirResultados" id="divInserirResultado">
                         <div class="box box-warning">
                             <div class="box-header with-border">
-                                <h3 class="box-title">Inserir resultado</h3>
+                                @if (Model.situacao_Id == 4)
+                                {
+                                    <h3 class="box-title">Alterar resultado</h3>
+                                }
+                                else
+                                {
+                                    <h3 class="box-title">Inserir resultado</h3>
+                                }
                             </div>
                             <div class="box-body">
                                 <div class="row clearfix">
@@ -312,7 +333,7 @@
                                 {
                                     if ((ViewBag.Editar == null) || (ViewBag.Editar))
                                     {
-                                        <input type="submit" class="btn btn-primary btn-small" id="submeter" value="Salvar" />
+                                        <center><input type="submit" class="btn btn-primary btn-small" id="submeter" value="Salvar" /></center>
                                     }
                                     else
                                     {
@@ -351,7 +372,7 @@
                             <br>
                             <input type="radio" name="vencedorWO" value=@Html.Raw(Model.desafiante_id)> @Html.Raw(Model.desafiante.nome)<br>
                         </div>
-                        <input type="submit" class="btn btn-primary btn-small" id="button_lancarWO" value="Salvar" />
+                        <center><input type="submit" class="btn btn-primary btn-small" id="button_lancarWO" value="Salvar" /></center>
                     </div>
                 </div>
 
@@ -363,47 +384,50 @@
                         <h3 class="box-title">Head 2 Head</h3>
                     </div>
                     <div class="box-body">
-                        <table class="table-bordered">
-                            <thead>
-                                <tr>
-                                    <th style="text-align:center">@Html.Raw(Model.desafiado.nome)</th>
-                                    <th></th>
-                                    <th style="text-align:center">@Html.Raw(Model.desafiante.nome)</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td class="col-md-2" style="text-align:center">@Html.Raw(DateTime.Now.Year - Model.desafiado.dataNascimento.Year)</td>
-                                    <td class="col-md-2" style="text-align:center">Idade</td>
-                                    <td class="col-md-2" style="text-align:center">@Html.Raw(DateTime.Now.Year - Model.desafiante.dataNascimento.Year)</td>
-                                </tr>
-                                <tr style="background-color:#e6e5e5;">
-                                    <td style="text-align:center;">@Html.Raw(Model.desafiado.naturalidade)</td>
-                                    <td style="text-align:center">Naturalidade</td>
-                                    <td style="text-align:center">@Html.Raw(Model.desafiante.naturalidade)</td>
-                                </tr>
-                                <tr>
-                                    <td style="text-align:center">@Html.Raw(Model.desafiado.lateralidade)</td>
-                                    <td style="text-align:center">Lateralidade</td>
-                                    <td style="text-align:center">@Html.Raw(Model.desafiante.lateralidade)</td>
-                                </tr>
-                                <tr style="background-color:#e6e5e5;">
-                                    <td style="text-align:center">@Html.Raw(Model.desafiado.altura2)</td>
-                                    <td style="text-align:center">Altura</td>
-                                    <td style="text-align:center">@Html.Raw(Model.desafiante.altura2)</td>
-                                </tr>
-                                <tr>
-                                    <td style="text-align:center">@Html.Raw(Model.desafiado.classe.nome)</td>
-                                    <td style="text-align:center">Classe</td>
-                                    <td style="text-align:center">@Html.Raw(Model.desafiante.classe.nome)</td>
-                                </tr>
-                                <tr style="background-color:#e6e5e5;">
-                                    <td style="text-align:center">@Html.Raw(Model.desafiado.dataInicioRancking.Month + "/" + Model.desafiado.dataInicioRancking.Year)</td>
-                                    <td style="text-align:center">Início no ranking</td>
-                                    <td style="text-align:center">@Html.Raw(Model.desafiante.dataInicioRancking.Month + "/" + Model.desafiante.dataInicioRancking.Year)</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <center>
+                            <table class="table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th style="text-align:center">@Html.Raw(Model.desafiado.nome)</th>
+                                        <th></th>
+                                        <th style="text-align:center">@Html.Raw(Model.desafiante.nome)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="col-md-2" style="text-align:center">@Html.Raw(DateTime.Now.Year - Model.desafiado.dataNascimento.Year)</td>
+                                        <td class="col-md-2" style="text-align:center">Idade</td>
+                                        <td class="col-md-2" style="text-align:center">@Html.Raw(DateTime.Now.Year - Model.desafiante.dataNascimento.Year)</td>
+                                    </tr>
+                                    <tr style="background-color:#e6e5e5;">
+                                        <td style="text-align:center;">@Html.Raw(Model.desafiado.naturalidade)</td>
+                                        <td style="text-align:center">Naturalidade</td>
+                                        <td style="text-align:center">@Html.Raw(Model.desafiante.naturalidade)</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="text-align:center">@Html.Raw(Model.desafiado.lateralidade)</td>
+                                        <td style="text-align:center">Lateralidade</td>
+                                        <td style="text-align:center">@Html.Raw(Model.desafiante.lateralidade)</td>
+                                    </tr>
+                                    <tr style="background-color:#e6e5e5;">
+                                        <td style="text-align:center">@Html.Raw(Model.desafiado.altura2)</td>
+                                        <td style="text-align:center">Altura</td>
+                                        <td style="text-align:center">@Html.Raw(Model.desafiante.altura2)</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="text-align:center">@Html.Raw(Model.desafiado.dataInicioRancking.Month + "/" + Model.desafiado.dataInicioRancking.Year)</td>
+                                        <td style="text-align:center">Entrada no ranking</td>
+                                        <td style="text-align:center">@Html.Raw(Model.desafiante.dataInicioRancking.Month + "/" + Model.desafiante.dataInicioRancking.Year)</td>
+                                    </tr>
+                                    <tr style="background-color:#e6e5e5;">
+                                        <td style="text-align:center">@Html.Raw(Model.desafiado.classe.nome)</td>
+                                        <td style="text-align:center">Classe</td>
+                                        <td style="text-align:center">@Html.Raw(Model.desafiante.classe.nome)</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </center>
+                        
                     </div>
                 </div>
             </div>
@@ -411,11 +435,40 @@
     </div>
 }
 
-
-
-
-
-
+@if (ViewBag.JogosPendentes != null)
+{
+    <div class="container-dashboard">
+        <div class="container-fluid">
+            <legend>
+                @Html.Raw("Jogos Pendentes")
+            </legend>
+            <div class="row">
+                @if (ViewBag.JogosPendentes != null)
+                {
+                    List<Barragem.Models.Jogo> jogosP = ViewBag.JogosPendentes;
+                    foreach (var item in jogosP)
+                    {
+                        <a href="@Url.Action("Index3", new { idJogo = @item.Id })" title="informar resultado">
+                            <div class="col-sm-4">
+                                <h4 style="color:forestgreen">Rodada @Html.DisplayFor(modelItem => item.rodada.codigoSeq)</h4>
+                                <div class="row">
+                                    <div class="col-md-4 column">
+                                        <img class="img-responsive" src="/Content/image/JogoPendente.png">
+                                    </div>
+                                    <div class="col-md-5 column">
+                                        <div class="row">@Html.DisplayFor(modelItem => item.desafiado.nome)</div>
+                                        <div class="row"><span style="text-align:center">X</span></div>
+                                        <div class="row">@Html.DisplayFor(modelItem => item.desafiante.nome)</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+}
 
 @using (Html.BeginForm("AtualizaStatus", "Account", FormMethod.Post, new { @enctype = "multipart/form-data" }))
 {
@@ -423,19 +476,27 @@
     <div class="container-dashboard">
         <div class="box box-success">
             <div class="box-header with-border">
-                <h3 class="box-title">Status Atual</h3>
+                <h3 class="box-title">@Html.Raw("Status atual do jogador: "+ViewBag.situacaoJogador)</h3>
             </div>
             <div class="box-body">
-                <select id="situacao" name="situacao">
-                    <option value="ativo" @if (ViewBag.situacaoJogador.Equals("ativo")) { @Html.Raw("selected") }>
-                        ativo
-                    </option>
-                    <option value="licenciado" @if (ViewBag.situacaoJogador.Equals("licenciado")) { @Html.Raw("selected") }>
-                        licenciado
-                    </option>
-                </select>
-                <input type="hidden" name="userId" value="@Html.Raw(ViewBag.userId)">
-                <input type="submit" class="btn btn-primary btn-small" id="submeter" value="Salvar" />
+                @if (ViewBag.situacaoJogador == "ativo" || ViewBag.situacaoJogador == "licenciado")
+                {
+                    <select id="situacao" name="situacao">
+                        <option value="ativo" @if (ViewBag.situacaoJogador.Equals("ativo")) { @Html.Raw("selected") }>
+                            ativo
+                        </option>
+                        <option value="licenciado" @if (ViewBag.situacaoJogador.Equals("licenciado")) { @Html.Raw("selected") }>
+                            licenciado
+                        </option>
+                    </select>
+                    <input type="hidden" name="userId" value="@Html.Raw(ViewBag.userId)">
+                    <input type="submit" class="btn btn-primary btn-small" id="submeter" value="Salvar" />
+                }
+                else
+                {
+                    <input type="text" name="situacao" value=@Html.Raw(ViewBag.situacaoJogador) disabled>
+                }
+
             </div>
         </div>
     </div>
