@@ -180,7 +180,7 @@
                 <h5><label>Ações</label></h5>
                 <div class="row">
                     <div class="col-sm-3">
-                        <button class="btn btn-success btn-block" id="botaomarcarJogo" onclick="mostrarMarcarJogo()">Marcar jogo</button>
+                        <button class="btn btn-success btn-block" id="botaomarcarJogo" onclick="mostrarMarcarJogo()">Marcar horário</button>
                     </div>
                     <div class="col-sm-3">
                         @if (Model.situacao_Id == 4)
@@ -236,7 +236,7 @@
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label class="control-label col-sm-3">Hora</label>
+                                        <label class="control-label col-sm-2">Hora</label>
                                         <div class="col-sm-2">
                                             <div class="input-group">
                                                 <div class="form-group col-sm-2">
@@ -245,10 +245,21 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-2">Local</label>
+                                        <div class="col-sm-2">
+                                            <div class="input-group">
+                                                <div class="form-group col-sm-2">
+                                                    <input id="LocalJogo" name="LocalJogo" value="" type="text" class="form-control col-sm-2" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </span>
                             </div>
+                            <center><input type="submit" class="btn btn-primary" id="button_marcarJogo" value="Salvar" /></center>
                         </div>
-                        <center><input type="submit" class="btn btn-primary" id="button_marcarJogo" value="Salvar" /></center>
+                        
 
                     </div>
                 </div>
@@ -288,11 +299,11 @@
                                 </div>
                                 <div class="row clearfix">
                                     <div id="set1" class="form-group col-md-4 col-xs-6 pull-right">
-                                        @Html.TextBoxFor(model => model.qtddGames1setDesafiante, new { @class = "form-control input-lg", @placeholder = "1º set" })
+                                        @Html.TextBoxFor(model => model.qtddGames1setDesafiante, new { @class = "form-control input-lg", @type = "number" })
                                         @Html.ValidationMessageFor(model => model.qtddGames1setDesafiante)
                                     </div>
                                     <div id="set1_2" class="form-group col-md-4 col-xs-6 pull-right">
-                                        @Html.TextBoxFor(model => model.qtddGames1setDesafiado, new { @class = "form-control input-lg", @placeholder = "1º set" })
+                                        @Html.TextBoxFor(model => model.qtddGames1setDesafiado, new { @class = "form-control input-lg", @type = "number" })
                                         @Html.ValidationMessageFor(model => model.qtddGames1setDesafiado)
                                     </div>
                                 </div>
@@ -303,11 +314,11 @@
                                 </div>
                                 <div class="row clearfix">
                                     <div id="set2" class="form-group col-md-4 col-xs-6 pull-right">
-                                        @Html.TextBoxFor(model => model.qtddGames2setDesafiante, new { @class = "form-control input-lg", @placeholder = "2º set" })
+                                        @Html.TextBoxFor(model => model.qtddGames2setDesafiante, new { @class = "form-control input-lg", @type = "number" })
                                         @Html.ValidationMessageFor(model => model.qtddGames2setDesafiante)
                                     </div>
                                     <div id="set2_2" class="form-group col-md-4 col-xs-6 pull-right">
-                                        @Html.TextBoxFor(model => model.qtddGames2setDesafiado, new { @class = "form-control input-lg", @placeholder = "2º set" })
+                                        @Html.TextBoxFor(model => model.qtddGames2setDesafiado, new { @class = "form-control input-lg", @type = "number" })
                                         @Html.ValidationMessageFor(model => model.qtddGames2setDesafiado)
                                     </div>
                                 </div>
@@ -318,29 +329,30 @@
                                 </div>
                                 <div class="row clearfix">
                                     <div id="set3" class="form-group col-md-4 col-xs-6 pull-right">
-                                        @Html.TextBoxFor(model => model.qtddGames3setDesafiante, new { @class = "form-control input-lg", @placeholder = "3º set" })
+                                        @Html.TextBoxFor(model => model.qtddGames3setDesafiante, new { @class = "form-control input-lg", @type = "number" })
                                         @Html.ValidationMessageFor(model => model.qtddGames2setDesafiante)
                                     </div>
                                     <div id="set3_2" class="form-group col-md-4 col-xs-6 pull-right">
-                                        @Html.TextBoxFor(model => model.qtddGames3setDesafiado, new { @class = "form-control input-lg", @placeholder = "3º set" })
+                                        @Html.TextBoxFor(model => model.qtddGames3setDesafiado, new { @class = "form-control input-lg", @type = "number" })
                                         @Html.ValidationMessageFor(model => model.qtddGames3setDesafiado)
                                     </div>
 
                                 </div>
+                                <p>
+                                    @if ((Model.desafiante_id != 0) && (Model.desafiado_id != 0))
+                                    {
+                                        if ((ViewBag.Editar == null) || (ViewBag.Editar))
+                                        {
+                                            <center><input type="submit" class="btn btn-primary btn-small" id="submeter" value="Salvar" /></center>
+                                        }
+                                        else
+                                        {
+                                            @Html.Raw("<b>Rodada Já Encerrada.</b>")
+                                        }
+                                    }
+                                </p>
                             </div>
-                            <p>
-                                @if ((Model.desafiante_id != 0) && (Model.desafiado_id != 0))
-                                {
-                                    if ((ViewBag.Editar == null) || (ViewBag.Editar))
-                                    {
-                                        <center><input type="submit" class="btn btn-primary btn-small" id="submeter" value="Salvar" /></center>
-                                    }
-                                    else
-                                    {
-                                        @Html.Raw("<b>Rodada Já Encerrada.</b>")
-                                    }
-                                }
-                            </p>
+                            
                         </div>
                     </div>
                 </div>
@@ -371,8 +383,9 @@
                             <input type="radio" name="vencedorWO" value=@Html.Raw(Model.desafiado_id) checked> @Html.Raw(Model.desafiado.nome)<br>
                             <br>
                             <input type="radio" name="vencedorWO" value=@Html.Raw(Model.desafiante_id)> @Html.Raw(Model.desafiante.nome)<br>
+                            <center><input type="submit" class="btn btn-primary btn-small" id="button_lancarWO" value="Salvar" /></center>
                         </div>
-                        <center><input type="submit" class="btn btn-primary btn-small" id="button_lancarWO" value="Salvar" /></center>
+                        
                     </div>
                 </div>
 
@@ -385,50 +398,57 @@
                     </div>
                     <div class="box-body">
                         <center>
-                            <table class="table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th style="text-align:center">@Html.Raw(Model.desafiado.nome)</th>
-                                        <th></th>
-                                        <th style="text-align:center">@Html.Raw(Model.desafiante.nome)</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td class="col-md-2" style="text-align:center">@Html.Raw(DateTime.Now.Year - Model.desafiado.dataNascimento.Year)</td>
-                                        <td class="col-md-2" style="text-align:center">Idade</td>
-                                        <td class="col-md-2" style="text-align:center">@Html.Raw(DateTime.Now.Year - Model.desafiante.dataNascimento.Year)</td>
-                                    </tr>
-                                    <tr style="background-color:#e6e5e5;">
-                                        <td style="text-align:center;">@Html.Raw(Model.desafiado.naturalidade)</td>
-                                        <td style="text-align:center">Naturalidade</td>
-                                        <td style="text-align:center">@Html.Raw(Model.desafiante.naturalidade)</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="text-align:center">@Html.Raw(Model.desafiado.lateralidade)</td>
-                                        <td style="text-align:center">Lateralidade</td>
-                                        <td style="text-align:center">@Html.Raw(Model.desafiante.lateralidade)</td>
-                                    </tr>
-                                    <tr style="background-color:#e6e5e5;">
-                                        <td style="text-align:center">@Html.Raw(Model.desafiado.altura2)</td>
-                                        <td style="text-align:center">Altura</td>
-                                        <td style="text-align:center">@Html.Raw(Model.desafiante.altura2)</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="text-align:center">@Html.Raw(Model.desafiado.dataInicioRancking.Month + "/" + Model.desafiado.dataInicioRancking.Year)</td>
-                                        <td style="text-align:center">Entrada no ranking</td>
-                                        <td style="text-align:center">@Html.Raw(Model.desafiante.dataInicioRancking.Month + "/" + Model.desafiante.dataInicioRancking.Year)</td>
-                                    </tr>
-                                    <tr style="background-color:#e6e5e5;">
-                                        <td style="text-align:center">@Html.Raw(Model.desafiado.classe.nome)</td>
-                                        <td style="text-align:center">Classe</td>
-                                        <td style="text-align:center">@Html.Raw(Model.desafiante.classe.nome)</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </center>
-                        
-                    </div>
+                            <div style="position: relative; width:100px; height:100px;">
+                                <canvas id="text" style="z-index: 1; position : absolute; left: 0px; top: 0px;" height="100" width="100"></canvas>
+                                <canvas id="canvas" style="z-index: 2; position: absolute; left: 0px; top: 0px;" height="100" width="100"></canvas>
+                            </div>
+                            
+                                <table class="table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th style="text-align:center; color:#FDB45C">@Html.Raw(Model.desafiado.nome)</th>
+                                            <th style="text-align:center">
+                                                <!--canvas id="donut" width="100" height="100"></canvas-->
+                                            </th>
+                                            <th style="text-align:center;color:#46BFBD">@Html.Raw(Model.desafiante.nome)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="col-md-2" style="text-align:center">@Html.Raw(DateTime.Now.Year - Model.desafiado.dataNascimento.Year)</td>
+                                            <td class="col-md-2" style="text-align:center">Idade</td>
+                                            <td class="col-md-2" style="text-align:center">@Html.Raw(DateTime.Now.Year - Model.desafiante.dataNascimento.Year)</td>
+                                        </tr>
+                                        <tr style="background-color:#e6e5e5;">
+                                            <td style="text-align:center;">@Html.Raw(Model.desafiado.naturalidade)</td>
+                                            <td style="text-align:center">Naturalidade</td>
+                                            <td style="text-align:center">@Html.Raw(Model.desafiante.naturalidade)</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="text-align:center">@Html.Raw(Model.desafiado.lateralidade)</td>
+                                            <td style="text-align:center">Lateralidade</td>
+                                            <td style="text-align:center">@Html.Raw(Model.desafiante.lateralidade)</td>
+                                        </tr>
+                                        <tr style="background-color:#e6e5e5;">
+                                            <td style="text-align:center">@Html.Raw(Model.desafiado.altura2)</td>
+                                            <td style="text-align:center">Altura</td>
+                                            <td style="text-align:center">@Html.Raw(Model.desafiante.altura2)</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="text-align:center">@Html.Raw(Model.desafiado.dataInicioRancking.Month + "/" + Model.desafiado.dataInicioRancking.Year)</td>
+                                            <td style="text-align:center">Entrada no ranking</td>
+                                            <td style="text-align:center">@Html.Raw(Model.desafiante.dataInicioRancking.Month + "/" + Model.desafiante.dataInicioRancking.Year)</td>
+                                        </tr>
+                                        <tr style="background-color:#e6e5e5;">
+                                            <td style="text-align:center">@Html.Raw(Model.desafiado.classe.nome)</td>
+                                            <td style="text-align:center">Classe</td>
+                                            <td style="text-align:center">@Html.Raw(Model.desafiante.classe.nome)</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </center>
+
+</div>
                 </div>
             </div>
         </div>
@@ -451,9 +471,9 @@
                         <a href="@Url.Action("Index3", new { idJogo = @item.Id })" title="informar resultado">
                             <div class="col-sm-4">
                                 <h4 style="color:forestgreen">Rodada @Html.DisplayFor(modelItem => item.rodada.codigoSeq)</h4>
-                                <div class="row">
+                                <div class="row centralizar">
                                     <div class="col-md-4 column">
-                                        <img class="img-responsive" src="/Content/image/JogoPendente.png">
+                                        <img class="" src="/Content/image/JogoPendente.png">
                                     </div>
                                     <div class="col-md-5 column">
                                         <div class="row">@Html.DisplayFor(modelItem => item.desafiado.nome)</div>
@@ -479,6 +499,7 @@
                 <h3 class="box-title">@Html.Raw("Status atual do jogador: "+ViewBag.situacaoJogador)</h3>
             </div>
             <div class="box-body">
+                Alterar para: 
                 @if (ViewBag.situacaoJogador == "ativo" || ViewBag.situacaoJogador == "licenciado")
                 {
                     <select id="situacao" name="situacao">
@@ -507,8 +528,37 @@
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
     @Scripts.Render("~/bundles/jqueryform")
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>
 
     <script type="text/javascript">
+        var data = [
+            {
+                value: 50,
+                color: "#46BFBD",
+                highlight: "#5AD3D1",
+                label: "Desafiante"
+            },
+            {
+                value: 100,
+                color: "#FDB45C",
+                highlight: "#FFC870",
+                label: "Desafiado"
+            }
+        ]
+
+        var options = { showTooltips: true, percentageInnerCutout: 60 };
+
+        var chartCtx = $("#canvas").get(0).getContext("2d");
+        var chart = new Chart(chartCtx).Doughnut(data, options);
+        var textCtx = $("#text").get(0).getContext("2d");
+        textCtx.textAlign = "center";
+        textCtx.textBaseline = "middle";
+        textCtx.font = "15px sans-serif";
+        textCtx.color = "#46BFBD";
+        textCtx.fillText("VS", 50, 50);
+        
+
+        
         @if (ViewBag.Sucesso)
         {
             @Html.Raw("toastr.success('"+ViewBag.MsgAlerta+"');");

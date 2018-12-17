@@ -3778,3 +3778,7 @@ p#jogo {
     border-radius: 10px;
     background: #8b8778;
 }
+
+.centralizar.row {
+    text-align: center;
+}

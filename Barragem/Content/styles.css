@@ -3828,3 +3828,7 @@ p#set {
     opacity: 0;
     filter: alpha(opacity=0);
 }
+
+.centralizar.row {
+    text-align: center;
+}
