@@ -33,6 +33,9 @@ namespace Barragem.Models
         [Display(Name = "Hora")]
         public string horaJogo { get; set; }
 
+        [Display(Name = "Local")]
+        public string localJogo { get; set; }
+
         public string usuarioInformResultado { get; set; }
 
         [Display(Name = "Desafiante")]

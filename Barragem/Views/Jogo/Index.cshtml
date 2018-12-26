@@ -99,14 +99,14 @@
                     <td>
                         @if ((Roles.IsUserInRole("admin")) || (Roles.IsUserInRole("organizador")))
                             {
-                            <a href="@Url.Action("ControlarJogo", new {id = @item.Id })" title="Controlar Jogo" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-edit"></span></a>
+                                <a href="@Url.Action("Index3", "Home",new { idJogo = @item.Id })" title="Controlar Jogo" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-edit"></span></a>
                                 if ((@item.situacao_Id == 1) || (@item.desafiante.nome == "curinga"))
                                 {
-                            <a href="@Url.Action("Edit", new {id = @item.Id })" title="Mudar Jogador" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-retweet"></span></a>
+                                <a href="@Url.Action("Edit", new {id = @item.Id })" title="Mudar Jogador" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-retweet"></span></a>
                                 }
-                            }
-                        <!--a href="" title="Detalhes da Pertida" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-list"></span></a-->
-                    </td>
+                                }
+                                <!--a href="" title="Detalhes da Pertida" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-list"></span></a-->
+</td>
                 </tr>
                     }
                     else if (item.desafiado.classe.nivel > c.nivel) { break; }

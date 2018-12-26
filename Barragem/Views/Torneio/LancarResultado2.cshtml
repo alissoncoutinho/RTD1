@@ -3,124 +3,34 @@
     ViewBag.Title = "Controlar Jogo";
 
 }
-@if ((ViewBag.solicitarAtivacao == "solicitar ativacao") && (!ViewBag.SoTorneio))
-{
+
+@if (Model != null) { 
     <div class="container-dashboard">
-        <legend>@Html.Raw("Ranking")</legend>
-        <a class="btn btn-primary btn-danger" href="@Url.Action("../Account/SolicitarAtivacao", new { uName = User.Identity.Name })">
-            Solicitar Ativação no Ranking
-        </a>
-    </div>
-}
-@if ((ViewBag.solicitarAtivacao == "Ativamento solicitado") && (!String.IsNullOrEmpty(ViewBag.linkPagSeguro + "")))
-{
-    <div class="container-dashboard">
-        <legend>@Html.Raw("Ranking")</legend>
-        <a class="btn btn-primary btn-danger" href="@ViewBag.linkPagSeguro" target="_blank">
-            Efetuar Pagamento
-        </a>
-    </div>
-}
-
-@if (ViewBag.Torneio != null)
-{
-    Barragem.Models.Torneio torneio = ViewBag.Torneio;
-    <div class="container-dashboard">
-        <legend>@Html.Raw("Torneios Abertos")</legend>
-        <div class="row">
-            <div class="col-md-8">
-                <div class="row">
-                    <div class="col-sm-8 info-box-text">
-                        @Html.Raw(torneio.nome) De @Html.Raw(torneio.dataInicio.ToShortDateString()) a @Html.Raw(torneio.dataFim.ToShortDateString())
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-sm-8 info-box-text">
-                        @Html.Raw("Local: " + torneio.local + " - " + torneio.cidade) Inscrição até @Html.Raw(torneio.dataFimInscricoes.ToShortDateString())
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-2">
-                <div class="col-sm-12 pull-right">
-                    <a class="btn btn-primary" href="/Torneio/Detalhes/@torneio.Id">
-                        Saiba mais
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-}
-
-
-@if (Model != null)
-{
-
-    <div class="container-dashboard">
-        @if (ViewBag.isRodadaAtual){
-            <h4><b>Rodada Atual</b></h4>
-        }
-
-        <div class="row" align="left">
-            @if (Model.rodada != null){
-                if (Model.rodada.temporadaId != null){
-                    <div class="col-md-12 col-xs-12" align="left">
-                        @Html.Raw(ViewBag.Temporada+": "+ ViewBag.NumeroRodada)
-                    </div>
-                    <div class="col-md-2 col-xs-12" align="left">
-                        @Html.Raw("Até " + Model.rodada.dataFim.ToShortDateString())
-                    </div>
-                }
-                else
-                {
-                    <div class="col-md-5 col-xs-12" align="left">
-                        <h5>@Html.Raw("Rodada:" + Model.rodada.codigoSeq + "")</h5>
-                    </div>
-                }
-            }
-            @if (ViewBag.NomeTorneio != null)
-            {
-                <div class="col-md-5 col-xs-12" align="left">
-                    @Html.Raw(ViewBag.NomeTorneio)
-                </div>
-            }
-        </div>
+        <h4><b>@ViewBag.NomeTorneio</b></h4>
+        
         <h5>
             <label>Situação do jogo:</label> @Html.Raw(Model.situacao.descricao + " " + ViewBag.Placar)
         </h5>
-        
         <div class="container-dashboard formato-desktop">
             <div class="row clearfix formato-desktop">
                 <div class="col-md-2 col-xs-2">
-                    @if ((Model.desafiado_id != 0) && (Model.desafiado.fotoURL != null))
-                    {
+                    @if ((Model.desafiado_id != 0) && (Model.desafiado.fotoURL != null)){
                         <img class="img-responsive center-block" src="@Url.Action("BuscaFoto", "Account", new { id = Model.desafiado_id })" style="width: 148px; height: 198px;" />
-                    }
-                    else
-                    {
+                    }else{
                         <img class="img-responsive center-block" src="/Content/image/sem-foto.jpg" style="width: 148px; height: 198px;" />
                     }
-                    <center>
-                        <p id='jogo'>
-                            @ViewBag.ptDefendidosDesafiado
-                        </p>
-                    </center>
                     @Html.HiddenFor(model => model.desafiado_id)
                 </div>
                 <div class="col-md-3 col-xs-3">
                     <center>
                         <br><br>
                         <p id="jogo">
-                            Desafiado<br>
-                            @if (Model.desafiado_id == 0)
-                            {
+                            @if (Model.desafiado_id == 0){
                                 @Html.Raw("Aguardando Adversário");
-                            }
-                            else
-                            {
+                            }else{
                                 <a href="@Url.Action("../Account/Detalhes", new { userId = Model.desafiado_id })" title="Detalhes do jogador">
                                     <b style="font-size:15px">@Model.desafiado.nome</b>
-                                </a>
-                                <br>@Html.Raw("#" + ViewBag.posicaoDesafiado)<br>
+                                </a><br>
                                 <a href="@Model.desafiado.linkwhatsapp"><img width="25" height="25" src="/Content/image/whatsapp.png"></a>
                             }
                         </p>
@@ -133,24 +43,16 @@
                     <center>
                         <br><br>
                         <p id="jogo">
-                            Desafiante<br>
-                            @if (Model.desafiante_id == 0)
-                            {
-                                if (Model.faseTorneio == 1)
-                                {
+                            @if (Model.desafiante_id == 0){
+                                if (Model.faseTorneio == 1){
                                     @Html.Raw("Bye");
-                                }
-                                else
-                                {
+                                }else{
                                     @Html.Raw("Aguardando Adversário");
                                 }
-                            }
-                            else
-                            {
+                            }else{
                                 <a href="@Url.Action("../Account/Detalhes", new { userId = Model.desafiante_id })" title="Detalhes do jogador">
                                     <b style="font-size:15px">@Model.desafiante.nome</b>
-                                </a>
-                                <br>@Html.Raw("#" + ViewBag.posicaoDesafiante)<br>
+                                </a><br>
                                 <a href="@Model.desafiante.linkwhatsapp">
                                     <img width="25" height="25" src="/Content/image/whatsapp.png">
                                 </a>
@@ -159,19 +61,11 @@
                     </center>
                 </div>
                 <div class="col-md-2 col-xs-2">
-                    @if ((Model.desafiante_id != 0) && (Model.desafiante.fotoURL != null))
-                    {
+                    @if ((Model.desafiante_id != 0) && (Model.desafiante.fotoURL != null)){
                         <img class="img-responsive center-block" src="@Url.Action("BuscaFoto", "Account", new { id = Model.desafiante_id })" style="width:148px;height:198px;" />
-                    }
-                    else
-                    {
+                    }else{
                         <img class="img-responsive center-block" src="/Content/image/sem-foto.jpg" style="width: 148px; height: 198px;" />
                     }
-                    <center>
-                        <p id='jogo'>
-                            @ViewBag.ptDefendidosDesafiante
-                        </p>
-                    </center>
                     @Html.HiddenFor(model => model.desafiante_id)
                 </div>
             </div>
@@ -180,26 +74,16 @@
             <div class="row">
                 <div class="col-xs-1 col-mobile" style="color:white">.</div>
                 <div class="col-xs-5 col-mobile">
-                    <p id="jogo">
-                        Desafiado @Html.Raw("#" + ViewBag.posicaoDesafiado)
-                    </p>
-                    @if ((Model.desafiado_id != 0) && (Model.desafiado.fotoURL != null))
-                    {
+                    @if ((Model.desafiado_id != 0) && (Model.desafiado.fotoURL != null)){
                         <img class="img-responsive center-block" src="@Url.Action("BuscaFoto", "Account", new { id = Model.desafiado_id })" style="width: 148px; height: 198px;" />
-                    }
-                    else
-                    {
+                    }else{
                         <img class="img-responsive center-block" src="/Content/image/sem-foto.jpg" style="width: 148px; height: 198px;" />
                     }
                 </div>
                 <div class="col-xs-5 col-mobile">
-                    <p id="jogo">Desafiante @Html.Raw("#" + ViewBag.posicaoDesafiante)</p>
-                    @if ((Model.desafiante_id != 0) && (Model.desafiante.fotoURL != null))
-                    {
+                    @if ((Model.desafiante_id != 0) && (Model.desafiante.fotoURL != null)){
                         <img class="img-responsive center-block" src="@Url.Action("BuscaFoto", "Account", new { id = Model.desafiante_id })" style="width: 148px; height: 198px;" />
-                    }
-                    else
-                    {
+                    }else{
                         <img class="img-responsive center-block" src="/Content/image/sem-foto.jpg" style="width: 148px; height: 198px;" />
                     }
                 </div>
@@ -209,36 +93,26 @@
                 <div class="col-xs-5 col-mobile">
                     <p id="jogo">
                         <a href="@Model.desafiado.linkwhatsapp"><img width="25" height="25" src="/Content/image/whatsapp.png"></a>
-                        @if (Model.desafiado_id == 0)
-                        {
+                        @if (Model.desafiado_id == 0){
                             @Html.Raw("Aguardando Adversário");
-                        }
-                        else
-                        {
+                        }else{
                             <a href="@Url.Action("../Account/Detalhes", new { userId = Model.desafiado_id })" title="Detalhes do jogador">
                                 @Model.desafiado.nome
                             </a>
                         }
-                        <br>
-                        @ViewBag.ptDefendidosDesafiado
                     </p>
                 </div>
                 @Html.HiddenFor(model => model.desafiado_id)
                 <div class="col-xs-5 col-mobile">
                     <p id="jogo">
                         <a href="@Model.desafiante.linkwhatsapp"><img width="25" height="25" src="/Content/image/whatsapp.png"></a>
-                        @if (Model.desafiante_id == 0)
-                        {
+                        @if (Model.desafiante_id == 0){
                             @Html.Raw("Aguardando Adversário");
-                        }
-                        else
-                        {
+                        }else{
                             <a href="@Url.Action("../Account/Detalhes", new { userId = Model.desafiante_id })" title="Detalhes do jogador">
                                 @Model.desafiante.nome
                             </a>
                         }
-                        <br>
-                        @ViewBag.ptDefendidosDesafiante
                     </p>
                 </div>
                 @Html.HiddenFor(model => model.desafiante_id)
@@ -250,7 +124,7 @@
             <h5><label>Ações</label></h5>
             <div class="row">
                 <div class="col-sm-3">
-                    <button class="btn btn-success btn-block" id="botaomarcarJogo" @if(Model.situacao_Id == 4 || Model.situacao_Id == 5) { @Html.Raw("disabled") } onclick="mostrarMarcarJogo()">Marcar horário</button>
+                    <button class="btn btn-success btn-block" id="botaomarcarJogo" @if (Model.situacao_Id == 4 || Model.situacao_Id == 5) { @Html.Raw("disabled")  } onclick="mostrarMarcarJogo()">Marcar horário</button>
                 </div>
                 <div class="col-sm-3">
                     @if (Model.situacao_Id == 4)
@@ -263,10 +137,7 @@
                     }
                 </div>
                 <div class="col-sm-3">
-                    <button class="btn btn-success btn-block" id="botaolancarWO"@if (Model.situacao_Id == 4) {@Html.Raw("disabled") } onclick="mostrarLancarWO()">Lançar WO</button>
-                </div>
-                <div class="col-sm-3">
-                    <button class="btn btn-success btn-block" id="botaolancarWO" onclick="mostrarHead2Head()">Head 2 Head</button>
+                    <button class="btn btn-success btn-block" id="botaolancarWO" @if (Model.situacao_Id == 4) { @Html.Raw("disabled")  } onclick="mostrarLancarWO()">Lançar WO</button>
                 </div>
             </div>
         </div>
@@ -465,9 +336,10 @@
                                 <input type="radio" name="vencedorWO" value=@Html.Raw(Model.desafiante_id)> @Html.Raw(Model.desafiante.nome)<br>
                             </div>
                             <div class="col-md-2 col-xs-12">
-                                @if ((ViewBag.Editar == null) || (ViewBag.Editar)){
+                                @if ((ViewBag.Editar == null) || (ViewBag.Editar))
+                                {
                                     <input type="submit" class="btn btn-primary btn-small" id="button_lancarWO" value="Salvar" />
-                                 }
+                                }
                             </div>
                         </div>
                     </div>
@@ -475,105 +347,9 @@
             </div>
 
         }
-
-        <div class="row exibir-headtohead" id="divHead2Head">
-            <div class="box box-warning">
-                <div class="box-header with-border">
-                    <h3 class="box-title">Head 2 Head</h3>
-                </div>
-                <div class="box-body">
-                    <div class="row centralizar">
-                        <div class="col-md-4">@Html.Raw(Model.desafiado.nome)</div>
-                        <div class="col-md-1">
-                            <div style="color:#FDB45C; font-size:26px">@ViewBag.qtddVitoriasDesafiado</div>
-                            <div style="font-size:11px">Vitórias</div>
-                        </div>
-                        <div class="col-md-2 col-md-offset-0 col-xs-6 col-xs-offset-3">
-                            <canvas id="canvas" height="100" width="100"></canvas>
-                        </div>
-                        <div class="col-md-1 col-xs-12">
-                            <div style="color:#46BFBD; font-size:26px">@ViewBag.qtddVitoriasDesafiante</div>
-                            <div style="font-size:11px">Vitórias</div>
-                        </div>
-                        <div class="col-md-4 col-xs-12">@Html.Raw(Model.desafiante.nome)</div>
-
-                    </div>
-                    <br>
-                    <div class="col-md-12 col-xs-12">
-                        <div class="row centralizar" style="background-color:#e6e5e5;">
-                            <div class="col-md-4 col-xs-3" style="text-align:center">@Html.Raw(DateTime.Now.Year - Model.desafiado.dataNascimento.Year)</div>
-                            <div class="col-md-4 col-xs-6" style="text-align:center"><p id="jogo">Idade</p></div>
-                            <div class="col-md-4 col-xs-3" style="text-align:center">@Html.Raw(DateTime.Now.Year - Model.desafiante.dataNascimento.Year)</div>
-                        </div>
-                        <div class="row centralizar">
-                            <div class="col-md-4 col-xs-4" style="text-align:center">@Html.Raw(Model.desafiado.naturalidade)</div>
-                            <div class="col-md-4 col-xs-4" style="text-align:center"><p id="jogo">Natural</p></div>
-                            <div class="col-md-4 col-xs-4" style="text-align:center">@Html.Raw(Model.desafiante.naturalidade)</div>
-                        </div>
-                        <div class="row centralizar" style="background-color:#e6e5e5;">
-                            <div class="col-md-4 col-xs-4" style="text-align:center">@Html.Raw(Model.desafiado.lateralidade)</div>
-                            <div class="col-md-4 col-xs-4" style="text-align:center"><p id="jogo">Lateral</p></div>
-                            <div class="col-md-4 col-xs-4" style="text-align:center">@Html.Raw(Model.desafiante.lateralidade)</div>
-                        </div>
-                        <div class="row centralizar">
-                            <div class="col-md-4 col-xs-4" style="text-align:center">@Html.Raw(Model.desafiado.altura2)</div>
-                            <div class="col-md-4 col-xs-4" style="text-align:center"><p id="jogo">Altura</p></div>
-                            <div class="col-md-4 col-xs-4" style="text-align:center">@Html.Raw(Model.desafiante.altura2)</div>
-                        </div>
-                        <div class="row centralizar" style="background-color:#e6e5e5;">
-                            <div class="col-md-4 col-xs-4" style="text-align:center">@Html.Raw(Model.desafiado.dataInicioRancking.Month + "/" + Model.desafiado.dataInicioRancking.Year)</div>
-                            <div class="col-md-4 col-xs-4" style="text-align:center"><p id="jogo">Início ranking</p></div>
-                            <div class="col-md-4 col-xs-4" style="text-align:center">@Html.Raw(Model.desafiante.dataInicioRancking.Month + "/" + Model.desafiante.dataInicioRancking.Year)</div>
-                        </div>
-                        <div class="row centralizar">
-                            <div class="col-md-4 col-xs-4" style="text-align:center">@ViewBag.melhorRankingDesafiado</div>
-                            <div class="col-md-4 col-xs-4" style="text-align:center"><p id="jogo">Melhor posição ranking</p></div>
-                            <div class="col-md-4 col-xs-4" style="text-align:center">@ViewBag.melhorRankingDesafiante</div>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-        </div>
     </div>
 
-
 }
-
-@using (Html.BeginForm("AtualizaStatus", "Account", FormMethod.Post, new { @enctype = "multipart/form-data" }))
-{
-    @Html.AntiForgeryToken()
-    <div class="container-dashboard">
-        <div class="box box-success">
-            <div class="box-header with-border">
-                <h3 class="box-title">@Html.Raw("Meu status atual: " + ViewBag.situacaoJogador)</h3>
-            </div>
-            <div class="box-body">
-    @if (ViewBag.situacaoJogador == "ativo" || ViewBag.situacaoJogador == "licenciado"){
-        <div class="form-group">
-            <label class="col-md-2 col-xs-7" for="situacao">Alterar para: </label>
-            <div class="col-md-2 col-xs-8">
-                <select id="situacao" name="situacao" class="form-control">
-                    <option value="ativo" @if (ViewBag.situacaoJogador.Equals("ativo")) { @Html.Raw("selected")       }>
-                        ativo
-                    </option>
-                    <option value="licenciado" @if (ViewBag.situacaoJogador.Equals("licenciado")) { @Html.Raw("selected")       }>
-                        licenciado
-                    </option>
-                </select>
-                <input type="hidden" name="userId" value="@Html.Raw(ViewBag.userId)">
-            </div>
-            <div class="col-md-3 col-xs-4">
-                <input type="submit" class="btn btn-primary btn-small" id="submeter" value="Salvar" />
-            </div>
-        </div>
-    }
-
-
-            </div>
-        </div>
-        </div>
-    }
 
 @if (ViewBag.JogosPendentes != null)
 {
@@ -588,9 +364,9 @@
                     List<Barragem.Models.Jogo> jogosP = ViewBag.JogosPendentes;
                     foreach (var item in jogosP)
                     {
-                        <a href="@Url.Action("Index3", new { idJogo = @item.Id })" title="informar resultado">
+                        <a href="@Url.Action("LancarResultado2", new { id = @item.Id })" title="informar resultado">
                             <div class="col-sm-4">
-                                <h4 style="color:forestgreen">Rodada @Html.DisplayFor(modelItem => item.rodada.codigoSeq)</h4>
+                                <h4 style="color:forestgreen">@Html.DisplayFor(modelItem => item.classe.nome)</h4>
                                 <div class="row centralizar">
                                     <div class="col-md-4 col-xs-6 column">
                                         <img class="" src="/Content/image/JogoPendente.png">
@@ -611,113 +387,12 @@
     </div>
 }
 
-<div class="container-dashboard">
-    <div class="box box-warning">
-        <div class="box-header with-border">
-            <h3 class="box-title">Meu desempenho</h3>
-        </div>
-        <div class="box-body">
-            <div class="col-md-4 col-md-offset-2" style="padding-right:0px; padding-left:0px">
-                <canvas id="canvasLine" height="250" width="250"></canvas>
-            </div>
-            <div class="col-md-3">
-                <canvas id="canvasdunot" height="200" width="200"></canvas>
-            </div>
-        </div>
-     </div>
-</div>
-
-
-
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
     @Scripts.Render("~/bundles/jqueryform")
-    @Scripts.Render("~/bundles/Chart")
-    
+
     <script type="text/javascript">
-        var chartCtx = $("#canvas").get(0).getContext("2d");
-        var config = {
-            type: "doughnut",
-            data: {
-                labels: ["Desafiante", "Desafiado"],
-                datasets: [{
-                    backgroundColor: ["#46BFBD", "#FDB45C"],
-                    data: [@ViewBag.qtddVitoriasDesafiante,@ViewBag.qtddVitoriasDesafiado]
-                }]
-            },
-            options: {
-                responsive: true, showTooltips: true, percentageInnerCutout: 30,legend: {display: false}
-            }
-        };
-        new Chart(chartCtx,config);
-
-        var chartLineCtx = $("#canvasLine").get(0).getContext("2d");
-        var config = {
-            type: 'line',
-            data: {
-                labels: [@Html.Raw(ViewBag.ChartLinelabels)],
-                datasets: [{
-                    label:"Evolução no ranking",
-                    backgroundColor: "#00a65a",
-                    borderColor: "#00a65a",
-                    data: [@Html.Raw(ViewBag.ChartLineData)],
-                    fill: false,
-                }]
-            },
-            options: {
-                responsive: true,
-                tooltips: {
-                    mode: 'index',
-                    intersect: false,
-                },
-                hover: {
-                    mode: 'nearest',
-                    intersect: true
-                },
-                scales: {
-                    xAxes: [{
-                        display: true,
-                        ticks: {
-                            autoSkip: false
-                        },
-                        scaleLabel: {
-                            display: true,
-                            labelString: 'Rodadas'
-                        }
-                    }],
-                    yAxes: [{
-                        display: true,
-                        ticks : {
-                            reverse: true,
-                            stepSize: 1
-                        },
-                        scaleLabel: {
-                            display: true,
-                            labelString: 'Posição',
-                        }
-                    }]
-                }
-            }
-        };
-        new Chart(chartLineCtx, config);
-
-        var charDoughnutCtx = $("#canvasdunot").get(0).getContext("2d");
-        var config = {
-            type: "doughnut",
-            data: {
-                @Html.Raw("labels: ['"+ ViewBag.qtddTotalVitorias+ " Vitórias','" + ViewBag.qtddTotalDerrotas +" Derrotas','"+ ViewBag.qtddTotalWos +" WOs'],")
-                datasets: [{
-                    label: "Meus Jogos",
-                    @Html.Raw("data: ["+ ViewBag.qtddTotalVitorias + "," + ViewBag.qtddTotalDerrotas + "," + ViewBag.qtddTotalWos + "],")
-                    backgroundColor: ["#00a65a", "#D53032", "#FDB45C"]
-                }]
-            }
-
-        };
-        new Chart(charDoughnutCtx,config);
-
-
         @if (ViewBag.Sucesso)
         {
             @Html.Raw("toastr.success('"+ViewBag.MsgAlerta+"');");
@@ -759,18 +434,6 @@
                 element.classList.add("show");
             }
         }
-        function mostrarHead2Head() {
-            var element = document.getElementById("divHead2Head");
-            if (element.classList.contains("show")) {
-                element.classList.remove("show");
-            } else {
-                document.getElementById("divMarcarJogo").classList.remove("show");
-                document.getElementById("divInserirResultado").classList.remove("show");
-                document.getElementById("divLancarWO").classList.remove("show");
-                document.getElementById("divAcoes").classList.remove("hide");
-                element.classList.add("show");
-            }
-        }
     </script>
     <script type="text/javascript">
         $("#dataJogo").datepicker({
@@ -778,6 +441,6 @@
             pickTime: false
         });
         $("#horaJogo").mask("99:99");
-        
+                
     </script>
 }

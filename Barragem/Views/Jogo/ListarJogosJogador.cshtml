@@ -28,7 +28,6 @@
                 <th>
                     situação
                 </th>
-                <th></th>
             </tr>
 
             @foreach (var item in Model)
@@ -58,9 +57,6 @@
                         {
                             @Html.Raw("<br>" + String.Format("{0:dd/MM/yyyy}", item.dataJogo) + " " + item.horaJogo + "hs")
                         }
-                    </td>
-                    <td>
-                        <a href="@Url.Action("ControlarJogo", new {id = @item.Id })" title="Controlar Jogo" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-edit"></span></a>
                     </td>
                 </tr>
             }

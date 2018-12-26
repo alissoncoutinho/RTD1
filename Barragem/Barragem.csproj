@@ -372,6 +372,8 @@
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\bootstrap.typeahead.min.js" />
+    <Content Include="Scripts\Chart.js" />
+    <Content Include="Scripts\Chart.min.js" />
     <Content Include="Scripts\chosen.jquery.js" />
     <Content Include="Scripts\chosen.jquery.min.js" />
     <Content Include="Scripts\compress.js" />
@@ -885,6 +887,7 @@
     <Content Include="Views\Home\TestePonto.cshtml" />
     <Content Include="Views\Home\Index3.cshtml" />
     <Content Include="Views\Account\AtualizaStatus.cshtml" />
+    <Content Include="Views\Torneio\LancarResultado2.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

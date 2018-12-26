@@ -650,10 +650,12 @@ namespace Barragem.Controllers
                 gamesDesafiado = 1;
                 gamesDesafiante = 6;
             }
-            jogoAtual.qtddGames1setDesafiado = gamesDesafiado;
+            jogoAtual.qtddGames1setDesafiado  = gamesDesafiado;
             jogoAtual.qtddGames1setDesafiante = gamesDesafiante;
-            jogoAtual.qtddGames2setDesafiado = gamesDesafiado;
+            jogoAtual.qtddGames2setDesafiado  = gamesDesafiado;
             jogoAtual.qtddGames2setDesafiante = gamesDesafiante;
+            jogoAtual.qtddGames3setDesafiado  = 0;
+            jogoAtual.qtddGames3setDesafiante = 0;
             //alterar status do jogo WO
             jogoAtual.situacao_Id = 5;
             db.Entry(jogoAtual).State = EntityState.Modified;
@@ -670,11 +672,12 @@ namespace Barragem.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "admin,usuario,organizador")]
-        public ActionResult MarcarJogo(int Id, DateTime dataJogo, string horaJogo)
+        public ActionResult MarcarJogo(int Id, DateTime dataJogo, string horaJogo, string localJogo="")
         {
             Jogo jogoAtual = db.Jogo.Find(Id);
             jogoAtual.dataJogo = dataJogo;
             jogoAtual.horaJogo = horaJogo;
+            jogoAtual.localJogo = localJogo;
             //alterar a situação do jogo para marcado
             jogoAtual.situacao_Id = 2;
             db.Entry(jogoAtual).State = EntityState.Modified;

@@ -552,7 +552,7 @@ namespace Barragem.Controllers
                     //jogador = usu;
                 }
             }
-            List<Rancking> ranckingJogador = db.Rancking.Where(r => r.userProfile_id == userId).OrderByDescending(r => r.rodada_id).ToList();
+            List<Rancking> ranckingJogador = db.Rancking.Where(r => r.userProfile_id == userId && r.posicaoClasse !=null).OrderByDescending(r => r.rodada_id).ToList();
             ViewBag.RanckingJogador = ranckingJogador;
             List<Jogo> jogosJogador = db.Jogo.Where(r => r.desafiante_id == userId || r.desafiado_id == userId)
                 .OrderByDescending(r => r.rodada_id).ToList();

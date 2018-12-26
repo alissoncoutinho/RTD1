@@ -224,6 +224,9 @@
                         @Html.DisplayName("Total")
                     </th>
                     <th>
+                        @Html.DisplayName("Classe")
+                    </th>
+                    <th>
                         @Html.DisplayName("Posição")
                     </th>
                     <th>
@@ -247,7 +250,10 @@
                             @Html.DisplayFor(modelItem => item.totalAcumulado, 2)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.posicao)º
+                            @Html.DisplayFor(modelItem => item.classe.nome, 2)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.posicaoClasse)º
                         </td>
                         <td>
                             @if ((Roles.IsUserInRole("admin")) || (Roles.IsUserInRole("organizador")))

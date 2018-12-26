@@ -3597,7 +3597,12 @@ p#versus {
 p#jogo {
     font-size: 13px;
 }
-
+p#set {
+    font-size: 12px;
+    padding: 0px;
+    margin: 0px;
+    float: right;
+}
 #divClasse {
     border: 1px solid #eee;
     width: 242px;
@@ -3726,6 +3731,26 @@ p#jogo {
     position: relative;
  }
 
+ .exibir-headtohead {
+    overflow: hidden;
+    max-height: 0px;
+    pointer-events: none;
+    transition: max-height 1s ease-in-out;
+}
+
+.exibir-headtohead.show {
+	max-height: 800px;
+	pointer-events: auto;
+	padding-left: 10px;
+	padding-top: 10px;
+	padding-bottom: 20px;
+	padding-right: 5px;
+	margin: 5px;
+	margin-bottom: 10px;
+	margin-top: 10px;
+	position: relative;
+}
+ 
 .container-dashboard.hide {
     overflow: hidden;
     max-height: 0px;
@@ -3738,10 +3763,29 @@ p#jogo {
     display: flex;
 }
 
-@media (max-width: 767px) {
+.formato-mobile {
+    display: none;
+}
 
+.col-mobile {
+    padding-right: 5px;
+    padding-left: 5px;
+}
+
+@media (max-width: 767px) {
+    #set {
+        float: none !important;
+    }
     .exibir-imagem {
         display: none;
+    }
+
+    .formato-desktop {
+        display: none;
+    }
+
+    .formato-mobile {
+        display: block;
     }
 }
 .fileUpload {
