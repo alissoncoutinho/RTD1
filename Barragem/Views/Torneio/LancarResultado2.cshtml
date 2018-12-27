@@ -26,7 +26,7 @@
                         <br><br>
                         <p id="jogo">
                             @if (Model.desafiado_id == 0){
-                                @Html.Raw("Aguardando Adversário");
+                                @Html.Raw("<b>Aguardando Adversário</b>");
                             }else{
                                 <a href="@Url.Action("../Account/Detalhes", new { userId = Model.desafiado_id })" title="Detalhes do jogador">
                                     <b style="font-size:15px">@Model.desafiado.nome</b>
@@ -47,7 +47,7 @@
                                 if (Model.faseTorneio == 1){
                                     @Html.Raw("Bye");
                                 }else{
-                                    @Html.Raw("Aguardando Adversário");
+                                    @Html.Raw("<b>Aguardando Adversário</b>");
                                 }
                             }else{
                                 <a href="@Url.Action("../Account/Detalhes", new { userId = Model.desafiante_id })" title="Detalhes do jogador">
@@ -92,10 +92,10 @@
                 <div class="col-xs-1 col-mobile" style="color:white">.</div>
                 <div class="col-xs-5 col-mobile">
                     <p id="jogo">
-                        <a href="@Model.desafiado.linkwhatsapp"><img width="25" height="25" src="/Content/image/whatsapp.png"></a>
                         @if (Model.desafiado_id == 0){
                             @Html.Raw("Aguardando Adversário");
                         }else{
+                            <a href="@Model.desafiado.linkwhatsapp"><img width="25" height="25" src="/Content/image/whatsapp.png"></a>
                             <a href="@Url.Action("../Account/Detalhes", new { userId = Model.desafiado_id })" title="Detalhes do jogador">
                                 @Model.desafiado.nome
                             </a>
@@ -105,10 +105,10 @@
                 @Html.HiddenFor(model => model.desafiado_id)
                 <div class="col-xs-5 col-mobile">
                     <p id="jogo">
-                        <a href="@Model.desafiante.linkwhatsapp"><img width="25" height="25" src="/Content/image/whatsapp.png"></a>
                         @if (Model.desafiante_id == 0){
                             @Html.Raw("Aguardando Adversário");
                         }else{
+                            <a href="@Model.desafiante.linkwhatsapp"><img width="25" height="25" src="/Content/image/whatsapp.png"></a>
                             <a href="@Url.Action("../Account/Detalhes", new { userId = Model.desafiante_id })" title="Detalhes do jogador">
                                 @Model.desafiante.nome
                             </a>
@@ -155,6 +155,7 @@
             @Html.HiddenFor(model => model.ordemJogo)
             @Html.HiddenFor(model => model.torneioId)
             <input type="hidden" name="userId" value="@Html.Raw(ViewBag.userId)">
+            <input type="hidden" name="isTorneio" value="true">
 
             <div class="row exibir-inserirResultados" id="divMarcarJogo">
                 <div class="box box-warning">
@@ -219,6 +220,7 @@
             @Html.HiddenFor(model => model.classeTorneio)
             @Html.HiddenFor(model => model.ordemJogo)
             @Html.HiddenFor(model => model.torneioId)
+            <input type="hidden" name="isTorneio" value="true">
             <div class="container-dashboard.hide" id="divAcoes">
                 <div class="row exibir-inserirResultados" id="divInserirResultado">
                     <div class="box box-warning">
@@ -236,10 +238,18 @@
                             <center>
                                 <div class="row clearfix">
                                     <div class="col-md-6 col-xs-6">
+                                    @if ((Model.desafiado_id != 0)) {
                                         <p id="jogo"><b>@Model.desafiado.nome</b></p>
+                                    } else {
+                                            <p id="jogo"><b>Aguardando Adversário</b></p>
+                                    }
                                     </div>
                                     <div lass="col-md-6 col-xs-6">
+                                        @if ((Model.desafiante_id != 0)) {
                                         <p id="jogo"><b>@Model.desafiante.nome</b></p>
+                                        } else {
+                                            <p id="jogo"><b>Aguardando Adversário</b></p>
+                                        }
                                     </div>
                                 </div>
                                 <div class="row clearfix">
@@ -322,7 +332,7 @@
             @Html.HiddenFor(model => model.ordemJogo)
             @Html.HiddenFor(model => model.torneioId)
             <input type="hidden" name="userId" value="@Html.Raw(ViewBag.userId)">
-
+            <input type="hidden" name="isTorneio" value="true">
             <div class="row exibir-inserirResultados" id="divLancarWO">
                 <div class="box box-warning">
                     <div class="box-header with-border">
@@ -332,8 +342,8 @@
                         <div class="form-group">
                             <label class="col-md-12 col-xs-12" for="situacao">Vencedor da partida</label>
                             <div class="col-md-2 col-xs-12">
-                                <input type="radio" name="vencedorWO" value=@Html.Raw(Model.desafiado_id) checked> @Html.Raw(Model.desafiado.nome)<br>
-                                <input type="radio" name="vencedorWO" value=@Html.Raw(Model.desafiante_id)> @Html.Raw(Model.desafiante.nome)<br>
+                                <input type="radio" name="vencedorWO" value=@Html.Raw(Model.desafiado_id) checked> @if (Model.desafiado_id != 0) {@Html.Raw(Model.desafiado.nome)}<br>
+                                <input type="radio" name="vencedorWO" value=@Html.Raw(Model.desafiante_id)> @if (Model.desafiante_id == 0) {@Html.Raw(Model.desafiante.nome)}<br>
                             </div>
                             <div class="col-md-2 col-xs-12">
                                 @if ((ViewBag.Editar == null) || (ViewBag.Editar))
@@ -406,7 +416,7 @@
                 document.getElementById("divLancarWO").classList.remove("show");
                 document.getElementById("divAcoes").classList.remove("hide");
                 document.getElementById("divAcoes").classList.remove("container-dashboard");
-                document.getElementById("divHead2Head").classList.remove("show");
+                //document.getElementById("divHead2Head").classList.remove("show");
                 element.classList.add("show");
             }
         }
@@ -418,7 +428,7 @@
                 document.getElementById("divMarcarJogo").classList.remove("show");
                 document.getElementById("divLancarWO").classList.remove("show");
                 document.getElementById("divAcoes").classList.remove("hide");
-                document.getElementById("divHead2Head").classList.remove("show");
+                //document.getElementById("divHead2Head").classList.remove("show");
                 element.classList.add("show");
             }
         }
@@ -430,7 +440,7 @@
                 document.getElementById("divMarcarJogo").classList.remove("show");
                 document.getElementById("divInserirResultado").classList.remove("show");
                 document.getElementById("divAcoes").classList.remove("hide");
-                document.getElementById("divHead2Head").classList.remove("show");
+                //document.getElementById("divHead2Head").classList.remove("show");
                 element.classList.add("show");
             }
         }

@@ -93,8 +93,8 @@
                         @Html.DisplayFor(modelItem => item.situacao.descricao)
                         @if (item.situacao.descricao == "marcado")
                             {
-                            @Html.Raw("<br>" + String.Format("{0:dd/MM/yyyy}", item.dataJogo) + " " + item.horaJogo + "hs")
-                            }
+                            @Html.Raw("<br>" + String.Format("{0:dd/MM/yyyy}", item.dataJogo) + " " + item.horaJogo + "hs") if (!String.IsNullOrEmpty(item.localJogo)) {@Html.Raw(item.localJogo) }
+                        }
                     </td>
                     <td>
                         @if ((Roles.IsUserInRole("admin")) || (Roles.IsUserInRole("organizador")))

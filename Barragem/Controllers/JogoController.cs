@@ -605,7 +605,7 @@ namespace Barragem.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "admin,usuario,organizador")]
-        public ActionResult InserirResultado(Jogo jogo)
+        public ActionResult InserirResultado(Jogo jogo, bool isTorneio = false)
         {
             Jogo jogoAtual = db.Jogo.Find(jogo.Id);
             //games
@@ -628,13 +628,15 @@ namespace Barragem.Controllers
 
             ViewBag.Sucesso = true;
             ViewBag.MsgAlerta = "Resultado lançado com sucesso.";
+            var barragemId = 0;
+            if (isTorneio) return RedirectToAction("LancarResultado2", "Torneio", new { jogo.Id, barragemId, ViewBag.Sucesso, ViewBag.MsgAlerta });
             return RedirectToAction("Index3", "Home", new { ViewBag.Sucesso, ViewBag.MsgAlerta });
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "admin,usuario,organizador")]
-        public ActionResult LancarWO(int Id, int vencedorWO)
+        public ActionResult LancarWO(int Id, int vencedorWO, bool isTorneio = false)
         {
             Jogo jogoAtual = db.Jogo.Find(Id);
             //alterar quantidade de games para desafiado e desafiante
@@ -666,13 +668,15 @@ namespace Barragem.Controllers
 
             ViewBag.Sucesso = true;
             ViewBag.MsgAlerta = "WO lançado com sucesso.";
+            var barragemId = 0;
+            if (isTorneio) return RedirectToAction("LancarResultado2", "Torneio", new { Id, barragemId, ViewBag.Sucesso, ViewBag.MsgAlerta });
             return RedirectToAction("Index3", "Home", new { ViewBag.Sucesso, ViewBag.MsgAlerta });
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "admin,usuario,organizador")]
-        public ActionResult MarcarJogo(int Id, DateTime dataJogo, string horaJogo, string localJogo="")
+        public ActionResult MarcarJogo(int Id, DateTime dataJogo, string horaJogo, string localJogo="", bool isTorneio=false)
         {
             Jogo jogoAtual = db.Jogo.Find(Id);
             jogoAtual.dataJogo = dataJogo;
@@ -684,6 +688,9 @@ namespace Barragem.Controllers
             db.SaveChanges();
             ViewBag.Sucesso = true;
             ViewBag.MsgAlerta = "Jogo marcado com sucesso.";
+            var barragemId = 0;
+            if (isTorneio) return RedirectToAction("LancarResultado2", "Torneio", new { Id, barragemId, ViewBag.Sucesso, ViewBag.MsgAlerta });
+
             return RedirectToAction("Index3", "Home", new { ViewBag.Sucesso, ViewBag.MsgAlerta });
         }
 

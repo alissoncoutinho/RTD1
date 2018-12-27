@@ -966,7 +966,7 @@ namespace Barragem.Controllers
         [Authorize(Roles = "admin,usuario,organizador")]
         public ActionResult ConfirmacaoInscricao(int torneioId, string msg = "", string msgErro = "")
         {
-            torneioId = 1;
+            //torneioId = 1;
             ViewBag.Msg = msg;
             ViewBag.MsgErro = msgErro;
             var userId = WebSecurity.GetUserId(User.Identity.Name);
@@ -1531,7 +1531,7 @@ namespace Barragem.Controllers
                     }else{
                         inscricao = db.InscricaoTorneio.Where(i => i.participante.UserId == usuario.UserId && i.isAtivo && i.torneio.dataFimInscricoes < agora && i.torneio.isAtivo).OrderByDescending(i => i.Id).Take(1).Single();
                     }
-                    ViewBag.NomeTorneio = inscricao.torneio.nome;
+                    
                     jogo = db.Jogo.Where(u => (u.desafiado_id == usuario.UserId || u.desafiante_id == usuario.UserId) && u.torneioId == inscricao.torneioId)
                         .OrderBy(u => u.faseTorneio).Take(1).Single();
                 }
@@ -1543,6 +1543,7 @@ namespace Barragem.Controllers
                 jogo = db.Jogo.Find(id);
             }
             if (jogo != null){
+                ViewBag.NomeTorneio = (from t in db.Torneio where t.Id == jogo.torneioId select t.nome).Single();
                 //nao permitir edição caso a rodada já esteja fechada e o placar já tenha sido informado
                 string perfil = Roles.GetRolesForUser(User.Identity.Name)[0];
                 if (!perfil.Equals("admin") && !perfil.Equals("organizador") && (jogo.rodada.isAberta == false) && (jogo.gamesJogados != 0)){
@@ -1564,15 +1565,17 @@ namespace Barragem.Controllers
                     }
                     ViewBag.Placar = placar;
                 }
+                // jogos pendentes
+                var torneioId = (int)jogo.torneioId;
+                var jogosPendentes = db.Jogo.Where(u => (u.desafiado_id == usuario.UserId || u.desafiante_id == usuario.UserId) && u.torneioId == jogo.torneioId
+                        && (u.situacao_Id != 4 && u.situacao_Id != 5)).OrderByDescending(u => u.Id).Take(3).ToList();
+                if (jogosPendentes.Count() > 1)
+                {
+                    ViewBag.JogosPendentes = jogosPendentes;
+                }
             }
+
             
-            // jogos pendentes
-            var jogosPendentes = db.Jogo.Where(u => (u.desafiado_id == usuario.UserId || u.desafiante_id == usuario.UserId) && u.torneioId == jogo.torneioId
-                    && (u.situacao_Id != 4 && u.situacao_Id != 5)).OrderByDescending(u => u.Id).Take(3).ToList();
-            if (jogosPendentes.Count() > 1)
-            {
-                ViewBag.JogosPendentes = jogosPendentes;
-            }
             
             return View(jogo);
         }
