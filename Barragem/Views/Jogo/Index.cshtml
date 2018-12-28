@@ -93,7 +93,7 @@
                         @Html.DisplayFor(modelItem => item.situacao.descricao)
                         @if (item.situacao.descricao == "marcado")
                             {
-                            @Html.Raw("<br>" + String.Format("{0:dd/MM/yyyy}", item.dataJogo) + " " + item.horaJogo + "hs") if (!String.IsNullOrEmpty(item.localJogo)) {@Html.Raw(item.localJogo) }
+                            @Html.Raw("<br>" + String.Format("{0:dd/MM/yyyy}", item.dataJogo) + " " + item.horaJogo + "hs") if (!String.IsNullOrEmpty(item.localJogo)) {@Html.Raw("<br>"+item.localJogo) }
                         }
                     </td>
                     <td>

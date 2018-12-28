@@ -478,7 +478,7 @@ namespace Barragem.Controllers
                     {
                         placar = placar + " " + jogo.qtddGames3setDesafiado + "/" + jogo.qtddGames3setDesafiante;
                     }
-                    ViewBag.Placar = placar;
+                    ViewBag.Placar = ": " + placar;
                 }
                 if ((jogo.torneioId != null) && (jogo.torneioId > 0))
                 {

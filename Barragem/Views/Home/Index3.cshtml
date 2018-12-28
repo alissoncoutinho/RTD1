@@ -85,7 +85,7 @@
             }
         </div>
         <h5>
-            <label>Situação do jogo:</label> @Html.Raw(Model.situacao.descricao + " " + ViewBag.Placar)
+            <label>Situação do jogo:</label> @Html.Raw(Model.situacao.descricao + " " + String.Format("{0:dd/MM/yyyy}", Model.dataJogo) + " " + Model.horaJogo + " " + Model.localJogo + ViewBag.Placar)
         </h5>
         
         <div class="container-dashboard formato-desktop">
@@ -310,7 +310,7 @@
                                     <div class="col-sm-2">
                                         <div class="input-group">
                                             <div class="form-group col-sm-2">
-                                                <input id="horaJogo" name="horaJogo" value="@Html.Raw(Model.horaJogo)" placeholder="hh:mm" type="text" class="form-control col-sm-2" />
+                                                <input id="horaJogo" name="horaJogo" value="@Html.Raw(Model.horaJogo)" placeholder="hh:mm" type="text" class="form-control" />
                                             </div>
                                         </div>
                                     </div>
@@ -320,7 +320,7 @@
                                     <div class="col-sm-2">
                                         <div class="input-group">
                                             <div class="form-group col-sm-2">
-                                                <input id="localJogo" name="localJogo" value="@Model.localJogo" type="text" class="form-control col-sm-2" />
+                                                <input id="localJogo" name="localJogo" value="@Model.localJogo" type="text" class="form-control" />
                                             </div>
                                         </div>
                                     </div>

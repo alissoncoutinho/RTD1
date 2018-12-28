@@ -1,7 +1,7 @@
 ﻿@model Barragem.Models.Jogo
 @{
     ViewBag.Title = "Controlar Jogo";
-
+    Layout = "~/Views/Shared/_LayoutTorneio2.cshtml";
 }
 
 @if (Model != null) { 
@@ -9,7 +9,7 @@
         <h4><b>@ViewBag.NomeTorneio</b></h4>
         
         <h5>
-            <label>Situação do jogo:</label> @Html.Raw(Model.situacao.descricao + " " + ViewBag.Placar)
+            <label>Situação do jogo:</label> @Html.Raw(Model.situacao.descricao + " " + String.Format("{0:dd/MM/yyyy}", Model.dataJogo) + " " + Model.horaJogo + " " + Model.localJogo + ViewBag.Placar)
         </h5>
         <div class="container-dashboard formato-desktop">
             <div class="row clearfix formato-desktop">
@@ -343,7 +343,7 @@
                             <label class="col-md-12 col-xs-12" for="situacao">Vencedor da partida</label>
                             <div class="col-md-2 col-xs-12">
                                 <input type="radio" name="vencedorWO" value=@Html.Raw(Model.desafiado_id) checked> @if (Model.desafiado_id != 0) {@Html.Raw(Model.desafiado.nome)}<br>
-                                <input type="radio" name="vencedorWO" value=@Html.Raw(Model.desafiante_id)> @if (Model.desafiante_id == 0) {@Html.Raw(Model.desafiante.nome)}<br>
+                                <input type="radio" name="vencedorWO" value=@Html.Raw(Model.desafiante_id)> @if (Model.desafiante_id != 0) {@Html.Raw(Model.desafiante.nome)}<br>
                             </div>
                             <div class="col-md-2 col-xs-12">
                                 @if ((ViewBag.Editar == null) || (ViewBag.Editar))

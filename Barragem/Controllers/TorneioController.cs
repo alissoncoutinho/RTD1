@@ -1563,7 +1563,7 @@ namespace Barragem.Controllers
                     {
                         placar = placar + " " + jogo.qtddGames3setDesafiado + "/" + jogo.qtddGames3setDesafiante;
                     }
-                    ViewBag.Placar = placar;
+                    ViewBag.Placar = ": " + placar;
                 }
                 // jogos pendentes
                 var torneioId = (int)jogo.torneioId;
