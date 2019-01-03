@@ -469,6 +469,9 @@ namespace Barragem.Controllers
                 ViewBag.Placar = "";
                 if ((jogo.situacao_Id == 4) || (jogo.situacao_Id == 5))
                 {
+                    if (perfil.Equals("admin") || perfil.Equals("organizador")) {
+                        ViewBag.VoltarPendente = true;
+                    }
                     var placar = jogo.qtddGames1setDesafiado + "/" + jogo.qtddGames1setDesafiante;
                     if (jogo.qtddGames2setDesafiado != 0 || jogo.qtddGames2setDesafiante != 0)
                     {
@@ -524,34 +527,35 @@ namespace Barragem.Controllers
             //}
 
 
-
-            List<Rancking> ranckingJogadorDesafiado = db.Rancking.Where(r => r.userProfile_id == jogo.desafiado_id && r.posicaoClasse!=null).OrderByDescending(r => r.rodada_id).Take(1).ToList();
-            List<Rancking> ranckingJogadorDesafiante = db.Rancking.Where(r => r.userProfile_id == jogo.desafiante_id && r.posicaoClasse != null).OrderByDescending(r => r.rodada_id).Take(1).ToList();
-            
-            if (ranckingJogadorDesafiado.Count > 0)
+            try
             {
-                ViewBag.posicaoDesafiado = ranckingJogadorDesafiado[0].posicaoClasse + "º";
-            }
-            else
-            {
-                ViewBag.posicaoDesafiado = "sem ranking";
-            }
+                List<Rancking> ranckingJogadorDesafiado = db.Rancking.Where(r => r.userProfile_id == jogo.desafiado_id && r.posicaoClasse != null).OrderByDescending(r => r.rodada_id).Take(1).ToList();
+                List<Rancking> ranckingJogadorDesafiante = db.Rancking.Where(r => r.userProfile_id == jogo.desafiante_id && r.posicaoClasse != null).OrderByDescending(r => r.rodada_id).Take(1).ToList();
 
-            if (ranckingJogadorDesafiante.Count > 0)
-            {
-                ViewBag.posicaoDesafiante = ranckingJogadorDesafiante[0].posicaoClasse + "º";
-            }
-            else
-            {
-                ViewBag.posicaoDesafiante = "sem ranking";
-            }
+                if (ranckingJogadorDesafiado.Count > 0)
+                {
+                    ViewBag.posicaoDesafiado = ranckingJogadorDesafiado[0].posicaoClasse + "º";
+                }
+                else
+                {
+                    ViewBag.posicaoDesafiado = "sem ranking";
+                }
 
-            var jogosHeadToHead = db.Jogo.Where(j => (j.desafiado_id == jogo.desafiado_id && j.desafiante_id == jogo.desafiante_id) ||
-            (j.desafiante_id == jogo.desafiado_id && j.desafiado_id == jogo.desafiante_id)).ToList();
+                if (ranckingJogadorDesafiante.Count > 0)
+                {
+                    ViewBag.posicaoDesafiante = ranckingJogadorDesafiante[0].posicaoClasse + "º";
+                }
+                else
+                {
+                    ViewBag.posicaoDesafiante = "sem ranking";
+                }
 
-            ViewBag.qtddVitoriasDesafiado = jogosHeadToHead.Where(j => j.idDoVencedor == jogo.desafiado_id).Count();
-            ViewBag.qtddVitoriasDesafiante = jogosHeadToHead.Where(j => j.idDoVencedor == jogo.desafiante_id).Count();
+                var jogosHeadToHead = db.Jogo.Where(j => (j.desafiado_id == jogo.desafiado_id && j.desafiante_id == jogo.desafiante_id) ||
+                (j.desafiante_id == jogo.desafiado_id && j.desafiado_id == jogo.desafiante_id)).ToList();
 
+                ViewBag.qtddVitoriasDesafiado = jogosHeadToHead.Where(j => j.idDoVencedor == jogo.desafiado_id).Count();
+                ViewBag.qtddVitoriasDesafiante = jogosHeadToHead.Where(j => j.idDoVencedor == jogo.desafiante_id).Count();
+            }catch(Exception e){}
             try
             {
                 ViewBag.melhorRankingDesafiado = "";

@@ -429,7 +429,10 @@
                                     {
                                         @Html.Raw("<b>Rodada Já Encerrada.</b>")
                                     }
-                                }
+                                    if ((ViewBag.VoltarPendente != null) || (ViewBag.VoltarPendente)){
+                                        <center><input type="submit" class="btn btn-danger btn-small" id="submeter" value="Voltar para pendente" /></center>
+
+                                    }
                             </p>
                         </div>
 
