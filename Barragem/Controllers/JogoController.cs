@@ -288,7 +288,7 @@ namespace Barragem.Controllers
 
             ProcessarJogoAtrasado(jogo);
 
-            return RedirectToAction("Index2", "Home");
+            return RedirectToAction("Index3", "Home");
 
         }
 

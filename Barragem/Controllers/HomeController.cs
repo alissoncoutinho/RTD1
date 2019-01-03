@@ -19,7 +19,7 @@ namespace Barragem.Controllers
         {
             if (User.Identity.IsAuthenticated)
             {
-                return RedirectToAction("Index2", "Home");
+                return RedirectToAction("Index3", "Home");
             }
             string url = HttpContext.Request.Url.AbsoluteUri;
             string path = HttpContext.Request.Url.AbsolutePath;
@@ -146,7 +146,7 @@ namespace Barragem.Controllers
                     var usuario = db.UserProfiles.Find(WebSecurity.GetUserId(User.Identity.Name));
                     Funcoes.CriarCookieBarragem(Response, Server, usuario.barragemId, usuario.barragem.nome);
                 }
-                return RedirectToAction("Index2", "Home");
+                return RedirectToAction("Index3", "Home");
             }
 
             if (cookie != null)

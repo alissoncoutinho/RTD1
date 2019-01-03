@@ -32,7 +32,7 @@ namespace Barragem.Controllers
         public ActionResult LoginPassword(string returnUrl="", string userName="", string Msg="", int torneioId=0)
         {
             if (User.Identity.IsAuthenticated){
-                return RedirectToAction("Index2", "Home");
+                return RedirectToAction("Index3", "Home");
             }
             ViewBag.ReturnUrl = returnUrl;
             ViewBag.userName = userName;
@@ -70,7 +70,7 @@ namespace Barragem.Controllers
                 }else if((!String.IsNullOrEmpty(returnUrl)) && (returnUrl.Contains("/Torneio/LancarResultado"))){
                     return RedirectToAction("LancarResultado", "Torneio");
                 }else{
-                    return RedirectToAction("Index2", "Home");
+                    return RedirectToAction("Index3", "Home");
                 }
                 //return RedirectToLocal(returnUrl);
             }
@@ -1125,7 +1125,7 @@ namespace Barragem.Controllers
             }
             else
             {
-                return RedirectToAction("Index2", "Home");
+                return RedirectToAction("Index3", "Home");
             }
         }
 
