@@ -419,20 +419,19 @@
                                 </div>
                             </center>
                             <p>
-                                @if ((Model.desafiante_id != 0) && (Model.desafiado_id != 0))
-                                {
-                                    if ((ViewBag.Editar == null) || (ViewBag.Editar))
-                                    {
-                                        <center><input type="submit" class="btn btn-primary btn-small" id="submeter" value="Salvar" /></center>
-                                    }
-                                    else
-                                    {
+                                <center>
+                                @if ((Model.desafiante_id != 0) && (Model.desafiado_id != 0)){
+                                    if ((ViewBag.Editar == null) || (ViewBag.Editar)){
+                                        <input type="submit" class="btn btn-primary btn-small" id="submeter" value="Salvar" />
+                                    }else{
                                         @Html.Raw("<b>Rodada Já Encerrada.</b>")
                                     }
-                                    if ((ViewBag.VoltarPendente != null) || (ViewBag.VoltarPendente)){
-                                        <center><input type="submit" class="btn btn-danger btn-small" id="submeter" value="Voltar para pendente" /></center>
-
+                                    if ((ViewBag.VoltarPendente != null) && (ViewBag.VoltarPendente)){
+                                        <input type="hidden" value="1" name="situacao_id" />
+                                        <input type="submit" class="btn btn-danger btn-small" id="submeter" value="Voltar para pendente" />
                                     }
+                                }
+                                </center>
                             </p>
                         </div>
 

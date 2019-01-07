@@ -609,16 +609,35 @@ namespace Barragem.Controllers
         {
             Jogo jogoAtual = db.Jogo.Find(jogo.Id);
             //games
-            jogoAtual.qtddGames1setDesafiado = jogo.qtddGames1setDesafiado;
-            jogoAtual.qtddGames2setDesafiado = jogo.qtddGames2setDesafiado;
-            jogoAtual.qtddGames3setDesafiado = jogo.qtddGames3setDesafiado;
-            jogoAtual.qtddGames1setDesafiante = jogo.qtddGames1setDesafiante;
-            jogoAtual.qtddGames2setDesafiante = jogo.qtddGames2setDesafiante;
-            jogoAtual.qtddGames3setDesafiante = jogo.qtddGames3setDesafiante;
-            //informações do jogo
-            jogoAtual.dataCadastroResultado = DateTime.Now;
-            jogoAtual.usuarioInformResultado = User.Identity.Name;
-            jogoAtual.situacao_Id = 4;
+            if (jogo.situacao_Id == 1) {
+                jogoAtual.qtddGames1setDesafiado  = 0;
+                jogoAtual.qtddGames2setDesafiado  = 0;
+                jogoAtual.qtddGames3setDesafiado  = 0;
+                jogoAtual.qtddGames1setDesafiante = 0;
+                jogoAtual.qtddGames2setDesafiante = 0;
+                jogoAtual.qtddGames3setDesafiante = 0;
+                //informações do jogo
+                jogoAtual.usuarioInformResultado = "";
+                jogoAtual.situacao_Id = 1;
+                jogoAtual.horaJogo = "";
+                jogoAtual.localJogo = "";
+                jogoAtual.dataJogo = null;
+                jogoAtual.dataCadastroResultado = null;
+            }
+            else{
+                jogoAtual.qtddGames1setDesafiado = jogo.qtddGames1setDesafiado;
+                jogoAtual.qtddGames2setDesafiado = jogo.qtddGames2setDesafiado;
+                jogoAtual.qtddGames3setDesafiado = jogo.qtddGames3setDesafiado;
+                jogoAtual.qtddGames1setDesafiante = jogo.qtddGames1setDesafiante;
+                jogoAtual.qtddGames2setDesafiante = jogo.qtddGames2setDesafiante;
+                jogoAtual.qtddGames3setDesafiante = jogo.qtddGames3setDesafiante;
+                //informações do jogo
+                jogoAtual.usuarioInformResultado = User.Identity.Name;
+                jogoAtual.dataCadastroResultado = DateTime.Now;
+                jogoAtual.situacao_Id = 4;
+            }
+            
+
             //
             db.Entry(jogoAtual).State = EntityState.Modified;
             db.SaveChanges();
