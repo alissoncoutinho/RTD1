@@ -20,7 +20,7 @@
                 <li><a href=@tabName data-toggle="tab">@c.nome</a></li>
             }
         }
-        <li><a href="#tabGeral" data-toggle="tab">Geral</a></li>
+        <!--li><a href="#tabGeral" data-toggle="tab">Geral</a></li-->
     </ul>
     <div class="tab-content">
         @foreach (Barragem.Models.Classe c in classes){
@@ -84,53 +84,5 @@
                 </div>
             </div>
         }
-    <div class="tab-pane fade" id="tabGeral">
-        <br>
-        <div class="box-body table-responsive no-padding">
-            <table class="table table-striped table-condensed table-bordered">
-                <tr>
-                    <th>
-                        @Html.DisplayNameFor(model => model.posicao)
-                    </th>
-                    <th>
-                        Jogadores
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.pontuacao) - @ViewBag.Rodada
-                    </th>
-                    <th>
-                        Total
-                    </th>
-                    <th></th>
-                </tr>
-                @{List<Barragem.Models.Rancking> rankingG = ViewBag.rankingGeral;}
-                @foreach (var item in rankingG){
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.posicao)º
-                </td>
-                <td>
-                    @if (item.userProfile.fotoURL != null){
-                        <img id="imgFoto" src="@item.userProfile.fotoURL" class="profile-image img-circle" style="width:50px;height:50px;">
-                    }else{
-                        <img id="imgFoto" src="/Content/image/sem-foto.png" class="profile-image img-circle" style="width:40px;height:40px;">
-                    }
-                    <a href="@Url.Action("../Account/Detalhes", new { userId = @item.userProfile.UserId })" title="Detalhes do jogador">
-                        @item.userProfile.nome
-                    </a>
-                </td>
-                <td>
-                    @string.Format("{0:N2}", item.pontuacao)
-                </td>
-                <td>
-                    @string.Format("{0:N2}", item.totalAcumulado)
-                </td>
-                <td>
-                    <a href="@Url.Action("historicoRanking", new { idJogador = item.userProfile.UserId })" title="histórico da pontuação" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-list"></span></a>
-                </td>
-            </tr>
-            }
-            </table>
-        </div>
-     </div>
+    
    </div>

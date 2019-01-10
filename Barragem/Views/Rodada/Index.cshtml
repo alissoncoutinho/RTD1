@@ -4,7 +4,7 @@
 @model IEnumerable<Barragem.Models.Rodada>
 <h2 class="title">Rodadas</h2>
 
-@if (Roles.IsUserInRole("admin") || Roles.IsUserInRole("organizador")){
+@if ((Roles.IsUserInRole("admin") || Roles.IsUserInRole("organizador"))&&(ViewBag.isBarragemAtiva)){
     <p>
         <a href="@Url.Action("Create")" class="btn btn-primary btn-small"><span class="glyphicon glyphicon-plus"></span> Nova</a>
     </p>

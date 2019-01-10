@@ -138,7 +138,8 @@ namespace Barragem.Controllers
             {
                 torneio = db.Torneio.Where(r => r.barragemId == barragemId).OrderByDescending(c => c.Id).ToList();
             }
-
+            var barragem = db.BarragemView.Find(barragemId);
+            ViewBag.isBarragemAtiva = barragem.isAtiva;
             return View(torneio);
         }
 
@@ -1177,7 +1178,9 @@ namespace Barragem.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(Torneio torneio)
         {
-            if (ModelState.IsValid)
+            var barragem = db.BarragemView.Find(torneio.barragemId);
+            
+            if ((ModelState.IsValid)&&(barragem.isAtiva))
             {
                 db.Torneio.Add(torneio);
                 db.SaveChanges();

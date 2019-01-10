@@ -47,7 +47,7 @@ namespace Barragem.Controllers
             rancking = db.Rancking.Include(r => r.userProfile).Include(r => r.rodada).
                 Where(r => r.rodada_id == id && r.posicao > 0 && r.userProfile.situacao != "desativado" && r.userProfile.situacao != "inativo").OrderBy(r=>r.classe.nivel).ThenBy(r => r.posicao).ToList();
             ViewBag.Classes = db.Classe.Where(c => c.barragemId == barragemId).ToList();
-            ViewBag.rankingGeral = rancking.OrderBy(r => r.posicao).ToList();
+            //ViewBag.rankingGeral = rancking.OrderBy(r => r.posicao).ToList();
             if (rancking.Count() > 0){
                 var barragem = rancking[0].rodada.barragemId;
                 ViewBag.Rodada = rancking[0].rodada.codigoSeq;
@@ -90,7 +90,11 @@ namespace Barragem.Controllers
             return View(ranckingJogador);
         }
 
-        
+        public ActionResult RegraPontuacao()
+        {
+            return View();
+        }
+
         protected override void Dispose(bool disposing)
         {
             db.Dispose();

@@ -41,22 +41,13 @@ namespace Barragem.Controllers
             List<Rodada> rodada = null;
             var userId = WebSecurity.GetUserId(User.Identity.Name);
             int barragemId = (from up in db.UserProfiles where up.UserId == userId select up.barragemId).Single();
-            //if (perfil.Equals("admin")||perfil.Equals("organizador")){
-            //    var sqlJogos = db.Jogo.Where(r => r.dataCadastroResultado > r.rodada.dataFim && (r.situacao_Id == 4 || r.situacao_Id == 5));
-            //    if (perfil.Equals("organizador")){
-            //        sqlJogos = sqlJogos.Where(r => r.rodada.barragemId == barragemId);
-            //    }
-            //    List<Jogo> jogos = sqlJogos.ToList();
-            //    foreach (Jogo jogo in jogos){
-            //        ViewBag.Reprocessar = ViewBag.Reprocessar + " - " + jogo.rodada.codigoSeq;
-            //    }
-            //}
             if (perfil.Equals("admin")){
                 rodada = db.Rodada.Where(r => r.isRodadaCarga == false).OrderByDescending(c => c.Id).ToList();
             } else {
                 rodada = db.Rodada.Where(r => r.isRodadaCarga == false && r.barragemId==barragemId).OrderByDescending(c => c.Id).ToList();
             }
-            
+            var barragem = db.BarragemView.Find(barragemId);
+            ViewBag.isBarragemAtiva = barragem.isAtiva;
             return View(rodada);
         }
        
@@ -95,6 +86,11 @@ namespace Barragem.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(Rodada rodada)
         {
+            var barragem = db.BarragemView.Find(rodada.barragemId);
+            if (!barragem.isAtiva){
+                var mensagem = "Não foi possível criar uma nova rodada, pois este ranking encontra-se desativado.";
+                return RedirectToAction("Index", new { msg = mensagem });
+            }
             if (ModelState.IsValid)
             {
                 List<Rodada> rodadas = db.Rodada.Where(r => r.isAberta == true && r.barragemId==rodada.barragemId).ToList();

@@ -16,27 +16,36 @@ namespace Barragem.Class
             // se a quantidade de games jogados for igual a zero, quer dizer que não houve jogo e o jogador ficará com zero de pontuação nesta rodada
             if (jogo.gamesJogados != 0 && !jogo.desafiante.situacao.Equals("curinga"))
             {
-                int bonus = 1;
-                float desempenho = calcularDesempenho(jogo.qtddSetsGanhosDesafiante, jogo.gamesGanhosDesafiante, jogo.setsJogados, jogo.gamesJogados);
-                if (jogo.idDoVencedor == jogo.desafiante_id)
+                if (jogo.desafiado.situacao.Equals("curinga"))
                 {
-                    bonus = 6;
+                    pontuacao = 6;
                 }
-                Rancking ranking = db.Rancking.Where(r => r.userProfile_id == jogo.desafiado_id && r.rodada.isAberta == false && r.rodada_id < jogo.rodada_id).OrderByDescending(ran => ran.rodada_id).Take(1).Single();
-                if (ranking.posicao == 0)
+                else if (jogo.idDoVencedor == jogo.desafiante_id && jogo.setsJogados == 2)
                 {
-                    ranking.posicao = 32; // jogador sem ranking ficara na posicao 32 para efeitos de calculos
+                    pontuacao = 10;
                 }
-                pontuacao = (desempenho / (ranking.posicao + 4)) + bonus;
-                pontuacao = bonificacaoPorDiferencaPlacar(jogo, "desafiante", pontuacao);
+                else if ((jogo.idDoVencedor == jogo.desafiante_id) && (jogo.setsJogados == 3 || jogo.setsJogados == 1))
+                {
+                    pontuacao = 8;
+                }
+                else if (jogo.idDoVencedor != jogo.desafiante_id && jogo.setsJogados == 2)
+                {
+                    pontuacao = 2;
+                }
+                else if ((jogo.idDoVencedor != jogo.desafiante_id) && (jogo.setsJogados == 3 || jogo.setsJogados == 1))
+                {
+                    pontuacao = 4;
+                }
+
                 if ((jogo.idDoVencedor == jogo.desafiante_id) && (jogo.situacao_Id == 5))
                 { // WO
-                    pontuacao = (pontuacao * 70) / 100;
+                    pontuacao = 6;
                 }
                 if ((jogo.idDoVencedor != jogo.desafiante_id) && (jogo.situacao_Id == 5))
                 { // WO
                     pontuacao = 0;
                 }
+
                 pontuacao = (float)Math.Round(pontuacao, 2);
             }
             return pontuacao;
@@ -44,73 +53,42 @@ namespace Barragem.Class
 
         public float calcularPontosDesafiado(Jogo jogo)
         {
-            int bonus = 1;
             float pontuacao = 0;
             // se a quantidade de games jogados for igual a zero, quer dizer que não houve jogo e o jogador ficará com zero de pontuação nesta rodada
-            if (jogo.gamesJogados != 0)
+            if (jogo.gamesJogados != 0 && !jogo.desafiado.situacao.Equals("curinga"))
             {
                 if (jogo.desafiante.situacao.Equals("curinga"))
                 {
+                    pontuacao = 6;
+                } else if (jogo.idDoVencedor == jogo.desafiado_id && jogo.setsJogados == 2)
+                {
+                    pontuacao = 10;
+                }
+                else if ((jogo.idDoVencedor == jogo.desafiado_id) && (jogo.setsJogados == 3 || jogo.setsJogados == 1))
+                {
+                    pontuacao = 8;
+                }
+                else if (jogo.idDoVencedor != jogo.desafiado_id && jogo.setsJogados == 2)
+                {
+                    pontuacao = 2;
+                }
+                else if ((jogo.idDoVencedor != jogo.desafiado_id) && (jogo.setsJogados == 3 || jogo.setsJogados == 1))
+                {
                     pontuacao = 4;
-                    return pontuacao;
                 }
-                float desempenho = calcularDesempenho(jogo.qtddSetsGanhosDesafiado, jogo.gamesGanhosDesafiado, jogo.setsJogados, jogo.gamesJogados);
-                //if (jogo.desafiado_id == 4)
-                //{
-                //    bonus = 1;
-                //}
-                if (jogo.idDoVencedor == jogo.desafiado_id)
-                {
-                    bonus = 6;
-                }
-                Rancking ranking = db.Rancking.Where(r => r.userProfile_id == jogo.desafiante_id && r.rodada.isAberta == false && r.rodada_id < jogo.rodada_id).OrderByDescending(ran => ran.rodada_id).Take(1).Single();
-                if (ranking.posicao == 0)
-                {
-                    ranking.posicao = 32; // jogador sem ranking ficara na posicao 32 para efeitos de calculos
-                }
-                pontuacao = (desempenho / (ranking.posicao + 4)) + bonus;
 
-                pontuacao = bonificacaoPorDiferencaPlacar(jogo, "desafiado", pontuacao);
                 if ((jogo.idDoVencedor == jogo.desafiado_id) && (jogo.situacao_Id == 5))
                 { // WO
-                    pontuacao = (pontuacao * 70) / 100;
+                    pontuacao = 6;
                 }
                 if ((jogo.idDoVencedor != jogo.desafiado_id) && (jogo.situacao_Id == 5))
                 { // WO
                     pontuacao = 0;
                 }
+
                 pontuacao = (float)Math.Round(pontuacao, 2);
             }
             return pontuacao;
-        }
-
-        public float bonificacaoPorDiferencaPlacar(Jogo jogo, string tipoJogador, float pontuacao)
-        {
-            if (tipoJogador == "desafiado")
-            {
-                if ((jogo.gamesGanhosDesafiado > 11) && (jogo.gamesGanhosDesafiante < 2))
-                {
-                    pontuacao = pontuacao + ((pontuacao * 30) / 100);
-                }
-            }
-            else
-            {
-                if ((jogo.gamesGanhosDesafiante > 11) && (jogo.gamesGanhosDesafiado < 2))
-                {
-                    pontuacao = pontuacao + ((pontuacao * 30) / 100);
-                }
-            }
-            return pontuacao;
-        }
-
-        public float calcularDesempenho(int setsGanhos, int gamesGanhos, int setsJogados, int gamesJogados)
-        {
-            float desempenho = 0;
-            if (gamesJogados != 0)
-            {
-                desempenho = ((float)((6 * setsGanhos) + gamesGanhos) / ((6 * setsJogados) + gamesJogados)) * 100;
-            }
-            return desempenho;
         }
 
         public void gravarPontuacaoNaRodada(int idRodada, UserProfile jogador, double pontosConquistados, bool isReprocessamento = false)
@@ -135,7 +113,8 @@ namespace Barragem.Class
                 else
                 {
                     var naoExisteRanking = db.Rancking.Where(r => r.rodada_id == idRodada && r.userProfile_id == jogador.UserId).Count();
-                    if (naoExisteRanking == 0) {
+                    if (naoExisteRanking == 0)
+                    {
                         ran = new Rancking();
                         ran.rodada_id = idRodada;
                         ran.pontuacao = Math.Round(pontosConquistados, 2);
@@ -147,7 +126,9 @@ namespace Barragem.Class
                         db.SaveChanges();
                     }
                 }
-            }catch (Exception e) {
+            }
+            catch (Exception e)
+            {
                 System.ArgumentException argEx = new System.ArgumentException("Jogador:" + jogador.UserId, "Jogador:" + jogador.UserId, e);
                 throw argEx;
             }
@@ -175,7 +156,9 @@ namespace Barragem.Class
                         }
                     }
                 }
-            } catch (Exception e) {
+            }
+            catch (Exception e)
+            {
                 throw e;
             }
         }
