@@ -1,0 +1,62 @@
+﻿@model Barragem.Models.Pagamento
+
+@{
+    ViewBag.Title = "Create";
+}
+
+@using (Html.BeginForm("Create", "Pagamento", FormMethod.Post, new { @class = "form-horizontal" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <legend>Criar Pagamento</legend>
+    <div class="form-group">
+        @Html.Label("Ano", new { @class = "col-sm-2 control-label" })
+        <div class="col-sm-8 input-group">
+            <select name="ano" class="form-control">
+                <option value="@ViewBag.anoAnterior">@ViewBag.anoAnterior</option>
+                <option selected value="@ViewBag.anoAtual">@ViewBag.anoAtual</option>
+                <option value="@ViewBag.proximoAno">@ViewBag.proximoAno</option>
+            </select>
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.Label("Mês", new { @class = "col-sm-2 control-label" })
+        <div class="col-sm-8 input-group">
+            <select name="mes" class="form-control">
+                <option @if (ViewBag.mes == 1) { @Html.Raw("select")  } value="1">janeiro</option>
+                <option @if (ViewBag.mes == 2) { @Html.Raw("select")  } value="2">fevereiro</option>
+                <option @if (ViewBag.mes == 3) { @Html.Raw("select")  } value="3">março</option>
+                <option @if (ViewBag.mes == 4) { @Html.Raw("select")  } value="4">abril</option>
+                <option @if (ViewBag.mes == 5) { @Html.Raw("select")  } value="5">maio</option>
+                <option @if (ViewBag.mes == 6) { @Html.Raw("select")  } value="6">junho</option>
+                <option @if (ViewBag.mes == 7) { @Html.Raw("select")  } value="7">julho</option>
+                <option @if (ViewBag.mes == 8) { @Html.Raw("select")  } value="8">agosto</option>
+                <option @if (ViewBag.mes == 9) { @Html.Raw("select")  } value="9">setembro</option>
+                <option @if (ViewBag.mes == 10) { @Html.Raw("select")  } value="10">outubro</option>
+                <option @if (ViewBag.mes == 11) { @Html.Raw("select")  } value="11">novembro</option>
+                <option @if (ViewBag.mes == 12) { @Html.Raw("select")  } value="12">dezembro</option>
+            </select>
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.Label("", new { @class = "col-sm-2 control-label" })
+        <div class="col-sm-8 input-group">
+            
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-xs-2">
+            <button type="submit" class="btn btn-info pull-right">Salvar</button>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+
+    
+

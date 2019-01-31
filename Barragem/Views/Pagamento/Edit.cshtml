@@ -1,0 +1,163 @@
+﻿@model Barragem.Models.Pagamento
+
+@{
+    ViewBag.Title = "Edit";
+}
+
+@using (Html.BeginForm("Edit", "Pagamento", FormMethod.Post, new { @class = "form-horizontal" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    @Html.HiddenFor(model => model.Id)
+
+    <legend>Editar Pagamento</legend>
+
+    <div class="form-group col-sm-6">
+        @Html.Label("Ano", new { @class = "control-label" })
+        <div class="col-sm-8 input-group">
+            <select name="ano" class="form-control">
+                <option @if (Model.ano == ViewBag.anoAnterior) { @Html.Raw("select") } value="@ViewBag.anoAnterior">@ViewBag.anoAnterior</option>
+                <option @if (Model.ano == ViewBag.anoAtual) { @Html.Raw("select") } value="@ViewBag.anoAtual">@ViewBag.anoAtual</option>
+                <option @if (Model.ano == ViewBag.proximoAno) { @Html.Raw("select") } value="@ViewBag.proximoAno">@ViewBag.proximoAno</option>
+            </select>
+        </div>
+    </div>
+    <div class="form-group col-sm-6">
+        @Html.Label("Mês", new { @class = "control-label" })
+        <div class="col-sm-8 input-group">
+            <select name="mes" class="form-control">
+                <option @if (Model.mes == 1) { @Html.Raw("select")   } value="1">janeiro</option>
+                <option @if (Model.mes == 2) { @Html.Raw("select")   } value="2">fevereiro</option>
+                <option @if (Model.mes == 3) { @Html.Raw("select")   } value="3">março</option>
+                <option @if (Model.mes == 4) { @Html.Raw("select")   } value="4">abril</option>
+                <option @if (Model.mes == 5) { @Html.Raw("select")   } value="5">maio</option>
+                <option @if (Model.mes == 6) { @Html.Raw("select")   } value="6">junho</option>
+                <option @if (Model.mes == 7) { @Html.Raw("select")   } value="7">julho</option>
+                <option @if (Model.mes == 8) { @Html.Raw("select")   } value="8">agosto</option>
+                <option @if (Model.mes == 9) { @Html.Raw("select")   } value="9">setembro</option>
+                <option @if (Model.mes == 10) { @Html.Raw("select")   } value="10">outubro</option>
+                <option @if (Model.mes == 11) { @Html.Raw("select")   } value="11">novembro</option>
+                <option @if (Model.mes == 12) { @Html.Raw("select")   } value="12">dezembro</option>
+            </select>
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-xs-12">
+            <button type="submit" class="btn btn-info">Salvar</button> <a class="btn btn-info" href="@Url.Action("/Apurar", new { Id = Model.Id })">Apurar</a> <a class="btn btn-info" href="@Url.Action("/EnviarBoleto", new { Id = Model.Id })">Enviar Boleto</a>
+</div>
+    </div>
+    <br>
+    
+}
+<table class="table table-striped table-condensed table-bordered">
+    <tr>
+        <th>
+            Ranking
+        </th>
+        <th>
+            Usuários
+        </th>
+        <th>
+            Status
+        </th>
+        <th>
+            Cobrar
+        </th>
+        <th>
+            Valor
+        </th>
+        
+    </tr>
+
+    @foreach (var item in ViewBag.PagamentoBarragens)
+    {
+        <tr>
+            <td>
+                @item.barragem.nome
+            </td>
+            <td>
+                @item.qtddUsuario
+            </td>
+            <td>
+                @if (!String.IsNullOrEmpty(item.status)) {
+                    <select name="@Html.Raw("status" + item.Id)" id="@Html.Raw("status" + item.Id)" class="alterarStatus" data-valor="@item.Id">
+                        <option @if (item.status == "Criado") { @Html.Raw("selected")  } value="Criado">Criado</option>
+                        <option @if (item.status=="Aguardando") {@Html.Raw("selected") } value="Aguardando">Aguardando</option>
+                        <option @if (item.status=="Pago") {@Html.Raw("selected") } value="Pago">Pago</option>
+                    </select>
+                }
+            </td>
+            <td>
+                <input type="checkbox" data-valor="@item.Id" @if((bool)item.cobrar) { @Html.Raw("checked")} value="true" name="cobrar" id="cobrar" class="cobrarBarragem" />
+            </td>
+            <td>
+                @Html.Raw("R$ " + item.valor + ",00")
+            </td>
+        </tr>
+    }
+
+</table>
+
+@section Scripts {
+    <script type="text/javascript">
+    $(document).ready(function () {
+        $(".cobrarBarragem").click(function (event) {
+            var Id = $(this).data("valor");
+            $.ajax({
+                type: "POST",
+                url: "/Pagamento/CobrarBarragem",
+                dataType: "json",
+                data: "{'Id':'" + Id + "'}",
+                contentType: "application/json; charset=utf-8",
+                success: function (response) {
+                    if (typeof response == "object") {
+                        if (response.retorno === 0) {
+                            toastr.error(response.erro, "Erro");
+                        } else {
+                            toastr.success("Atualização realizada com sucesso.", "Aviso");
+                        }
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    location.reload(true);
+                }
+            });
+        });
+
+        $(".alterarStatus").change(function (event) {
+            var Id = $(this).data("valor");
+            var status = document.getElementById("status" + Id).value;
+            $.ajax({
+                type: "POST",
+                url: "/Pagamento/AlterarStatus",
+                dataType: "json",
+                data: "{'Id':" + Id + ",'status':'" + status + "'}",
+                contentType: "application/json; charset=utf-8",
+                success: function (response) {
+                    if (typeof response == "object") {
+                        if (response.retorno === 0) {
+                            toastr.error(response.erro, "Erro");
+                        } else {
+                            toastr.success("Atualização realizada com sucesso.", "Aviso");
+                        }
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    location.reload(true);
+                }
+            });
+        });
+
+    });
+
+    </script>
+}
+
+
+
+
+
+
+
+

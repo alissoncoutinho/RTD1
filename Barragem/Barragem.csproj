@@ -183,6 +183,7 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Class\ClientePagHiper.cs" />
     <Compile Include="Class\Funcoes.cs" />
     <Compile Include="Class\Mail.cs" />
     <Compile Include="Class\MD5Cript.cs" />
@@ -208,6 +209,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\JogoController.cs" />
     <Compile Include="Controllers\NotificacaoController.cs" />
+    <Compile Include="Controllers\PagamentoController.cs" />
     <Compile Include="Controllers\RanckingController.cs" />
     <Compile Include="Controllers\RodadaController.cs" />
     <Compile Include="Controllers\TemporadaController.cs" />
@@ -231,6 +233,8 @@
     <Compile Include="Models\Jogo.cs" />
     <Compile Include="Models\JogoCabecaChave.cs" />
     <Compile Include="Models\Log.cs" />
+    <Compile Include="Models\Pagamento.cs" />
+    <Compile Include="Models\PagamentoBarragem.cs" />
     <Compile Include="Models\Rancking.cs" />
     <Compile Include="Models\RankingView.cs" />
     <Compile Include="Models\Rodada.cs" />
@@ -889,6 +893,10 @@
     <Content Include="Views\Account\AtualizaStatus.cshtml" />
     <Content Include="Views\Torneio\LancarResultado2.cshtml" />
     <Content Include="Views\Rancking\RegraPontuacao.cshtml" />
+    <Content Include="Views\Torneio\Regulamento.cshtml" />
+    <Content Include="Views\Pagamento\Index.cshtml" />
+    <Content Include="Views\Pagamento\Edit.cshtml" />
+    <Content Include="Views\Pagamento\Create.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -1,0 +1,11 @@
+﻿@model Barragem.Models.Barragens
+@{
+    ViewBag.Title = "Regulamento";
+    Layout = "~/Views/Shared/_LayoutTorneio2.cshtml";
+}
+
+    <div class="desc text-left">
+        @Html.Raw(Model.regulamento)
+        <br><br><br>
+    </div>
+

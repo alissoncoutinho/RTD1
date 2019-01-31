@@ -48,5 +48,9 @@ namespace Barragem.Context
 
         public DbSet<JogoCabecaChave> JogoCabecaChave { get; set; }
 
+        public DbSet<Pagamento> Pagamento { get; set; }
+
+        public DbSet<PagamentoBarragem> PagamentoBarragem { get; set; }
+        
     }
 }

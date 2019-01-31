@@ -28,7 +28,33 @@
             @Html.ValidationMessageFor(model => model.nome)
         </div>
     </div>
-
+    <div class="row">
+        <div class="col-xs-2">
+            @Html.Label("CPF/CNPJ")
+            <div class="input-group">
+                @Html.TextBoxFor(model => model.cpfResponsavel, new { @class = "form-control" })
+            </div>
+            @Html.ValidationMessageFor(model => model.cpfResponsavel)
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-6">
+            @Html.LabelFor(model => model.nomeResponsavel)
+            <div class="input-group">
+                @Html.TextBoxFor(model => model.nomeResponsavel, new { @class = "form-control" })
+            </div>
+            @Html.ValidationMessageFor(model => model.nomeResponsavel)
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-2">
+            @Html.Label("Valor p/usuário")
+            <div class="input-group">
+                @Html.TextBoxFor(model => model.valorPorUsuario, new { @class = "form-control" })
+            </div>
+            @Html.ValidationMessageFor(model => model.valorPorUsuario)
+        </div>
+    </div>
     <div class="row">
         <div class="col-xs-6">
             @Html.LabelFor(model => model.email)
@@ -136,6 +162,7 @@
 
     @Scripts.Render("~/bundles/editor")
     <script type="text/javascript">
+        $("#cpfResponsavel").mask("99999999999999");
 		tinyMCE.baseURL = '@Url.Content("~/Scripts/tinymce/")'
 		tinyMCE.init({
 		    selector: 'textarea#regulamento',

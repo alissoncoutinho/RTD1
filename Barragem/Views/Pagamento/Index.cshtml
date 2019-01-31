@@ -1,0 +1,58 @@
+﻿@model IEnumerable<Barragem.Models.Pagamento>
+
+    @{
+        ViewBag.Title = "Index";
+    }
+
+    <h3>Controle de Pagamentos</h3>
+
+    <p>
+        <a href="@Url.Action("Create")" class="btn btn-primary btn-small"><span class="glyphicon glyphicon-plus"></span> Nova Cobrança</a>
+    </p>
+    
+    <table class="table table-striped table-condensed table-bordered">
+        <tr>
+            <th>
+                Ano
+            </th>
+            <th>
+                Mês
+            </th>
+            <th>
+                Status
+            </th>
+            <th>
+                Arrecadado
+            </th>
+            <th>
+                A receber
+            </th>
+            <th></th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ano)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.mes)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.status)
+                </td>
+                <td>
+                    R$ @Html.DisplayFor(modelItem => item.arrecadado),00
+                </td>
+                <td>
+                    R$ @Html.DisplayFor(modelItem => item.areceber),00
+                </td>
+                <td>
+                    <a href="@Url.Action("Edit", new {id = @item.Id })" title="Editar/Detalhar" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-edit"></span></a>
+                </td>
+            </tr>
+        }
+
+    </table>
+

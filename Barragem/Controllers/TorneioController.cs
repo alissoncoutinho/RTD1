@@ -724,6 +724,13 @@ namespace Barragem.Controllers
             return RedirectToAction("ConfirmacaoInscricao", new { torneioId = inscricao.torneioId, msgErro = MsgErro });
         }
 
+        public ActionResult Regulamento(int barragem)
+        {
+            Barragens barra = db.Barragens.Find(barragem);
+
+            return View(barra);
+        }
+
 
         private Uri Register(InscricaoTorneio inscricao, string token, string email)
         {
@@ -740,7 +747,7 @@ namespace Barragem.Controllers
             payment.Currency = Currency.Brl;
 
             // Add an item for this payment request
-            payment.Items.Add(new Item(inscricao.torneioId + "", inscricao.torneio.nome, 1, (decimal)inscricao.valor));
+            payment.Items.Add(new Uol.PagSeguro.Domain.Item(inscricao.torneioId + "", inscricao.torneio.nome, 1, (decimal)inscricao.valor));
 
             // Sets a reference code for this payment request, it is useful to identify this payment in future notifications.
             payment.Reference = "T-" + inscricao.Id;

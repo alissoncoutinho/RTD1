@@ -20,6 +20,10 @@
                 <li>@Html.ActionLink("Temporada", "Index", "Temporada")</li>
                 <li>@Html.ActionLink("Torneio", "Index", "Torneio")</li>
             }
+            @if (Roles.IsUserInRole("admin"))
+            {
+                <li>@Html.ActionLink("Pagamentos", "Index", "Pagamento")</li>
+            }
             
             
                 <!--li class="divider"></!--li-->
