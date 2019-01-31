@@ -216,6 +216,19 @@
                                 </div>
                             </div>
                         }
+                        else
+                        {
+                            
+                            if (ViewBag.ClasseInsc2 > 0)
+                            {
+
+                                <input type="hidden" value="true" name="isMaisDeUmaClasse" id="isMaisDeUmaClasse" checked />
+                            }
+                            else
+                            {
+                                <input type="hidden" value="false" name="isMaisDeUmaClasse" id="isMaisDeUmaClasse" />
+                            }
+                        }
 
                         if (!String.IsNullOrEmpty(ViewBag.ClasseInscricao2))
                         {
