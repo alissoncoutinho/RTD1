@@ -1,9 +1,11 @@
-﻿using System;
+﻿using Barragem.Context;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace Barragem.Class
 {
@@ -55,15 +57,42 @@ namespace Barragem.Class
 
     }
 
+    public class Status_request
+    {
+        public string result { get; set; }
+        public string response_message { get; set; }
+        public string transaction_id { get; set; }
+        public string created_date { get; set; }
+        public string status { get; set; }
+        public List<Item> items { get; set; }
+        public int http_code { get; set; }
+
+    }
+
+    public class Notificacao
+    {
+        public string token { get { return "YOY6V157GUGEH2M8NXZS07DRLC86HWXGLVMHWSPCM5R3"; } }
+        public string apiKey { get { return "apk_40465669-WocOWDbeFEYtUuSGyMSrTTwYrWjjsKYP"; } }
+        public string transaction_id { get; set; }
+        public string notification_id { get; set; }
+    }
+
     public class Retorno
     {
         public Create_request create_request{get; set;}
         
     }
 
+    public class RetornoNotificacao
+    {
+        public Status_request status_request { get; set; }
+
+    }
+
     public class ClientePagHiper{
         HttpClient client = new HttpClient();
         public static List<BoletoRetorno> listBoletoRetorno = new List<BoletoRetorno>();
+        private BarragemDbContext db = new BarragemDbContext();
 
         public ClientePagHiper()
         {
@@ -101,6 +130,35 @@ namespace Barragem.Class
         }
 
         
+        public async Task ConfirmarNotificacao(Notificacao notificacao)
+        {
+            try
+            {
+                var response = await client.PostAsJsonAsync(
+                    "/transaction/notification", notificacao);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var retorno = await response.Content.ReadAsAsync<RetornoNotificacao>();
+                    int id = Convert.ToInt32(retorno.status_request.items[0].item_id);
+                    var pb = db.PagamentoBarragem.Where(p => p.Id == id).SingleOrDefault();
+                    if (retorno.status_request.result == "success") {
+                        if (retorno.status_request.status == "paid")
+                        {
+                            pb.status = "Pago";
+                        } else {
+                            pb.status = retorno.status_request.status;
+                        }
+                    }else{
+                        pb.status = retorno.status_request.response_message;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                
+            }
+        }
 
         //static void Main()
         //{

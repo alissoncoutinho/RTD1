@@ -425,6 +425,7 @@ namespace Barragem.Controllers
             int barragemId = usuario.barragemId;
             BarragemView barragem = db.BarragemView.Find(barragemId);
             var barragemName = barragem.nome;
+            string perfil = Roles.GetRolesForUser(User.Identity.Name)[0];
             ViewBag.linkPagSeguro = barragem.linkPagSeguro;
             if ((barragem.soTorneio) != null)
             {
@@ -437,6 +438,16 @@ namespace Barragem.Controllers
 
             ViewBag.situacaoJogador = usuario.situacao;
             ViewBag.userId = usuario.UserId;
+            ViewBag.cobranca = "";
+            if (perfil.Equals("admin") || perfil.Equals("organizador")) {
+                var pb = db.PagamentoBarragem.Where(p => (bool)p.cobrar && p.barragemId == barragemId && p.status != "Pago").OrderByDescending(o => o.Id).ToList();
+                if (pb.Count() > 0)
+                {
+                    ViewBag.cobranca = "Olá, o boleto da sua mensalidade já está disponível para pagamento. Clique no link abaixo para acessar o boleto ou copie o código de barras abaixo:";
+                    ViewBag.boleto = pb[0].linkBoleto;
+                    ViewBag.numeroCodigoBarras = pb[0].digitableLine;
+                }
+            }
 
             Jogo jogo = null;
             if (idJogo == 0)
@@ -460,7 +471,6 @@ namespace Barragem.Controllers
             if (jogo != null)
             {
                 //nao permitir edição caso a rodada já esteja fechada e o placar já tenha sido informado
-                string perfil = Roles.GetRolesForUser(User.Identity.Name)[0];
                 if (!perfil.Equals("admin") && !perfil.Equals("organizador") && (jogo.rodada.isAberta == false) && (jogo.gamesJogados != 0)){
                     ViewBag.Editar = false;
                 }else{

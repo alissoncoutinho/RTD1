@@ -1,4 +1,5 @@
-﻿using Barragem.Context;
+﻿using Barragem.Class;
+using Barragem.Context;
 using Barragem.Models;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,7 @@ using System.Web.Mvc;
 using Uol.PagSeguro.Domain;
 using Uol.PagSeguro.Resources;
 using Uol.PagSeguro.Service;
+using System.Threading.Tasks;
 
 namespace Barragem.Controllers
 {
@@ -101,6 +103,13 @@ namespace Barragem.Controllers
             
         }
 
-    
+        [HttpPost]
+        public async Task ReceberPagHiperAsync(string apiKey, string transaction_id, string notification_id, DateTime notification_date) {
+            var notificacao = new Notificacao();
+            notificacao.transaction_id = transaction_id;
+            notificacao.notification_id = notification_id;
+
+            await new ClientePagHiper().ConfirmarNotificacao(notificacao);
+        }
     }    
 }

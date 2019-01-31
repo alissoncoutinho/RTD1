@@ -151,23 +151,6 @@ namespace Barragem.Controllers
             return boleto;
         }
 
-        private async void gerarBoleto(PagamentoBarragem pb)
-        {
-            
-        }
-
-        private void EnviarEmail(string emailDestinatario, string nome, string nomeBarragem, string linkBoleto)
-        {
-            var mensagem = "";
-            Mail e = new Mail();
-            e.assunto = "";
-            e.conteudo = mensagem;
-            e.formato = Class.Tipos.FormatoEmail.Html;
-            e.de = "postmaster@rankingdetenis.com";
-            e.para = emailDestinatario;
-            e.EnviarMail();
-        }
-
         public async Task<ActionResult> EnviarBoleto(int Id)
         {
             try
@@ -178,7 +161,7 @@ namespace Barragem.Controllers
                     var boleto = montarDadosBoleto(pb);
                     await new ClientePagHiper().EmitirBoletoAsync(boleto);
                 }
-                while (pagamentoBarragem.Count() != ClientePagHiper.listBoletoRetorno.Count()) {
+                while (pagamentoBarragem.Count() > ClientePagHiper.listBoletoRetorno.Count()) {
 
                 }
                 var conferencia = 0;
@@ -249,6 +232,29 @@ namespace Barragem.Controllers
 
         }
 
+        public ActionResult InativarBarragensPendentes(int Id)
+        {
+            try
+            {
+                var pagamentoBarragem = db.PagamentoBarragem.Where(pb => pb.pagamentoId == Id && (bool) pb.cobrar).ToList();
+                foreach (PagamentoBarragem pb in pagamentoBarragem)
+                {
+                    if (pb.status != "Pago")
+                    {
+                        var barragem = db.Barragens.Find(pb.barragemId);
+                        barragem.isAtiva = false;
+                        db.Entry(barragem).State = EntityState.Modified;
+                    }
+                }
+                db.SaveChanges();
+                return RedirectToAction("Edit", "Pagamento", new { Id = Id, Msg = "Inativação realizada com sucesso." });
+            }
+            catch (Exception ex)
+            {
+                return RedirectToAction("Edit", "Pagamento", new { Id = Id, MsgErro = ex.InnerException });
+            }
+
+        }
 
         [HttpPost]
         public ActionResult CobrarBarragem(int Id){
