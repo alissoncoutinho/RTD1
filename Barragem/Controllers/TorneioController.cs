@@ -1035,6 +1035,9 @@ namespace Barragem.Controllers
                                 }
                             }else if (isMaisDeUmaClasse)
                             {
+                                    if (it[0].statusPagamento!= null && it[0].statusPagamento.Equals("3")) {
+                                        return RedirectToAction("Detalhes", new { id = torneioId });
+                                    }
                                     it[0].valor = torneio.valorMaisClasses;
                                     db.Entry(it[0]).State = EntityState.Modified;
                                     InscricaoTorneio inscricao2 = new InscricaoTorneio();
