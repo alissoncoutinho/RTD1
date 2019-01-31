@@ -149,7 +149,7 @@
                                     <div class="col-sm-8">
                                         <div class="checkbox">
                                             <label>
-                                                <input type="checkbox" value="true" name="isMaisDeUmaClasse" id="isMaisDeUmaClasse" onclick="segundaOpcaoDeClasse()" /> @Html.Raw("Quero escolher mais uma categoria")
+                                                <input type="checkbox" value ="true" name="isMaisDeUmaClasse" id="isMaisDeUmaClasse" onclick="segundaOpcaoDeClasse()" /> @Html.Raw("Quero escolher mais uma categoria")
                                             </label>
                                         </div>
                                     </div>
@@ -168,6 +168,7 @@
 
                             }
                         }else{
+                            <!--INSCRIÇÃO REALIZADA-->
                             <div class="row">
                                 @Html.Label("Classe", new { @class = "col-sm-4" })
                                 <div class="col-sm-8 info-box-text">
@@ -180,9 +181,18 @@
                                     </select>
                                 </div>
                             </div>
+                            <div class="form-group">
+                                    <div class="col-sm-8">
+                                        <div class="checkbox">
+                                            <label>
+                                                    <input type="checkbox" value="true" name="isMaisDeUmaClasse" id="isMaisDeUmaClasse" onclick="segundaOpcaoDeClasse()" @if(!String.IsNullOrEmpty(ViewBag.ClasseInscricao2)){@Html.Raw("checked")}/> @Html.Raw("Quero escolher mais uma categoria")
+                                            </label>
+                                        </div>
+                                    </div>
+                            </div>
                             if(!String.IsNullOrEmpty(ViewBag.ClasseInscricao2)){
-                                <div class="row">
-                                    <input type="hidden" value="true" name="isMaisDeUmaClasse" id="isMaisDeUmaClasse" />
+                                <div id="segundaOpcaoClasse" class="row">
+                                    <!--<input type="hidden" value="true" name="isMaisDeUmaClasse" id="isMaisDeUmaClasse" />-->
                                     @Html.Label("2ª Classe", new { @class = "col-sm-4" })
                                     <div class="col-sm-8 info-box-text">
                                         <select name="classeInscricao2" class="form-control">
@@ -194,7 +204,19 @@
                                     </div>
                                 </div>
                             } else {
-                                <input type="hidden" name="classeInscricao2" value="0"/>
+                                <!--<input type="hidden" name="classeInscricao2" value="0"/>-->
+                                
+                                <div id="segundaOpcaoClasse" class="row">
+                                    @Html.Label("2ª Classe", new { @class = "col-sm-4" })
+                                    <div class="col-sm-8 info-box-text">
+                                        <select name="classeInscricao2" class="form-control">
+                                            <option value="0">Selecione uma classe...</option>
+                                            @foreach (var item in ViewBag.Classes2){
+                                                <option value="@item.Id" @if ((!String.IsNullOrEmpty(ViewBag.ClasseInscricao2)) && (ViewBag.ClasseInscricao2 == item.Id) ) { @Html.Raw("selected")      }>@item.nome</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
                             }
                        }
                         @if (!String.IsNullOrEmpty(Model.observacao)) {
@@ -233,7 +255,7 @@
                                         @if ((String.IsNullOrEmpty(inscricao.statusPagamento) && !inscricao.isAtivo)){    
                                             <button type="button" class="btn btn-danger col-xs-12 pull-right confirmCancel">Cancelar</button>
                                         }
-                                        <a href="@Url.Action("AlterarClasse", new { torneioId = Model.Id })" data-classe1="@ViewBag.ClasseInscricao" data-classe2="@ViewBag.ClasseInsc2" class="btn btn-info col-xs-12 confirmAlterarClasse" title="Alterar Classe">Alterar Classe</a>
+                                        <a href="@Url.Action("AlterarClasse", new { torneioId = Model.Id })" data-classe1="@ViewBag.ClasseInscricao" data-classe2="@ViewBag.ClasseInsc2" class="btn btn-info col-xs-12 confirmAlterarClasse" title="Salvar alterações">Salvar alterações</a>
                                     </div>
                             }
                             else
@@ -328,10 +350,7 @@
             var classe2 = $(this).data("classe2");
             var classe1Nova = document.formInscricao.classeInscricao.value;
             var classe2Nova = document.formInscricao.classeInscricao2.value;
-            if ((classe1 == classe1Nova) && (classe2 == classe2Nova)) {
-                //if(true){
-                toastr.success("Selecione uma nova classe na caixa de seleção de classe.", "Aviso");
-            } else {
+            
                 $.confirm({
                     title: "Confirmação",
                     text: "Aperte SIM para confirmar a alteração de classe!",
@@ -345,7 +364,7 @@
                     confirmButton: "Sim",
                     cancelButton: "Não"
                 });
-            }
+            
         });
             
 
@@ -364,8 +383,11 @@
                 document.getElementById('segundaOpcaoClasse').style.display = "none";
             }
         }
-        document.getElementById('segundaOpcaoClasse').style.opacity = "0";
-        document.getElementById('segundaOpcaoClasse').style.display = "none";
+
+        if (!document.getElementById('isMaisDeUmaClasse').checked) {
+            document.getElementById('segundaOpcaoClasse').style.opacity = "0";
+            document.getElementById('segundaOpcaoClasse').style.display = "none";
+        }
 
     </script>
 }

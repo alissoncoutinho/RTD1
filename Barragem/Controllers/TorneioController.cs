@@ -1020,8 +1020,38 @@ namespace Barragem.Controllers
                             it[0].classe = classeInscricao;
                             db.Entry(it[0]).State = EntityState.Modified;
                             if (it.Count() > 1){
-                                it[1].classe = classeInscricao2;
-                                db.Entry(it[1]).State = EntityState.Modified;
+                                if (isMaisDeUmaClasse)
+                                {
+                                    it[1].classe = classeInscricao2;
+                                    db.Entry(it[1]).State = EntityState.Modified;
+                                }
+                                else
+                                {
+                                    //remover 2 classe
+                                    db.InscricaoTorneio.Remove(it[1]);
+                                    //atualizar valor inscr
+                                    it[0].valor = torneio.valor;
+                                    db.Entry(it[0]).State = EntityState.Modified;
+                                }
+                            }else if (isMaisDeUmaClasse)
+                            {
+                                    it[0].valor = torneio.valorMaisClasses;
+                                    db.Entry(it[0]).State = EntityState.Modified;
+                                    InscricaoTorneio inscricao2 = new InscricaoTorneio();
+                                    inscricao2.classe = classeInscricao2;
+                                    inscricao2.torneioId = torneioId;
+                                    inscricao2.userId = userId;
+                                    inscricao2.valor = torneio.valorMaisClasses;
+                                    inscricao2.observacao = observacao;
+                                    if (torneio.valor > 0)
+                                    {
+                                        inscricao2.isAtivo = false;
+                                    }
+                                    else
+                                    {
+                                        inscricao2.isAtivo = true;
+                                    }
+                                    db.InscricaoTorneio.Add(inscricao2);
                             }
                             db.SaveChanges();
                             return RedirectToAction("Detalhes", new { id = torneioId, Msg = "ok" });
