@@ -48,7 +48,7 @@ namespace Barragem.Models
         public string tokenPagSeguro { get; set; }
         [Display(Name = "Cidade")]
         public string cidade { get; set; }
-        public int valorPorUsuario { get; set; }
+        public int? valorPorUsuario { get; set; }
         [Display(Name = "Cpf Resp.")]
         public string cpfResponsavel { get; set; }
         [Display(Name = "Nome Resp.")]
@@ -81,7 +81,7 @@ namespace Barragem.Models
         public string tokenPagSeguro { get; set; }
         [Display(Name = "Cidade")]
         public string cidade { get; set; }
-        public int valorPorUsuario { get; set; }
+        public int? valorPorUsuario { get; set; }
         public string cpfResponsavel { get; set; }
         public string nomeResponsavel { get; set; }
     }

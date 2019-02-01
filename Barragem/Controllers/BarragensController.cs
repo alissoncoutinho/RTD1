@@ -65,6 +65,7 @@ namespace Barragem.Controllers
             {
                 var codigo=91;
                 var sql="";
+                if (barragens.valorPorUsuario == null) barragens.valorPorUsuario = 5;
                 using (TransactionScope scope = new TransactionScope())
                 {
                     if (ModelState.IsValid){
@@ -126,6 +127,17 @@ namespace Barragem.Controllers
                     ViewBag.MsgErro = "Você não pertence a esta barragem.";
                     return View(barragens);
                 }
+                var barraAtual = db.BarragemView.Find(barragens.Id);
+                // o organizador não deve alterar este valor
+                barragens.valorPorUsuario = barraAtual.valorPorUsuario;
+                if (!barraAtual.isAtiva)
+                {
+                    if (barragens.isAtiva)
+                    {
+                        ViewBag.MsgErro = "Você não tem permissão para ativar este Ranking.";
+                        return View(barragens);
+                    }
+                } 
             }
             if (ModelState.IsValid){
                 if (barragens.email!=null){

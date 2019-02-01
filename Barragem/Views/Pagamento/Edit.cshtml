@@ -16,9 +16,9 @@
         @Html.Label("Ano", new { @class = "control-label" })
         <div class="col-sm-8 input-group">
             <select name="ano" class="form-control">
-                <option @if (Model.ano == ViewBag.anoAnterior) { @Html.Raw("select") } value="@ViewBag.anoAnterior">@ViewBag.anoAnterior</option>
-                <option @if (Model.ano == ViewBag.anoAtual) { @Html.Raw("select") } value="@ViewBag.anoAtual">@ViewBag.anoAtual</option>
-                <option @if (Model.ano == ViewBag.proximoAno) { @Html.Raw("select") } value="@ViewBag.proximoAno">@ViewBag.proximoAno</option>
+                <option @if (Model.ano == ViewBag.anoAnterior) { @Html.Raw("selected") } value="@ViewBag.anoAnterior">@ViewBag.anoAnterior</option>
+                <option @if (Model.ano == ViewBag.anoAtual) { @Html.Raw("selected") } value="@ViewBag.anoAtual">@ViewBag.anoAtual</option>
+                <option @if (Model.ano == ViewBag.proximoAno) { @Html.Raw("selected") } value="@ViewBag.proximoAno">@ViewBag.proximoAno</option>
             </select>
         </div>
     </div>
@@ -26,18 +26,18 @@
         @Html.Label("Mês", new { @class = "control-label" })
         <div class="col-sm-8 input-group">
             <select name="mes" class="form-control">
-                <option @if (Model.mes == 1) { @Html.Raw("select")   } value="1">janeiro</option>
-                <option @if (Model.mes == 2) { @Html.Raw("select")   } value="2">fevereiro</option>
-                <option @if (Model.mes == 3) { @Html.Raw("select")   } value="3">março</option>
-                <option @if (Model.mes == 4) { @Html.Raw("select")   } value="4">abril</option>
-                <option @if (Model.mes == 5) { @Html.Raw("select")   } value="5">maio</option>
-                <option @if (Model.mes == 6) { @Html.Raw("select")   } value="6">junho</option>
-                <option @if (Model.mes == 7) { @Html.Raw("select")   } value="7">julho</option>
-                <option @if (Model.mes == 8) { @Html.Raw("select")   } value="8">agosto</option>
-                <option @if (Model.mes == 9) { @Html.Raw("select")   } value="9">setembro</option>
-                <option @if (Model.mes == 10) { @Html.Raw("select")   } value="10">outubro</option>
-                <option @if (Model.mes == 11) { @Html.Raw("select")   } value="11">novembro</option>
-                <option @if (Model.mes == 12) { @Html.Raw("select")   } value="12">dezembro</option>
+                <option @if (Model.mes == 1) { @Html.Raw("selected")   } value="1">janeiro</option>
+                <option @if (Model.mes == 2) { @Html.Raw("selected")   } value="2">fevereiro</option>
+                <option @if (Model.mes == 3) { @Html.Raw("selected")   } value="3">março</option>
+                <option @if (Model.mes == 4) { @Html.Raw("selected")   } value="4">abril</option>
+                <option @if (Model.mes == 5) { @Html.Raw("selected")   } value="5">maio</option>
+                <option @if (Model.mes == 6) { @Html.Raw("selected")   } value="6">junho</option>
+                <option @if (Model.mes == 7) { @Html.Raw("selected")   } value="7">julho</option>
+                <option @if (Model.mes == 8) { @Html.Raw("selected")   } value="8">agosto</option>
+                <option @if (Model.mes == 9) { @Html.Raw("selected")   } value="9">setembro</option>
+                <option @if (Model.mes == 10) { @Html.Raw("selected")   } value="10">outubro</option>
+                <option @if (Model.mes == 11) { @Html.Raw("selected")   } value="11">novembro</option>
+                <option @if (Model.mes == 12) { @Html.Raw("selected")   } value="12">dezembro</option>
             </select>
         </div>
     </div>
@@ -67,6 +67,9 @@
         <th>
             Valor
         </th>
+        <th>
+            Boleto
+        </th>
         
     </tr>
 
@@ -94,11 +97,21 @@
             <td>
                 @Html.Raw("R$ " + item.valor + ",00")
             </td>
+            <td>
+                @if (item.status == "Aguardando")
+                {
+                    <a href="@item.linkBoleto" title="Boleto" target="_blank" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-barcode"></span></a>
+                }
+                else if ((item.status != "Pago") && (item.status != "Criado"))
+                {
+                    @Html.Raw(item.status)
+                }
+            </td>
         </tr>
     }
 
 </table>
-
+<a class="btn btn-default" href="@Url.Action("/Index")">Voltar</a>
 @section Scripts {
     <script type="text/javascript">
     $(document).ready(function () {

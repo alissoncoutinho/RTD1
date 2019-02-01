@@ -21,7 +21,20 @@
         </a>
     </div>
 }
-
+@if (!String.IsNullOrEmpty(ViewBag.cobranca))
+{
+    <div class="alert alert-info alert-dismissable">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="col-sm-12">
+                        @ViewBag.cobranca <a class="btn btn-primary" href="@ViewBag.boleto" target="_blank">Link do Boleto</a> <br>Número do código de barras: @ViewBag.numeroCodigoBarras
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
 @if (ViewBag.Torneio != null)
 {
     Barragem.Models.Torneio torneio = ViewBag.Torneio;

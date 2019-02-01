@@ -136,7 +136,7 @@ namespace Barragem.Controllers
             var barragemId = pb.barragemId;
             var barragem = db.BarragemView.Find(barragemId);
             var boleto = new Boleto();
-            boleto.order_id = "ranking_"+pb.barragemId+"_"+pb.Id;
+            boleto.order_id = "ranking-"+pb.barragemId+"-"+pb.Id;
             boleto.payer_email = barragem.email;
             boleto.payer_name = barragem.nomeResponsavel;
             boleto.payer_cpf_cnpj = barragem.cpfResponsavel;
