@@ -27,7 +27,7 @@ namespace Barragem.Models
         public DateTime? dataLimiteJogo { get; set; }
 
         [Display(Name = "Data do jogo")]
-        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:d}", ConvertEmptyStringToNull = true)]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd/MM/yyyy}", ConvertEmptyStringToNull = true)]
         public DateTime? dataJogo { get; set; }
 
         [Display(Name = "Hora")]

@@ -695,18 +695,30 @@ namespace Barragem.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "admin,usuario,organizador")]
-        public ActionResult MarcarJogo(int Id, DateTime dataJogo, string horaJogo, string localJogo="", bool isTorneio=false)
+        public ActionResult MarcarJogo(int Id, DateTime dataJogo, string horaJogo, string localJogo="", bool isTorneio=false, bool desmarcar=false)
         {
             Jogo jogoAtual = db.Jogo.Find(Id);
-            jogoAtual.dataJogo = dataJogo;
-            jogoAtual.horaJogo = horaJogo;
-            jogoAtual.localJogo = localJogo;
-            //alterar a situação do jogo para marcado
-            jogoAtual.situacao_Id = 2;
+            if (desmarcar)
+            {
+                jogoAtual.dataJogo = null;
+                jogoAtual.horaJogo = null;
+                jogoAtual.localJogo = null;
+                jogoAtual.situacao_Id = 1;
+                ViewBag.MsgAlerta = "Jogo desmarcado.";
+            }
+            else
+            {
+                jogoAtual.dataJogo = dataJogo;
+                jogoAtual.horaJogo = horaJogo;
+                jogoAtual.localJogo = localJogo;
+                //alterar a situação do jogo para marcado
+                jogoAtual.situacao_Id = 2;
+                ViewBag.MsgAlerta = "Jogo marcado com sucesso.";
+            }
             db.Entry(jogoAtual).State = EntityState.Modified;
             db.SaveChanges();
             ViewBag.Sucesso = true;
-            ViewBag.MsgAlerta = "Jogo marcado com sucesso.";
+            
             var barragemId = 0;
             if (isTorneio) return RedirectToAction("LancarResultado2", "Torneio", new { Id, barragemId, ViewBag.Sucesso, ViewBag.MsgAlerta });
 
