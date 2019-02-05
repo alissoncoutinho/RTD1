@@ -2,10 +2,14 @@
 
 <div class="alinhamento">
     <div class="bloco_jogo">
-        @if (Model.isRepescagem!=null){
-            <p class="data">Repescagem</p>
+        @if ((Model.isRepescagem!=null)&&(String.IsNullOrEmpty(Model.horaJogo))){
+            <p class="data" style="background-color:#dd4b39">Repescagem</p>
         }else{
-            <p class="data">@Html.Raw(Model.dataHorarioQuadra)</p>
+            if (Model.isRepescagem != null) {
+                <p class="data" style="background-color:#dd4b39">@Html.Raw(Model.dataHorarioQuadra)</p>
+            } else {
+                <p class="data">@Html.Raw(Model.dataHorarioQuadra)</p>
+            }
         }
         <p class="nome">
             @if (Model.desafiado_id != 0){
@@ -16,8 +20,8 @@
                     @Html.Raw(Model.desafiado.nome)
                 </a>
                 if (Model.desafiado2 != null){
-                    <a href="@Url.Action("../Account/Detalhes", new { userId = @Model.desafiado2.UserId })" title="Detalhes do jogador">
-                        @Html.Raw("<br>" + Model.desafiado2.nome)
+                    @Html.Raw("/ ") <a href="@Url.Action("../Account/Detalhes", new { userId = @Model.desafiado2.UserId })" title="Detalhes do jogador">
+                        @Html.Raw(Model.desafiado2.nome)
                     </a>
                 }
             }else{
@@ -46,8 +50,8 @@
                     @Html.Raw(Model.desafiante.nome)
                 </a>
                 if (Model.desafiante2 != null){
-                    <a href="@Url.Action("../Account/Detalhes", new { userId = @Model.desafiante2.UserId })" title="Detalhes do jogador">
-                        @Html.Raw("<br>" + Model.desafiante2.nome)
+                    @Html.Raw("/ ") <a href="@Url.Action("../Account/Detalhes", new { userId = @Model.desafiante2.UserId })" title="Detalhes do jogador">
+                        @Html.Raw(Model.desafiante2.nome)
                     </a>
                 }
             }

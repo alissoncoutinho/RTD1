@@ -25,7 +25,7 @@ namespace Barragem.Class
         public string payer_cpf_cnpj { get; set; }
         public int days_due_date { get; set; }
         public string type_bank_slip { get { return "boletoA4"; } }
-        //public string notification_url { get { return ""; } }
+        public string notification_url { get { return "http://www.rankingdetenis.com/Notification/ReceberPagHiperAsync"; } }
         public bool per_day_interest { get { return false; } }
         public List<Item> items { get; set; }
                 
