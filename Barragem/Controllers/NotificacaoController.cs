@@ -105,6 +105,10 @@ namespace Barragem.Controllers
 
         [HttpPost]
         public async Task ReceberPagHiperAsync(string apiKey, string transaction_id, string notification_id, DateTime notification_date) {
+            var log = new Log();
+            log.descricao = "PagHiper:" + DateTime.Now + ":" + apiKey + "::" + transaction_id + "::" + notification_id + "::" + notification_date;
+            db.Log.Add(log);
+            db.SaveChanges();
             var notificacao = new Notificacao();
             notificacao.transaction_id = transaction_id;
             notificacao.notification_id = notification_id;
