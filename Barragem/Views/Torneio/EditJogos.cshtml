@@ -60,6 +60,17 @@
                     </select>
                 </div>
                 <div class="form-group col-sm-2">
+                    <select name="fase" id="fase" class="form-control">
+                        <option value="0" @if (ViewBag.fase == 0) { @Html.Raw("selected")}>Fases</option>
+                        <option value="6" @if (ViewBag.fase == 6) { @Html.Raw("selected")}>R1</option>
+                        <option value="5" @if (ViewBag.fase == 5) { @Html.Raw("selected")}>R2</option>
+                        <option value="4" @if (ViewBag.fase == 4) { @Html.Raw("selected")}>Oitavas</option>
+                        <option value="3" @if (ViewBag.fase == 3) { @Html.Raw("selected")}>Quartas</option>
+                        <option value="2" @if (ViewBag.fase == 2) { @Html.Raw("selected")}>Semi</option>
+                        <option value="1" @if (ViewBag.fase == 1) { @Html.Raw("selected")}>Final</option>
+                    </select>
+                </div>
+                <div class="form-group col-sm-2">
                     <input type="button" value="filtrar" class="btn btn-primary" onclick="Pesquisar()">
                 </div>
             </div>
@@ -236,7 +247,8 @@
                 var data = document.getElementById('fData').value;
                 var hora = document.getElementById('fHora').value;
                 var quadra = document.getElementById('fQuadra').value;
-                window.location = "EditJogos?torneioId=" + torneioId + "&fClasse=" + classeId + "&fData=" + data + "&fHora=" + hora + "&fQuadra=" + quadra;
+                var fase = document.getElementById('fase').value;
+                window.location = "EditJogos?torneioId=" + torneioId + "&fClasse=" + classeId + "&fData=" + data + "&fHora=" + hora + "&fQuadra=" + quadra + "&fase=" + fase;
             }
 
         </script>

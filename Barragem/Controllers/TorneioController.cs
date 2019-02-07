@@ -1347,7 +1347,7 @@ namespace Barragem.Controllers
         }
 
         [Authorize(Roles = "admin,organizador")]
-        public ActionResult EditJogos(int torneioId, int fClasse = 0, string fData = "", string fHora = "", int fQuadra = 0)
+        public ActionResult EditJogos(int torneioId, int fClasse = 0, string fData = "", string fHora = "", int fQuadra = 0, int fase = 0)
         {
             List<Jogo> listaJogos = null;
             var classes = db.ClasseTorneio.Where(i => i.torneioId == torneioId).OrderBy(c => c.nome).ToList();
@@ -1356,12 +1356,13 @@ namespace Barragem.Controllers
             ViewBag.fData = fData;
             ViewBag.fHora = fHora;
             ViewBag.fQuadra = fQuadra;
+            ViewBag.fase = fase;
             if (fClasse == 0){
                 fClasse = classes[0].Id;
                 ViewBag.filtroClasse = fClasse;
             }
             var jogo = db.Jogo.Where(i => i.torneioId == torneioId);
-            listaJogos = filtrarJogos(jogo, fClasse, fData, fHora, fQuadra);
+            listaJogos = filtrarJogos(jogo, fClasse, fData, fHora, fQuadra, fase);
             if (fClasse == 1){
                 ViewBag.Inscritos = db.InscricaoTorneio.Where(c => c.torneioId == torneioId && c.isAtivo).ToList();
             }else{
@@ -1373,7 +1374,7 @@ namespace Barragem.Controllers
             return View(listaJogos);
         }
 
-        private List<Jogo> filtrarJogos(IQueryable<Jogo> jogos, int classe, string data, string hora, int quadra)
+        private List<Jogo> filtrarJogos(IQueryable<Jogo> jogos, int classe, string data, string hora, int quadra, int fase)
         {
             ViewBag.fClasse = classe;
             ViewBag.fData = data;
@@ -1391,6 +1392,10 @@ namespace Barragem.Controllers
             }
             if(quadra!=0){
                 jogos = jogos.Where(j=>j.quadra==quadra);
+            }
+            if (fase != 0)
+            {
+                jogos = jogos.Where(j => j.faseTorneio == fase);
             }
             return jogos.OrderByDescending(r => r.faseTorneio).ThenBy(r => r.ordemJogo).ToList();
         }
