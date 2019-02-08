@@ -114,10 +114,18 @@
                                 <a href="@Model.desafiado.linkwhatsapp">
                                     <img width="25" height="25" src="/Content/image/whatsapp.png">
                                 </a>
+                                if (Model.desafiado2_id != null)
+                                {
+                                    <br><a href="@Url.Action("../Account/Detalhes", new { userId = Model.desafiado2_id })" title="Detalhes do jogador">
+                                        @Model.desafiado2.nome
+                                    </a>
+
+                                }
                             }
                         </p>
                     </center>
                     @Html.HiddenFor(model => model.desafiado_id)
+                    @Html.HiddenFor(model => model.desafiado2_id)
                 </div>
                 <div class="col-md-4 col-xs-6">
                     @if ((Model.desafiante_id != 0) && (Model.desafiante_id != 10) && (Model.desafiante.fotoURL != null))
@@ -146,10 +154,18 @@
                                 <a href="@Model.desafiante.linkwhatsapp">
                                     <img width="25" height="25" src="/Content/image/whatsapp.png">
                                 </a>
+                                if (Model.desafiante2_id != null)
+                                {
+                                    <br><a href="@Url.Action("../Account/Detalhes", new { userId = Model.desafiante2_id })" title="Detalhes do jogador">
+                                        @Model.desafiante2.nome
+                                    </a>
+
+                                }
                             }
                         </p>
                     </center>
                     @Html.HiddenFor(model => model.desafiante_id)
+                    @Html.HiddenFor(model => model.desafiante2_id)
                 </div>
             </div>
             <div class="row clearfix">

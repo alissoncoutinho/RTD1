@@ -263,7 +263,14 @@
             <h5><label>Ações</label></h5>
             <div class="row">
                 <div class="col-sm-3">
-                    <button class="btn btn-success btn-block" id="botaomarcarJogo" @if(Model.situacao_Id == 4 || Model.situacao_Id == 5) { @Html.Raw("disabled") } onclick="mostrarMarcarJogo()">Marcar horário</button>
+                    @if (Model.situacao_Id == 2)
+                    {
+                        <button class="btn btn-success btn-block" id="botaomarcarJogo" @if (Model.situacao_Id == 4 || Model.situacao_Id == 5) { @Html.Raw("disabled") } onclick="mostrarMarcarJogo()">Alterar horário</button>
+                    }
+                    else
+                    {
+                        <button class="btn btn-success btn-block" id="botaomarcarJogo" @if (Model.situacao_Id == 4 || Model.situacao_Id == 5) { @Html.Raw("disabled") } onclick="mostrarMarcarJogo()">Marcar horário</button>
+                    }
                 </div>
                 <div class="col-sm-3">
                     @if (Model.situacao_Id == 4)
@@ -308,9 +315,9 @@
                             <span id="dadosJogo">
                                 <div class="form-group">
                                     @Html.LabelFor(model => model.dataJogo, new { @class = "control-label col-sm-4" })
-                                    <div class="col-sm-6">
+                                    <div class="col-sm-3">
                                         <div class="input-group date" id="dataJogo" data-date-format="dd/mm/yyyy">
-                                            <input id="dataJogo" name="dataJogo" value="@Html.Raw(Model.dataJogo)" placeholder="dd/mm/yyyy" type="text" autocomplete="off" class="form-control col-md-5" />
+                                            <input id="dataJogo" name="dataJogo" value="@Html.Raw(String.Format("{0:dd/MM/yyyy}", Model.dataJogo))" placeholder="dd/mm/yyyy" type="text" autocomplete="off" />
                                             <span class="input-group-addon">
                                                 <span class="glyphicon glyphicon-calendar">
                                                 </span>
@@ -319,28 +326,27 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="control-label col-sm-2">Hora</label>
-                                    <div class="col-sm-2">
-                                        <div class="input-group">
-                                            <div class="form-group col-sm-2">
-                                                <input id="horaJogo" name="horaJogo" value="@Html.Raw(Model.horaJogo)" placeholder="hh:mm" type="text" class="form-control" />
-                                            </div>
-                                        </div>
+                                    @Html.LabelFor(model => model.horaJogo, new { @class = "control-label col-sm-4" })
+                                    <div class="col-sm-3">
+                                        <input id="horaJogo" name="horaJogo" value="@Html.Raw(Model.horaJogo)" placeholder="hh:mm" type="text" />
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="control-label col-sm-2">Local</label>
-                                    <div class="col-sm-2">
-                                        <div class="input-group">
-                                            <div class="form-group col-sm-2">
-                                                <input id="localJogo" name="localJogo" value="@Model.localJogo" type="text" class="form-control" />
-                                            </div>
-                                        </div>
+                                    @Html.LabelFor(model => model.localJogo, new { @class = "control-label col-sm-4" })
+                                    <div class="col-sm-3">
+                                        <input id="localJogo" name="localJogo" value="@Model.localJogo" type="text" />
                                     </div>
                                 </div>
                             </span>
                         </div>
-                        <center><input type="submit" class="btn btn-primary" id="button_marcarJogo" value="Salvar" /></center>
+                        <center>
+                            <input type="submit" class="btn btn-primary" id="button_marcarJogo" value="Salvar" />
+                            @if (Model.situacao_Id == 2)
+                            {
+                                <input type="hidden" value="false" name="desmarcar" id="desmarcar"/>
+                                <input type="submit" class="btn btn-danger btn-small" id="desmarcar" value="Desmarcar horário" onclick="desmarcarHorario()" />
+                            }
+                        </center>
                     </div>
 
 
@@ -476,8 +482,8 @@
                         <div class="form-group">
                             <label class="col-md-12 col-xs-12" for="situacao">Vencedor da partida</label>
                             <div class="col-md-2 col-xs-12">
-                                <input type="radio" name="vencedorWO" value=@Html.Raw(Model.desafiado_id) checked> @Html.Raw(Model.desafiado.nome)<br>
-                                <input type="radio" name="vencedorWO" value=@Html.Raw(Model.desafiante_id)> @Html.Raw(Model.desafiante.nome)<br>
+                                <input type="radio" name="vencedorWO" value=@Html.Raw(Model.desafiado_id) @if (Model.idDoVencedor == Model.desafiado_id) { @Html.Raw(" checked") }> @Html.Raw(Model.desafiado.nome)<br>
+                                <input type="radio" name="vencedorWO" value=@Html.Raw(Model.desafiante_id)@if (Model.idDoVencedor==Model.desafiante_id) { @Html.Raw(" checked") }> @Html.Raw(Model.desafiante.nome)<br>
                             </div>
                             <div class="col-md-2 col-xs-12">
                                 @if ((ViewBag.Editar == null) || (ViewBag.Editar)){
@@ -785,6 +791,10 @@
                 document.getElementById("divAcoes").classList.remove("hide");
                 element.classList.add("show");
             }
+        }
+        function desmarcarHorario() {
+            var element = document.getElementById("desmarcar");
+            element.value = true;
         }
     </script>
     <script type="text/javascript">
