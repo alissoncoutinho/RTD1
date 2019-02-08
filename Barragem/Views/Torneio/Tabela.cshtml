@@ -7,7 +7,7 @@
     string faseId = "";
 }
 
-    <h4>@ViewBag.nomeTorneio</h4>
+    <h4 class="info-box-text">@ViewBag.nomeTorneio</h4>
 
     <div class="box-body table-responsive no-padding no-border table-hover">
     @if ((!ViewBag.tabelaLiberada) && !((Roles.IsUserInRole("admin")) || (Roles.IsUserInRole("organizador")))){
