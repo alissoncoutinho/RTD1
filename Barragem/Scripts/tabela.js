@@ -53,8 +53,8 @@ jQuery(function() {
 			if(i == 0){
 				if((((index % 2) != 0) && (index != 0))){
 					jQuery(element).addClass("primeira_rodada");
-					jQuery(element).before("<div class='linhas_ajuste linhas_ajuste_1' style='top: "+(offset.top-346+ajuste_mobile)+"px;'></div>");
-					jQuery(element).before("<div class='linhas linhas_1' style='top: "+(offset.top-342+ajuste_mobile)+"px;'></div>");
+					jQuery(element).before("<div class='linhas_ajuste linhas_ajuste_1' style='top: "+(offset.top-336+ajuste_mobile)+"px;'></div>");
+					jQuery(element).before("<div class='linhas linhas_1' style='top: "+(offset.top-332+ajuste_mobile)+"px;'></div>");
 				}
 			}
 
@@ -63,8 +63,8 @@ jQuery(function() {
 				jQuery(e).css('padding','52px 0px 0px');
 				jQuery(element).addClass('segunda_rodada');
 				if((((index % 2) != 0) && (index != 0))){
-					jQuery(element).before("<div class='linhas_ajuste linhas_ajuste_2' style='top: "+(offset.top-439+ajuste_mobile)+"px;'></div>");
-					jQuery(element).before("<div class='linhas linhas_2' style='top: "+(offset.top-435+ajuste_mobile)+"px;'></div>");
+					jQuery(element).before("<div class='linhas_ajuste linhas_ajuste_2' style='top: "+(offset.top-429+ajuste_mobile)+"px;'></div>");
+					jQuery(element).before("<div class='linhas linhas_2' style='top: "+(offset.top-425+ajuste_mobile)+"px;'></div>");
 				}
 			}
 
@@ -73,8 +73,8 @@ jQuery(function() {
 				jQuery(e).css('padding','160px 0px 0px');
 				jQuery(element).addClass('terceira_rodada');
 				if((((index % 2) != 0) && (index != 0))){
-					jQuery(element).before("<div class='linhas_ajuste linhas_ajuste_3' style='top: "+(offset.top-649+ajuste_mobile)+"px;'></div>");
-					jQuery(element).before("<div class='linhas linhas_3' style='top: "+(offset.top-645+ajuste_mobile)+"px;'></div>");
+					jQuery(element).before("<div class='linhas_ajuste linhas_ajuste_3' style='top: "+(offset.top-639+ajuste_mobile)+"px;'></div>");
+					jQuery(element).before("<div class='linhas linhas_3' style='top: "+(offset.top-635+ajuste_mobile)+"px;'></div>");
 				}
 			}
 
@@ -83,8 +83,8 @@ jQuery(function() {
 				jQuery(e).css('padding','372px 0px 0px');
 				jQuery(element).addClass('quarta_rodada');
 				if((((index % 2) != 0) && (index != 0))){
-					jQuery(element).before("<div class='linhas_ajuste linhas_ajuste_4' style='top: "+(offset.top-1064+ajuste_mobile)+"px;'></div>");
-					jQuery(element).before("<div class='linhas linhas_4' style='top: "+(offset.top-1060+ajuste_mobile)+"px;'></div>");
+					jQuery(element).before("<div class='linhas_ajuste linhas_ajuste_4' style='top: "+(offset.top-1054+ajuste_mobile)+"px;'></div>");
+					jQuery(element).before("<div class='linhas linhas_4' style='top: "+(offset.top-1050+ajuste_mobile)+"px;'></div>");
 				}
 			}
 
@@ -93,8 +93,8 @@ jQuery(function() {
 				jQuery(e).css('padding','785px 0px 0px');
 				jQuery(element).addClass('quinta_rodada');
 				if((((index % 2) != 0) && (index != 0))){
-					jQuery(element).before("<div class='linhas_ajuste linhas_ajuste_5' style='top: "+(offset.top-1898+ajuste_mobile)+"px;'></div>");
-					jQuery(element).before("<div class='linhas linhas_5' style='top: "+(offset.top-1894+ajuste_mobile)+"px;'></div>");
+					jQuery(element).before("<div class='linhas_ajuste linhas_ajuste_5' style='top: "+(offset.top-1888+ajuste_mobile)+"px;'></div>");
+					jQuery(element).before("<div class='linhas linhas_5' style='top: "+(offset.top-1884+ajuste_mobile)+"px;'></div>");
 				}
 			}
 
