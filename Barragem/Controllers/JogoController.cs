@@ -679,6 +679,8 @@ namespace Barragem.Controllers
             jogoAtual.qtddGames3setDesafiante = 0;
             //alterar status do jogo WO
             jogoAtual.situacao_Id = 5;
+            jogoAtual.usuarioInformResultado = User.Identity.Name;
+            jogoAtual.dataCadastroResultado = DateTime.Now;
             db.Entry(jogoAtual).State = EntityState.Modified;
             db.SaveChanges();
 

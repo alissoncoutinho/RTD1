@@ -48,7 +48,7 @@ namespace Barragem.Class
 
                 pontuacao = (float)Math.Round(pontuacao, 2);
             }
-            return pontuacao;
+            return pontuacao + getBonus(jogo, true);
         }
 
         public float calcularPontosDesafiado(Jogo jogo)
@@ -88,7 +88,21 @@ namespace Barragem.Class
 
                 pontuacao = (float)Math.Round(pontuacao, 2);
             }
-            return pontuacao;
+            return pontuacao + getBonus(jogo, false);
+        }
+
+        private int getBonus(Jogo jogo, bool isDesafiado) {
+            if((jogo.situacao_Id == 5) || (jogo.desafiante.situacao.Equals("curinga")) || (jogo.desafiado.situacao.Equals("curinga")))
+            {
+                return 0;
+            }
+            if (((jogo.qtddGames1setDesafiado + jogo.qtddGames2setDesafiado)<3) && isDesafiado) {
+                return 3;
+            }else if (((jogo.qtddGames1setDesafiante + jogo.qtddGames2setDesafiante) < 3) && !isDesafiado) {
+                return 3;
+            }else{
+                return 0;
+            }
         }
 
         public void gravarPontuacaoNaRodada(int idRodada, UserProfile jogador, double pontosConquistados, bool isReprocessamento = false)
