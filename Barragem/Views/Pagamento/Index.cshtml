@@ -43,10 +43,10 @@
                     @Html.DisplayFor(modelItem => item.status)
                 </td>
                 <td>
-                    R$ @Html.DisplayFor(modelItem => item.arrecadado),00
+                    @Html.Raw(String.Format("{0:C2}", item.arrecadado))
                 </td>
                 <td>
-                    R$ @Html.DisplayFor(modelItem => item.areceber),00
+                    @Html.Raw(String.Format("{0:C2}", item.areceber))
                 </td>
                 <td>
                     <a href="@Url.Action("Edit", new {id = @item.Id })" title="Editar/Detalhar" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-edit"></span></a>

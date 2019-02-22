@@ -439,12 +439,16 @@ namespace Barragem.Controllers
             ViewBag.situacaoJogador = usuario.situacao;
             ViewBag.userId = usuario.UserId;
             if (perfil.Equals("admin") || perfil.Equals("organizador")) {
-                var pb = db.PagamentoBarragem.Where(p => (bool)p.cobrar && p.barragemId == barragemId && p.status == "Aguardando").OrderByDescending(o => o.Id).ToList();
-                if (pb.Count() > 0)
-                {
-                    ViewBag.cobranca = "Olá, o boleto da sua mensalidade já está disponível para pagamento. Clique no link para acessar o boleto ou copie o número do código de barras:";
-                    ViewBag.boleto = pb[0].linkBoleto;
-                    ViewBag.numeroCodigoBarras = pb[0].digitableLine;
+                var pb = db.PagamentoBarragem.Where(p => (bool)p.cobrar && p.barragemId == barragemId && (p.status == "Aguardando" || p.status== "canceled")).OrderByDescending(o => o.Id).ToList();
+                if (pb.Count() > 0){
+                    if (pb[0].status=="Aguardando") { 
+                        ViewBag.cobranca = "Olá, o boleto da sua mensalidade já está disponível para pagamento. Clique no link para acessar o boleto ou copie o número do código de barras:";
+                        ViewBag.boleto = pb[0].linkBoleto;
+                        ViewBag.numeroCodigoBarras = pb[0].digitableLine;
+                    }
+                    if (pb[0].status == "canceled"){
+                        ViewBag.cobranca = "Seu ranking está inativo por falta de pagamento do boleto. Não será possível gerar temporadas e rodadas. Favor consultar os administradores do rankingdetenis.com";
+                    }
                 }
             }
 

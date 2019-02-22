@@ -145,9 +145,15 @@ namespace Barragem.Class
                     int id = Convert.ToInt32(retorno.status_request.items[0].item_id);
                     var pb = db.PagamentoBarragem.Where(p => p.Id == id).SingleOrDefault();
                     if (retorno.status_request.result == "success") {
-                        if (retorno.status_request.status == "paid")
+                        if (retorno.status_request.status == "paid" || retorno.status_request.status == "reserved" || retorno.status_request.status == "completed")
                         {
                             pb.status = "Pago";
+                        }else if(retorno.status_request.status == "canceled") {
+                            pb.status = retorno.status_request.status;
+                            var barragem = db.Barragens.Find(pb.barragemId);
+                            barragem.isAtiva = false;
+                            db.Entry(barragem).State = EntityState.Modified;
+                            db.SaveChanges();
                         } else {
                             pb.status = retorno.status_request.status;
                         }

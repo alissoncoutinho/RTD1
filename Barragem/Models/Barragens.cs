@@ -23,6 +23,9 @@ namespace Barragem.Models
         [Display(Name = "situação")]
         public bool isAtiva { get; set; }
 
+        [Display(Name = "em teste")]
+        public bool isTeste { get; set; }
+
         [Display(Name = "regulamento")]
         [UIHint("tinymce_full_compressed"), AllowHtml]
         public string regulamento { get; set; }
@@ -48,7 +51,7 @@ namespace Barragem.Models
         public string tokenPagSeguro { get; set; }
         [Display(Name = "Cidade")]
         public string cidade { get; set; }
-        public int? valorPorUsuario { get; set; }
+        public double? valorPorUsuario { get; set; }
         [Display(Name = "Cpf Resp.")]
         public string cpfResponsavel { get; set; }
         [Display(Name = "Nome Resp.")]
@@ -71,6 +74,9 @@ namespace Barragem.Models
         [Display(Name = "situação")]
         public bool isAtiva { get; set; }
 
+        [Display(Name = "em teste")]
+        public bool isTeste { get; set; }
+
         [Display(Name = "Classe única")]
         public bool isClasseUnica { get; set; }
         [Display(Name = "Domínio")]
@@ -81,7 +87,7 @@ namespace Barragem.Models
         public string tokenPagSeguro { get; set; }
         [Display(Name = "Cidade")]
         public string cidade { get; set; }
-        public int? valorPorUsuario { get; set; }
+        public double? valorPorUsuario { get; set; }
         public string cpfResponsavel { get; set; }
         public string nomeResponsavel { get; set; }
     }

@@ -66,7 +66,7 @@ namespace Barragem.Controllers
                         db.Pagamento.Add(pagamento);
                         db.SaveChanges();
 
-                        var barragens = db.BarragemView.Where(b => b.isAtiva).ToList();
+                        var barragens = db.BarragemView.Where(b => b.isAtiva && !b.isTeste && (bool)!b.soTorneio).ToList();
 
                         foreach(BarragemView barragem in barragens){
                             var pgBarragem = new PagamentoBarragem();
@@ -143,7 +143,7 @@ namespace Barragem.Controllers
             boleto.days_due_date = 5;
             var item = new Item();
             item.item_id = pb.Id + "";
-            item.price_cents = Convert.ToInt32(pb.valor+"00");
+            item.price_cents = Convert.ToInt32(pb.valor*100);
             item.description = pb.barragem.nome;
             item.quantity = 1;
             boleto.items = new List<Item>();

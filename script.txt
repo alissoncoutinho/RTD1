@@ -1,5 +1,7 @@
 ALTER TABLE dbo.JogoCabecaChave ADD temRepescagem bit NULL; 
 
+ALTER TABLE Barragem ALTER COLUMN valorPorUsuario float NULL; 
+
 --update JogoCabecaChave set temRepescagem=0 where temRepescagem is null;
 
 --INSERT INTO JogoCabecaChave (ordemJogo,cabecaChave,chaveamento,temRepescagem) VALUES (1, 1 ,8, 1);
@@ -18,3 +20,5 @@ ALTER TABLE dbo.Jogo ADD isPrimeiroJogoTorneio bit NULL, isRepescagem bit NULL;
 ALTER TABLE dbo.UserProfile ADD fotoURL [nvarchar](300) NULL;
 
 ALTER TABLE dbo.Jogo ADD localJogo [nvarchar](300) NULL;
+
+Rest Assured
