@@ -159,7 +159,7 @@ namespace Barragem.Controllers
         {
             if (ModelState.IsValid)
             {
-                var registers = db.UserProfiles.Where(u => (u.email.Equals(model.email) || u.UserName.ToLower() == model.email.ToLower()) && !u.situacao.Equals("desativado")).ToList();
+                var registers = db.UserProfiles.Where(u => (u.email.Equals(model.email) || u.UserName.ToLower() == model.email.ToLower()) ).ToList();
                 if (registers.Count() > 1){
                     return RedirectToAction("ListaLogins", "Account", model);
                 }else if(registers.Count() > 0){
@@ -183,7 +183,7 @@ namespace Barragem.Controllers
         [AllowAnonymous]
         public ActionResult ListaLogins(VerificacaoCadastro model)
         {
-            var registers = db.UserProfiles.Where(u => (u.email.Equals(model.email) || u.UserName.ToLower() == model.email.ToLower()) && !u.situacao.Equals("desativado")).ToList();
+            var registers = db.UserProfiles.Where(u => (u.email.Equals(model.email) || u.UserName.ToLower() == model.email.ToLower())).ToList();
             ViewBag.ReturnUrl=model.returnUrl;
             ViewBag.torneioId = model.torneioId;
             return View(registers);
@@ -324,7 +324,7 @@ namespace Barragem.Controllers
                             ViewBag.classeId = new SelectList(db.Classe.Where(c => c.barragemId == model.barragemId).ToList(), "Id", "nome");
                             return View(model);
                         }
-                        
+
                         WebSecurity.CreateUserAndAccount(model.UserName, model.Password, new
                         {
                             nome = model.nome,
@@ -1116,8 +1116,34 @@ namespace Barragem.Controllers
             return RedirectToAction("Index3", "Home", new { ViewBag.Sucesso, ViewBag.MsgAlerta });
         }
 
-            #region Helpers
-            private ActionResult RedirectToLocal(string returnUrl)
+        [HttpPost]
+        [Authorize(Roles = "admin,organizador")]
+        public ActionResult AtivaUsuario(int userId)
+        {
+            try
+            {
+                var user = db.UserProfiles.Where(u => u.UserId == userId).FirstOrDefault();
+                if (user != null)
+                {
+                    user.situacao = "ativo";
+                    user.logAlteracao = User.Identity.Name;
+                    db.Entry(user).State = EntityState.Modified;
+                    db.SaveChanges();
+                    return Json(new { erro = "", retorno = 1 }, "text/plain", JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    return Json(new { erro = "Usuário não encontrado", retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { erro = ex.Message, retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        #region Helpers
+        private ActionResult RedirectToLocal(string returnUrl)
         {
             if (Url.IsLocalUrl(returnUrl))
             {
@@ -1371,4 +1397,5 @@ namespace Barragem.Controllers
         }
         #endregion
     }
+
 }

@@ -80,7 +80,7 @@ namespace Barragem.Class
             try
             {
                 email = Regex.Replace(email, @"(@)(.+)$", DomainMapper,
-                                      RegexOptions.None, TimeSpan.FromMilliseconds(200));
+                                      RegexOptions.None, TimeSpan.FromMilliseconds(200)).Trim(' ');
             }
             catch (RegexMatchTimeoutException)
             {
