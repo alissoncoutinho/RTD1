@@ -1,4 +1,4 @@
-ALTER TABLE dbo.JogoCabecaChave ADD temRepescagem bit NULL; 
+ALTER TABLE Barragem ADD isTeste bit NULL; 
 
 ALTER TABLE Barragem ALTER COLUMN valorPorUsuario float NULL; 
 
