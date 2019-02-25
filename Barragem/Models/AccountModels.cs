@@ -75,6 +75,8 @@ namespace Barragem.Models
 
         [Display(Name = "Matrícula (apenas para clubes)")]
         public string matriculaClube { get; set; }
+
+        [Display(Name = "Situação")]
         public string situacao { get; set; }
 
         [Required(ErrorMessage = "O campo email é obrigatório")]
@@ -233,6 +235,7 @@ namespace Barragem.Models
         public virtual Barragens barragem { get; set; }
 
         [Display(Name = "Classe")]
+        [Required(ErrorMessage = "Este campo é obrigatório")]
         public int? classeId { get; set; }
 
         [Display(Name = "Classe")]

@@ -104,10 +104,10 @@
         </div>
     </div>
     <div class="form-group">
-        @Html.LabelFor(model => model.classeId, new { @class = "control-label col-md-2" })
+        @Html.LabelFor(m => m.classeId, new { @class = "control-label col-md-2" })*
         <div class="col-md-4">
-            @Html.DropDownList("classeId", null, new { @class = "form-control" })
-            @Html.ValidationMessageFor(model => model.classeId)
+            @Html.DropDownList("classeId", null, "Escolha a sua classe", new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.classeId, "", new { @class = "alert-danger" })
         </div>
     </div>
     <div class="form-group">

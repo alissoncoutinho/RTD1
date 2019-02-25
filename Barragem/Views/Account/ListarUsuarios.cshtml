@@ -20,131 +20,178 @@
                     <div class="col-lg-3">
                         <select name="filtroSituacao" class="form-control input-sm" onchange="this.form.submit()">
                             <option value="">ativos - licenc. - susp.</option>
-                            <option value="ativo" @if (filtro=="ativo"){@Html.Raw("selected")}>ativos</option>
-                            <option value="licenciado" @if (filtro == "licenciado"){ @Html.Raw("selected") }>licenciados</option>
-                            <option value="suspenso" @if (filtro == "suspenso"){ @Html.Raw("selected") }>suspensos</option>
-                            <option value="desativado" @if (filtro == "desativado"){ @Html.Raw("selected") }>desativados</option>
-                            <option value="Ativamento solicitado" @if (filtro == "Ativamento solicitado"){ @Html.Raw("selected") }>solicitações de ativamento</option>
-                            <option value="pendente" @if (filtro == "pendente"){ @Html.Raw("selected") }>pendentes</option>
-                            <option value="inativo" @if (filtro == "inativo") { @Html.Raw("selected")  }>inativos</option>
+                            <option value="ativo" @if (filtro == "ativo") { @Html.Raw("selected") }>ativos</option>
+                            <option value="licenciado" @if (filtro == "licenciado") { @Html.Raw("selected") }>licenciados</option>
+                            <option value="suspenso" @if (filtro == "suspenso") { @Html.Raw("selected") }>suspensos</option>
+                            <option value="desativado" @if (filtro == "desativado") { @Html.Raw("selected") }>desativados</option>
+                            <option value="Ativamento solicitado" @if (filtro == "Ativamento solicitado") { @Html.Raw("selected") }>solicitações de ativamento</option>
+                            <option value="pendente" @if (filtro == "pendente") { @Html.Raw("selected") }>pendentes</option>
+                            <option value="inativo" @if (filtro == "inativo") { @Html.Raw("selected") }>inativos</option>
                             <option value="todos" @if (filtro == "todos") { @Html.Raw("selected") }>todos</option>
                         </select>
                     </div>
                 </div>
                 <div class="form-group">
-                        @if (Roles.IsUserInRole("admin")) {
-                            <label class="control-label col-sm-2">Barragens</label>
-                            <div class="col-lg-3">
-                                @Html.DropDownList("filtroBarragem", (SelectList)ViewBag.filtroBarragem,"Todos", new { @class = "form-control input-sm", @onchange = "form.submit();" })
-                            </div>
-                        } else {
-                            <input type="hidden" name="filtroBarragem" value="0" />
-                        }
+                    @if (Roles.IsUserInRole("admin"))
+                    {
+                        <label class="control-label col-sm-2">Barragens</label>
+                        <div class="col-lg-3">
+                            @Html.DropDownList("filtroBarragem", (SelectList)ViewBag.filtroBarragem, "Todos", new { @class = "form-control input-sm", @onchange = "form.submit();" })
+                        </div>
+                    }
+                    else
+                    {
+                        <input type="hidden" name="filtroBarragem" value="0" />
+                    }
                 </div>
             </div>
-         }
-      }  
-                      <div class="box-body table-responsive no-padding">
-                          <table class="table table-striped table-condensed table-bordered">
-                              <tr>
-                                  <th>
+        }
+    }
+    <div class="box-body table-responsive no-padding">
+        <table class="table table-striped table-condensed table-bordered">
+            <tr>
+                <th>
 
-                                  </th>
-                                  <th>
-                                      @Html.DisplayNameFor(model => model.nome)
-                                  </th>
-                                  <th>
-                                      @Html.DisplayNameFor(model => model.telefoneCelular)
-                                  </th>
-                                  <th>
-                                      @Html.DisplayNameFor(model => model.situacao)
-                                  </th>
-                                  @if (Roles.IsUserInRole("admin"))
-                                  {
-                                      <th>
-                                          @Html.DisplayNameFor(model => model.barragem)
-                                      </th>
-                                  }
-                                  <th>
-                                      @Html.DisplayNameFor(model => model.email)
-                                  </th>
-                                  @if ((Roles.IsUserInRole("admin")) || (Roles.IsUserInRole("organizador")))
-                                  {
-                                      <th>
-                                          Matrícula Clube
-                                      </th>
-                                  }
-                                  <th></th>
-                              </tr>
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.nome)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.telefoneCelular)
+                </th>
 
-                              @foreach (var item in Model)
-                              {
-                                  contador++;
-                                  <tr>
-                                      <td>@Html.Raw(contador)</td>
-                                      <td>
-                                          @if ((ViewBag.situacao == "ativo") || (ViewBag.situacao == "licenciado")
-                            || (ViewBag.situacao == "suspenso") || (Roles.IsUserInRole("admin")) || (Roles.IsUserInRole("organizador")))
-                                          {
-                                              <a href="@Url.Action("../Account/Detalhes", new { userId = @item.UserId })" title="Detalhes do jogador">
-                                                  @Html.DisplayFor(modelItem => item.nome)
-                                              </a>
-                                          }
-                                          else
-                                          {
-                                              @Html.DisplayFor(modelItem => item.nome)
-                                          }
-                                      </td>
-                                      <td>
-                                          @if ((ViewBag.situacao == "ativo") || (ViewBag.situacao == "licenciado")
-  || (ViewBag.situacao == "suspenso") || (Roles.IsUserInRole("admin")) || (Roles.IsUserInRole("organizador")))
-                                          {
-                                              @Html.DisplayFor(modelItem => item.telefoneCelular)
-                                          }
-                                      </td>
+                @if (Roles.IsUserInRole("admin"))
+                {
+                    <th>
+                        @Html.DisplayNameFor(model => model.barragem)
+                    </th>
+                }
+                <th>
+                    @Html.DisplayNameFor(model => model.email)
+                </th>
+                @if ((Roles.IsUserInRole("admin")) || (Roles.IsUserInRole("organizador")))
+                {
+                    <th>
+                        Matrícula Clube
+                    </th>
+                }
 
-                                      <td>
-                                          @if (item.situacao == "Ativamento solicitado")
-                                          {
-                                              @Html.Raw("<font color=red>")
-                                          }
-                                          @Html.DisplayFor(modelItem => item.situacao)
-                                      </td>
-                                      @if (Roles.IsUserInRole("admin"))
-                                      {
-                                          <td>
-                                              @Html.DisplayFor(modelItem => item.barragem.nome)
-                                          </td>
-                                      }
-                                      <td>
-                                          @if ((ViewBag.situacao == "ativo") || (ViewBag.situacao == "licenciado")
-                            || (ViewBag.situacao == "suspenso") || (Roles.IsUserInRole("admin")) || (Roles.IsUserInRole("organizador")))
-                                          {
-                                              @Html.DisplayFor(modelItem => item.email)
-                                          }
-                                      </td>
-                                      @if ((Roles.IsUserInRole("admin")) || (Roles.IsUserInRole("organizador")))
-                                      {
-                                          <td>
-                                              @Html.DisplayFor(modelItem => item.matriculaClube)
-                                          </td>
-                                      }
-                                      <td style="text-align:center;width:90px;">
-                                          <div class="btn-group">
-                                              @if ((ViewBag.situacao == "ativo") || (ViewBag.situacao == "licenciado")
-                            || (ViewBag.situacao == "suspenso") || (Roles.IsUserInRole("admin")) || (Roles.IsUserInRole("organizador")))
-                                              {
-                                                  if ((Roles.IsUserInRole("admin")) || (Roles.IsUserInRole("organizador")) || (User.Identity.Name.Equals(item.UserName)))
-                                                  {
-                                                      <a href="@Url.Action("EditaUsuario", new { UserName = item.UserName })" title="Editar" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-edit"></span></a>
-                                                  }
-                                                  <a href="@Url.Action("Detalhes", new { userId = item.UserId })" title="detalhes do jogador" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-list"></span></a>
-                                              }
-                                          </div>
-                                      </td>
-                                  </tr>
-                                  //}
-                              }
+                <th>
+                    @Html.DisplayNameFor(model => model.situacao)
+                </th>
 
-                          </table>
-                          </div>
+                <th></th>
+            </tr>
+
+            @foreach (var item in Model)
+            {
+                contador++;
+                <tr>
+                    <td>@Html.Raw(contador)</td>
+                    <td>
+                        @if ((ViewBag.situacao == "ativo") || (ViewBag.situacao == "licenciado")
+          || (ViewBag.situacao == "suspenso") || (Roles.IsUserInRole("admin")) || (Roles.IsUserInRole("organizador")))
+                        {
+                            <a href="@Url.Action("../Account/Detalhes", new { userId = @item.UserId })" title="Detalhes do jogador">
+                                @Html.DisplayFor(modelItem => item.nome)
+                            </a>
+                        }
+                        else
+                        {
+                            @Html.DisplayFor(modelItem => item.nome)
+                        }
+                    </td>
+                    <td>
+                        @if ((ViewBag.situacao == "ativo") || (ViewBag.situacao == "licenciado")
+|| (ViewBag.situacao == "suspenso") || (Roles.IsUserInRole("admin")) || (Roles.IsUserInRole("organizador")))
+                        {
+                            @Html.DisplayFor(modelItem => item.telefoneCelular)
+                        }
+                    </td>
+
+                    @if (Roles.IsUserInRole("admin"))
+                    {
+                        <td>
+                            @Html.DisplayFor(modelItem => item.barragem.nome)
+                        </td>
+                    }
+                    <td>
+                        @if ((ViewBag.situacao == "ativo") || (ViewBag.situacao == "licenciado")
+          || (ViewBag.situacao == "suspenso") || (Roles.IsUserInRole("admin")) || (Roles.IsUserInRole("organizador")))
+                        {
+                            @Html.DisplayFor(modelItem => item.email)
+                        }
+                    </td>
+                    @if ((Roles.IsUserInRole("admin")) || (Roles.IsUserInRole("organizador")))
+                    {
+                        <td>
+                            @Html.DisplayFor(modelItem => item.matriculaClube)
+                        </td>
+                    }
+
+                    <td id="@Html.Raw("situacao"+item.UserId)">
+                        @if (item.situacao == "Ativamento solicitado")
+                        {
+                            @Html.Raw("<font color=red>")
+                        }
+                        @Html.DisplayFor(modelItem => item.situacao)
+                    </td>
+
+                    <td style="text-align:center;width:90px;">
+                        
+                        <div class="btn-group">
+                            @if ((ViewBag.situacao == "ativo") || (ViewBag.situacao == "licenciado")
+|| (ViewBag.situacao == "suspenso") || (Roles.IsUserInRole("admin")) || (Roles.IsUserInRole("organizador")))
+                            {
+                                if ((Roles.IsUserInRole("admin")) || (Roles.IsUserInRole("organizador")) || (User.Identity.Name.Equals(item.UserName)))
+                                {
+                                    if ((Roles.IsUserInRole("admin") || Roles.IsUserInRole("organizador")) && ("Ativamento solicitado".Equals(item.situacao)))
+                                    {
+                                        <a title="Ativar Jogador" class="btn btn-default btn-xs"><span data-valor="@Html.Raw(item.UserId)" class="glyphicon glyphicon-ok"></span></a>
+                                    }
+                                    <a href="@Url.Action("EditaUsuario", new { UserName = item.UserName })" title="Editar" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-edit"></span></a>
+                                }
+                                <a href="@Url.Action("Detalhes", new { userId = item.UserId })" title="detalhes do jogador" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-list"></span></a>
+                            }
+                        </div>
+                        
+                    </td>
+                </tr>
+                //}
+            }
+
+        </table>
+    </div>
+
+    @section Scripts {
+        <script type="text/javascript">
+            $(document).ready(function () {
+                $(".glyphicon-ok").click(function (event) {
+                    var userId = $(this).data("valor");
+                    $.ajax({
+                        type: "POST",
+                        url: "/Account/AtivaUsuario",
+                        dataType: "json",
+                        data: "{'userId':'" + userId + "'}",
+                        contentType: "application/json; charset=utf-8",
+                        success: function (response) {
+                            if (typeof response == "object") {
+                                if (response.retorno === 0) {
+                                    toastr.error(response.erro, "Erro");
+                                } else {
+                                    var tdSituacao = document.getElementById("situacao" + userId);
+                                    tdSituacao.innerText = "ativo";
+                                    toastr.success("O jogador foi ativado com sucesso.", "Aviso");
+                                }
+                            }
+                        },
+                        error: function (jqXHR, textStatus, errorThrown) {
+                            location.reload(true);
+                        }
+                    });
+                });
+            });
+
+            
+        </script>
+    }
