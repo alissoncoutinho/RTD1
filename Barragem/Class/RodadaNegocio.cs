@@ -92,7 +92,7 @@ namespace Barragem.Class
         }
 
         private int getBonus(Jogo jogo, bool isDesafiado) {
-            if((jogo.situacao_Id == 5) || (jogo.desafiante.situacao.Equals("curinga")) || (jogo.desafiado.situacao.Equals("curinga")))
+            if((jogo.situacao_Id != 4) || (jogo.desafiante.situacao.Equals("curinga")) || (jogo.desafiado.situacao.Equals("curinga")))
             {
                 return 0;
             }
