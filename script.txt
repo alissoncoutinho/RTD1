@@ -21,4 +21,5 @@ ALTER TABLE dbo.UserProfile ADD fotoURL [nvarchar](300) NULL;
 
 ALTER TABLE dbo.Jogo ADD localJogo [nvarchar](300) NULL;
 
-Rest Assured
+ALTER TABLE Torneio ADD valorSocio float NULL;
+ALTER TABLE Torneio ADD valorMaisClassesSocio float NULL;

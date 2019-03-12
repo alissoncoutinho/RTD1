@@ -95,7 +95,7 @@
                 <input type="checkbox" data-valor="@item.Id" @if((bool)item.cobrar) { @Html.Raw("checked")} value="true" name="cobrar" id="cobrar" class="cobrarBarragem" />
             </td>
             <td>
-                @Html.Raw(String.Format("{0:C2}", item.valor))
+                @if (item.valor != null) { @Html.Raw(String.Format("{0:C2}", item.valor))}
             </td>
             <td>
                 @if (item.status == "Aguardando")

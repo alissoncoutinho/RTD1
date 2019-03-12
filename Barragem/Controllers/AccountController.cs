@@ -560,7 +560,7 @@ namespace Barragem.Controllers
 
             if (ranckingJogador.Count > 0)
             {
-                ViewBag.posicao = ranckingJogador[0].posicao + "º";
+                ViewBag.posicao = ranckingJogador[0].posicaoClasse + "º";
                 ViewBag.pontos = Math.Round(ranckingJogador[0].totalAcumulado, 2);
             }
             else
@@ -1127,6 +1127,17 @@ namespace Barragem.Controllers
                 {
                     user.situacao = "ativo";
                     user.logAlteracao = User.Identity.Name;
+                    try{
+                        gerarRankingInicial(user, "organizador");
+                    }
+                    catch (Exception e)
+                    {
+                        if (e.InnerException == null){
+                            return Json(new { erro = "Erro ao gerar a pontuação inicial do usuário: " + e.Message, retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
+                        }else{
+                            return Json(new { erro = "Erro ao gerar a pontuação inicial do usuário: " + e.Message + ", " + e.InnerException.Message, retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
+                        }
+                    }
                     db.Entry(user).State = EntityState.Modified;
                     db.SaveChanges();
                     return Json(new { erro = "", retorno = 1 }, "text/plain", JsonRequestBehavior.AllowGet);
