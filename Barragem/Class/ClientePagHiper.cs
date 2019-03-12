@@ -154,6 +154,9 @@ namespace Barragem.Class
                             barragem.isAtiva = false;
                             db.Entry(barragem).State = EntityState.Modified;
                             db.SaveChanges();
+                        }
+                        else if (retorno.status_request.status == "pending"){
+                            // não faz nada
                         } else {
                             pb.status = retorno.status_request.status;
                         }

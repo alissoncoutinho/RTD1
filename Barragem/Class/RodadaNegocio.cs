@@ -114,9 +114,15 @@ namespace Barragem.Class
                     return;
                 }
                 Rancking ran = null;
-                double pontuacaoTotal = db.Rancking.Where(r => r.rodada.isAberta == false && r.userProfile_id == jogador.UserId && r.rodada_id < idRodada).
+                double pontuacaoTotal = 0;
+                try
+                {
+                    pontuacaoTotal = db.Rancking.Where(r => r.rodada.isAberta == false && r.userProfile_id == jogador.UserId && r.rodada_id < idRodada).
                     OrderByDescending(r => r.rodada_id).Take(9).Sum(r => r.pontuacao);
-
+                }catch(Exception e)
+                {
+                    return;
+                }
                 if (isReprocessamento)
                 {
                     ran = db.Rancking.Where(r => r.rodada_id == idRodada && r.userProfile_id == jogador.UserId).Single();
