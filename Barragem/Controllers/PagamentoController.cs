@@ -188,7 +188,7 @@ namespace Barragem.Controllers
                     }
                 }
                 var pagamento = db.Pagamento.Find(Id);
-                if (conferencia == pagamentoBarragem.Count()) {
+                if (conferencia >= pagamentoBarragem.Count()) {
                     pagamento.status = "Em Andamento";
                 } else {
                     pagamento.status = "Erro no envio";

@@ -281,6 +281,7 @@ namespace Barragem.Models
         public RegisterInscricao() {
             this.register = new RegisterModel();
             this.register.bairro = "Não informado";
+            this.register.classeId = 0;
             this.inscricao = new InscricaoTorneio();
         }
 

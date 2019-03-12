@@ -521,7 +521,7 @@ namespace Barragem.Controllers
         {
             string msg = "";
             string detalheErro="";
-            db.Database.ExecuteSqlCommand("Delete from Rancking where rodada_id=" + id);
+            db.Database.ExecuteSqlCommand("Delete from Rancking where rodada_id=" + id + " and posicaoClasse is not null");
             List<Jogo> jogos = db.Jogo.Where(r => r.rodada_id == id).ToList(); 
             var pontosDesafiante = 0.0;
             var pontosDesafiado = 0.0;
