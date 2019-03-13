@@ -213,7 +213,7 @@ namespace Barragem.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        public ActionResult RegisterTorneio(RegisterInscricao model, int torneioId)
+        public ActionResult RegisterTorneio(RegisterInscricao model, int torneioId, bool isSocio=false)
         {
             var torneio = db.Torneio.Find(torneioId);
             ViewBag.torneio = torneio;
@@ -265,9 +265,22 @@ namespace Barragem.Controllers
                     // incluir inscrição
                     model.inscricao.userId = WebSecurity.GetUserId(model.register.UserName);
                     if (model.isMaisDeUmaClasse){
-                        model.inscricao.valor = torneio.valorMaisClasses;
+                        if ((isSocio) && (torneio.valorMaisClassesSocio != null || torneio.valorMaisClassesSocio != 0)){
+                            model.inscricao.valor = torneio.valorMaisClassesSocio;
+                        }else{
+                            model.inscricao.valor = torneio.valorMaisClasses;
+                        }
+
                     }else{
-                        model.inscricao.valor = torneio.valor;
+                        if ((isSocio) && (torneio.valorSocio != null || torneio.valorSocio != 0))
+                        {
+                            model.inscricao.valor = torneio.valorSocio;
+                        }
+                        else
+                        {
+                            model.inscricao.valor = torneio.valor;
+                        }
+
                     }
                     if (torneio.valor > 0){
                         model.inscricao.isAtivo = false;
@@ -279,7 +292,7 @@ namespace Barragem.Controllers
                         InscricaoTorneio inscricao2 = new InscricaoTorneio();
                         inscricao2.formaPagamento = model.inscricao.formaPagamento;
                         inscricao2.classe = model.classeInscricao2;
-                        inscricao2.valor = torneio.valorMaisClasses;
+                        inscricao2.valor = model.inscricao.valor;
                         inscricao2.isAtivo = model.inscricao.isAtivo;
                         inscricao2.observacao = model.inscricao.observacao;
                         inscricao2.userId = model.inscricao.userId;

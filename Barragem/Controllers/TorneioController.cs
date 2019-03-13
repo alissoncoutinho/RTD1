@@ -1134,14 +1134,7 @@ namespace Barragem.Controllers
                         inscricao2.classe = classeInscricao2;
                         inscricao2.torneioId = torneioId;
                         inscricao2.userId = userId;
-                        if (isMaisDeUmaClasse)
-                        {
-                            inscricao2.valor = torneio.valorMaisClasses;
-                        }
-                        else
-                        {
-                            inscricao2.valor = torneio.valor;
-                        }
+                        inscricao2.valor = inscricao.valor;
                         inscricao2.observacao = observacao;
                         if (torneio.valor > 0)
                         {
