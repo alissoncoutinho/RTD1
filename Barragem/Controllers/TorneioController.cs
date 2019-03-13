@@ -992,7 +992,7 @@ namespace Barragem.Controllers
         }
         [Authorize(Roles = "admin,usuario,organizador")]
         [HttpPost]
-        public ActionResult Inscricao(int torneioId, int classeInscricao = 0, string operacao = "", bool isMaisDeUmaClasse = false, int classeInscricao2 = 0, string observacao = "")
+        public ActionResult Inscricao(int torneioId, int classeInscricao = 0, string operacao = "", bool isMaisDeUmaClasse = false, int classeInscricao2 = 0, string observacao = "", bool isSocio = false)
         {
             try
             {
@@ -1013,8 +1013,9 @@ namespace Barragem.Controllers
                     }
                     else
                     {
-                        if ((classeInscricao == 0)||((isMaisDeUmaClasse)&&(classeInscricao2==0))){
-                        
+                        if ((classeInscricao == 0) || ((isMaisDeUmaClasse) && (classeInscricao2 == 0)))
+                        {
+
                             return RedirectToAction("Detalhes", new { id = torneioId, Msg = "Selecione uma categoria." });
                         }
                         if (classeInscricao == classeInscricao2)
@@ -1023,10 +1024,12 @@ namespace Barragem.Controllers
                             return RedirectToAction("Detalhes", new { id = torneioId, Msg = "Selecione uma categoria diferente na segunda opção de categoria." });
                         }
                         it[0].classe = classeInscricao;
-                        if (operacao == "alterarClasse") {
+                        if (operacao == "alterarClasse")
+                        {
                             it[0].classe = classeInscricao;
                             db.Entry(it[0]).State = EntityState.Modified;
-                            if (it.Count() > 1){
+                            if (it.Count() > 1)
+                            {
                                 if (isMaisDeUmaClasse)
                                 {
                                     it[1].classe = classeInscricao2;
@@ -1040,28 +1043,30 @@ namespace Barragem.Controllers
                                     it[0].valor = torneio.valor;
                                     db.Entry(it[0]).State = EntityState.Modified;
                                 }
-                            }else if (isMaisDeUmaClasse)
+                            }
+                            else if (isMaisDeUmaClasse)
                             {
-                                    if (it[0].statusPagamento!= null && it[0].statusPagamento.Equals("3")) {
-                                        return RedirectToAction("Detalhes", new { id = torneioId });
-                                    }
-                                    it[0].valor = torneio.valorMaisClasses;
-                                    db.Entry(it[0]).State = EntityState.Modified;
-                                    InscricaoTorneio inscricao2 = new InscricaoTorneio();
-                                    inscricao2.classe = classeInscricao2;
-                                    inscricao2.torneioId = torneioId;
-                                    inscricao2.userId = userId;
-                                    inscricao2.valor = torneio.valorMaisClasses;
-                                    inscricao2.observacao = observacao;
-                                    if (torneio.valor > 0)
+                                if (it[0].statusPagamento != null && it[0].statusPagamento.Equals("3"))
+                                {
+                                    return RedirectToAction("Detalhes", new { id = torneioId });
+                                }
+                                it[0].valor = torneio.valorMaisClasses;
+                                db.Entry(it[0]).State = EntityState.Modified;
+                                InscricaoTorneio inscricao2 = new InscricaoTorneio();
+                                inscricao2.classe = classeInscricao2;
+                                inscricao2.torneioId = torneioId;
+                                inscricao2.userId = userId;
+                                inscricao2.valor = torneio.valorMaisClasses;
+                                inscricao2.observacao = observacao;
+                                if (torneio.valor > 0)
+                                {
+                                    inscricao2.isAtivo = false;
+                                }
+                                else
                                     {
-                                        inscricao2.isAtivo = false;
-                                    }
-                                    else
-                                    {
-                                        inscricao2.isAtivo = true;
-                                    }
-                                    db.InscricaoTorneio.Add(inscricao2);
+                                    inscricao2.isAtivo = true;
+                                }
+                                db.InscricaoTorneio.Add(inscricao2);
                             }
                             db.SaveChanges();
                             return RedirectToAction("Detalhes", new { id = torneioId, Msg = "ok" });
@@ -1070,11 +1075,13 @@ namespace Barragem.Controllers
                 }
                 else
                 {
-                    if ((classeInscricao == 0)||((isMaisDeUmaClasse)&&(classeInscricao2==0))){
-                    
+                    if ((classeInscricao == 0) || ((isMaisDeUmaClasse) && (classeInscricao2 == 0)))
+                    {
+
                         return RedirectToAction("Detalhes", new { id = torneioId, Msg = "Selecione uma categoria." });
                     }
-                    if (classeInscricao == classeInscricao2){
+                    if (classeInscricao == classeInscricao2)
+                    {
 
                         return RedirectToAction("Detalhes", new { id = torneioId, Msg = "Selecione uma categoria diferente na segunda opção de categoria." });
                     }
@@ -1084,11 +1091,27 @@ namespace Barragem.Controllers
                     inscricao.userId = userId;
                     if (isMaisDeUmaClasse)
                     {
-                        inscricao.valor = torneio.valorMaisClasses;
+                        if ((isSocio) && (torneio.valorMaisClassesSocio != null || torneio.valorMaisClassesSocio != 0))
+                        {
+                            inscricao.valor = torneio.valorMaisClassesSocio;
+                        }
+                        else
+                        {
+                            inscricao.valor = torneio.valorMaisClasses;
+                        }
+
                     }
                     else
                     {
-                        inscricao.valor = torneio.valor;
+                        if ((isSocio) && (torneio.valorSocio != null || torneio.valorSocio != 0))
+                        {
+                            inscricao.valor = torneio.valorSocio;
+                        }
+                        else
+                        {
+                            inscricao.valor = torneio.valor;
+                        }
+
                     }
                     gratuidade = VerificarGratuidade(torneio, userId);
                     if (gratuidade)

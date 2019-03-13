@@ -62,20 +62,37 @@
                 </div>
                 @Html.ValidationMessageFor(model => model.local)
             </div>
-                <div class="form-group">
-                    @Html.LabelFor(model => model.valor, new { @class = "col-sm-2 control-label" })
-                    <div class="col-sm-4 input-group">
-                        @Html.TextBoxFor(model => model.valor, new { @class = "form-control", @placeholder = "Informe 0 para torneio gratuito" })
-                    </div>
-                    @Html.ValidationMessageFor(model => model.valor)
-                </div>
             <div class="form-group">
                 @Html.LabelFor(model => model.qtddClasses, new { @class = "col-sm-2 control-label" })
                 <div class="col-sm-4 input-group">
-                    <input type="number" id="qtddClasses" name="qtddClasses" class="form-control"/>
+                    <input type="number" id="qtddClasses" name="qtddClasses" class="form-control" />
                 </div>
                 @Html.ValidationMessageFor(model => model.qtddClasses)
             </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.valor, new { @class = "col-sm-2 control-label" })
+                <div class="col-sm-4 input-group">
+                    @Html.TextBoxFor(model => model.valor, new { @class = "form-control", @placeholder = "Informe 0 para torneio gratuito" })
+                </div>
+                @Html.ValidationMessageFor(model => model.valor)
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-6">
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" value="true" name="isDescontoSocio" id="isDescontoSocio" onclick="CadastrarValorDescontoSocio()" /> @Html.Raw("Tem desconto para sócio")
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div id="descontoSocio" class="form-group">
+                @Html.LabelFor(model => model.valorSocio, new { @class = "col-sm-2 control-label" })
+                <div class="col-sm-4 input-group">
+                    @Html.TextBoxFor(model => model.valorSocio, new { @class = "form-control" })
+                </div>
+                @Html.ValidationMessageFor(model => model.valorSocio)
+            </div>
+            
             <div class="form-group">
                 <div class="col-sm-offset-2 col-sm-6">
                     <div class="checkbox">
@@ -91,6 +108,13 @@
                     @Html.TextBoxFor(model => model.valorMaisClasses, new { @class = "form-control", @placeholder = "Informe 0 para torneio gratuito" })
                 </div>
                 @Html.ValidationMessageFor(model => model.valorMaisClasses)
+            </div>
+            <div id="descontoSocioMaisClasses" class="form-group">
+                @Html.LabelFor(model => model.valorMaisClassesSocio, new { @class = "col-sm-2 control-label" })
+                <div class="col-sm-4 input-group">
+                    @Html.TextBoxFor(model => model.valorMaisClassesSocio, new { @class = "form-control" })
+                </div>
+                @Html.ValidationMessageFor(model => model.valorMaisClassesSocio)
             </div>
                 <div class="form-group">
                     @Html.LabelFor(model => model.periodicidadeJogos, new { @class = "col-sm-2 control-label" })
@@ -261,7 +285,23 @@
             language: 'pt-BR',
             pickTime: false
         });
-    });
+     });
+
+    function CadastrarValorDescontoSocio() {
+        if (document.getElementById('isDescontoSocio').checked) {
+            document.getElementById('descontoSocio').style.opacity = "1";
+            document.getElementById('descontoSocio').style.display = "block";
+            document.getElementById('descontoSocioMaisClasses').style.opacity = "1";
+            document.getElementById('descontoSocioMaisClasses').style.display = "block";
+        } else {
+            document.getElementById('descontoSocio').value = "0";
+            document.getElementById('descontoSocioMaisClasses').value = "0";
+            document.getElementById('descontoSocio').style.opacity = "0 !important";
+            document.getElementById('descontoSocio').style.display = "none";
+            document.getElementById('descontoSocioMaisClasses').style.opacity = "0 !important";
+            document.getElementById('descontoSocioMaisClasses').style.display = "none";
+        }
+    }
 </script>
 
 }

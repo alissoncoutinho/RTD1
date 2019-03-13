@@ -11,7 +11,8 @@ namespace Barragem.Models
     [Table("Torneio")]
     public class Torneio
     {
-        public Torneio(){
+        public Torneio()
+        {
             this.isMaisUmaClasse = false;
         }
 
@@ -54,8 +55,14 @@ namespace Barragem.Models
         [Display(Name = "Valor da Inscrição")]
         public double? valor { get; set; }
 
+        [Display(Name = "Valor para sócio")]
+        public double? valorSocio { get; set; }
+
         [Display(Name = "Valor para +1 classe")]
         public double? valorMaisClasses { get; set; }
+
+        [Display(Name = "Valor sócio +1 classe")]
+        public double? valorMaisClassesSocio { get; set; }
 
         [Display(Name = "Tem Repescagem")]
         public bool temRepescagem { get; set; }
