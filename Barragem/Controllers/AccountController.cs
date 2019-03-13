@@ -1162,9 +1162,6 @@ namespace Barragem.Controllers
             ViewBag.RanckingJogador = ranckingJogador;
             ViewBag.posicaoJogador = ranckingJogador[0].posicaoClasse + "º";
             ViewBag.pontuacaoAtual = ranckingJogador[0].totalAcumulado;
-            List<Jogo> jogosJogador = db.Jogo.Where(r => r.desafiante_id == userId || r.desafiado_id == userId)
-                .OrderByDescending(r => r.rodada_id).ToList();
-            ViewBag.jogosJogador = jogosJogador;
             return View(userProfile);
         }
 
