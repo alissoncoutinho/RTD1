@@ -366,7 +366,7 @@ namespace Barragem.Controllers
                         jogo.isPrimeiroJogoTorneio = true;
                     }
                     jogo.desafiado_id = jogador2.userId;
-                    if (jogador2.classeTorneio.isDupla){
+                    if ((jogador2.classeTorneio!=null)&&(jogador2.classeTorneio.isDupla)){
                         jogo.desafiado2_id = jogador2.parceiroDuplaId;
                     }
                     jogador2 = null;

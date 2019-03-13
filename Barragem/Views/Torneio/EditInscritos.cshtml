@@ -43,6 +43,9 @@
                         <th>
                             @Html.DisplayName("ativo")
                         </th>
+                        <th>
+                            @Html.DisplayName("PagSeguro")
+                        </th>
                         <th></th>
                     </tr>
                     @foreach (var item in Model)
@@ -94,6 +97,11 @@
                                 else
                                 {
                                     <input type="checkbox" value="true" name="@Html.Raw("isAtivo" + i)" id="@Html.Raw("isAtivo" + i)" />
+                                }
+                            </td>
+                            <td>
+                                @if ((item.statusPagamento=="3")|| (item.statusPagamento == "4")){
+                                    @Html.Raw("Sim")
                                 }
                             </td>
                             <td align="center">
