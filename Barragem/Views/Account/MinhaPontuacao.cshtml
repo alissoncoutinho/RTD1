@@ -1,0 +1,105 @@
+﻿@model Barragem.Models.UserProfile
+
+@{
+    ViewBag.Title = "Minha Pontuação";
+}
+
+<style>
+    .posicao {
+        color: dimgray;
+        font-weight: bold;
+    }
+    .nomeJogador {
+        color: black;
+        display:inline;
+        font-weight: bold;
+    }
+    .rotuloPontuacaoAtual {
+        color: black;
+     }
+    .pontuacaoAtual {
+        border-radius: 10px;
+        padding: 10px;
+        color: white;
+        font-weight: bold;
+        background: #006600;
+        display: inline;
+    }
+    .explica {
+        position: relative;
+        top: 15px;
+        border-radius: 3px;
+        color: black;
+        padding: 5px;
+        background:darkgray;
+        text-align:center;
+    }
+</style>
+
+@if ((ViewBag.MsgErro != "") && (ViewBag.MsgErro != null))
+{
+    <div class="alert alert-danger alert-dismissable">
+        <strong>Erro!</strong> @ViewBag.MsgErro
+    </div>
+}
+
+    <legend>
+        <div class="posicao">
+            @Html.Raw("#" + ViewBag.posicaoJogador)
+            <div class="nomeJogador"> @Html.Raw(@Model.nome)</div>
+        </div>
+    </legend>
+
+    <div class="rotuloPontuacaoAtual">
+        @Html.Raw("Pontuação atual: ")
+        <div class="pontuacaoAtual">
+            @Html.Raw(ViewBag.pontuacaoAtual+" pts")
+        </div>
+    </div>
+
+    <div class="explica">
+        @Html.Raw("Sua pontuação é a soma dos seus últimos 10 resultados")
+    </div>
+
+
+<div id="tabRanking">
+    @if (ViewBag.RanckingJogador != null)
+    {
+        List<Barragem.Models.Rancking> ranking = ViewBag.RanckingJogador;
+        <br>
+        <div>
+            <table border="0" class="table table-striped">
+                <tr>
+                    <th>
+                        @Html.DisplayName("rodada") 
+                    </th>
+                    <th>
+                        @Html.DisplayName("data")
+                    </th>
+                    <th>
+                        @Html.DisplayName("pts na rodada")
+                    </th>
+                    <th>
+
+                    </th>
+                </tr>
+
+                @foreach (var item in ranking)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.rodada.codigoSeq)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.rodada.dataFim)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.pontuacao, 2)
+                        </td>
+                    </tr>
+                }
+
+            </table>
+        </div>
+    }
+</div>

@@ -1153,6 +1153,21 @@ namespace Barragem.Controllers
             }
         }
 
+        [Authorize(Roles = "admin, organizador, usuario")]
+        public ActionResult MinhaPontuacao()
+        {
+            var userProfile = db.UserProfiles.Find(WebSecurity.GetUserId(User.Identity.Name));
+            var userId = userProfile.UserId;
+            List<Rancking> ranckingJogador = db.Rancking.Where(r => r.userProfile_id == userId && r.posicaoClasse != null).OrderByDescending(r => r.rodada_id).Take(10).ToList();
+            ViewBag.RanckingJogador = ranckingJogador;
+            ViewBag.posicaoJogador = ranckingJogador[0].posicaoClasse + "º";
+            ViewBag.pontuacaoAtual = ranckingJogador[0].totalAcumulado;
+            List<Jogo> jogosJogador = db.Jogo.Where(r => r.desafiante_id == userId || r.desafiado_id == userId)
+                .OrderByDescending(r => r.rodada_id).ToList();
+            ViewBag.jogosJogador = jogosJogador;
+            return View(userProfile);
+        }
+
         #region Helpers
         private ActionResult RedirectToLocal(string returnUrl)
         {
