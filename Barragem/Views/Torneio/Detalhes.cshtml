@@ -82,8 +82,8 @@
                     @Html.Hidden("vrInscricao", Model.valor);
                     <div class="box-body">
                         <div class="row">
-                            @Html.Label("Valor", new { @class = "col-sm-4" })
-                            <div class="col-sm-8 info-box-text">
+                            @Html.Label("Valor", new { @class = "col-sm-5" })
+                            <div class="col-sm-7 info-box-text">
                                 @if (inscricao == null)
                                 {
                                     if ((Model.valor == 0) || (ViewBag.isGratuito))
@@ -111,8 +111,8 @@
                         @if ((Model.valorSocio != null) && (Model.valorSocio != 0) && (inscricao == null))
                         {
                             <div class="row">
-                                @Html.Label("Valor p/Sócio", new { @class = "col-sm-4" })
-                                <div class="col-sm-8 info-box-text">
+                                @Html.Label("Valor p/Sócio", new { @class = "col-sm-5" })
+                                <div class="col-sm-7 info-box-text">
                                     @Html.Raw("R$ " + Model.valorSocio + ",00")
                                 </div>
                             </div>
@@ -120,8 +120,8 @@
                         @if (inscricao != null)
                         {
                             <div class="row">
-                                @Html.Label("Status Inscrição", new { @class = "col-sm-4" })
-                                <div class="col-sm-8 info-box-text">
+                                @Html.Label("Status Inscrição", new { @class = "col-sm-5" })
+                                <div class="col-sm-7 info-box-text">
                                     @if ((Model.valor != 0) && (!ViewBag.isGratuito))
                                     {
                                         @Html.Raw(inscricao.descricaoStatusPag)
@@ -142,8 +142,8 @@
                             if ((bool)Model.isMaisUmaClasse)
                             {
                                 <div class="row">
-                                    @Html.Label("Valor para 2 classes", new { @class = "col-sm-4" })
-                                    <div class="col-sm-8 info-box-text">
+                                    @Html.Label("Valor para 2 classes", new { @class = "col-sm-5" })
+                                    <div class="col-sm-7 info-box-text">
                                         @if ((Model.valor == 0) || (ViewBag.isGratuito))
                                         {
                                             @Html.Raw("gratuito")
@@ -157,16 +157,16 @@
                                 if ((Model.valorMaisClassesSocio != null) && (Model.valorMaisClassesSocio != 0))
                                 {
                                     <div class="row">
-                                        @Html.Label("Valor Sócio 2 classes", new { @class = "col-sm-4" })
-                                        <div class="col-sm-8 info-box-text">
+                                        @Html.Label("Valor Sócio 2 classes", new { @class = "col-sm-5" })
+                                        <div class="col-sm-7 info-box-text">
                                             @Html.Raw("R$ " + Model.valorMaisClassesSocio + ",00")
                                         </div>
                                     </div>
                                 }
                             }
                             <div class="row">
-                                @Html.Label("Inscrições até", new { @class = "col-sm-4" })
-                                <div class="col-sm-8 info-box-text">
+                                @Html.Label("Inscrições até", new { @class = "col-sm-5" })
+                                <div class="col-sm-7 info-box-text">
                                     @Html.Raw(Model.dataFimInscricoes.ToShortDateString())
                                 </div>
                             </div>
@@ -329,7 +329,9 @@
                                         {
                                             <a href="@Url.Action("EfetuarPagamento", new { inscricaoId = inscricao.Id })" class="btn btn-success" title="Efetuar Pagamento">Cartão ou Boleto</a>
                                         }
-                                        <button class="btn btn-success transferenciaButton" title="Transferência bancária">Transferência</button>
+                                        if ((Model.dadosBancarios != null)&&(Model.dadosBancarios.Length > 100)){
+                                            <button class="btn btn-success transferenciaButton" title="Transferência bancária">Transferência</button>
+                                        }
                                     }
                                 </div>
                                     <div class="col-xs-12 col-sm-4 pull-right">

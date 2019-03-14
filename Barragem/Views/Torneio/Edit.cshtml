@@ -86,7 +86,7 @@
                     <div class="col-sm-offset-2 col-sm-6">
                         <div class="checkbox">
                             <label>
-                                @if (true)
+                                @if ((Model.valorSocio != null) && (Model.valorSocio != 0))
                                 {
                                     <input type="checkbox" checked value="true" name="isDescontoSocio" id="isDescontoSocio" onclick="CadastrarValorDescontoSocio()" /> @Html.Raw("Tem desconto para sócio")
                                 }

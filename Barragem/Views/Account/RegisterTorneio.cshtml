@@ -59,9 +59,9 @@
                                 </div>
                             </div>
                             <div class="row form-group">
-                                @Html.LabelFor(m => m.register.nome, new { @class = "control-label col-md-4" })*
+                                @Html.Label("Nome e Sobrenome", new { @class = "control-label col-md-4" })*
                                 <div class="col-md-6 input-group-sm">
-                                    @Html.TextBoxFor(m => m.register.nome, new { @class = "form-control" })
+                                    @Html.TextBoxFor(m => m.register.nome, new { @class = "form-control", placeholder = "Nome e Sobrenome" })
                                     @Html.ValidationMessageFor(m => m.register.nome, "", new { @class = "alert-danger" })
                                 </div>
                             </div>
