@@ -33,8 +33,22 @@
                 <div class="step text-center col-xs-12 col-sm-4">
                     <h3 class="title"><span class="number"><span class="glyphicon glyphicon-list"></span></span><br><span class="text">Inscrições</span></h3>
                     <p>
-                        @if(Model.valor==0){ @Html.Raw("Inscrições Gratuitas.")<br> 
-                        }else{ @Html.Raw("O valor da inscrição é R$ " + Model.valor + ",00")}
+                        @if(Model.valor==0){ 
+                            @Html.Raw("Inscrições Gratuitas.")<br> 
+                        }else{ 
+                            @Html.Raw("Valor da inscrição: R$ " + Model.valor + ",00")<br>
+                        }
+                        @if ((Model.valorSocio != null)&&(Model.valorSocio != 0)){
+                            @Html.Raw("Valor para sócio: R$ " + Model.valorSocio + ",00") <br>
+                        }
+                        @if (Model.isMaisUmaClasse){
+                            @Html.Raw("Valor para 2 classes: R$ " + Model.valorMaisClasses + ",00") <br>
+                            if ((Model.valorSocio != null) && (Model.valorSocio != 0))
+                            {
+                                @Html.Raw("Valor para 2 classes sócio: R$ " + Model.valorMaisClassesSocio + ",00") <br>
+                            }
+                        }
+
                         As inscrições do Torneio vão até o dia @Html.Raw(String.Format("{0:dd/MM/yyyy}", Model.dataFimInscricoes)).
                     </p>
                 </div><!--//step-->

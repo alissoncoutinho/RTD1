@@ -19,7 +19,7 @@
                             </a>
                         </div>
                     </div>
-                    
+
                 }
                 <div class="form-group">
                     @Html.LabelFor(model => model.nome, new { @class = "col-sm-2 control-label" })
@@ -31,7 +31,7 @@
                 <div class="form-group">
                     @Html.LabelFor(model => model.dataInicio, new { @class = "col-sm-2 control-label" })
                     <div class="col-sm-4 input-group date" id="dataInicio" data-date-format="dd/mm/yyyy">
-                        <input type="text" name="dataInicio" id="dataInicio" value="@Model.dataInicio.ToShortDateString()" class="form-control" readonly="readonly"/>
+                        <input type="text" name="dataInicio" id="dataInicio" value="@Model.dataInicio.ToShortDateString()" class="form-control" readonly="readonly" />
                         <span class="input-group-addon">
                             <span class="glyphicon glyphicon-calendar">
                             </span>
@@ -82,27 +82,40 @@
                     </div>
                     @Html.ValidationMessageFor(model => model.valor)
                 </div>
-                <!--div class="form-group">
-                    Html.LabelFor(model => model.qtddClasses, new { class = "col-sm-2 control-label" })
-                    <div class="col-sm-4 input-group">
-                        <select id="qtddClasses" name="qtddClasses" class="form-control">
-                            <option value="1" if (Model.qtddClasses == 1) { Html.Raw("selected")   }>1</option>
-                            <option value="2" if (Model.qtddClasses == 2) { Html.Raw("selected")    }>2</option>
-                            <option value="3" if (Model.qtddClasses == 3) { Html.Raw("selected")    }>3</option>
-                            <option value="4" if (Model.qtddClasses == 4) { Html.Raw("selected")    }>4</option>
-                            <option value="5" if (Model.qtddClasses == 5) { Html.Raw("selected")    }>5</option>
-                        </select>
-                    </div>
-                    Html.ValidationMessageFor(model => model.qtddClasses)
-                </div-->
                 <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-6">
                         <div class="checkbox">
                             <label>
-                                @if (Model.isMaisUmaClasse){
+                                @if ((Model.valorSocio != null) && (Model.valorSocio != 0))
+                                {
+                                    <input type="checkbox" checked value="true" name="isDescontoSocio" id="isDescontoSocio" onclick="CadastrarValorDescontoSocio()" /> @Html.Raw("Tem desconto para sócio")
+                                }
+                                else
+                                {
+                                    <input type="checkbox" value="true" name="isDescontoSocio" id="isDescontoSocio" onclick="CadastrarValorDescontoSocio()" /> @Html.Raw("Tem desconto para sócio")
+                                }
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div id="descontoSocio" class="form-group">
+                    @Html.LabelFor(model => model.valorSocio, new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-4 input-group">
+                        @Html.TextBoxFor(model => model.valorSocio, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.valorSocio)
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-6">
+                        <div class="checkbox">
+                            <label>
+                                @if (Model.isMaisUmaClasse)
+                                {
                                     <input type="checkbox" checked value="true" name="isMaisUmaClasse" /> @Html.Raw("Inscrição em + de 1 classe")
-                                }else{
-                                    <input type="checkbox" value="true" name="isMaisUmaClasse"/> @Html.Raw("Inscrição em + de 1 classe")
+                                }
+                                else
+                                {
+                                    <input type="checkbox" value="true" name="isMaisUmaClasse" /> @Html.Raw("Inscrição em + de 1 classe")
                                 }
                             </label>
                         </div>
@@ -115,21 +128,28 @@
                     </div>
                     @Html.ValidationMessageFor(model => model.valorMaisClasses)
                 </div>
+                <div id="descontoSocioMaisClasses" class="form-group">
+                    @Html.LabelFor(model => model.valorMaisClassesSocio, new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-4 input-group">
+                        @Html.TextBoxFor(model => model.valorMaisClassesSocio, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.valorMaisClassesSocio)
+                </div>
                 <div class="form-group">
                     @Html.LabelFor(model => model.periodicidadeJogos, new { @class = "col-sm-2 control-label" })
                     <div class="col-sm-4 input-group">
                         <select id="periodicidadeJogos" name="periodicidadeJogos" class="form-control">
-                            <option value="1" @if (Model.periodicidadeJogos == 1) { @Html.Raw("selected")    }>1 em 1 dia</option>
-                            <option value="2" @if (Model.periodicidadeJogos == 2) { @Html.Raw("selected")     }>2 em 2 dias</option>
-                            <option value="3" @if (Model.periodicidadeJogos == 3) { @Html.Raw("selected")     }>3 em 3 dias</option>
-                            <option value="4" @if (Model.periodicidadeJogos == 4) { @Html.Raw("selected")     }>4 em 4 dias</option>
-                            <option value="5" @if (Model.periodicidadeJogos == 5) { @Html.Raw("selected")     }>5 em 5 dias</option>
-                            <option value="6" @if (Model.periodicidadeJogos == 6) { @Html.Raw("selected")     }>6 em 6 dias</option>
-                            <option value="7" @if (Model.periodicidadeJogos == 7) { @Html.Raw("selected")     }>7 em 7 dias</option>
-                            <option value="10" @if (Model.periodicidadeJogos == 10) { @Html.Raw("selected")     }>10 em 10 dias</option>
-                            <option value="15" @if (Model.periodicidadeJogos == 15) { @Html.Raw("selected")     }>15 em 15 dias</option>
-                            <option value="20" @if (Model.periodicidadeJogos == 20) { @Html.Raw("selected")     }>20 em 20 dias</option>
-                            <option value="30" @if (Model.periodicidadeJogos == 30) { @Html.Raw("selected")     }>30 em 30 dias</option>
+                            <option value="1" @if (Model.periodicidadeJogos == 1) { @Html.Raw("selected")     }>1 em 1 dia</option>
+                            <option value="2" @if (Model.periodicidadeJogos == 2) { @Html.Raw("selected")      }>2 em 2 dias</option>
+                            <option value="3" @if (Model.periodicidadeJogos == 3) { @Html.Raw("selected")      }>3 em 3 dias</option>
+                            <option value="4" @if (Model.periodicidadeJogos == 4) { @Html.Raw("selected")      }>4 em 4 dias</option>
+                            <option value="5" @if (Model.periodicidadeJogos == 5) { @Html.Raw("selected")      }>5 em 5 dias</option>
+                            <option value="6" @if (Model.periodicidadeJogos == 6) { @Html.Raw("selected")      }>6 em 6 dias</option>
+                            <option value="7" @if (Model.periodicidadeJogos == 7) { @Html.Raw("selected")      }>7 em 7 dias</option>
+                            <option value="10" @if (Model.periodicidadeJogos == 10) { @Html.Raw("selected")      }>10 em 10 dias</option>
+                            <option value="15" @if (Model.periodicidadeJogos == 15) { @Html.Raw("selected")      }>15 em 15 dias</option>
+                            <option value="20" @if (Model.periodicidadeJogos == 20) { @Html.Raw("selected")      }>20 em 20 dias</option>
+                            <option value="30" @if (Model.periodicidadeJogos == 30) { @Html.Raw("selected")      }>30 em 30 dias</option>
                         </select>
                     </div>
                     @Html.ValidationMessageFor(model => model.periodicidadeJogos)
@@ -206,7 +226,7 @@
                             </label>
                         </div>
                     </div>
-                    
+
                 </div>
 
                 @if (Roles.IsUserInRole("admin"))
@@ -276,29 +296,29 @@
                                         <input type="hidden" value="@item.Id" name="Id">
                                         <input type="hidden" value="@item.classe" name="classeId">
                                         @{var nome = item.participante.nome;
-                                        if (nome.Length > 14)
-                                        {
-                                            nome = item.participante.nome.Substring(0, 15) + "...";
-                                        }
+                                            if (nome.Length > 14)
+                                            {
+                                                nome = item.participante.nome.Substring(0, 15) + "...";
+                                            }
                                         }
                                         @Html.Raw(nome)
                                     </li>
-                                }
-                                else if (item.classe > nivel)
-                                {
-                                    break;
-                                }
-                            }
+                                                }
+                                                else if (item.classe > nivel)
+                                                {
+                                                    break;
+                                                }
+                                            }
                         </ul>
                     </div>
                 </div>
-            }
+                                            }
         </div>
         <div class="box-footer">
             <button type="button" onclick="saveJogadoresAlterados()" class="btn btn-info">Gravar</button>
         </div>
     </div>
-    
+
     <div class="tab-pane fade" id="tabInscritos"></div>
     <div class="tab-pane fade" id="tabJogos"></div>
     <div class="tab-pane fade" id="tabEditClasses"></div>
@@ -419,6 +439,29 @@
                     location.reload(true);
                 }
             });
+        }
+
+        function CadastrarValorDescontoSocio() {
+            if (document.getElementById('isDescontoSocio').checked) {
+                document.getElementById('descontoSocio').style.opacity = "1";
+                document.getElementById('descontoSocio').style.display = "block"; 
+                document.getElementById('descontoSocioMaisClasses').style.opacity = "1";
+                document.getElementById('descontoSocioMaisClasses').style.display = "block";
+            } else {
+                document.getElementById('descontoSocio').value = "0";
+                document.getElementById('descontoSocioMaisClasses').value = "0";
+                document.getElementById('descontoSocio').style.opacity = "0 !important";
+                document.getElementById('descontoSocio').style.display = "none";
+                document.getElementById('descontoSocioMaisClasses').style.opacity = "0 !important";
+                document.getElementById('descontoSocioMaisClasses').style.display = "none";
+            }
+        }
+
+        if (!document.getElementById('isDescontoSocio').checked) {
+            document.getElementById('descontoSocio').style.opacity = "0";
+            document.getElementById('descontoSocio').style.display = "none";
+            document.getElementById('descontoSocioMaisClasses').style.opacity = "0";
+            document.getElementById('descontoSocioMaisClasses').style.display = "none";
         }
     </script>
 }

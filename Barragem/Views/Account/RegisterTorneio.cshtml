@@ -59,9 +59,9 @@
                                 </div>
                             </div>
                             <div class="row form-group">
-                                @Html.LabelFor(m => m.register.nome, new { @class = "control-label col-md-4" })*
+                                @Html.Label("Nome e Sobrenome", new { @class = "control-label col-md-4" })*
                                 <div class="col-md-6 input-group-sm">
-                                    @Html.TextBoxFor(m => m.register.nome, new { @class = "form-control" })
+                                    @Html.TextBoxFor(m => m.register.nome, new { @class = "form-control", placeholder = "Nome e Sobrenome" })
                                     @Html.ValidationMessageFor(m => m.register.nome, "", new { @class = "alert-danger" })
                                 </div>
                             </div>
@@ -106,8 +106,8 @@
                     </div>
                     <div class="box-body">
                         <div class="row">
-                            @Html.Label("Valor", new { @class = "col-sm-4" })
-                            <div class="col-sm-8 info-box-text">
+                            @Html.Label("Valor", new { @class = "col-sm-5" })
+                            <div class="col-sm-7 info-box-text">
                                 @Html.Hidden("inscricao.torneioId", torneio.Id)
                                 @if (torneio.valor == 0)
                                 {
@@ -121,69 +121,101 @@
                                 }
                             </div>
                         </div>
+                        @if ((torneio.valorSocio != null) && (torneio.valorSocio != 0))
+                        {
+                            <div class="row">
+                                @Html.Label("Valor p/Sócio", new { @class = "col-sm-5" })
+                                <div class="col-sm-7 info-box-text">
+                                    @Html.Raw("R$ " + torneio.valorSocio + ",00")
+                                </div>
+                            </div>
+                        }
                         @if ((torneio.isMaisUmaClasse) && (torneio.valor!=0)){
                             <div class="row">
-                                @Html.Label("Valor para 2 classes", new { @class = "col-sm-4" })
-                                <div class="col-sm-8 info-box-text">
+                                @Html.Label("Valor para 2 classes", new { @class = "col-sm-5" })
+                                <div class="col-sm-7 info-box-text">
                                     @Html.Raw("R$ " + torneio.valorMaisClasses + ",00")
                                 </div>
                             </div>
+                            if ((torneio.valorMaisClassesSocio != null) && (torneio.valorMaisClassesSocio != 0))
+                            {
+                                <div class="row">
+                                    @Html.Label("Valor Sócio 2 classes", new { @class = "col-sm-5" })
+                                    <div class="col-sm-7 info-box-text">
+                                        @Html.Raw("R$ " + torneio.valorMaisClassesSocio + ",00")
+                                    </div>
+                                </div>
+                            }
                         }
                         <div class="row">
-                            @Html.Label("Inscrições até", new { @class = "col-sm-4" })
-                            <div class="col-sm-8 info-box-text">
+                            @Html.Label("Inscrições até", new { @class = "col-sm-5" })
+                            <div class="col-sm-7 info-box-text">
                                 @Html.Raw(torneio.dataFimInscricoes.ToShortDateString())
                             </div>
                         </div>
-                        <div class="row">
-                            @Html.Label("Categoria", new { @class = "col-sm-4" })
-                            <div class="col-sm-8 input-group-sm">
-                                <select name="inscricao.classe" data-classe2="@torneio.isMaisUmaClasse" class="form-control escolherSegundaOpcaoClasse">
-                                    <option value="0">Selecione uma categoria...</option>
-                                    @foreach (var item in ViewBag.Classes)
-                                    {
-                                        <option value="@item.Id" @if (ViewBag.ClasseInscricao == item.Id) { @Html.Raw("selected")           }>@item.nome</option>
-                                    }
-                                </select>
-                            </div>
-                        </div>
-                        @if (torneio.isMaisUmaClasse)
+                        @if ((torneio.valorSocio != null) && (torneio.valorSocio != 0))
                         {
-                            <div class="form-group">
-                                <div class="col-sm-10">
-                                    <div class="checkbox">
-                                        <label>
-                                            <input type="checkbox" value="true" name="isMaisDeUmaClasse" id="isMaisDeUmaClasse" onclick="segundaOpcaoDeClasse()" /> @Html.Raw("Quero escolher mais uma categoria")
-                                        </label>
+                            <div class="row">
+                                <div class="form-group">
+                                    <div class="col-sm-8">
+                                        <div class="checkbox">
+                                            <label>
+                                                <input type="checkbox" value="true" name="isSocio" id="isSocio" /> @Html.Raw("Sou sócio do clube")
+                                            </label>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <div id="segundaOpcaoClasse" class="row">
-                                @Html.Label("2ª Categoria", new { @class = "col-sm-4" })
-                                <div class="col-sm-8 input-group-sm">
-                                    <select name="classeInscricao2" class="form-control">
-                                        <option value="0">Selecione uma categoria...</option>
-                                        @foreach (var item in ViewBag.Classes2Opcao)
-                                        {
-                                            <option value="@item.Id" @if (ViewBag.ClasseInscricao2 == item.Id) { @Html.Raw("selected")         }>@item.nome</option>
-                                        }
-                                    </select>
-                                </div>
-                            </div>
-                        }
-                        @if (!String.IsNullOrEmpty(torneio.observacao))
-                        {
-                            <br>
-                            <div class="boxPadrao">
+                          }
                                 <div class="row">
-                                    <div class="col-sm-12">@Html.Raw(torneio.observacao)</div>
+                                    @Html.Label("Categoria", new { @class = "col-sm-4" })
+                                    <div class="col-sm-8 input-group-sm">
+                                        <select name="inscricao.classe" data-classe2="@torneio.isMaisUmaClasse" class="form-control escolherSegundaOpcaoClasse">
+                                            <option value="0">Selecione uma categoria...</option>
+                                            @foreach (var item in ViewBag.Classes)
+                                            {
+                                                <option value="@item.Id" @if (ViewBag.ClasseInscricao == item.Id) { @Html.Raw("selected")            }>@item.nome</option>
+                                            }
+                                        </select>
+                                    </div>
                                 </div>
-                                <div class="row form-group input-group-sm">
-                                    <div class="col-sm-12"><input type="text" placeholder="Responda aqui..." name="inscricao.observacao" class="form-control"></div>
-                                </div>
+                                @if (torneio.isMaisUmaClasse)
+                                {
+                                    <div class="form-group">
+                                        <div class="col-sm-10">
+                                            <div class="checkbox">
+                                                <label>
+                                                    <input type="checkbox" value="true" name="isMaisDeUmaClasse" id="isMaisDeUmaClasse" onclick="segundaOpcaoDeClasse()" /> @Html.Raw("Quero escolher mais uma categoria")
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="segundaOpcaoClasse" class="row">
+                                        @Html.Label("2ª Categoria", new { @class = "col-sm-4" })
+                                        <div class="col-sm-8 input-group-sm">
+                                            <select name="classeInscricao2" class="form-control">
+                                                <option value="0">Selecione uma categoria...</option>
+                                                @foreach (var item in ViewBag.Classes2Opcao)
+                                                {
+                                                    <option value="@item.Id" @if (ViewBag.ClasseInscricao2 == item.Id) { @Html.Raw("selected")          }>@item.nome</option>
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+                                }
+                                @if (!String.IsNullOrEmpty(torneio.observacao))
+                                {
+                                    <br>
+                                    <div class="boxPadrao">
+                                        <div class="row">
+                                            <div class="col-sm-12">@Html.Raw(torneio.observacao)</div>
+                                        </div>
+                                        <div class="row form-group input-group-sm">
+                                            <div class="col-sm-12"><input type="text" placeholder="Responda aqui..." name="inscricao.observacao" class="form-control"></div>
+                                        </div>
+                                    </div>
+                                }
                             </div>
-                        }
-                    </div>
                     <!-- /.box-body -->
                     <div class="box-footer">
                         @if (torneio.dataFimInscricoes.AddDays(1) >= DateTime.Now)

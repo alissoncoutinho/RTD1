@@ -22,7 +22,10 @@
                     if (ViewBag.isAceitaCartao) { 
                         <a href="@Url.Action("EfetuarPagamento", "Torneio", new { inscricaoId = Model.Id })" style="text-decoration: none" class="btn btn-success" data-id="@Model.Id" title="Efetuar Pagamento">Cartão ou Boleto</a>
                     }
-                    <button class="btn btn-success" onclick="mostrarDadosBancarios()" title="Transferência bancária">Transferência</button>
+                    if ((Model.torneio.dadosBancarios != null) && (Model.torneio.dadosBancarios.Length > 100))
+                    {
+                        <button class="btn btn-success" onclick="mostrarDadosBancarios()" title="Transferência bancária">Transferência</button>
+                    }
                 }
             </div>
         </div>
