@@ -897,6 +897,7 @@
     <Content Include="Views\Pagamento\Index.cshtml" />
     <Content Include="Views\Pagamento\Edit.cshtml" />
     <Content Include="Views\Pagamento\Create.cshtml" />
+    <Content Include="Views\Account\MinhaPontuacao.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
