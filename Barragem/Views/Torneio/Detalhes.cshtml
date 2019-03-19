@@ -173,8 +173,8 @@
                             if ((Model.valorSocio != null) && (Model.valorSocio != 0))
                             {
                                 <div class="row">
-                                    <label class="col-sm-5">
-                                        É sócio do clube?
+                                    <label id="labelIsSocio" class="col-sm-5">
+                                        É sócio do clube? *
                                     </label>
                                     <div class="col-sm-7 info-box-text">
                                         <input type="radio" name="isSocio" id="isSocio" value="true">Sim
@@ -477,8 +477,10 @@
         $(".validarSeSocio").click(function (event) {
             event.preventDefault();
             var radioButtons = document.getElementsByName("isSocio");
-            if ((radioButtons[0].checked == false) && (radioButtons[1].checked == false)) {
+            var labelisSocio = document.getElementById("labelIsSocio");
+            if ((labelisSocio!=null) && (radioButtons[0].checked == false) && (radioButtons[1].checked == false)) {
                 alert("Favor informar se você é sócio do clube ou não.");
+                labelisSocio.style.color = "red";
                 return false;
             } else {
                 document.formInscricao.submit();
