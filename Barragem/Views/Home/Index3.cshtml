@@ -68,7 +68,7 @@
 }
 
 
-@if (Model != null)
+@if (Model != null && !(ViewBag.situacaoJogador=="desativado" || ViewBag.situacaoJogador == "pendente"))
 {
 
     <div class="container-dashboard">
@@ -599,7 +599,7 @@
         </div>
     }
 
-@if (ViewBag.JogosPendentes != null)
+@if (ViewBag.JogosPendentes != null && !(ViewBag.situacaoJogador == "desativado" || ViewBag.situacaoJogador == "pendente"))
 {
     <div class="container-dashboard">
         <div class="container-fluid">
