@@ -172,13 +172,13 @@
                             </div>
                             if ((Model.valorSocio != null) && (Model.valorSocio != 0))
                             {
-                                <div class="form-group">
-                                    <div class="col-sm-8">
-                                        <div class="checkbox">
-                                            <label>
-                                                <input type="checkbox" value="true" name="isSocio" id="isSocio" /> @Html.Raw("Sou sócio do clube")
-                                            </label>
-                                        </div>
+                                <div class="row">
+                                    <label class="col-sm-5">
+                                        É sócio do clube?
+                                    </label>
+                                    <div class="col-sm-7 info-box-text">
+                                        <input type="radio" name="isSocio" id="isSocio" value="true">Sim
+                                        <input type="radio" name="isSocio" id="isSocio" value="false">Não
                                     </div>
                                 </div>
                             }
@@ -344,7 +344,7 @@
                             }
                             else
                             {
-                                <button type="submit" class="btn btn-info pull-right confirmInscricao">Inscrever-me</button>
+                                <button type="submit" class="btn btn-info pull-right validarSeSocio">Inscrever-me</button>
                             }
                         }
                         else
@@ -473,6 +473,17 @@
             document.getElementById('segundaOpcaoClasse').style.opacity = "0";
             document.getElementById('segundaOpcaoClasse').style.display = "none";
         }
+
+        $(".validarSeSocio").click(function (event) {
+            event.preventDefault();
+            var radioButtons = document.getElementsByName("isSocio");
+            if ((radioButtons[0].checked == false) && (radioButtons[1].checked == false)) {
+                alert("Favor informar se você é sócio do clube ou não.");
+                return false;
+            } else {
+                document.formInscricao.submit();
+            }
+        });
 
     </script>
 }

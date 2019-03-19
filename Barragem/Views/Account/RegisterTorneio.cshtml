@@ -130,7 +130,7 @@
                                 </div>
                             </div>
                         }
-                        @if ((torneio.isMaisUmaClasse) && (torneio.valor!=0)){
+                        @if ((torneio.isMaisUmaClasse) && (torneio.valor != 0)) {
                             <div class="row">
                                 @Html.Label("Valor para 2 classes", new { @class = "col-sm-5" })
                                 <div class="col-sm-7 info-box-text">
@@ -157,16 +157,16 @@
                         {
                             <div class="row">
                                 <div class="form-group">
-                                    <div class="col-sm-8">
-                                        <div class="checkbox">
-                                            <label>
-                                                <input type="checkbox" value="true" name="isSocio" id="isSocio" /> @Html.Raw("Sou sócio do clube")
-                                            </label>
-                                        </div>
+                                    <label class="col-sm-5">
+                                        É sócio do clube?
+                                    </label>
+                                    <div class="col-sm-7 info-box-text">
+                                        <input type="radio" name="isSocio" id="isSocio" value="true">Sim
+                                        <input type="radio" name="isSocio" id="isSocio" value="false">Não
                                     </div>
                                 </div>
                             </div>
-                          }
+                        }
                                 <div class="row">
                                     @Html.Label("Categoria", new { @class = "col-sm-4" })
                                     <div class="col-sm-8 input-group-sm">
@@ -222,11 +222,11 @@
                         {
                             if (!String.IsNullOrEmpty(ViewBag.statusPagamento))
                             {
-                                <a href="@Url.Action("EfetuarPagamento", "Torneio",new { inscricaoId = ViewBag.inscricaoId })" class="btn btn-default" data-id="@ViewBag.inscricaoId" title="Efetuar Pagamento">Efetuar Pagamento</a>
+                                <a href="@Url.Action("EfetuarPagamento", "Torneio", new { inscricaoId = ViewBag.inscricaoId })" class="btn btn-default" data-id="@ViewBag.inscricaoId" title="Efetuar Pagamento">Efetuar Pagamento</a>
                             }
                             else
                             {
-                                <button type="submit" class="btn btn-primary pull-right confirmInscricao">Inscrever-me</button>
+                                <button type="submit" class="btn btn-primary pull-right validarSeSocio">Inscrever-me</button>
                             }
                         }
                         else
@@ -281,6 +281,19 @@
         }
         document.getElementById('segundaOpcaoClasse').style.opacity = "0";
         document.getElementById('segundaOpcaoClasse').style.display = "none";
+
+
+        $(".validarSeSocio").click(function(event) {
+            event.preventDefault();
+            var radioButtons = document.getElementsByName("isSocio");
+            if ((radioButtons[0].checked == false)&&(radioButtons[1].checked == false)){
+                alert("Favor informar se você é sócio do clube ou não.");
+                return false;
+            } else {
+                document.forms[0].submit();
+            }
+        });
+        
     </script>
 }
 

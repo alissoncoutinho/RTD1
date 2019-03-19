@@ -1,0 +1,100 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Tabela</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    @Styles.Render("~/css")
+    <style type="text/css">
+        body {
+            margin: 10px;
+        }
+        </style>
+
+</head>
+
+<body>
+
+    <h3>@ViewBag.nomeTorneio</h3>
+    <table class="table table-striped table-condensed table-bordered">
+        <tr>
+            <th>
+                @Html.DisplayName("Jogador 1")
+            </th>
+            <th>
+                @Html.DisplayName("Jogador 2")
+            </th>
+            <th>
+                @Html.DisplayName("Fase")
+            </th>
+            <th>
+                @Html.DisplayName("Data")
+            </th>
+            <th>
+                @Html.DisplayName("Horário")
+            </th>
+            <th>
+                @Html.DisplayName("Quadra")
+            </th>
+        </tr>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @if (item.desafiante_id == 10)
+                    {
+                        @Html.Raw("bye")
+                    }
+                    else if (item.desafiante == null)
+                    {
+                        @Html.Raw("Aguardando")
+                    }
+                    else
+                    {
+                        @item.desafiante.nome
+                    }
+
+                </td>
+                <td>
+                    @if (item.desafiado == null)
+                {
+                        @Html.Raw("Aguardando")
+                    }
+                    else
+                    {
+                        @item.desafiado.nome
+                    }
+                </td>
+                <td>
+                    @Html.Raw(item.descricaoFaseTorneio)
+                </td>
+                <td>
+                    @if (item.dataJogo != null)
+                    {
+                        @Html.Raw(String.Format("{0:dd/MM/yyyy}", item.dataJogo))
+                    }
+                </td>
+                <td>
+                    @Html.Raw(item.horaJogo)
+                </td>
+                <td>
+                    @if ((item.quadra != null) && (item.quadra != 100))
+                    {
+                        @Html.Raw("quadra " + item.quadra)
+                    }
+                </td>
+            </tr>
+        }
+    </table>
+    <script>
+        window.print();
+    </script>
+</body>
+</html>

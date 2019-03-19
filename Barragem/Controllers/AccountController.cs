@@ -257,7 +257,8 @@ namespace Barragem.Controllers
                         lateralidade = model.register.lateralidade,
                         nivelDeJogo = model.register.nivelDeJogo,
                         barragemId = model.register.barragemId,
-                        classeId = classesBarragem[0].Id
+                        classeId = classesBarragem[0].Id,
+                        
                     });
                     Roles.AddUserToRole(model.register.UserName, "usuario");
                     WebSecurity.Login(model.register.UserName, model.register.Password);
@@ -287,6 +288,7 @@ namespace Barragem.Controllers
                     }else{
                         model.inscricao.isAtivo = true;
                     }
+                    model.inscricao.isSocio = isSocio;
                     db.InscricaoTorneio.Add(model.inscricao);
                     if (model.isMaisDeUmaClasse){
                         InscricaoTorneio inscricao2 = new InscricaoTorneio();
@@ -294,6 +296,7 @@ namespace Barragem.Controllers
                         inscricao2.classe = model.classeInscricao2;
                         inscricao2.valor = model.inscricao.valor;
                         inscricao2.isAtivo = model.inscricao.isAtivo;
+                        inscricao2.isSocio = model.inscricao.isSocio;
                         inscricao2.observacao = model.inscricao.observacao;
                         inscricao2.userId = model.inscricao.userId;
                         inscricao2.torneioId = model.inscricao.torneioId;

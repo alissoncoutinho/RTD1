@@ -46,6 +46,9 @@
                         <th>
                             @Html.DisplayName("PagSeguro")
                         </th>
+                        <th>
+                            @Html.DisplayName("Sócio")
+                        </th>
                         <th></th>
                     </tr>
                     @foreach (var item in Model)
@@ -104,6 +107,8 @@
                                     @Html.Raw("Sim")
                                 }
                             </td>
+
+                            <td>@if ((item.isSocio != null) && ((bool)item.isSocio)) { @Html.Raw("Sim")}</td>
                             <td align="center">
                                 <form method="post" enctype="multipart/form-data" action="#" name="@Html.Raw("form"+i)" id="@Html.Raw("form"+i)" class="form">
                                     <input type="hidden" name="Id" id="Id" value="@item.Id">

@@ -1089,6 +1089,7 @@ namespace Barragem.Controllers
                     inscricao.classe = classeInscricao;
                     inscricao.torneioId = torneioId;
                     inscricao.userId = userId;
+                    inscricao.isSocio = isSocio;
                     if (isMaisDeUmaClasse)
                     {
                         if ((isSocio) && (torneio.valorMaisClassesSocio != null || torneio.valorMaisClassesSocio != 0))
@@ -1136,6 +1137,7 @@ namespace Barragem.Controllers
                         inscricao2.userId = userId;
                         inscricao2.valor = inscricao.valor;
                         inscricao2.observacao = observacao;
+                        inscricao2.isSocio = isSocio;
                         if (torneio.valor > 0)
                         {
                             inscricao2.isAtivo = false;
@@ -1387,6 +1389,17 @@ namespace Barragem.Controllers
             
             ViewBag.TorneioId = torneioId;
             ViewBag.flag = "jogos";
+            return View(listaJogos);
+        }
+
+        [Authorize(Roles = "admin,organizador")]
+        public ActionResult ImprimirJogos(int torneioId, int fClasse = 0, string fData = "", string fHora = "", int fQuadra = 0, int fase = 0)
+        {
+            List<Jogo> listaJogos = null;
+            var torneio = db.Torneio.Find(torneioId);
+            ViewBag.nomeTorneio = torneio.nome;
+            var jogo = db.Jogo.Where(i => i.torneioId == torneioId);
+            listaJogos = filtrarJogos(jogo, fClasse, fData, fHora, fQuadra, fase);
             return View(listaJogos);
         }
 
