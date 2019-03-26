@@ -2,7 +2,7 @@
 
 <div class="alinhamento">
     <div class="bloco_jogo">
-        @if ((Model.isRepescagem!=null)&&(String.IsNullOrEmpty(Model.horaJogo))){
+        @if ((Model.isRepescagem!=null)&&(String.IsNullOrEmpty(Model.dataJogo+""))){
             <p class="data" style="background-color:#dd4b39">Repescagem</p>
         }else{
             if (Model.isRepescagem != null) {
@@ -10,6 +10,7 @@
             } else {
                 <p class="data">@Html.Raw(Model.dataHorarioQuadra)</p>
             }
+            
         }
         <p class="nome">
             @if (Model.desafiado_id != 0){
