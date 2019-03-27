@@ -144,27 +144,39 @@ namespace Barragem.Class
                     var retorno = await response.Content.ReadAsAsync<RetornoNotificacao>();
                     int id = Convert.ToInt32(retorno.status_request.items[0].item_id);
                     var pb = db.PagamentoBarragem.Where(p => p.Id == id).SingleOrDefault();
-                    if (retorno.status_request.result == "success") {
-                        if (retorno.status_request.status == "paid" || retorno.status_request.status == "reserved" || retorno.status_request.status == "completed")
-                        {
+                    if (retorno.status_request.result == "success"){
+                        if (retorno.status_request.status == "paid" || retorno.status_request.status == "reserved" || retorno.status_request.status == "completed"){
                             pb.status = "Pago";
-                        }else if(retorno.status_request.status == "canceled") {
+                        }else if (retorno.status_request.status == "canceled"){
                             pb.status = retorno.status_request.status;
                             var barragem = db.Barragens.Find(pb.barragemId);
                             barragem.isAtiva = false;
                             db.Entry(barragem).State = EntityState.Modified;
                             db.SaveChanges();
-                        }
-                        else if (retorno.status_request.status == "pending"){
+                        } else if (retorno.status_request.status == "pending"){
                             // não faz nada
                         } else {
                             pb.status = retorno.status_request.status;
                         }
+                        db.Entry(pb).State = EntityState.Modified;
+                        db.SaveChanges();
+                        if (retorno.status_request.status == "paid" || retorno.status_request.status == "reserved" || retorno.status_request.status == "completed"){
+                            Pagamento pagamento = db.Pagamento.Find(pb.pagamentoId);
+                            pagamento.arrecadado = db.PagamentoBarragem.Where(pg => pg.pagamentoId == pagamento.Id && pg.status == "Pago").Sum(pg => pg.valor);
+                            if (pagamento.arrecadado == pagamento.areceber){
+                                pagamento.status = "Finalizado";
+                            }else
+                            {
+                                pagamento.status = "Em aberto";
+                            }
+                            db.Entry(pagamento).State = EntityState.Modified;
+                            db.SaveChanges();
+                        }
                     }else{
                         pb.status = retorno.status_request.response_message;
+                        db.Entry(pb).State = EntityState.Modified;
+                        db.SaveChanges();
                     }
-                    db.Entry(pb).State = EntityState.Modified;
-                    db.SaveChanges();
                 }
             }
             catch (Exception e)

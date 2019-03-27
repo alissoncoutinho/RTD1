@@ -131,7 +131,7 @@ namespace Barragem.Controllers
             }
         }
 
-        private Boleto montarDadosBoleto(PagamentoBarragem pb)
+        private Boleto montarDadosBoleto(PagamentoBarragem pb, string mesAno="")
         {
             var barragemId = pb.barragemId;
             var barragem = db.BarragemView.Find(barragemId);
@@ -144,7 +144,7 @@ namespace Barragem.Controllers
             var item = new Item();
             item.item_id = pb.Id + "";
             item.price_cents = Convert.ToInt32(pb.valor*100);
-            item.description = pb.barragem.nome;
+            item.description = pb.barragem.nome + " - Mensalidade " + mesAno;
             item.quantity = 1;
             boleto.items = new List<Item>();
             boleto.items.Add(item);
@@ -156,19 +156,18 @@ namespace Barragem.Controllers
             try
             {
                 ClientePagHiper.listBoletoRetorno = new List<BoletoRetorno>();
+                var pagamento = db.Pagamento.Find(Id);
                 var pagamentoBarragem = db.PagamentoBarragem.Where(pb => pb.pagamentoId == Id && (bool)pb.cobrar).ToList();
                 foreach (PagamentoBarragem pb in pagamentoBarragem){
-                    var boleto = montarDadosBoleto(pb);
+                    var boleto = montarDadosBoleto(pb, pagamento.mes + "/" + pagamento.ano);
                     await new ClientePagHiper().EmitirBoletoAsync(boleto);
                 }
                 while (pagamentoBarragem.Count() > ClientePagHiper.listBoletoRetorno.Count()) {
 
                 }
                 var conferencia = 0;
-                foreach (BoletoRetorno bR in ClientePagHiper.listBoletoRetorno)
-                {
-                    if (bR.retorno.create_request.result == "success")
-                    {
+                foreach (BoletoRetorno bR in ClientePagHiper.listBoletoRetorno){
+                    if (bR.retorno.create_request.result == "success"){
                         int id = Convert.ToInt32(bR.boleto.items[0].item_id);
                         var pb = pagamentoBarragem.Where(p => p.Id == id).SingleOrDefault();
                         pb.linkBoleto = bR.retorno.create_request.bank_slip.url_slip_pdf;
@@ -178,8 +177,7 @@ namespace Barragem.Controllers
                         db.SaveChanges();
                         //EnviarEmail(bR.boleto.payer_email, bR.boleto.payer_name, pb.barragem.nome, pb.linkBoleto);
                         conferencia++;
-                    }else if (bR.retorno.create_request.result == "reject")
-                    {
+                    }else if (bR.retorno.create_request.result == "reject"){
                         int id = Convert.ToInt32(bR.boleto.items[0].item_id);
                         var pb = pagamentoBarragem.Where(p => p.Id == id).SingleOrDefault();
                         pb.status = bR.retorno.create_request.response_message;
@@ -187,7 +185,6 @@ namespace Barragem.Controllers
                         db.SaveChanges();
                     }
                 }
-                var pagamento = db.Pagamento.Find(Id);
                 if (conferencia >= pagamentoBarragem.Count()) {
                     pagamento.status = "Em Andamento";
                 } else {
@@ -264,6 +261,19 @@ namespace Barragem.Controllers
                 pagamentoBarragem.cobrar = !pagamentoBarragem.cobrar;
                 db.Entry(pagamentoBarragem).State = EntityState.Modified;
                 db.SaveChanges();
+
+                Pagamento pagamento = db.Pagamento.Find(pagamentoBarragem.pagamentoId);
+                pagamento.areceber = db.PagamentoBarragem.Where(pg => pg.pagamentoId == pagamento.Id && pg.cobrar==true).Sum(pg => pg.valor);
+                if (pagamento.arrecadado == pagamento.areceber)
+                {
+                    pagamento.status = "Finalizado";
+                }else
+                {
+                    pagamento.status = "Em aberto";
+                }
+                db.Entry(pagamento).State = EntityState.Modified;
+                db.SaveChanges();
+
                 return Json(new { erro = "", retorno = 1 }, "text/plain", JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
