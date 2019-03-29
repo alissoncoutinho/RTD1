@@ -14,14 +14,14 @@
         }
         <p class="nome">
             @if (Model.desafiado_id != 0){
-                <a href="@Url.Action("../Account/Detalhes", new { userId = @Model.desafiado.UserId })" title="Detalhes do jogador">
+                <a href="@Url.Action("../Account/Detalhes", new { userId = @Model.desafiado.UserId, mostrarClasse = false })" title="Detalhes do jogador">
                     @if ((Model.cabecaChave != null) && (Model.cabecaChave > 0) && (Model.cabecaChave < 100)){
                         @Html.Raw("(" + Model.cabecaChave + ") ")
                     }
                     @Html.Raw(Model.desafiado.nome)
                 </a>
                 if (Model.desafiado2 != null){
-                    @Html.Raw("/ ") <a href="@Url.Action("../Account/Detalhes", new { userId = @Model.desafiado2.UserId })" title="Detalhes do jogador">
+                    @Html.Raw("/ ") <a href="@Url.Action("../Account/Detalhes", new { userId = @Model.desafiado2.UserId, mostrarClasse = false })" title="Detalhes do jogador">
                         @Html.Raw(Model.desafiado2.nome)
                     </a>
                 }
@@ -47,11 +47,11 @@
             }else if (Model.desafiante == null){
                 @Html.Raw("aguardando")
             }else{
-                <a href="@Url.Action("../Account/Detalhes", new { userId = @Model.desafiante.UserId })" title="Detalhes do jogador">
+                <a href="@Url.Action("../Account/Detalhes", new { userId = @Model.desafiante.UserId, mostrarClasse = false })" title="Detalhes do jogador">
                     @Html.Raw(Model.desafiante.nome)
                 </a>
                 if (Model.desafiante2 != null){
-                    @Html.Raw("/ ") <a href="@Url.Action("../Account/Detalhes", new { userId = @Model.desafiante2.UserId })" title="Detalhes do jogador">
+                    @Html.Raw("/ ") <a href="@Url.Action("../Account/Detalhes", new { userId = @Model.desafiante2.UserId, mostrarClasse = false })" title="Detalhes do jogador">
                         @Html.Raw(Model.desafiante2.nome)
                     </a>
                 }

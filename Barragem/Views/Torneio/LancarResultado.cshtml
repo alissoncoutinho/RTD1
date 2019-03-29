@@ -109,7 +109,7 @@
                             }
                             else
                             {
-                                <a href="@Url.Action("../Account/Detalhes", new { userId = Model.desafiado_id })" title="Detalhes do jogador">
+                                <a href="@Url.Action("../Account/Detalhes", new { userId = Model.desafiado_id, mostrarClasse = false })" title="Detalhes do jogador">
                                     @Model.desafiado.nome
                                 </a>
                                 <a href="@Model.desafiado.linkwhatsapp">
@@ -117,7 +117,7 @@
                                 </a>
                                 if (Model.desafiado2_id != null)
                                 {
-                                    <br><a href="@Url.Action("../Account/Detalhes", new { userId = Model.desafiado2_id })" title="Detalhes do jogador">
+                                    <br><a href="@Url.Action("../Account/Detalhes", new { userId = Model.desafiado2_id, mostrarClasse = false })" title="Detalhes do jogador">
                                         @Model.desafiado2.nome
                                     </a>
 
@@ -149,7 +149,7 @@
                             }
                             else
                             {
-                                <a href="@Url.Action("../Account/Detalhes", new { userId = Model.desafiante_id })" title="Detalhes do jogador">
+                                <a href="@Url.Action("../Account/Detalhes", new { userId = Model.desafiante_id, mostrarClasse = false })" title="Detalhes do jogador">
                                     @Model.desafiante.nome
                                 </a>
                                 <a href="@Model.desafiante.linkwhatsapp">
@@ -157,7 +157,7 @@
                                 </a>
                                 if (Model.desafiante2_id != null)
                                 {
-                                    <br><a href="@Url.Action("../Account/Detalhes", new { userId = Model.desafiante2_id })" title="Detalhes do jogador">
+                                    <br><a href="@Url.Action("../Account/Detalhes", new { userId = Model.desafiante2_id, mostrarClasse = false })" title="Detalhes do jogador">
                                         @Model.desafiante2.nome
                                     </a>
 
