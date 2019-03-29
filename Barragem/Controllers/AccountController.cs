@@ -107,6 +107,8 @@ namespace Barragem.Controllers
                 barragemId = Convert.ToInt32(cookie.Value.ToString());
             }
             ViewBag.barragemId = barragemId;
+            Barragens barragens = db.Barragens.Find(barragemId);
+            ViewBag.isClasseUnica = barragens.isClasseUnica;
             ViewBag.classeId = new SelectList(db.Classe.Where(c => c.barragemId == barragemId).ToList(), "Id", "nome");
             return View();
         }

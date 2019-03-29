@@ -85,9 +85,15 @@ namespace Barragem.Controllers
                             db.Database.ExecuteSqlCommand(sql);
                             codigo = codigo + 1;
                         }
-                        for (int i = 1; i <= 5; i++){
-                            sql = "INSERT INTO Classe (nome, nivel, barragemId) VALUES ('"+ i +"ª Classe',"+ i +", " + barragens.Id + ")";
+                        if (barragens.isClasseUnica){
+                            sql = "INSERT INTO Classe (nome, nivel, barragemId) VALUES ('Classe Única'," + 1 + ", " + barragens.Id + ")";
                             db.Database.ExecuteSqlCommand(sql);
+                        } else {
+                            for (int i = 1; i <= 5; i++)
+                            {
+                                sql = "INSERT INTO Classe (nome, nivel, barragemId) VALUES ('" + i + "ª Classe'," + i + ", " + barragens.Id + ")";
+                                db.Database.ExecuteSqlCommand(sql);
+                            }
                         }
                         scope.Complete();
                         return RedirectToAction("Index");

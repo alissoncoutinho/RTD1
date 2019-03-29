@@ -106,7 +106,14 @@
     <div class="form-group">
         @Html.LabelFor(m => m.classeId, new { @class = "control-label col-md-2" })*
         <div class="col-md-4">
-            @Html.DropDownList("classeId", null, "Escolha a sua classe", new { @class = "form-control" })
+            @if (ViewBag.isClasseUnica)
+            {
+                @Html.DropDownList("classeId", null, new { @class = "form-control" })
+            }
+            else
+            {
+                @Html.DropDownList("classeId", null, "Escolha a sua classe", new { @class = "form-control" })
+            }
             @Html.ValidationMessageFor(m => m.classeId, "", new { @class = "alert-danger" })
         </div>
     </div>
