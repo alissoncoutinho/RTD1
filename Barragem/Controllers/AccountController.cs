@@ -557,8 +557,9 @@ namespace Barragem.Controllers
         }
 
         [Authorize(Roles = "admin,organizador,usuario")]
-        public ActionResult Detalhes(int userId)
+        public ActionResult Detalhes(int userId, bool mostrarClasse=true)
         {
+            ViewBag.mostrarClasse = mostrarClasse;
             UserProfile jogador = db.UserProfiles.Find(userId);
             UserProfile usu = db.UserProfiles.Find(WebSecurity.GetUserId(User.Identity.Name));
             string perfil = Roles.GetRolesForUser(User.Identity.Name)[0];

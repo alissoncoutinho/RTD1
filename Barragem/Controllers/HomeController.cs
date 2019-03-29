@@ -445,6 +445,9 @@ namespace Barragem.Controllers
                         ViewBag.cobranca = "Olá, o boleto da sua mensalidade já está disponível para pagamento. Clique no link para acessar o boleto ou copie o número do código de barras:";
                         ViewBag.boleto = pb[0].linkBoleto;
                         ViewBag.numeroCodigoBarras = pb[0].digitableLine;
+                        if (DateTime.Now.Day > 10){
+                            ViewBag.cobranca = "Olá, Você possui uma mensalidade em atrasado. A partir do dia 15 o seu ranking estará inativado. Clique no link para acessar o boleto ou copie o número do código de barras:";
+                        }
                     }
                     if (pb[0].status == "canceled"){
                         ViewBag.cobranca = "Seu ranking está inativo por falta de pagamento do boleto. Não será possível gerar temporadas e rodadas. Favor consultar os administradores do rankingdetenis.com";

@@ -97,6 +97,22 @@ namespace Barragem.Controllers
                     log2.descricao = ranking + " movimentacao ok " + status + ":" + DateTime.Now + ":" + notificationCode;
                     db.Log.Add(log2);
                     db.SaveChanges();
+
+                    // ativar segunda inscrição caso exista
+                    var listInscricao = db.InscricaoTorneio.Where(t => t.torneioId == inscricao.torneioId && t.userId == inscricao.userId && t.Id != inscricao.Id).ToList();
+                    if (listInscricao.Count() > 0)
+                    {
+                        var inscricao2 = listInscricao[0];
+                        if (status == 3){
+                            inscricao2.isAtivo = true;
+                        }
+                        inscricao2.statusPagamento = status + "";
+                        inscricao2.formaPagamento = paymentMethod.PaymentMethodType + "";
+                        inscricao2.valor = (float)transaction.GrossAmount;
+                        db.Entry(inscricao2).State = EntityState.Modified;
+                        db.SaveChanges();
+
+                    }
                 }
 
             }
@@ -115,5 +131,7 @@ namespace Barragem.Controllers
 
             await new ClientePagHiper().ConfirmarNotificacao(notificacao);
         }
+
+        
     }    
 }

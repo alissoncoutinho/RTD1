@@ -754,7 +754,7 @@ namespace Barragem.Controllers
 
             // Sets your customer information.
             //payment.Sender = new Sender(inscricao.participante.nome,inscricao.participante.email,new Phone("61", "99999999"));
-            string[] arrayNomes = inscricao.participante.nome.Split(' ');
+            string[] arrayNomes = inscricao.participante.nome.Trim().Split(' ');
             var nome = inscricao.participante.nome;
             if (arrayNomes.Length == 1)
             {
@@ -1550,7 +1550,7 @@ namespace Barragem.Controllers
                     }
                     ViewBag.NomeTorneio = inscricao.torneio.nome;
                     jogo = db.Jogo.Where(u => (u.desafiado_id == usuario.UserId || u.desafiante_id == usuario.UserId) && u.torneioId == inscricao.torneioId)
-                        .OrderBy(u => u.faseTorneio).Take(1).Single();
+                        .OrderBy(u => u.situacao_Id).ThenBy(u => u.faseTorneio).Take(1).Single();
                 }catch (System.InvalidOperationException e){
                     ViewBag.MsgAlert = "Não foi possível encontrar jogos em aberto:" + e.Message;
                 }
@@ -1610,7 +1610,7 @@ namespace Barragem.Controllers
                     }
                     
                     jogo = db.Jogo.Where(u => (u.desafiado_id == usuario.UserId || u.desafiante_id == usuario.UserId) && u.torneioId == inscricao.torneioId)
-                        .OrderBy(u => u.faseTorneio).Take(1).Single();
+                        .OrderBy(u => u.situacao_Id).ThenBy(u => u.faseTorneio).Take(1).Single();
                 }
                 catch (System.InvalidOperationException e)
                 {

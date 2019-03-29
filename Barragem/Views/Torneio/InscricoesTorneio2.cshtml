@@ -32,7 +32,7 @@
                         @i
                     </td>
                     <td>
-                        <a href="@Url.Action("../Account/Detalhes", new { userId = item.userId })" title="Detalhes do jogador">
+                        <a href="@Url.Action("../Account/Detalhes", new { userId = item.userId, mostrarClasse=false })" title="Detalhes do jogador">
                             @Html.DisplayFor(modelItem => item.participante.nome)
                         </a>
                     </td>
