@@ -446,7 +446,11 @@ namespace Barragem.Controllers
                         ViewBag.boleto = pb[0].linkBoleto;
                         ViewBag.numeroCodigoBarras = pb[0].digitableLine;
                         if (DateTime.Now.Day > 10){
-                            ViewBag.cobranca = "Olá, Você possui uma mensalidade em atrasado. A partir do dia 15 o seu ranking estará inativado. Clique no link para acessar o boleto ou copie o número do código de barras:";
+                            var brg = db.Barragens.Find(barragemId);
+                            brg.isAtiva = false;
+                            db.Entry(brg).State = System.Data.EntityState.Modified;
+                            db.SaveChanges();
+                            ViewBag.cobranca = "Olá, Você possui uma mensalidade em atrasado que ocasionou o bloqueio do seu ranking. Não será possível gerar temporadas e rodadas. Clique no link para acessar o boleto ou copie o número do código de barras para realizar o pagamento:";
                         }
                     }
                     if (pb[0].status == "canceled"){

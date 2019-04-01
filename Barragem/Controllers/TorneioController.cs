@@ -1743,6 +1743,32 @@ namespace Barragem.Controllers
             }
         }
 
+        [Authorize(Roles = "admin, organizador")]
+        [HttpPost]
+        public ActionResult notificarJogadores(int Id, string texto)
+        {
+            Torneio torneio = db.Torneio.Find(Id);
+            try
+            {
+                Mail mail = new Mail();
+                mail.de = System.Configuration.ConfigurationManager.AppSettings.Get("UsuarioMail");
+                mail.para = "barragemdocerrado@gmail.com";
+                mail.assunto = torneio.nome;
+                mail.conteudo = texto;
+                mail.formato = Tipos.FormatoEmail.Html;
+                List<InscricaoTorneio> users = db.InscricaoTorneio.Where(u => u.isAtivo == true && u.torneioId == Id).ToList();
+                List<string> bcc = new List<string>();
+                foreach (InscricaoTorneio user in users)
+                {
+                    bcc.Add(user.participante.email);
+                }
+                mail.bcc = bcc;
+                mail.EnviarMail();
+            }
+            catch (Exception ex) { }
+            return RedirectToAction("Index", new { msg = "ok" });
+        }
+
         private void MontarProximoJogoTorneio(Jogo jogo)
         {
             var ordemJogo = 0;
