@@ -1046,7 +1046,7 @@ namespace Barragem.Controllers
                             }
                             else if (isMaisDeUmaClasse)
                             {
-                                if (it[0].statusPagamento != null && it[0].statusPagamento.Equals("3"))
+                                if (it[0].isAtivo)
                                 {
                                     return RedirectToAction("Detalhes", new { id = torneioId });
                                 }
@@ -1825,5 +1825,12 @@ namespace Barragem.Controllers
             }
         }
 
+        public ActionResult TabelaImprimir(int torneioId, int fClasse = 0)
+        {
+            var torneio = db.Torneio.Find(torneioId);
+            ViewBag.nomeTorneio = torneio.nome;
+            var jogos = db.Jogo.Where(r => r.torneioId == torneioId && r.classeTorneio == fClasse && r.faseTorneio != 100 && r.faseTorneio != 101).OrderByDescending(r => r.faseTorneio).ThenBy(r => r.ordemJogo).ToList();
+            return View(jogos);
+        }
     }
 }
