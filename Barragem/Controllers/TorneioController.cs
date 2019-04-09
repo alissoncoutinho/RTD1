@@ -1745,9 +1745,10 @@ namespace Barragem.Controllers
 
         [Authorize(Roles = "admin, organizador")]
         [HttpPost]
-        public ActionResult notificarJogadores(int Id, string texto)
+        public ActionResult notificarJogadores(int torneioId, string texto)
         {
-            Torneio torneio = db.Torneio.Find(Id);
+            Torneio torneio = db.Torneio.Find(torneioId);
+            var retorno = "";
             try
             {
                 Mail mail = new Mail();
@@ -1756,7 +1757,7 @@ namespace Barragem.Controllers
                 mail.assunto = torneio.nome;
                 mail.conteudo = texto;
                 mail.formato = Tipos.FormatoEmail.Html;
-                List<InscricaoTorneio> users = db.InscricaoTorneio.Where(u => u.isAtivo == true && u.torneioId == Id).ToList();
+                List<InscricaoTorneio> users = db.InscricaoTorneio.Where(u => u.isAtivo == true && u.torneioId == torneioId).ToList();
                 List<string> bcc = new List<string>();
                 foreach (InscricaoTorneio user in users)
                 {
@@ -1764,9 +1765,21 @@ namespace Barragem.Controllers
                 }
                 mail.bcc = bcc;
                 mail.EnviarMail();
+                retorno = "Notificação enviada com sucesso.";
             }
-            catch (Exception ex) { }
-            return RedirectToAction("Index", new { msg = "ok" });
+            catch (Exception ex) {
+                retorno = "Houve uma falha no envio. Favor entrar em contato com o administrador do sistema.";
+            }
+            return RedirectToAction("EditNotificacao", new { torneioId= torneioId, msg = retorno });
+        }
+
+        [Authorize(Roles = "admin, organizador")]
+        public ActionResult EditNotificacao(int torneioId, string msg="")
+        {
+            ViewBag.retorno = msg;
+            ViewBag.flag = "notificacao";
+            ViewBag.TorneioId = torneioId;
+            return View();
         }
 
         private void MontarProximoJogoTorneio(Jogo jogo)
