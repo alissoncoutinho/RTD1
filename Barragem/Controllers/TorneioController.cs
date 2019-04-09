@@ -1435,6 +1435,12 @@ namespace Barragem.Controllers
             try
             {
                 var jogo = db.Jogo.Find(Id);
+                if (jogo.classe.isDupla) {
+                    var dupla = db.InscricaoTorneio.Where(i => i.userId == jogador1 && i.classe == jogo.classeTorneio && i.parceiroDuplaId != null).ToList();
+                    if (dupla.Count() > 0) jogo.desafiante2_id = dupla[0].parceiroDuplaId;
+                    var dupla2 = db.InscricaoTorneio.Where(i => i.userId == jogador2 && i.classe == jogo.classeTorneio && i.parceiroDuplaId != null).ToList();
+                    if (dupla2.Count() > 0) jogo.desafiado2_id = dupla2[0].parceiroDuplaId;
+                }
                 jogo.desafiante_id = jogador1;
                 jogo.desafiado_id = jogador2;
                 if (dataJogo != "")
