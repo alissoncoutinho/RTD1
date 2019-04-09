@@ -235,7 +235,7 @@
                                     </select>
                                 </div>
                             </div>
-                            if ((String.IsNullOrEmpty(inscricao.statusPagamento) && !inscricao.isAtivo) && Model.valor != 0 && (!ViewBag.isGratuito))
+                            if ((!inscricao.isAtivo) && (Model.valor != 0) && (!ViewBag.isGratuito))
                             {
                                 <div class="form-group">
                                     <div class="col-sm-8">
