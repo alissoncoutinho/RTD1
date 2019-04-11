@@ -56,14 +56,14 @@
                         @Html.Raw("<div id='" + faseId + "' class='col-xs-2 box_rodada'>");
                         <div class="titulo">@item.descricaoFaseTorneio</div>
                     }
-                    @Html.Partial("_PartialJogoTabela", (Barragem.Models.Jogo)item)
+                    @Html.Partial("_PartialJogoImprimir", (Barragem.Models.Jogo)item)
                 }
             </div>
         </div>
         @Scripts.Render("~/js")
         @Scripts.Render("~/bundles/tabela")
         <script>
-        //window.print();
+            window.print();
         </script>
     </body>
 </html>
