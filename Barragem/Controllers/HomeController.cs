@@ -4,11 +4,11 @@ using Barragem.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
 using WebMatrix.WebData;
+using System.Data.Entity;
 
 namespace Barragem.Controllers
 {
@@ -448,7 +448,7 @@ namespace Barragem.Controllers
                         if (DateTime.Now.Day > 10){
                             var brg = db.Barragens.Find(barragemId);
                             brg.isAtiva = false;
-                            db.Entry(brg).State = System.Data.EntityState.Modified;
+                            db.Entry(brg).State = EntityState.Modified;
                             db.SaveChanges();
                             ViewBag.cobranca = "Olá, Você possui uma mensalidade em atrasado que ocasionou o bloqueio do seu ranking. Não será possível gerar temporadas e rodadas. Clique no link para acessar o boleto ou copie o número do código de barras para realizar o pagamento:";
                         }

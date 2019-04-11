@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -295,5 +296,56 @@ namespace Barragem.Models
             }
 
         }
+    }
+
+    public class MeuJogo {
+
+        public int Id { get; set; }
+
+        public string rodada { get; set; }
+
+        public string temporada { get; set; }
+
+        public DateTime dataFinalRodada { get; set; }
+
+        public DateTime? dataJogo { get; set; }
+
+        public string horaJogo { get; set; }
+
+        public string localJogo { get; set; }
+
+        public int idDesafiante { get; set; }
+
+        public int idDesafiado { get; set; }
+
+        public int qtddGames1setDesafiante { get; set; }
+        public int qtddGames2setDesafiante { get; set; }
+        public int qtddGames3setDesafiante { get; set; }
+
+        public int qtddGames1setDesafiado { get; set; }
+        public int qtddGames2setDesafiado { get; set; }
+        public int qtddGames3setDesafiado { get; set; }
+
+        public string nomeDesafiado { get; set; }
+
+        public int posicaoDesafiado { get; set; }
+
+        public string nomeDesafiante { get; set; }
+
+        public string fotoDesafiado { get; set; }
+
+        public string fotoDesafiante { get; set; }
+
+        public int posicaoDesafiante { get; set; }
+
+        public string situacao { get; set; }
+
+        public int qtddSetsGanhosDesafiante { get; set; }
+
+        public int qtddSetsGanhosDesafiado { get; set; }
+
+        public int idDoVencedor{ get; set; }
+
+
     }
 }

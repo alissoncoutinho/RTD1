@@ -8,15 +8,11 @@ using System.Web.Mvc;
 using Barragem.Models;
 using Barragem.Context;
 using Barragem.Filters;
-using System.Data.EntityClient;
-using System.Transactions;
 using Barragem.Class;
 using System.Web.Security;
 using WebMatrix.WebData;
 using Uol.PagSeguro.Constants;
 using Uol.PagSeguro.Domain;
-using Uol.PagSeguro.Service;
-using Uol.PagSeguro.Resources;
 using Uol.PagSeguro.Exception;
 
 namespace Barragem.Controllers

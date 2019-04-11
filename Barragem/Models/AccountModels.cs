@@ -156,6 +156,16 @@ namespace Barragem.Models
         public bool RememberMe { get; set; }
     }
 
+
+    public class LoginRankingModel
+    {
+        public string userName { get; set; }
+
+        public string nomeRanking { get; set; }
+
+        public int idRanking { get; set; }
+    }
+
     public class RegisterModel
     {
         public RegisterModel(){

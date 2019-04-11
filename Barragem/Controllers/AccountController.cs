@@ -16,6 +16,7 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using System.Web.Security;
 using WebMatrix.WebData;
+using System.Data.Entity;
 
 
 namespace Barragem.Controllers
