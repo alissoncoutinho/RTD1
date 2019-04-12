@@ -92,6 +92,23 @@ namespace Barragem.Controllers
             return meuJogo;
         }
 
+        [HttpGet]
+        [Route("api/JogoAPI/ListarJogosPendentes")]
+        // GET: api/JogoAPI/ListarJogosPendentes
+        public IList<dynamic> ListarJogosPendentes(int userId)
+        {
+            var dataLimite = DateTime.Now.AddMonths(-10);
+            var jogosPendentes = db.Jogo.Where(u => (u.desafiado_id == userId || u.desafiante_id == userId) && !u.rodada.isAberta
+                && u.situacao_Id != 4 && u.situacao_Id != 5 && u.rodada.dataInicio > dataLimite && u.torneioId == null).OrderByDescending(u => u.Id).Take(3).Select(jogo => new {
+                    Id = jogo.Id,
+                    rodada = "Rodada " + jogo.rodada.codigo + " " + jogo.rodada.sequencial,
+                    nomeDesafiante = jogo.desafiante.nome,
+                    nomeDasafiado = jogo.desafiado.nome
+                }).ToList<dynamic>(); 
+
+            return jogosPendentes;
+        }
+
         // PUT: api/JogoAPI/5
         [ResponseType(typeof(void))]
         public IHttpActionResult PutJogo(int id, Jogo jogo)
@@ -105,6 +122,37 @@ namespace Barragem.Controllers
             {
                 return BadRequest();
             }
+
+            db.Entry(jogo).State = EntityState.Modified;
+
+            try
+            {
+                db.SaveChanges();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!JogoExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return StatusCode(HttpStatusCode.NoContent);
+        }
+
+        // PUT: api/JogoAPI/DefinirHorario
+        [ResponseType(typeof(void))]
+        public IHttpActionResult DefinirHorario(int id, DateTime dataJogo, string horaJogo="", string localJogo="")
+        {
+            var jogo = db.Jogo.Find(id);
+
+            jogo.dataJogo = dataJogo;
+            jogo.horaJogo = horaJogo;
+            jogo.localJogo = localJogo;
 
             db.Entry(jogo).State = EntityState.Modified;
 
