@@ -348,4 +348,14 @@ namespace Barragem.Models
 
 
     }
+
+    public class JogoRodada
+    {
+        
+        public int Id { get; set; }
+        public string nomeRodada { get; set; }
+        public string nomeDesafiante { get; set; }
+        public string nomeDesafiado { get; set; }
+    }
+    
 }

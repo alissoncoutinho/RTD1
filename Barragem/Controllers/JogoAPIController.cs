@@ -10,6 +10,7 @@ using System.Web.Http;
 using System.Web.Http.Description;
 using Barragem.Context;
 using Barragem.Models;
+using System.Runtime.Serialization;
 
 namespace Barragem.Controllers
 {
@@ -18,12 +19,11 @@ namespace Barragem.Controllers
         private BarragemDbContext db = new BarragemDbContext();
 
         // GET: api/JogoAPI
-        public IList<dynamic> GetJogo()
+        public IList<JogoRodada> GetJogo()
         {
             var barragemId = 1; // TODO pegar o id da barragem no claim
             var rodadaId = db.Rodada.Where(r => r.isRodadaCarga == false && r.barragemId == barragemId).Max(r => r.Id);
-            var jogos = db.Jogo.Where(j => j.rodada_id == rodadaId).Select(jogo=> new { Id = jogo.Id,
-                nomeDesafiante = jogo.desafiante.nome, nomeDasafiado = jogo.desafiado.nome }).ToList<dynamic>();
+            var jogos = db.Jogo.Where(j => j.rodada_id == rodadaId).Select(jogo=> new JogoRodada() {Id=jogo.Id, nomeDesafiante = jogo.desafiante.nome, nomeDesafiado = jogo.desafiado.nome }).ToList<JogoRodada>();
             
             return jogos;
         }
@@ -95,16 +95,17 @@ namespace Barragem.Controllers
         [HttpGet]
         [Route("api/JogoAPI/ListarJogosPendentes")]
         // GET: api/JogoAPI/ListarJogosPendentes
-        public IList<dynamic> ListarJogosPendentes(int userId)
+        public IList<JogoRodada> ListarJogosPendentes(int userId)
         {
             var dataLimite = DateTime.Now.AddMonths(-10);
             var jogosPendentes = db.Jogo.Where(u => (u.desafiado_id == userId || u.desafiante_id == userId) && !u.rodada.isAberta
-                && u.situacao_Id != 4 && u.situacao_Id != 5 && u.rodada.dataInicio > dataLimite && u.torneioId == null).OrderByDescending(u => u.Id).Take(3).Select(jogo => new {
+                && u.situacao_Id != 4 && u.situacao_Id != 5 && u.rodada.dataInicio > dataLimite && u.torneioId == null).OrderByDescending(u => u.Id).Take(3).
+                Select(jogo => new JogoRodada {
                     Id = jogo.Id,
-                    rodada = "Rodada " + jogo.rodada.codigo + " " + jogo.rodada.sequencial,
+                    nomeRodada = "Rodada " + jogo.rodada.codigo + jogo.rodada.sequencial,
                     nomeDesafiante = jogo.desafiante.nome,
-                    nomeDasafiado = jogo.desafiado.nome
-                }).ToList<dynamic>(); 
+                    nomeDesafiado = jogo.desafiado.nome
+                }).ToList<JogoRodada>(); 
 
             return jogosPendentes;
         }
