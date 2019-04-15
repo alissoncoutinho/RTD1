@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using Barragem.Models;
 using Barragem.Context;
+using System.Transactions;
 
 namespace Barragem.Class
 {
@@ -180,6 +181,47 @@ namespace Barragem.Class
             catch (Exception e)
             {
                 throw e;
+            }
+        }
+
+        public void ProcessarJogoAtrasado(Jogo jogo)
+        {
+            string msg = "";
+            //situação: 4: finalizado -- 5: wo
+            //List<Jogo> jogos = db.Jogo.Where(r => r.rodada_id == id && r.dataCadastroResultado > r.rodada.dataFim && (r.situacao_Id == 4 || r.situacao_Id == 5)).ToList();
+            if (jogo.torneioId == null && jogo.dataCadastroResultado > jogo.rodada.dataFim && (jogo.situacao_Id == 4 || jogo.situacao_Id == 5))
+            {
+                var pontosDesafiante = 0.0;
+                var pontosDesafiado = 0.0;
+                try
+                {
+                    using (TransactionScope scope = new TransactionScope())
+                    {
+                        pontosDesafiante = calcularPontosDesafiante(jogo);
+                        pontosDesafiado = calcularPontosDesafiado(jogo);
+
+                        gravarPontuacaoNaRodada(jogo.rodada_id, jogo.desafiante, pontosDesafiante, true);
+                        gravarPontuacaoNaRodada(jogo.rodada_id, jogo.desafiado, pontosDesafiado, true);
+                        jogo.dataCadastroResultado = jogo.rodada.dataFim;
+                        if (jogo.desafiante.situacao.Equals("suspenso"))
+                        {
+                            UserProfile desafiante = db.UserProfiles.Find(jogo.desafiante_id);
+                            desafiante.situacao = "ativo";
+                        }
+                        if (jogo.desafiado.situacao.Equals("suspenso"))
+                        {
+                            UserProfile desafiado = db.UserProfiles.Find(jogo.desafiado_id);
+                            desafiado.situacao = "ativo";
+                        }
+                        db.SaveChanges();
+                        scope.Complete();
+                        msg = "ok";
+                    }
+                }
+                catch (Exception ex)
+                {
+                    msg = ex.Message;
+                }
             }
         }
 

@@ -286,7 +286,7 @@ namespace Barragem.Controllers
 
             MontarProximoJogoTorneio(jogo);
 
-            ProcessarJogoAtrasado(jogo);
+            rn.ProcessarJogoAtrasado(jogo);
 
             return RedirectToAction("Index3", "Home");
 
@@ -348,7 +348,7 @@ namespace Barragem.Controllers
 
             MontarProximoJogoTorneio(jogo);
 
-            ProcessarJogoAtrasado(jogo);
+            rn.ProcessarJogoAtrasado(jogo);
 
             return RedirectToAction("Index3", "Home", new { ViewBag.Sucesso, ViewBag.MsgAlerta });
 
@@ -528,47 +528,6 @@ namespace Barragem.Controllers
             }
         }
 
-        private void ProcessarJogoAtrasado(Jogo jogo)
-        {
-            string msg = "";
-            //situação: 4: finalizado -- 5: wo
-            //List<Jogo> jogos = db.Jogo.Where(r => r.rodada_id == id && r.dataCadastroResultado > r.rodada.dataFim && (r.situacao_Id == 4 || r.situacao_Id == 5)).ToList();
-            if (jogo.torneioId == null && jogo.dataCadastroResultado > jogo.rodada.dataFim && (jogo.situacao_Id == 4 || jogo.situacao_Id == 5))
-            {
-                var pontosDesafiante = 0.0;
-                var pontosDesafiado = 0.0;
-                try
-                {
-                    using (TransactionScope scope = new TransactionScope())
-                    {
-                        pontosDesafiante = rn.calcularPontosDesafiante(jogo);
-                        pontosDesafiado = rn.calcularPontosDesafiado(jogo);
-
-                        rn.gravarPontuacaoNaRodada(jogo.rodada_id, jogo.desafiante, pontosDesafiante, true);
-                        rn.gravarPontuacaoNaRodada(jogo.rodada_id, jogo.desafiado, pontosDesafiado, true);
-                        jogo.dataCadastroResultado = jogo.rodada.dataFim;
-                        if (jogo.desafiante.situacao.Equals("suspenso"))
-                        {
-                            UserProfile desafiante = db.UserProfiles.Find(jogo.desafiante_id);
-                            desafiante.situacao = "ativo";
-                        }
-                        if (jogo.desafiado.situacao.Equals("suspenso"))
-                        {
-                            UserProfile desafiado = db.UserProfiles.Find(jogo.desafiado_id);
-                            desafiado.situacao = "ativo";
-                        }
-                        db.SaveChanges();
-                        scope.Complete();
-                        msg = "ok";
-                    }
-                }
-                catch (Exception ex)
-                {
-                    msg = ex.Message;
-                }
-            }
-        }
-
         //
         // GET: /Jogo/Delete/5
         [Authorize(Roles = "admin, organizador")]
@@ -643,7 +602,7 @@ namespace Barragem.Controllers
             db.SaveChanges();
 
             MontarProximoJogoTorneio(jogoAtual);
-            ProcessarJogoAtrasado(jogoAtual);
+            rn.ProcessarJogoAtrasado(jogoAtual);
 
             ViewBag.Sucesso = true;
             ViewBag.MsgAlerta = "Resultado lançado com sucesso.";
@@ -685,7 +644,7 @@ namespace Barragem.Controllers
             db.SaveChanges();
 
             MontarProximoJogoTorneio(jogoAtual);
-            ProcessarJogoAtrasado(jogoAtual);
+            rn.ProcessarJogoAtrasado(jogoAtual);
 
             ViewBag.Sucesso = true;
             ViewBag.MsgAlerta = "WO lançado com sucesso.";
