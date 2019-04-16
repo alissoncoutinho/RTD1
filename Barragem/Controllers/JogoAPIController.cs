@@ -94,6 +94,52 @@ namespace Barragem.Controllers
             return meuJogo;
         }
 
+        private HeadToHead montarHead2Head(Jogo jogo)
+        {
+            var jogosHeadToHead = db.Jogo.Where(j => (j.desafiado_id == jogo.desafiado_id && j.desafiante_id == jogo.desafiante_id) ||
+                (j.desafiante_id == jogo.desafiado_id && j.desafiado_id == jogo.desafiante_id)).ToList();
+
+            HeadToHead headToHead = new HeadToHead();
+            headToHead.Id = jogo.Id;
+
+            headToHead.qtddVitoriasDesafiado = jogosHeadToHead.Where(j => j.idDoVencedor == jogo.desafiado_id).Count();
+            headToHead.qtddVitoriasDesafiante = jogosHeadToHead.Where(j => j.idDoVencedor == jogo.desafiante_id).Count();
+
+            headToHead.alturaDesafiado = jogo.desafiado.altura2;
+            headToHead.alturaDesafiante = jogo.desafiante.altura2;
+            headToHead.idadeDesafiado = jogo.desafiado.idade;
+            headToHead.idadeDesafiante = jogo.desafiante.idade;
+            headToHead.inicioRankingDesafiado = jogo.desafiado.dataInicioRancking.Month + "/" + jogo.desafiado.dataInicioRancking.Year;
+            headToHead.inicioRankingDesafiante = jogo.desafiante.dataInicioRancking.Month + "/" + jogo.desafiante.dataInicioRancking.Year;
+            headToHead.lateralDesafiado = jogo.desafiado.lateralidade;
+            headToHead.lateralDesafiante = jogo.desafiante.lateralidade;
+            try{
+                var melhorRankingDesafiado = db.Rancking.Where(r => r.userProfile_id == jogo.desafiado_id && r.posicaoClasse != null && r.classeId != null).OrderBy(r => r.classe.nivel).ThenBy(r => r.posicaoClasse).Take(1).ToList();
+                headToHead.melhorPosicaoDesafiado = melhorRankingDesafiado[0].posicaoClasse + "º/" + melhorRankingDesafiado[0].classe.nome;
+            }catch (Exception e) { }
+            try{
+                var melhorRankingDesafiante = db.Rancking.Where(r => r.userProfile_id == jogo.desafiante_id && r.posicaoClasse != null && r.classeId != null).OrderBy(r => r.classe.nivel).ThenBy(r => r.posicaoClasse).Take(1).ToList();
+                headToHead.melhorPosicaoDesafiante = melhorRankingDesafiante[0].posicaoClasse + "º/" + melhorRankingDesafiante[0].classe.nome;
+            }catch (Exception e) { }
+            
+            return headToHead;
+        }
+
+        // GET: api/JogoAPI/5
+        [ResponseType(typeof(MeuJogo))]
+        [HttpGet]
+        [Route("api/JogoAPI/GetHead2Head/{id}")]
+        public IHttpActionResult GetHead2Head(int id)
+        {
+            Jogo jogo = db.Jogo.Find(id);
+            if (jogo == null){
+                return NotFound();
+            }
+            HeadToHead headToHead = montarHead2Head(jogo);
+
+            return Ok(headToHead);
+        }
+
         [HttpGet]
         [Route("api/JogoAPI/ListarJogosPendentes")]
         // GET: api/JogoAPI/ListarJogosPendentes

@@ -357,5 +357,24 @@ namespace Barragem.Models
         public string nomeDesafiante { get; set; }
         public string nomeDesafiado { get; set; }
     }
-    
+
+    public class HeadToHead
+    {
+
+        public int Id { get; set; }
+        public int qtddVitoriasDesafiante { get; set; }
+        public int qtddVitoriasDesafiado { get; set; }
+        public int idadeDesafiante { get; set; }
+        public int idadeDesafiado { get; set; }
+        public string alturaDesafiante { get; set; }
+        public string alturaDesafiado { get; set; }
+        public string lateralDesafiante { get; set; }
+        public string lateralDesafiado { get; set; }
+        public string inicioRankingDesafiante { get; set; }
+        public string inicioRankingDesafiado { get; set; }
+        public string melhorPosicaoDesafiante { get; set; }
+        public string melhorPosicaoDesafiado { get; set; }
+                
+    }
+
 }
