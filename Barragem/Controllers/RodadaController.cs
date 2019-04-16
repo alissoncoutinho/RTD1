@@ -140,7 +140,7 @@ namespace Barragem.Controllers
         {
             string mensagem = "ok";
             try{
-                List<Classe> classes = db.Classe.Where(c=>c.barragemId==barragemId).ToList();
+                List<Classe> classes = db.Classe.Where(c=>c.barragemId==barragemId && c.ativa==true).ToList();
                 setClasseUnica(barragemId);
                 for (int i = 0; i < classes.Count(); i++){
                     EfetuarSorteio(id, barragemId, classes[i].Id);
