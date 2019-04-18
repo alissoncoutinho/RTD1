@@ -1,0 +1,79 @@
+﻿@model Barragem.Models.Jogo
+
+<div class="alinhamento">
+    <div class="bloco_jogo">
+        @if ((Model.isRepescagem != null) && (String.IsNullOrEmpty(Model.dataJogo + "")))
+        {
+            <p class="data" style="background-color:#dd4b39">Repescagem</p>
+        }
+        else
+        {
+            if (Model.isRepescagem != null)
+            {
+                <p class="data" style="background-color:#dd4b39">@Html.Raw(Model.dataHorarioQuadra)</p>
+            }
+            else
+            {
+                <p class="data">@Html.Raw(Model.dataHorarioQuadra)</p>
+            }
+
+        }
+        <p class="nome">
+            @if (Model.desafiado_id != 0)
+            {
+                
+                    if ((Model.cabecaChave != null) && (Model.cabecaChave > 0) && (Model.cabecaChave < 100))
+                    {
+                        @Html.Raw("(" + Model.cabecaChave + ") ")
+                    }
+                    @Html.Raw(Model.desafiado.nome)
+                
+                if (Model.desafiado2 != null)
+                {
+                    @Html.Raw("/ ") @Html.Raw(Model.desafiado2.nome)
+                    
+                }
+            }
+            else
+            {
+                @Html.Raw("aguardando")
+            }
+        </p>
+        <p class="numeros">
+            @if ((Model.situacao_Id == 4) || (Model.situacao_Id == 5))
+            {
+                @Html.Raw(Model.qtddGames1setDesafiado + "/" + Model.qtddGames1setDesafiante + " - " + Model.qtddGames2setDesafiado + "/" + Model.qtddGames2setDesafiante)
+                if ((Model.qtddGames3setDesafiado != 0) || (Model.qtddGames3setDesafiante != 0))
+                {
+                    @Html.Raw(" - " + Model.qtddGames3setDesafiado + "/" + Model.qtddGames3setDesafiante)
+                }
+            }
+            else
+            {
+                @Html.Raw("X")
+            }
+        </p>
+        <p class="nome">
+            @if (Model.desafiante_id == 10)
+            {
+                @Html.Raw("bye")
+            }
+            else if (Model.desafiante_id == 0)
+            {
+                @Html.Raw("aguardando")
+            }
+            else if (Model.desafiante == null)
+            {
+                @Html.Raw("aguardando")
+            }
+            else
+            {
+                @Html.Raw(Model.desafiante.nome)
+                if (Model.desafiante2 != null)
+                {
+                    @Html.Raw("/ ") @Html.Raw(Model.desafiante2.nome)
+                }
+            }
+        </p>
+    </div>
+</div>

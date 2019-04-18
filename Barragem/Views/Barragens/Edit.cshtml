@@ -1,174 +1,174 @@
 ﻿@model Barragem.Models.Barragens
 
+@Html.Partial("_PartialTabsBarragem", "")
+
 @{
     ViewBag.Title = "Edit";
 }
 
-@using (Html.BeginForm())
-{
-    @Html.AntiForgeryToken()
-    @Html.ValidationSummary(true)
-    @Html.HiddenFor(model => model.dominio)
+<div class="tab-content">
+    <div class="tab-pane fade in active" id="tabCadastro">
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(true)
+            @Html.HiddenFor(model => model.dominio)
 
-    <legend>Editar Ranking</legend>
-    <div class="form-group">
-        @Html.Label("Link do Ranking", new { @class = "col-sm-2 control-label" })
-        <div class="col-sm-8 input-group">
-            <a href="/ranking-@Model.dominio" title="Link do ranking" class="btn btn-default btn-xs">
-                <span class="glyphicon glyphicon-link"></span>
-            </a>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-xs-4">
-            @Html.LabelFor(model => model.nome)
-            <div class="input-group">
-                @Html.TextBoxFor(model => model.nome, new { @class = "form-control" })
-            </div>
-            @Html.ValidationMessageFor(model => model.nome)
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-xs-2">
-            @Html.Label("CPF/CNPJ")
-            <div class="input-group">
-                @Html.TextBoxFor(model => model.cpfResponsavel, new { @class = "form-control" })
-            </div>
-            @Html.ValidationMessageFor(model => model.cpfResponsavel)
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-xs-6">
-            @Html.LabelFor(model => model.nomeResponsavel)
-            <div class="input-group">
-                @Html.TextBoxFor(model => model.nomeResponsavel, new { @class = "form-control" })
-            </div>
-            @Html.ValidationMessageFor(model => model.nomeResponsavel)
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-xs-2">
-            @Html.Label("Valor p/usuário")
-            <div class="input-group">
-                @Html.TextBoxFor(model => model.valorPorUsuario, new { @class = "form-control" })
-            </div>
-            @Html.ValidationMessageFor(model => model.valorPorUsuario)
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-xs-6">
-            @Html.LabelFor(model => model.email)
-            <div class="input-group col-xs-6">
-                @Html.TextBoxFor(model => model.email, new { @class = "form-control" })
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-xs-2">
-            @Html.LabelFor(model => model.cidade)
-            <div class="input-group">
-                @Html.TextBoxFor(model => model.cidade, new { @class = "form-control" })
-            </div>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-xs-6">
-            @Html.LabelFor(model => model.linkPagSeguro)
-            <div class="input-group col-xs-6">
-                @Html.TextBoxFor(model => model.linkPagSeguro, new { @class = "form-control", @placeholder = "exemplo: https://linkDoPagSeguro.com.br" })
-            </div>
-            @Html.ValidationMessageFor(model => model.linkPagSeguro)
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-xs-2">
-            <label>
-                @Html.CheckBoxFor(model => model.isClasseUnica) Classe Única
-            </label>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-xs-2">
-            <label>
-                @if ((Model.soTorneio != null) && ((bool)Model.soTorneio)){
-                    <input type="checkbox" checked value="true" name="soTorneio" /> @Html.Raw("Só Torneio")
-                }else{
-                    <input type="checkbox" value="true" name="soTorneio"/> @Html.Raw("Só Torneio")
-                }
-            </label>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-xs-2">
-            <label>
-                @Html.CheckBoxFor(model => model.isAtiva) Ativa
-            </label>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-xs-2">
-            <label>
-                @Html.CheckBoxFor(model => model.isTeste) Período de teste
-            </label>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-xs-6">
-            @Html.LabelFor(model => model.emailPagSeguro)
-            <div class="input-group col-xs-6">
-                @Html.TextBoxFor(model => model.emailPagSeguro, new { @class = "form-control" })
-            </div>
-            @Html.ValidationMessageFor(model => model.emailPagSeguro)
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-xs-6">
-            @Html.LabelFor(model => model.tokenPagSeguro)
-            <div class="input-group col-xs-6">
-                @Html.TextBoxFor(model => model.tokenPagSeguro, new { @class = "form-control" })
-            </div>
-            @Html.ValidationMessageFor(model => model.tokenPagSeguro)
-        </div>
-    </div>
-    <div class="editor-label">
-        @Html.LabelFor(model => model.regulamento)
-    </div>
-    <div class="editor-field">
-        @Html.TextAreaFor(model => model.regulamento)
-        @Html.ValidationMessageFor(model => model.regulamento)
-    </div>
 
-    <div class="editor-label">
-        @Html.LabelFor(model => model.quemsomos)
-    </div>
-    <div class="editor-field">
-        @Html.TextAreaFor(model => model.quemsomos)
-        @Html.ValidationMessageFor(model => model.quemsomos)
-    </div>
+            <div class="form-group">
+                @Html.Label("Link do Ranking", new { @class = "col-sm-2 control-label" })
+                <div class="col-sm-8 input-group">
+                    <a href="/ranking-@Model.dominio" title="Link do ranking" class="btn btn-default btn-xs">
+                        <span class="glyphicon glyphicon-link"></span>
+                    </a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-4">
+                    @Html.LabelFor(model => model.nome)
+                    <div class="input-group">
+                        @Html.TextBoxFor(model => model.nome, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.nome)
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-2">
+                    @Html.Label("CPF/CNPJ")
+                    <div class="input-group">
+                        @Html.TextBoxFor(model => model.cpfResponsavel, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.cpfResponsavel)
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6">
+                    @Html.LabelFor(model => model.nomeResponsavel)
+                    <div class="input-group">
+                        @Html.TextBoxFor(model => model.nomeResponsavel, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.nomeResponsavel)
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-2">
+                    @Html.Label("Valor p/usuário")
+                    <div class="input-group">
+                        @Html.TextBoxFor(model => model.valorPorUsuario, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.valorPorUsuario)
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6">
+                    @Html.LabelFor(model => model.email)
+                    <div class="input-group col-xs-6">
+                        @Html.TextBoxFor(model => model.email, new { @class = "form-control" })
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-2">
+                    @Html.LabelFor(model => model.cidade)
+                    <div class="input-group">
+                        @Html.TextBoxFor(model => model.cidade, new { @class = "form-control" })
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6">
+                    @Html.LabelFor(model => model.linkPagSeguro)
+                    <div class="input-group col-xs-6">
+                        @Html.TextBoxFor(model => model.linkPagSeguro, new { @class = "form-control", @placeholder = "exemplo: https://linkDoPagSeguro.com.br" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.linkPagSeguro)
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-2">
+                    <label>
+                        @if ((Model.soTorneio != null) && ((bool)Model.soTorneio))
+                        {
+                            <input type="checkbox" checked value="true" name="soTorneio" /> @Html.Raw("Só Torneio")
+                        }
+                        else
+                        {
+                            <input type="checkbox" value="true" name="soTorneio" /> @Html.Raw("Só Torneio")
+                        }
+                    </label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-2">
+                    <label>
+                        @Html.CheckBoxFor(model => model.isAtiva) Ativa
+                    </label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-2">
+                    <label>
+                        @Html.CheckBoxFor(model => model.isTeste) Período de teste
+                    </label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6">
+                    @Html.LabelFor(model => model.emailPagSeguro)
+                    <div class="input-group col-xs-6">
+                        @Html.TextBoxFor(model => model.emailPagSeguro, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.emailPagSeguro)
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6">
+                    @Html.LabelFor(model => model.tokenPagSeguro)
+                    <div class="input-group col-xs-6">
+                        @Html.TextBoxFor(model => model.tokenPagSeguro, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.tokenPagSeguro)
+                </div>
+            </div>
+            <div class="editor-label">
+                @Html.LabelFor(model => model.regulamento)
+            </div>
+            <div class="editor-field">
+                @Html.TextAreaFor(model => model.regulamento)
+                @Html.ValidationMessageFor(model => model.regulamento)
+            </div>
 
-    <div class="editor-label">
-        @Html.LabelFor(model => model.contato)
-    </div>
-    <div class="editor-field">
-        @Html.TextAreaFor(model => model.contato)
-        @Html.ValidationMessageFor(model => model.contato)
-    </div>
-    <br />
-    <div class="row">
-        <div class="col-xs-2">
-            <input type="submit" value="Editar" />
+            <div class="editor-label">
+                @Html.LabelFor(model => model.quemsomos)
+            </div>
+            <div class="editor-field">
+                @Html.TextAreaFor(model => model.quemsomos)
+                @Html.ValidationMessageFor(model => model.quemsomos)
+            </div>
+
+            <div class="editor-label">
+                @Html.LabelFor(model => model.contato)
+            </div>
+            <div class="editor-field">
+                @Html.TextAreaFor(model => model.contato)
+                @Html.ValidationMessageFor(model => model.contato)
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-xs-2">
+                    <input type="submit" value="Editar" />
+                </div>
+            </div>
+        }
+
+        <div>
+            @Html.ActionLink("Back to List", "Index")
         </div>
-    </div>
-}
 
-<div>
-    @Html.ActionLink("Back to List", "Index")
-</div>
+        @section Scripts {
 
-@section Scripts {
-
-    @Scripts.Render("~/bundles/editor")
-    <script type="text/javascript">
+            @Scripts.Render("~/bundles/editor")
+            <script type="text/javascript">
         $("#cpfResponsavel").mask("99999999999999");
 		tinyMCE.baseURL = '@Url.Content("~/Scripts/tinymce/")'
 		tinyMCE.init({
@@ -224,5 +224,8 @@
 		    toolbar2: "forecolor backcolor | fontselect |  fontsizeselect | styleselect"
 
 		});
-    </script>
-}
+            </script>
+        }
+    </div>
+    <div class="tab-pane fade" id="tabClasses">
+</div>

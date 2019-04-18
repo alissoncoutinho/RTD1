@@ -16,5 +16,6 @@ namespace Barragem.Models
         public string nome { get; set; }
         public int nivel { get; set; }
         public int barragemId { get; set; }
+        public bool ativa { get; set; }
     }
 }
