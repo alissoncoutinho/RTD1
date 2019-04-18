@@ -67,6 +67,28 @@ namespace Barragem.Controllers
             return RedirectToAction("IndexTorneioRedirect", "Home", new { id = barragem.dominio });
         }
 
+        private Torneio montarDadosTorneio(Torneio torneio) {
+            var torneioLess = new Torneio();
+            torneioLess.nome = torneio.nome;
+            torneioLess.dataInicio = torneio.dataInicio;
+            torneioLess.dataFim = torneio.dataFim;
+            torneioLess.local = torneio.local;
+            torneioLess.cidade = torneio.cidade;
+            torneioLess.Id = torneio.Id;
+            torneioLess.liberarEscolhaDuplas = torneio.liberarEscolhaDuplas;
+            torneioLess.dataFimInscricoes = torneio.dataFimInscricoes;
+            torneioLess.valor = torneio.valor;
+            torneioLess.valorSocio = torneio.valorSocio;
+            torneioLess.isMaisUmaClasse = torneio.isMaisUmaClasse;
+            torneioLess.valorMaisClasses = torneio.valorMaisClasses;
+            torneioLess.valorMaisClassesSocio = torneio.valorMaisClassesSocio;
+            torneioLess.dataFimInscricoes = torneio.dataFimInscricoes;
+            torneioLess.premiacao = torneio.premiacao;
+            torneioLess.barragemId = torneio.barragemId;
+            return torneioLess;
+
+        }
+
         public ActionResult IndexTorneioRedirect(string id)
         {
             var barragem = db.BarragemView.Where(b => b.dominio.ToLower().Equals(id.ToLower())).ToList<BarragemView>();
@@ -77,7 +99,9 @@ namespace Barragem.Controllers
                 var torneio = db.Torneio.Where(t => t.barragemId == barragemId && t.isAtivo).OrderByDescending(t => t.Id).ToList();
                 if (torneio.Count() > 0)
                 {
-                    return RedirectToAction("IndexTorneio", "Home", torneio[0]);
+                    var torneioLess = montarDadosTorneio(torneio[0]);
+
+                    return RedirectToAction("IndexTorneio", "Home", torneioLess);
                 }
                 else
                 {
