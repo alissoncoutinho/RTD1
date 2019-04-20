@@ -1,3 +1,6 @@
+-- consulta para saber quem participou de algum torneio e que não é sócio do ranking:
+select distinct u.userId, u.nome from inscricaotorneio i, userprofile u where u.userid=i.userid and torneioid=41 and isRanckingGerado=0 and i.isativo=1; 
+
 ALTER TABLE Barragem ADD isTeste bit NULL; 
 
 ALTER TABLE Barragem ALTER COLUMN valorPorUsuario float NULL; 

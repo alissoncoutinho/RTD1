@@ -15,14 +15,17 @@
     }else{
         <div class="form-horizontal">
             <div class="form-group">
-                <label class="col-sm-2 control-label">Classes</label>
-                <div class="col-sm-4">
+                <label class="col-xs-12 col-sm-2 control-label">Classes</label>
+                <div class="col-sm-4 col-xs-8">
                     <select name="filtroClasse" id="filtroClasse" class="form-control" onchange="Selecionar()">
                         @foreach (var item2 in ViewBag.Classes){
                         <option value="@item2.Id" @if (ViewBag.filtroClasse == item2.Id) { @Html.Raw("selected") }>@item2.nome</option>
                         }
                     </select>
                     <input type="hidden" value="@ViewBag.TorneioId" name="torneioId" id="torneioId">
+                </div>
+                <div class="col-sm-2 col-xs-3">
+                    <input type="button" value="imprimir" class="btn btn-primary" onclick="Imprimir()">
                 </div>
             </div>
         </div>
@@ -61,6 +64,13 @@
                 var torneioId = document.getElementById('torneioId').value;
                 var classeId = document.getElementById('filtroClasse').value;
                 window.location = "Tabela?torneioId=" + torneioId + "&filtroClasse=" + classeId;
+            }
+
+            function Imprimir() {
+                var torneioId = document.getElementById('torneioId').value;
+                var classeId = document.getElementById('filtroClasse').value;
+                window.open("TabelaImprimir?torneioId=" + torneioId + "&fClasse=" + classeId, '_blank');
+                //window.location = "TabelaImprimir?torneioId=" + torneioId + "&fClasse=" + classeId;
             }
 
         </script>

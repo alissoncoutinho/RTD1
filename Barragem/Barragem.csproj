@@ -944,6 +944,9 @@
     <Content Include="Views\Pagamento\Create.cshtml" />
     <Content Include="Views\Account\MinhaPontuacao.cshtml" />
     <Content Include="Views\Torneio\ImprimirJogos.cshtml" />
+    <Content Include="Views\Torneio\EditNotificacao.cshtml" />
+    <Content Include="Views\Torneio\TabelaImprimir.cshtml" />
+    <Content Include="Views\Torneio\_PartialJogoImprimir.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

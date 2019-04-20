@@ -1,0 +1,69 @@
+﻿@model IEnumerable<Barragem.Models.Jogo>
+    @{
+        Layout = null;
+        int? faseTorneio = 0;
+        string faseId = "";
+    }
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Tabela</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="">
+        <meta name="author" content="">
+
+        @Styles.Render("~/css")
+        @Styles.Render("~/tabela")
+        <style type="text/css">
+            body {
+                margin: 10px;
+            }
+        </style>
+
+    </head>
+    <body>
+        <h1 class="logo">
+            @{ 
+                var src = "/Content/image/logo" + ViewBag.idBarragem + ".png";
+            }
+            <img width="50" height="50" src="@src">&nbsp;@ViewBag.nomeRanking
+        </h1>
+        <br>
+        <h3>@ViewBag.nomeTorneio</h3>
+        <h4>@ViewBag.nomeClasse</h4>
+        <br>
+        <div id="conteudo_tabela_jogos">
+            <div class="display_jogos">
+                @{
+                    faseTorneio = 0;
+                }
+                @foreach (var item in Model)
+                {
+                    if (faseTorneio != item.faseTorneio)
+                    {
+                        faseId = "times" + item.faseTorneio;
+                        if (faseTorneio != 0)
+                        {
+                            @Html.Raw("</div>");
+                        }
+                        faseTorneio = item.faseTorneio;
+                        if (faseTorneio == 1)
+                        {
+                            faseId = "time" + item.faseTorneio;
+                        }
+                        @Html.Raw("<div id='" + faseId + "' class='col-xs-2 box_rodada'>");
+                        <div class="titulo">@item.descricaoFaseTorneio</div>
+                    }
+                    @Html.Partial("_PartialJogoImprimir", (Barragem.Models.Jogo)item)
+                }
+            </div>
+        </div>
+        @Scripts.Render("~/js")
+        @Scripts.Render("~/bundles/tabela")
+        <script>
+            window.print();
+        </script>
+    </body>
+</html>

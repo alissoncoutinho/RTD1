@@ -1042,7 +1042,7 @@ namespace Barragem.Controllers
                             }
                             else if (isMaisDeUmaClasse)
                             {
-                                if (it[0].statusPagamento != null && it[0].statusPagamento.Equals("3"))
+                                if (it[0].isAtivo)
                                 {
                                     return RedirectToAction("Detalhes", new { id = torneioId });
                                 }
@@ -1431,6 +1431,12 @@ namespace Barragem.Controllers
             try
             {
                 var jogo = db.Jogo.Find(Id);
+                if (jogo.classe.isDupla) {
+                    var dupla = db.InscricaoTorneio.Where(i => i.userId == jogador1 && i.classe == jogo.classeTorneio && i.parceiroDuplaId != null).ToList();
+                    if (dupla.Count() > 0) jogo.desafiante2_id = dupla[0].parceiroDuplaId;
+                    var dupla2 = db.InscricaoTorneio.Where(i => i.userId == jogador2 && i.classe == jogo.classeTorneio && i.parceiroDuplaId != null).ToList();
+                    if (dupla2.Count() > 0) jogo.desafiado2_id = dupla2[0].parceiroDuplaId;
+                }
                 jogo.desafiante_id = jogador1;
                 jogo.desafiado_id = jogador2;
                 if (dataJogo != "")
@@ -1741,9 +1747,10 @@ namespace Barragem.Controllers
 
         [Authorize(Roles = "admin, organizador")]
         [HttpPost]
-        public ActionResult notificarJogadores(int Id, string texto)
+        public ActionResult notificarJogadores(int torneioId, string texto)
         {
-            Torneio torneio = db.Torneio.Find(Id);
+            Torneio torneio = db.Torneio.Find(torneioId);
+            var retorno = "";
             try
             {
                 Mail mail = new Mail();
@@ -1752,7 +1759,7 @@ namespace Barragem.Controllers
                 mail.assunto = torneio.nome;
                 mail.conteudo = texto;
                 mail.formato = Tipos.FormatoEmail.Html;
-                List<InscricaoTorneio> users = db.InscricaoTorneio.Where(u => u.isAtivo == true && u.torneioId == Id).ToList();
+                List<InscricaoTorneio> users = db.InscricaoTorneio.Where(u => u.isAtivo == true && u.torneioId == torneioId).ToList();
                 List<string> bcc = new List<string>();
                 foreach (InscricaoTorneio user in users)
                 {
@@ -1760,9 +1767,21 @@ namespace Barragem.Controllers
                 }
                 mail.bcc = bcc;
                 mail.EnviarMail();
+                retorno = "Notificação enviada com sucesso.";
             }
-            catch (Exception ex) { }
-            return RedirectToAction("Index", new { msg = "ok" });
+            catch (Exception ex) {
+                retorno = "Houve uma falha no envio. Favor entrar em contato com o administrador do sistema.";
+            }
+            return RedirectToAction("EditNotificacao", new { torneioId= torneioId, msg = retorno });
+        }
+
+        [Authorize(Roles = "admin, organizador")]
+        public ActionResult EditNotificacao(int torneioId, string msg="")
+        {
+            ViewBag.retorno = msg;
+            ViewBag.flag = "notificacao";
+            ViewBag.TorneioId = torneioId;
+            return View();
         }
 
         private void MontarProximoJogoTorneio(Jogo jogo)
@@ -1821,5 +1840,15 @@ namespace Barragem.Controllers
             }
         }
 
+        public ActionResult TabelaImprimir(int torneioId, int fClasse = 0)
+        {
+            var torneio = db.Torneio.Find(torneioId);
+            ViewBag.nomeTorneio = torneio.nome;
+            ViewBag.nomeRanking = torneio.barragem.nome;
+            ViewBag.idBarragem = torneio.barragemId;
+            var jogos = db.Jogo.Where(r => r.torneioId == torneioId && r.classeTorneio == fClasse && r.faseTorneio != 100 && r.faseTorneio != 101).OrderByDescending(r => r.faseTorneio).ThenBy(r => r.ordemJogo).ToList();
+            ViewBag.nomeClasse = jogos[0].classe.nome;
+            return View(jogos);
+        }
     }
 }
