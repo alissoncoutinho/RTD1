@@ -11,12 +11,14 @@ using System.Web.Http.Description;
 using Barragem.Context;
 using Barragem.Models;
 using System.Runtime.Serialization;
+using Barragem.Class;
 
 namespace Barragem.Controllers
 {
     public class JogoAPIController : ApiController
     {
         private BarragemDbContext db = new BarragemDbContext();
+        private RodadaNegocio rn = new RodadaNegocio();
 
         // GET: api/JogoAPI
         public IList<JogoRodada> GetJogo()
@@ -92,6 +94,52 @@ namespace Barragem.Controllers
             return meuJogo;
         }
 
+        private HeadToHead montarHead2Head(Jogo jogo)
+        {
+            var jogosHeadToHead = db.Jogo.Where(j => (j.desafiado_id == jogo.desafiado_id && j.desafiante_id == jogo.desafiante_id) ||
+                (j.desafiante_id == jogo.desafiado_id && j.desafiado_id == jogo.desafiante_id)).ToList();
+
+            HeadToHead headToHead = new HeadToHead();
+            headToHead.Id = jogo.Id;
+
+            headToHead.qtddVitoriasDesafiado = jogosHeadToHead.Where(j => j.idDoVencedor == jogo.desafiado_id).Count();
+            headToHead.qtddVitoriasDesafiante = jogosHeadToHead.Where(j => j.idDoVencedor == jogo.desafiante_id).Count();
+
+            headToHead.alturaDesafiado = jogo.desafiado.altura2;
+            headToHead.alturaDesafiante = jogo.desafiante.altura2;
+            headToHead.idadeDesafiado = jogo.desafiado.idade;
+            headToHead.idadeDesafiante = jogo.desafiante.idade;
+            headToHead.inicioRankingDesafiado = jogo.desafiado.dataInicioRancking.Month + "/" + jogo.desafiado.dataInicioRancking.Year;
+            headToHead.inicioRankingDesafiante = jogo.desafiante.dataInicioRancking.Month + "/" + jogo.desafiante.dataInicioRancking.Year;
+            headToHead.lateralDesafiado = jogo.desafiado.lateralidade;
+            headToHead.lateralDesafiante = jogo.desafiante.lateralidade;
+            try{
+                var melhorRankingDesafiado = db.Rancking.Where(r => r.userProfile_id == jogo.desafiado_id && r.posicaoClasse != null && r.classeId != null).OrderBy(r => r.classe.nivel).ThenBy(r => r.posicaoClasse).Take(1).ToList();
+                headToHead.melhorPosicaoDesafiado = melhorRankingDesafiado[0].posicaoClasse + "º/" + melhorRankingDesafiado[0].classe.nome;
+            }catch (Exception e) { }
+            try{
+                var melhorRankingDesafiante = db.Rancking.Where(r => r.userProfile_id == jogo.desafiante_id && r.posicaoClasse != null && r.classeId != null).OrderBy(r => r.classe.nivel).ThenBy(r => r.posicaoClasse).Take(1).ToList();
+                headToHead.melhorPosicaoDesafiante = melhorRankingDesafiante[0].posicaoClasse + "º/" + melhorRankingDesafiante[0].classe.nome;
+            }catch (Exception e) { }
+            
+            return headToHead;
+        }
+
+        // GET: api/JogoAPI/5
+        [ResponseType(typeof(MeuJogo))]
+        [HttpGet]
+        [Route("api/JogoAPI/GetHead2Head/{id}")]
+        public IHttpActionResult GetHead2Head(int id)
+        {
+            Jogo jogo = db.Jogo.Find(id);
+            if (jogo == null){
+                return NotFound();
+            }
+            HeadToHead headToHead = montarHead2Head(jogo);
+
+            return Ok(headToHead);
+        }
+
         [HttpGet]
         [Route("api/JogoAPI/ListarJogosPendentes")]
         // GET: api/JogoAPI/ListarJogosPendentes
@@ -110,44 +158,11 @@ namespace Barragem.Controllers
             return jogosPendentes;
         }
 
-        // PUT: api/JogoAPI/5
+        
         [ResponseType(typeof(void))]
-        public IHttpActionResult PutJogo(int id, Jogo jogo)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            if (id != jogo.Id)
-            {
-                return BadRequest();
-            }
-
-            db.Entry(jogo).State = EntityState.Modified;
-
-            try
-            {
-                db.SaveChanges();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!JogoExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return StatusCode(HttpStatusCode.NoContent);
-        }
-
-        // PUT: api/JogoAPI/DefinirHorario
-        [ResponseType(typeof(void))]
-        public IHttpActionResult DefinirHorario(int id, DateTime dataJogo, string horaJogo="", string localJogo="")
+        [HttpPut]
+        [Route("api/JogoAPI/DefinirHorario/{id}")]
+        public IHttpActionResult PutDefinirHorario(int id, DateTime dataJogo, string horaJogo="", string localJogo="")
         {
             var jogo = db.Jogo.Find(id);
 
@@ -176,19 +191,88 @@ namespace Barragem.Controllers
             return StatusCode(HttpStatusCode.NoContent);
         }
 
-        // POST: api/JogoAPI
-        [ResponseType(typeof(Jogo))]
-        public IHttpActionResult PostJogo(Jogo jogo)
+        [ResponseType(typeof(void))]
+        [HttpPut]
+        [Route("api/JogoAPI/LancarResultado/{id}")]
+        public IHttpActionResult PutLancarResultado(int id, int games1setDesafiante, int games2setDesafiante, int games3setDesafiante, int games1setDesafiado, int games2setDesafiado, int games3setDesafiado)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
+            var jogo = db.Jogo.Find(id);
+
+            jogo.qtddGames1setDesafiante = games1setDesafiante;
+            jogo.qtddGames2setDesafiante = games2setDesafiante;
+            jogo.qtddGames3setDesafiante = games3setDesafiante;
+
+            jogo.qtddGames1setDesafiado = games1setDesafiado;
+            jogo.qtddGames2setDesafiado = games2setDesafiado;
+            jogo.qtddGames3setDesafiado = games3setDesafiado;
+            jogo.usuarioInformResultado = ""; //User.Identity.Name; TODO: PEGAR O NOME DO USUÁRIO
+            jogo.dataCadastroResultado = DateTime.Now;
+            jogo.situacao_Id = 4;
+
+            db.Entry(jogo).State = EntityState.Modified;
+
+            try{
+
+                db.SaveChanges();
+                rn.ProcessarJogoAtrasado(jogo);
+
+            }
+            catch (DbUpdateConcurrencyException){
+                if (!JogoExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
             }
 
-            db.Jogo.Add(jogo);
-            db.SaveChanges();
+            return StatusCode(HttpStatusCode.NoContent);
+        }
 
-            return CreatedAtRoute("DefaultApi", new { id = jogo.Id }, jogo);
+        [ResponseType(typeof(void))]
+        [HttpPut]
+        [Route("api/JogoAPI/LancarWO/{id}")]
+        public IHttpActionResult PutLancarWO(int id, int userIdVencedor)
+        {
+            Jogo jogoAtual = db.Jogo.Find(id);
+            //alterar quantidade de games para desafiado e desafiante
+            int gamesDesafiante = 0;
+            int gamesDesafiado = 0;
+            if (jogoAtual.desafiado_id == userIdVencedor)
+            {
+                gamesDesafiado = 6;
+                gamesDesafiante = 1;
+            }
+            else
+            {
+                gamesDesafiado = 1;
+                gamesDesafiante = 6;
+            }
+            jogoAtual.qtddGames1setDesafiado = gamesDesafiado;
+            jogoAtual.qtddGames1setDesafiante = gamesDesafiante;
+            jogoAtual.qtddGames2setDesafiado = gamesDesafiado;
+            jogoAtual.qtddGames2setDesafiante = gamesDesafiante;
+            jogoAtual.qtddGames3setDesafiado = 0;
+            jogoAtual.qtddGames3setDesafiante = 0;
+            //alterar status do jogo WO
+            jogoAtual.situacao_Id = 5;
+            jogoAtual.usuarioInformResultado = ""; // TODO User.Identity.Name;
+            jogoAtual.dataCadastroResultado = DateTime.Now;
+            db.Entry(jogoAtual).State = EntityState.Modified;
+            try{
+                db.SaveChanges();
+                rn.ProcessarJogoAtrasado(jogoAtual);
+            }catch (DbUpdateConcurrencyException){
+                if (!JogoExists(id)){
+                    return NotFound();
+                } else {
+                    throw;
+                }
+            }
+
+            return StatusCode(HttpStatusCode.NoContent);
         }
 
         // DELETE: api/JogoAPI/5

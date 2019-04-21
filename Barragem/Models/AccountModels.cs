@@ -67,6 +67,17 @@ namespace Barragem.Models
             }
         }
 
+        public virtual int idade
+        {
+            get {
+                var birthdate = dataNascimento;
+                var today =  new DateTime();
+                var idade = today.Year - birthdate.Year;
+                if (birthdate > today.AddYears(-idade))  idade--;
+                return idade;
+            }
+        }
+
         [Display(Name = "celular2/operadora")]
         public string telefoneCelular2 { get; set; }
 
