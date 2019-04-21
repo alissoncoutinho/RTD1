@@ -275,22 +275,6 @@ namespace Barragem.Controllers
             return StatusCode(HttpStatusCode.NoContent);
         }
 
-        // DELETE: api/JogoAPI/5
-        [ResponseType(typeof(Jogo))]
-        public IHttpActionResult DeleteJogo(int id)
-        {
-            Jogo jogo = db.Jogo.Find(id);
-            if (jogo == null)
-            {
-                return NotFound();
-            }
-
-            db.Jogo.Remove(jogo);
-            db.SaveChanges();
-
-            return Ok(jogo);
-        }
-
         protected override void Dispose(bool disposing)
         {
             if (disposing)

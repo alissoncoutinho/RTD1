@@ -37,9 +37,7 @@ namespace Barragem.Controllers
             }
             return loginRankings;
         }
-
-
-
+        
         // GET: api/RankingAPI/
         [Route("api/RankingAPI/{classeId}")]
         public IList<Rancking> GetRanking(int classeId){
@@ -61,85 +59,6 @@ namespace Barragem.Controllers
                 OrderBy(r => r.classe.nivel).ThenBy(r => r.posicao).ToList();
             
             return rancking;
-        }
-
-        // GET: api/RankingAPI/5
-        [ResponseType(typeof(BarragemView))]
-        public IHttpActionResult GetBarragemView(int id)
-        {
-            BarragemView barragemView = db.BarragemView.Find(id);
-            if (barragemView == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(barragemView);
-        }
-
-        // PUT: api/RankingAPI/5
-        [ResponseType(typeof(void))]
-        public IHttpActionResult PutBarragemView(int id, BarragemView barragemView)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            if (id != barragemView.Id)
-            {
-                return BadRequest();
-            }
-
-            db.Entry(barragemView).State = EntityState.Modified;
-
-            try
-            {
-                db.SaveChanges();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!BarragemViewExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return StatusCode(HttpStatusCode.NoContent);
-        }
-
-        // POST: api/RankingAPI
-        [ResponseType(typeof(BarragemView))]
-        public IHttpActionResult PostBarragemView(BarragemView barragemView)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            db.BarragemView.Add(barragemView);
-            db.SaveChanges();
-
-            return CreatedAtRoute("DefaultApi", new { id = barragemView.Id }, barragemView);
-        }
-
-        // DELETE: api/RankingAPI/5
-        [ResponseType(typeof(BarragemView))]
-        public IHttpActionResult DeleteBarragemView(int id)
-        {
-            BarragemView barragemView = db.BarragemView.Find(id);
-            if (barragemView == null)
-            {
-                return NotFound();
-            }
-
-            db.BarragemView.Remove(barragemView);
-            db.SaveChanges();
-
-            return Ok(barragemView);
         }
 
         protected override void Dispose(bool disposing)
