@@ -21,12 +21,13 @@ namespace Barragem.Controllers
         // GET: api/RankingAPI/userEmail
         public IList<LoginRankingModel> GetRankingsByUserEmail(string email)
         {
-            var users = db.UserProfiles.Where(u => u.email == email.Trim()).ToList();
-            if (users.Count() == 0)
-            {
-                throw (new Exception("Não foi encontrado ranking com este email."));
-            }
             List<LoginRankingModel> loginRankings = new List<LoginRankingModel>();
+            var users = db.UserProfiles.Where(u => u.email.ToLower() == email.Trim().ToLower()).ToList();
+            if (users.Count() == 0){
+                return loginRankings;
+                //throw (new Exception("Não foi encontrado ranking com este email."));
+            }
+            
             foreach (var item in users)
             {
                 var ranking = new LoginRankingModel();
@@ -40,8 +41,8 @@ namespace Barragem.Controllers
         
         // GET: api/RankingAPI/
         [Route("api/RankingAPI/{classeId}")]
-        public IList<Rancking> GetRanking(int classeId){
-            List<Rancking> rancking;
+        public IList<RanckingView> GetRanking(int classeId){
+            //List<RanckingView> rancking;
             int barragemId = 1; // TODO: get barragem usuario
             var idRodada = 0;
             UserProfile usuario = null;
@@ -54,9 +55,17 @@ namespace Barragem.Controllers
             {
 
             }
-            rancking = db.Rancking.Include(r => r.userProfile).Include(r => r.rodada).
-                Where(r => r.rodada_id == idRodada && r.posicao > 0 && r.userProfile.situacao != "desativado" && r.userProfile.situacao != "inativo" && r.classe.Id == usuario.classeId).
-                OrderBy(r => r.classe.nivel).ThenBy(r => r.posicao).ToList();
+            var rancking = db.Rancking.Include(r => r.userProfile).Include(r => r.rodada).
+                Where(r => r.rodada_id == idRodada && r.posicao > 0 && r.posicaoClasse != null && r.userProfile.situacao != "desativado" && r.userProfile.situacao != "inativo" && r.classe.Id == classeId).
+                OrderBy(r => r.classe.nivel).ThenBy(r => r.posicaoClasse).Select(rk => new RanckingView()
+                {
+                    rodada = rk.rodada.codigo + rk.rodada.sequencial,
+                    dataRodada = rk.rodada.dataFim,
+                    nome = rk.userProfile.nome,
+                    posicao = (int)rk.posicaoClasse,
+                    nomeClasse = rk.classe.nome,
+                    pontuacao = rk.pontuacao
+                }).ToList<RanckingView>();
             
             return rancking;
         }

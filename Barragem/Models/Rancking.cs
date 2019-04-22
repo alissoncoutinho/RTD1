@@ -52,4 +52,20 @@ namespace Barragem.Models
 
 
     }
+
+    public class RanckingView
+    {
+        public string rodada { get; set; }
+
+        public DateTime dataRodada { get; set; }
+
+        public double pontuacao { get; set; }
+
+        public int posicao { get; set; }
+
+        public string nome { get; set; }
+
+        public string nomeClasse { get; set; }
+        
+    }
 }
