@@ -79,28 +79,43 @@
                 var qtddAtleta = "qtddAtleta" + c.nivel; 
                 <div class="col-md-2">
                     <div class="box box-primary">
-                        <div class="with-border">
-                            <h4 class="sortable-title">@c.nome - Qtdd:<span id="@qtddAtleta">@rankingView.Where(r=>r.nivel==nivel).Count()</span></h4>
-                        </div>
+                        
+                        @if (c.ativa)
+                        {
+                            <div class="with-border">
+                                <h4 class="sortable-title">@c.nome - Qtdd:<span id="@qtddAtleta">@rankingView.Where(r => r.nivel == nivel).Count()</span></h4>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="with-border">
+                                <h4 class="sortable-title" style="color:red">@c.nome - Desativada</h4>
+                            </div>
+                        }
                         <ul id="@ulId" class="connectedSortable">
-                            @foreach (var item in rankingView){
-                                if (item.nivel == c.nivel) {
-                                    var liClass = "ui-state-classe" + c.nivel; 
+                            @foreach (var item in rankingView)
+                            {
+                                if (item.nivel == c.nivel)
+                                {
+                                    var liClass = "ui-state-classe" + c.nivel;
                                     <li class="@liClass" title="@item.nome">
                                         <input type="hidden" value="@item.userProfile_id" name="userId">
                                         <input type="hidden" value="@item.nivel" name="classeId">
                                         @{var nome = item.nome;
-                                          if (nome.Length>14){
-                                              nome = item.nome.Substring(0, 15) + "...";
-                                          }
-                                         }
-                                        @Html.Raw(nome) @Html.DisplayFor(modelItem => item.totalAcumulado)pt-@Html.Raw(item.situacao.Substring(0,1)) 
+                                            if (nome.Length > 14)
+                                            {
+                                                nome = item.nome.Substring(0, 15) + "...";
+                                            }
+                                        }
+                                        @Html.Raw(nome) @Html.DisplayFor(modelItem => item.totalAcumulado)pt-@Html.Raw(item.situacao.Substring(0, 1))
                                     </li>
-                                }else if (item.nivel > c.nivel){
+                                }
+                                else if (item.nivel > c.nivel)
+                                {
                                     break;
                                 }
                             }
-                            </ul>
+                        </ul>
                     </div>
                 </div>
             }

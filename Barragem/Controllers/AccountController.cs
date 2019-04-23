@@ -108,9 +108,7 @@ namespace Barragem.Controllers
                 barragemId = Convert.ToInt32(cookie.Value.ToString());
             }
             ViewBag.barragemId = barragemId;
-            Barragens barragens = db.Barragens.Find(barragemId);
-            ViewBag.isClasseUnica = barragens.isClasseUnica;
-            ViewBag.classeId = new SelectList(db.Classe.Where(c => c.barragemId == barragemId).ToList(), "Id", "nome");
+            ViewBag.classeId = new SelectList(db.Classe.Where(c => c.barragemId == barragemId && c.ativa==true).ToList(), "Id", "nome");
             return View();
         }
 
@@ -340,7 +338,7 @@ namespace Barragem.Controllers
                         {
                             ViewBag.MsgErro = string.Format("E-mail inválido. '{0}'", model.email);
                             ViewBag.barragemId = model.barragemId;
-                            ViewBag.classeId = new SelectList(db.Classe.Where(c => c.barragemId == model.barragemId).ToList(), "Id", "nome");
+                            ViewBag.classeId = new SelectList(db.Classe.Where(c => c.barragemId == model.barragemId && c.ativa==true).ToList(), "Id", "nome");
                             return View(model);
                         }
 
@@ -382,7 +380,7 @@ namespace Barragem.Controllers
                     else
                     {
                         ViewBag.barragemId = model.barragemId;
-                        ViewBag.classeId = new SelectList(db.Classe.Where(c => c.barragemId == model.barragemId).ToList(), "Id", "nome");
+                        ViewBag.classeId = new SelectList(db.Classe.Where(c => c.barragemId == model.barragemId && c.ativa == true).ToList(), "Id", "nome");
                         ViewBag.MsgErro = string.Format("Login já existente. Favor escolha outro nome. '{0}'", model.UserName);
                     }
 
@@ -394,7 +392,7 @@ namespace Barragem.Controllers
 
             }
             ViewBag.barragemId = model.barragemId;
-            ViewBag.classeId = new SelectList(db.Classe.Where(c => c.barragemId == model.barragemId).ToList(), "Id", "nome");
+            ViewBag.classeId = new SelectList(db.Classe.Where(c => c.barragemId == model.barragemId && c.ativa == true).ToList(), "Id", "nome");
             // If we got this far, something failed, redisplay form
             return View(model);
         }
@@ -883,7 +881,7 @@ namespace Barragem.Controllers
             ViewBag.isAlterarFoto = isAlterarFoto;
             var usuario = db.UserProfiles.Find(WebSecurity.GetUserId(UserName));
             ViewBag.solicitarAtivacao = "";
-            ViewBag.classeId = new SelectList(db.Classe.Where(c => c.barragemId == usuario.barragemId).ToList(), "Id", "nome", usuario.classeId);
+            ViewBag.classeId = new SelectList(db.Classe.Where(c => c.barragemId == usuario.barragemId && c.ativa == true).ToList(), "Id", "nome", usuario.classeId);
             if (usuario.situacao == "pendente")
             {
                 ViewBag.solicitarAtivacao = "sim";
@@ -940,7 +938,7 @@ namespace Barragem.Controllers
             if ((!perfil.Equals("admin")) && (!perfil.Equals("organizador")) && (WebSecurity.GetUserId(User.Identity.Name) != model.UserId))
             {
                 ViewBag.MsgErro = string.Format("Você não tem permissão para alterar este usuário '{0}'", model.nome);
-                ViewBag.classeId = new SelectList(db.Classe.Where(c => c.barragemId == model.barragemId).ToList(), "Id", "nome");
+                ViewBag.classeId = new SelectList(db.Classe.Where(c => c.barragemId == model.barragemId && c.ativa == true).ToList(), "Id", "nome");
                 return View(model);
             }
             if (ModelState.IsValid)
@@ -951,7 +949,7 @@ namespace Barragem.Controllers
                     if (!Funcoes.IsValidEmail(model.email))
                     {
                         ViewBag.MsgErro = string.Format("E-mail inválido. '{0}'", model.email);
-                        ViewBag.classeId = new SelectList(db.Classe.Where(c => c.barragemId == model.barragemId).ToList(), "Id", "nome");
+                        ViewBag.classeId = new SelectList(db.Classe.Where(c => c.barragemId == model.barragemId && c.ativa == true).ToList(), "Id", "nome");
                         return View(model);
                     }
                     if (!String.IsNullOrEmpty(avatarCropped)){
@@ -990,7 +988,7 @@ namespace Barragem.Controllers
                         ViewBag.MsgErro = "Erro ao gerar a pontuação inicial do usuário: " + e.Message + ", " + e.InnerException.Message;
                         ViewBag.DetalheErro = e.InnerException.StackTrace;
                     }
-                    ViewBag.classeId = new SelectList(db.Classe.Where(c => c.barragemId == model.barragemId).ToList(), "Id", "nome");
+                    ViewBag.classeId = new SelectList(db.Classe.Where(c => c.barragemId == model.barragemId && c.ativa == true).ToList(), "Id", "nome");
                     return View(model);
 
                 }
@@ -999,7 +997,7 @@ namespace Barragem.Controllers
             if (((perfil.Equals("admin")) || (!perfil.Equals("organizador"))) && (WebSecurity.GetUserId(User.Identity.Name) != model.UserId)){
                 return RedirectToAction("ListarUsuarios", "Account", new { filtroSituacao = "todos", filtroBarragem= model.barragemId, msg = "ok" });
             }
-            ViewBag.classeId = new SelectList(db.Classe.Where(c => c.barragemId == model.barragemId).ToList(), "Id", "nome");
+            ViewBag.classeId = new SelectList(db.Classe.Where(c => c.barragemId == model.barragemId && c.ativa == true).ToList(), "Id", "nome");
             return View(model);
 
 

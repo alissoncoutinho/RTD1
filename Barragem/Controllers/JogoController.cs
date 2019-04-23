@@ -64,7 +64,7 @@ namespace Barragem.Controllers
                 {
                     barragemId = jogo[0].rodada.barragemId;
                 }
-                ViewBag.Classes = db.Classe.Where(c => c.barragemId == barragemId).ToList();
+                ViewBag.Classes = db.Classe.Where(c => c.barragemId == barragemId && c.ativa == true).ToList();
                 if (jogo.Count() > 0)
                 {
                     barragemId = jogo[0].rodada.barragemId;

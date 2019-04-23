@@ -46,7 +46,7 @@ namespace Barragem.Controllers
             }
             rancking = db.Rancking.Include(r => r.userProfile).Include(r => r.rodada).
                 Where(r => r.rodada_id == id && r.posicao > 0 && r.userProfile.situacao != "desativado" && r.userProfile.situacao != "inativo").OrderBy(r=>r.classe.nivel).ThenBy(r => r.posicaoClasse).ToList();
-            ViewBag.Classes = db.Classe.Where(c => c.barragemId == barragemId).ToList();
+            ViewBag.Classes = db.Classe.Where(c => c.barragemId == barragemId && c.ativa == true).ToList();
             //ViewBag.rankingGeral = rancking.OrderBy(r => r.posicao).ToList();
             if (rancking.Count() > 0){
                 var barragem = rancking[0].rodada.barragemId;

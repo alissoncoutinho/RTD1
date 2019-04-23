@@ -1,0 +1,4 @@
+﻿<ul class="nav nav-tabs" id="myTab">
+    <li @if (@ViewBag.flag == "edit") { @Html.Raw("class='active'")  }><a href="@Url.Action("Edit", new { id = @ViewBag.BarragemId })"><b>Editar Ranking</b></a></li>
+    <li @if (@ViewBag.flag == "classes") { @Html.Raw("class='active'")  }><a href="@Url.Action("EditClasse", new { barragemId = @ViewBag.BarragemId })"><b>Editar Classes do Ranking</b></a></li>
+</ul>

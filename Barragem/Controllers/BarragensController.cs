@@ -82,15 +82,10 @@ namespace Barragem.Controllers
                             db.Database.ExecuteSqlCommand(sql);
                             codigo = codigo + 1;
                         }
-                        if (barragens.isClasseUnica){
-                            sql = "INSERT INTO Classe (nome, nivel, barragemId) VALUES ('Classe Única'," + 1 + ", " + barragens.Id + ")";
+                        for (int i = 1; i <= 5; i++)
+                        {
+                            sql = "INSERT INTO Classe (nome, nivel, barragemId) VALUES ('" + i + "ª Classe'," + i + ", " + barragens.Id + ")";
                             db.Database.ExecuteSqlCommand(sql);
-                        } else {
-                            for (int i = 1; i <= 5; i++)
-                            {
-                                sql = "INSERT INTO Classe (nome, nivel, barragemId) VALUES ('" + i + "ª Classe'," + i + ", " + barragens.Id + ")";
-                                db.Database.ExecuteSqlCommand(sql);
-                            }
                         }
                         scope.Complete();
                         return RedirectToAction("Index");
@@ -110,10 +105,12 @@ namespace Barragem.Controllers
         public ActionResult Edit(int id = 0)
         {
             Barragens barragens = db.Barragens.Find(id);
+            ViewBag.BarragemId = barragens.Id;
             if (barragens == null)
             {
                 return HttpNotFound();
             }
+            ViewBag.flag = "edit";
             return View(barragens);
         }
 
@@ -154,6 +151,56 @@ namespace Barragem.Controllers
                 return RedirectToAction("Index");
             }
             return View(barragens);
+        }
+
+        [Authorize(Roles = "admin,organizador")]
+        public ActionResult EditClasse(int barragemId)
+        {
+            var classes = db.Classe.Where(c => c.barragemId == barragemId).ToList();
+            ViewBag.flag = "classes";
+            ViewBag.BarragemId = barragemId;
+
+            var list = new[]
+            {
+                new SelectListItem { Value = "1", Text = "1º" },
+                new SelectListItem { Value = "2", Text = "2º" },
+                new SelectListItem { Value = "3", Text = "3º" },
+                new SelectListItem { Value = "4", Text = "4º" },
+                new SelectListItem { Value = "5", Text = "5º" },
+            };
+
+            ViewBag.Niveis = new SelectList(list, "Value", "Text");
+
+            return View(classes);
+        }
+
+        [HttpPost]
+        public ActionResult EditClasse(int Id, string nome, int nivel = 1, bool ativa = true)
+        {
+            try
+            {
+                var classe = db.Classe.Find(Id);
+                if (!ativa)
+                {
+                    //só desativa classe se já tiver fechado a rodada
+                    //classe.barragemId
+                    var qtdeRodadasAbertas = db.Rodada.Where(r => r.barragemId == classe.barragemId && r.isAberta == true).Count();
+                    if (qtdeRodadasAbertas>0)
+                    {
+                        return Json(new { erro = "É necessário fechar as rodadas para desabilitar uma classe.", retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
+                    }
+                }
+                classe.nome = nome;
+                classe.ativa = ativa;
+                classe.nivel = nivel;
+                db.Entry(classe).State = EntityState.Modified;
+                db.SaveChanges();
+                return Json(new { erro = "", retorno = 1 }, "text/plain", JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { erro = ex.Message, retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
+            }
         }
 
         [HttpPost, ActionName("Delete")]

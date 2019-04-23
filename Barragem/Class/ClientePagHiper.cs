@@ -148,11 +148,13 @@ namespace Barragem.Class
                         if (retorno.status_request.status == "paid" || retorno.status_request.status == "reserved" || retorno.status_request.status == "completed"){
                             pb.status = "Pago";
                         }else if (retorno.status_request.status == "canceled"){
-                            pb.status = retorno.status_request.status;
-                            var barragem = db.Barragens.Find(pb.barragemId);
-                            barragem.isAtiva = false;
-                            db.Entry(barragem).State = EntityState.Modified;
-                            db.SaveChanges();
+                            if (pb.status != "Pago") { 
+                                pb.status = retorno.status_request.status;
+                                var barragem = db.Barragens.Find(pb.barragemId);
+                                barragem.isAtiva = false;
+                                db.Entry(barragem).State = EntityState.Modified;
+                                db.SaveChanges();
+                             }
                         } else if (retorno.status_request.status == "pending"){
                             // não faz nada
                         } else {
