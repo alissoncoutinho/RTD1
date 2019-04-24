@@ -5,16 +5,15 @@ using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Description;
 using Barragem.Context;
 using Barragem.Models;
-using System.Runtime.Serialization;
 using Barragem.Class;
 
 namespace Barragem.Controllers
 {
+    [Authorize]
     public class JogoAPIController : ApiController
     {
         private BarragemDbContext db = new BarragemDbContext();

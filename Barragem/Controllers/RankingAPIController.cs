@@ -13,6 +13,7 @@ using Barragem.Models;
 
 namespace Barragem.Controllers
 {
+    
     public class RankingAPIController : ApiController
     {
         private BarragemDbContext db = new BarragemDbContext();
