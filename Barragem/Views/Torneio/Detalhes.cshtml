@@ -235,7 +235,7 @@
                                     </select>
                                 </div>
                             </div>
-                            if ((!inscricao.isAtivo) && (Model.valor != 0) && (!ViewBag.isGratuito))
+                            if ((!inscricao.isAtivo) && (Model.valor != 0) && (!ViewBag.isGratuito) && ((bool)Model.isMaisUmaClasse))
                             {
                                 <div class="form-group">
                                     <div class="col-sm-8">
