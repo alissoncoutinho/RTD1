@@ -313,6 +313,8 @@
                             {@Html.Raw("Oitavas de final")}
                             @if ((int)colocacao.GetType().GetProperty("colocacao").GetValue(colocacao) == 5)
                             {@Html.Raw("R2")}
+                            @if ((int)colocacao.GetType().GetProperty("colocacao").GetValue(colocacao) > 5)
+                            {@Html.Raw("Primeira fase")}
                         </td>
                         <td>
                             @Html.Raw(colocacao.GetType().GetProperty("classe").GetValue(colocacao))
