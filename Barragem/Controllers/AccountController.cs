@@ -587,6 +587,18 @@ namespace Barragem.Controllers
                 ViewBag.posicao = "sem rancking";
             }
 
+            //carregar colocações em torneios
+            //db.InscricaoTorneio.Where
+            var colocacoesEmTorneios =
+                from inscricao in db.InscricaoTorneio
+                join torneio in db.Torneio on inscricao.torneioId equals torneio.Id into colocacaoJogador
+                where inscricao.userId == userId && inscricao.torneio.dataFim < DateTime.Now && inscricao.colocacao != null
+                select new { inscricao.colocacao,inscricao.torneio.nome, classe = inscricao.classeTorneio.nome,
+                    dataInicio=inscricao.torneio.dataInicio,
+                    dataFim=inscricao.torneio.dataFim };
+
+            ViewBag.colocacoesEmTorneios = colocacoesEmTorneios;
+
             return View(jogador);
         }
 

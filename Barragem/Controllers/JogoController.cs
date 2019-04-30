@@ -461,6 +461,7 @@ namespace Barragem.Controllers
                 }
                 else
                 {
+                    cadastrarColocacaoPerdedorTorneio(jogo);
                     // indicar o vencedor do torneio
                     var inscricao = db.InscricaoTorneio.Where(i => i.userId == jogo.idDoVencedor && i.torneioId == jogo.torneioId).ToList();
                     if (inscricao.Count() > 0)

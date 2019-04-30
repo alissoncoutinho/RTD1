@@ -273,7 +273,56 @@
             </div>
             }
         </div>
-        <div id="tabTorneio" class="tab-pane fade"></div>
+        <div id="tabTorneio" class="tab-pane fade">
+            <br/>
+            <table border="0" class="table table-striped">
+                <tr>
+                    <th>
+                        Torneio
+                    </th>
+                    <th>
+                        Período do Torneio
+                    </th>
+                    <th>
+                        Colocação
+                    </th>
+                    <th>
+                        Classe
+                    </th>
+                </tr>
+                @foreach (var colocacao in ViewBag.colocacoesEmTorneios)
+                {
+                    <tr>
+                        <td>
+                            @Html.Raw(colocacao.GetType().GetProperty("nome").GetValue(colocacao))
+                        </td>
+                        <td>
+                            @Html.Raw("De "+colocacao.GetType().GetProperty("dataInicio").GetValue(colocacao).ToString("dd/MM/yyyy")
+                           + " a "+ colocacao.GetType().GetProperty("dataFim").GetValue(colocacao).ToString("dd/MM/yyyy"))
+                        </td>
+                        <td>
+                            @if ((int)colocacao.GetType().GetProperty("colocacao").GetValue(colocacao) == 0)
+                            {@Html.Raw("Campeão")}
+                            @if ((int)colocacao.GetType().GetProperty("colocacao").GetValue(colocacao) == 1)
+                            {@Html.Raw("Vice-Campeão")}
+                            @if ((int)colocacao.GetType().GetProperty("colocacao").GetValue(colocacao) == 2)
+                            {@Html.Raw("Semi-finais")}
+                            @if ((int)colocacao.GetType().GetProperty("colocacao").GetValue(colocacao) == 3)
+                            {@Html.Raw("Quartas de final")}
+                            @if ((int)colocacao.GetType().GetProperty("colocacao").GetValue(colocacao) == 4)
+                            {@Html.Raw("Oitavas de final")}
+                            @if ((int)colocacao.GetType().GetProperty("colocacao").GetValue(colocacao) == 5)
+                            {@Html.Raw("R2")}
+                            @if ((int)colocacao.GetType().GetProperty("colocacao").GetValue(colocacao) > 5)
+                            {@Html.Raw("Primeira fase")}
+                        </td>
+                        <td>
+                            @Html.Raw(colocacao.GetType().GetProperty("classe").GetValue(colocacao))
+                        </td>
+                    </tr>
+                }
+            </table>
+        </div>
     </div>
 
 
