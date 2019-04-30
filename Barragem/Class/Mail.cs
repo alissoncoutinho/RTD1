@@ -20,7 +20,7 @@ namespace Barragem.Class
             Usuario = System.Configuration.ConfigurationManager.AppSettings.Get("UsuarioMail");
             Senha = System.Configuration.ConfigurationManager.AppSettings.Get("SenhaMail");
             SMTPPort = System.Configuration.ConfigurationManager.AppSettings.Get("PortaSMTP");
-            HostIP = System.Configuration.ConfigurationManager.AppSettings.Get("ServidorSMTP");
+            HostIP = "mail.rankingdetenis.com"; //System.Configuration.ConfigurationManager.AppSettings.Get("ServidorSMTP");
         }
 
         public Mail(string de, string para, string assunto, string conteudo, Tipos.FormatoEmail formato, List<string> bcc=null)
@@ -35,7 +35,7 @@ namespace Barragem.Class
             Usuario = System.Configuration.ConfigurationManager.AppSettings.Get("UsuarioMail");
             Senha = System.Configuration.ConfigurationManager.AppSettings.Get("SenhaMail");
             SMTPPort = System.Configuration.ConfigurationManager.AppSettings.Get("PortaSMTP");
-            HostIP = System.Configuration.ConfigurationManager.AppSettings.Get("ServidorSMTP");
+            HostIP = "mail.rankingdetenis.com"; //System.Configuration.ConfigurationManager.AppSettings.Get("ServidorSMTP");
         }
 
         public string de { get; set; }
@@ -49,24 +49,21 @@ namespace Barragem.Class
         {
             try
             {
+                MailMessage m = new MailMessage();
                 SmtpClient scMail = new SmtpClient();
                 scMail.Host = HostIP;
                 scMail.Port = int.Parse(SMTPPort);
+                scMail.EnableSsl = false;
                 scMail.Credentials = new System.Net.NetworkCredential(Usuario, Senha);
-
                 if (de == string.Empty || de == null)
                     de = this.Usuario;
+                MailMessage message = new MailMessage();
+                message.From = new MailAddress(de);
+                message.To.Add(para);
 
-                MailAddress _de = new MailAddress(de);
-                MailAddress _para = new MailAddress(para);
-                MailMessage message = new MailMessage(_de, _para);
-
-                if (formato == Tipos.FormatoEmail.Html)
-                {
+                if (formato == Tipos.FormatoEmail.Html){
                     message.IsBodyHtml = true;
-                }
-                else
-                {
+                }else{
                     message.IsBodyHtml = false;
                 }
 
@@ -91,5 +88,28 @@ namespace Barragem.Class
 
         }
 
+        public void SendEmail(string para, string assunto, string conteudo, Tipos.FormatoEmail formato, List<string> bcc = null)
+        {
+            MailMessage m = new MailMessage();
+            SmtpClient sc = new SmtpClient();
+            m.From = new MailAddress("postmaster@rankingdetenis.com");
+            sc.Host = "mail.rankingdetenis.com";
+            sc.Port = 25;
+            sc.EnableSsl = false;
+            m.To.Add(para);
+            m.Subject = assunto;
+            m.Body = conteudo;
+            if (formato == Tipos.FormatoEmail.Html){
+                m.IsBodyHtml = true;
+            }else{
+                m.IsBodyHtml = false;
+            }
+            sc.Credentials = new System.Net.NetworkCredential("postmaster@rankingdetenis.com", "@abc5826");
+            try{
+                sc.Send(m);
+            } catch (Exception ex){
+                throw ex;
+            }
+        }
     }
 }

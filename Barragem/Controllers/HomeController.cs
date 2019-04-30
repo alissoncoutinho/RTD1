@@ -143,17 +143,22 @@ namespace Barragem.Controllers
                 try
                 {
                     Mail e = new Mail();
+                    //e.SendEmail("esmartins@gmail.com", "Solicitação de contato Ranking de tenis", "Nome do contato: " + nome + "<br>telefone de contato: " + fone, Class.Tipos.FormatoEmail.Html);
                     e.assunto = "Solicitação de contato Ranking de tenis";
                     e.conteudo = "Nome do contato: " + nome + "<br>telefone de contato: " + fone;
                     e.formato = Class.Tipos.FormatoEmail.Html;
                     e.de = "postmaster@rankingdetenis.com";
                     e.para = "esmartins@gmail.com";
-                    e.bcc = new List<String>() { "coutinho.alisson@gmail.com", "barragemdocerrago@gmail.com" };
+                    e.bcc = new List<String>() { "coutinho.alisson@gmail.com" };
                     e.EnviarMail();
                 }
                 catch (Exception e)
                 {
-                    return RedirectToAction("Index", "Home", new { msg = "Desculpe. Casdastro temporariamente indisponível." + e.InnerException + " - " + e.Message });
+                    var log2 = new Log();
+                    log2.descricao = "Email :" + e.Message;
+                    db.Log.Add(log2);
+                    db.SaveChanges();
+                    return RedirectToAction("Index", "Home", new { msg = "Desculpe. Casdastro temporariamente indisponível." });
                 }
             }
             return RedirectToAction("Index", "Home", new { msg = mensagem });
