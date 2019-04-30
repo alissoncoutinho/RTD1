@@ -53,19 +53,33 @@ namespace Barragem.Models
 
     }
 
-    public class RanckingView
+    public class Classificacao
     {
-        public string rodada { get; set; }
-
-        public DateTime dataRodada { get; set; }
-
         public double pontuacao { get; set; }
 
-        public int posicao { get; set; }
+        public int? posicaoUser { get; set; }
 
-        public string nome { get; set; }
+        public string nomeUser { get; set; }
+        public string rodada { get; set; }
+        public DateTime dataRodada { get; set; }
 
-        public string nomeClasse { get; set; }
-        
+    }
+
+    public class Cabecalho
+    {
+        public string rodada { get; set; }
+        public DateTime dataRodada { get; set; }
+        public string temporada { get; set; }
+        public IList<Classe> classes { get; set; }
+        public int classeUserId { get; set; }
+
+    }
+
+    public class MinhaPontuacao
+    {
+        public string nomeUser { get; set; }
+        public int? posicao { get; set; }
+        public double pontuacaoAtual { get; set; }
+        public IList<Classificacao> classificacao { get; set; }
     }
 }

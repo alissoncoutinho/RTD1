@@ -13,20 +13,72 @@ using Barragem.Class;
 
 namespace Barragem.Controllers
 {
-    [Authorize]
+    
     public class JogoAPIController : ApiController
     {
         private BarragemDbContext db = new BarragemDbContext();
         private RodadaNegocio rn = new RodadaNegocio();
 
         // GET: api/JogoAPI
-        public IList<JogoRodada> GetJogo()
+        [Route("api/JogoAPI/ListarJogos/{classeId}")]
+        public IList<JogoRodada> GetListarJogos(int classeId)
         {
-            var barragemId = 1; // TODO pegar o id da barragem no claim
+            var barragemId = 1; // TODO: pegar a barragem do userId
             var rodadaId = db.Rodada.Where(r => r.isRodadaCarga == false && r.barragemId == barragemId).Max(r => r.Id);
-            var jogos = db.Jogo.Where(j => j.rodada_id == rodadaId).Select(jogo=> new JogoRodada() {Id=jogo.Id, nomeDesafiante = jogo.desafiante.nome, nomeDesafiado = jogo.desafiado.nome }).ToList<JogoRodada>();
+            var jogos = db.Jogo.Where(j => j.rodada_id == rodadaId && j.desafiado.classeId == classeId).
+                Select(jogo => new JogoRodada() {
+                    Id = jogo.Id,
+                    nomeDesafiante = jogo.desafiante.nome,
+                    nomeDesafiado = jogo.desafiado.nome,
+                    dataJogo = jogo.dataJogo,
+                    horaJogo = jogo.horaJogo,
+                    localJogo = jogo.localJogo,
+                    fotoDesafiado = jogo.desafiado.fotoURL,
+                    fotoDesafiante = jogo.desafiante.fotoURL,
+                    qtddGames1setDesafiante = jogo.qtddGames1setDesafiante,
+                    qtddGames2setDesafiante = jogo.qtddGames2setDesafiante,
+                    qtddGames3setDesafiante = jogo.qtddGames3setDesafiante,
+                    qtddGames1setDesafiado = jogo.qtddGames1setDesafiado,
+                    qtddGames2setDesafiado = jogo.qtddGames2setDesafiado,
+                    qtddGames3setDesafiado = jogo.qtddGames3setDesafiado
+                }).ToList<JogoRodada>();
             
             return jogos;
+        }
+
+        [Route("api/RankingAPI/cabecalho/{userId}")]
+        public Cabecalho GetCabecalho(int userId)
+        {
+            var user = db.UserProfiles.Find(userId);
+            int barragemId = user.barragemId;
+            var qtddRodada = 0;
+            var nomeTemporada = "";
+            var idRodada = 0;
+            Rodada rodada = null;
+            Cabecalho cabecalho = new Cabecalho();
+            try
+            {
+                idRodada = db.Rodada.Where(r => r.isRodadaCarga == false && r.barragemId == barragemId).Max(r => r.Id);
+                rodada = db.Rodada.Find(idRodada);
+            }
+            catch (Exception e) { }
+            var classes = db.Classe.Where(c => c.barragemId == barragemId && c.ativa).OrderBy(c => c.nivel).ToList<Classe>();
+            if (rodada != null)
+            {
+                cabecalho.rodada = "Rodada " + rodada.codigoSeq;
+                if (rodada.temporadaId != null)
+                {
+                    qtddRodada = db.Rodada.Where(rd => rd.temporadaId == rodada.temporadaId && rd.Id <= rodada.Id
+                    && rd.barragemId == rodada.barragemId).Count();
+                    nomeTemporada = rodada.temporada.nome;
+                    cabecalho.rodada = "Rodada " + qtddRodada + "/" + rodada.temporada.qtddRodadas;
+                }
+                cabecalho.dataRodada = rodada.dataFim;
+            }
+            cabecalho.temporada = nomeTemporada;
+            cabecalho.classes = classes;
+            cabecalho.classeUserId = (int)user.classeId;
+            return cabecalho;
         }
 
         // GET: api/JogoAPI/5
