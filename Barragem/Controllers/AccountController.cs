@@ -947,6 +947,7 @@ namespace Barragem.Controllers
         {
             ViewBag.solicitarAtivacao = "";
             string perfil = Roles.GetRolesForUser(User.Identity.Name)[0];
+            string situacaoAtual = "";
             if ((!perfil.Equals("admin")) && (!perfil.Equals("organizador")) && (WebSecurity.GetUserId(User.Identity.Name) != model.UserId))
             {
                 ViewBag.MsgErro = string.Format("Você não tem permissão para alterar este usuário '{0}'", model.nome);
@@ -971,6 +972,7 @@ namespace Barragem.Controllers
                         model.fotoURL = (from up in db.UserProfiles where up.UserId == model.UserId select up.fotoURL).Single();
                     }
                     model.dataInicioRancking = (from up in db.UserProfiles where up.UserId == model.UserId select up.dataInicioRancking).Single();
+                    situacaoAtual = (from up in db.UserProfiles where up.UserId == model.UserId select up.situacao).Single();
                     db.Entry(model).State = EntityState.Modified;
                     db.SaveChanges();
                     if (model.situacao == "pendente")
@@ -984,6 +986,9 @@ namespace Barragem.Controllers
                 }
                 try
                 {
+                    if ((situacaoAtual.ToLower().Equals("desativado")) && (model.situacao.ToLower().Equals("ativo"))){
+                        model.isRanckingGerado = false;
+                    }
                     gerarRankingInicial(model, perfil);
                     ViewBag.Ok = "ok";
                 }
@@ -1155,6 +1160,10 @@ namespace Barragem.Controllers
                 var user = db.UserProfiles.Where(u => u.UserId == userId).FirstOrDefault();
                 if (user != null)
                 {
+                    // se o jogador estiver desativado e for ativar novamente o sistema deverar gerar o ranking dele novamente
+                    if ((user.situacao.ToLower().Equals("desativado")) && (user.isRanckingGerado)) {
+                        user.isRanckingGerado = false;
+                    }
                     user.situacao = "ativo";
                     user.logAlteracao = User.Identity.Name;
                     try{
