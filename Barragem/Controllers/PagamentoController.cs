@@ -3,16 +3,11 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using Barragem.Models;
 using Barragem.Context;
-using Barragem.Filters;
-using System.Data.EntityClient;
 using System.Transactions;
 using Barragem.Class;
-using WebMatrix.WebData;
-using System.Web.Security;
 using System.Threading.Tasks;
 
 namespace Barragem.Controllers

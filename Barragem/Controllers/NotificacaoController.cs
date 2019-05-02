@@ -2,16 +2,13 @@
 using Barragem.Context;
 using Barragem.Models;
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Text;
-using System.Web;
 using System.Web.Mvc;
 using Uol.PagSeguro.Domain;
-using Uol.PagSeguro.Resources;
 using Uol.PagSeguro.Service;
 using System.Threading.Tasks;
+using System.Data.Entity;
 
 namespace Barragem.Controllers
 {

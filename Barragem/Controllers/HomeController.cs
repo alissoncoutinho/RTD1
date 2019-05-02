@@ -4,11 +4,11 @@ using Barragem.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
 using WebMatrix.WebData;
+using System.Data.Entity;
 
 namespace Barragem.Controllers
 {
@@ -143,17 +143,22 @@ namespace Barragem.Controllers
                 try
                 {
                     Mail e = new Mail();
+                    //e.SendEmail("esmartins@gmail.com", "Solicitação de contato Ranking de tenis", "Nome do contato: " + nome + "<br>telefone de contato: " + fone, Class.Tipos.FormatoEmail.Html);
                     e.assunto = "Solicitação de contato Ranking de tenis";
                     e.conteudo = "Nome do contato: " + nome + "<br>telefone de contato: " + fone;
                     e.formato = Class.Tipos.FormatoEmail.Html;
                     e.de = "postmaster@rankingdetenis.com";
                     e.para = "esmartins@gmail.com";
-                    e.bcc = new List<String>() { "coutinho.alisson@gmail.com", "barragemdocerrago@gmail.com" };
+                    e.bcc = new List<String>() { "coutinho.alisson@gmail.com" };
                     e.EnviarMail();
                 }
                 catch (Exception e)
                 {
-                    return RedirectToAction("Index", "Home", new { msg = "Desculpe. Casdastro temporariamente indisponível." + e.InnerException + " - " + e.Message });
+                    var log2 = new Log();
+                    log2.descricao = "Email :" + e.Message;
+                    db.Log.Add(log2);
+                    db.SaveChanges();
+                    return RedirectToAction("Index", "Home", new { msg = "Desculpe. Casdastro temporariamente indisponível." });
                 }
             }
             return RedirectToAction("Index", "Home", new { msg = mensagem });
@@ -472,7 +477,7 @@ namespace Barragem.Controllers
                         if (DateTime.Now.Day > 10){
                             var brg = db.Barragens.Find(barragemId);
                             brg.isAtiva = false;
-                            db.Entry(brg).State = System.Data.EntityState.Modified;
+                            db.Entry(brg).State = EntityState.Modified;
                             db.SaveChanges();
                             ViewBag.cobranca = "Olá, Você possui uma mensalidade em atrasado que ocasionou o bloqueio do seu ranking. Não será possível gerar temporadas e rodadas. Clique no link para acessar o boleto ou copie o número do código de barras para realizar o pagamento:";
                         }

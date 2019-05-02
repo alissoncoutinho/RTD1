@@ -16,6 +16,7 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using System.Web.Security;
 using WebMatrix.WebData;
+using System.Data.Entity;
 
 
 namespace Barragem.Controllers
@@ -1344,11 +1345,8 @@ namespace Barragem.Controllers
             }
             catch (Exception ex)
             {
-                var routeData = new RouteData();
-                routeData.Values["controller"] = "Erros";
-                routeData.Values["exception"] = ex;
-                routeData.Values["action"] = "General";
-                return RedirectToAction("General", "Erros", routeData);
+                ViewBag.MsgErro = ex.Message;
+                return View();
             }
             finally
             {
@@ -1366,11 +1364,12 @@ namespace Barragem.Controllers
             strConteudo += "Para continuar, clique no link abaixo: <br /> " + strUrl + " </body> </html>";
 
             Mail email = new Mail();
-            email.assunto = "Solicitação de troca de senha";
-            email.conteudo = strConteudo;
-            email.formato = Class.Tipos.FormatoEmail.Html;
-            email.para = emailUsuario;
-            email.EnviarMail();
+            email.SendEmail(emailUsuario, "recuperação de senha", strConteudo, Class.Tipos.FormatoEmail.Html);
+            //email.assunto = "Solicitação de troca de senha";
+            //email.conteudo = strConteudo;
+            //email.formato = Class.Tipos.FormatoEmail.Html;
+            //email.para = emailUsuario;
+            //email.EnviarMail();
 
         }
 
