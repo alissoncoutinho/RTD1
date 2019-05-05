@@ -80,6 +80,7 @@
                     @Html.Hidden("operacao", "inscricao")
                     @Html.Hidden("torneioId", Model.Id)
                     @Html.Hidden("vrInscricao", Model.valor);
+                    @Html.Hidden("isClasseDupla", false);
                     <div class="box-body">
                         <div class="row">
                             @Html.Label("Valor", new { @class = "col-sm-5" })
@@ -189,7 +190,7 @@
                                         <option value="0">Selecione uma classe...</option>
                                         @foreach (var item in ViewBag.Classes)
                                         {
-                                            <option value="@item.Id" @if (ViewBag.ClasseInscricao == item.Id) { @Html.Raw("selected")  }>@item.nome</option>
+                                            <option value="@item.Id" data-isDupla="@item.isDupla" @if (ViewBag.ClasseInscricao == item.Id) { @Html.Raw("selected")   }>@item.nome</option>
                                         }
                                     </select>
                                 </div>
@@ -208,11 +209,11 @@
                                 <div id="segundaOpcaoClasse" class="row">
                                     @Html.Label("2ª Classe", new { @class = "col-sm-4" })
                                     <div class="col-sm-8 info-box-text">
-                                        <select name="classeInscricao2" class="form-control">
+                                        <select name="classeInscricao2" class="form-control segundaOpcaoClasse">
                                             <option value="0">Selecione uma classe...</option>
                                             @foreach (var item in ViewBag.Classes2)
                                             {
-                                                <option value="@item.Id" @if ((!String.IsNullOrEmpty(ViewBag.ClasseInscricao2)) && (ViewBag.ClasseInscricao2 == item.Id)) { @Html.Raw("selected")  }>@item.nome</option>
+                                                <option value="@item.Id" data-isDupla="@item.isDupla" @if ((!String.IsNullOrEmpty(ViewBag.ClasseInscricao2)) && (ViewBag.ClasseInscricao2 == item.Id)) { @Html.Raw("selected")   }>@item.nome</option>
                                             }
                                         </select>
                                     </div>
@@ -230,7 +231,7 @@
                                         <option value="0">Selecione uma classe...</option>
                                         @foreach (var item in ViewBag.Classes)
                                         {
-                                            <option value="@item.Id" @if (ViewBag.ClasseInscricao == item.Id) { @Html.Raw("selected")  }>@item.nome</option>
+                                            <option value="@item.Id" data-isDupla="@item.isDupla" @if (ViewBag.ClasseInscricao == item.Id) { @Html.Raw("selected")   }>@item.nome</option>
                                         }
                                     </select>
                                 </div>
@@ -241,7 +242,7 @@
                                     <div class="col-sm-8">
                                         <div class="checkbox">
                                             <label>
-                                                <input type="checkbox" value="true" name="isMaisDeUmaClasse" id="isMaisDeUmaClasse" onclick="segundaOpcaoDeClasse()" @if (!String.IsNullOrEmpty(ViewBag.ClasseInscricao2)) { @Html.Raw("checked")  } /> @Html.Raw("Quero escolher mais uma categoria")
+                                                <input type="checkbox" value="true" name="isMaisDeUmaClasse" id="isMaisDeUmaClasse" onclick="segundaOpcaoDeClasse()" @if (!String.IsNullOrEmpty(ViewBag.ClasseInscricao2)) { @Html.Raw("checked")   } /> @Html.Raw("Quero escolher mais uma categoria")
                                             </label>
                                         </div>
                                     </div>
@@ -267,11 +268,11 @@
                                     <!--<input type="hidden" value="true" name="isMaisDeUmaClasse" id="isMaisDeUmaClasse" />-->
                                     @Html.Label("2ª Classe", new { @class = "col-sm-4" })
                                     <div class="col-sm-8 info-box-text">
-                                        <select name="classeInscricao2" class="form-control">
+                                        <select name="classeInscricao2" class="form-control segundaOpcaoClasse">
                                             <option value="0">Selecione uma classe...</option>
                                             @foreach (var item in ViewBag.Classes2)
                                             {
-                                                <option value="@item.Id" @if ((!String.IsNullOrEmpty(ViewBag.ClasseInscricao2)) && (ViewBag.ClasseInscricao2 == item.nome)) { @Html.Raw("selected")  }>@item.nome</option>
+                                                <option value="@item.Id" data-isDupla="@item.isDupla" @if ((!String.IsNullOrEmpty(ViewBag.ClasseInscricao2)) && (ViewBag.ClasseInscricao2 == item.nome)) { @Html.Raw("selected")   }>@item.nome</option>
                                             }
                                         </select>
                                     </div>
@@ -284,11 +285,11 @@
                                 <div id="segundaOpcaoClasse" class="row">
                                     @Html.Label("2ª Classe", new { @class = "col-sm-4" })
                                     <div class="col-sm-8 info-box-text">
-                                        <select name="classeInscricao2" class="form-control">
+                                        <select name="classeInscricao2" class="form-control segundaOpcaoClasse">
                                             <option value="0">Selecione uma classe...</option>
                                             @foreach (var item in ViewBag.Classes2)
                                             {
-                                                <option value="@item.Id" @if ((!String.IsNullOrEmpty(ViewBag.ClasseInscricao2)) && (ViewBag.ClasseInscricao2 == item.Id)) { @Html.Raw("selected")  }>@item.nome</option>
+                                                <option value="@item.Id" data-isDupla="@item.isDupla" @if ((!String.IsNullOrEmpty(ViewBag.ClasseInscricao2)) && (ViewBag.ClasseInscricao2 == item.Id)) { @Html.Raw("selected")   }>@item.nome</option>
                                             }
                                         </select>
                                     </div>
@@ -327,24 +328,25 @@
                                     {
                                         if (ViewBag.isAceitaCartao)
                                         {
-                                            <a href="@Url.Action("EfetuarPagamento", new { inscricaoId = inscricao.Id })" class="btn btn-success" title="Efetuar Pagamento">Cartão ou Boleto</a>
+                                            <a href="@Url.Action("EfetuarPagamento", new { inscricaoId = inscricao.Id })" class="btn btn-success" title="Efetuar Pagamento">Cartão</a>
                                         }
-                                        if ((Model.dadosBancarios != null)&&(Model.dadosBancarios.Length > 100)){
+                                        if ((Model.dadosBancarios != null) && (Model.dadosBancarios.Length > 100))
+                                        {
                                             <button class="btn btn-success transferenciaButton" title="Transferência bancária">Transferência</button>
                                         }
                                     }
                                 </div>
-                                    <div class="col-xs-12 col-sm-4 pull-right">
-                                        @if ((String.IsNullOrEmpty(inscricao.statusPagamento) && !inscricao.isAtivo))
-                                        {
-                                            <button type="button" class="btn btn-danger col-xs-12 pull-right confirmCancel">Cancelar</button>
-                                        }
-                                        <a href="@Url.Action("AlterarClasse", new { torneioId = Model.Id })" data-classe1="@ViewBag.ClasseInscricao" data-classe2="@ViewBag.ClasseInsc2" class="btn btn-info col-xs-12 confirmAlterarClasse" title="Salvar alterações">Salvar alterações</a>
-                                    </div>
+                                <div class="col-xs-12 col-sm-4 pull-right">
+                                    @if ((String.IsNullOrEmpty(inscricao.statusPagamento) && !inscricao.isAtivo))
+                                    {
+                                        <button type="button" class="btn btn-danger col-xs-12 pull-right confirmCancel">Cancelar</button>
+                                    }
+                                    <a href="@Url.Action("AlterarClasse", new { torneioId = Model.Id })" data-classe1="@ViewBag.ClasseInscricao" data-classe2="@ViewBag.ClasseInsc2" class="btn btn-info col-xs-12 confirmAlterarClasse" title="Salvar alterações">Salvar alterações</a>
+                                </div>
                             }
                             else
                             {
-                                <button type="submit" class="btn btn-info pull-right validarSeSocio">Inscrever-me</button>
+                                <button type="submit" id="btnIncricao" class="btn btn-info pull-right validarSeSocio">Inscrever-me</button>
                             }
                         }
                         else
@@ -389,6 +391,8 @@
 </div>
 @section Scripts {
     <script type="text/javascript">
+        var isDupla = false;
+        var isDupla2 = false;
         $(document).ready(function () {
 
             $(".confirmCancel").confirm({
@@ -409,6 +413,14 @@
             $(".escolherSegundaOpcaoClasse").change(function (event) {
                 event.preventDefault();
                 var classe2 = $(this).data("classe2");
+                isDupla = $(this).children(':selected').data("isdupla")=="True";
+                if ((isDupla)||(isDupla2)) {
+                    $("#btnIncricao").text("Escolher Parceiro");
+                    document.formInscricao.isClasseDupla.value = true;
+                } else {
+                    $("#btnIncricao").text("Inscrever-me");
+                    document.formInscricao.isClasseDupla.value = false;
+                }
                 if (classe2 == "True") {
                     $.confirm({
                         title: "",
@@ -424,6 +436,19 @@
                         cancelButton: "Não"
                     });
                 }
+            });
+
+            $(".segundaOpcaoClasse").change(function (event) {
+                event.preventDefault();
+                isDupla2 = $(this).children(':selected').data("isdupla")=="True";
+                if ((isDupla) || (isDupla2)) {
+                    $("#btnIncricao").text("Escolher Parceiro");
+                    document.formInscricao.isClasseDupla.value = true;
+                } else {
+                    $("#btnIncricao").text("Inscrever-me");
+                    document.formInscricao.isClasseDupla.value = false;
+                }
+
             });
 
         });
@@ -466,6 +491,14 @@
             } else {
                 document.getElementById('segundaOpcaoClasse').style.opacity = "0 !important";
                 document.getElementById('segundaOpcaoClasse').style.display = "none";
+                isDupla2 = false;
+                if ((isDupla) || (isDupla2)) {
+                    $("#btnIncricao").text("Escolher Parceiro");
+                    document.formInscricao.isClasseDupla.value = true;
+                } else {
+                    $("#btnIncricao").text("Inscrever-me");
+                    document.formInscricao.isClasseDupla.value = false;
+                }
             }
         }
 

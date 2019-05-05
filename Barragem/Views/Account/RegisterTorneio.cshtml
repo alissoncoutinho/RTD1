@@ -109,6 +109,7 @@
                             @Html.Label("Valor", new { @class = "col-sm-5" })
                             <div class="col-sm-7 info-box-text">
                                 @Html.Hidden("inscricao.torneioId", torneio.Id)
+                                @Html.Hidden("isClasseDupla", false)
                                 @if (torneio.valor == 0)
                                 {
                                     @Html.Raw("Gratuito")
@@ -174,7 +175,7 @@
                                             <option value="0">Selecione uma categoria...</option>
                                             @foreach (var item in ViewBag.Classes)
                                             {
-                                                <option value="@item.Id" @if (ViewBag.ClasseInscricao == item.Id) { @Html.Raw("selected")            }>@item.nome</option>
+                                                <option value="@item.Id" data-isDupla="@item.isDupla" @if (ViewBag.ClasseInscricao == item.Id) { @Html.Raw("selected")            }>@item.nome</option>
                                             }
                                         </select>
                                     </div>
@@ -193,11 +194,11 @@
                                     <div id="segundaOpcaoClasse" class="row">
                                         @Html.Label("2ª Categoria", new { @class = "col-sm-4" })
                                         <div class="col-sm-8 input-group-sm">
-                                            <select name="classeInscricao2" class="form-control">
+                                            <select name="classeInscricao2" class="form-control segundaOpcaoClasse">
                                                 <option value="0">Selecione uma categoria...</option>
                                                 @foreach (var item in ViewBag.Classes2Opcao)
                                                 {
-                                                    <option value="@item.Id" @if (ViewBag.ClasseInscricao2 == item.Id) { @Html.Raw("selected")          }>@item.nome</option>
+                                                    <option value="@item.Id" data-isDupla="@item.isDupla" @if (ViewBag.ClasseInscricao2 == item.Id) { @Html.Raw("selected")          }>@item.nome</option>
                                                 }
                                             </select>
                                         </div>
@@ -226,7 +227,7 @@
                             }
                             else
                             {
-                                <button type="submit" class="btn btn-primary pull-right validarSeSocio">Inscrever-me</button>
+                                <button type="submit" id="btnIncricao" class="btn btn-primary pull-right validarSeSocio">Inscrever-me</button>
                             }
                         }
                         else
@@ -243,6 +244,8 @@
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
     <script type="text/javascript">
+        var isDupla = false;
+        var isDupla2 = false;
         $(document).ready(function () {
             $("#register_dataNascimento").mask("99/99/9999");
             $("#register_altura2").mask("9,99");
@@ -251,6 +254,14 @@
             $(".escolherSegundaOpcaoClasse").change(function (event) {
                 event.preventDefault();
                 var classe2 = $(this).data("classe2");
+                isDupla = $(this).children(':selected').data("isdupla") == "True";
+                if ((isDupla) || (isDupla2)) {
+                    $("#btnIncricao").text("Escolher Parceiro");
+                    document.forms[0].isClasseDupla.value = true;
+                } else {
+                    $("#btnIncricao").text("Inscrever-me");
+                    document.forms[0].isClasseDupla.value = false;
+                }
                 if (classe2 == "True") {
                     $.confirm({
                         title: "",
@@ -268,6 +279,19 @@
                 }
             });
 
+            $(".segundaOpcaoClasse").change(function (event) {
+                event.preventDefault();
+                isDupla2 = $(this).children(':selected').data("isdupla") == "True";
+                if ((isDupla) || (isDupla2)) {
+                    $("#btnIncricao").text("Escolher Parceiro");
+                    document.forms[0].isClasseDupla.value = true;
+                } else {
+                    $("#btnIncricao").text("Inscrever-me");
+                    document.forms[0].isClasseDupla.value = false;
+                }
+
+            });
+
         })
 
         function segundaOpcaoDeClasse() {
@@ -277,6 +301,14 @@
             } else {
                 document.getElementById('segundaOpcaoClasse').style.opacity = "0 !important";
                 document.getElementById('segundaOpcaoClasse').style.display = "none";
+                isDupla2 = false;
+                if ((isDupla) || (isDupla2)) {
+                    $("#btnIncricao").text("Escolher Parceiro");
+                    document.forms[0].isClasseDupla.value = true;
+                } else {
+                    $("#btnIncricao").text("Inscrever-me");
+                    document.forms[0].isClasseDupla.value = false;
+                }
             }
         }
         document.getElementById('segundaOpcaoClasse').style.opacity = "0";

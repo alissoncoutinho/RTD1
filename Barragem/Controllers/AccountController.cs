@@ -214,7 +214,7 @@ namespace Barragem.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        public ActionResult RegisterTorneio(RegisterInscricao model, int torneioId, bool isSocio=false)
+        public ActionResult RegisterTorneio(RegisterInscricao model, int torneioId, bool isSocio=false, bool isClasseDupla = false)
         {
             var torneio = db.Torneio.Find(torneioId);
             ViewBag.torneio = torneio;
@@ -304,6 +304,9 @@ namespace Barragem.Controllers
                         db.InscricaoTorneio.Add(inscricao2);
                     }
                     db.SaveChanges();
+                    if (isClasseDupla){
+                        return RedirectToAction("EscolherDupla", "Torneio", new { torneioId = torneioId });
+                    }
                     return RedirectToAction("ConfirmacaoInscricao", "Torneio", new { torneioId = torneio.Id, msg="Inscrição realizada." });            
                 }catch (MembershipCreateUserException e){
                     ModelState.AddModelError("", ErrorCodeToString(e.StatusCode));

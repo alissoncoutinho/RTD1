@@ -63,6 +63,7 @@ namespace Barragem.Controllers
                 var codigo=91;
                 var sql="";
                 if (barragens.valorPorUsuario == null) barragens.valorPorUsuario = 5;
+                if (barragens.soTorneio == null) barragens.soTorneio = false;
                 using (TransactionScope scope = new TransactionScope())
                 {
                     if (ModelState.IsValid){
@@ -127,6 +128,8 @@ namespace Barragem.Controllers
                     ViewBag.MsgErro = "Você não pertence a esta barragem.";
                     return View(barragens);
                 }
+                if (barragens.soTorneio == null) barragens.soTorneio = false;
+
                 var barraAtual = db.BarragemView.Find(barragens.Id);
                 // o organizador não deve alterar este valor
                 barragens.valorPorUsuario = barraAtual.valorPorUsuario;
