@@ -10,10 +10,6 @@
                         <h3 class="box-title">Monte sua dupla na categoria @ViewBag.classeNome</h3>
                     </div>
                     <div class="box-body">
-                        <button title="Não encontrei meu parceiro" data-maisduplas="@ViewBag.temMaisClassesDuplas" data-torneio="@ViewBag.torneioId" class="col-lg-12 col-xs-12 btn btn-primary btn-sm naoEncontreiParceio">
-                            Meu parceiro ainda não está na lista
-                        </button>
-                        <br><br>
                         @if (Model == null){
                             <p>Desculpe, mas não encontramos nenhuma inscrição ativa de classe de dupla no seu login.</p>
                         }else{
@@ -55,6 +51,10 @@
                                     </tr>
                                 }
                             </table>
+                            <br>
+                            <button title="Não encontrei meu parceiro" data-maisduplas="@ViewBag.temMaisClassesDuplas" data-torneio="@ViewBag.torneioId" class="col-lg-12 col-xs-12 btn btn-danger btn-sm naoEncontreiParceio">
+                                Meu parceiro ainda não está na lista
+                            </button>
                         }
                     </div>
                 </div>
@@ -79,7 +79,7 @@
                         url = "/Torneio/EscolherDupla?torneioId=" + torneio + "&classe=0&segundaClasseDupla=true";
                     }
                     $.confirm({
-                        text: "Você está escolhendo <b>" + participante + "</b>, telefone <b>" + fone + "</b> como sua dupla. <b>Deseja prosseguir?</b> Após esta escolha, apenas o organizador poderá alterar sua dupla.",
+                        text: "Você está escolhendo <b>" + participante + "</b>, telefone <b>" + fone + "</b> como sua dupla. <b>Deseja prosseguir?</b>",
                         confirm: function (button) {
                             $.ajax({
                                 type: "POST",
@@ -118,11 +118,11 @@
                     var textoButton = "Ok. Finalizar inscrição."
                     var url = "/Torneio/ConfirmacaoInscricao?torneioId=" + torneio + "&msg=Inscrição realizada com sucesso";
                     if (temMaisClassesDuplas) {
-                        textoButton = "Ok. Ir para a escolha da próxima categoria."
+                        textoButton = "Ok. Ir para escolha do parceiro da outra categoria."
                         url = "/Torneio/EscolherDupla?torneioId=" + torneio + "&classe=0&segundaClasseDupla=true";
                     }
                     $.confirm({
-                        text: "Isso acontece porque o seu parceiro ainda não se inscreveu. Não se preocupe, ele poderá te escolher como parceiro. Haverá ainda uma última chance de escolha de parceiro após o encerramento das inscrições.",
+                        text: "Isso acontece porque o seu parceiro ainda não se inscreveu. Não se preocupe, ele poderá te escolher como parceiro no momento da inscrição dele.",
                         confirm: function (button) {
                             window.location.href = url;
                         },
