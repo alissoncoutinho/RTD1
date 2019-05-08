@@ -21,10 +21,9 @@ namespace Barragem.Controllers
 
         // GET: api/JogoAPI
         [Route("api/JogoAPI/ListarJogos/{classeId}")]
-        public IList<JogoRodada> GetListarJogos(int classeId)
+        public IList<JogoRodada> GetListarJogos(int classeId, int rankingId)
         {
-            var barragemId = 1; // TODO: pegar a barragem do userId
-            var rodadaId = db.Rodada.Where(r => r.isRodadaCarga == false && r.barragemId == barragemId).Max(r => r.Id);
+            var rodadaId = db.Rodada.Where(r => r.isRodadaCarga == false && r.barragemId == rankingId).Max(r => r.Id);
             var jogos = db.Jogo.Where(j => j.rodada_id == rodadaId && j.desafiado.classeId == classeId).
                 Select(jogo => new JogoRodada() {
                     Id = jogo.Id,
@@ -46,7 +45,7 @@ namespace Barragem.Controllers
             return jogos;
         }
 
-        [Route("api/RankingAPI/cabecalho/{userId}")]
+        [Route("api/JogoAPI/cabecalho/{userId}")]
         public Cabecalho GetCabecalho(int userId)
         {
             var user = db.UserProfiles.Find(userId);
@@ -83,11 +82,18 @@ namespace Barragem.Controllers
 
         // GET: api/JogoAPI/5
         [ResponseType(typeof(MeuJogo))]
-        public IHttpActionResult GetJogo(int id)
+        public IHttpActionResult GetJogo(int id, int userId=0)
         {
-            Jogo jogo = db.Jogo.Find(id);
-            if (jogo == null)
-            {
+            Jogo jogo = null;
+            if (id == 0) {
+                try{
+                    jogo = db.Jogo.Where(u => (u.desafiado_id == userId || u.desafiante_id == userId) && u.torneioId == null)
+                            .OrderByDescending(u => u.Id).Take(1).Single();
+                }catch(Exception e) { }
+            } else {
+                jogo = db.Jogo.Find(id);
+            }
+            if (jogo == null){
                 return NotFound();
             }
             MeuJogo meuJogo = montarMeuJogo(jogo);
@@ -160,6 +166,8 @@ namespace Barragem.Controllers
             headToHead.alturaDesafiante = jogo.desafiante.altura2;
             headToHead.idadeDesafiado = jogo.desafiado.idade;
             headToHead.idadeDesafiante = jogo.desafiante.idade;
+            headToHead.naturalidadeDesafiado = jogo.desafiado.naturalidade;
+            headToHead.naturalidadeDesafiante = jogo.desafiante.naturalidade;
             headToHead.inicioRankingDesafiado = jogo.desafiado.dataInicioRancking.Month + "/" + jogo.desafiado.dataInicioRancking.Year;
             headToHead.inicioRankingDesafiante = jogo.desafiante.dataInicioRancking.Month + "/" + jogo.desafiante.dataInicioRancking.Year;
             headToHead.lateralDesafiado = jogo.desafiado.lateralidade;
@@ -176,7 +184,7 @@ namespace Barragem.Controllers
             return headToHead;
         }
 
-        // GET: api/JogoAPI/5
+       
         [ResponseType(typeof(MeuJogo))]
         [HttpGet]
         [Route("api/JogoAPI/GetHead2Head/{id}")]

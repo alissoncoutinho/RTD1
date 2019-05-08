@@ -381,6 +381,8 @@ namespace Barragem.Models
         public int idadeDesafiado { get; set; }
         public string alturaDesafiante { get; set; }
         public string alturaDesafiado { get; set; }
+        public string naturalidadeDesafiante { get; set; }
+        public string naturalidadeDesafiado { get; set; }
         public string lateralDesafiante { get; set; }
         public string lateralDesafiado { get; set; }
         public string inicioRankingDesafiante { get; set; }

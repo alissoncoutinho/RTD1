@@ -71,7 +71,7 @@ namespace Barragem.Models
         {
             get {
                 var birthdate = dataNascimento;
-                var today =  new DateTime();
+                var today =  DateTime.Now;
                 var idade = today.Year - birthdate.Year;
                 if (birthdate > today.AddYears(-idade))  idade--;
                 return idade;
@@ -175,6 +175,8 @@ namespace Barragem.Models
         public string nomeRanking { get; set; }
 
         public int idRanking { get; set; }
+
+        public int userId { get; set; }
     }
 
     public class RegisterModel

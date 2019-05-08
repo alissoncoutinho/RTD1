@@ -84,14 +84,14 @@
     </div>
     <div class="form-group">
         @Html.LabelFor(m => m.telefoneCelular, new { @class = "control-label col-md-2" })*
-        <div class="col-md-2">
+        <div class="col-md-3">
             @Html.TextBoxFor(m => m.telefoneCelular, new { @class = "form-control",placeholder="ex.:(61)99999-9999/vivo" })
             @Html.ValidationMessageFor(m => m.telefoneCelular, "", new { @class = "alert-danger" })
         </div>
     </div>
     <div class="form-group">
         @Html.LabelFor(m => m.telefoneCelular2, new { @class = "control-label col-md-2" })
-        <div class="col-md-2">
+        <div class="col-md-3">
             @Html.TextBoxFor(m => m.telefoneCelular2, new { @class = "form-control", placeholder = "ex.:(61)99999-9999/tim" })
             @Html.ValidationMessageFor(m => m.telefoneCelular2)
         </div>
