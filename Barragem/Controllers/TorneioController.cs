@@ -198,13 +198,25 @@ namespace Barragem.Controllers
         }
 
         [Authorize(Roles = "admin,organizador")]
-        public ActionResult MontarChaveamento(int torneioId)
+        [HttpPost]
+        public ActionResult MontarChaveamento(int torneioId, IEnumerable<int> classeIds = null)
         {
-            db.Database.ExecuteSqlCommand("delete from jogo where torneioId=" + torneioId);
+            List<ClasseTorneio> classes = new List<ClasseTorneio>();
+            if (classeIds == null) { 
+                db.Database.ExecuteSqlCommand("delete from jogo where torneioId=" + torneioId);
+                classes = db.ClasseTorneio.Where(c => c.torneioId == torneioId).ToList();
+            } else {
+                foreach (int classeId in classeIds){
+                    db.Database.ExecuteSqlCommand("delete from jogo where classeTorneio=" + classeId);
+                    var classe = new ClasseTorneio();
+                    classe.Id = classeId;
+                    classes.Add(classe);
+                }
+            }
             List<InscricaoTorneio> inscricoes = null;
             var torneio = db.Torneio.Find(torneioId);
             var qtddJogadores = 0;
-            var classes = db.ClasseTorneio.Where(c => c.torneioId == torneioId).ToList();
+            
             foreach (ClasseTorneio classe in classes)
             {
                 if (classe.isDupla)
@@ -1438,6 +1450,8 @@ namespace Barragem.Controllers
         {
             List<Jogo> listaJogos = null;
             var classes = db.ClasseTorneio.Where(i => i.torneioId == torneioId).OrderBy(c => c.nome).ToList();
+            var classesGeradas = db.Jogo.Where(i => i.torneioId == torneioId).Select(i => (int)i.classeTorneio).Distinct().ToList();
+            ViewBag.ClassesGeradas = classesGeradas;
             ViewBag.Classes = classes;
             ViewBag.fClasse = fClasse;
             ViewBag.fData = fData;
