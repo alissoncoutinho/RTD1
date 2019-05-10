@@ -89,10 +89,20 @@ namespace Barragem.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult LogOff()
+        public ActionResult LogOff(string isTorneio="")
         {
+            var dominioTorneio = "";
+            if (isTorneio == "torneio"){
+                HttpCookie cookie = Request.Cookies["_barragemId"];
+                if (cookie != null){
+                    var barragemId = Convert.ToInt32(cookie.Value.ToString());
+                    dominioTorneio = db.BarragemView.Find(barragemId).dominio;
+                }
+            }
             WebSecurity.Logout();
-
+            if (isTorneio == "torneio"){
+                return RedirectToAction("IndexTorneioRedirect", "Home", new { id = dominioTorneio });
+            }
             return RedirectToAction("IndexBarragens", "Home");
         }
 

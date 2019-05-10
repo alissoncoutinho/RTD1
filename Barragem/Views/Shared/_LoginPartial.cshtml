@@ -36,6 +36,7 @@
     
     using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm" })) {
         @Html.AntiForgeryToken()
+        <input type="hidden" name="isTorneio" value="@ehTorneio"/>
     }
 
 }else{
