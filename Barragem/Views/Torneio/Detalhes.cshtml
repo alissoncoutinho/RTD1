@@ -143,7 +143,7 @@
                             if ((bool)Model.isMaisUmaClasse)
                             {
                                 <div class="row">
-                                    @Html.Label("Valor para 2 classes", new { @class = "col-sm-5" })
+                                    @Html.Label("Valor para duas classes", new { @class = "col-sm-5" })
                                     <div class="col-sm-7 info-box-text">
                                         @if ((Model.valor == 0) || (ViewBag.isGratuito))
                                         {
@@ -158,7 +158,7 @@
                                 if ((Model.valorMaisClassesSocio != null) && (Model.valorMaisClassesSocio != 0))
                                 {
                                     <div class="row">
-                                        @Html.Label("Valor Sócio 2 classes", new { @class = "col-sm-5" })
+                                        @Html.Label("Valor Sócio duas classes", new { @class = "col-sm-5" })
                                         <div class="col-sm-7 info-box-text">
                                             @Html.Raw("R$ " + Model.valorMaisClassesSocio + ",00")
                                         </div>

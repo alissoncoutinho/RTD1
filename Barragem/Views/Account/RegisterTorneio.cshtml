@@ -28,6 +28,15 @@
                         <h3 class="box-title">Dados Pessoais</h3>
                     </div>
                     <div class="box-body">
+                        <div>
+                            @Html.ValidationMessageFor(m => m.register.email, "", new { @class = "alert-danger" })
+                            @Html.ValidationMessageFor(m => m.register.UserName, "", new { @class = "alert-danger" })
+                            @Html.ValidationMessageFor(m => m.register.Password, "", new { @class = "alert-danger" })
+                            @Html.ValidationMessageFor(m => m.register.ConfirmPassword, "", new { @class = "alert-danger" })
+                            @Html.ValidationMessageFor(model => model.register.dataNascimento, "", new { @class = "alert-danger" })
+                            @Html.ValidationMessageFor(m => m.register.altura2, "", new { @class = "alert-danger" })
+                            @Html.ValidationMessageFor(m => m.register.telefoneCelular, "", new { @class = "alert-danger" })
+                        </div>
                         <div class="form">
                             <input type="hidden" name="register.barragemId" id="register_barragemId" value="@torneio.barragemId">
                             <div class="row form-group">
@@ -48,14 +57,14 @@
                                 @Html.LabelFor(m => m.register.Password, new { @class = "control-label col-md-4" })
                                 <div class="col-md-6 input-group-sm">
                                     @Html.PasswordFor(m => m.register.Password, new { @class = "form-control" })
-                                    @Html.ValidationMessageFor(m => m.register.Password)
+                                    @Html.ValidationMessageFor(m => m.register.Password, "", new { @class = "alert-danger" })
                                 </div>
                             </div>
                             <div class="row form-group">
                                 @Html.LabelFor(m => m.register.ConfirmPassword, new { @class = "control-label col-md-4" })
                                 <div class="col-md-6 input-group-sm">
                                     @Html.PasswordFor(m => m.register.ConfirmPassword, new { @class = "form-control" })
-                                    @Html.ValidationMessageFor(m => m.register.ConfirmPassword)
+                                    @Html.ValidationMessageFor(m => m.register.ConfirmPassword, "", new { @class = "alert-danger" })
                                 </div>
                             </div>
                             <div class="row form-group">
@@ -68,7 +77,7 @@
                             <div class="row form-group">
                                 @Html.LabelFor(model => model.register.dataNascimento, new { @class = "control-label col-md-4" })*
                                 <div class="col-md-5 input-group-sm">
-                                    <input type="text" name="register.dataNascimento" id="register_dataNascimento" class="form-control" placeholder="dd/mm/yyyy">
+                                    @Html.TextBoxFor(m => m.register.dataNascimento, new { @class = "form-control", placeholder = "dd/mm/yyyy" })
                                     @Html.ValidationMessageFor(model => model.register.dataNascimento, "", new { @class = "alert-danger" })
                                 </div>
                             </div>
@@ -133,7 +142,7 @@
                         }
                         @if ((torneio.isMaisUmaClasse) && (torneio.valor != 0)) {
                             <div class="row">
-                                @Html.Label("Valor para 2 classes", new { @class = "col-sm-5" })
+                                @Html.Label("Valor para duas classes", new { @class = "col-sm-5" })
                                 <div class="col-sm-7 info-box-text">
                                     @Html.Raw("R$ " + torneio.valorMaisClasses + ",00")
                                 </div>
@@ -141,7 +150,7 @@
                             if ((torneio.valorMaisClassesSocio != null) && (torneio.valorMaisClassesSocio != 0))
                             {
                                 <div class="row">
-                                    @Html.Label("Valor Sócio 2 classes", new { @class = "col-sm-5" })
+                                    @Html.Label("Valor Sócio duas classes", new { @class = "col-sm-5" })
                                     <div class="col-sm-7 info-box-text">
                                         @Html.Raw("R$ " + torneio.valorMaisClassesSocio + ",00")
                                     </div>
@@ -162,11 +171,15 @@
                                         É sócio do clube? *
                                     </label>
                                     <div class="col-sm-7 info-box-text">
-                                        <input type="radio" name="isSocio" id="isSocio" value="true">Sim
-                                        <input type="radio" name="isSocio" id="isSocio" value="false">Não
-                                    </div>
-                                </div>
-                            </div>
+                                        <input type="radio" name="isSocio" id="isSocio" value="true" @if (ViewBag.isSocio != null && ViewBag.isSocio) {@Html.Raw("checked") } >Sim
+                                        <input type="radio" name="isSocio" id="isSocio" value="false" @if (ViewBag.isSocio != null && !ViewBag.isSocio) {@Html.Raw("checked") } >Não
+</div>
+
+
+</div>
+
+
+</div>
                         }
                                 <div class="row">
                                     @Html.Label("Categoria", new { @class = "col-sm-4" })
@@ -186,7 +199,7 @@
                                         <div class="col-sm-10">
                                             <div class="checkbox">
                                                 <label>
-                                                    <input type="checkbox" value="true" name="isMaisDeUmaClasse" id="isMaisDeUmaClasse" onclick="segundaOpcaoDeClasse()" /> @Html.Raw("Quero escolher mais uma categoria")
+                                                    <input type="checkbox" value="true" name="isMaisDeUmaClasse" id="isMaisDeUmaClasse" @if (ViewBag.ClasseInscricao2!=null && ViewBag.ClasseInscricao2 != 0) { @Html.Raw("checked") } onclick="segundaOpcaoDeClasse()" /> @Html.Raw("Quero escolher mais uma categoria")
                                                 </label>
                                             </div>
                                         </div>
@@ -212,7 +225,9 @@
                                             <div class="col-sm-12">@Html.Raw(torneio.observacao)</div>
                                         </div>
                                         <div class="row form-group input-group-sm">
-                                            <div class="col-sm-12"><input type="text" placeholder="Responda aqui..." name="inscricao.observacao" class="form-control"></div>
+                                            <div class="col-sm-12">
+                                                @Html.TextBoxFor(m => m.inscricao.observacao, new { @class = "form-control", placeholder = "Responda aqui..." })
+                                            </div>
                                         </div>
                                     </div>
                                 }
@@ -311,15 +326,26 @@
                 }
             }
         }
-        document.getElementById('segundaOpcaoClasse').style.opacity = "0";
-        document.getElementById('segundaOpcaoClasse').style.display = "none";
+        @if(ViewBag.isClasseDupla!=null && ViewBag.isClasseDupla)
+        {
+            @Html.Raw("$('#btnIncricao').text('Escolher Parceiro'); ");
+            @Html.Raw("document.forms[0].isClasseDupla.value = true;");
+        }
 
 
-        $(".validarSeSocio").click(function(event) {
+        if (document.getElementById('isMaisDeUmaClasse').checked) {
+            document.getElementById('segundaOpcaoClasse').style.opacity = "1";
+            document.getElementById('segundaOpcaoClasse').style.display = "block";
+        } else {
+            document.getElementById('segundaOpcaoClasse').style.opacity = "0";
+            document.getElementById('segundaOpcaoClasse').style.display = "none";
+        }
+
+        $(".validarSeSocio").click(function (event) {
             event.preventDefault();
             var radioButtons = document.getElementsByName("isSocio");
             var labelisSocio = document.getElementById("labelIsSocio");
-            if ((labelisSocio != null) && (radioButtons[0].checked == false)&&(radioButtons[1].checked == false)){
+            if ((labelisSocio != null) && (radioButtons[0].checked == false) && (radioButtons[1].checked == false)) {
                 alert("Favor informar se você é sócio do clube ou não.");
                 labelisSocio.style.color = "red";
                 return false;
@@ -327,7 +353,17 @@
                 document.forms[0].submit();
             }
         });
-        
+
+        jQuery(function ($) {
+            $.validator.addMethod('date',
+            function (value, element) {
+                $.culture = Globalize.culture("pt-BR");
+                var date = Globalize.parseDate(value, "dd/MM/yyyy", "pt-BR");
+                return this.optional(element) ||
+                  !/Invalid|NaN/.test(new Date(date).toString());
+            });
+        });
+
     </script>
 }
 

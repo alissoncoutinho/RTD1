@@ -10,6 +10,7 @@ using System.Web.Http.Description;
 using Barragem.Context;
 using Barragem.Models;
 using Barragem.Class;
+using System.Net.Http;
 
 namespace Barragem.Controllers
 {
@@ -94,12 +95,13 @@ namespace Barragem.Controllers
                 jogo = db.Jogo.Find(id);
             }
             if (jogo == null){
-                return NotFound();
+                return InternalServerError(new Exception("Jogo não encontrado.")); 
             }
             MeuJogo meuJogo = montarMeuJogo(jogo);
             
             return Ok(meuJogo);
         }
+        
 
         private MeuJogo montarMeuJogo(Jogo jogo) {
             var qtddRodada = 0;

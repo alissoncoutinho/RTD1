@@ -30,7 +30,7 @@ namespace Barragem.Models
         [Display(Name = "data nascimento")]
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}")]
         [DataType(DataType.Date)]
-        [Required(ErrorMessage = "Este campo é obrigatório")]
+        [Required(ErrorMessage = "Campo data é obrigatório")]
         public DateTime dataNascimento { get; set; }
 
         [Display(Name = "naturalidade")]
@@ -39,7 +39,7 @@ namespace Barragem.Models
         public int? altura { get; set; }
 
         [Display(Name = "altura")]
-        [Required(ErrorMessage = "Este campo é obrigatório")]
+        [Required(ErrorMessage = "Campo altura é obrigatório")]
         public string altura2 { get; set; }
 
         [Display(Name = "lateralidade")]
@@ -184,16 +184,17 @@ namespace Barragem.Models
         public RegisterModel(){
             this.altura = 1;
         }
-        [Required]
+        [Required(ErrorMessage = "O campo login é obrigatório")]
         [Display(Name = "Login")]
         public string UserName { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "O campo senha é obrigatório")]
         [StringLength(100, ErrorMessage = "A {0} deve ter pelo menos {2} caracteres.", MinimumLength = 6)]
         [DataType(DataType.Password)]
         [Display(Name = "Senha")]
         public string Password { get; set; }
 
+        [Required(ErrorMessage = "O campo senha é obrigatório")]
         [DataType(DataType.Password)]
         [Display(Name = "Confirmar senha")]
         [Compare("Password", ErrorMessage = "A senha e a confirmação de senha não estão iguais.")]
@@ -206,7 +207,7 @@ namespace Barragem.Models
         [Display(Name = "data nascimento")]
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}")]
         [DataType(DataType.Date, ErrorMessage = "Data de Nascimento com formato inválido")]
-        [Required(ErrorMessage = "Este campo é obrigatório")]
+        [Required(ErrorMessage = "Campo data nascimento obrigatório")]
         public DateTime dataNascimento { get; set; }
         [Display(Name = "naturalidade")]
         public string naturalidade { get; set; }
@@ -214,7 +215,7 @@ namespace Barragem.Models
         public int? altura { get; set; }
 
         [Display(Name = "altura")]
-        [Required(ErrorMessage = "Este campo é obrigatório")]
+        [Required(ErrorMessage = "Campo altura é obrigatório")]
         public string altura2 { get; set; }
 
         [Display(Name = "lateralidade")]

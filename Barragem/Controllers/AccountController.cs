@@ -229,11 +229,17 @@ namespace Barragem.Controllers
             var torneio = db.Torneio.Find(torneioId);
             ViewBag.torneio = torneio;
             ViewBag.email = model.register.email;
+            ViewBag.login = model.register.UserName;
+            ViewBag.isSocio = isSocio;
+            ViewBag.isClasseDupla = isClasseDupla;
+            ViewBag.ClasseInscricao = model.inscricao.classe;
+            ViewBag.ClasseInscricao2 = model.classeInscricao2;
             var classes = db.ClasseTorneio.Where(i => i.torneioId == torneioId && i.isPrimeiraOpcao).OrderBy(c => c.nome).ToList();
             ViewBag.Classes = classes;
             var classes2Opcao = db.ClasseTorneio.Where(i => i.torneioId == torneioId && i.isSegundaOpcao).OrderBy(c => c.nome).ToList();
             ViewBag.Classes2Opcao = classes2Opcao;
             var classesBarragem = db.Classe.Where(c => c.barragemId == torneio.barragemId).ToList();
+            
             if (ModelState.IsValid){
                 try{
                     if (WebSecurity.UserExists(model.register.UserName)){
