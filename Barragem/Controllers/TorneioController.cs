@@ -208,8 +208,7 @@ namespace Barragem.Controllers
             } else {
                 foreach (int classeId in classeIds){
                     db.Database.ExecuteSqlCommand("delete from jogo where classeTorneio=" + classeId);
-                    var classe = new ClasseTorneio();
-                    classe.Id = classeId;
+                    var classe = db.ClasseTorneio.Find(classeId);
                     classes.Add(classe);
                 }
             }
@@ -219,12 +218,9 @@ namespace Barragem.Controllers
             
             foreach (ClasseTorneio classe in classes)
             {
-                if (classe.isDupla)
-                {
+                if (classe.isDupla){
                     inscricoes = db.InscricaoTorneio.Where(r => r.torneioId == torneioId && r.classe == classe.Id && r.isAtivo && r.parceiroDuplaId != null).ToList();
-                }
-                else
-                {
+                }else{
                     inscricoes = db.InscricaoTorneio.Where(r => r.torneioId == torneioId && r.classe == classe.Id && r.isAtivo).ToList();
                 }
                 qtddJogadores = inscricoes.Count();
