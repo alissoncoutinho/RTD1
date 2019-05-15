@@ -253,7 +253,7 @@ namespace Barragem.Controllers
             bool umaVez = true;
             for (int i = 1; i <= qtddByes; i++)
             {
-                var listJogoCChave = db.JogoCabecaChave.Where(j => j.cabecaChave == i && j.chaveamento == qtddJogos).ToList();
+                var listJogoCChave = db.JogoCabecaChave.Where(j => j.cabecaChave == i && j.chaveamento == qtddJogos && j.temRepescagem==temRepescagem).ToList();
                 Jogo jogo = null;
                 if ((listJogoCChave.Count() > 0) && (!temRepescagem))
                 {
@@ -376,8 +376,7 @@ namespace Barragem.Controllers
             InscricaoTorneio jogador2 = null;
             foreach (Jogo jogo in jogosRodada1)
             {
-                if ((temRepescagem) && (inscritos.Count() == 0))
-                {
+                if (inscritos.Count() == 0){
                     if ((jogador1 != null) && (jogador1.userId != 0))
                     {
                         jogador2 = jogador1;
