@@ -1566,10 +1566,10 @@ namespace Barragem.Controllers
                 filtroClasse = classes[0].Id;
                 ViewBag.filtroClasse = filtroClasse;
             }
-            duplas = db.InscricaoTorneio.Where(i => i.torneioId == torneioId && i.classe == filtroClasse && i.isAtivo).
+            duplas = db.InscricaoTorneio.Where(i => i.torneioId == torneioId && i.classe == filtroClasse).
                 OrderByDescending(i => i.parceiroDuplaId).ToList();
 
-            ViewBag.Inscritos = db.InscricaoTorneio.Where(c => c.torneioId == torneioId && c.isAtivo && c.classe == filtroClasse).ToList();
+            ViewBag.Inscritos = db.InscricaoTorneio.Where(c => c.torneioId == torneioId && c.classe == filtroClasse).ToList();
             return View(duplas);
         }
         [Authorize(Roles = "admin,organizador")]
