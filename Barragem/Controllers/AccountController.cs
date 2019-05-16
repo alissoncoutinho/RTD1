@@ -1219,7 +1219,7 @@ namespace Barragem.Controllers
             List<Rancking> ranckingJogador = db.Rancking.Where(r => r.userProfile_id == userId).OrderByDescending(r => r.rodada_id).Take(10).ToList();
             ViewBag.RanckingJogador = ranckingJogador;
             ViewBag.posicaoJogador = ranckingJogador[0].posicaoClasse + "º";
-            ViewBag.pontuacaoAtual = ranckingJogador[0].totalAcumulado;
+            ViewBag.pontuacaoAtual = ranckingJogador.Sum(r=>r.pontuacao);
             return View(userProfile);
         }
 

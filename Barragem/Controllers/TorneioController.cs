@@ -377,17 +377,11 @@ namespace Barragem.Controllers
             foreach (Jogo jogo in jogosRodada1)
             {
                 if (inscritos.Count() == 0){
-                    if ((jogador1 != null) && (jogador1.userId != 0))
+                    if ((jogador1 != null) && (jogador1.userId != 0)&&(jogo.desafiante_id==10))
                     {
                         jogador2 = jogador1;
                         jogador1 = null;
-                    }
-                    else if ((jogador2 != null) && (jogador2.userId != 0))
-                    {
-                        jogador1 = jogador2;
-                        jogador2 = null;
-                    }
-                    else
+                    } else if((jogo.desafiante_id != 0)&&(jogo.desafiado_id != 0))
                     {
                         break;
                     }
@@ -400,9 +394,10 @@ namespace Barragem.Controllers
                 {
                     jogador2 = selecionarAdversario(inscritos);
                 }
-
-                if (jogo.desafiante_id == 0)
-                {
+                if ((inscritos.Count() == 0)&&(jogo.desafiante_id==10)&&(jogador1 != null)&&(jogador1.userId != 0)){
+                    jogador2 = jogador1;
+                }
+                if (jogo.desafiante_id == 0){
                     jogo.desafiante_id = jogador1.userId;
                     jogo.isPrimeiroJogoTorneio = true;
                     if (jogador1.classeTorneio.isDupla)
