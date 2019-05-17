@@ -112,6 +112,9 @@
                             <td align="center">
                                 <form method="post" enctype="multipart/form-data" action="#" name="@Html.Raw("form"+i)" id="@Html.Raw("form"+i)" class="form">
                                     <input type="hidden" name="Id" id="Id" value="@item.Id">
+                                    <button title="detalhe" data-valor="@Html.Raw(item.torneioId+"|"+item.userId)" name="@Html.Raw("det-button"+i)" id="@Html.Raw("det-button" + i)" class="btn btn-default btn-xs detalhe">
+                                        Detalhe
+                                    </button>
                                     <button title="salvar" data-valor="@Html.Raw(i)" name="@Html.Raw("button"+i)" id="@Html.Raw("button"+i)" class="btn btn-default btn-xs inscricaoButton">
                                         Salvar
                                     </button>
@@ -171,6 +174,12 @@
             },
             confirmButton: "Sim",
             cancelButton: "Não"
+        });
+
+        $(".detalhe").click(function (event) {
+            event.preventDefault();
+            var arr = $(this).data("valor").split("|");
+            window.location.href = "/Torneio/Detalhes?Id=" + arr[0] +"&Msg=&userId=" + arr[1];
         });
 
     });
