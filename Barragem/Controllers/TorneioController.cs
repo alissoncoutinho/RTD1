@@ -372,52 +372,26 @@ namespace Barragem.Controllers
 
         private void montarJogosPorSorteio(List<Jogo> jogosRodada1, List<InscricaoTorneio> inscritos, bool temRepescagem)
         {
-            InscricaoTorneio jogador1 = null;
-            InscricaoTorneio jogador2 = null;
-            foreach (Jogo jogo in jogosRodada1)
-            {
-                if (inscritos.Count() == 0){
-                    if ((jogador1 != null) && (jogador1.userId != 0)&&(jogo.desafiante_id==10))
-                    {
-                        jogador2 = jogador1;
-                        jogador1 = null;
-                    } else if((jogo.desafiante_id != 0)&&(jogo.desafiado_id != 0))
-                    {
-                        break;
-                    }
-                }
-                if (jogador1 == null)
-                {
-                    jogador1 = selecionarAdversario(inscritos);
-                }
-                if (jogador2 == null)
-                {
-                    jogador2 = selecionarAdversario(inscritos);
-                }
-                if ((inscritos.Count() == 0)&&(jogo.desafiante_id==10)&&(jogador1 != null)&&(jogador1.userId != 0)){
-                    jogador2 = jogador1;
-                }
+            InscricaoTorneio jogador = null;
+            foreach (Jogo jogo in jogosRodada1) { 
                 if (jogo.desafiante_id == 0){
-                    jogo.desafiante_id = jogador1.userId;
+                    jogador = selecionarAdversario(inscritos);
+                    jogo.desafiante_id = jogador.userId;
                     jogo.isPrimeiroJogoTorneio = true;
-                    if (jogador1.classeTorneio.isDupla)
+                    if (jogador.classeTorneio.isDupla)
                     {
-                        jogo.desafiante2_id = jogador1.parceiroDuplaId;
+                        jogo.desafiante2_id = jogador.parceiroDuplaId;
                     }
-                    jogador1 = null;
                 }
-                if (jogo.desafiado_id == 0)
-                {
-                    if (jogo.desafiante_id != 10)
-                    {
+                if (jogo.desafiado_id == 0){
+                    jogador = selecionarAdversario(inscritos);
+                    if (jogo.desafiante_id != 10){
                         jogo.isPrimeiroJogoTorneio = true;
                     }
-                    jogo.desafiado_id = jogador2.userId;
-                    if ((jogador2.classeTorneio != null) && (jogador2.classeTorneio.isDupla))
-                    {
-                        jogo.desafiado2_id = jogador2.parceiroDuplaId;
+                    jogo.desafiado_id = jogador.userId;
+                    if ((jogador.classeTorneio != null) && (jogador.classeTorneio.isDupla)){
+                        jogo.desafiado2_id = jogador.parceiroDuplaId;
                     }
-                    jogador2 = null;
                 }
                 db.Entry(jogo).State = EntityState.Modified;
                 db.SaveChanges();
