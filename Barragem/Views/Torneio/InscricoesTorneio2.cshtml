@@ -1,8 +1,9 @@
 ﻿@{
     ViewBag.Title = "Index";
+    List<Barragem.Models.InscricaoTorneio> inscricoesDupla = ViewBag.inscricoesDupla;
     int i = 0;
     if (ViewBag.Torneio != null) {
-        Layout = "~/Views/Shared/_LayoutTorneio2.cshtml"; 
+        Layout = "~/Views/Shared/_LayoutTorneio2.cshtml";
     }
 }
 @model IEnumerable<Barragem.Models.InscricaoTorneio>
@@ -27,6 +28,7 @@
             @foreach (var item in Model)
             {
                 i++;
+
                 <tr>
                     <td>
                         @i
@@ -43,6 +45,38 @@
                         @if (item.isAtivo)
                         {
                            <b> Confirmado </b>
+                        }
+                        else
+                        {
+                            @Html.Raw("Pendente")
+                        }
+                    </td>
+                </tr>
+            }
+            @foreach (var item in inscricoesDupla)
+            {
+                i++;
+
+                <tr>
+                    <td>
+                        @i
+                    </td>
+                    <td>
+                        <a href="@Url.Action("../Account/Detalhes", new { userId = item.userId, mostrarClasse=false })" title="Detalhes do jogador">
+                            @Html.DisplayFor(modelItem => item.participante.nome)
+                            @if ((item.parceiroDuplaId != null) && (item.parceiroDuplaId != 0))
+                            {
+                                @Html.Raw(" / ") @Html.DisplayFor(modelItem => item.parceiroDupla.nome)
+                            }
+                        </a>
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.classeTorneio.nome)
+                    </td>
+                    <td>
+                        @if (item.isAtivo)
+                        {
+                            <b> Confirmado </b>
                         }
                         else
                         {

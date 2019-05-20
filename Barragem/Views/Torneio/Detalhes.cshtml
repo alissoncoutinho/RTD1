@@ -1,7 +1,7 @@
 ﻿@model Barragem.Models.Torneio
 @{
     Layout = "~/Views/Shared/_LayoutTorneio2.cshtml";
-    Barragem.Models.InscricaoTorneio inscricao = null;
+    Barragem.Models.InscricaoTorneio inscricao = new Barragem.Models.InscricaoTorneio();
     if (ViewBag.inscricao != null)
     {
         inscricao = ViewBag.inscricao;

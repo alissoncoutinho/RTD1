@@ -718,7 +718,6 @@ namespace Barragem.Controllers
                     var torneio = db.Torneio.Where(t => t.barragemId == barragemId && t.isAtivo).OrderByDescending(t => t.Id).ToList();
                     torneioId = torneio[0].Id;
                     liberarTabelaInscricao = torneio[0].liberaTabelaInscricao;
-                    inscricoes = db.InscricaoTorneio.Where(r => r.torneioId == torneioId).OrderBy(r => r.classe).ThenBy(r => r.participante.nome).ToList();
                 }
                 else if (barra != 0)
                 {
@@ -726,22 +725,30 @@ namespace Barragem.Controllers
                     var torneio = db.Torneio.Where(t => t.barragemId == barra && t.isAtivo).OrderByDescending(t => t.Id).ToList();
                     liberarTabelaInscricao = torneio[0].liberaTabelaInscricao;
                     torneioId = torneio[0].Id;
-                    inscricoes = db.InscricaoTorneio.Where(r => r.torneioId == torneioId).OrderBy(r => r.classe).ThenBy(r => r.participante.nome).ToList();
                     Funcoes.CriarCookieBarragem(Response, Server, barragem.Id, barragem.nome);
                 }
             }
-            else
-            {
-                inscricoes = db.InscricaoTorneio.Where(r => r.torneioId == torneioId).OrderBy(r => r.classe).ThenBy(r => r.participante.nome).ToList();
+            inscricoes = db.InscricaoTorneio.Where(r => r.torneioId == torneioId && r.classeTorneio.isDupla == false).OrderBy(r => r.classe).ThenBy(r => r.participante.nome).ToList();
+            var inscricoesDupla = db.InscricaoTorneio.Where(r => r.torneioId == torneioId && r.classeTorneio.isDupla == true).OrderBy(r => r.classe).ThenBy(r => r.participante.nome).ToList();
+
+            List<InscricaoTorneio> inscricoesRemove = new List<InscricaoTorneio>();
+            foreach (var ins in inscricoesDupla){
+                var formouDupla = inscricoesDupla.Where(i => i.parceiroDuplaId == ins.userId && i.classe==ins.classe).Count();
+                if (formouDupla > 0){
+                    inscricoesRemove.Add(ins);
+                }
             }
+            foreach (var ins in inscricoesRemove){
+                inscricoesDupla.Remove(ins);
+            }
+            ViewBag.inscricoesDupla = inscricoesDupla;
             ViewBag.liberaTabelaInscricao = liberarTabelaInscricao;
             mensagem(Msg);
 
-            if (Url == "torneio")
-            {
+            if (Url == "torneio"){
                 ViewBag.Torneio = "Sim";
             }
-
+           
             return View(inscricoes);
         }
 
