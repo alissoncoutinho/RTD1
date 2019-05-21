@@ -162,7 +162,7 @@ namespace Barragem.Controllers
         {
 
             string perfil = Roles.GetRolesForUser(User.Identity.Name)[0];
-            if (perfil.Equals("usuario")){
+            if (perfil.Equals("usuario")|| userId==0){
                 userId = WebSecurity.GetUserId(User.Identity.Name);
             }
             var inscricao = db.InscricaoTorneio.Where(i => i.userId == userId && i.torneioId == torneioId && i.classeTorneio.isDupla).OrderBy(i=>i.Id).ToList();
@@ -171,6 +171,7 @@ namespace Barragem.Controllers
             List<InscricaoTorneio> inscricoesDuplas = null;
             ViewBag.isDisponivel = false;
             ViewBag.torneioId = torneioId;
+            ViewBag.userId = userId;
             if (inscricao.Count() > 0)
             {
                 if (classe == 0)
@@ -967,7 +968,7 @@ namespace Barragem.Controllers
                 ViewBag.isAceitaCartao = true;
             }
             string perfil = Roles.GetRolesForUser(User.Identity.Name)[0];
-            if (perfil.Equals("usuario")){
+            if (perfil.Equals("usuario") || userId==0){
                 userId = WebSecurity.GetUserId(User.Identity.Name);
             }
             var inscricao = db.InscricaoTorneio.Where(i => i.torneio.Id == id && i.userId == userId).ToList();
@@ -1021,12 +1022,15 @@ namespace Barragem.Controllers
         }
 
         [Authorize(Roles = "admin,usuario,organizador")]
-        public ActionResult ConfirmacaoInscricao(int torneioId, string msg = "", string msgErro = "")
+        public ActionResult ConfirmacaoInscricao(int torneioId, string msg = "", string msgErro = "", int userId=0)
         {
             //torneioId = 1;
             ViewBag.Msg = msg;
             ViewBag.MsgErro = msgErro;
-            var userId = WebSecurity.GetUserId(User.Identity.Name);
+            string perfil = Roles.GetRolesForUser(User.Identity.Name)[0];
+            if (perfil.Equals("usuario") || userId == 0){
+                userId = WebSecurity.GetUserId(User.Identity.Name);
+            }
             var torneio = db.Torneio.Find(torneioId);
             ViewBag.isAceitaCartao = false;
             if (!String.IsNullOrEmpty(torneio.barragem.tokenPagSeguro))
@@ -1048,7 +1052,7 @@ namespace Barragem.Controllers
             {
                 var gratuidade = false;
                 string perfil = Roles.GetRolesForUser(User.Identity.Name)[0];
-                if (perfil.Equals("usuario")){
+                if (perfil.Equals("usuario") || userId==0){
                     userId = WebSecurity.GetUserId(User.Identity.Name);
                 }
                 var torneio = db.Torneio.Find(torneioId);
@@ -1581,12 +1585,15 @@ namespace Barragem.Controllers
 
         [Authorize(Roles = "admin,usuario,organizador")]
         [HttpPost]
-        public ActionResult EscolherDupla(int inscricaoJogador, int torneioId, int classe=0)
+        public ActionResult EscolherDupla(int inscricaoJogador, int torneioId, int classe=0, int userId=0)
         {
             try
             {
                 var inscricao = db.InscricaoTorneio.Find(inscricaoJogador);
-                var userId = inscricao.userId;
+                string perfil = Roles.GetRolesForUser(User.Identity.Name)[0];
+                if (perfil.Equals("usuario") || userId == 0){
+                    userId = WebSecurity.GetUserId(User.Identity.Name);
+                }
                 var validar = db.InscricaoTorneio.Where(i => i.torneioId == torneioId && i.classe == classe && ((i.userId == userId && i.parceiroDuplaId != null) || (i.parceiroDuplaId == userId))).Count();
                 if (validar == 0)
                 {

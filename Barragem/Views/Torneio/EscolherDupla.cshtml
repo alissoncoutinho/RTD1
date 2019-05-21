@@ -42,7 +42,7 @@
                                             }
                                             else
                                             {
-                                                <button title="Escolher dupla" data-maisduplas="@ViewBag.temMaisClassesDuplas" data-torneio="@item.torneioId" data-valor="@item.Id" data-nome="@item.participante.nome" data-classe="@item.classe" data-fone="@item.participante.telefoneCelular"
+                                                <button title="Escolher dupla" data-maisduplas="@ViewBag.temMaisClassesDuplas" data-torneio="@item.torneioId" data-valor="@item.Id" data-nome="@item.participante.nome" data-classe="@item.classe" data-userid="@ViewBag.userId" data-fone="@item.participante.telefoneCelular"
                                                         name="@Html.Raw("button"+item.Id)" id="@Html.Raw("button" + item.Id)" class="col-lg-12 col-xs-12 btn btn-primary btn-xs confirmEscolha">
                                                     Escolher
                                                 </button>
@@ -52,7 +52,7 @@
                                 }
                             </table>
                             <br>
-                            <button title="Não encontrei meu parceiro" data-maisduplas="@ViewBag.temMaisClassesDuplas" data-torneio="@ViewBag.torneioId" class="col-lg-12 col-xs-12 btn btn-danger btn-sm naoEncontreiParceio">
+                            <button title="Não encontrei meu parceiro" data-maisduplas="@ViewBag.temMaisClassesDuplas" data-torneio="@ViewBag.torneioId" data-userid="@ViewBag.userId" class="col-lg-12 col-xs-12 btn btn-danger btn-sm naoEncontreiParceio">
                                 Meu parceiro ainda não está na lista
                             </button>
                         }
@@ -71,12 +71,13 @@
                     var fone = $(this).data("fone");
                     var torneio = $(this).data("torneio");
                     var classe = $(this).data("classe");
+                    var userId = $(this).data("userid");
                     var textoButton = "Ok. Finalizar inscrição."
                     var temMaisClassesDuplas = $(this).data("maisduplas") == "True";
-                    var url = "/Torneio/ConfirmacaoInscricao?torneioId=" + torneio + "&msg=Inscrição realizada com sucesso";
+                    var url = "/Torneio/ConfirmacaoInscricao?torneioId=" + torneio + "&msg=Inscrição realizada com sucesso&userId="+userId;
                     if (temMaisClassesDuplas) {
                         textoButton = "Ok. Ir para a escolha da próxima categoria."
-                        url = "/Torneio/EscolherDupla?torneioId=" + torneio + "&classe=0&segundaClasseDupla=true";
+                        url = "/Torneio/EscolherDupla?torneioId=" + torneio + "&classe=0&segundaClasseDupla=true&userId="+userId;
                     }
                     $.confirm({
                         text: "Você está escolhendo <b>" + participante + "</b>, telefone <b>" + fone + "</b> como sua dupla. <b>Deseja prosseguir?</b>",
@@ -85,7 +86,7 @@
                                 type: "POST",
                                 url: "/Torneio/EscolherDupla",
                                 dataType: "json",
-                                data: "{'inscricaoJogador':'" + id + "', 'torneioId':'" + torneio + "', 'classe':'" + classe + "'}",
+                                data: "{'inscricaoJogador':'" + id + "', 'torneioId':'" + torneio + "', 'classe':'" + classe + "', 'userId':'" + userId + "'}",
                                 contentType: "application/json; charset=utf-8",
                                 success: function (response) {
                                     if (typeof response == "object") {
@@ -115,11 +116,12 @@
                     event.preventDefault();
                     var torneio = $(this).data("torneio");
                     var temMaisClassesDuplas = $(this).data("maisduplas") == "True";
+                    var userId = $(this).data("userid");
                     var textoButton = "Ok. Finalizar inscrição."
-                    var url = "/Torneio/ConfirmacaoInscricao?torneioId=" + torneio + "&msg=Inscrição realizada com sucesso";
+                    var url = "/Torneio/ConfirmacaoInscricao?torneioId=" + torneio + "&msg=Inscrição realizada com sucesso&userId=" + userId;
                     if (temMaisClassesDuplas) {
                         textoButton = "Ok. Ir para escolha do parceiro da outra categoria."
-                        url = "/Torneio/EscolherDupla?torneioId=" + torneio + "&classe=0&segundaClasseDupla=true";
+                        url = "/Torneio/EscolherDupla?torneioId=" + torneio + "&classe=0&segundaClasseDupla=true&userId="+userId;
                     }
                     $.confirm({
                         text: "Isso acontece porque o seu parceiro ainda não se inscreveu. Não se preocupe, ele poderá te escolher como parceiro no momento da inscrição dele.",

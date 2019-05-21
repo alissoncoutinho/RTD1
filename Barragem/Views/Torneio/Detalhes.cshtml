@@ -1,7 +1,7 @@
 ﻿@model Barragem.Models.Torneio
 @{
     Layout = "~/Views/Shared/_LayoutTorneio2.cshtml";
-    Barragem.Models.InscricaoTorneio inscricao = new Barragem.Models.InscricaoTorneio();
+    Barragem.Models.InscricaoTorneio inscricao = null;
     if (ViewBag.inscricao != null)
     {
         inscricao = ViewBag.inscricao;
@@ -80,7 +80,7 @@
                     @Html.Hidden("operacao", "inscricao")
                     @Html.Hidden("torneioId", Model.Id)
                     @Html.Hidden("vrInscricao", Model.valor);
-                    @Html.Hidden("userId", inscricao.userId);
+                    @Html.Hidden("userId", inscricao==null? 0 : inscricao.userId);
                     @Html.Hidden("isClasseDupla", false);
                     <div class="box-body">
                         <div class="row">
