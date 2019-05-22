@@ -3,34 +3,7 @@
     ViewBag.Title = "Controlar Jogo";
     Layout = "~/Views/Shared/_LayoutTorneio2.cshtml";
 }
-@if (ViewBag.Torneio != null)
-{
-    Barragem.Models.Torneio torneio = ViewBag.Torneio;
-    <div class="container-dashboard">
-        <legend>@Html.Raw("Torneio Aberto")</legend>
-        <div class="row">
-            <div class="col-md-8">
-                <div class="row">
-                    <div class="col-sm-8 info-box-text">
-                        @Html.Raw(torneio.nome) De @Html.Raw(torneio.dataInicio.ToShortDateString()) a @Html.Raw(torneio.dataFim.ToShortDateString())
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-sm-8 info-box-text">
-                        @Html.Raw("Local: " + torneio.local + " - " + torneio.cidade) Inscrição até @Html.Raw(torneio.dataFimInscricoes.ToShortDateString())
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-2">
-                <div class="col-sm-12 pull-right">
-                    <a class="btn btn-primary" href="/Torneio/Detalhes/@torneio.Id">
-                        Saiba mais
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-}
+
 
 @if (Model != null)
 {
@@ -60,6 +33,19 @@
                     <label class="control-label col-sm-3">Situação</label>
                     <div class="col-sm-5">
                         @Html.DropDownList("situacao_Id", null, new { @class = "form-control input-sm" })
+                    </div>
+                </div>
+                <div class="form-group exibir-inserirResultados" id="divLancarWO">
+                    <label class="col-md-12 col-xs-12" for="situacao">Vencedor da partida</label>
+                    <div class="col-md-2 col-xs-12">
+                        <input type="radio" name="vencedorWO" value=@Html.Raw(Model.desafiado_id) @if (Model.idDoVencedor == Model.desafiado_id) { @Html.Raw(" checked")  }> @Html.Raw(Model.desafiado.nome)<br>
+                        <input type="radio" name="vencedorWO" value=@Html.Raw(Model.desafiante_id)@if (Model.idDoVencedor==Model.desafiante_id) { @Html.Raw(" checked") }> @Html.Raw(Model.desafiante.nome)<br>
+                    </div>
+                    <div class="col-md-2 col-xs-12">
+                        @if ((ViewBag.Editar == null) || (ViewBag.Editar))
+                        {
+                            <input type="button" class="btn btn-primary btn-small" id="button_lancarWO" value="Lançar WO" onclick="lancarWO()" />
+                        }
                     </div>
                 </div>
                 <span id="dadosJogo">
@@ -396,6 +382,11 @@
                 $("#1set").hide();
                 $("#2set").hide();
                 $("#3set").hide();
+                if (str == "WO") {
+                    document.getElementById("divLancarWO").classList.add("show");
+                } else {
+                    document.getElementById("divLancarWO").classList.remove("show");
+                }
 
             } else {
                 $("#labelset1").show();
@@ -414,6 +405,11 @@
 
             }
         })
-        .change();
+            .change();
+
+        function lancarWO() {
+            document.forms[1].action = "/Torneio/LancarWO";
+            document.forms[1].submit();
+        }
     </script>
 }
