@@ -62,6 +62,7 @@
                                 <a href="@Url.Action("../Account/EditaUsuario", new { UserName = item.participante.UserName })" title="Editar" >
                                     @Html.DisplayFor(modelItem => item.participante.nome)
                                 </a>
+                                <a href="@item.participante.linkwhatsapp"><img width="25" height="25" src="/Content/image/whatsapp.png"></a>
                             </td>
                             <td>
                                 <select name="@Html.Raw("classe" + i)" id="@Html.Raw("classe" + i)" class="form-control" onchange="this.form.submit()">
