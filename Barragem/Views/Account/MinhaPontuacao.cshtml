@@ -25,6 +25,12 @@
         background: #006600;
         display: inline;
     }
+    .legenda {
+        padding: 5px;
+        color: red;
+        background: red;
+        display: inline;
+    }
     .explica {
         position: relative;
         top: 15px;
@@ -67,6 +73,8 @@
     @if (ViewBag.RanckingJogador != null)
     {
         List<Barragem.Models.Rancking> ranking = ViewBag.RanckingJogador;
+        var dataJogos = ViewBag.dataJogos;
+        var i = 0;
         <br>
         <div>
             <table border="0" class="table table-striped">
@@ -87,7 +95,12 @@
 
                 @foreach (var item in ranking)
                 {
-                    <tr>
+                    var jogoAtrasado = "";
+                    if(dataJogos[i]!=null && dataJogos[i] > ViewBag.dataFimRodada) {
+                        jogoAtrasado = "red";
+                    }
+                    i++;
+                    <tr style='background-color:@jogoAtrasado'>
                         <td>
                             @Html.DisplayFor(modelItem => item.rodada.codigoSeq)
                         </td>
@@ -99,8 +112,8 @@
                         </td>
                     </tr>
                 }
-
             </table>
+            <div class="legenda">xxx</div> A pontuação de jogos atrasados serão contabilizadas após o fechamento da próxima rodada.
         </div>
     }
 </div>

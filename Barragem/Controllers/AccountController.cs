@@ -1217,9 +1217,13 @@ namespace Barragem.Controllers
             var userProfile = db.UserProfiles.Find(WebSecurity.GetUserId(User.Identity.Name));
             var userId = userProfile.UserId;
             List<Rancking> ranckingJogador = db.Rancking.Where(r => r.userProfile_id == userId).OrderByDescending(r => r.rodada_id).Take(10).ToList();
+            var dataJogos = db.Jogo.Where(r => (r.desafiado_id == userId || r.desafiante_id == userId) && r.rodada.isAberta==false).OrderByDescending(r => r.rodada_id).Take(10).Select(r=>r.dataCadastroResultado).ToList<DateTime?>();
             ViewBag.RanckingJogador = ranckingJogador;
             ViewBag.posicaoJogador = ranckingJogador[0].posicaoClasse + "º";
-            ViewBag.pontuacaoAtual = ranckingJogador.Sum(r=>r.pontuacao);
+            ViewBag.pontuacaoAtual = ranckingJogador[0].totalAcumulado;
+            ViewBag.dataFimRodada = ranckingJogador[0].rodada.dataFim;
+            ViewBag.dataJogos = dataJogos;
+            //ViewBag.pontuacaoAtual = ranckingJogador.Sum(r=>r.pontuacao);
             return View(userProfile);
         }
 
