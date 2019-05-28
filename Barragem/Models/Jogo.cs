@@ -346,6 +346,8 @@ namespace Barragem.Models
 
         public int idDoVencedor{ get; set; }
 
+        public string linkWhatsapp { get; set; }
+
 
     }
 
@@ -368,7 +370,8 @@ namespace Barragem.Models
         public int qtddGames1setDesafiado { get; set; }
         public int qtddGames2setDesafiado { get; set; }
         public int qtddGames3setDesafiado { get; set; }
-        
+        public int idVencedor { get; set; }
+
     }
 
     public class HeadToHead

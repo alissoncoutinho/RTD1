@@ -25,25 +25,31 @@ namespace Barragem.Controllers
         public IList<JogoRodada> GetListarJogos(int classeId, int rankingId)
         {
             var rodadaId = db.Rodada.Where(r => r.isRodadaCarga == false && r.barragemId == rankingId).Max(r => r.Id);
-            var jogos = db.Jogo.Where(j => j.rodada_id == rodadaId && j.desafiado.classeId == classeId).
-                Select(jogo => new JogoRodada() {
-                    Id = jogo.Id,
-                    nomeDesafiante = jogo.desafiante.nome,
-                    nomeDesafiado = jogo.desafiado.nome,
-                    dataJogo = jogo.dataJogo,
-                    horaJogo = jogo.horaJogo,
-                    localJogo = jogo.localJogo,
-                    fotoDesafiado = jogo.desafiado.fotoURL,
-                    fotoDesafiante = jogo.desafiante.fotoURL,
-                    qtddGames1setDesafiante = jogo.qtddGames1setDesafiante,
-                    qtddGames2setDesafiante = jogo.qtddGames2setDesafiante,
-                    qtddGames3setDesafiante = jogo.qtddGames3setDesafiante,
-                    qtddGames1setDesafiado = jogo.qtddGames1setDesafiado,
-                    qtddGames2setDesafiado = jogo.qtddGames2setDesafiado,
-                    qtddGames3setDesafiado = jogo.qtddGames3setDesafiado
-                }).ToList<JogoRodada>();
+            var jogos = db.Jogo.Where(j => j.rodada_id == rodadaId && j.desafiado.classeId == classeId).ToList<Jogo>();
+            IList<JogoRodada> jogoRodada = new List<JogoRodada>();
+            foreach (var jogo in jogos)
+            {
+                var j = new JogoRodada();
+                j.Id = jogo.Id;
+                j.nomeDesafiante = jogo.desafiante.nome;
+                j.nomeDesafiado = jogo.desafiado.nome;
+                j.dataJogo = jogo.dataJogo;
+                j.horaJogo = jogo.horaJogo;
+                j.localJogo = jogo.localJogo;
+                j.fotoDesafiado = jogo.desafiado.fotoURL;
+                j.fotoDesafiante = jogo.desafiante.fotoURL;
+                j.qtddGames1setDesafiante = jogo.qtddGames1setDesafiante;
+                j.qtddGames2setDesafiante = jogo.qtddGames2setDesafiante;
+                j.qtddGames3setDesafiante = jogo.qtddGames3setDesafiante;
+                j.qtddGames1setDesafiado = jogo.qtddGames1setDesafiado;
+                j.qtddGames2setDesafiado = jogo.qtddGames2setDesafiado;
+                j.qtddGames3setDesafiado = jogo.qtddGames3setDesafiado;
+                j.idVencedor = jogo.idDoVencedor;
+                jogoRodada.Add(j);
+                
+            }
             
-            return jogos;
+            return jogoRodada;
         }
 
         [Route("api/JogoAPI/cabecalho/{userId}")]
@@ -97,13 +103,13 @@ namespace Barragem.Controllers
             if (jogo == null){
                 return InternalServerError(new Exception("Jogo não encontrado.")); 
             }
-            MeuJogo meuJogo = montarMeuJogo(jogo);
+            MeuJogo meuJogo = montarMeuJogo(jogo, userId);
             
             return Ok(meuJogo);
         }
         
 
-        private MeuJogo montarMeuJogo(Jogo jogo) {
+        private MeuJogo montarMeuJogo(Jogo jogo, int userId) {
             var qtddRodada = 0;
             var nomeTemporada = "";
             MeuJogo meuJogo = new MeuJogo();
@@ -150,6 +156,12 @@ namespace Barragem.Controllers
             meuJogo.qtddGames3setDesafiante = jogo.qtddGames3setDesafiante;
             meuJogo.situacao = jogo.situacao.descricao;
             meuJogo.idDoVencedor = jogo.idDoVencedor;
+            if (jogo.desafiado_id == userId)
+            {
+                meuJogo.linkWhatsapp = jogo.desafiante.linkwhatsapp;
+            } else {
+                meuJogo.linkWhatsapp = jogo.desafiado.linkwhatsapp;
+            }
             return meuJogo;
         }
 
