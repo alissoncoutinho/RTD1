@@ -27,7 +27,9 @@
     <link href='http://fonts.googleapis.com/css?family=Roboto+Slab:400,700,300,100' rel='stylesheet' type='text/css'>
 
     @Styles.Render("~/css")
-    @if ((barraId==1010)||(barraId==1012)){
+    @if (barraId == 1081){
+        @Styles.Render("~/css3")
+    }else if ((barraId==1010)||(barraId==1012)){
         @Styles.Render("~/css4")
     }else if(barraId>7){
         @Styles.Render("~/css7")

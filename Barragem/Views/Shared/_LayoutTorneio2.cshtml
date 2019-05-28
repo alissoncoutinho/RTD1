@@ -30,7 +30,11 @@
 
     @Styles.Render("~/css")
     @Styles.Render("~/tabela")
-    @if ((barraId == 1010) || (barraId == 1012))
+    @if (barraId == 1081)
+    {
+        @Styles.Render("~/css3")
+    }
+    else if ((barraId == 1010) || (barraId == 1012))
     {
         @Styles.Render("~/css4")
     }

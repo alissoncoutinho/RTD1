@@ -63,19 +63,19 @@ namespace Barragem.Class
                     pontuacao = 6;
                 } else if (jogo.idDoVencedor == jogo.desafiado_id && jogo.setsJogados == 2)
                 {
-                    pontuacao = 10;
+                    pontuacao = 9;
                 }
                 else if ((jogo.idDoVencedor == jogo.desafiado_id) && (jogo.setsJogados == 3 || jogo.setsJogados == 1))
                 {
-                    pontuacao = 8;
+                    pontuacao = 7;
                 }
                 else if (jogo.idDoVencedor != jogo.desafiado_id && jogo.setsJogados == 2)
                 {
-                    pontuacao = 2;
+                    pontuacao = 1;
                 }
                 else if ((jogo.idDoVencedor != jogo.desafiado_id) && (jogo.setsJogados == 3 || jogo.setsJogados == 1))
                 {
-                    pontuacao = 4;
+                    pontuacao = 3;
                 }
 
                 if ((jogo.idDoVencedor == jogo.desafiado_id) && (jogo.situacao_Id == 5))
