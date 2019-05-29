@@ -67,6 +67,25 @@ namespace Barragem.Models
             }
         }
 
+        public virtual string linkwhatsappSemMsg
+        {
+            get
+            {
+                var i = telefoneCelular.IndexOf("/");
+                var dddcel = "";
+                if (i < 1)
+                {
+                    dddcel = telefoneCelular.Trim().Replace("(", "").Replace(")", "").Replace(" ", "").Replace("-", "");
+                }
+                else
+                {
+                    dddcel = telefoneCelular.Substring(0, i).Trim().Replace("(", "").Replace(")", "").Replace(" ", "").Replace("-", "");
+                }
+
+                return "https://api.whatsapp.com/send?phone=55" + dddcel + "&text=Olá,%20" + nome + " ";
+            }
+        }
+
         public virtual int idade
         {
             get {
