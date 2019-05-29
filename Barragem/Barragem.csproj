@@ -252,6 +252,7 @@
     <Compile Include="Controllers\JogoController.cs" />
     <Compile Include="Controllers\NotificacaoController.cs" />
     <Compile Include="Controllers\PagamentoController.cs" />
+    <Compile Include="Controllers\PerfilAPIController.cs" />
     <Compile Include="Controllers\RanckingController.cs" />
     <Compile Include="Controllers\RankingAPIController.cs" />
     <Compile Include="Controllers\RodadaController.cs" />
