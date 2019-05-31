@@ -11,9 +11,12 @@ using Barragem.Context;
 using Barragem.Models;
 using WebMatrix.WebData;
 using Barragem.Class;
+using Barragem.Filters;
 
 namespace Barragem.Controllers
 {
+
+    
     public class PerfilAPIController : ApiController
     {
         private BarragemDbContext db = new BarragemDbContext();
@@ -30,6 +33,10 @@ namespace Barragem.Controllers
                     if (String.IsNullOrEmpty(user.email)){
                         return InternalServerError(new Exception("Este usuário não possui e-mail cadastrado. Por favor, entre em contato com o administrador."));
                     } else {
+                        Database.SetInitializer<BarragemDbContext>(null);
+                        if (!WebSecurity.Initialized) { 
+                                WebSecurity.InitializeDatabaseConnection("DefaultConnection", "UserProfile", "UserId", "UserName", autoCreateTables: false);
+                        }
                         string confirmationToken = WebSecurity.GeneratePasswordResetToken(user.UserName);
                         EnviarMailSenha(confirmationToken, user.nome, user.email);
                         return StatusCode(HttpStatusCode.NoContent);
@@ -48,7 +55,7 @@ namespace Barragem.Controllers
 
         private void EnviarMailSenha(string token, string nomeUsuario, string emailUsuario)
         {
-            string strUrl = string.Format("http://www.rankingdetenis.com/Account/ConfirmaSenha/{1}", token);
+            string strUrl = string.Format("http://www.rankingdetenis.com/Account/ConfirmaSenha/{0}", token);
             string strConteudo = "<html> <head> </head> <body> Prezado(a) " + nomeUsuario + ", <br /> Você fez uma solicitação de reinicio de senha. <br />";
             strConteudo += "Para continuar, clique no link abaixo: <br /> " + strUrl + " </body> </html>";
 
