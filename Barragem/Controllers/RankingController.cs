@@ -11,43 +11,44 @@ using WebMatrix.WebData;
 
 namespace Barragem.Controllers
 {
-    public class RanckingController : Controller
+    [Authorize]
+    public class RankingController : Controller
     {
         private BarragemDbContext db = new BarragemDbContext();
 
         //
         // GET: /Rancking/
-
-        public ActionResult Index(int id=0)
+        [AllowAnonymous]
+        public ActionResult Index(int id=0, string nome="")
         {
             List<Rancking> rancking;
-            int barragemId = 0;
+            BarragemView bV = null;
             try{
-                if (id == 0){
-                    UserProfile usuario = null;
-                    if (User.Identity.Name != ""){
-                        usuario = db.UserProfiles.Find(WebSecurity.GetUserId(User.Identity.Name));
-                    }
-                    if (usuario == null){
-                        if (Request.Cookies["_barragemId"] != null){
-                            HttpCookie cookie = new HttpCookie("_barragemId");
-                            barragemId = Convert.ToInt32(cookie.Value.ToString());
-                        }else{
-                            barragemId = 1;
-                        }
-                    } else {
-                        barragemId = usuario.barragemId;
-                    }
-                    id = db.Rancking.Where(r => r.rodada.isAberta == false && r.rodada.isRodadaCarga == false && r.rodada.barragemId == barragemId).Max(r => r.rodada_id);
-                                        
+                if ((id == 0) && (nome == "") && (User.Identity.Name != "")){
+                    UserProfile usuario = db.UserProfiles.Find(WebSecurity.GetUserId(User.Identity.Name));
+                    bV = usuario.barragem;
+                    id = db.Rancking.Where(r => r.rodada.isAberta == false && r.rodada.isRodadaCarga == false && r.rodada.barragemId == bV.Id).Max(r => r.rodada_id);
+                    ViewBag.IdBarragem = bV.Id;
+                    ViewBag.NomeBarragem = bV.nome;
+                }else if (nome != ""){
+                    bV = db.BarragemView.Where(b => b.dominio == nome).FirstOrDefault();
+                    id = db.Rancking.Where(r => r.rodada.isAberta == false && r.rodada.isRodadaCarga == false && r.rodada.barragemId == bV.Id).Max(r => r.rodada_id);
+                    ViewBag.IdBarragem = bV.Id;
+                    ViewBag.NomeBarragem = bV.nome;
+                }else if (id == 0){
+                    return RedirectToAction("Login", "Account");
+                }else{
+                    HttpCookie cookie = new HttpCookie("_barragemId");
+                    var barragemId = Convert.ToInt32(cookie.Value.ToString());
+                    bV = db.BarragemView.Find(barragemId);
                 }
-            }catch (InvalidOperationException){
-                
+            }
+            catch (Exception e){
+                return RedirectToAction("Login", "Account");
             }
             rancking = db.Rancking.Include(r => r.userProfile).Include(r => r.rodada).
                 Where(r => r.rodada_id == id && r.posicao > 0 && r.userProfile.situacao != "desativado" && r.userProfile.situacao != "inativo").OrderBy(r=>r.classe.nivel).ThenBy(r => r.posicaoClasse).ToList();
-            ViewBag.Classes = db.Classe.Where(c => c.barragemId == barragemId && c.ativa == true).ToList();
-            //ViewBag.rankingGeral = rancking.OrderBy(r => r.posicao).ToList();
+            ViewBag.Classes = db.Classe.Where(c => c.barragemId == bV.Id && c.ativa == true).ToList();
             if (rancking.Count() > 0){
                 var barragem = rancking[0].rodada.barragemId;
                 ViewBag.Rodada = rancking[0].rodada.codigoSeq;
