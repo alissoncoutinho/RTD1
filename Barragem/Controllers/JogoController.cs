@@ -24,44 +24,39 @@ namespace Barragem.Controllers
         //
         // GET: /Jogo/
 
-        [Authorize(Roles = "admin, organizador, usuario")]
-        public ActionResult Index(int rodadaId = 0)
+        [AllowAnonymous]
+        public ActionResult Index(int rodadaId = 0, string ranking="")
         {
             string msg = "";
-            int barragemId = 0;
-            try
-            {
-                if (rodadaId == 0)
-                {
+            BarragemView bV = null;
+            var barragemId = 0;
+            try{
+                if ((rodadaId == 0) && (ranking == "") && (User.Identity.Name != "")){
                     UserProfile usuario = db.UserProfiles.Find(WebSecurity.GetUserId(User.Identity.Name));
-                    barragemId = usuario.barragemId;
+                    bV = usuario.barragem;
                     rodadaId = db.Rodada.Where(r => r.isRodadaCarga == false && r.barragemId == usuario.barragemId).Max(r => r.Id);
-                    if (usuario == null)
-                    {
-                        if (Request.Cookies["_barragemId"] != null)
-                        {
-                            HttpCookie cookie = new HttpCookie("_barragemId");
-                            barragemId = Convert.ToInt32(cookie.Value.ToString());
-                        }
-                        else
-                        {
-                            barragemId = 1;
-                        }
-                    }
-                    else
-                    {
-                        barragemId = usuario.barragemId;
-                    }
+                    ViewBag.IdBarragem = bV.Id;
+                    ViewBag.NomeBarragem = bV.nome;
+                } else if (ranking != ""){
+                    bV = db.BarragemView.Where(b => b.dominio == ranking).FirstOrDefault();
+                    rodadaId = db.Rodada.Where(r => r.isRodadaCarga == false && r.barragemId == bV.Id).Max(r => r.Id);
+                    ViewBag.IdBarragem = bV.Id;
+                    ViewBag.NomeBarragem = bV.nome;
+                } else if (rodadaId == 0)            {
+                    return RedirectToAction("Login", "Account");
+                } else {
+                    HttpCookie cookie = new HttpCookie("_barragemId");
+                    bV = db.BarragemView.Find(barragemId);
                 }
             }
-            catch (InvalidOperationException) { }
-            try
-            {
+            catch (Exception e) {
+                return RedirectToAction("Login", "Account");
+            }
+            try{
                 var jogo = db.Jogo.Include(j => j.desafiado).Include(j => j.desafiante).Include(j => j.rodada).
                     Where(j => j.rodada_id == rodadaId).OrderBy(j => j.desafiado.classe.nivel).ToList();
                 msg = "jogos";
-                if ((rodadaId > 0) && (jogo.Count() > 0))
-                {
+                if ((rodadaId > 0) && (jogo.Count() > 0)){
                     barragemId = jogo[0].rodada.barragemId;
                 }
                 ViewBag.Classes = db.Classe.Where(c => c.barragemId == barragemId && c.ativa == true).ToList();
