@@ -50,7 +50,7 @@ namespace Barragem.Controllers
             UserProfile usuario = null;
             try
             {
-                usuario = db.UserProfiles.Find(2030); // TODO : GET USERID WebSecurity.GetUserId(User.Identity.Name)
+                //usuario = db.UserProfiles.Find(2030); // TODO : GET USERID WebSecurity.GetUserId(User.Identity.Name)
                 idRodada = db.Rancking.Where(r => r.rodada.isAberta == false && r.rodada.isRodadaCarga == false && r.rodada.barragemId == barragemId).Max(r => r.rodada_id);
             }
             catch (InvalidOperationException)
@@ -105,20 +105,49 @@ namespace Barragem.Controllers
         {
             MinhaPontuacao minhaPontuacao = new MinhaPontuacao();
             List<Classificacao> classificacao = db.Rancking.Where(r => r.userProfile_id == userId).
-                OrderByDescending(r => r.rodada_id).Take(10).Select(rk=> new Classificacao() {
-                    pontuacao= rk.pontuacao,
+                OrderByDescending(r => r.rodada_id).Take(10).Select(rk => new Classificacao() {
+                    pontuacao = rk.pontuacao,
                     posicaoUser = rk.posicaoClasse,
                     nomeUser = rk.userProfile.nome,
                     rodada = "Rodada " + rk.rodada.codigo + rk.rodada.sequencial,
-                    dataRodada = rk.rodada.dataFim
+                    totalAcumulado = rk.totalAcumulado,
+                    dataRodada = rk.rodada.dataFim,
+                    rodadaId = rk.rodada_id
                 }).ToList();
             minhaPontuacao.classificacao = classificacao;
             if (classificacao.Count() > 0){
                 minhaPontuacao.nomeUser = classificacao[0].nomeUser;
-                minhaPontuacao.pontuacaoAtual = classificacao.Sum(c=> c.pontuacao);
+                minhaPontuacao.pontuacaoAtual = classificacao[0].totalAcumulado;
                 minhaPontuacao.posicao = classificacao[0].posicaoUser;
+                var dataUltimaRodada = classificacao[0].dataRodada;
+                foreach(var classific in classificacao)
+                {
+                    var dataRealizacaoJogo = db.Jogo.Where(r => (r.desafiado_id == userId || r.desafiante_id == userId) && r.rodada_id == classific.rodadaId && (r.situacao_Id==4 || r.situacao_Id==5)).Select(r => r.dataCadastroResultado).FirstOrDefault();
+                    if (dataRealizacaoJogo!=null && dataRealizacaoJogo > dataUltimaRodada)
+                    {
+                        classific.jogoAtrasado = "S";
+                    }
+                }
             }
+            
             return minhaPontuacao;
+        }
+
+        [Route("api/RankingAPI/Sobre/{rankingId}")]
+        [HttpGet]
+        [ResponseType(typeof(Barragens))]
+        public IHttpActionResult Sobre(int rankingId)
+        {
+            var barragem = db.Barragens.Find(rankingId);
+            return Ok(barragem);
+        }
+
+        [Route("api/RankingAPI/RegrasPontuacao")]
+        [HttpGet]
+        [ResponseType(typeof(string))]
+        public IHttpActionResult RegrasPontuacao()
+        {
+            return Ok("<p><b>Vitórias</b></p><p>O <b>Desafiante</b> que vencer pelo seguinte placar em sets:<br>2x0 - ganhará 10 pontos<br>2x1 - ganhará 08 pontos<br>O <b>Desafiado</b> que vencer pelo seguinte placar em sets:<br>2x0 - ganhará 09 pontos<br>2x1 - ganhará 07 pontos<br></p><p><b>Derrotas</b></p><p>O <b>Desafiante</b> que perder pelo seguinte placar em sets:<br>2x0 - ganhará 02 pontos<br>2x1 - ganhará 04 pontos<br>O <b>Desafiado</b> que perder pelo seguinte placar em sets:<br>2x0 - ganhará 01 ponto<br>2x1 - ganhará 03 pontos</p><p><b>Bônus</b></p><p>Nos jogos em que o perdedor fizer no máximo 2 games na partida o ganhador do jogo receberá 3 pontos a mais de bônus na sua pontuação do jogo.</p><p><b>PRÓ-SET</b></p><p>A pontuação nos jogos de PRÓ-SET será igual aos resultados de jogos com placares 2x1.</p><p><b>WO e Jogo com o Curinga</b></p><p>O Vencedor ganhará - 06 pontos</p><p>O Perderdor não pontuará</p><p><b>Jogador Licenciado</b></p><p>ganhará 3 pontos</p>");
         }
 
         protected override void Dispose(bool disposing)

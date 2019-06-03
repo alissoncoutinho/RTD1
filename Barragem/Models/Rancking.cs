@@ -56,12 +56,14 @@ namespace Barragem.Models
     public class Classificacao
     {
         public double pontuacao { get; set; }
-
+        public double totalAcumulado { get; set; }
         public int? posicaoUser { get; set; }
 
         public string nomeUser { get; set; }
         public string rodada { get; set; }
+        public int rodadaId { get; set; }
         public DateTime dataRodada { get; set; }
+        public string jogoAtrasado { get; set; }
 
     }
 
