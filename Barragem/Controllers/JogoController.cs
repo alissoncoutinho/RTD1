@@ -39,7 +39,7 @@ namespace Barragem.Controllers
                     ViewBag.NomeBarragem = bV.nome;
                 } else if (ranking != ""){
                     bV = db.BarragemView.Where(b => b.dominio == ranking).FirstOrDefault();
-                    rodadaId = db.Rancking.Where(r => r.rodada.isAberta == false && r.rodada.isRodadaCarga == false && r.rodada.barragemId == bV.Id).Max(r => r.rodada_id);
+                    rodadaId = db.Rodada.Where(r => r.isRodadaCarga == false && r.barragemId == bV.Id).Max(r => r.Id);
                     ViewBag.IdBarragem = bV.Id;
                     ViewBag.NomeBarragem = bV.nome;
                 } else if (rodadaId == 0)            {
