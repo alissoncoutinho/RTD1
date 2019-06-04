@@ -8,12 +8,13 @@ using System.Web.Security;
 
 namespace Barragem.Models
 {
-    
+
 
     [Table("UserProfile")]
     public class UserProfile
     {
-        public UserProfile(){
+        public UserProfile()
+        {
             this.altura = 1;
         }
         [Key]
@@ -54,15 +55,19 @@ namespace Barragem.Models
 
         public virtual string linkwhatsapp
         {
-            get{
+            get
+            {
                 var i = telefoneCelular.IndexOf("/");
                 var dddcel = "";
-                if (i < 1){
+                if (i < 1)
+                {
                     dddcel = telefoneCelular.Trim().Replace("(", "").Replace(")", "").Replace(" ", "").Replace("-", "");
-                } else {
-                    dddcel = telefoneCelular.Substring(0, i).Trim().Replace("(", "").Replace(")", "").Replace(" ", "").Replace("-", ""); 
                 }
-                
+                else
+                {
+                    dddcel = telefoneCelular.Substring(0, i).Trim().Replace("(", "").Replace(")", "").Replace(" ", "").Replace("-", "");
+                }
+
                 return "https://api.whatsapp.com/send?phone=55" + dddcel + "&text=Olá,%20" + nome + "!%20Temos%20um%20jogo%20de%20tênis%20nesta%20rodada,%20qual%20é%20a%20sua%20disponibilidade?";
             }
         }
@@ -88,11 +93,12 @@ namespace Barragem.Models
 
         public virtual int idade
         {
-            get {
+            get
+            {
                 var birthdate = dataNascimento;
-                var today =  DateTime.Now;
+                var today = DateTime.Now;
                 var idade = today.Year - birthdate.Year;
-                if (birthdate > today.AddYears(-idade))  idade--;
+                if (birthdate > today.AddYears(-idade)) idade--;
                 return idade;
             }
         }
@@ -121,7 +127,7 @@ namespace Barragem.Models
         public bool isRanckingGerado { get; set; }
 
         public DateTime dataInicioRancking { get; set; }
-        
+
         [Display(Name = "Nível de jogo")]
         public string nivelDeJogo { get; set; }
 
@@ -200,7 +206,8 @@ namespace Barragem.Models
 
     public class RegisterModel
     {
-        public RegisterModel(){
+        public RegisterModel()
+        {
             this.altura = 1;
         }
         [Required(ErrorMessage = "O campo login é obrigatório")]
@@ -266,7 +273,7 @@ namespace Barragem.Models
         public string fotoURL { get; set; }
 
         public DateTime dataInicioRancking { get; set; }
-        
+
         [Display(Name = "Nível de jogo")]
         public string nivelDeJogo { get; set; }
 
@@ -286,7 +293,7 @@ namespace Barragem.Models
         public virtual Classe classe { get; set; }
 
         public bool organizador { get; set; }
-        
+
     }
 
     public class ExternalLogin
@@ -319,9 +326,11 @@ namespace Barragem.Models
         public int torneioId { get; set; }
     }
 
-    public class RegisterInscricao{
+    public class RegisterInscricao
+    {
 
-        public RegisterInscricao() {
+        public RegisterInscricao()
+        {
             this.register = new RegisterModel();
             this.register.bairro = "Não informado";
             this.register.classeId = 0;
@@ -335,6 +344,22 @@ namespace Barragem.Models
 
         public int classeInscricao2 { get; set; }
 
-        
+
     }
+
+    public class CabecalhoPerfil
+    {
+        public double totalAcumulado { get; set; }
+        public int? posicaoUser { get; set; }
+        public string nomeUser { get; set; }
+        public string statusUser { get; set; }
+        public string fotoPerfil { get; set; }
+    }
+
+    public class Estatistica
+    {
+        public string labels { get; set; }
+        public string dados { get; set; }
+    }
+
 }

@@ -109,7 +109,7 @@ namespace Barragem.Controllers
                     pontuacao = rk.pontuacao,
                     posicaoUser = rk.posicaoClasse,
                     nomeUser = rk.userProfile.nome,
-                    rodada = "Rodada " + rk.rodada.codigo + rk.rodada.sequencial,
+                    rodada = rk.rodada.codigo + rk.rodada.sequencial,
                     totalAcumulado = rk.totalAcumulado,
                     dataRodada = rk.rodada.dataFim,
                     rodadaId = rk.rodada_id
@@ -126,6 +126,8 @@ namespace Barragem.Controllers
                     if (dataRealizacaoJogo!=null && dataRealizacaoJogo > dataUltimaRodada)
                     {
                         classific.jogoAtrasado = "S";
+                    }else{
+                        classific.jogoAtrasado = "N";
                     }
                 }
             }
