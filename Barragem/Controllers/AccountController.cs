@@ -1229,9 +1229,21 @@ namespace Barragem.Controllers
             ViewBag.RanckingJogador = ranckingJogador;
             ViewBag.posicaoJogador = ranckingJogador[0].posicaoClasse + "º";
             ViewBag.pontuacaoAtual = ranckingJogador[0].totalAcumulado;
-            ViewBag.dataFimRodada = ranckingJogador[0].rodada.dataFim;
-            ViewBag.dataJogos = dataJogos;
+            //ViewBag.dataFimRodada = ranckingJogador[0].rodada.dataFim;
+            //ViewBag.dataJogos = dataJogos;
             //ViewBag.pontuacaoAtual = ranckingJogador.Sum(r=>r.pontuacao);
+            foreach (var rkg in ranckingJogador)
+            {
+                var dataRealizacaoJogo = db.Jogo.Where(r => (r.desafiado_id == userId || r.desafiante_id == userId) && r.rodada_id == rkg.rodada_id && (r.situacao_Id == 4 || r.situacao_Id == 5)).Select(r => r.dataCadastroResultado).FirstOrDefault();
+                if (dataRealizacaoJogo != null && dataRealizacaoJogo > ranckingJogador[0].rodada.dataFim){
+                    rkg.classeId = 1; // se jogo atrasado, usando este campo como gambiarra, não deveria.
+                } else {
+                    rkg.classeId = 0; // se jogo não atrasado, usando este campo como gambiarra, não deveria.
+                }
+            }
+
+
+
             return View(userProfile);
         }
 

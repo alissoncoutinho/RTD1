@@ -237,28 +237,23 @@ namespace Barragem.Controllers
         [Route("api/JogoAPI/DefinirHorario/{id}")]
         public IHttpActionResult PutDefinirHorario(int id, DateTime dataJogo, string horaJogo="", string localJogo="")
         {
-            var jogo = db.Jogo.Find(id);
-
-            jogo.dataJogo = dataJogo;
-            jogo.horaJogo = horaJogo;
-            jogo.localJogo = localJogo;
-            jogo.situacao_Id = 2;
-            db.Entry(jogo).State = EntityState.Modified;
-
             try
             {
+                var jogo = db.Jogo.Find(id);
+                if (jogo == null){
+                    return InternalServerError(new Exception("Jogo não encontrado."));
+                }
+                jogo.dataJogo = dataJogo;
+                jogo.horaJogo = horaJogo;
+                jogo.localJogo = localJogo;
+                if (jogo.situacao_Id != 4 && jogo.situacao_Id != 5){
+                    jogo.situacao_Id = 2;
+                }
+                db.Entry(jogo).State = EntityState.Modified;
                 db.SaveChanges();
             }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!JogoExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+            catch (Exception e){
+                return InternalServerError(e);
             }
 
             return StatusCode(HttpStatusCode.NoContent);
