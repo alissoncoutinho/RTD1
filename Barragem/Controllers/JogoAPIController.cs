@@ -242,7 +242,7 @@ namespace Barragem.Controllers
             jogo.dataJogo = dataJogo;
             jogo.horaJogo = horaJogo;
             jogo.localJogo = localJogo;
-
+            jogo.situacao_Id = 2;
             db.Entry(jogo).State = EntityState.Modified;
 
             try
