@@ -104,5 +104,102 @@ namespace Barragem.Controllers
             }
             return estatistica; 
         }
+
+        [ResponseType(typeof(HeadToHead))]
+        [HttpGet]
+        [Route("api/PerfilAPI/GetHead2Head/{userId}")]
+        public IHttpActionResult GetHead2Head(int userId)
+        {
+            var user = db.UserProfiles.Find(userId);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            HeadToHead headToHead = new HeadToHead();
+            headToHead.idadeDesafiado = user.idade;
+            headToHead.naturalidadeDesafiado = user.naturalidade;
+            headToHead.lateralDesafiado = user.lateralidade;
+            headToHead.alturaDesafiado = user.altura2;
+            headToHead.inicioRankingDesafiado = user.dataInicioRancking.Month + "/" + user.dataInicioRancking.Year;
+            var melhorRankingDesafiado = db.Rancking.Where(r => r.userProfile_id == userId && r.posicaoClasse != null && r.classeId != null).OrderBy(r => r.classe.nivel).ThenBy(r => r.posicaoClasse).Take(1).ToList();
+            headToHead.melhorPosicaoDesafiado = melhorRankingDesafiado[0].posicaoClasse + "º/" + melhorRankingDesafiado[0].classe.nome;
+
+            return Ok(headToHead);
+        }
+
+        [ResponseType(typeof(UserProfile))]
+        public IHttpActionResult GetPerfil(int userId){
+            var user = db.UserProfiles.Find(userId);
+            return Ok(user);
+        }
+
+        [ResponseType(typeof(void))]
+        [HttpPut]
+        [Route("api/PerfilAPI/AlterarPerfil/{userId}")]
+        public IHttpActionResult PutAlterarPerfil(int userId, string nome, string email, string celular, string naturalidade, DateTime dataNascimento, string altura, string lateralidade, string informacoesAdicionais)
+        {
+            var user = db.UserProfiles.Find(userId);
+
+            user.nome = nome;
+            user.email = email;
+            user.telefoneCelular = celular;
+            user.naturalidade = naturalidade;
+            user.dataNascimento = dataNascimento;
+            user.altura2 = altura;
+            user.lateralidade = lateralidade;
+            user.matriculaClube = informacoesAdicionais;
+
+            db.Entry(user).State = EntityState.Modified;
+            try{
+                db.SaveChanges();
+            }catch (Exception e){
+                return InternalServerError(e);
+            }
+
+            return StatusCode(HttpStatusCode.NoContent);
+        }
+
+        [Route("api/PerfilAPI/Ranking/{userId}")]
+        public IList<JogoRodada> GetRanking(int userId)
+        {
+            var jogos = db.Jogo.Where(j => j.desafiado_id == userId || j.desafiante_id == userId).OrderByDescending(j=>j.Id).Take(10).ToList<Jogo>();
+            IList<JogoRodada> jogoRodada = new List<JogoRodada>();
+            foreach (var jogo in jogos){
+                var j = new JogoRodada();
+                j.Id = jogo.Id;
+                j.nomeDesafiante = jogo.desafiante.nome;
+                j.nomeDesafiado = jogo.desafiado.nome;
+                j.dataJogo = jogo.dataJogo;
+                j.horaJogo = jogo.horaJogo;
+                j.localJogo = jogo.localJogo;
+                j.fotoDesafiado = jogo.desafiado.fotoURL;
+                j.fotoDesafiante = jogo.desafiante.fotoURL;
+                j.qtddGames1setDesafiante = jogo.qtddGames1setDesafiante;
+                j.qtddGames2setDesafiante = jogo.qtddGames2setDesafiante;
+                j.qtddGames3setDesafiante = jogo.qtddGames3setDesafiante;
+                j.qtddGames1setDesafiado = jogo.qtddGames1setDesafiado;
+                j.qtddGames2setDesafiado = jogo.qtddGames2setDesafiado;
+                j.qtddGames3setDesafiado = jogo.qtddGames3setDesafiado;
+                j.idVencedor = jogo.idDoVencedor;
+                j.nomeRodada = "Rodada " + jogo.rodada.codigoSeq;
+                var rankingDesafiado = db.Rancking.Where(r => r.rodada_id == jogo.rodada_id && r.userProfile_id == jogo.desafiado_id).FirstOrDefault();
+                var rankingDesafiante = db.Rancking.Where(r => r.rodada_id == jogo.rodada_id && r.userProfile_id == jogo.desafiante_id).FirstOrDefault();
+                if (rankingDesafiado != null)
+                {
+                    j.rankingDesafiado = rankingDesafiado.posicaoClasse!=null ? (int)rankingDesafiado.posicaoClasse:0;
+                    j.pontuacaoDesafiado = rankingDesafiado.pontuacao;
+                }
+                if (rankingDesafiante != null)
+                {
+                    j.rankingDesafiante = rankingDesafiante.posicaoClasse != null ? (int)rankingDesafiante.posicaoClasse : 0;
+                    j.pontuacaoDesafiante = rankingDesafiante.pontuacao;
+                }
+                jogoRodada.Add(j);
+
+            }
+
+            return jogoRodada;
+        }
+
     }
 }

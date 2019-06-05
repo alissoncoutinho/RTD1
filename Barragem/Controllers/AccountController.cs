@@ -973,7 +973,15 @@ namespace Barragem.Controllers
                 ViewBag.classeId = new SelectList(db.Classe.Where(c => c.barragemId == model.barragemId && c.ativa == true).ToList(), "Id", "nome");
                 return View(model);
             }
-            if (ModelState.IsValid)
+            if (perfil.Equals("organizador")){
+                var userOrg = db.UserProfiles.Find(WebSecurity.GetUserId(User.Identity.Name));
+                if (userOrg.barragemId != model.barragemId) {
+                    ViewBag.MsgErro = string.Format("Você não tem permissão para alterar este usuário '{0}'", model.nome);
+                    ViewBag.classeId = new SelectList(db.Classe.Where(c => c.barragemId == model.barragemId && c.ativa == true).ToList(), "Id", "nome");
+                    return View(model);
+                }
+            }
+                if (ModelState.IsValid)
             {
                 //UserProfile usuario = null;
                 try

@@ -128,8 +128,7 @@ namespace Barragem.Controllers
                     ViewBag.MsgErro = "Você não pertence a esta barragem.";
                     return View(barragens);
                 }
-                if (barragens.soTorneio == null) barragens.soTorneio = false;
-
+                
                 var barraAtual = db.BarragemView.Find(barragens.Id);
                 // o organizador não deve alterar este valor
                 barragens.valorPorUsuario = barraAtual.valorPorUsuario;
@@ -142,6 +141,7 @@ namespace Barragem.Controllers
                     }
                 } 
             }
+            if (barragens.soTorneio == null) barragens.soTorneio = false;
             if (ModelState.IsValid){
                 if (barragens.email!=null){
                     if (!Funcoes.IsValidEmail(barragens.email)){

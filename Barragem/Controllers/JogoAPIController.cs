@@ -199,7 +199,7 @@ namespace Barragem.Controllers
         }
 
        
-        [ResponseType(typeof(MeuJogo))]
+        [ResponseType(typeof(HeadToHead))]
         [HttpGet]
         [Route("api/JogoAPI/GetHead2Head/{id}")]
         public IHttpActionResult GetHead2Head(int id)
