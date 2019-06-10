@@ -11,6 +11,7 @@ using System.Transactions;
 using Barragem.Class;
 using System.Web.Security;
 using WebMatrix.WebData;
+using System.Diagnostics;
 
 namespace Barragem.Controllers
 {
@@ -153,33 +154,30 @@ namespace Barragem.Controllers
             try
             {
                 // busca jogos que ainda não foram realizados na rodada anterior
-                List<Jogo> jogo = db.Jogo.Where(j => j.rodada_id == rodadaAnterior && j.situacao_Id != 4 && j.situacao_Id != 5 && j.desafiado.classeId == classeId).ToList();
+                List<Jogo> jogo = db.Jogo.Where(j => j.rodada_id == rodadaAnterior && j.situacao_Id != 4 && j.situacao_Id != 5 && j.desafiado.classeId == classeId && (j.desafiante.situacao == "ativo" || j.desafiado.situacao == "ativo")).ToList();
                 UserProfile jogador = null;
                 RankingView rv = null;
-                for (int i = 0; i < jogo.Count(); i++)
-                {
-                    if ((rodadaAnterior % 2 == 0) && (jogo[i].desafiante.situacao.Equals("ativo"))
-                        && jogadores.SingleOrDefault(r => r.userProfile_id == jogo[i].desafiante.UserId) != null)
-                    {
-                        jogador = jogo[i].desafiante;
-                    }
-                    else if ((jogo[i].desafiado.situacao.Equals("ativo"))
-                       && jogadores.SingleOrDefault(r => r.userProfile_id == jogo[i].desafiado.UserId) != null)
-                    {
-                        jogador = jogo[i].desafiado;
+                if (jogo.Count()>0){
+                    Random r = new Random();
+                    int randomIndex = r.Next(jogo.Count()); //Choose a random object in the list
+                    var desafiante = jogo[randomIndex].desafiante;
+                    var desafiado = jogo[randomIndex].desafiado;
+                    if (desafiante.situacao.Equals("ativo")){
+                        jogador = desafiante;
+                    }else if (desafiado.situacao.Equals("ativo")){
+                        jogador = desafiado;
                     }
                 }
                 UserProfile curinga = db.UserProfiles.Where(u => u.situacao.Equals("curinga")).Single();
-                if (jogador != null)
-                {
+                if ((jogador != null) && (jogadores.SingleOrDefault(r => r.userProfile_id == jogador.UserId)!=null)){
                     criarJogo(jogador.UserId, curinga.UserId, rodadaAtual, true);
                     var itemToRemove = jogadores.SingleOrDefault(r => r.userProfile_id == jogador.UserId);
                     jogadores.Remove(itemToRemove);
-                }
-                else
-                {
-                    criarJogo(jogadores[0].userProfile_id, curinga.UserId, rodadaAtual, true);
-                    rv = jogadores[0];
+                }else{
+                    Random r = new Random();
+                    int randomIndex = r.Next(jogadores.Count());
+                    criarJogo(jogadores[randomIndex].userProfile_id, curinga.UserId, rodadaAtual, true);
+                    rv = jogadores[randomIndex];
                     jogadores.Remove(rv);
                 }
 

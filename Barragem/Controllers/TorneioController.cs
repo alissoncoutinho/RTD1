@@ -664,6 +664,7 @@ namespace Barragem.Controllers
             {
                 ViewBag.Torneio = "Sim";
             }
+            ViewBag.tabelaLiberada = false;
             if (torneioId == 0)
             {
                 HttpCookie cookie = Request.Cookies["_barragemId"];
@@ -672,17 +673,25 @@ namespace Barragem.Controllers
                     var barragemId = Convert.ToInt32(cookie.Value.ToString());
                     BarragemView barragem = db.BarragemView.Find(barragemId);
                     var tn = db.Torneio.Where(t => t.barragemId == barragemId && t.isAtivo).OrderByDescending(t => t.Id).ToList();
+                    if (tn.Count() == 0)
+                    {
+                        mensagem("Não localizamos nenhum torneio ativo no seu ranking.");
+                        return View();
+                    }
                     torneioId = tn[0].Id;
                 }
                 else if (barra != 0)
                 {
                     BarragemView barragem = db.BarragemView.Find(barra);
                     var tn = db.Torneio.Where(t => t.barragemId == barra && t.isAtivo).OrderByDescending(t => t.Id).ToList();
+                    if (tn.Count() == 0){
+                        mensagem("Não localizamos nenhum torneio ativo no seu ranking.");
+                        return View();
+                    }
                     torneioId = tn[0].Id;
                     Funcoes.CriarCookieBarragem(Response, Server, barragem.Id, barragem.nome);
                 }
             }
-            ViewBag.tabelaLiberada = false;
             var torneio = db.Torneio.Find(torneioId);
             if (torneioId == 0)
             {

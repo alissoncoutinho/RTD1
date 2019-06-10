@@ -18,8 +18,13 @@
                 <label class="col-xs-12 col-sm-2 control-label">Classes</label>
                 <div class="col-sm-4 col-xs-8">
                     <select name="filtroClasse" id="filtroClasse" class="form-control" onchange="Selecionar()">
-                        @foreach (var item2 in ViewBag.Classes){
-                        <option value="@item2.Id" @if (ViewBag.filtroClasse == item2.Id) { @Html.Raw("selected") }>@item2.nome</option>
+                        @if (ViewBag.Classes != null)
+                        {
+                            foreach (var item2 in ViewBag.Classes)
+                            {
+                        <option value="@item2.Id" @if (ViewBag.filtroClasse == item2.Id)
+                        { @Html.Raw("selected") }>@item2.nome</option>
+                            }
                         }
                     </select>
                     <input type="hidden" value="@ViewBag.TorneioId" name="torneioId" id="torneioId">
@@ -38,20 +43,27 @@
                         @{
                             faseTorneio = 0;
                         }
-                        @foreach (var item in Model){
-                            if(faseTorneio!=item.faseTorneio){
-                                faseId = "times" + item.faseTorneio;
-                                if (faseTorneio != 0) {
+                        @if (Model != null)
+                        {
+                            foreach (var item in Model)
+                            {
+                                if (faseTorneio != item.faseTorneio)
+                                {
+                                    faseId = "times" + item.faseTorneio;
+                                    if (faseTorneio != 0)
+                                    {
                                     @Html.Raw("</div>");
-                                }
-                                faseTorneio = item.faseTorneio;
-                                if (faseTorneio == 1) {
-                                    faseId = "time" + item.faseTorneio;
-                                }
+                                    }
+                                    faseTorneio = item.faseTorneio;
+                                    if (faseTorneio == 1)
+                                    {
+                                        faseId = "time" + item.faseTorneio;
+                                    }
                                 @Html.Raw("<div id='" + faseId + "' class='col-xs-2 box_rodada'>");
                                 <div class="titulo">@item.descricaoFaseTorneio</div>
-                            }
+                                }
                             @Html.Partial("_PartialJogoTabela", (Barragem.Models.Jogo)item)
+                            }
                         }
                     </div>
                 </div>
