@@ -130,16 +130,12 @@ namespace Barragem.Controllers
                 }
                 
                 var barraAtual = db.BarragemView.Find(barragens.Id);
-                // o organizador não deve alterar este valor
+                // o organizador não deve alterar os campos abaixo
                 barragens.valorPorUsuario = barraAtual.valorPorUsuario;
-                if (!barraAtual.isAtiva)
-                {
-                    if (barragens.isAtiva)
-                    {
-                        ViewBag.MsgErro = "Você não tem permissão para ativar este Ranking.";
-                        return View(barragens);
-                    }
-                } 
+                barragens.isAtiva = barraAtual.isAtiva;
+                barragens.isClasseUnica = barraAtual.isClasseUnica;
+                barragens.isTeste = barraAtual.isTeste;
+                barragens.soTorneio = barraAtual.soTorneio;
             }
             if (barragens.soTorneio == null) barragens.soTorneio = false;
             if (ModelState.IsValid){
