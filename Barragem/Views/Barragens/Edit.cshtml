@@ -84,6 +84,8 @@
                     @Html.ValidationMessageFor(model => model.linkPagSeguro)
                 </div>
             </div>
+            if (!Roles.IsUserInRole("organizador"))
+            {
             <div class="row">
                 <div class="col-xs-2">
                     <label>
@@ -119,6 +121,7 @@
                     </label>
                 </div>
             </div>
+            }
             <div class="row">
                 <div class="col-xs-6">
                     @Html.LabelFor(model => model.emailPagSeguro)
