@@ -147,7 +147,14 @@ namespace Barragem.Class
                     if (retorno.status_request.result == "success"){
                         if (retorno.status_request.status == "paid" || retorno.status_request.status == "reserved" || retorno.status_request.status == "completed"){
                             pb.status = "Pago";
-                        }else if (retorno.status_request.status == "canceled"){
+                            var barragem = db.Barragens.Find(pb.barragemId);
+                            if (barragem.isAtiva == false) {
+                                barragem.isAtiva = true;
+                                db.Entry(barragem).State = EntityState.Modified;
+                                db.SaveChanges();
+                            }
+                        }
+                        else if (retorno.status_request.status == "canceled"){
                             if (pb.status != "Pago") { 
                                 pb.status = retorno.status_request.status;
                                 var barragem = db.Barragens.Find(pb.barragemId);
