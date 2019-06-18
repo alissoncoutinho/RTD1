@@ -262,8 +262,7 @@ namespace Barragem.Controllers
         [ResponseType(typeof(void))]
         [HttpPut]
         [Route("api/JogoAPI/LancarResultado/{id}")]
-        public IHttpActionResult PutLancarResultado(int id, int games1setDesafiante, int games2setDesafiante, int games3setDesafiante, int games1setDesafiado, int games2setDesafiado, int games3setDesafiado)
-        {
+        public IHttpActionResult PutLancarResultado(int id, int games1setDesafiante=0, int games2setDesafiante=0, int games3setDesafiante=0, int games1setDesafiado=0, int games2setDesafiado=0, int games3setDesafiado=0){
             var jogo = db.Jogo.Find(id);
 
             jogo.qtddGames1setDesafiante = games1setDesafiante;
@@ -283,19 +282,9 @@ namespace Barragem.Controllers
 
                 db.SaveChanges();
                 rn.ProcessarJogoAtrasado(jogo);
-
+            }catch (Exception){
+                return InternalServerError(new Exception("Erro ao lançar resultado."));
             }
-            catch (DbUpdateConcurrencyException){
-                if (!JogoExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
             return StatusCode(HttpStatusCode.NoContent);
         }
 

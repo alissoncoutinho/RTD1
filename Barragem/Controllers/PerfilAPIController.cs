@@ -201,5 +201,9 @@ namespace Barragem.Controllers
             return jogoRodada;
         }
 
+        /*
+            FALTANDO: ALTERAR IMAGEM;   ALTERAR STATUS;     ESCOLHER OPONENTE;
+         */
+
     }
 }
