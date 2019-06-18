@@ -3,24 +3,7 @@
     ViewBag.Title = "Controlar Jogo";
 
 }
-@if ((ViewBag.solicitarAtivacao == "solicitar ativacao") && (!ViewBag.SoTorneio))
-{
-    <div class="container-dashboard">
-        <legend>@Html.Raw("Ranking")</legend>
-        <a class="btn btn-primary btn-danger" href="@Url.Action("../Account/SolicitarAtivacao", new { uName = User.Identity.Name })">
-            Solicitar Ativação no Ranking
-        </a>
-    </div>
-}
-@if ((ViewBag.solicitarAtivacao == "Ativamento solicitado") && (!String.IsNullOrEmpty(ViewBag.linkPagSeguro + "")))
-{
-    <div class="container-dashboard">
-        <legend>@Html.Raw("Ranking")</legend>
-        <a class="btn btn-primary btn-danger" href="@ViewBag.linkPagSeguro" target="_blank">
-            Efetuar Pagamento
-        </a>
-    </div>
-}
+
 @if (!String.IsNullOrEmpty(ViewBag.cobranca))
 {
     <div class="alert alert-danger alert-dismissable">

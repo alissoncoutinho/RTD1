@@ -504,15 +504,15 @@ namespace Barragem.Controllers
             mail.para = email;
             mail.assunto = "Cadastro realizado com sucesso.";
             mail.conteudo = "Olá " + nome + ",<br> Parabéns você acabou de se cadastrar no " + barragem.nome + ".<br><br>" +
-            "Para participar das próximas rodadas você deve solicitar a ativação do seu cadastro clicando no botão localizado em sua página principal no site." +
-            "após a ativação do seu cadastro você será notificado por email e já estará apto a participar dos jogos do ranking. <br><br>" +
+            "Em breve o organizador do ranking entrará em contato para confirmar sua ativação no ranking. " +
+            "Após a ativação do seu cadastro você será notificado por email e já estará apto a participar dos jogos do ranking. <br><br>" +
             "Atenciosamente,"+ barragem.nome + ".<br>";
             mail.formato = Tipos.FormatoEmail.Html;
             mail.EnviarMail();
         }
 
         [AllowAnonymous]
-        public ActionResult SolicitarAtivacao(string uName="")
+        /*public ActionResult SolicitarAtivacao(string uName="")
         {
             //string userName = MD5Crypt.Descriptografar(token);
             var userName = User.Identity.Name;
@@ -572,7 +572,7 @@ namespace Barragem.Controllers
                     db.Dispose();
             }
             //return View();
-        }
+        }*/
 
         [Authorize(Roles = "admin,organizador,usuario")]
         public ActionResult Detalhes(int userId, bool mostrarClasse=true)
@@ -964,7 +964,6 @@ namespace Barragem.Controllers
         [Authorize(Roles = "admin,organizador,usuario")]
         public ActionResult EditaUsuario(UserProfile model, string avatarCropped)
         {
-            ViewBag.solicitarAtivacao = "";
             string perfil = Roles.GetRolesForUser(User.Identity.Name)[0];
             string situacaoAtual = "";
             if ((!perfil.Equals("admin")) && (!perfil.Equals("organizador")) && (WebSecurity.GetUserId(User.Identity.Name) != model.UserId))
@@ -981,13 +980,11 @@ namespace Barragem.Controllers
                     return View(model);
                 }
             }
-                if (ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 //UserProfile usuario = null;
-                try
-                {
-                    if (!Funcoes.IsValidEmail(model.email))
-                    {
+                try{
+                    if (!Funcoes.IsValidEmail(model.email)){
                         ViewBag.MsgErro = string.Format("E-mail inválido. '{0}'", model.email);
                         ViewBag.classeId = new SelectList(db.Classe.Where(c => c.barragemId == model.barragemId && c.ativa == true).ToList(), "Id", "nome");
                         return View(model);
@@ -1002,17 +999,10 @@ namespace Barragem.Controllers
                     situacaoAtual = (from up in db.UserProfiles where up.UserId == model.UserId select up.situacao).Single();
                     db.Entry(model).State = EntityState.Modified;
                     db.SaveChanges();
-                    if (model.situacao == "pendente")
-                    {
-                        ViewBag.solicitarAtivacao = Class.MD5Crypt.Criptografar(model.UserName);
-                    }
-                }
-                catch (MembershipCreateUserException ex)
-                {
+                }catch (MembershipCreateUserException ex){
                     ViewBag.MsgErro = ex.Message;
                 }
-                try
-                {
+                try{
                     if ((situacaoAtual.ToLower().Equals("desativado")) && (model.situacao.ToLower().Equals("ativo"))){
                         model.isRanckingGerado = false;
                     }
@@ -1182,11 +1172,9 @@ namespace Barragem.Controllers
         [Authorize(Roles = "admin,organizador")]
         public ActionResult AtivaUsuario(int userId)
         {
-            try
-            {
+            try{
                 var user = db.UserProfiles.Where(u => u.UserId == userId).FirstOrDefault();
-                if (user != null)
-                {
+                if (user != null){
                     // se o jogador estiver desativado e for ativar novamente o sistema deverar gerar o ranking dele novamente
                     if ((user.situacao.ToLower().Equals("desativado")) && (user.isRanckingGerado)) {
                         user.isRanckingGerado = false;
@@ -1195,9 +1183,7 @@ namespace Barragem.Controllers
                     user.logAlteracao = User.Identity.Name;
                     try{
                         gerarRankingInicial(user, "organizador");
-                    }
-                    catch (Exception e)
-                    {
+                    }catch (Exception e){
                         if (e.InnerException == null){
                             return Json(new { erro = "Erro ao gerar a pontuação inicial do usuário: " + e.Message, retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
                         }else{
@@ -1207,14 +1193,10 @@ namespace Barragem.Controllers
                     db.Entry(user).State = EntityState.Modified;
                     db.SaveChanges();
                     return Json(new { erro = "", retorno = 1 }, "text/plain", JsonRequestBehavior.AllowGet);
-                }
-                else
-                {
+                }else{
                     return Json(new { erro = "Usuário não encontrado", retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
                 }
-            }
-            catch (Exception ex)
-            {
+            }catch (Exception ex){
                 return Json(new { erro = ex.Message, retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
             }
         }

@@ -133,7 +133,6 @@ namespace Barragem.Controllers
                 // o organizador não deve alterar os campos abaixo
                 barragens.valorPorUsuario = barraAtual.valorPorUsuario;
                 barragens.isAtiva = barraAtual.isAtiva;
-                barragens.isClasseUnica = barraAtual.isClasseUnica;
                 barragens.isTeste = barraAtual.isTeste;
                 barragens.soTorneio = barraAtual.soTorneio;
             }
