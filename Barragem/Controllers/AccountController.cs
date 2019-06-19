@@ -511,7 +511,7 @@ namespace Barragem.Controllers
             mail.EnviarMail();
         }
 
-        [AllowAnonymous]
+       
         /*public ActionResult SolicitarAtivacao(string uName="")
         {
             //string userName = MD5Crypt.Descriptografar(token);
