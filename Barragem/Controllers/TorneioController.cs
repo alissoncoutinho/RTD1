@@ -737,6 +737,10 @@ namespace Barragem.Controllers
                     torneioId = torneio[0].Id;
                     Funcoes.CriarCookieBarragem(Response, Server, barragem.Id, barragem.nome);
                 }
+            }else
+            {
+                var torneio = db.Torneio.Find(torneioId);
+                liberarTabelaInscricao = torneio.liberaTabelaInscricao;
             }
             inscricoes = db.InscricaoTorneio.Where(r => r.torneioId == torneioId && r.classeTorneio.isDupla == false).OrderBy(r => r.classe).ThenBy(r => r.participante.nome).ToList();
             var inscricoesDupla = db.InscricaoTorneio.Where(r => r.torneioId == torneioId && r.classeTorneio.isDupla == true).OrderBy(r => r.classe).ThenBy(r => r.participante.nome).ToList();
