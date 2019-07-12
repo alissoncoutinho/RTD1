@@ -323,7 +323,7 @@
                                     {
                                         if (ViewBag.isAceitaCartao)
                                         {
-                                            <a href="@Url.Action("EfetuarPagamento", new { inscricaoId = inscricao.Id })" class="btn btn-success" title="Efetuar Pagamento">Cartão</a>
+                                            <a href="@Url.Action("EfetuarPagamento", new { inscricaoId = inscricao.Id })" class="btn btn-success" title="Efetuar Pagamento">Cartão ou Boleto</a>
                                         }
                                         if ((Model.dadosBancarios != null) && (Model.dadosBancarios.Length > 100))
                                         {

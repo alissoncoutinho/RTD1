@@ -100,7 +100,7 @@
                             <div class="row form-group">
                                 @Html.LabelFor(m => m.register.telefoneCelular, new { @class = "control-label col-md-4" })*
                                 <div class="col-md-6 input-group-sm">
-                                    @Html.TextBoxFor(m => m.register.telefoneCelular, new { @class = "form-control", placeholder = "ex.:(61)99999-9999/vivo" })
+                                    @Html.TextBoxFor(m => m.register.telefoneCelular, new { @class = "form-control", placeholder = "ex.:(61)99999-9999" })
                                     @Html.ValidationMessageFor(m => m.register.telefoneCelular, "", new { @class = "alert-danger" })
                                 </div>
                             </div>
@@ -264,7 +264,7 @@
         $(document).ready(function () {
             $("#register_dataNascimento").mask("99/99/9999");
             $("#register_altura2").mask("9,99");
-            $("#register_telefoneCelular").mask("(99) 99999-9999/AAAAAA");
+            $("#register_telefoneCelular").mask("(99) 99999-9999");
 
             $(".escolherSegundaOpcaoClasse").change(function (event) {
                 event.preventDefault();

@@ -124,24 +124,10 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    @Html.LabelFor(m => m.telefoneFixo, new { @class = "col-md-2" })
-                    <div class="col-md-2">
-                        @Html.TextBoxFor(m => m.telefoneFixo, new { @class = "form-control" })
-                        @Html.ValidationMessageFor(m => m.telefoneFixo, "", new { @class = "alert-danger" })
-                    </div>
-                </div>
-                <div class="form-group">
                     @Html.LabelFor(m => m.telefoneCelular, new { @class = "col-md-2" })*
                     <div class="col-md-2">
                         @Html.TextBoxFor(m => m.telefoneCelular, new { @class = "form-control" })
                         @Html.ValidationMessageFor(m => m.telefoneCelular, "", new { @class = "alert-danger" })
-                    </div>
-                </div>
-                <div class="form-group">
-                    @Html.LabelFor(m => m.telefoneCelular2, new { @class = "col-md-2" })
-                    <div class="col-md-2">
-                        @Html.TextBoxFor(m => m.telefoneCelular2, new { @class = "form-control" })
-                        @Html.ValidationMessageFor(m => m.telefoneCelular2, "", new { @class = "alert-danger" })
                     </div>
                 </div>
                 <div class="form-group">
@@ -257,8 +243,8 @@
                         });
                         $("#altura2").mask("9,99");
                         $("#telefoneFixo").mask("(99) 99999-9999");
-                        $("#telefoneCelular").mask("(99) 99999-9999/AAAAAA");
-                        $("#telefoneCelular2").mask("(99) 99999-9999/AAAAAA");
+                        $("#telefoneCelular").mask("(99) 99999-9999");
+                        $("#telefoneCelular2").mask("(99) 99999-9999");
                         $("#divFoto").click(function () {
                             $("#myTabDados").attr('class', '');
                             $("#myTabFoto").attr('class','active');

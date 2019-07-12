@@ -50,7 +50,7 @@ namespace Barragem.Models
         public string telefoneFixo { get; set; }
 
         [Required(ErrorMessage = "O campo celular é obrigatório")]
-        [Display(Name = "celular/operadora")]
+        [Display(Name = "celular/whatsapp")]
         public string telefoneCelular { get; set; }
 
         public virtual string linkwhatsapp
@@ -103,7 +103,7 @@ namespace Barragem.Models
             }
         }
 
-        [Display(Name = "celular2/operadora")]
+        [Display(Name = "celular2")]
         public string telefoneCelular2 { get; set; }
 
         [Required(ErrorMessage = "O campo bairro é obrigatório")]
@@ -251,7 +251,7 @@ namespace Barragem.Models
         public string telefoneFixo { get; set; }
 
         [Required(ErrorMessage = "O campo celular é obrigatório")]
-        [Display(Name = "celular/operadora")]
+        [Display(Name = "celular/whatsapp")]
         public string telefoneCelular { get; set; }
 
         [Display(Name = "celular2/operadora")]

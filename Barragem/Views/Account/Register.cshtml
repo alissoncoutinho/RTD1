@@ -77,23 +77,10 @@
         </div>
     </div>
     <div class="form-group">
-        @Html.LabelFor(m => m.telefoneFixo, new { @class = "control-label col-md-2" })
-        <div class="col-md-2">
-            @Html.TextBoxFor(m => m.telefoneFixo, new { @class = "form-control" })
-        </div>
-    </div>
-    <div class="form-group">
         @Html.LabelFor(m => m.telefoneCelular, new { @class = "control-label col-md-2" })*
         <div class="col-md-3">
-            @Html.TextBoxFor(m => m.telefoneCelular, new { @class = "form-control",placeholder="ex.:(61)99999-9999/vivo" })
+            @Html.TextBoxFor(m => m.telefoneCelular, new { @class = "form-control",placeholder="ex.:(61)99999-9999" })
             @Html.ValidationMessageFor(m => m.telefoneCelular, "", new { @class = "alert-danger" })
-        </div>
-    </div>
-    <div class="form-group">
-        @Html.LabelFor(m => m.telefoneCelular2, new { @class = "control-label col-md-2" })
-        <div class="col-md-3">
-            @Html.TextBoxFor(m => m.telefoneCelular2, new { @class = "form-control", placeholder = "ex.:(61)99999-9999/tim" })
-            @Html.ValidationMessageFor(m => m.telefoneCelular2)
         </div>
     </div>
     <div class="form-group">
@@ -138,8 +125,8 @@
                         $("#dataNascimento").mask("99/99/9999");
                         $("#altura2").mask("9,99");
                         $("#telefoneFixo").mask("(99) 9999-9999");
-                        $("#telefoneCelular").mask("(99) 99999-9999/AAAAAA");
-                        $("#telefoneCelular2").mask("(99) 99999-9999/AAAAAA");
+                        $("#telefoneCelular").mask("(99) 99999-9999");
+                        $("#telefoneCelular2").mask("(99) 99999-9999");
                                                 
                     })
                 </script>
