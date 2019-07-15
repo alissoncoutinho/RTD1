@@ -332,6 +332,15 @@
             @Html.Raw("document.forms[0].isClasseDupla.value = true;");
         }
 
+        jQuery(function ($) {
+            $.validator.addMethod('date',
+                function (value, element) {
+                    $.culture = Globalize.culture("pt-BR");
+                    var date = Globalize.parseDate(value, "dd/MM/yyyy", "pt-BR");
+                    return this.optional(element) ||
+                        !/Invalid|NaN/.test(new Date(date).toString());
+                });
+        });
 
         if (document.getElementById('isMaisDeUmaClasse').checked) {
             document.getElementById('segundaOpcaoClasse').style.opacity = "1";
@@ -354,15 +363,7 @@
             }
         });
 
-        jQuery(function ($) {
-            $.validator.addMethod('date',
-            function (value, element) {
-                $.culture = Globalize.culture("pt-BR");
-                var date = Globalize.parseDate(value, "dd/MM/yyyy", "pt-BR");
-                return this.optional(element) ||
-                  !/Invalid|NaN/.test(new Date(date).toString());
-            });
-        });
+        
 
     </script>
 }

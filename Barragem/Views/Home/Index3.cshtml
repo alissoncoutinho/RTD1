@@ -51,7 +51,8 @@
 }
 
 
-@if (Model != null && !(ViewBag.situacaoJogador=="desativado" || ViewBag.situacaoJogador == "pendente"))
+@if ((Model != null && !(ViewBag.situacaoJogador=="desativado" || ViewBag.situacaoJogador == "pendente")) 
+    || (ViewBag.ViewOrganizador))
 {
 
     <div class="container-dashboard">
@@ -583,6 +584,7 @@
     }
 
 @if (ViewBag.JogosPendentes != null && !(ViewBag.situacaoJogador == "desativado" || ViewBag.situacaoJogador == "pendente"))
+    
 {
     <div class="container-dashboard">
         <div class="container-fluid">

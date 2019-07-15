@@ -449,6 +449,7 @@ namespace Barragem.Controllers
             ViewBag.Sucesso = Sucesso;
             ViewBag.MsgAlerta = MsgAlerta;
             ViewBag.SoTorneio = false;
+            ViewBag.ViewOrganizador = false;
             var usuario = db.UserProfiles.Find(WebSecurity.GetUserId(User.Identity.Name));
             Funcoes.CriarCookieBarragem(Response, Server, usuario.barragemId, usuario.barragem.nome);
             int barragemId = usuario.barragemId;
@@ -499,6 +500,7 @@ namespace Barragem.Controllers
                 }
                 catch (System.InvalidOperationException e)
                 {
+                    ViewBag.isRodadaAtual = false;
                     //ViewBag.MsgAlert = "Não foi possível encontrar jogos em aberto:" + e.Message;
                 }
             }
@@ -506,6 +508,9 @@ namespace Barragem.Controllers
             {
                 jogo = db.Jogo.Find(idJogo);
                 ViewBag.isRodadaAtual = false;
+                if (perfil.Equals("admin") || perfil.Equals("organizador")){
+                    ViewBag.ViewOrganizador = true;
+                }
             }
             if (jogo != null)
             {
