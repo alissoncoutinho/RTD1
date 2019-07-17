@@ -225,8 +225,10 @@ namespace Barragem.Controllers
                     Id = jogo.Id,
                     nomeRodada = "Rodada " + jogo.rodada.codigo + jogo.rodada.sequencial,
                     nomeDesafiante = jogo.desafiante.nome,
-                    nomeDesafiado = jogo.desafiado.nome
-                }).ToList<JogoRodada>(); 
+                    nomeDesafiado = jogo.desafiado.nome,
+                    fotoDesafiado = jogo.desafiado.fotoURL,
+                    fotoDesafiante = jogo.desafiante.fotoURL
+        }).ToList<JogoRodada>(); 
 
             return jogosPendentes;
         }
