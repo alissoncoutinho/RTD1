@@ -362,4 +362,19 @@ namespace Barragem.Models
         public string dados { get; set; }
     }
 
+
+    public class Perfil
+    {
+        public int userId { get; set; }
+        public string login { get; set; }
+        public string nome { get; set; }
+        public string email { get; set; }
+        public string telefone { get; set; }
+        public string naturalidade { get; set; }
+        public DateTime dataNascimento { get; set; }
+        public string altura { get; set; }
+        public string lateralidade { get; set; }
+        public string informacoesAdicionais { get; set; }
+    }
+
 }

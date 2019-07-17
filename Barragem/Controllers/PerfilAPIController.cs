@@ -127,10 +127,25 @@ namespace Barragem.Controllers
             return Ok(headToHead);
         }
 
-        [ResponseType(typeof(UserProfile))]
+        // GET: api/RankingAPI/
+        [Route("api/PerfilAPI/{userId}")]
+        [HttpGet]
+        [ResponseType(typeof(Perfil))]
         public IHttpActionResult GetPerfil(int userId){
             var user = db.UserProfiles.Find(userId);
-            return Ok(user);
+            var perfil = new Perfil();
+            perfil.login = user.UserName;
+            perfil.nome = user.nome;
+            perfil.email = user.email;
+            perfil.telefone = user.telefoneCelular;
+            perfil.naturalidade = user.naturalidade;
+            perfil.dataNascimento = user.dataNascimento;
+            perfil.altura = user.altura2;
+            perfil.lateralidade = user.lateralidade;
+            perfil.informacoesAdicionais = user.matriculaClube;
+            perfil.userId = user.UserId;
+
+            return Ok(perfil);
         }
 
         [ResponseType(typeof(void))]
