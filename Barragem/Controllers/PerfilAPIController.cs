@@ -12,6 +12,9 @@ using Barragem.Models;
 using WebMatrix.WebData;
 using Barragem.Class;
 using Barragem.Filters;
+using System.IO;
+using System.Drawing;
+using System.Web.Hosting;
 
 namespace Barragem.Controllers
 {
@@ -216,9 +219,173 @@ namespace Barragem.Controllers
             return jogoRodada;
         }
 
-        /*
-            FALTANDO: ALTERAR IMAGEM;   ALTERAR STATUS;     ESCOLHER OPONENTE;
-         */
+        [Route("api/PerfilAPI/Torneio/{userId}")]
+        public IList<ColocacaoTorneio> GetTorneio(int userId) {
+            var colocacoesEmTorneios =
+                from inscricao in db.InscricaoTorneio
+                join torneio in db.Torneio on inscricao.torneioId equals torneio.Id into colocacaoJogador
+                where inscricao.userId == userId && inscricao.torneio.dataFim < DateTime.Now && inscricao.colocacao != null
+                select new ColocacaoTorneio()
+                {
+                    colocacaoId = inscricao.colocacao,
+                    nomeTorneio = inscricao.torneio.nome,
+                    classe = inscricao.classeTorneio.nome,
+                    dataTorneio = inscricao.torneio.dataInicio,
+                    
+                };
+            var listCT = new List<ColocacaoTorneio>(colocacoesEmTorneios);
+            foreach (var c in listCT)
+            {
+                c.colocacao = c.getDescricaoColocacao(c.colocacaoId);
+            }
+         
 
+            return listCT;
+        }
+
+        [ResponseType(typeof(void))]
+        [HttpPut]
+        [Route("api/PerfilAPI/AlterarStatus/{userId}")]
+        public IHttpActionResult PutAlterarStatus(int userId, string status)
+        {
+            var user = db.UserProfiles.Find(userId);
+
+            if ((user.situacao == "ativo" || user.situacao == "licenciado") && (status=="ativo" || status== "licenciado")){
+
+                user.situacao = status;
+            } else {
+                return InternalServerError(new Exception("Status não pode ser alterado nesta situação."));
+            }
+
+            db.Entry(user).State = EntityState.Modified;
+            try
+            {
+                db.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                return InternalServerError(e);
+            }
+
+            return StatusCode(HttpStatusCode.NoContent);
+        }
+
+        [Route("api/PerfilAPI/BuscaOponentes/{rankingId}")]
+        public IList<Perfil> GetBuscaOponentes(int rankingId, string nome)
+        {
+            var oponentes = db.UserProfiles.Where(j => j.barragemId == rankingId && j.nome.Contains(nome)).OrderBy(j => j.nome).Take(20).ToList<UserProfile>();
+            IList<Perfil> Listaperfil = new List<Perfil>();
+            foreach (var oponente in oponentes)
+            {
+                var j = new Perfil();
+                j.userId = oponente.UserId;
+                j.nome = oponente.nome;
+                j.fotoPerfil = oponente.fotoURL;
+                Listaperfil.Add(j);
+
+            }
+
+            return Listaperfil;
+        }
+
+        private HeadToHead montarHead2Head(int userIdOponente, int userId)
+        {
+            var jogosHeadToHead = db.Jogo.Where(j => (j.desafiado_id == userId && j.desafiante_id == userIdOponente) ||
+                (j.desafiante_id == userId && j.desafiado_id == userIdOponente)).ToList();
+
+            HeadToHead headToHead = new HeadToHead();
+            headToHead.Id = 0;
+
+            headToHead.qtddVitoriasDesafiado = jogosHeadToHead.Where(j => j.idDoVencedor == userId).Count();
+            headToHead.qtddVitoriasDesafiante = jogosHeadToHead.Where(j => j.idDoVencedor == userIdOponente).Count();
+
+            var userOponente = db.UserProfiles.Find(userIdOponente);
+
+            headToHead.alturaDesafiante = userOponente.altura2;
+            headToHead.idadeDesafiante = userOponente.idade;
+            headToHead.naturalidadeDesafiante = userOponente.naturalidade;
+            headToHead.inicioRankingDesafiante = userOponente.dataInicioRancking.Month + "/" + userOponente.dataInicioRancking.Year;
+            headToHead.lateralDesafiante = userOponente.lateralidade;
+            try
+            {
+                var melhorRankingDesafiante = db.Rancking.Where(r => r.userProfile_id == userIdOponente && r.posicaoClasse != null && r.classeId != null).OrderBy(r => r.classe.nivel).ThenBy(r => r.posicaoClasse).Take(1).ToList();
+                headToHead.melhorPosicaoDesafiante = melhorRankingDesafiante[0].posicaoClasse + "º/" + melhorRankingDesafiante[0].classe.nome;
+            }
+            catch (Exception e) { }
+
+            return headToHead;
+        }
+
+
+        [ResponseType(typeof(HeadToHead))]
+        [HttpGet]
+        [Route("api/PerfilAPI/GetHead2Head/{userId}")]
+        public IHttpActionResult GetHead2Head(int userId, int userIdOponente)
+        {
+            HeadToHead headToHead = montarHead2Head(userIdOponente, userId);
+
+            return Ok(headToHead);
+        }
+
+        private string ProcessImage(string croppedImage, int userId)
+        {
+
+            string filePath = String.Empty;
+            try
+            {
+                string base64 = croppedImage;
+                byte[] bytes = Convert.FromBase64String(base64.Split(',')[1]);
+                filePath = "/Content/images/Photo/Pf-" + Guid.NewGuid() + ".jpg";
+                MemoryStream stream = new MemoryStream(bytes);
+                Image png = Image.FromStream(stream);
+                png.Save(HostingEnvironment.MapPath(filePath), System.Drawing.Imaging.ImageFormat.Jpeg);
+                png.Dispose();
+            }
+            catch (Exception ex)
+            {
+                string st = ex.Message;
+            }
+            if (userId != 0)
+            {
+                string fotoURL = (from up in db.UserProfiles where up.UserId == userId select up.fotoURL).Single();
+                if ((fotoURL != null) && (System.IO.File.Exists(HostingEnvironment.MapPath(fotoURL))))
+                {
+                    try
+                    {
+                        System.IO.File.Delete(HostingEnvironment.MapPath(fotoURL));
+                    }
+                    catch (System.IO.IOException e)
+                    {
+                        Console.WriteLine(e.Message);
+                    }
+                }
+            }
+
+            return filePath;
+        }
+
+        [ResponseType(typeof(string))]
+        [HttpPut]
+        [Route("api/PerfilAPI/AlterarFoto/{userId}")]
+        public IHttpActionResult PutAlterarFoto(int userId, string avatarCropped)
+        {
+            UserProfile user = null;
+            try
+            {
+                user = db.UserProfiles.Find(userId);
+                if (!String.IsNullOrEmpty(avatarCropped)){
+                    string filePath = ProcessImage(avatarCropped, userId);
+                    user.fotoURL = filePath;
+                    db.Entry(user).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+            } catch (Exception e) {
+                return InternalServerError(e);
+            }
+
+            return Ok(user.fotoURL);
+        }
+
+        
     }
 }

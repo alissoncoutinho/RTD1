@@ -143,8 +143,8 @@ namespace Barragem.Controllers
             {
                 return HttpNotFound();
             }
-            ViewBag.desafiado_id = new SelectList(db.UserProfiles.Where(u => u.situacao == "ativo" && u.barragemId == jogo.rodada.barragemId).OrderBy(u => u.nome), "UserId", "nome", jogo.desafiado_id);
-            ViewBag.desafiante_id = new SelectList(db.UserProfiles.Where(u => u.situacao == "ativo" && u.barragemId == jogo.rodada.barragemId).OrderBy(u => u.nome), "UserId", "nome", jogo.desafiante_id);
+            ViewBag.desafiado_id = new SelectList(db.UserProfiles.Where(u => (u.situacao == "ativo" && u.barragemId == jogo.rodada.barragemId) || u.UserId==8).OrderBy(u => u.nome), "UserId", "nome", jogo.desafiado_id);
+            ViewBag.desafiante_id = new SelectList(db.UserProfiles.Where(u => (u.situacao == "ativo" && u.barragemId == jogo.rodada.barragemId) || u.UserId == 8).OrderBy(u => u.nome), "UserId", "nome", jogo.desafiante_id);
             ViewBag.rodada_id = new SelectList(db.Rodada, "Id", "codigo", jogo.rodada_id);
             return View(jogo);
         }

@@ -119,4 +119,51 @@ namespace Barragem.Models
         public int? cabecaChave { get; set; }
 
     }
+
+    public class ColocacaoTorneio {
+        public string getDescricaoColocacao(int? colocId)
+        {
+            if (colocId == null)
+            {
+                return "Sem informação";
+            }
+            else if (colocId == 0)
+            {
+                return "Campeão";
+            }
+            else if (colocId == 1)
+            {
+                return "Vice-Campeão";
+            }
+            else if (colocId == 2)
+            {
+                return "Semi-finais";
+            }
+            else if (colocId == 3)
+            {
+                return "Quartas de final";
+            }
+            else if (colocId == 4)
+            {
+                return "Oitavas de final";
+            }
+            else if (colocId == 5)
+            {
+                return "R2";
+            }
+            else
+            {
+                return "Primeira fase";
+            }
+        }
+        public int? colocacaoId { get; set; }
+        public string colocacao { get; set; }
+        public string  nomeTorneio { get; set; }
+        public string  classe { get; set; }
+        public DateTime dataTorneio { get; set; }
+        
+    }
+
+   
+
 }

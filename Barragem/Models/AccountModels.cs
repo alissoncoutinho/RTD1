@@ -375,6 +375,7 @@ namespace Barragem.Models
         public string altura { get; set; }
         public string lateralidade { get; set; }
         public string informacoesAdicionais { get; set; }
+        public string fotoPerfil { get; set; }
     }
 
 }
