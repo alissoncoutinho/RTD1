@@ -11,10 +11,11 @@ using Barragem.Context;
 using Barragem.Models;
 using Barragem.Class;
 using System.Net.Http;
+using System.Security.Claims;
 
 namespace Barragem.Controllers
 {
-    
+    [Authorize]
     public class JogoAPIController : ApiController
     {
         private BarragemDbContext db = new BarragemDbContext();
@@ -55,6 +56,8 @@ namespace Barragem.Controllers
         [Route("api/JogoAPI/cabecalho/{userId}")]
         public Cabecalho GetCabecalho(int userId)
         {
+            var claimsIdentity = User.Identity as ClaimsIdentity;
+            var teste = claimsIdentity.FindFirst("sub").Value;
             var user = db.UserProfiles.Find(userId);
             int barragemId = user.barragemId;
             var qtddRodada = 0;
@@ -100,7 +103,8 @@ namespace Barragem.Controllers
             }else if((id == 0) && (torneioId != 0)) {
                 try
                 {
-                    jogo = db.Jogo.Where(u => (u.desafiado_id == userId || u.desafiante_id == userId) && u.torneioId == torneioId)
+                    jogo = db.Jogo.Where(u => u.torneioId == torneioId && (u.desafiado_id == userId || u.desafiante_id == userId) &&
+                    !(u.desafiado_id == 0 || u.desafiante_id == 0))
                             .OrderByDescending(u => u.Id).Take(1).Single();
                 }
                 catch (Exception e) { }
@@ -281,7 +285,8 @@ namespace Barragem.Controllers
             jogo.qtddGames1setDesafiado = games1setDesafiado;
             jogo.qtddGames2setDesafiado = games2setDesafiado;
             jogo.qtddGames3setDesafiado = games3setDesafiado;
-            jogo.usuarioInformResultado = ""; //User.Identity.Name; TODO: PEGAR O NOME DO USUÁRIO
+            var claimsIdentity = User.Identity as ClaimsIdentity;
+            jogo.usuarioInformResultado = claimsIdentity.FindFirst("sub").Value; // TODO: PEGAR O NOME DO USUÁRIO
             jogo.dataCadastroResultado = DateTime.Now;
             jogo.situacao_Id = 4;
 

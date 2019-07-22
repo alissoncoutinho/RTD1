@@ -20,7 +20,7 @@ namespace Barragem.Controllers
         public IList<TorneioApp> GetTorneio(int userId)
         {
             var dataHoje = DateTime.Now.AddDays(-5);
-            var Torneios = from inscricao in db.InscricaoTorneio
+            var Torneios = (from inscricao in db.InscricaoTorneio
                            join torneio in db.Torneio on inscricao.torneioId equals torneio.Id into colocacaoJogador
                            where inscricao.userId == userId && inscricao.isAtivo && inscricao.torneio.isAtivo && inscricao.torneio.dataFim > dataHoje
                 select new TorneioApp
@@ -33,9 +33,49 @@ namespace Barragem.Controllers
                     cidade = inscricao.torneio.cidade,
                     premiacao = inscricao.torneio.premiacao,
                     contato = inscricao.torneio.barragem.email
-                };
+                }).Distinct<TorneioApp>();
             var listTorneio = new List<TorneioApp>(Torneios);
             return listTorneio;
+        }
+
+        [Route("api/TorneioAPI/Inscritos/{torneioId}")]
+        public IList<Inscrito> GetListarInscritos(int torneioId)
+        {
+            var torneio = db.Torneio.Find(torneioId);
+            var liberarTabelaInscricao = torneio.liberaTabelaInscricao;
+            if (!liberarTabelaInscricao)
+            {
+                throw new Exception(message: "Tabela de inscritos ainda não liberada.");
+            }
+
+            var inscricoes = db.InscricaoTorneio.Where(r => r.torneioId == torneioId && r.classeTorneio.isDupla == false).
+                OrderBy(r => r.classe).ThenBy(r => r.participante.nome).ToList();
+            var inscricoesDupla = db.InscricaoTorneio.Where(r => r.torneioId == torneioId && r.classeTorneio.isDupla == true).
+                OrderBy(r => r.classe).ThenBy(r => r.participante.nome).ToList();
+
+            List<InscricaoTorneio> inscricoesRemove = new List<InscricaoTorneio>();
+            foreach (var ins in inscricoesDupla) {
+                var formouDupla = inscricoesDupla.Where(i => i.parceiroDuplaId == ins.userId && i.classe == ins.classe).Count();
+                if (formouDupla > 0) {
+                    inscricoesRemove.Add(ins);
+                }
+            }
+            foreach (var ins in inscricoesRemove){
+                    inscricoesDupla.Remove(ins);
+            }
+            inscricoes.AddRange(inscricoesDupla);
+            List<Inscrito> inscritos = new List<Inscrito>();
+            foreach (var i in inscricoes)
+            {
+                var inscrito = new Inscrito();
+                inscrito.nome = i.participante.nome;
+                inscrito.classe = i.classeTorneio.nome;
+                inscrito.foto = i.participante.fotoURL;
+                if(i.parceiroDupla!=null) inscrito.nomeDupla = i.parceiroDupla.nome;
+                inscritos.Add(inscrito);
+            }
+                        
+            return inscritos;
         }
 
         [ResponseType(typeof(void))]
@@ -112,6 +152,15 @@ namespace Barragem.Controllers
             }
 
             return StatusCode(HttpStatusCode.NoContent);
+        }
+
+        [HttpGet]
+        [Route("api/TorneioAPI/ListarClasses/{torneioId}")]
+        public IList<ClasseTorneio> GetClasses(int torneioId)
+        {
+            var classes = db.ClasseTorneio.Where(c => c.torneioId == torneioId).OrderBy(c => c.nome).ToList<ClasseTorneio>();
+
+            return classes;
         }
 
         private int? getParceiroDuplaProximoJogo(Jogo jogoAnterior, int idJogadorPrincipal)

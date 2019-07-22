@@ -164,6 +164,13 @@ namespace Barragem.Models
         
     }
 
+    public class Inscrito
+    {
+        public string foto { get; set; }
+        public string nome { get; set; }
+        public string classe { get; set; }
+        public string nomeDupla { get; set; }
+    }
    
 
 }

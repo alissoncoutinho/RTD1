@@ -63,7 +63,8 @@ namespace Barragem.Controllers
                 {
                     nomeUser = rk.userProfile.nome,
                     posicaoUser = (int)rk.posicaoClasse,
-                    pontuacao = rk.totalAcumulado
+                    pontuacao = rk.totalAcumulado,
+                    foto = rk.userProfile.fotoURL
                 }).ToList<Classificacao>();
             
             return rancking;

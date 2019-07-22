@@ -16,8 +16,8 @@ namespace Barragem
             if (WebSecurity.Login(context.UserName, context.Password))
             {
                 var identity = new ClaimsIdentity(context.Options.AuthenticationType);
-                identity.AddClaim(new Claim("sub", context.UserName));
-                identity.AddClaim(new Claim("role", "user"));
+                identity.AddClaim(new Claim("sub", ""+WebSecurity.GetUserId(context.UserName)));
+                //identity.AddClaim(new Claim("role", "user"));
                 context.Validated(identity);
                 WebSecurity.Logout();
             }

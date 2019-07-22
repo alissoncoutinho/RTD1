@@ -64,6 +64,7 @@ namespace Barragem.Models
         public int rodadaId { get; set; }
         public DateTime dataRodada { get; set; }
         public string jogoAtrasado { get; set; }
+        public string foto { get; set; }
 
     }
 
