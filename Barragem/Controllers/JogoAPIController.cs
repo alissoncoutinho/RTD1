@@ -89,14 +89,21 @@ namespace Barragem.Controllers
 
         // GET: api/JogoAPI/5
         [ResponseType(typeof(MeuJogo))]
-        public IHttpActionResult GetJogo(int id, int userId=0)
+        public IHttpActionResult GetJogo(int id, int userId=0, int torneioId=0)
         {
             Jogo jogo = null;
-            if (id == 0) {
+            if ((id == 0) && (torneioId==0)) {
                 try{
                     jogo = db.Jogo.Where(u => (u.desafiado_id == userId || u.desafiante_id == userId) && u.torneioId == null)
                             .OrderByDescending(u => u.Id).Take(1).Single();
                 }catch(Exception e) { }
+            }else if((id == 0) && (torneioId != 0)) {
+                try
+                {
+                    jogo = db.Jogo.Where(u => (u.desafiado_id == userId || u.desafiante_id == userId) && u.torneioId == torneioId)
+                            .OrderByDescending(u => u.Id).Take(1).Single();
+                }
+                catch (Exception e) { }
             } else {
                 jogo = db.Jogo.Find(id);
             }

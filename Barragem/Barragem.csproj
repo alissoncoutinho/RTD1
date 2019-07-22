@@ -257,6 +257,7 @@
     <Compile Include="Controllers\RankingAPIController.cs" />
     <Compile Include="Controllers\RodadaController.cs" />
     <Compile Include="Controllers\TemporadaController.cs" />
+    <Compile Include="Controllers\TorneioAPIController.cs" />
     <Compile Include="Controllers\TorneioController.cs" />
     <Compile Include="Controllers\UmuaramaController.cs" />
     <Compile Include="Controllers\WtaBarreirasController.cs" />

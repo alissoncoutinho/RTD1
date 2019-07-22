@@ -105,9 +105,18 @@ namespace Barragem.Models
         [UIHint("tinymce_full_compressed"), AllowHtml]
         [Display(Name = "Dados Bancários")]
         public string dadosBancarios { get; set; }
-
-
+        
     }
 
-
+    public class TorneioApp
+    {
+        public int Id { get; set; }
+        public int logoId { get; set; }
+        public string nome { get; set; }
+        public DateTime dataInicio { get; set; }
+        public DateTime dataFim { get; set; }
+        public string cidade { get; set; }
+        public string premiacao { get; set; }
+        public string contato { get; set; }
+    }
 }
