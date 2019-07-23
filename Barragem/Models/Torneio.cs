@@ -119,4 +119,11 @@ namespace Barragem.Models
         public string premiacao { get; set; }
         public string contato { get; set; }
     }
+    public class TabelaApp
+    {
+        public List<ClasseTorneioApp> classes { get; set; }
+        public string descricaoFase { get; set; }
+        public List<MeuJogo> jogos { get; set; }
+        public int faseTorneio { get; set; }
+    }
 }

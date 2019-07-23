@@ -20,4 +20,11 @@ namespace Barragem.Models
         public bool isPrimeiraOpcao { get; set; }
         public bool isDupla { get; set; }
     }
+
+    public class ClasseTorneioApp
+    {
+        public int Id { get; set; }
+        public string nome { get; set; }
+        public bool selected { get; set; }
+    }
 }
