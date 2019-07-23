@@ -161,14 +161,14 @@ namespace Barragem.Controllers
         {
             var claimsIdentity = User.Identity as ClaimsIdentity;
             var userId = Convert.ToInt32(claimsIdentity.FindFirst("sub").Value);
-            var classeUser = db.InscricaoTorneio.Where(c=>c.torneioId==torneioId && c.isAtivo && c.userId==userId)
-                .Select(c=>c.classe).SingleOrDefault();
+            var classeUser = db.InscricaoTorneio.Where(c => c.torneioId == torneioId && c.isAtivo && c.userId == userId).FirstOrDefault().classe;
+                //.Select(c=>c.classe).FirstOrDefault();
             var classes = db.ClasseTorneio.Where(c => c.torneioId == torneioId).Select(ct => new ClasseTorneioApp
             {
                 nome = ct.nome,
                 Id = ct.Id
-            }).OrderBy(c => c.nome);
-
+            }).OrderBy(c => c.nome).ToList<ClasseTorneioApp>();
+            //var listClasses = new List<ClasseTorneioApp>(classes);
             foreach (var c in classes){
                 if (classeUser==c.Id) {
                     c.selected = true;
@@ -177,30 +177,57 @@ namespace Barragem.Controllers
                 }
             }
             var primeiraFase = db.Jogo.Where(r => r.classeTorneio == classeUser && r.faseTorneio < 100).Max(r => r.faseTorneio);
-            var jogos = db.Jogo.Where(c => c.classeTorneio == classeUser && c.faseTorneio == primeiraFase).Select(j => new MeuJogo
+            var jogos = db.Jogo.Where(c => c.classeTorneio == classeUser && c.faseTorneio == primeiraFase).ToList();
+
+            var ListJogos = new List<MeuJogo>();
+            foreach (var j in jogos)
             {
-                dataJogo = j.dataJogo,
-                horaJogo = j.horaJogo,
-                localJogo = j.localJogo,
-                idDesafiante = j.desafiante_id,
-                nomeDesafiante = j.desafiante.nome,
-                fotoDesafiante = j.desafiante.fotoURL,
-                idDesafiado = j.desafiado_id,
-                nomeDesafiado = j.desafiado.nome,
-                fotoDesafiado = j.desafiado.fotoURL,
-                qtddGames1setDesafiado = j.qtddGames1setDesafiado,
-                qtddGames1setDesafiante = j.qtddGames1setDesafiante,
-                qtddGames2setDesafiado = j.qtddGames2setDesafiado,
-                qtddGames2setDesafiante = j.qtddGames2setDesafiante,
-                qtddGames3setDesafiado = j.qtddGames3setDesafiado,
-                qtddGames3setDesafiante = j.qtddGames3setDesafiante,
-                idDoVencedor = j.idDoVencedor
-        }).ToList<MeuJogo>(); 
-            var listClasses = new List<ClasseTorneioApp>(classes);
+                var meuJogo = new MeuJogo();
+                meuJogo.dataJogo = j.dataJogo;
+                meuJogo.horaJogo = j.horaJogo;
+                meuJogo.localJogo = j.localJogo;
+                meuJogo.idDesafiante = j.desafiante_id;
+                if (meuJogo.idDesafiante == 10)
+                {
+                    meuJogo.nomeDesafiante = "bye";
+                }
+                else if (meuJogo.idDesafiante == 0)
+                {
+                    meuJogo.nomeDesafiante = "Aguardando Adversário";
+                }
+                else
+                {
+                    meuJogo.nomeDesafiante = j.desafiante.nome;
+                    meuJogo.fotoDesafiante = j.desafiante.fotoURL;
+                }
+                meuJogo.idDesafiado = j.desafiado_id;
+                if (meuJogo.idDesafiado == 10)
+                {
+                    meuJogo.nomeDesafiado = "bye";
+                }
+                else if (meuJogo.idDesafiado == 0)
+                {
+                    meuJogo.nomeDesafiado = "Aguardando Adversário";
+                }
+                else
+                {
+                    meuJogo.nomeDesafiado = j.desafiado.nome;
+                    meuJogo.fotoDesafiado = j.desafiado.fotoURL;
+                }
+                meuJogo.qtddGames1setDesafiado = j.qtddGames1setDesafiado;
+                meuJogo.qtddGames1setDesafiante = j.qtddGames1setDesafiante;
+                meuJogo.qtddGames2setDesafiado = j.qtddGames2setDesafiado;
+                meuJogo.qtddGames2setDesafiante = j.qtddGames2setDesafiante;
+                meuJogo.qtddGames3setDesafiado = j.qtddGames3setDesafiado;
+                meuJogo.qtddGames3setDesafiante = j.qtddGames3setDesafiante;
+                meuJogo.idDoVencedor = j.idDoVencedor;
+                ListJogos.Add(meuJogo);
+            }
+            
             var tabelaApp = new TabelaApp();
-            tabelaApp.classes = listClasses;
+            tabelaApp.classes = classes;
             tabelaApp.descricaoFase = getDescricaoFaseTorneio((int)primeiraFase);
-            tabelaApp.jogos = jogos;
+            tabelaApp.jogos = ListJogos;
             tabelaApp.faseTorneio = (int)primeiraFase;
             return tabelaApp;
         }
