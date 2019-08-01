@@ -45,18 +45,13 @@ namespace Barragem.Controllers
         [Route("api/RankingAPI/{classeId}")]
         public IList<Classificacao> GetRanking(int classeId){
             //List<RanckingView> rancking;
-            int barragemId = 1; // TODO: get barragem usuario
+            var classe = db.Classe.Find(classeId);
+            int barragemId = classe.barragemId;
             var idRodada = 0;
-            UserProfile usuario = null;
-            try
-            {
-                //usuario = db.UserProfiles.Find(2030); // TODO : GET USERID WebSecurity.GetUserId(User.Identity.Name)
+            try {
                 idRodada = db.Rancking.Where(r => r.rodada.isAberta == false && r.rodada.isRodadaCarga == false && r.rodada.barragemId == barragemId).Max(r => r.rodada_id);
-            }
-            catch (InvalidOperationException)
-            {
+            } catch (InvalidOperationException){}
 
-            }
             var rancking = db.Rancking.Include(r => r.userProfile).Include(r => r.rodada).
                 Where(r => r.rodada_id == idRodada && r.posicao > 0 && r.posicaoClasse != null && r.userProfile.situacao != "desativado" && r.userProfile.situacao != "inativo" && r.classe.Id == classeId).
                 OrderBy(r => r.classe.nivel).ThenBy(r => r.posicaoClasse).Select(rk => new Classificacao()
