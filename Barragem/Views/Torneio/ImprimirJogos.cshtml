@@ -32,6 +32,9 @@
                 @Html.DisplayName("Jogador 2")
             </th>
             <th>
+                @Html.DisplayName("Classe")
+            </th>
+            <th>
                 @Html.DisplayName("Fase")
             </th>
             <th>
@@ -71,6 +74,9 @@
                     {
                         @item.desafiado.nome
                     }
+                </td>
+                <td>
+                    @Html.Raw(item.classe.nome)
                 </td>
                 <td>
                     @Html.Raw(item.descricaoFaseTorneio)

@@ -1483,11 +1483,11 @@ namespace Barragem.Controllers
             var torneio = db.Torneio.Find(torneioId);
             ViewBag.nomeTorneio = torneio.nome;
             var jogo = db.Jogo.Where(i => i.torneioId == torneioId);
-            listaJogos = filtrarJogos(jogo, fClasse, fData, fHora, fQuadra, fase);
+            listaJogos = filtrarJogos(jogo, fClasse, fData, fHora, fQuadra, fase,true);
             return View(listaJogos);
         }
 
-        private List<Jogo> filtrarJogos(IQueryable<Jogo> jogos, int classe, string data, string hora, int quadra, int fase)
+        private List<Jogo> filtrarJogos(IQueryable<Jogo> jogos, int classe, string data, string hora, int quadra, int fase, Boolean isImprimir=false)
         {
             ViewBag.fClasse = classe;
             ViewBag.fData = data;
@@ -1514,7 +1514,12 @@ namespace Barragem.Controllers
             {
                 jogos = jogos.Where(j => j.faseTorneio == fase);
             }
-            return jogos.OrderByDescending(r => r.faseTorneio).ThenBy(r => r.ordemJogo).ToList();
+            if (isImprimir) {
+                return jogos.OrderBy(r => r.dataJogo).ThenBy(r => r.horaJogo).ToList();
+            } else {
+                return jogos.OrderByDescending(r => r.faseTorneio).ThenBy(r => r.ordemJogo).ToList();
+            }
+            
         }
         [Authorize(Roles = "admin,organizador")]
         [HttpPost]
