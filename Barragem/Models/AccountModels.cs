@@ -378,4 +378,10 @@ namespace Barragem.Models
         public string fotoPerfil { get; set; }
     }
 
+    public class Avatar
+    {
+        public int userId { get; set; }
+        public string avatarCropped { get; set; }
+    }
+
 }

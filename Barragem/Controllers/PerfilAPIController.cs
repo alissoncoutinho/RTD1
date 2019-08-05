@@ -332,7 +332,7 @@ namespace Barragem.Controllers
             return Ok(headToHead);
         }
 
-        private string ProcessImage(string croppedImage, int userId)
+        private string ProcessImage(string croppedImage, int userId)  
         {
 
             string filePath = String.Empty;
@@ -348,7 +348,7 @@ namespace Barragem.Controllers
             }
             catch (Exception ex)
             {
-                string st = ex.Message;
+                throw new Exception("Erro ao gravar imagem "+ex.Message);
             }
             if (userId != 0)
             {
@@ -361,7 +361,7 @@ namespace Barragem.Controllers
                     }
                     catch (System.IO.IOException e)
                     {
-                        Console.WriteLine(e.Message);
+                        throw new Exception("Erro ao deletar foto anterior " + e.Message);
                     }
                 }
             }
@@ -371,15 +371,15 @@ namespace Barragem.Controllers
 
         [ResponseType(typeof(string))]
         [HttpPut]
-        [Route("api/PerfilAPI/AlterarFoto/{userId}")]
-        public IHttpActionResult PutAlterarFoto(int userId, string avatarCropped)
+        [Route("api/PerfilAPI/AlterarFoto")]
+        public IHttpActionResult PutAlterarFoto([FromBody] Avatar avatar)
         {
             UserProfile user = null;
             try
             {
-                user = db.UserProfiles.Find(userId);
-                if (!String.IsNullOrEmpty(avatarCropped)){
-                    string filePath = ProcessImage(avatarCropped, userId);
+                user = db.UserProfiles.Find(avatar.userId);
+                if (!String.IsNullOrEmpty(avatar.avatarCropped)){
+                    string filePath = ProcessImage(avatar.avatarCropped, avatar.userId);
                     user.fotoURL = filePath;
                     db.Entry(user).State = EntityState.Modified;
                     db.SaveChanges();
