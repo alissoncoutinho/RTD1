@@ -644,10 +644,10 @@ namespace Barragem.Controllers
             ViewBag.ChartLineData = dados;
             ViewBag.meuRanking = meuRanking;
             // gráfico rosca - desempenho nos jogos
-            var meusJogos = db.Jogo.Where(j => (j.desafiado_id == usuario.UserId || j.desafiante_id == usuario.UserId) && (j.situacao_Id==5 || j.situacao_Id==4)).ToList();
+            var meusJogos = db.Jogo.Where(j => (j.desafiado_id == usuario.UserId || j.desafiante_id == usuario.UserId) && (j.situacao_Id==5 || j.situacao_Id==4) && j.torneioId==null).ToList();
             ViewBag.qtddTotalDerrotas = meusJogos.Where(j => j.idDoVencedor != usuario.UserId).Count();
             ViewBag.qtddTotalVitorias = meusJogos.Where(j => j.idDoVencedor == usuario.UserId).Count();
-            ViewBag.qtddTotalWos = meusJogos.Where(j => j.situacao_Id == 5).Count();
+            //ViewBag.qtddTotalWos = meusJogos.Where(j => j.situacao_Id == 5).Count();
 
             return View(jogo);
         }

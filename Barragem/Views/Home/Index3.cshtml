@@ -715,11 +715,11 @@
         var config = {
             type: "doughnut",
             data: {
-                @Html.Raw("labels: ['"+ ViewBag.qtddTotalVitorias+ " Vitórias','" + ViewBag.qtddTotalDerrotas +" Derrotas','"+ ViewBag.qtddTotalWos +" WOs'],")
+                @Html.Raw("labels: ['"+ ViewBag.qtddTotalVitorias+ " Vitórias','" + ViewBag.qtddTotalDerrotas +" Derrotas'],")
                 datasets: [{
                     label: "Meus Jogos",
-                    @Html.Raw("data: ["+ ViewBag.qtddTotalVitorias + "," + ViewBag.qtddTotalDerrotas + "," + ViewBag.qtddTotalWos + "],")
-                    backgroundColor: ["#00a65a", "#D53032", "#FDB45C"]
+                    @Html.Raw("data: ["+ ViewBag.qtddTotalVitorias + "," + ViewBag.qtddTotalDerrotas + "],")
+                    backgroundColor: ["#00a65a", "#D53032"]
                 }]
             }
 

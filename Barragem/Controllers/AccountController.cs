@@ -591,8 +591,8 @@ namespace Barragem.Controllers
             }
             List<Rancking> ranckingJogador = db.Rancking.Where(r => r.userProfile_id == userId && r.posicaoClasse !=null).OrderByDescending(r => r.rodada_id).ToList();
             ViewBag.RanckingJogador = ranckingJogador;
-            List<Jogo> jogosJogador = db.Jogo.Where(r => r.desafiante_id == userId || r.desafiado_id == userId)
-                .OrderByDescending(r => r.rodada_id).ToList();
+            List<Jogo> jogosJogador = db.Jogo.Where(r => (r.desafiante_id == userId || r.desafiado_id == userId) && r.torneioId==null)
+                .OrderByDescending(r => r.rodada_id).Take(30).ToList();
             ViewBag.jogosJogador = jogosJogador;
 
             if (ranckingJogador.Count > 0)
@@ -895,6 +895,7 @@ namespace Barragem.Controllers
                         db.Database.ExecuteSqlCommand("delete from rancking where USERPROFILE_ID=" + Id);
                         db.Database.ExecuteSqlCommand("Delete from webpages_UsersInRoles where UserId=" + Id);
                         db.Database.ExecuteSqlCommand("Delete from UserProfile where UserId=" + Id);
+                        db.Database.ExecuteSqlCommand("delete from inscricaotorneio where UserId=" + Id);
                     }
                     else
                     {

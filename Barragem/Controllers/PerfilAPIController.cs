@@ -353,7 +353,7 @@ namespace Barragem.Controllers
             if (userId != 0)
             {
                 string fotoURL = (from up in db.UserProfiles where up.UserId == userId select up.fotoURL).Single();
-                if ((fotoURL != null) && (System.IO.File.Exists(HostingEnvironment.MapPath(fotoURL))))
+                if ((fotoURL != null) && (fotoURL != "") && (System.IO.File.Exists(HostingEnvironment.MapPath(fotoURL))))
                 {
                     try
                     {
