@@ -56,6 +56,7 @@ namespace Barragem.Controllers
                 Where(r => r.rodada_id == idRodada && r.posicao > 0 && r.posicaoClasse != null && r.userProfile.situacao != "desativado" && r.userProfile.situacao != "inativo" && r.classe.Id == classeId).
                 OrderBy(r => r.classe.nivel).ThenBy(r => r.posicaoClasse).Select(rk => new Classificacao()
                 {
+                    userId = rk.userProfile_id,
                     nomeUser = rk.userProfile.nome,
                     posicaoUser = (int)rk.posicaoClasse,
                     pontuacao = rk.totalAcumulado,

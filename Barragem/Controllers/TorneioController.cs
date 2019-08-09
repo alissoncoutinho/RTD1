@@ -815,14 +815,24 @@ namespace Barragem.Controllers
             // Sets your customer information.
             //payment.Sender = new Sender(inscricao.participante.nome,inscricao.participante.email,new Phone("61", "99999999"));
             string[] arrayNomes = inscricao.participante.nome.Trim().Split(' ');
-            var nome = inscricao.participante.nome;
+            var nome = inscricao.participante.nome.Trim();
             if (arrayNomes.Length == 1)
             {
                 nome = nome + " Sobrenome";
             }
-            var ddd = inscricao.participante.telefoneCelular.Substring(1, 2);
-            var cel = inscricao.participante.telefoneCelular.Substring(4).Trim().Replace("-", "");
-            payment.Sender = new Sender(nome, inscricao.participante.email, new Phone(ddd, cel));
+            nome = nome.Replace("-", "").Replace(".", "");
+            var ddd = "";
+            var cel = "";
+            var telefone = inscricao.participante.telefoneCelular.Trim().Replace("(", "").Replace(")", "").Replace(" ", "").Replace("-", "");
+            if (telefone.Length < 10) {
+                ddd = "61";
+                cel = "984086580";
+            }else{
+                ddd = telefone.Substring(0, 2);
+                cel = telefone.Substring(2);
+            }
+            
+            payment.Sender = new Sender(nome, inscricao.participante.email.Trim(), new Phone(ddd, cel));
 
             //SenderDocument document = new SenderDocument(Documents.GetDocumentByType("CPF"), "12345678909");
             //payment.Sender.Documents.Add(document);
@@ -1540,7 +1550,9 @@ namespace Barragem.Controllers
                 if (dataJogo != "")
                 {
                     jogo.dataJogo = Convert.ToDateTime(dataJogo);
-                    jogo.situacao_Id = 2;
+                    if (jogo.situacao_Id != 4 && jogo.situacao_Id != 5){
+                        jogo.situacao_Id = 2;
+                    }
                 }
                 jogo.horaJogo = horaJogo;
                 jogo.quadra = quadra;

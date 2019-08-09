@@ -59,6 +59,7 @@ namespace Barragem.Models
         public double totalAcumulado { get; set; }
         public int? posicaoUser { get; set; }
 
+        public int userId { get; set; }
         public string nomeUser { get; set; }
         public string rodada { get; set; }
         public int rodadaId { get; set; }

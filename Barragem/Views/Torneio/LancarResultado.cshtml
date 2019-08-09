@@ -38,9 +38,9 @@
                 <div class="form-group exibir-inserirResultados" id="divLancarWO">
                     <label class="col-md-12 col-xs-12" for="situacao">Vencedor da partida</label>
                     <div class="col-md-2 col-xs-12">
-                        <input type="radio" name="vencedorWO" value=@Html.Raw(Model.desafiado_id) @if (Model.idDoVencedor == Model.desafiado_id) { @Html.Raw(" checked")  }> @if (Model.idDoVencedor == Model.desafiado_id && Model.desafiado_id != 0 && Model.desafiado_id != 10)
+                        <input type="radio" name="vencedorWO" value=@Html.Raw(Model.desafiado_id) @if (Model.idDoVencedor == Model.desafiado_id) { @Html.Raw(" checked")  }> @if (Model.desafiado_id != 0 && Model.desafiado_id != 10)
                         {@Html.Raw(Model.desafiado.nome)}<br>
-                        <input type="radio" name="vencedorWO" value=@Html.Raw(Model.desafiante_id) @if (Model.idDoVencedor==Model.desafiante_id) { @Html.Raw(" checked") }> @if (Model.idDoVencedor == Model.desafiante_id && Model.desafiante_id != 0 && Model.desafiante_id != 10)
+                        <input type="radio" name="vencedorWO" value=@Html.Raw(Model.desafiante_id) @if (Model.idDoVencedor==Model.desafiante_id) { @Html.Raw(" checked") }> @if (Model.desafiante_id != 0 && Model.desafiante_id != 10)
                         {@Html.Raw(Model.desafiante.nome)}<br>
                     </div>
                     <div class="col-md-2 col-xs-12">
