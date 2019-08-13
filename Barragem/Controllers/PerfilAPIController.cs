@@ -180,7 +180,7 @@ namespace Barragem.Controllers
         [Route("api/PerfilAPI/Ranking/{userId}")]
         public IList<JogoRodada> GetRanking(int userId)
         {
-            var jogos = db.Jogo.Where(j => j.desafiado_id == userId || j.desafiante_id == userId).OrderByDescending(j=>j.Id).Take(10).ToList<Jogo>();
+            var jogos = db.Jogo.Where(j => (j.desafiado_id == userId || j.desafiante_id == userId) && j.torneioId==null).OrderByDescending(j=>j.Id).Take(10).ToList<Jogo>();
             IList<JogoRodada> jogoRodada = new List<JogoRodada>();
             foreach (var jogo in jogos){
                 var j = new JogoRodada();
@@ -271,21 +271,18 @@ namespace Barragem.Controllers
         }
 
         [Route("api/PerfilAPI/BuscaOponentes/{rankingId}")]
-        public IList<Perfil> GetBuscaOponentes(int rankingId, string nome="")
+        public IList<Perfil> GetBuscaOponentes(int rankingId)
         {
             List<UserProfile> oponentes;
-            if (nome == ""){
-                oponentes = db.UserProfiles.Where(j => j.barragemId == rankingId && (j.situacao== "ativo" || j.situacao == "licenciado" || j.situacao == "suspenso")).OrderBy(j => j.nome).Take(20).ToList<UserProfile>();
-            } else {
-                oponentes = db.UserProfiles.Where(j => j.barragemId == rankingId && j.nome.Contains(nome)).OrderBy(j => j.nome).Take(20).ToList<UserProfile>();
-            }
+            oponentes = db.UserProfiles.Where(j => j.barragemId == rankingId && (j.situacao== "ativo" || j.situacao == "licenciado" || j.situacao == "suspenso")).OrderBy(j => j.nome).ToList<UserProfile>();
+            
              IList<Perfil> Listaperfil = new List<Perfil>();
             foreach (var oponente in oponentes)
             {
                 var j = new Perfil();
                 j.userId = oponente.UserId;
                 j.nome = oponente.nome;
-                j.fotoPerfil = oponente.fotoURL;
+                j.fotoPerfil = null;
                 Listaperfil.Add(j);
 
             }
