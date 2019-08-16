@@ -105,6 +105,10 @@ namespace Barragem.Controllers
                 estatistica.labels = labels;
                 estatistica.dados = dados;
             }
+            // gráfico rosca - desempenho nos jogos
+            var meusJogos = db.Jogo.Where(j => (j.desafiado_id == userId || j.desafiante_id == userId) && (j.situacao_Id == 5 || j.situacao_Id == 4) && j.torneioId == null).ToList();
+            estatistica.qtddTotalDerrotas = meusJogos.Where(j => j.idDoVencedor != userId).Count();
+            estatistica.qtddTotalVitorias = meusJogos.Where(j => j.idDoVencedor == userId).Count();
             return estatistica; 
         }
 
@@ -302,7 +306,8 @@ namespace Barragem.Controllers
             headToHead.qtddVitoriasDesafiante = jogosHeadToHead.Where(j => j.idDoVencedor == userIdOponente).Count();
 
             var userOponente = db.UserProfiles.Find(userIdOponente);
-
+            headToHead.idDesafiado = userId;
+            headToHead.idDesafiante = userIdOponente;
             headToHead.alturaDesafiante = userOponente.altura2;
             headToHead.idadeDesafiante = userOponente.idade;
             headToHead.naturalidadeDesafiante = userOponente.naturalidade;

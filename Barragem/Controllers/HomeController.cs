@@ -446,6 +446,7 @@ namespace Barragem.Controllers
         [Authorize(Roles = "admin, organizador, usuario")]
         public ActionResult Index3(int idJogo = 0, bool Sucesso = false, string MsgAlerta = "")
         {
+
             ViewBag.Sucesso = Sucesso;
             ViewBag.MsgAlerta = MsgAlerta;
             ViewBag.SoTorneio = false;
@@ -475,7 +476,10 @@ namespace Barragem.Controllers
                         ViewBag.cobranca = "Olá, o boleto da sua mensalidade já está disponível para pagamento. Clique no link para acessar o boleto ou copie o número do código de barras:";
                         ViewBag.boleto = pb[0].linkBoleto;
                         ViewBag.numeroCodigoBarras = pb[0].digitableLine;
-                        if (DateTime.Now.Day > 10){
+                        if (((DateTime.Now.Day > 10)&&(DateTime.Now.DayOfWeek!=DayOfWeek.Saturday) && 
+                            (DateTime.Now.DayOfWeek != DayOfWeek.Sunday) && (DateTime.Now.DayOfWeek != DayOfWeek.Monday)) 
+                            || (DateTime.Now.Day > 13))
+                        {
                             var brg = db.Barragens.Find(barragemId);
                             brg.isAtiva = false;
                             db.Entry(brg).State = EntityState.Modified;

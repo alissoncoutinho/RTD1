@@ -118,6 +118,7 @@ namespace Barragem.Controllers
         {
             List<MeuJogo> jogosTorneio = new List<MeuJogo>();
             var classesUser = db.InscricaoTorneio.Where(c => c.torneioId == torneioId && c.isAtivo && c.userId == userId).Select(c=>c.classe).ToList();
+            var torneio = db.Torneio.Find(torneioId);
             foreach(var i in classesUser)
             {
                 try{
@@ -125,6 +126,7 @@ namespace Barragem.Controllers
                     !(u.desafiado_id == 0 || u.desafiante_id == 0))
                             .OrderBy(u => u.faseTorneio).Take(1).SingleOrDefault();
                     MeuJogo meuJogo = montarMeuJogo(jogo, userId);
+                    meuJogo.naoPodelancarResultado = torneio.jogadorNaoLancaResult;
                     jogosTorneio.Add(meuJogo);
                 }
                 catch (Exception e) { }
@@ -148,6 +150,9 @@ namespace Barragem.Controllers
                     meuJogo.rodada = "Rodada " + qtddRodada + "/" + jogo.rodada.temporada.qtddRodadas;
                 }
                 meuJogo.dataFinalRodada = jogo.rodada.dataFim;
+            }else if (jogo.classe != null)
+            {
+                meuJogo.rodada = jogo.classe.nome;
             }
             meuJogo.temporada = nomeTemporada;
             meuJogo.dataJogo = jogo.dataJogo;
@@ -201,6 +206,8 @@ namespace Barragem.Controllers
             headToHead.qtddVitoriasDesafiado = jogosHeadToHead.Where(j => j.idDoVencedor == jogo.desafiado_id).Count();
             headToHead.qtddVitoriasDesafiante = jogosHeadToHead.Where(j => j.idDoVencedor == jogo.desafiante_id).Count();
 
+            headToHead.idDesafiado = jogo.desafiado_id;
+            headToHead.idDesafiante = jogo.desafiante_id;
             headToHead.alturaDesafiado = jogo.desafiado.altura2;
             headToHead.alturaDesafiante = jogo.desafiante.altura2;
             headToHead.idadeDesafiado = jogo.desafiado.idade;

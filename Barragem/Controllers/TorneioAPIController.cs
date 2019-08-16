@@ -159,8 +159,9 @@ namespace Barragem.Controllers
         [Route("api/TorneioAPI/Tabela/{torneioId}")]
         public TabelaApp GetTabela(int torneioId)
         {
-            var claimsIdentity = User.Identity as ClaimsIdentity;
-            var userId = Convert.ToInt32(claimsIdentity.FindFirst("sub").Value);
+            //var claimsIdentity = User.Identity as ClaimsIdentity;
+            //var userId = Convert.ToInt32(claimsIdentity.FindFirst("sub").Value);
+            var userId = 2030;
             var classeUser = db.InscricaoTorneio.Where(c => c.torneioId == torneioId && c.isAtivo && c.userId == userId).FirstOrDefault().classe;
                 //.Select(c=>c.classe).FirstOrDefault();
             var classes = db.ClasseTorneio.Where(c => c.torneioId == torneioId).Select(ct => new ClasseTorneioApp
@@ -185,7 +186,16 @@ namespace Barragem.Controllers
                 var meuJogo = new MeuJogo();
                 meuJogo.dataJogo = j.dataJogo;
                 meuJogo.horaJogo = j.horaJogo;
-                meuJogo.localJogo = j.localJogo;
+                var quadra = "";
+                if ((j.quadra!=null) && (j.quadra != 100)){
+                    quadra = " quadra " + j.quadra;
+                }
+                var local = "";
+                if (j.localJogo != null)
+                {
+                    local = j.localJogo;
+                }
+                meuJogo.localJogo = local + quadra;
                 meuJogo.idDesafiante = j.desafiante_id;
                 if (meuJogo.idDesafiante == 10)
                 {

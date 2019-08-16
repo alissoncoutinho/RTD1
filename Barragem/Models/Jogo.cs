@@ -302,6 +302,8 @@ namespace Barragem.Models
 
         public int Id { get; set; }
 
+        public bool naoPodelancarResultado { get; set; }
+
         public string rodada { get; set; }
 
         public string temporada { get; set; }
@@ -382,6 +384,8 @@ namespace Barragem.Models
     {
 
         public int Id { get; set; }
+        public int idDesafiante { get; set; }
+        public int idDesafiado { get; set; }
         public int qtddVitoriasDesafiante { get; set; }
         public int qtddVitoriasDesafiado { get; set; }
         public int idadeDesafiante { get; set; }
