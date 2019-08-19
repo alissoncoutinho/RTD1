@@ -46,7 +46,7 @@
                     <div class="col-md-2 col-xs-12">
                         @if ((ViewBag.Editar == null) || (ViewBag.Editar))
                         {
-                            <input type="button" class="btn btn-primary btn-small" id="button_lancarWO" value="Lançar WO" onclick="lancarWO()" />
+                            <input type="button" class="btn btn-primary btn-small" id="button_lancarWO" value="Lançar" onclick="lancarWO()" />
                         }
                     </div>
                 </div>
@@ -371,7 +371,7 @@
                 $("#dadosJogo").hide();
                 $("#submeter").hide();
             }
-            if (str == "pendente" || str == "marcado" || str == "WO") {
+            if (str == "pendente" || str == "marcado" || str == "WO" || str == "desistência") {
                 $("#labelset1").hide();
                 $("#labelset2").hide();
                 $("#labelset3").hide();
@@ -384,7 +384,7 @@
                 $("#1set").hide();
                 $("#2set").hide();
                 $("#3set").hide();
-                if (str == "WO") {
+                if (str == "WO" || str == "desistência"){
                     document.getElementById("divLancarWO").classList.add("show");
                 } else {
                     document.getElementById("divLancarWO").classList.remove("show");
