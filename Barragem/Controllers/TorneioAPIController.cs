@@ -69,6 +69,7 @@ namespace Barragem.Controllers
             foreach (var i in inscricoes)
             {
                 var inscrito = new Inscrito();
+                inscrito.userId = i.userId;
                 inscrito.nome = i.participante.nome;
                 inscrito.classe = i.classeTorneio.nome;
                 inscrito.foto = i.participante.fotoURL;
@@ -159,9 +160,9 @@ namespace Barragem.Controllers
         [Route("api/TorneioAPI/Tabela/{torneioId}")]
         public TabelaApp GetTabela(int torneioId)
         {
-            //var claimsIdentity = User.Identity as ClaimsIdentity;
-            //var userId = Convert.ToInt32(claimsIdentity.FindFirst("sub").Value);
-            var userId = 2030;
+            var claimsIdentity = User.Identity as ClaimsIdentity;
+            var userId = Convert.ToInt32(claimsIdentity.FindFirst("sub").Value);
+            //var userId = 2030;
             var classeUser = db.InscricaoTorneio.Where(c => c.torneioId == torneioId && c.isAtivo && c.userId == userId).FirstOrDefault().classe;
                 //.Select(c=>c.classe).FirstOrDefault();
             var classes = db.ClasseTorneio.Where(c => c.torneioId == torneioId).Select(ct => new ClasseTorneioApp

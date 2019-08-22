@@ -69,15 +69,19 @@ namespace Barragem.Controllers
         [Route("api/PerfilAPI/Cabecalho/{userId}")]
         public CabecalhoPerfil GetCabecalho(int userId)
         {
-            CabecalhoPerfil cabecalho = db.Rancking.Where(r => r.userProfile_id == userId).
-                OrderByDescending(r => r.rodada_id).Take(1).Select(rk => new CabecalhoPerfil()
-                {
-                    posicaoUser = rk.posicaoClasse,
-                    nomeUser = rk.userProfile.nome,
-                    totalAcumulado = rk.totalAcumulado,
-                    fotoPerfil = rk.userProfile.fotoURL,
-                    statusUser = rk.userProfile.situacao
-                }).FirstOrDefault();
+            var perfil = db.UserProfiles.Find(userId);
+            CabecalhoPerfil cabecalho = new CabecalhoPerfil();
+            cabecalho.nomeUser = perfil.nome;
+            cabecalho.fotoPerfil = perfil.fotoURL;
+            cabecalho.statusUser = perfil.situacao;
+
+            var ranking = db.Rancking.Where(r => r.userProfile_id == userId).
+                OrderByDescending(r => r.rodada_id).Take(1).FirstOrDefault();
+            if (ranking != null)
+            {
+                cabecalho.posicaoUser = ranking.posicaoClasse;
+                cabecalho.totalAcumulado = ranking.totalAcumulado;
+            }
             return cabecalho;
         }
 

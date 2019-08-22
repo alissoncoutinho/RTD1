@@ -157,6 +157,15 @@ namespace Barragem.Controllers
             meuJogo.temporada = nomeTemporada;
             meuJogo.dataJogo = jogo.dataJogo;
             meuJogo.horaJogo = jogo.horaJogo;
+            var quadra = "";
+            if ((jogo.quadra != null) && (jogo.quadra != 100)){
+                quadra = " quadra " + jogo.quadra;
+            }
+            var local = "";
+            if (jogo.localJogo != null){
+                local = jogo.localJogo;
+            }
+            meuJogo.localJogo = local + quadra;
             meuJogo.localJogo = jogo.localJogo;
             meuJogo.idDesafiante = jogo.desafiante_id;
             meuJogo.nomeDesafiante = jogo.desafiante.nome;

@@ -23,17 +23,23 @@ namespace Barragem.Controllers
         public IList<LoginRankingModel> GetRankingsByUserEmail(string email)
         {
             List<LoginRankingModel> loginRankings = new List<LoginRankingModel>();
-            var users = db.UserProfiles.Where(u => u.email.ToLower() == email.Trim().ToLower()).ToList();
+            var users = db.UserProfiles.Where(u => u.email.ToLower() == email.Trim().ToLower() && u.situacao!="desativado" && u.situacao!="inativo").ToList();
             if (users.Count() == 0){
                 return loginRankings;
                 //throw (new Exception("Não foi encontrado ranking com este email."));
             }
-            
+            var qtdd = users.Count();
             foreach (var item in users)
             {
                 var ranking = new LoginRankingModel();
                 ranking.idRanking = item.barragemId;
-                ranking.nomeRanking = item.barragem.nome;
+                if (qtdd > 1)
+                {
+                    ranking.nomeRanking = item.barragem.nome + " - " + item.UserName;
+                } else {
+                    ranking.nomeRanking = item.barragem.nome;
+                }
+                
                 ranking.userName = item.UserName;
                 ranking.userId = item.UserId;
                 loginRankings.Add(ranking);
