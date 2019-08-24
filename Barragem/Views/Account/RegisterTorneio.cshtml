@@ -68,9 +68,9 @@
                                 </div>
                             </div>
                             <div class="row form-group">
-                                @Html.Label("Nome e Sobrenome", new { @class = "control-label col-md-4" })*
+                                @Html.Label("Nome e UM Sobrenome", new { @class = "control-label col-md-4" })*
                                 <div class="col-md-6 input-group-sm">
-                                    @Html.TextBoxFor(m => m.register.nome, new { @class = "form-control", placeholder = "Nome e Sobrenome" })
+                                    @Html.TextBoxFor(m => m.register.nome, new { @class = "form-control", placeholder = "Nome e UM Sobrenome" })
                                     @Html.ValidationMessageFor(m => m.register.nome, "", new { @class = "alert-danger" })
                                 </div>
                             </div>
@@ -115,7 +115,7 @@
                     </div>
                     <div class="box-body">
                         <div class="row">
-                            @Html.Label("Valor", new { @class = "col-sm-5" })
+                            @Html.Label("Uma categoria", new { @class = "col-sm-5" })
                             <div class="col-sm-7 info-box-text">
                                 @Html.Hidden("inscricao.torneioId", torneio.Id)
                                 @Html.Hidden("isClasseDupla", false)
@@ -134,7 +134,7 @@
                         @if ((torneio.valorSocio != null) && (torneio.valorSocio != 0))
                         {
                             <div class="row">
-                                @Html.Label("Valor p/Sócio", new { @class = "col-sm-5" })
+                                @Html.Label("Uma categoria p/ sócio", new { @class = "col-sm-5" })
                                 <div class="col-sm-7 info-box-text">
                                     @Html.Raw("R$ " + torneio.valorSocio + ",00")
                                 </div>
@@ -142,7 +142,7 @@
                         }
                         @if ((torneio.isMaisUmaClasse) && (torneio.valor != 0)) {
                             <div class="row">
-                                @Html.Label("Valor para duas classes", new { @class = "col-sm-5" })
+                                @Html.Label("Duas Categorias", new { @class = "col-sm-5" })
                                 <div class="col-sm-7 info-box-text">
                                     @Html.Raw("R$ " + torneio.valorMaisClasses + ",00")
                                 </div>
@@ -150,7 +150,7 @@
                             if ((torneio.valorMaisClassesSocio != null) && (torneio.valorMaisClassesSocio != 0))
                             {
                                 <div class="row">
-                                    @Html.Label("Valor Sócio duas classes", new { @class = "col-sm-5" })
+                                    @Html.Label("Duas Categorias p/sócio", new { @class = "col-sm-5" })
                                     <div class="col-sm-7 info-box-text">
                                         @Html.Raw("R$ " + torneio.valorMaisClassesSocio + ",00")
                                     </div>

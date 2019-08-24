@@ -26,6 +26,33 @@
                     </div>
                 </div>
             </div>
+            <table class="table table-striped table-condensed table-bordered">
+                <tr>
+                    <th>
+                        @Html.DisplayName("Total inscritos")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Sócios")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Pagantes")
+                    </th>
+                    <th>
+                        @Html.DisplayName("PagSeguro")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Valor Pago")
+                    </th>
+                </tr>
+                <tr>
+                    <td>@ViewBag.InscIndividuais</td>
+                    <td>@ViewBag.InscIndividuaisSocios</td>
+                    <td>@ViewBag.TotalPagantes</td>
+                    <td>@ViewBag.PagoNoCartao</td>
+                    <td>R$ @string.Format("{0:N}", @ViewBag.ValorPago)</td>
+               </tr>
+            </table>
+
                 <table class="table table-striped table-condensed table-bordered">
                     <tr>
                         <th>
