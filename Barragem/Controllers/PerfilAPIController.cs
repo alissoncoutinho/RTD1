@@ -69,15 +69,19 @@ namespace Barragem.Controllers
         [Route("api/PerfilAPI/Cabecalho/{userId}")]
         public CabecalhoPerfil GetCabecalho(int userId)
         {
-            CabecalhoPerfil cabecalho = db.Rancking.Where(r => r.userProfile_id == userId).
-                OrderByDescending(r => r.rodada_id).Take(1).Select(rk => new CabecalhoPerfil()
-                {
-                    posicaoUser = rk.posicaoClasse,
-                    nomeUser = rk.userProfile.nome,
-                    totalAcumulado = rk.totalAcumulado,
-                    fotoPerfil = rk.userProfile.fotoURL,
-                    statusUser = rk.userProfile.situacao
-                }).FirstOrDefault();
+            var perfil = db.UserProfiles.Find(userId);
+            CabecalhoPerfil cabecalho = new CabecalhoPerfil();
+            cabecalho.nomeUser = perfil.nome;
+            cabecalho.fotoPerfil = perfil.fotoURL;
+            cabecalho.statusUser = perfil.situacao;
+
+            var ranking = db.Rancking.Where(r => r.userProfile_id == userId).
+                OrderByDescending(r => r.rodada_id).Take(1).FirstOrDefault();
+            if (ranking != null)
+            {
+                cabecalho.posicaoUser = ranking.posicaoClasse;
+                cabecalho.totalAcumulado = ranking.totalAcumulado;
+            }
             return cabecalho;
         }
 
@@ -105,6 +109,10 @@ namespace Barragem.Controllers
                 estatistica.labels = labels;
                 estatistica.dados = dados;
             }
+            // gráfico rosca - desempenho nos jogos
+            var meusJogos = db.Jogo.Where(j => (j.desafiado_id == userId || j.desafiante_id == userId) && (j.situacao_Id == 5 || j.situacao_Id == 4) && j.torneioId == null).ToList();
+            estatistica.qtddTotalDerrotas = meusJogos.Where(j => j.idDoVencedor != userId).Count();
+            estatistica.qtddTotalVitorias = meusJogos.Where(j => j.idDoVencedor == userId).Count();
             return estatistica; 
         }
 
@@ -180,7 +188,7 @@ namespace Barragem.Controllers
         [Route("api/PerfilAPI/Ranking/{userId}")]
         public IList<JogoRodada> GetRanking(int userId)
         {
-            var jogos = db.Jogo.Where(j => j.desafiado_id == userId || j.desafiante_id == userId).OrderByDescending(j=>j.Id).Take(10).ToList<Jogo>();
+            var jogos = db.Jogo.Where(j => (j.desafiado_id == userId || j.desafiante_id == userId) && j.torneioId==null).OrderByDescending(j=>j.Id).Take(10).ToList<Jogo>();
             IList<JogoRodada> jogoRodada = new List<JogoRodada>();
             foreach (var jogo in jogos){
                 var j = new JogoRodada();
@@ -271,21 +279,18 @@ namespace Barragem.Controllers
         }
 
         [Route("api/PerfilAPI/BuscaOponentes/{rankingId}")]
-        public IList<Perfil> GetBuscaOponentes(int rankingId, string nome="")
+        public IList<Perfil> GetBuscaOponentes(int rankingId)
         {
             List<UserProfile> oponentes;
-            if (nome == ""){
-                oponentes = db.UserProfiles.Where(j => j.barragemId == rankingId && (j.situacao== "ativo" || j.situacao == "licenciado" || j.situacao == "suspenso")).OrderBy(j => j.nome).Take(20).ToList<UserProfile>();
-            } else {
-                oponentes = db.UserProfiles.Where(j => j.barragemId == rankingId && j.nome.Contains(nome)).OrderBy(j => j.nome).Take(20).ToList<UserProfile>();
-            }
+            oponentes = db.UserProfiles.Where(j => j.barragemId == rankingId && (j.situacao== "ativo" || j.situacao == "licenciado" || j.situacao == "suspenso")).OrderBy(j => j.nome).ToList<UserProfile>();
+            
              IList<Perfil> Listaperfil = new List<Perfil>();
             foreach (var oponente in oponentes)
             {
                 var j = new Perfil();
                 j.userId = oponente.UserId;
                 j.nome = oponente.nome;
-                j.fotoPerfil = oponente.fotoURL;
+                j.fotoPerfil = null;
                 Listaperfil.Add(j);
 
             }
@@ -305,7 +310,8 @@ namespace Barragem.Controllers
             headToHead.qtddVitoriasDesafiante = jogosHeadToHead.Where(j => j.idDoVencedor == userIdOponente).Count();
 
             var userOponente = db.UserProfiles.Find(userIdOponente);
-
+            headToHead.idDesafiado = userId;
+            headToHead.idDesafiante = userIdOponente;
             headToHead.alturaDesafiante = userOponente.altura2;
             headToHead.idadeDesafiante = userOponente.idade;
             headToHead.naturalidadeDesafiante = userOponente.naturalidade;

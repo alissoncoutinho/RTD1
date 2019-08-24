@@ -208,7 +208,7 @@ namespace Barragem.Controllers
                 while (jogadores.Count > 0)
                 {
                     RankingView desafiado = jogadores[0];
-                    desafiante = selecionarAdversario(jogadores, desafiado, Id_rodadaAnterior, idRodada);
+                    desafiante = selecionarAdversario(jogadores, desafiado, Id_rodadaAnterior, idRodada, classeId);
                     criarJogo(desafiado.userProfile_id, desafiante.userProfile_id, idRodada);
                 }
             } catch (Exception e) {
@@ -242,7 +242,7 @@ namespace Barragem.Controllers
             return RedirectToAction("Index", new { msg = "ok" });
         }
 
-        private RankingView selecionarAdversario(List<RankingView> listaJogadores, RankingView desafiado, int rodadaAnteriorId, int rodadaAtual=0)
+        private RankingView selecionarAdversario(List<RankingView> listaJogadores, RankingView desafiado, int rodadaAnteriorId, int rodadaAtual=0, int classeId=0)
         {
             try
             {
@@ -263,7 +263,7 @@ namespace Barragem.Controllers
                         Take(1).OrderByDescending(j => j.Id).ToList();
                     if ((jogoAnterior.Count() > 0)&&
                         ((jogoAnterior[0].desafiado_id == desafiante.userProfile_id)||(jogoAnterior[0].desafiante_id == desafiante.userProfile_id))){
-                        var jogo = db.Jogo.Where(j => j.rodada_id == rodadaAtual).Take(1).OrderByDescending(j => j.Id).FirstOrDefault();
+                        var jogo = db.Jogo.Where(j => j.rodada_id == rodadaAtual && j.desafiante.classeId==classeId).Take(1).OrderByDescending(j => j.Id).FirstOrDefault();
                         var desafianteJaSorteado = jogo.desafiante_id;
                         jogo.desafiante_id = desafiante.userProfile_id;
                         db.Entry(jogo).State = EntityState.Modified;

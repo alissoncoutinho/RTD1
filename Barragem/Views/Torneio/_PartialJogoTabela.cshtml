@@ -37,7 +37,13 @@
                 }
             } else if ((Model.situacao_Id == 5) && (Model.desafiante_id != 10)) {
                 @Html.Raw("WO")
-            } else {
+            }
+            else if (Model.situacao_Id == 6)
+            {
+                @Html.Raw("desistênica")
+            }
+            else
+            {
                 @Html.Raw("X")
             }
         </p>

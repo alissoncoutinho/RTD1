@@ -1782,7 +1782,7 @@ namespace Barragem.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "admin,usuario,organizador")]
-        public ActionResult LancarWO(int Id, int vencedorWO)
+        public ActionResult LancarWO(int Id, int vencedorWO, int situacao_id=5)
         {
             Jogo jogoAtual = db.Jogo.Find(Id);
             //alterar quantidade de games para desafiado e desafiante
@@ -1805,7 +1805,7 @@ namespace Barragem.Controllers
             jogoAtual.qtddGames3setDesafiado = 0;
             jogoAtual.qtddGames3setDesafiante = 0;
             //alterar status do jogo WO
-            jogoAtual.situacao_Id = 5;
+            jogoAtual.situacao_Id = situacao_id;
             jogoAtual.usuarioInformResultado = User.Identity.Name;
             jogoAtual.dataCadastroResultado = DateTime.Now;
             db.Entry(jogoAtual).State = EntityState.Modified;

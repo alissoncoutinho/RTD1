@@ -360,6 +360,9 @@ namespace Barragem.Models
     {
         public string labels { get; set; }
         public string dados { get; set; }
+        public int qtddTotalDerrotas { get; set; }
+        public int qtddTotalVitorias { get; set; }
+        
     }
 
 
