@@ -78,7 +78,7 @@
                     @Html.Hidden("isClasseDupla", false);
                     <div class="box-body">
                         <div class="row">
-                            @Html.Label("Valor", new { @class = "col-sm-5" })
+                            @Html.Label("Uma categoria", new { @class = "col-sm-5" })
                             <div class="col-sm-7 info-box-text">
                                 @if (inscricao == null)
                                 {
@@ -107,7 +107,7 @@
                         @if ((Model.valorSocio != null) && (Model.valorSocio != 0) && (inscricao == null))
                         {
                             <div class="row">
-                                @Html.Label("Valor p/Sócio", new { @class = "col-sm-5" })
+                                @Html.Label("Uma categoria p/ sócio", new { @class = "col-sm-5" })
                                 <div class="col-sm-7 info-box-text">
                                     @Html.Raw("R$ " + Model.valorSocio + ",00")
                                 </div>
@@ -138,7 +138,7 @@
                             if ((bool)Model.isMaisUmaClasse)
                             {
                                 <div class="row">
-                                    @Html.Label("Valor para duas classes", new { @class = "col-sm-5" })
+                                    @Html.Label("Duas Categorias", new { @class = "col-sm-5" })
                                     <div class="col-sm-7 info-box-text">
                                         @if ((Model.valor == 0) || (ViewBag.isGratuito))
                                         {
@@ -153,7 +153,7 @@
                                 if ((Model.valorMaisClassesSocio != null) && (Model.valorMaisClassesSocio != 0))
                                 {
                                     <div class="row">
-                                        @Html.Label("Valor Sócio duas classes", new { @class = "col-sm-5" })
+                                        @Html.Label("Duas Categorias p/sócio", new { @class = "col-sm-5" })
                                         <div class="col-sm-7 info-box-text">
                                             @Html.Raw("R$ " + Model.valorMaisClassesSocio + ",00")
                                         </div>
