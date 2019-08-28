@@ -10,6 +10,7 @@ using System.Web.Http;
 using System.Web.Http.Description;
 using Barragem.Context;
 using Barragem.Models;
+using Barragem.Class;
 
 namespace Barragem.Controllers
 {
@@ -168,5 +169,17 @@ namespace Barragem.Controllers
         {
             return db.BarragemView.Count(e => e.Id == id) > 0;
         }
+
+        [Route("api/RankingAPI/SortearJogos/{classeId}")]
+        [HttpGet]
+        public IList<Jogo> getSortearJogos(int classeId, int barragemId, int rodadaId)
+        {
+            var rodadaNegocio = new RodadaNegocio();
+            var jogos = rodadaNegocio.EfetuarSorteio(2, 1);
+            jogos = rodadaNegocio.definirDesafianteDesafiado(jogos, classeId, barragemId);
+            rodadaNegocio.salvarJogos(jogos, rodadaId);
+            return jogos;
+        }
+
     }
 }
