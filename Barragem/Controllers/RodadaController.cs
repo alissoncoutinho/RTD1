@@ -150,6 +150,7 @@ namespace Barragem.Controllers
             return RedirectToAction("Index", new { msg=mensagem});
         }
 
+        
         private List<RankingView> selecionarJogadorParaFicarFora(List<RankingView> jogadores, int rodadaAnterior, int rodadaAtual, int classeId){
             try
             {
@@ -255,21 +256,9 @@ namespace Barragem.Controllers
                     desafiante.userProfile_id = curinga.UserId;
                     return desafiante;
                 }
-                if (listaJogadores.Count() == 2){
+                if (listaJogadores.Count() == 2)
+                {
                     desafiante = listaJogadores[1];
-
-                    List<Jogo> jogoAnterior = db.Jogo.Where(j => (j.rodada_id <= rodadaAnteriorId &&
-                        (j.desafiado_id == desafiado.userProfile_id || j.desafiante_id == desafiado.userProfile_id))).
-                        Take(1).OrderByDescending(j => j.Id).ToList();
-                    if ((jogoAnterior.Count() > 0)&&
-                        ((jogoAnterior[0].desafiado_id == desafiante.userProfile_id)||(jogoAnterior[0].desafiante_id == desafiante.userProfile_id))){
-                        var jogo = db.Jogo.Where(j => j.rodada_id == rodadaAtual && j.desafiante.classeId==classeId).Take(1).OrderByDescending(j => j.Id).FirstOrDefault();
-                        var desafianteJaSorteado = jogo.desafiante_id;
-                        jogo.desafiante_id = desafiante.userProfile_id;
-                        db.Entry(jogo).State = EntityState.Modified;
-                        db.SaveChanges();
-                        desafiante.userProfile_id = desafianteJaSorteado;
-                    }
                     listaJogadores.RemoveAt(1);
                     listaJogadores.RemoveAt(0);
                     return desafiante;

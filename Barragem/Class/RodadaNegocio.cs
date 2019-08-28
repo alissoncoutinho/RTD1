@@ -225,5 +225,40 @@ namespace Barragem.Class
             }
         }
 
+        public void EfetuarSorteio(int classeId) {
+            var jogadores = db.UserProfiles.Where(u => u.classeId == classeId && u.situacao == "ativo").ToList();
+            var jogadoresJaEscolhidos = new List<UserProfile>();
+            if (jogadores.Count() % 2 != 0){
+                var coringa = db.UserProfiles.Find(8);
+                jogadores.Add(coringa);
+            }
+            
+            while (jogadores.Count() > 0){
+                Random r = new Random();
+                int index = r.Next(jogadores.Count());
+                var jogador = jogadores[index];
+                var mesesRecentes = DateTime.Now.AddMonths(-3);
+                var jogadoresQueNaoPodeJogar = (from u in db.UserProfiles
+                        join jogo in db.Jogo on u.UserId equals jogo.desafiado_id
+                        join rodada in db.Rodada on jogo.rodada_id equals rodada.Id
+                        where u.barragemId == jogador.barragemId && jogo.torneioId == null
+                        && jogo.desafiante_id == jogador.UserId && u.situacao == "ativo" && u.classeId == jogador.classeId
+                        && rodada.dataFim > mesesRecentes select u).Distinct().ToList();
+                var jogadoresPermitidos = jogadores.Except(jogadoresQueNaoPodeJogar).Except(jogadoresJaEscolhidos);
+                foreach (var oponente in jogadoresPermitidos){
+                    if (oponente.UserId != jogador.UserId){
+                        jogadoresJaEscolhidos.Add(oponente);
+                        jogadoresJaEscolhidos.Add(jogador);
+                        //montaJogo(jogador, oponente);
+                        jogadores.Remove(jogador);
+                        jogadores.Remove(oponente);
+                        break;
+                    }                        
+                }
+                                
+
+            }
+        }
+
     }
 }
