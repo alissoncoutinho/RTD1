@@ -172,13 +172,37 @@ namespace Barragem.Controllers
 
         [Route("api/RankingAPI/SortearJogos/{classeId}")]
         [HttpGet]
-        public IList<Jogo> getSortearJogos(int classeId, int barragemId, int rodadaId)
+        public IList<JogoTeste> getSortearJogos(int classeId, int barragemId, int rodadaId)
         {
             var rodadaNegocio = new RodadaNegocio();
-            var jogos = rodadaNegocio.EfetuarSorteio(2, 1);
-            jogos = rodadaNegocio.definirDesafianteDesafiado(jogos, classeId, barragemId);
-            rodadaNegocio.salvarJogos(jogos, rodadaId);
-            return jogos;
+            var barragens = db.BarragemView.Where(b => b.isAtiva).ToList();
+            List<JogoTeste> jogosTeste = new List<JogoTeste>();
+            
+            /*for (int i = 0; i < 30; i++)
+            {
+                var j = rodadaNegocio.EfetuarSorteio(2138, 1036);
+                jogos.AddRange(j);
+            }*/
+            foreach (var b in barragens)
+            {
+                var classes = db.Classe.Where(c=>c.barragemId==b.Id && c.ativa).ToList();
+                foreach (var c in classes)
+                {
+                    var jogos = rodadaNegocio.EfetuarSorteio(c.Id, b.Id);
+                    jogos = rodadaNegocio.definirDesafianteDesafiado(jogos, c.Id, b.Id);
+                    //rodadaNegocio.salvarJogos(jogos, rodadaId);*/
+                    foreach (var jogo in jogos)
+                    {
+                        var jogoTeste = new JogoTeste();
+                        jogoTeste.nomeDesafiado = jogo.desafiado.nome;
+                        jogoTeste.nomeDesafiante = jogo.desafiante.nome;
+                        jogoTeste.barragem = b.nome;
+                        jogoTeste.classe = c.nome;
+                        jogosTeste.Add(jogoTeste);
+                    }
+                }
+            }
+            return jogosTeste;
         }
 
     }

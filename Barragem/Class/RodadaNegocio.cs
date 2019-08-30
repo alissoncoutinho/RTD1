@@ -230,62 +230,63 @@ namespace Barragem.Class
             // lista para guardar os jogadores já sorteados
             var jogadoresJaEscolhidos = new List<UserProfile>();
             var jogos = new List<Jogo>();
+            if (jogadores.Count() < 2) return jogos;
+            if (jogadores.Count() == 2) {
+                montarJogo(jogos, jogadoresJaEscolhidos,jogadores, jogadores[0], jogadores[1], false);
+                return jogos;
+            }
             // verifica se a lista de jogadores é impar, caso seja inclui o coringa na lista
             if (jogadores.Count() % 2 != 0){
                 var coringa = db.UserProfiles.Find(8);
                 jogadores.Add(coringa);
             }
-            int controlador = 1;
-            // esse for é utilizado para iniciar a verificação com 2 meses de jogos sem repetição, mas caso não consiga montar todos os jogos, ele reduz o intervalo para 1 mês;
-            for (int i = -2; i <= -1; i++){
-                // variável utilizada por segurança, evitar um eventual loop infinito;
-                int limitador = 0;
+            var qtddJogos = jogadores.Count() / 2;
+            for (int i = qtddJogos; i >= 1; i--){
+                // variável utilizada por segurança, para evitar um eventual loop infinito;
+                var limitador = 0;
                 // conforme for montando os jogos vai retirando os jogadores da lista, até não sobrar mais nenhum
-                Console.WriteLine("Pesquisando jogos de : " + i + " meses");
                 while (jogadores.Count() > 0)
                 {
-                    Console.WriteLine("jogador : " + controlador++);
-
-                    Random r = new Random();
-                    int index = r.Next(jogadores.Count());
-                    var jogador = jogadores[index];
-                    var dataInicioDeJogosRealizado = DateTime.Now.AddMonths(i);
-                    var jogadoresQueNaoPodeJogar = getJogadoresQueJaJogaramNosUltimosMeses(jogador, dataInicioDeJogosRealizado);
+                    var  jogador = getJogadorRandomicamente(jogadores);
+                    jogadores.Remove(jogador);
+                    var jogadoresQueNaoPodeJogar = getUltimosOponentes(jogador.UserId, qtddJogos, barragemId);
                     var jogadoresPermitidos = jogadores.Except(jogadoresQueNaoPodeJogar);
-                    var encontrou = false;
-                    Console.WriteLine("Qtdd jogadores: " + jogadores.Count());
-                    Console.WriteLine("Qtdd jogadores permitidos : " + jogadoresPermitidos.Count());
-                    foreach (var oponente in jogadoresPermitidos)
-                    {
-                        if ((oponente.UserId != jogador.UserId)&&(oponente.UserId!=8)) // não pegar o coringa também 8
-                        {
-                            jogadoresJaEscolhidos.Add(oponente);
-                            jogadoresJaEscolhidos.Add(jogador);
-                            jogos.Add(new Jogo { desafiado_id = oponente.UserId, desafiado = oponente, desafiante_id = jogador.UserId, desafiante = jogador });
-                            jogadores.Remove(jogador);
-                            jogadores.Remove(oponente);
-                            encontrou = true;
-                            Console.WriteLine("ENCONTOU");
-                            break;
-                        }
-                    }
-                    if (limitador > 50)  break;
-                    if (!encontrou){
-                        Console.WriteLine("NÃO ENCONTOU: " + limitador);
-                        limitador++;
+                    if (jogadoresPermitidos.Count() > 0) {
+                        int indexPermit = new Random().Next(jogadoresPermitidos.Count());
+                        var oponente = jogadoresPermitidos.ElementAt(indexPermit);
+                        montarJogo(jogos, jogadoresJaEscolhidos, jogadores, jogador, oponente, true);
+                    } else {
+                        if (limitador++ > 10) break;
                         jogadoresPermitidos = jogadoresJaEscolhidos.Except(jogadoresQueNaoPodeJogar);
-                        foreach (var jogadorSelecionado in jogadoresPermitidos)
-                        {
-                            var jogadorDeJogoDesfeito = desfazerJogo(jogos, jogadorSelecionado);
-                            jogadoresJaEscolhidos.Add(jogador);
-                            jogadores.Remove(jogador);
-                            jogadores.Add(jogadorDeJogoDesfeito);
-                            break;
-                        }
+                        int indexPermit = new Random().Next(jogadoresPermitidos.Count());
+                        var oponente = jogadoresPermitidos.ElementAt(indexPermit);
+                        desfazerJogo(jogadores, jogadoresJaEscolhidos, jogos, oponente);
+                        montarJogo(jogos, jogadoresJaEscolhidos, jogadores, jogador, oponente, false);
                     }
                 }
             }
+            if (jogadores.Count() > 0)
+            {
+                Console.WriteLine("falhou");
+            }
             return jogos;
+        }
+
+        private UserProfile getJogadorRandomicamente(List<UserProfile> jogadores)
+        {
+            Random r = new Random();
+            int index = r.Next(jogadores.Count());
+            var jogador = jogadores[index];
+            return jogador;
+        }
+
+        private void montarJogo(List<Jogo> jogos, List<UserProfile> jogadoresJaEscolhidos, List<UserProfile> jogadores, UserProfile jogador, UserProfile oponente, bool removeOponenteLista=true) {
+            jogos.Add(new Jogo { desafiado_id = oponente.UserId, desafiado = oponente, desafiante_id = jogador.UserId, desafiante = jogador });
+            jogadoresJaEscolhidos.Add(jogador);
+            if (removeOponenteLista){
+                jogadoresJaEscolhidos.Add(oponente);
+                jogadores.Remove(oponente);
+            }
         }
 
         public void salvarJogos(List<Jogo> jogos, int rodadaId){
@@ -305,20 +306,21 @@ namespace Barragem.Class
             }
         }
 
-        private List<UserProfile> getJogadoresQueJaJogaramNosUltimosMeses(UserProfile jogador, DateTime dataFinalDeJogosRealizado) {
-            return (from u in db.UserProfiles
-             join jogo in db.Jogo on u.UserId equals jogo.desafiado_id
-             join rodada in db.Rodada on jogo.rodada_id equals rodada.Id
-             where u.barragemId == jogador.barragemId && jogo.torneioId == null
-             && jogo.desafiante_id == jogador.UserId && u.situacao == "ativo" && u.classeId == jogador.classeId
-             && rodada.dataFim > dataFinalDeJogosRealizado select u).Union(
-                from u2 in db.UserProfiles
-                join jogo2 in db.Jogo on u2.UserId equals jogo2.desafiante_id
-                join rodada2 in db.Rodada on jogo2.rodada_id equals rodada2.Id
-                where u2.barragemId == jogador.barragemId && jogo2.torneioId == null
-                && jogo2.desafiado_id == jogador.UserId && u2.situacao == "ativo" && u2.classeId == jogador.classeId
-                && rodada2.dataFim > dataFinalDeJogosRealizado
-                select u2).Distinct().ToList();
+        private List<UserProfile> getUltimosOponentes(int userId, int qtddJogos, int barragemId) {
+            var oponentes = new List<UserProfile>();
+            var retorno = (from j in db.Jogo join rodada in db.Rodada on j.rodada_id equals rodada.Id
+             where rodada.barragemId == barragemId && j.torneioId == null && j.desafiante_id == userId select j).Union(
+                from j in db.Jogo
+                join rodada in db.Rodada on j.rodada_id equals rodada.Id
+                where rodada.barragemId == barragemId && j.torneioId == null && j.desafiado_id == userId
+                select j).Take(qtddJogos).OrderByDescending(j=>j.Id).ToList();
+            foreach(var jogo in retorno) {
+                if (jogo.desafiante_id == userId) oponentes.Add(jogo.desafiado);
+                else oponentes.Add(jogo.desafiante);
+            }
+                
+            if (retorno == null) return new List<UserProfile>();
+            return oponentes;
         }
 
         public List<Jogo> definirDesafianteDesafiado(List<Jogo> jogos, int classeId, int barragemId)
@@ -328,29 +330,53 @@ namespace Barragem.Class
             RankingView rkDesafiado = null;
             foreach (var jogo in jogos)
             {
-                if (jogo.desafiante.UserId != 8) // não verificar se for coringa
-                {
-                    rkDesafiado = ranking.Where(r => r.userProfile_id == jogo.desafiado.UserId).FirstOrDefault();
-                    rkDesafiante = ranking.Where(r => r.userProfile_id == jogo.desafiante.UserId).FirstOrDefault();
-                    if (rkDesafiante.posicao < rkDesafiado.posicao)
-                    {
+                try { 
+                    // quer dizer que o coringa está na posição errada.
+                    if (jogo.desafiado_id == 8) {
                         var desafiado = jogo.desafiante;
                         var desafiante = jogo.desafiado;
                         jogo.desafiado = desafiado;
+                        jogo.desafiado_id = desafiado.UserId;
                         jogo.desafiante = desafiante;
+                        jogo.desafiante_id = desafiante.UserId;
+                    } else if (jogo.desafiante_id != 8) // não verificar se for coringa
+                    {
+                        rkDesafiado = ranking.Where(r => r.userProfile_id == jogo.desafiado.UserId).FirstOrDefault();
+                        rkDesafiante = ranking.Where(r => r.userProfile_id == jogo.desafiante.UserId).FirstOrDefault();
+                        if((rkDesafiado!=null && rkDesafiante!=null) && (rkDesafiante.posicao < rkDesafiado.posicao))
+                        {
+                            var desafiado = jogo.desafiante;
+                            var desafiante = jogo.desafiado;
+                            jogo.desafiado = desafiado;
+                            jogo.desafiado_id = desafiado.UserId;
+                            jogo.desafiante = desafiante;
+                            jogo.desafiante_id = desafiante.UserId;
+                        }
                     }
+                }catch(Exception e) {
+                    Console.WriteLine();
                 }
             }
             return jogos;
         }
 
-        private UserProfile desfazerJogo(List<Jogo> jogos, UserProfile jogadorSelecionado) {
-            var jogo = jogos.Where(j => j.desafiado_id == jogadorSelecionado.UserId || j.desafiante_id == jogadorSelecionado.UserId).FirstOrDefault();
-            jogos.Remove(jogo);
-            if (jogo.desafiante_id == jogadorSelecionado.UserId) {
-                return jogo.desafiado;
-            } else {
-                return jogo.desafiante;
+        private void desfazerJogo(List<UserProfile> jogadores, List<UserProfile> jogadoresJaSelecionados, List<Jogo> jogos, UserProfile jogadorSelecionado) {
+            try
+            {
+                var jogo = jogos.Where(j => j.desafiado_id == jogadorSelecionado.UserId || j.desafiante_id == jogadorSelecionado.UserId).FirstOrDefault();
+                jogos.Remove(jogo);
+                if (jogo.desafiante_id == jogadorSelecionado.UserId){
+                    jogadores.Add(jogo.desafiado);
+                    jogadoresJaSelecionados.Remove(jogo.desafiado);
+                }
+                else
+                {
+                    jogadores.Add(jogo.desafiante);
+                    jogadoresJaSelecionados.Remove(jogo.desafiante);
+                }
+            }catch(Exception e)
+            {
+                Console.WriteLine();
             }
         }
     }
