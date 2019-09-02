@@ -166,7 +166,6 @@ namespace Barragem.Controllers
                 local = jogo.localJogo;
             }
             meuJogo.localJogo = local + quadra;
-            meuJogo.localJogo = jogo.localJogo;
             meuJogo.idDesafiante = jogo.desafiante_id;
             meuJogo.nomeDesafiante = jogo.desafiante.nome;
             meuJogo.fotoDesafiante = jogo.desafiante.fotoURL;

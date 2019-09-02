@@ -175,16 +175,45 @@ namespace Barragem.Controllers
         public IList<JogoTeste> getSortearJogos(int classeId, int barragemId, int rodadaId)
         {
             var rodadaNegocio = new RodadaNegocio();
-            var barragens = db.BarragemView.Where(b => b.isAtiva).ToList();
+            var b = db.BarragemView.Find(barragemId);
             List<JogoTeste> jogosTeste = new List<JogoTeste>();
             
-            /*for (int i = 0; i < 30; i++)
+            if (b.isClasseUnica){
+                var classes = db.Classe.Where(c => c.barragemId == b.Id && c.ativa).ToList();
+                foreach (var c in classes) {
+                    
+                }
+            }else{
+                var classes = db.Classe.Where(c => c.barragemId == b.Id && c.ativa).ToList();
+                foreach (var c in classes)
+                {
+                    var jogos = rodadaNegocio.EfetuarSorteio(c.Id, b.Id, null);
+                    jogos = rodadaNegocio.definirDesafianteDesafiado(jogos, c.Id, b.Id);
+                    rodadaNegocio.salvarJogos(jogos, rodadaId);
+                    foreach (var jogo in jogos)
+                    {
+                        var jogoTeste = new JogoTeste();
+                        jogoTeste.jogo = c.nome + ":  " + jogo.desafiado.nome + " / " + jogo.desafiante.nome;
+                        jogosTeste.Add(jogoTeste);
+                    }
+                }
+            }
+            return jogosTeste;
+        }
+
+
+        [Route("api/RankingAPI/SortearJogosTeste/{classeId}")]
+        [HttpGet]
+        public IList<JogoTeste> getSortearJogosTeste(int classeId, int barragemId, int rodadaId)
+        {
+            var rodadaNegocio = new RodadaNegocio();
+            var barragens = db.BarragemView.Where(b => b.isAtiva).ToList();
+            List<JogoTeste> jogosTeste = new List<JogoTeste>();
+
+            foreach (var b in barragens)
             {
-                var j = rodadaNegocio.EfetuarSorteio(2138, 1036);
-                jogos.AddRange(j);
-            }*/
-            foreach (var b in barragens){
-                if (b.isClasseUnica){
+                if (b.isClasseUnica)
+                {
                     List<RankingView> rankingJogadores = db.RankingView.
                         Where(r => r.barragemId == b.Id && r.situacao.Equals("ativo")).
                         OrderByDescending(r => r.totalAcumulado).ToList();
@@ -205,22 +234,31 @@ namespace Barragem.Controllers
                     {
                         contador++;
                         jogadoresParaEnvio.Add(jogador);
-                        if ((contador == jogadoresPorBloco && divisaoPorClasse!= classeAtual)||(jogador.UserId==jgs[jgs.Count()-1].UserId))
+                        if ((contador == jogadoresPorBloco && divisaoPorClasse != classeAtual) || (jogador.UserId == jgs[jgs.Count() - 1].UserId))
                         {
                             classeAtual++;
                             contador = 0;
                             var jogos = rodadaNegocio.EfetuarSorteio(0, b.Id, jogadoresParaEnvio);
                             jogos = rodadaNegocio.definirDesafianteDesafiado(jogos, rankingJogadores[0].classeId, b.Id);
+                            rodadaNegocio.salvarJogos(jogos, rodadaId);
+                            foreach (var jogo in jogos)
+                            {
+                                var jogoTeste = new JogoTeste();
+                                jogoTeste.jogo = b.nome + ":  " + jogo.desafiado.nome + " / " + jogo.desafiante.nome;
+                                jogosTeste.Add(jogoTeste);
+                            }
                             jogadoresParaEnvio = new List<UserProfile>();
                         }
                     }
-                }else{
+                }
+                else
+                {
                     var classes = db.Classe.Where(c => c.barragemId == b.Id && c.ativa).ToList();
                     foreach (var c in classes)
                     {
                         var jogos = rodadaNegocio.EfetuarSorteio(c.Id, b.Id, null);
                         jogos = rodadaNegocio.definirDesafianteDesafiado(jogos, c.Id, b.Id);
-                        //rodadaNegocio.salvarJogos(jogos, rodadaId);*/
+                        rodadaNegocio.salvarJogos(jogos, rodadaId);
                         foreach (var jogo in jogos)
                         {
                             var jogoTeste = new JogoTeste();
