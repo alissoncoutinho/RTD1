@@ -405,10 +405,8 @@ namespace Barragem.Models
 
     public class JogoTeste
     {
-        public string nomeDesafiado { get; set; }
-        public string nomeDesafiante { get; set; }
-        public string barragem { get; set; }
-        public string classe { get; set; }
+        public string jogo { get; set; }
+        
     }
 
 }

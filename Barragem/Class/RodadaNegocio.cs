@@ -225,8 +225,11 @@ namespace Barragem.Class
             }
         }
 
-        public List<Jogo> EfetuarSorteio(int classeId, int barragemId) {
-            var jogadores = db.UserProfiles.Where(u => u.classeId == classeId && u.situacao == "ativo").ToList();
+        public List<Jogo> EfetuarSorteio(int classeId, int barragemId, List<UserProfile> jogadores) {
+            // if classeId for igual a 0 é porque a lista já virá pronta, inicialmente utilizado para os casos de classe única com sorteio por proximidade
+            if (classeId != 0) { 
+                jogadores = db.UserProfiles.Where(u => u.classeId == classeId && u.situacao == "ativo").ToList();
+            }
             // lista para guardar os jogadores já sorteados
             var jogadoresJaEscolhidos = new List<UserProfile>();
             var jogos = new List<Jogo>();

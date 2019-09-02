@@ -183,22 +183,50 @@ namespace Barragem.Controllers
                 var j = rodadaNegocio.EfetuarSorteio(2138, 1036);
                 jogos.AddRange(j);
             }*/
-            foreach (var b in barragens)
-            {
-                var classes = db.Classe.Where(c=>c.barragemId==b.Id && c.ativa).ToList();
-                foreach (var c in classes)
-                {
-                    var jogos = rodadaNegocio.EfetuarSorteio(c.Id, b.Id);
-                    jogos = rodadaNegocio.definirDesafianteDesafiado(jogos, c.Id, b.Id);
-                    //rodadaNegocio.salvarJogos(jogos, rodadaId);*/
-                    foreach (var jogo in jogos)
+            foreach (var b in barragens){
+                if (b.isClasseUnica){
+                    List<RankingView> rankingJogadores = db.RankingView.
+                        Where(r => r.barragemId == b.Id && r.situacao.Equals("ativo")).
+                        OrderByDescending(r => r.totalAcumulado).ToList();
+                    var jogadoresPorBloco = 11;
+                    int divisaoPorClasse = 0;
+                    while (jogadoresPorBloco > 10)
                     {
-                        var jogoTeste = new JogoTeste();
-                        jogoTeste.nomeDesafiado = jogo.desafiado.nome;
-                        jogoTeste.nomeDesafiante = jogo.desafiante.nome;
-                        jogoTeste.barragem = b.nome;
-                        jogoTeste.classe = c.nome;
-                        jogosTeste.Add(jogoTeste);
+                        divisaoPorClasse++;
+                        jogadoresPorBloco = rankingJogadores.Count() / divisaoPorClasse;
+                    }
+                    if (jogadoresPorBloco % 2 != 0) jogadoresPorBloco++;
+
+                    var jgs = rankingJogadores.Select(j => new UserProfile() { UserId = j.userProfile_id, nome = j.nome }).ToList();
+                    var contador = 0;
+                    var jogadoresParaEnvio = new List<UserProfile>();
+                    var classeAtual = 1;
+                    foreach (var jogador in jgs)
+                    {
+                        contador++;
+                        jogadoresParaEnvio.Add(jogador);
+                        if ((contador == jogadoresPorBloco && divisaoPorClasse!= classeAtual)||(jogador.UserId==jgs[jgs.Count()-1].UserId))
+                        {
+                            classeAtual++;
+                            contador = 0;
+                            var jogos = rodadaNegocio.EfetuarSorteio(0, b.Id, jogadoresParaEnvio);
+                            jogos = rodadaNegocio.definirDesafianteDesafiado(jogos, rankingJogadores[0].classeId, b.Id);
+                            jogadoresParaEnvio = new List<UserProfile>();
+                        }
+                    }
+                }else{
+                    var classes = db.Classe.Where(c => c.barragemId == b.Id && c.ativa).ToList();
+                    foreach (var c in classes)
+                    {
+                        var jogos = rodadaNegocio.EfetuarSorteio(c.Id, b.Id, null);
+                        jogos = rodadaNegocio.definirDesafianteDesafiado(jogos, c.Id, b.Id);
+                        //rodadaNegocio.salvarJogos(jogos, rodadaId);*/
+                        foreach (var jogo in jogos)
+                        {
+                            var jogoTeste = new JogoTeste();
+                            jogoTeste.jogo = c.nome + ":  " + jogo.desafiado.nome + " / " + jogo.desafiante.nome;
+                            jogosTeste.Add(jogoTeste);
+                        }
                     }
                 }
             }
