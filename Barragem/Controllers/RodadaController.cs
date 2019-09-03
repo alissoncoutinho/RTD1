@@ -138,11 +138,19 @@ namespace Barragem.Controllers
         public ActionResult SortearJogos(int id, int barragemId)
         {
             string mensagem = "ok";
+            var rodadaNegocio = new RodadaNegocio();
             try{
                 List<Classe> classes = db.Classe.Where(c=>c.barragemId==barragemId && c.ativa==true).ToList();
                 setClasseUnica(barragemId);
+                var jogos = new List<Jogo>();
                 for (int i = 0; i < classes.Count(); i++){
-                    EfetuarSorteio(id, barragemId, classes[i].Id);
+                    if (isClasseUnica) {
+                        rodadaNegocio.EfetuarSorteioPorProximidade(barragemId, classes[i].Id, id);
+                    } else {
+                        jogos = rodadaNegocio.EfetuarSorteio(classes[i].Id, barragemId, null, id);
+                    }
+                    jogos = rodadaNegocio.definirDesafianteDesafiado(jogos, id, id);
+                    rodadaNegocio.salvarJogos(jogos, id);
                 }
             }catch (Exception e){
                 mensagem = e.Message;

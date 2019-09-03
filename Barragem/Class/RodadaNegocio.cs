@@ -226,12 +226,13 @@ namespace Barragem.Class
             }
         }
 
-        public List<Jogo> EfetuarSorteio(int classeId, int barragemId, List<UserProfile> jogadores) {
+        public List<Jogo> EfetuarSorteio(int classeId, int barragemId, List<UserProfile> jogadores, int rodadaId) {
             try
             {
                 // if classeId for igual a 0 é porque a lista já virá pronta, inicialmente utilizado para os casos de classe única com sorteio por proximidade
-                if (classeId != 0)
+                if (jogadores == null)
                 {
+                    db.Database.ExecuteSqlCommand("DELETE j fROM jogo j INNER JOIN UserProfile u ON j.desafiado_id=u.UserId WHERE u.classeId = " + classeId + " AND j.rodada_id =" + rodadaId);
                     jogadores = db.UserProfiles.Where(u => u.classeId == classeId && u.situacao == "ativo").ToList();
                 }
                 // lista para guardar os jogadores já sorteados
@@ -332,7 +333,8 @@ namespace Barragem.Class
             
         }
 
-        private void EfetuarSorteioPorProximidade(int barragemId, int classeId, int rodadaId) {
+        public void EfetuarSorteioPorProximidade(int barragemId, int classeId, int rodadaId) {
+            db.Database.ExecuteSqlCommand("DELETE j fROM jogo j INNER JOIN UserProfile u ON j.desafiado_id=u.UserId WHERE u.classeId = " + classeId + " AND j.rodada_id =" + rodadaId);
             List<RankingView> rankingJogadores = db.RankingView.
                     Where(r => r.barragemId == barragemId && r.classeId == classeId && r.situacao.Equals("ativo")).
                     OrderByDescending(r => r.totalAcumulado).ToList();
@@ -357,8 +359,8 @@ namespace Barragem.Class
                 {
                     classeAtual++;
                     contador = 0;
-                    var jogos = EfetuarSorteio(0, b.Id, jogadoresParaEnvio);
-                    jogos = definirDesafianteDesafiado(jogos, rankingJogadores[0].classeId, b.Id);
+                    var jogos = EfetuarSorteio(classeId, barragemId, jogadoresParaEnvio, rodadaId);
+                    jogos = definirDesafianteDesafiado(jogos, rankingJogadores[0].classeId, barragemId);
                     salvarJogos(jogos, rodadaId);
                     jogadoresParaEnvio = new List<UserProfile>();
                 }
