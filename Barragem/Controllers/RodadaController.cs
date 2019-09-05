@@ -158,7 +158,7 @@ namespace Barragem.Controllers
             return RedirectToAction("Index", new { msg=mensagem});
         }
 
-        
+        /*
         private List<RankingView> selecionarJogadorParaFicarFora(List<RankingView> jogadores, int rodadaAnterior, int rodadaAtual, int classeId){
             try
             {
@@ -198,34 +198,35 @@ namespace Barragem.Controllers
         }
 
         private void EfetuarSorteio(int idRodada, int barragemId, int classeId){
-            try
-            {
-                // excluir os jogos já sorteados para o caso de estar sorteando novamente
-                db.Database.ExecuteSqlCommand("DELETE j fROM jogo j INNER JOIN UserProfile u ON j.desafiado_id=u.UserId WHERE u.classeId = " + classeId + " AND j.rodada_id =" + idRodada);
-                // monta a lista ordenada pelo último rancking consolidado
-                int Id_rodadaAnterior = db.Rancking.Where(r => r.rodada.isAberta == false && r.rodada_id < idRodada && r.rodada.barragemId == barragemId).Max(r => r.rodada_id);
-                List<RankingView> jogadores = db.RankingView.Where(r => r.barragemId == barragemId && r.classeId == classeId && r.situacao.Equals("ativo")).OrderByDescending(r => r.totalAcumulado).ToList();
+             try
+             {
+                 // excluir os jogos já sorteados para o caso de estar sorteando novamente
+                 db.Database.ExecuteSqlCommand("DELETE j fROM jogo j INNER JOIN UserProfile u ON j.desafiado_id=u.UserId WHERE u.classeId = " + classeId + " AND j.rodada_id =" + idRodada);
+                 // monta a lista ordenada pelo último rancking consolidado
+                 int Id_rodadaAnterior = db.Rancking.Where(r => r.rodada.isAberta == false && r.rodada_id < idRodada && r.rodada.barragemId == barragemId).Max(r => r.rodada_id);
+                 List<RankingView> jogadores = db.RankingView.Where(r => r.barragemId == barragemId && r.classeId == classeId && r.situacao.Equals("ativo")).OrderByDescending(r => r.totalAcumulado).ToList();
 
-                // se a quantidade de participantes ativos for impar o sistema escolherá, 
-                // de acordo com a regra estabelecida, um jogador para ficar de fora
-                if (jogadores.Count % 2 != 0)
-                {
-                    jogadores = selecionarJogadorParaFicarFora(jogadores, Id_rodadaAnterior, idRodada, classeId);
-                }
-                // o mais bem posicionado no ranking será desafiado por alguém pior posicionado
-                RankingView desafiante = null;
-                while (jogadores.Count > 0)
-                {
-                    RankingView desafiado = jogadores[0];
-                    desafiante = selecionarAdversario(jogadores, desafiado, Id_rodadaAnterior, idRodada, classeId);
-                    criarJogo(desafiado.userProfile_id, desafiante.userProfile_id, idRodada);
-                }
-            } catch (Exception e) {
-                System.ArgumentException argEx = new System.ArgumentException("Sorteio classe " + classeId + ": " + e.Message, e);
-                throw argEx;
-                
-            }
-        }
+                 // se a quantidade de participantes ativos for impar o sistema escolherá, 
+                 // de acordo com a regra estabelecida, um jogador para ficar de fora
+                 if (jogadores.Count % 2 != 0)
+                 {
+                     jogadores = selecionarJogadorParaFicarFora(jogadores, Id_rodadaAnterior, idRodada, classeId);
+                 }
+                 // o mais bem posicionado no ranking será desafiado por alguém pior posicionado
+                 RankingView desafiante = null;
+                 while (jogadores.Count > 0)
+                 {
+                     RankingView desafiado = jogadores[0];
+                     desafiante = selecionarAdversario(jogadores, desafiado, Id_rodadaAnterior, idRodada, classeId);
+                     criarJogo(desafiado.userProfile_id, desafiante.userProfile_id, idRodada);
+                 }
+             } catch (Exception e) {
+                 System.ArgumentException argEx = new System.ArgumentException("Sorteio classe " + classeId + ": " + e.Message, e);
+                 throw argEx;
+
+             }
+         }
+         */
 
         [Authorize(Roles = "admin, organizador")]
         public ActionResult notificarGeracaoRodada(int Id)
@@ -250,7 +251,7 @@ namespace Barragem.Controllers
             } catch (Exception ex) { }
             return RedirectToAction("Index", new { msg = "ok" });
         }
-
+        /*
         private RankingView selecionarAdversario(List<RankingView> listaJogadores, RankingView desafiado, int rodadaAnteriorId, int rodadaAtual=0, int classeId=0)
         {
             try
@@ -391,7 +392,7 @@ namespace Barragem.Controllers
                 throw argEx;
             }
         }
-
+        
         private void criarJogo(int desafiadoId, int desafianteId, int idRodada, bool isCuringa=false){
             try
             {
@@ -418,6 +419,7 @@ namespace Barragem.Controllers
                 throw argEx;
             }
         }
+        */
         //
         // GET: /Rodada/Edit/5
         [Authorize(Roles = "admin, organizador")]

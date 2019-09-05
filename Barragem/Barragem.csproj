@@ -225,6 +225,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Class\ClientePagHiper.cs" />
+    <Compile Include="Class\FirebaseNotification.cs" />
     <Compile Include="Class\Funcoes.cs" />
     <Compile Include="Class\Mail.cs" />
     <Compile Include="Class\MD5Cript.cs" />

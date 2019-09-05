@@ -169,6 +169,22 @@ namespace Barragem.Controllers
         {
             return db.BarragemView.Count(e => e.Id == id) > 0;
         }
-        
+
+        [Route("api/RankingAPI/Teste")]
+        [HttpGet]
+        [ResponseType(typeof(string))]
+        public IHttpActionResult Teste()
+        {
+            try
+            {
+                var fbmodel = new FirebaseNotificationModel() { message = new Message() { topic = "ranking1", notification = new NotificationModel() { title = "Test Titulo", body = "Test body" } } };
+                new FirebaseNotification().SendNotification(fbmodel);
+            }catch(Exception e)
+            {
+                return InternalServerError(new Exception("Erro: " + e.Message));
+            }
+            return Ok("Teste");
+        }
+
     }
 }
