@@ -19,8 +19,8 @@ public class FirebaseNotification
     public void SendNotification(Byte[] byteArray)
     {
         try {
-            string server_api_key = "AAAAAIRrcz4:APA91bEw4e4VBpHD-FVR_p5VwwRezSCH7kt7arb5RD_nkAGtJzULkJTCvWM2EOF7hB6Q6EPMMPNcirHJAoBl5TUwB84UkAIbVLi89ilpylRMuY3FQLHAdG5xf8dlkNNFToGtuo-v4TbG"; //"AIzaSyBY1ak0mB7yhykCAqwT3ePbnxK-rcEXLAU"; // ConfigurationManager.AppSettings["SERVER_API_KEY"];
-            string sender_id = "2221634366"; // ConfigurationManager.AppSettings["SENDER_ID"];
+            string server_api_key = ConfigurationManager.AppSettings["SERVER_API_KEY"];
+            string sender_id = ConfigurationManager.AppSettings["SENDER_ID"];
             WebRequest httpRequest = WebRequest.Create("https://fcm.googleapis.com/fcm/send");
             httpRequest.Method = "post";
             httpRequest.ContentType = "application/json";
