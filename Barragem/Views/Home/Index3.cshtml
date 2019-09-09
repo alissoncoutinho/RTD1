@@ -51,7 +51,7 @@
 }
 
 
-@if ((Model != null && !(ViewBag.situacaoJogador=="desativado" || ViewBag.situacaoJogador == "pendente")) 
+@if ((Model != null && !(ViewBag.situacaoJogador=="desativado" || ViewBag.situacaoJogador == "pendente" || ViewBag.situacaoJogador == "torneio")) 
     || (ViewBag.ViewOrganizador))
 {
 
@@ -583,7 +583,7 @@
         </div>
     }
 
-@if (ViewBag.JogosPendentes != null && !(ViewBag.situacaoJogador == "desativado" || ViewBag.situacaoJogador == "pendente"))
+@if (ViewBag.JogosPendentes != null && !(ViewBag.situacaoJogador == "desativado" || ViewBag.situacaoJogador == "pendente" || ViewBag.situacaoJogador == "torneio"))
     
 {
     <div class="container-dashboard">

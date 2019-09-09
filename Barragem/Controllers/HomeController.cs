@@ -409,14 +409,7 @@ namespace Barragem.Controllers
                     }
                 }
             }
-            if (usuario.situacao == "pendente")
-            {
-                ViewBag.solicitarAtivacao = "solicitar ativacao";
-            }
-            else if (usuario.situacao == "Ativamento solicitado")
-            {
-                ViewBag.solicitarAtivacao = "Ativamento solicitado";
-            }
+            
 
             // jogos pendentes
             var dataLimite = DateTime.Now.AddMonths(-10);
@@ -562,14 +555,7 @@ namespace Barragem.Controllers
                     }
                 }
             }
-            if (usuario.situacao == "pendente")
-            {
-                ViewBag.solicitarAtivacao = "solicitar ativacao";
-            }
-            else if (usuario.situacao == "Ativamento solicitado")
-            {
-                ViewBag.solicitarAtivacao = "Ativamento solicitado";
-            }
+            
 
             // jogos pendentes
             var dataLimite = DateTime.Now.AddMonths(-10);

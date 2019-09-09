@@ -28,8 +28,7 @@ public class FirebaseNotification
             httpRequest.Headers.Add($"Sender: id={sender_id}");
 
             httpRequest.ContentLength = byteArray.Length;
-            httpRequest.
-            System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+            //System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             Stream dataStream = httpRequest.GetRequestStream();
             dataStream.Write(byteArray, 0, byteArray.Length);
             dataStream.Close();

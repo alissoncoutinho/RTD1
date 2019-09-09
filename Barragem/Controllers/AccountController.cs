@@ -267,7 +267,7 @@ namespace Barragem.Controllers
                         telefoneCelular = model.register.telefoneCelular,
                         telefoneCelular2 = "",
                         email = model.register.email,
-                        situacao = Tipos.Situacao.pendente.ToString(),
+                        situacao = Tipos.Situacao.torneio.ToString(),
                         bairro = model.register.bairro,
                         dataInicioRancking = DateTime.Now,
                         naturalidade = "",
@@ -914,10 +914,7 @@ namespace Barragem.Controllers
             var usuario = db.UserProfiles.Find(WebSecurity.GetUserId(UserName));
             ViewBag.solicitarAtivacao = "";
             ViewBag.classeId = new SelectList(db.Classe.Where(c => c.barragemId == usuario.barragemId && c.ativa == true).ToList(), "Id", "nome", usuario.classeId);
-            if (usuario.situacao == "pendente")
-            {
-                ViewBag.solicitarAtivacao = "sim";
-            }
+            
             return View(usuario);
         }
 

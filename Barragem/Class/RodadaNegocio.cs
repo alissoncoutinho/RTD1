@@ -62,7 +62,8 @@ namespace Barragem.Class
                 if (jogo.desafiante.situacao.Equals("curinga"))
                 {
                     pontuacao = 6;
-                } else if (jogo.idDoVencedor == jogo.desafiado_id && jogo.setsJogados == 2)
+                }
+                else if (jogo.idDoVencedor == jogo.desafiado_id && jogo.setsJogados == 2)
                 {
                     pontuacao = 9;
                 }
@@ -93,16 +94,22 @@ namespace Barragem.Class
             return pontuacao + getBonus(jogo, false);
         }
 
-        private int getBonus(Jogo jogo, bool isDesafiado) {
-            if((jogo.situacao_Id != 4) || (jogo.desafiante.situacao.Equals("curinga")) || (jogo.desafiado.situacao.Equals("curinga")))
+        private int getBonus(Jogo jogo, bool isDesafiado)
+        {
+            if ((jogo.situacao_Id != 4) || (jogo.desafiante.situacao.Equals("curinga")) || (jogo.desafiado.situacao.Equals("curinga")))
             {
                 return 0;
             }
-            if (((jogo.qtddGames1setDesafiado + jogo.qtddGames2setDesafiado)<3) && isDesafiado) {
+            if (((jogo.qtddGames1setDesafiado + jogo.qtddGames2setDesafiado) < 3) && isDesafiado)
+            {
                 return 3;
-            }else if (((jogo.qtddGames1setDesafiante + jogo.qtddGames2setDesafiante) < 3) && !isDesafiado) {
+            }
+            else if (((jogo.qtddGames1setDesafiante + jogo.qtddGames2setDesafiante) < 3) && !isDesafiado)
+            {
                 return 3;
-            }else{
+            }
+            else
+            {
                 return 0;
             }
         }
@@ -121,7 +128,8 @@ namespace Barragem.Class
                 {
                     pontuacaoTotal = db.Rancking.Where(r => r.rodada.isAberta == false && r.userProfile_id == jogador.UserId && r.rodada_id < idRodada).
                     OrderByDescending(r => r.rodada_id).Take(9).Sum(r => r.pontuacao);
-                }catch(Exception e)
+                }
+                catch (Exception e)
                 {
                     return;
                 }
@@ -226,7 +234,8 @@ namespace Barragem.Class
             }
         }
 
-        public List<Jogo> EfetuarSorteio(int classeId, int barragemId, List<UserProfile> jogadores, int rodadaId) {
+        public List<Jogo> EfetuarSorteio(int classeId, int barragemId, List<UserProfile> jogadores, int rodadaId)
+        {
             try
             {
                 // if classeId for igual a 0 é porque a lista já virá pronta, inicialmente utilizado para os casos de classe única com sorteio por proximidade
@@ -281,7 +290,8 @@ namespace Barragem.Class
                 }
 
                 return jogos;
-            }catch(Exception e)
+            }
+            catch (Exception e)
             {
                 throw e;
             }
@@ -295,16 +305,19 @@ namespace Barragem.Class
             return jogador;
         }
 
-        private void montarJogo(List<Jogo> jogos, List<UserProfile> jogadoresJaEscolhidos, List<UserProfile> jogadores, UserProfile jogador, UserProfile oponente, bool removeOponenteLista=true) {
+        private void montarJogo(List<Jogo> jogos, List<UserProfile> jogadoresJaEscolhidos, List<UserProfile> jogadores, UserProfile jogador, UserProfile oponente, bool removeOponenteLista = true)
+        {
             jogos.Add(new Jogo { desafiado_id = oponente.UserId, desafiado = oponente, desafiante_id = jogador.UserId, desafiante = jogador });
             jogadoresJaEscolhidos.Add(jogador);
-            if (removeOponenteLista){
+            if (removeOponenteLista)
+            {
                 jogadoresJaEscolhidos.Add(oponente);
                 jogadores.Remove(oponente);
             }
         }
 
-        public void salvarJogos(List<Jogo> jogos, int rodadaId){
+        public void salvarJogos(List<Jogo> jogos, int rodadaId)
+        {
             foreach (var jogo in jogos)
             {
                 try
@@ -325,42 +338,37 @@ namespace Barragem.Class
                     db.Jogo.Add(j);
                     db.Entry(j).State = EntityState.Added;
                     db.SaveChanges();
-                }catch(System.Data.Entity.Validation.DbEntityValidationException e)
+                }
+                catch (System.Data.Entity.Validation.DbEntityValidationException e)
                 {
                     Console.Write(e);
                 }
             }
-            
+
         }
 
-        public void EfetuarSorteioPorProximidade(int barragemId, int classeId, int rodadaId) {
+        public void EfetuarSorteioPorProximidade(int barragemId, int classeId, int rodadaId)
+        {
             db.Database.ExecuteSqlCommand("DELETE j fROM jogo j INNER JOIN UserProfile u ON j.desafiado_id=u.UserId WHERE u.classeId = " + classeId + " AND j.rodada_id =" + rodadaId);
-
-            var idRodadaAnterior = 0;
-            try {
-                idRodadaAnterior = db.Rancking.Where(r => r.rodada.isAberta == false && r.rodada.isRodadaCarga == false && r.rodada.barragemId == barragemId).Max(r => r.rodada_id);
-            } catch (InvalidOperationException) { }
+            List<RankingView> rankingJogadores = db.RankingView.
+                    Where(r => r.barragemId == barragemId && r.classeId == classeId && r.situacao.Equals("ativo")).
+                    OrderByDescending(r => r.totalAcumulado).ToList();
             var jgs = new List<UserProfile>();
-            var qtddJogadores = 0;
-            if (idRodadaAnterior == 0) {
-                jgs = db.UserProfiles.Where(j => j.situacao == "ativo" && j.classeId == classeId && j.barragemId == barragemId).ToList();
-                qtddJogadores = jgs.Count();
+            if (rankingJogadores.Count() == 0){
+                jgs = db.UserProfiles.Where(u => u.classeId == classeId && u.situacao == "ativo").ToList();
             } else {
-                var rankingJogadores = db.Rancking.Where(r => r.rodada_id == idRodadaAnterior && r.userProfile.situacao == "ativo" && r.classe.Id == classeId).
-                OrderByDescending(r => r.totalAcumulado).ToList();
-                qtddJogadores = rankingJogadores.Count();
-                jgs = rankingJogadores.Select(j => new UserProfile() { UserId = j.userProfile_id }).ToList();
+                jgs = rankingJogadores.Select(j => new UserProfile() { UserId = j.userProfile_id, nome = j.nome }).Distinct().ToList();
             }
-            
             var jogadoresPorBloco = 11;
             int divisaoPorClasse = 0;
             while (jogadoresPorBloco > 10)
             {
                 divisaoPorClasse++;
-                jogadoresPorBloco = qtddJogadores / divisaoPorClasse;
+                jogadoresPorBloco = rankingJogadores.Count() / divisaoPorClasse;
             }
             if (jogadoresPorBloco % 2 != 0) jogadoresPorBloco++;
 
+            
             var contador = 0;
             var jogadoresParaEnvio = new List<UserProfile>();
             var classeAtual = 1;
@@ -373,7 +381,7 @@ namespace Barragem.Class
                     classeAtual++;
                     contador = 0;
                     var jogos = EfetuarSorteio(classeId, barragemId, jogadoresParaEnvio, rodadaId);
-                    jogos = definirDesafianteDesafiado(jogos, classeId, barragemId);
+                    jogos = definirDesafianteDesafiado(jogos, rankingJogadores[0].classeId, barragemId);
                     salvarJogos(jogos, rodadaId);
                     jogadoresParaEnvio = new List<UserProfile>();
                 }
@@ -382,19 +390,23 @@ namespace Barragem.Class
 
         }
 
-        private List<UserProfile> getUltimosOponentes(int userId, int qtddJogos, int barragemId) {
+        private List<UserProfile> getUltimosOponentes(int userId, int qtddJogos, int barragemId)
+        {
             var oponentes = new List<UserProfile>();
-            var retorno = (from j in db.Jogo join rodada in db.Rodada on j.rodada_id equals rodada.Id
-             where rodada.barragemId == barragemId && j.torneioId == null && j.desafiante_id == userId select j).Union(
+            var retorno = (from j in db.Jogo
+                           join rodada in db.Rodada on j.rodada_id equals rodada.Id
+                           where rodada.barragemId == barragemId && j.torneioId == null && j.desafiante_id == userId
+                           select j).Union(
                 from j in db.Jogo
                 join rodada in db.Rodada on j.rodada_id equals rodada.Id
                 where rodada.barragemId == barragemId && j.torneioId == null && j.desafiado_id == userId
-                select j).Take(qtddJogos).OrderByDescending(j=>j.Id).ToList();
-            foreach(var jogo in retorno) {
+                select j).Take(qtddJogos).OrderByDescending(j => j.Id).ToList();
+            foreach (var jogo in retorno)
+            {
                 if (jogo.desafiante_id == userId) oponentes.Add(jogo.desafiado);
                 else oponentes.Add(jogo.desafiante);
             }
-                
+
             if (retorno == null) return new List<UserProfile>();
             return oponentes;
         }
@@ -406,20 +418,23 @@ namespace Barragem.Class
             RankingView rkDesafiado = null;
             foreach (var jogo in jogos)
             {
-                try { 
+                try
+                {
                     // quer dizer que o coringa está na posição errada.
-                    if (jogo.desafiado_id == 8) {
+                    if (jogo.desafiado_id == 8)
+                    {
                         var desafiado = jogo.desafiante;
                         var desafiante = jogo.desafiado;
                         jogo.desafiado = desafiado;
                         jogo.desafiado_id = desafiado.UserId;
                         jogo.desafiante = desafiante;
                         jogo.desafiante_id = desafiante.UserId;
-                    } else if (jogo.desafiante_id != 8) // não verificar se for coringa
+                    }
+                    else if (jogo.desafiante_id != 8) // não verificar se for coringa
                     {
                         rkDesafiado = ranking.Where(r => r.userProfile_id == jogo.desafiado.UserId).FirstOrDefault();
                         rkDesafiante = ranking.Where(r => r.userProfile_id == jogo.desafiante.UserId).FirstOrDefault();
-                        if((rkDesafiado!=null && rkDesafiante!=null) && (rkDesafiante.posicao < rkDesafiado.posicao))
+                        if ((rkDesafiado != null && rkDesafiante != null) && (rkDesafiante.posicao < rkDesafiado.posicao))
                         {
                             var desafiado = jogo.desafiante;
                             var desafiante = jogo.desafiado;
@@ -429,19 +444,23 @@ namespace Barragem.Class
                             jogo.desafiante_id = desafiante.UserId;
                         }
                     }
-                }catch(Exception e) {
+                }
+                catch (Exception e)
+                {
                     throw e;
                 }
             }
             return jogos;
         }
 
-        private void desfazerJogo(List<UserProfile> jogadores, List<UserProfile> jogadoresJaSelecionados, List<Jogo> jogos, UserProfile jogadorSelecionado) {
+        private void desfazerJogo(List<UserProfile> jogadores, List<UserProfile> jogadoresJaSelecionados, List<Jogo> jogos, UserProfile jogadorSelecionado)
+        {
             try
             {
                 var jogo = jogos.Where(j => j.desafiado_id == jogadorSelecionado.UserId || j.desafiante_id == jogadorSelecionado.UserId).FirstOrDefault();
                 jogos.Remove(jogo);
-                if (jogo.desafiante_id == jogadorSelecionado.UserId){
+                if (jogo.desafiante_id == jogadorSelecionado.UserId)
+                {
                     jogadores.Add(jogo.desafiado);
                     jogadoresJaSelecionados.Remove(jogo.desafiado);
                 }
@@ -450,7 +469,8 @@ namespace Barragem.Class
                     jogadores.Add(jogo.desafiante);
                     jogadoresJaSelecionados.Remove(jogo.desafiante);
                 }
-            }catch(Exception e)
+            }
+            catch (Exception e)
             {
                 throw e;
             }

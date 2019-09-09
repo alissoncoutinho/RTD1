@@ -26,6 +26,7 @@
                             <option value="desativado" @if (filtro == "desativado") { @Html.Raw("selected") }>desativados</option>
                             <option value="Ativamento solicitado" @if (filtro == "Ativamento solicitado") { @Html.Raw("selected") }>solicitações de ativamento</option>
                             <option value="pendente" @if (filtro == "pendente") { @Html.Raw("selected") }>pendentes</option>
+                            <option value="torneio" @if (filtro == "torneio") { @Html.Raw("selected")  }>torneio</option>
                             <option value="inativo" @if (filtro == "inativo") { @Html.Raw("selected") }>inativos</option>
                             <option value="todos" @if (filtro == "todos") { @Html.Raw("selected") }>todos</option>
                         </select>
@@ -147,7 +148,7 @@
                                 {
                                     if ( ( Roles.IsUserInRole("admin") || Roles.IsUserInRole("organizador") ) 
                                         && 
-                                        ( "Ativamento solicitado".Equals(item.situacao) || "pendente".Equals(item.situacao) ) )
+                                        ( "torneio".Equals(item.situacao) || "pendente".Equals(item.situacao) ) )
                                     {
                                         <a title="Ativar Jogador" class="btn btn-default btn-xs"><span data-valor="@Html.Raw(item.UserId)" class="glyphicon glyphicon-ok"></span></a>
                                     }

@@ -10,7 +10,7 @@ namespace Barragem.Class
     {
         public enum FormatoEmail { Texto = 1, Html = 2 }
 
-        public enum Situacao { desativado, ativo, pendente, licenciado, suspenso }
+        public enum Situacao { desativado, ativo, pendente, licenciado, suspenso, torneio }
 
     }
 }
