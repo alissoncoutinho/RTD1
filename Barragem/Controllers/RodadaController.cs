@@ -532,7 +532,10 @@ namespace Barragem.Controllers
             List<Jogo> jogos = db.Jogo.Where(r => r.rodada_id == id).ToList(); 
             var pontosDesafiante = 0.0;
             var pontosDesafiado = 0.0;
-            try{
+            Rodada rodada = db.Rodada.Find(id);
+            BarragemView barragem = db.BarragemView.Find(rodada.barragemId);
+            try
+            {
                using (TransactionScope scope = new TransactionScope()){
                     foreach (Jogo item in jogos){
                         pontosDesafiante = rn.calcularPontosDesafiante(item);
@@ -544,10 +547,16 @@ namespace Barragem.Controllers
                         }
                         rn.gravarPontuacaoNaRodada(id, item.desafiado, pontosDesafiado);
                         msg = "gravarPontuacaoNaRodadaDesafiado" + item.desafiado_id;
-                        verificarRegraSuspensao(item);
+                        if (barragem.suspensaoPorAtraso){
+                            verificarRegraSuspensaoPorAtraso(item);
+                        }
+                        if (barragem.suspensaoPorWO)
+                        {
+                            verificarRegraSuspensaoPorWO(item);
+                        }
                         msg = "verificarRegraSuspensao" + item.desafiado_id;
                     }
-                    Rodada rodada = db.Rodada.Find(id);
+                    
                     rn.gerarPontuacaoDosJogadoresForaDaRodada(id, rodada.barragemId);
                     msg = "gerarPontuacaoDosJogadoresForaDaRodada";
                     
@@ -574,13 +583,24 @@ namespace Barragem.Controllers
             return RedirectToAction("Index", new { msg = msg, detalheErro = detalheErro });
         }
 
-        private void verificarRegraSuspensao(Jogo jogo){
+        private void verificarRegraSuspensaoPorAtraso(Jogo jogo){
             // 5.6.O jogador que não receber pontuação ou deixar de jogar, mesmo que justificadamente, por 2 (dois) jogos seguidos
             //será retirado das rodadas e colocado em suspensão automática até que regularize seus jogos de forma que ele saia desta condição.
             if (jogo.gamesJogados == 0) { 
                 // Caso no fechamento da rodada o jogo não tenha sido realizado, verificar a situação da rodada anterior
                 verificarSeJogoRealizadoNaRodadaAnterior(jogo.desafiado_id, jogo.rodada_id, jogo.rodada.barragemId);
                 verificarSeJogoRealizadoNaRodadaAnterior(jogo.desafiante_id, jogo.rodada_id, jogo.rodada.barragemId);
+            }
+        }
+
+        private void verificarRegraSuspensaoPorWO(Jogo jogo)
+        {
+            // Jogador que perder por wo 2 vezes seguidas ficará em suspensão por WO até que o adminstrador retire ele dessa situação.
+            if (jogo.situacao_Id == 5)
+            {
+                var userDerrotado = jogo.idDoPerdedor;
+                verificarSeHouveWONaRodadaAnterior(userDerrotado, jogo.rodada_id, jogo.rodada.barragemId);
+                
             }
         }
 
@@ -598,6 +618,23 @@ namespace Barragem.Controllers
                 }
             }
         
+        }
+
+        private void verificarSeHouveWONaRodadaAnterior(int idJogador, int rodada_id, int barragemId)
+        {
+            int idRodadaAnterior = db.Rodada.Where(r => r.isAberta == false && r.Id < rodada_id && r.barragemId == barragemId).Max(r => r.Id);
+            List<Jogo> jogoAnterior = db.Jogo.Where(j => j.rodada_id == idRodadaAnterior && (j.desafiado_id == idJogador || j.desafiante_id == idJogador))
+                .ToList();
+            if (jogoAnterior.Count > 0)
+            {
+                if ((jogoAnterior[0].situacao_Id == 5) && (idJogador == jogoAnterior[0].idDoPerdedor))
+                {
+                    UserProfile jogador = db.UserProfiles.Find(idJogador);
+                    jogador.situacao = Tipos.Situacao.suspensoWO.ToString();
+                    db.SaveChanges();
+                }
+            }
+
         }
 
         private void gerarRancking(int idRodada){

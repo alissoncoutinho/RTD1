@@ -170,13 +170,14 @@ namespace Barragem.Class
             try
             {
                 string suspenso = Tipos.Situacao.suspenso.ToString();
+                string suspensoWO = Tipos.Situacao.suspensoWO.ToString();
                 List<UserProfile> jogadores = db.UserProfiles.Where(j => j.barragemId == barragemId).ToList();
                 foreach (UserProfile user in jogadores)
                 {
                     int estaNaRodadaAtual = db.Jogo.Where(j => j.rodada_id == idRodada && (j.desafiante_id == user.UserId || j.desafiado_id == user.UserId)).Count();
                     if (estaNaRodadaAtual == 0)
                     {
-                        if (user.situacao == suspenso)
+                        if ((user.situacao == suspenso) || (user.situacao == suspensoWO))
                         {
                             gravarPontuacaoNaRodada(idRodada, user, 0.0);
                         }
@@ -269,8 +270,8 @@ namespace Barragem.Class
                     {
                         var jogador = getJogadorRandomicamente(jogadores);
                         jogadores.Remove(jogador);
-                        var jogadoresQueNaoPodeJogar = getUltimosOponentes(jogador.UserId, qtddJogos, barragemId);
-                        var jogadoresPermitidos = jogadores.Except(jogadoresQueNaoPodeJogar);
+                        List<UserProfile> jogadoresQueNaoPodeJogar = getUltimosOponentes(jogador.UserId, qtddJogos, barragemId);
+                        var jogadoresPermitidos = getJogadoresPermitidos(jogadores, jogadoresQueNaoPodeJogar);
                         if (jogadoresPermitidos.Count() > 0)
                         {
                             int indexPermit = new Random().Next(jogadoresPermitidos.Count());
@@ -280,7 +281,7 @@ namespace Barragem.Class
                         else
                         {
                             if (limitador++ > 10) break;
-                            jogadoresPermitidos = jogadoresJaEscolhidos.Except(jogadoresQueNaoPodeJogar);
+                            jogadoresPermitidos = getJogadoresPermitidos(jogadoresJaEscolhidos, jogadoresQueNaoPodeJogar);
                             int indexPermit = new Random().Next(jogadoresPermitidos.Count());
                             var oponente = jogadoresPermitidos.ElementAt(indexPermit);
                             desfazerJogo(jogadores, jogadoresJaEscolhidos, jogos, oponente);
@@ -295,6 +296,22 @@ namespace Barragem.Class
             {
                 throw e;
             }
+        }
+
+        private List<UserProfile> getJogadoresPermitidos(List<UserProfile> jogadores, List<UserProfile> jogadoresQueNaoPodeJogar)
+        {
+            List<UserProfile> jogadoresPermitidos = new List<UserProfile>();
+            foreach(var jogador in jogadores)
+            {
+                var temNalista = 0;
+                try{
+                    temNalista = jogadoresQueNaoPodeJogar.Where(j => j.UserId == jogador.UserId).Count();
+                } catch (Exception e) { }
+                    if (temNalista == 0){
+                    jogadoresPermitidos.Add(jogador);
+                }
+            }
+            return jogadoresPermitidos;
         }
 
         private UserProfile getJogadorRandomicamente(List<UserProfile> jogadores)
@@ -392,6 +409,7 @@ namespace Barragem.Class
 
         private List<UserProfile> getUltimosOponentes(int userId, int qtddJogos, int barragemId)
         {
+            
             var oponentes = new List<UserProfile>();
             var retorno = (from j in db.Jogo
                            join rodada in db.Rodada on j.rodada_id equals rodada.Id
@@ -403,8 +421,11 @@ namespace Barragem.Class
                 select j).Take(qtddJogos).OrderByDescending(j => j.Id).ToList();
             foreach (var jogo in retorno)
             {
-                if (jogo.desafiante_id == userId) oponentes.Add(jogo.desafiado);
-                else oponentes.Add(jogo.desafiante);
+                if (jogo.desafiante_id == userId){
+                    oponentes.Add(jogo.desafiado);
+                } else if (jogo.desafiado_id == userId){
+                    oponentes.Add(jogo.desafiante);
+                }
             }
 
             if (retorno == null) return new List<UserProfile>();

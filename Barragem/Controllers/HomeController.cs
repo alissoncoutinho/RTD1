@@ -436,6 +436,102 @@ namespace Barragem.Controllers
 
         }
 
+        private string diaDaSemanaEmPortugues(string diaDaSemanaEmIngles) {
+            var diaDaSemanaEmPt = "";
+
+            if (diaDaSemanaEmIngles == "Sunday")
+            {
+                diaDaSemanaEmPt = "Domingo";
+            }
+            else if(diaDaSemanaEmIngles == "Monday")
+            {
+                diaDaSemanaEmPt = "Segunda-feira";
+            }
+            else if(diaDaSemanaEmIngles == "Tuesday")
+            {
+                diaDaSemanaEmPt = "Terça-feira";
+            }
+            else if(diaDaSemanaEmIngles == "Wednesday")
+            {
+                diaDaSemanaEmPt = "Quarta-feira";
+            }
+            else if(diaDaSemanaEmIngles == "Thursday")
+            {
+                diaDaSemanaEmPt = "Quinta-feira";
+            }
+            else if(diaDaSemanaEmIngles == "Friday")
+            {
+                diaDaSemanaEmPt = "Sexta-feira";
+            }
+            else if(diaDaSemanaEmIngles == "Saturday")
+            {
+                diaDaSemanaEmPt = "Sábado";
+            }
+            return diaDaSemanaEmPt;
+        }
+
+        [Authorize(Roles="admin, organizador")]
+        public ActionResult Dashboard() {
+            HttpCookie cookie = Request.Cookies["_barragemId"];
+            var barragemId = Convert.ToInt32(cookie.Value.ToString());
+            // caobrança
+            var pb = db.PagamentoBarragem.Where(p => (bool)p.cobrar && p.barragemId == barragemId && (p.status == "Aguardando" || p.status == "canceled")).OrderByDescending(o => o.Id).ToList();
+            if (pb.Count() > 0)
+            {
+                if (pb[0].status == "Aguardando")
+                {
+                    ViewBag.cobranca = "Olá, o boleto da sua mensalidade já está disponível para pagamento. Clique no link para acessar o boleto ou copie o número do código de barras:";
+                    ViewBag.boleto = pb[0].linkBoleto;
+                    ViewBag.numeroCodigoBarras = pb[0].digitableLine;
+                    if (((DateTime.Now.Day > 10) && (DateTime.Now.DayOfWeek != DayOfWeek.Saturday) &&
+                        (DateTime.Now.DayOfWeek != DayOfWeek.Sunday) && (DateTime.Now.DayOfWeek != DayOfWeek.Monday))
+                        || (DateTime.Now.Day > 13))
+                    {
+                        var brg = db.Barragens.Find(barragemId);
+                        brg.isAtiva = false;
+                        db.Entry(brg).State = EntityState.Modified;
+                        db.SaveChanges();
+                        ViewBag.cobranca = "Olá, Você possui uma mensalidade em atrasado que ocasionou o bloqueio do seu ranking. Não será possível gerar temporadas e rodadas. Clique no link para acessar o boleto ou copie o número do código de barras para realizar o pagamento:";
+                    }
+                }
+                if (pb[0].status == "canceled")
+                {
+                    ViewBag.cobranca = "Seu ranking está inativo por falta de pagamento do boleto. Não será possível gerar temporadas e rodadas. Favor consultar os administradores do rankingdetenis.com";
+                }
+            }
+
+            // seção da Rodada atual:
+            try
+            {
+                var rodadaAtual = db.Rodada.Where(r => r.barragemId == barragemId && r.isRodadaCarga == false).OrderByDescending(r => r.Id).FirstOrDefault();
+                ViewBag.rodadaAtual = rodadaAtual;
+                ViewBag.diaDaSemana = diaDaSemanaEmPortugues(rodadaAtual.dataFim.DayOfWeek.ToString());
+                var jogosEmAberto = db.Jogo.Where(j => j.rodada_id == rodadaAtual.Id && j.situacao_Id != 4 && j.situacao_Id != 5).Count();
+                ViewBag.jogosEmAberto = jogosEmAberto;
+            }catch (Exception) { }
+            // seção da Temporada atual:
+            try {
+                var temporada = db.Temporada.Where(t => t.barragemId == barragemId && t.isAtivo == true).OrderByDescending(t => t.Id).FirstOrDefault();
+                ViewBag.temporada = temporada;
+            } catch (Exception) { }
+            // seção dos suspensos por WO:
+            try{
+                string suspensoWO = Tipos.Situacao.suspensoWO.ToString();
+                var jogadoresSuspensosWO = db.UserProfiles.Where(u => u.barragemId == barragemId && u.situacao == suspensoWO).Count();
+                ViewBag.jogadoresSuspensosWO = jogadoresSuspensosWO;
+            }
+            catch (Exception) { }
+            // seção das novas solicitações de participação:
+            try
+            {
+                string pendente = Tipos.Situacao.pendente.ToString();
+                var jogadorespendentes = db.UserProfiles.Where(u => u.barragemId == barragemId && u.situacao == pendente).Count();
+                ViewBag.jogadorespendentes = jogadorespendentes;
+            }
+            catch (Exception) { }
+            return View();
+        }
+
         [Authorize(Roles = "admin, organizador, usuario")]
         public ActionResult Index3(int idJogo = 0, bool Sucesso = false, string MsgAlerta = "")
         {

@@ -56,6 +56,10 @@ namespace Barragem.Models
         public string cpfResponsavel { get; set; }
         [Display(Name = "Nome Resp.")]
         public string nomeResponsavel { get; set; }
+        [Display(Name = "Suspensao por atraso")]
+        public bool suspensaoPorAtraso { get; set; }
+        [Display(Name = "Suspensao por WO")]
+        public bool suspensaoPorWO { get; set; }
 
     }
 
@@ -90,5 +94,9 @@ namespace Barragem.Models
         public double? valorPorUsuario { get; set; }
         public string cpfResponsavel { get; set; }
         public string nomeResponsavel { get; set; }
+        [Display(Name = "Suspensao por atraso")]
+        public bool suspensaoPorAtraso { get; set; }
+        [Display(Name = "Suspensao por WO")]
+        public bool suspensaoPorWO { get; set; }
     }
 }

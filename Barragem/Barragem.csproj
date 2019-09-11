@@ -952,6 +952,7 @@
     <Content Include="Views\Torneio\_PartialJogoImprimir.cshtml" />
     <Content Include="Views\Barragens\EditClasse.cshtml" />
     <Content Include="Views\Barragens\_PartialTabsBarragem.cshtml" />
+    <Content Include="Views\Home\Dashboard.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

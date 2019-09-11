@@ -1310,7 +1310,7 @@ namespace Barragem.Controllers
             IQueryable<UserProfile> consulta = null;
             if (filtroSituacao == "")
             {
-                consulta = db.UserProfiles.Where(u => u.situacao.Equals("ativo") || u.situacao.Equals("licenciado") || u.situacao.Equals("suspenso"));
+                consulta = db.UserProfiles.Where(u => u.situacao.Equals("ativo") || u.situacao.Equals("licenciado") || u.situacao.Equals("suspenso") || u.situacao.Equals("suspensoWO"));
             }
             else if (filtroSituacao == "todos")
             {

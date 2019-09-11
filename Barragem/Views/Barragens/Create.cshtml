@@ -87,6 +87,20 @@
     <div class="row">
         <div class="col-xs-2">
             <label>
+                @Html.CheckBoxFor(model => model.suspensaoPorAtraso, new { @checked = "checked" }) Suspensão por jogo atrasado
+            </label>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-2">
+            <label>
+                @Html.CheckBoxFor(model => model.suspensaoPorWO, new { @checked = "checked" }) Suspensão por WO
+            </label>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-2">
+            <label>
                 @Html.CheckBoxFor(model => model.isAtiva, new { @checked = "checked" }) Ativa
             </label>
         </div>

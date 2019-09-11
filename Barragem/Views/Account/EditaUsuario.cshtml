@@ -37,7 +37,7 @@
                 <div class="form-group">
                     @Html.LabelFor(m => m.situacao, new { @class = "col-md-2" })
                     <div class="col-md-3">
-                        @if (!Model.situacao.Equals("pendente") && !Model.situacao.Equals("torneio") && !Model.situacao.Equals("suspenso") &&
+                        @if (!Model.situacao.Equals("pendente") && !Model.situacao.Equals("torneio") && !Model.situacao.Equals("suspenso") && !Model.situacao.Equals("suspensoWO") &&
         !Model.situacao.Equals("desativado") && !Model.situacao.Equals("Ativamento solicitado"))
                         {
                             <select id="situacao" name="situacao" class="form-control">
@@ -49,6 +49,7 @@
                                     <option value="pendente" @if (Model.situacao.Equals("pendente")) { @Html.Raw("selected")       }>pendente</option>
                                     <option value="torneio" @if (Model.situacao.Equals("torneio")) { @Html.Raw("selected")        }>torneio</option>
                                     <option value="suspenso" @if (Model.situacao.Equals("suspenso")) { @Html.Raw("selected")       }>suspenso</option>
+                                    <option value="suspensoWO" @if (Model.situacao.Equals("suspensoWO")) { @Html.Raw("selected")        }>suspenso por WO</option>
                                     <option value="desativado" @if (Model.situacao.Equals("desativado")) { @Html.Raw("selected")       }>desativado</option>
                                     <option value="inativo" @if (Model.situacao.Equals("inativo")) { @Html.Raw("selected")        }>inativo</option>
                                 }
@@ -63,6 +64,7 @@
                                     <option value="pendente" @if (Model.situacao.Equals("pendente")) { @Html.Raw("selected")        }>pendente</option>
                                     <option value="torneio" @if (Model.situacao.Equals("torneio")) { @Html.Raw("selected")         }>torneio</option>
                                     <option value="suspenso" @if (Model.situacao.Equals("suspenso")) { @Html.Raw("selected")        }>suspenso</option>
+                                    <option value="suspensoWO" @if (Model.situacao.Equals("suspensoWO")) { @Html.Raw("selected")         }>suspenso por WO</option>
                                     <option value="desativado" @if (Model.situacao.Equals("desativado")) { @Html.Raw("selected")        }>desativado</option>
                                     <option value="Ativamento solicitado" @if (Model.situacao.Equals("Ativamento solicitado")) { @Html.Raw("selected")         }>Ativamento solicitado</option>
                                 </select>
