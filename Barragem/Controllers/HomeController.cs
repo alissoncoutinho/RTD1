@@ -19,6 +19,12 @@ namespace Barragem.Controllers
         {
             if (User.Identity.IsAuthenticated)
             {
+                string perfil = Roles.GetRolesForUser(User.Identity.Name)[0];
+                if (perfil.Equals("admin") || perfil.Equals("organizador"))
+                {
+                    return RedirectToAction("Dashboard", "Home");
+                }
+
                 return RedirectToAction("Index3", "Home");
             }
             string url = HttpContext.Request.Url.AbsoluteUri;
@@ -174,6 +180,10 @@ namespace Barragem.Controllers
                 {
                     var usuario = db.UserProfiles.Find(WebSecurity.GetUserId(User.Identity.Name));
                     Funcoes.CriarCookieBarragem(Response, Server, usuario.barragemId, usuario.barragem.nome);
+                }
+                string perfil = Roles.GetRolesForUser(User.Identity.Name)[0];
+                if (perfil.Equals("admin") || perfil.Equals("organizador")){
+                    return RedirectToAction("Dashboard", "Home");
                 }
                 return RedirectToAction("Index3", "Home");
             }
@@ -517,8 +527,11 @@ namespace Barragem.Controllers
             // seção dos suspensos por WO:
             try{
                 string suspensoWO = Tipos.Situacao.suspensoWO.ToString();
+                string suspenso = Tipos.Situacao.suspenso.ToString();
                 var jogadoresSuspensosWO = db.UserProfiles.Where(u => u.barragemId == barragemId && u.situacao == suspensoWO).Count();
+                var jogadoresSuspensos = db.UserProfiles.Where(u => u.barragemId == barragemId && u.situacao == suspenso).Count();
                 ViewBag.jogadoresSuspensosWO = jogadoresSuspensosWO;
+                ViewBag.jogadoresSuspensos = jogadoresSuspensos;
             }
             catch (Exception) { }
             // seção das novas solicitações de participação:
