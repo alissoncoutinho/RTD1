@@ -50,9 +50,11 @@
                                     <div><a href="/Jogo/Index" style="font-size:12px; color:grey; text-decoration: underline;">@ViewBag.jogosEmAberto jogos em aberto</a></div>
                                 }
                                 <div>
-                                    <button data-link="@Url.Action("../Rodada/FecharRodada", new { id = rodada.Id })" data-title="Fechar Rodada!" 
-                                            title="Fechar Rodada" class="btn btn-danger btn-flat btn-sm pull-left confirmDialog" style="padding-top:3px; padding-bottom:3px; font-size:11px" >Fechar Rodada</button>
-                                    <a class="btn btn-sm btn-success btn-flat pull-right" style="padding-top:3px; padding-bottom:3px; font-size:11px" href="/Rodada/Create" >Criar rodada</a>
+                                    <a class="btn btn-sm btn-success btn-flat pull-left" style="padding-top:3px; padding-bottom:3px; font-size:11px" href="/Rodada/Create" >Criar rodada</a>
+                                    <button data-link="@Url.Action("../Rodada/FecharRodada", new { id = rodada.Id })" data-title="Fechar Rodada!"
+                                            title="Fechar Rodada" class="btn btn-danger btn-flat btn-sm pull-right confirmDialog" style="padding-top:3px; padding-bottom:3px; font-size:11px">
+                                        Fechar Rodada
+                                    </button>
                                 </div>
                             <!-- /.info-box-content -->
                         </div>
@@ -69,11 +71,13 @@
                             <span class="info-box-icon bg-green"><i class="fa fa-calendar"></i></span>
 
                             <div class="info-box-content">
-                                <span class="info-box-text">@temporada.nome</span>
                                 <span class="label label-success">Aberta</span>
+                                <span class="info-box-text">@temporada.nome</span>
+                                <span class="info-box-text">@ViewBag.NumeroRodada</span>
                                 <div>
-                                    <a href="/Temporada/Create" style="font-size:12px; color:grey; text-decoration: underline;">Criar nova temporada</a></div>
-                            </div>
+                                    <a href="/Temporada/Create" style="font-size:12px; color:grey; text-decoration: underline;">Criar nova temporada</a>
+                                </div>
+</div>
                             <!-- /.info-box-content -->
                         </div>
                         <!-- /.info-box -->

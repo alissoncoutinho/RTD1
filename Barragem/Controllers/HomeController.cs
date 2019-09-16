@@ -19,11 +19,14 @@ namespace Barragem.Controllers
         {
             if (User.Identity.IsAuthenticated)
             {
-                string perfil = Roles.GetRolesForUser(User.Identity.Name)[0];
-                if (perfil.Equals("admin") || perfil.Equals("organizador"))
+                try
                 {
-                    return RedirectToAction("Dashboard", "Home");
-                }
+                    string perfil = Roles.GetRolesForUser(User.Identity.Name)[0];
+                    if (perfil.Equals("admin") || perfil.Equals("organizador"))
+                    {
+                        return RedirectToAction("Dashboard", "Home");
+                    }
+                }  catch (Exception) { }
 
                 return RedirectToAction("Index3", "Home");
             }
@@ -511,9 +514,10 @@ namespace Barragem.Controllers
             }
 
             // seção da Rodada atual:
+            Rodada rodadaAtual = new Rodada();
             try
             {
-                var rodadaAtual = db.Rodada.Where(r => r.barragemId == barragemId && r.isRodadaCarga == false).OrderByDescending(r => r.Id).FirstOrDefault();
+                rodadaAtual = db.Rodada.Where(r => r.barragemId == barragemId && r.isRodadaCarga == false).OrderByDescending(r => r.Id).FirstOrDefault();
                 ViewBag.rodadaAtual = rodadaAtual;
                 ViewBag.diaDaSemana = diaDaSemanaEmPortugues(rodadaAtual.dataFim.DayOfWeek.ToString());
                 var jogosEmAberto = db.Jogo.Where(j => j.rodada_id == rodadaAtual.Id && j.situacao_Id != 4 && j.situacao_Id != 5).Count();
@@ -523,6 +527,9 @@ namespace Barragem.Controllers
             try {
                 var temporada = db.Temporada.Where(t => t.barragemId == barragemId && t.isAtivo == true).OrderByDescending(t => t.Id).FirstOrDefault();
                 ViewBag.temporada = temporada;
+                var qtddRodada = db.Rodada.Where(r => r.temporadaId == temporada.Id && r.Id <= rodadaAtual.Id && r.barragemId == barragemId).Count();
+                ViewBag.NumeroRodada = "Rodada " + qtddRodada + " de " + temporada.qtddRodadas;
+                
             } catch (Exception) { }
             // seção dos suspensos por WO:
             try{

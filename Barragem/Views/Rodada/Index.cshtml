@@ -6,7 +6,7 @@
 
 @if ((Roles.IsUserInRole("admin") || Roles.IsUserInRole("organizador"))&&(ViewBag.isBarragemAtiva)){
     <p>
-        <a href="@Url.Action("Create")" class="btn btn-primary btn-small"><span class="glyphicon glyphicon-plus"></span> Nova</a>
+        <a href="@Url.Action("Create")" class="btn btn-primary btn-small"><span class="glyphicon glyphicon-plus"></span> Nova</a> <a href="@Url.Action("../Home/Dashboard")" class="btn btn-success btn-small">Painel</a>
     </p>
     
 }

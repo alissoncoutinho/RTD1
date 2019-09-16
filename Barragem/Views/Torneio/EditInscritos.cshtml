@@ -1,5 +1,9 @@
 ﻿@{
     int i = 0;
+    double valor = 0;
+    if (ViewBag.TotalPagantes != 0) {
+        valor = ViewBag.ValorPago;
+    }
 }
 @model IEnumerable<Barragem.Models.InscricaoTorneio>
     @Html.Partial("_PartialTabs")
@@ -49,7 +53,7 @@
                     <td>@ViewBag.InscIndividuaisSocios</td>
                     <td>@ViewBag.TotalPagantes</td>
                     <td>@ViewBag.PagoNoCartao</td>
-                    <td>R$ @string.Format("{0:N}", @ViewBag.ValorPago)</td>
+                    <td>R$ @string.Format("{0:N}", valor)</td>
                </tr>
             </table>
 

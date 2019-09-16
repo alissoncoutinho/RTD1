@@ -118,7 +118,90 @@ namespace Barragem.Controllers
                 rodada.dataFim = new DateTime(rodada.dataFim.Year, rodada.dataFim.Month, rodada.dataFim.Day, 23, 59, 59);
                 db.Rodada.Add(rodada);
                 db.SaveChanges();
+
+
                 return RedirectToAction("Index");
+            }
+
+            return View(rodada);
+        }
+
+
+
+        [Authorize(Roles = "admin, organizador")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult CriaESorteia(Rodada rodada)
+        {
+            string mensagem = "";
+            var barragem = db.BarragemView.Find(rodada.barragemId);
+            if (!barragem.isAtiva)
+            {
+                mensagem = "Não foi possível criar uma nova rodada, pois este ranking encontra-se desativado.";
+                return RedirectToAction("Index", new { msg = mensagem });
+            }
+            if (ModelState.IsValid)
+            {
+                List<Rodada> rodadas = db.Rodada.Where(r => r.isAberta == true && r.barragemId == rodada.barragemId).ToList();
+
+                if (rodadas.Count() > 0){
+                    mensagem = "Não foi possível criar uma nova rodada, pois ainda existe rodada(s) em aberto.";
+                    return RedirectToAction("Index", new { msg = mensagem });
+                }
+                try
+                {
+                    Rodada rd = db.Rodada.Where(r => r.barragemId == rodada.barragemId).OrderByDescending(r => r.Id).Take(1).Single();
+                    if (rd.sequencial == 10)
+                    {
+                        string alfabeto = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+                        int pos = alfabeto.IndexOf(rd.codigo);
+                        pos++;
+                        rodada.sequencial = 1;
+                        rodada.codigo = Convert.ToString(alfabeto[pos]);
+                    }
+                    else
+                    {
+                        rodada.sequencial = rd.sequencial + 1;
+                        rodada.codigo = rd.codigo;
+                    }
+                }
+                catch (InvalidOperationException)
+                {
+                    rodada.sequencial = 1;
+                    rodada.codigo = "A";
+                }
+                rodada.isAberta = true;
+                rodada.dataFim = new DateTime(rodada.dataFim.Year, rodada.dataFim.Month, rodada.dataFim.Day, 23, 59, 59);
+                Rodada rodadaCriada = db.Rodada.Add(rodada);
+                db.SaveChanges();
+
+                mensagem = "ok";
+                var rodadaNegocio = new RodadaNegocio();
+                try
+                {
+                    List<Classe> classes = db.Classe.Where(c => c.barragemId == barragem.Id && c.ativa == true).ToList();
+                    setClasseUnica(barragem.Id);
+                    var jogos = new List<Jogo>();
+                    for (int i = 0; i < classes.Count(); i++)
+                    {
+                        if (isClasseUnica)
+                        {
+                            rodadaNegocio.EfetuarSorteioPorProximidade(barragem.Id, classes[i].Id, rodadaCriada.Id);
+                        }
+                        else
+                        {
+                            jogos = rodadaNegocio.EfetuarSorteio(classes[i].Id, barragem.Id, null, rodadaCriada.Id);
+                        }
+                        jogos = rodadaNegocio.definirDesafianteDesafiado(jogos, classes[i].Id, barragem.Id);
+                        rodadaNegocio.salvarJogos(jogos, rodadaCriada.Id);
+                    }
+                }
+                catch (Exception e)
+                {
+                    mensagem = e.Message;
+                }
+                return RedirectToAction("Index", new { msg = mensagem });
+                                
             }
 
             return View(rodada);
@@ -149,7 +232,7 @@ namespace Barragem.Controllers
                     } else {
                         jogos = rodadaNegocio.EfetuarSorteio(classes[i].Id, barragemId, null, id);
                     }
-                    jogos = rodadaNegocio.definirDesafianteDesafiado(jogos, id, id);
+                    jogos = rodadaNegocio.definirDesafianteDesafiado(jogos, classes[i].Id, id);
                     rodadaNegocio.salvarJogos(jogos, id);
                 }
             }catch (Exception e){
