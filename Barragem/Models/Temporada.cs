@@ -25,7 +25,26 @@ namespace Barragem.Models
         [ForeignKey("barragemId")]
         public virtual BarragemView barragem { get; set; }
 
+        [Display(Name = "Quantidade de rodadas")]
         public int? qtddRodadas { get; set; }
+
+        [Display(Name = "Data de início")]
+        public DateTime? dataInicio { get; set; }
+
+        [Display(Name = "Data de fim")]
+        public DateTime? dataFim { get; set; }
+
+        [Display(Name = "Iniciar Temporada do zero")]
+        public bool iniciarZerada { get; set; }
+
+        [Display(Name = "Automatizar sorteio")]
+        public bool isAutomatico { get; set; }
+
+        [Display(Name = "Frequencia das rodadas")]
+        public string frequencia { get; set; }
+
+        [Display(Name = "Dia de geração das rodadas")]
+        public DayOfWeek? diaDeGeracao { get; set; }
     }
 
     

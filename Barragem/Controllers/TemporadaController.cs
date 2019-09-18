@@ -116,7 +116,11 @@ namespace Barragem.Controllers
             ViewBag.barraId = barragemId;
             ViewBag.barragemId = new SelectList(db.BarragemView, "Id", "nome");
 
-            return View();
+            Temporada temporada = new Temporada();
+            temporada.isAutomatico = false;
+            temporada.iniciarZerada = false;
+
+            return View(temporada);
         }
 
         //
@@ -141,6 +145,54 @@ namespace Barragem.Controllers
             }
 
             return View(temporada);
+        }
+
+        [HttpGet]
+        public void GerarRodadasAutomaticas()
+        {
+            DayOfWeek diaDaSemana = DateTime.Now.DayOfWeek;
+            //consultar as temporadas automaticas
+            //refinar consulta para ver as da semana
+            List<Temporada> temporadas =  db.Temporada.Where(t => t.isAutomatico 
+                        && t.dataInicio < DateTime.Now && DateTime.Now < t.dataFim
+                        && t.diaDeGeracao == diaDaSemana).ToList();
+            //para cada temporada
+            //  1. tratar zeramento do ranking se for o caso
+            //  2.fechar rodada
+            //  3.criar nova rodada
+            //  4.sortear jogos da rodada
+            //  5.enviar push
+            RodadaController rodadaController = new RodadaController();
+            foreach (Temporada temporada in temporadas){
+                List<Rodada> rodadas = db.Rodada.Where(r => r.temporadaId == temporada.Id).ToList();
+                rodadas.
+                int quantidadeDeRodadasRealizadas = rodadas.Count;
+                if (temporada.qtddRodadas == quantidadeDeRodadasRealizadas)
+                {
+                    temporada.isAutomatico = false;
+                    db.Entry(temporada).State = EntityState.Modified;
+                    db.SaveChanges();
+                    continue;
+                }
+                Rodada rodada = rodadas.Last();
+                rodadaController.FecharRodada(rodada.Id);
+                DateTime dataDaUltimaRodada = rodada.dataFim;
+                DateTime dataDeInicioProxRodada, dataFimProximaRodada;
+                dataDeInicioProxRodada = dataDaUltimaRodada.AddDays(7);
+                dataFimProximaRodada = dataDeInicioProxRodada.AddDays(7);
+                if (temporada.frequencia.Equals("QUINZENAL"))
+                {
+                    dataDeInicioProxRodada = dataDaUltimaRodada.AddDays(14);
+                    dataFimProximaRodada = dataDeInicioProxRodada.AddDays(14);
+                }
+                Rodada novaRodada = new Rodada();
+                novaRodada.temporadaId  = temporada.Id;
+                novaRodada.dataInicio = dataDeInicioProxRodada;
+                novaRodada.dataFim = DateTime.Now;
+                rodadaController.Create(novaRodada);
+                rodadaController.SortearJogos(novaRodada.Id, temporada.barragemId);
+            }
+            
         }
 
     }
