@@ -84,8 +84,8 @@
                     <div class="col-sm-offset-2 col-sm-6">
                         @Html.LabelFor(model => model.frequencia)
                         <select id="frequencia" name="frequencia" class="form-control">
-                            <option value="SEMANAL" @if (Model.frequencia.Equals("SEMANAL")) { @Html.Raw("selected")}>semanal</option>
-                            <option value="QUINZENAL" @if (Model.frequencia.Equals("QUINZENAL")) { @Html.Raw("selected")}>quinzenal</option>
+                            <option value="SEMANAL" @if (Model.frequencia.Equals("7")) { @Html.Raw("selected")}>1</option>
+                            <option value="QUINZENAL" @if (Model.frequencia.Equals("14")) { @Html.Raw("selected")}>2</option>
                         </select>
                     </div>
                 </div>
@@ -94,13 +94,13 @@
                     <div class="col-sm-offset-2 col-sm-6">
                         @Html.LabelFor(model => model.diaDeGeracao)
                         <select id="diaDeGeracao" name="diaDeGeracao" class="form-control">
-                            <option value="0" @if (Model.diaDeGeracao == 1) { @Html.Raw("selected")}>domingo</option>
-                            <option value="1" @if (Model.diaDeGeracao == 2) { @Html.Raw("selected")}>segunda</option>
-                            <option value="2" @if (Model.diaDeGeracao == 3) { @Html.Raw("selected")}>terça</option>
-                            <option value="3" @if (Model.diaDeGeracao == 4) { @Html.Raw("selected")}>quarta</option>
-                            <option value="4" @if (Model.diaDeGeracao == 5) { @Html.Raw("selected")}>quinta</option>
-                            <option value="5" @if (Model.diaDeGeracao == 6) { @Html.Raw("selected")}>sexta</option>
-                            <option value="6" @if (Model.diaDeGeracao == 7) { @Html.Raw("selected")}>sábado</option>
+                            <option value="1" @if (Model.diaDeGeracao == 0) { @Html.Raw("selected")}>domingo</option>
+                            <option value="2" @if (Model.diaDeGeracao == 1) { @Html.Raw("selected")}>segunda</option>
+                            <option value="3" @if (Model.diaDeGeracao == 2) { @Html.Raw("selected")}>terça</option>
+                            <option value="4" @if (Model.diaDeGeracao == 3) { @Html.Raw("selected")}>quarta</option>
+                            <option value="5" @if (Model.diaDeGeracao == 4) { @Html.Raw("selected")}>quinta</option>
+                            <option value="6" @if (Model.diaDeGeracao == 5) { @Html.Raw("selected")}>sexta</option>
+                            <option value="7" @if (Model.diaDeGeracao == 6) { @Html.Raw("selected")}>sábado</option>
                         </select>
                         @Html.Raw("às 23 horas.")
                     </div>
@@ -291,5 +291,14 @@
             }
         }); 
     }
+
+    $("#dataInicio").datepicker({
+        language: 'pt-BR',
+        pickTime: false
+    });
+    $("#dataFim").datepicker({
+        language: 'pt-BR',
+        pickTime: false
+    });
 </script>
 }
