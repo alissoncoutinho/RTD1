@@ -150,29 +150,30 @@ namespace Barragem.Controllers
         [HttpGet]
         public void GerarRodadasAutomaticas()
         {
-            int diaDaSemana = (int)DateTime.Now.DayOfWeek + 1;
+            DateTime hoje = DateTime.Now;
+            RodadaController rodadaController = new RodadaController();
             //consultar as temporadas automaticas
-            //refinar consulta para ver as da semana
-            List<Temporada> temporadas =  db.Temporada.Where(t => t.isAutomatico 
-                        && t.dataInicio < DateTime.Now && DateTime.Now < t.dataFim
-                        && t.diaDeGeracao == diaDaSemana).ToList();
+            List<Temporada> temporadas = db.Temporada.Where(t => t.isAutomatico
+                       && t.dataInicio <= hoje && hoje <= t.dataFim).ToList();
+
             //para cada temporada
             //  1. tratar zeramento do ranking se for o caso(a implementar)
             //  2.fechar rodada
             //  3.criar nova rodada
             //  4.sortear jogos da rodada
             //  5.enviar push(a implementar)
-            RodadaController rodadaController = new RodadaController();
-            foreach (Temporada temporada in temporadas){
-                DateTime hoje = DateTime.Now;
+
+            foreach (Temporada temporada in temporadas)
+            {
                 List<Rodada> rodadas = db.Rodada.Where(r => r.temporadaId == temporada.Id).ToList();
                 int quantidadeDeRodadasRealizadas = rodadas.Count;
-                if(quantidadeDeRodadasRealizadas == 0)
+                if (quantidadeDeRodadasRealizadas == 0)
                 {
                     criarNovaRodadaComJogos(rodadaController, temporada, hoje);
                     continue;
                 }
-                if (temporada.qtddRodadas == quantidadeDeRodadasRealizadas)
+                Rodada rodadaAtual = rodadas.Last();
+                if (hoje == temporada.dataFim)
                 {
                     temporada.isAutomatico = false;
                     temporada.isAtivo = false;
@@ -180,11 +181,9 @@ namespace Barragem.Controllers
                     db.SaveChanges();
                     continue;
                 }
-                Rodada rodada = rodadas.Last();
-                rodadaController.FecharRodada(rodada.Id);
-                DateTime dataDaUltimaRodada = rodada.dataFim;
-                if (hoje.Subtract(dataDaUltimaRodada).Days > temporada.frequencia)
+                if (hoje.Subtract(rodadaAtual.dataFim).Days == temporada.frequencia)
                 {
+                    rodadaController.FecharRodada(rodadaAtual.Id);
                     criarNovaRodadaComJogos(rodadaController, temporada, hoje);
                 }
             }
