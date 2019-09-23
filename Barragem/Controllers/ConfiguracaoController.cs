@@ -32,41 +32,7 @@ namespace Barragem.Controllers
             return View(configuracao);
         }
 
-        [Authorize(Roles = "admin")]
-        public ActionResult Resetar()
-        {
-            string mensagem="";
-            try{
-                using (TransactionScope scope = new TransactionScope()){
-                    db.Database.ExecuteSqlCommand("Delete from Jogo");
-                    db.Database.ExecuteSqlCommand("Delete from Rancking");
-                    db.Database.ExecuteSqlCommand("Delete from Rodada where isRodadaCarga=0");
-                    db.Database.ExecuteSqlCommand("update UserProfile set situacao='ativo' where situacao='suspenso'");
-                    Rancking ranking = null;
-                    List<Rodada> rodadas = db.Rodada.ToList();
-                    List<UserProfile> jogadores = db.UserProfiles.ToList();
-                    foreach (var rodada in rodadas) {
-                        foreach (var jogador in jogadores) {
-                            ranking = new Rancking();
-                            ranking.rodada_id = rodada.Id;
-                            ranking.pontuacao = 5.0;
-                            ranking.posicao = 0;
-                            ranking.totalAcumulado = 50;
-                            ranking.userProfile_id = jogador.UserId;
-                            db.Rancking.Add(ranking);
-                            
-                        }
-                    }
-                    db.SaveChanges();
-                    scope.Complete();
-                    mensagem = "ok";
-                }
-            }catch (Exception ex){
-                mensagem = ex.Message;
-            } 
-           return RedirectToAction("Edit", "Configuracao",new{id=1,msg=mensagem});
-        }
-
+        
         //
         // POST: /Configuracao/Edit/5
 

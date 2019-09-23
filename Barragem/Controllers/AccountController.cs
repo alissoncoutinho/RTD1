@@ -33,6 +33,11 @@ namespace Barragem.Controllers
         public ActionResult LoginPassword(string returnUrl="", string userName="", string Msg="", int torneioId=0)
         {
             if (User.Identity.IsAuthenticated){
+                string perfil = Roles.GetRolesForUser(User.Identity.Name)[0];
+                if (perfil.Equals("admin") || perfil.Equals("organizador"))
+                {
+                    return RedirectToAction("Dashboard", "Home");
+                }
                 return RedirectToAction("Index3", "Home");
             }
             ViewBag.ReturnUrl = returnUrl;
@@ -71,7 +76,7 @@ namespace Barragem.Controllers
                 }else if((!String.IsNullOrEmpty(returnUrl)) && (returnUrl.Contains("/Torneio/LancarResultado"))){
                     return RedirectToAction("LancarResultado", "Torneio");
                 }else{
-                    return RedirectToAction("Index3", "Home");
+                    return RedirectToAction("Index", "Home");
                 }
                 //return RedirectToLocal(returnUrl);
             }
@@ -267,7 +272,7 @@ namespace Barragem.Controllers
                         telefoneCelular = model.register.telefoneCelular,
                         telefoneCelular2 = "",
                         email = model.register.email,
-                        situacao = Tipos.Situacao.pendente.ToString(),
+                        situacao = Tipos.Situacao.torneio.ToString(),
                         bairro = model.register.bairro,
                         dataInicioRancking = DateTime.Now,
                         naturalidade = "",
@@ -914,10 +919,7 @@ namespace Barragem.Controllers
             var usuario = db.UserProfiles.Find(WebSecurity.GetUserId(UserName));
             ViewBag.solicitarAtivacao = "";
             ViewBag.classeId = new SelectList(db.Classe.Where(c => c.barragemId == usuario.barragemId && c.ativa == true).ToList(), "Id", "nome", usuario.classeId);
-            if (usuario.situacao == "pendente")
-            {
-                ViewBag.solicitarAtivacao = "sim";
-            }
+            
             return View(usuario);
         }
 
@@ -1313,7 +1315,7 @@ namespace Barragem.Controllers
             IQueryable<UserProfile> consulta = null;
             if (filtroSituacao == "")
             {
-                consulta = db.UserProfiles.Where(u => u.situacao.Equals("ativo") || u.situacao.Equals("licenciado") || u.situacao.Equals("suspenso"));
+                consulta = db.UserProfiles.Where(u => u.situacao.Equals("ativo") || u.situacao.Equals("licenciado") || u.situacao.Equals("suspenso") || u.situacao.Equals("suspensoWO"));
             }
             else if (filtroSituacao == "todos")
             {

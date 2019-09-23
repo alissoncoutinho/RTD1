@@ -205,7 +205,7 @@ namespace Barragem.Controllers
                 var pagamentoBarragem = db.PagamentoBarragem.Where(pb=>pb.pagamentoId==Id).ToList();
                 foreach(PagamentoBarragem pb in pagamentoBarragem){
                     if ((bool)pb.cobrar) { 
-                        int qtddUsuario = db.UserProfiles.Where(u => u.barragemId == pb.barragemId && (u.situacao == "ativo" || u.situacao == "suspenso" || u.situacao == "licenciado")).Count();
+                        int qtddUsuario = db.UserProfiles.Where(u => u.barragemId == pb.barragemId && (u.situacao == "ativo" || u.situacao == "suspenso" || u.situacao == "suspensoWO" || u.situacao == "licenciado")).Count();
                         pb.qtddUsuario = qtddUsuario;
                         pb.valor = qtddUsuario * pb.barragem.valorPorUsuario;
                         db.Entry(pb).State = EntityState.Modified;

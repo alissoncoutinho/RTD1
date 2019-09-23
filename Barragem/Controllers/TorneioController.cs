@@ -1038,7 +1038,7 @@ namespace Barragem.Controllers
             {
                 var user = db.UserProfiles.Find(userId);
                 if ((user.barragemId == torneio.barragemId) &&
-                    (user.situacao.Equals("ativo") || user.situacao.Equals("licenciado") || user.situacao.Equals("suspenso")))
+                    (user.situacao.Equals("ativo") || user.situacao.Equals("licenciado") || user.situacao.Equals("suspenso") || user.situacao.Equals("suspensoWO")))
                 {
                     return true;
                 }

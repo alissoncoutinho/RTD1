@@ -58,7 +58,7 @@ namespace Barragem.Controllers
             }
             ViewBag.barraId = barragemId;
             ViewBag.barragemId = new SelectList(db.BarragemView, "Id", "nome",barragemId);
-            ViewBag.JogadoresClasses = db.RankingView.Where(r => r.barragemId == barragemId && (r.situacao.Equals("ativo") ||r.situacao.Equals("suspenso")||r.situacao.Equals("licenciado"))).OrderBy(r=>r.nivel).ThenByDescending(r=>r.totalAcumulado).ToList();
+            ViewBag.JogadoresClasses = db.RankingView.Where(r => r.barragemId == barragemId && (r.situacao.Equals("ativo") ||r.situacao.Equals("suspenso") || r.situacao.Equals("suspensoWO") || r.situacao.Equals("licenciado"))).OrderBy(r=>r.nivel).ThenByDescending(r=>r.totalAcumulado).ToList();
             ViewBag.Classes = db.Classe.Where(c => c.barragemId == barragemId).ToList();
             ViewBag.temRodadaAberta = db.Rodada.Where(u => u.isAberta && u.barragemId == barragemId && !u.isRodadaCarga).Count();
             

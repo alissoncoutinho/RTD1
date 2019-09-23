@@ -282,7 +282,7 @@ namespace Barragem.Controllers
         public IList<Perfil> GetBuscaOponentes(int rankingId)
         {
             List<UserProfile> oponentes;
-            oponentes = db.UserProfiles.Where(j => j.barragemId == rankingId && (j.situacao== "ativo" || j.situacao == "licenciado" || j.situacao == "suspenso")).OrderBy(j => j.nome).ToList<UserProfile>();
+            oponentes = db.UserProfiles.Where(j => j.barragemId == rankingId && (j.situacao== "ativo" || j.situacao == "licenciado" || j.situacao == "suspenso" || j.situacao == "suspensoWO")).OrderBy(j => j.nome).ToList<UserProfile>();
             
              IList<Perfil> Listaperfil = new List<Perfil>();
             foreach (var oponente in oponentes)
