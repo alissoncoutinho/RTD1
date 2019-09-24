@@ -62,16 +62,6 @@
             <div class="col-sm-offset-2 col-sm-6">
                 <div class="checkbox">
                     <label>
-                        @Html.CheckBoxFor(model => model.iniciarZerada, new { @checked = "checked" }) Iniciar Temporada do zero
-                    </label>
-                </div>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <div class="col-sm-offset-2 col-sm-6">
-                <div class="checkbox">
-                    <label>
                         @Html.CheckBoxFor(model => model.isAutomatico, new { @checked = "checked" }) Automatizar sorteio
                     </label>
                 </div>
@@ -80,25 +70,11 @@
 
         <div class="form-group">
             <div class="col-sm-offset-2 col-sm-6">
-                @Html.LabelFor(model => model.frequencia)
-                <select id="frequencia" name="frequencia" class="form-control">
-                    <option value="7">1</option>
-                    <option value="14">2</option>
-                </select>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <div class="col-sm-offset-2 col-sm-6">
-                @Html.LabelFor(model => model.diaDeGeracao)
-                <select id="diaDeGeracao" name="diaDeGeracao" class="form-control">
-                    <option value="1">domingo</option>
-                    <option value="2">segunda</option>
-                    <option value="3">terça</option>
-                    <option value="4">quarta</option>
-                    <option value="5">quinta</option>
-                    <option value="6">sexta</option>
-                    <option value="7">sábado</option>
+                @Html.LabelFor(model => model.tamanhoRodada)
+                <select id="tamanhoRodada" name="tamanhoRodada" class="form-control">
+                    <option value="7">7</option>
+                    <option value="14">14</option>
+                    <option value="15">15</option>
                 </select>
             </div>
         </div>

@@ -40,11 +40,8 @@ namespace Barragem.Models
         [Display(Name = "Automatizar sorteio")]
         public bool isAutomatico { get; set; }
 
-        [Display(Name = "Frequencia das rodadas: A cada ")]
-        public int? frequencia { get; set; }
-
-        [Display(Name = "Dia de geração das rodadas")]
-        public int? diaDeGeracao { get; set; }
+        [Display(Name = "Tamanho da rodada(em dias):")]
+        public int? tamanhoRodada { get; set; }
     }
 
     

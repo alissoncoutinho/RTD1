@@ -9,6 +9,7 @@ using Barragem.Context;
 using Barragem.Filters;
 using System.Web.Security;
 using WebMatrix.WebData;
+using Barragem.Class;
 
 namespace Barragem.Controllers
 {
@@ -150,54 +151,8 @@ namespace Barragem.Controllers
         [HttpGet]
         public void GerarRodadasAutomaticas()
         {
-            DateTime hoje = DateTime.Now;
-            RodadaController rodadaController = new RodadaController();
-            //consultar as temporadas automaticas
-            List<Temporada> temporadas = db.Temporada.Where(t => t.isAutomatico
-                       && t.dataInicio <= hoje && hoje <= t.dataFim).ToList();
-
-            //para cada temporada
-            //  1. tratar zeramento do ranking se for o caso(a implementar)
-            //  2.fechar rodada
-            //  3.criar nova rodada
-            //  4.sortear jogos da rodada
-            //  5.enviar push(a implementar)
-
-            foreach (Temporada temporada in temporadas)
-            {
-                List<Rodada> rodadas = db.Rodada.Where(r => r.temporadaId == temporada.Id).ToList();
-                int quantidadeDeRodadasRealizadas = rodadas.Count;
-                if (quantidadeDeRodadasRealizadas == 0)
-                {
-                    criarNovaRodadaComJogos(rodadaController, temporada, hoje);
-                    continue;
-                }
-                Rodada rodadaAtual = rodadas.Last();
-                if (hoje == temporada.dataFim)
-                {
-                    temporada.isAutomatico = false;
-                    temporada.isAtivo = false;
-                    db.Entry(temporada).State = EntityState.Modified;
-                    db.SaveChanges();
-                    continue;
-                }
-                if (hoje.Subtract(rodadaAtual.dataFim).Days == temporada.frequencia)
-                {
-                    rodadaController.FecharRodada(rodadaAtual.Id);
-                    criarNovaRodadaComJogos(rodadaController, temporada, hoje);
-                }
-            }
-        }
-
-        private static void criarNovaRodadaComJogos(RodadaController rodadaController, Temporada temporada, DateTime hoje)
-        {
-            Rodada novaRodada = new Rodada();
-            novaRodada.temporadaId = temporada.Id;
-            novaRodada.barragemId = temporada.barragemId;
-            novaRodada.dataInicio = hoje;
-            novaRodada.dataFim = hoje.AddDays(temporada.frequencia.Value);
-            rodadaController.Create(novaRodada);
-            rodadaController.SortearJogos(novaRodada.Id, temporada.barragemId);
+            TemporadaNegocio temporadaNegocio = new TemporadaNegocio();
+            temporadaNegocio.GerarRodadasAutomaticas();
         }
 
     }

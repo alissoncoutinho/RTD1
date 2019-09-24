@@ -496,5 +496,230 @@ namespace Barragem.Class
                 throw e;
             }
         }
+
+        public Rodada Create(Rodada rodada)
+        {
+            try
+            {
+                var barragem = db.BarragemView.Find(rodada.barragemId);
+                if (!barragem.isAtiva)
+                {
+                    throw new ExceptionRankingDesativado("Não foi possível criar uma nova rodada, pois este ranking encontra-se desativado.");
+                }
+
+                List<Rodada> rodadas = db.Rodada.Where(r => r.isAberta == true && r.barragemId == rodada.barragemId).ToList();
+
+                if (rodadas.Count() > 0)
+                {
+                    throw new ExceptionRodadaEmAberto("Não foi possível criar uma nova rodada, pois ainda existe rodada(s) em aberto.");
+                }
+                try
+                {
+                    Rodada rd = db.Rodada.Where(r => r.barragemId == rodada.barragemId).OrderByDescending(r => r.Id).Take(1).Single();
+                    if (rd.sequencial == 10)
+                    {
+                        string alfabeto = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+                        int pos = alfabeto.IndexOf(rd.codigo);
+                        pos++;
+                        rodada.sequencial = 1;
+                        rodada.codigo = Convert.ToString(alfabeto[pos]);
+                    }
+                    else
+                    {
+                        rodada.sequencial = rd.sequencial + 1;
+                        rodada.codigo = rd.codigo;
+                    }
+                }
+                catch (InvalidOperationException)
+                {
+                    rodada.sequencial = 1;
+                    rodada.codigo = "A";
+                }
+                rodada.isAberta = true;
+                rodada.dataFim = new DateTime(rodada.dataFim.Year, rodada.dataFim.Month, rodada.dataFim.Day, 23, 59, 59);
+                db.Rodada.Add(rodada);
+                db.SaveChanges();
+
+                return rodada;
+            }catch(Exception e)
+            {
+                throw new Exception("Houve um erro no processamento da rodada.",e);
+            }
+            
+        }
+
+        public void FecharRodada(int id)
+        {
+            string msg = "";
+            db.Database.ExecuteSqlCommand("Delete from Rancking where rodada_id=" + id + " and posicaoClasse is not null");
+            List<Jogo> jogos = db.Jogo.Where(r => r.rodada_id == id).ToList();
+            var pontosDesafiante = 0.0;
+            var pontosDesafiado = 0.0;
+            Rodada rodada = db.Rodada.Find(id);
+            BarragemView barragem = db.BarragemView.Find(rodada.barragemId);
+            try
+            {
+                using (TransactionScope scope = new TransactionScope())
+                {
+                    foreach (Jogo item in jogos)
+                    {
+                        pontosDesafiante = calcularPontosDesafiante(item);
+                        pontosDesafiado = calcularPontosDesafiado(item);
+                        msg = "pontosDesafio" + item.desafiado_id;
+                        if (!item.desafiante.situacao.Equals("curinga"))
+                        {
+                            gravarPontuacaoNaRodada(id, item.desafiante, pontosDesafiante);
+                            msg = "gravarPontuacaoNaRodadaDesafiante" + item.desafiante_id;
+                        }
+                        gravarPontuacaoNaRodada(id, item.desafiado, pontosDesafiado);
+                        msg = "gravarPontuacaoNaRodadaDesafiado" + item.desafiado_id;
+                        if (barragem.suspensaoPorAtraso)
+                        {
+                            verificarRegraSuspensaoPorAtraso(item);
+                        }
+                        if (barragem.suspensaoPorWO)
+                        {
+                            verificarRegraSuspensaoPorWO(item);
+                        }
+                        msg = "verificarRegraSuspensao" + item.desafiado_id;
+                    }
+
+                    gerarPontuacaoDosJogadoresForaDaRodada(id, rodada.barragemId);
+                    msg = "gerarPontuacaoDosJogadoresForaDaRodada";
+
+                    gerarRancking(id);
+                    msg = "gerarRanking";
+                    List<Classe> classes = db.Classe.Where(c => c.barragemId == rodada.barragemId).ToList();
+                    for (int i = 0; i < classes.Count(); i++)
+                    {
+                        gerarRanckingPorClasse(id, classes[i].Id);
+                    }
+                    msg = "gerarRankingPorClasse";
+                    rodada.isAberta = false;
+                    rodada.dataFim = DateTime.Now;
+                    db.Entry(rodada).State = EntityState.Modified;
+                    db.SaveChanges();
+                    scope.Complete();
+                    msg = "ok";
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Erro ao fechar rodada", ex);
+            }
+        }
+
+        private void verificarRegraSuspensaoPorAtraso(Jogo jogo)
+        {
+            // 5.6.O jogador que não receber pontuação ou deixar de jogar, mesmo que justificadamente, por 2 (dois) jogos seguidos
+            //será retirado das rodadas e colocado em suspensão automática até que regularize seus jogos de forma que ele saia desta condição.
+            if (jogo.gamesJogados == 0)
+            {
+                // Caso no fechamento da rodada o jogo não tenha sido realizado, verificar a situação da rodada anterior
+                verificarSeJogoRealizadoNaRodadaAnterior(jogo.desafiado_id, jogo.rodada_id, jogo.rodada.barragemId);
+                verificarSeJogoRealizadoNaRodadaAnterior(jogo.desafiante_id, jogo.rodada_id, jogo.rodada.barragemId);
+            }
+        }
+
+        private void verificarRegraSuspensaoPorWO(Jogo jogo)
+        {
+            // Jogador que perder por wo 2 vezes seguidas ficará em suspensão por WO até que o adminstrador retire ele dessa situação.
+            if (jogo.situacao_Id == 5)
+            {
+                var userDerrotado = jogo.idDoPerdedor;
+                verificarSeHouveWONaRodadaAnterior(userDerrotado, jogo.rodada_id, jogo.rodada.barragemId);
+
+            }
+        }
+
+        private void gerarRancking(int idRodada)
+        {
+            int posicao = 1;
+            List<Rancking> listaRancking = db.Rancking.Where(r => r.rodada_id == idRodada && r.userProfile.situacao != "desativado" && r.userProfile.situacao != "inativo").OrderByDescending(r => r.totalAcumulado).ToList();
+            foreach (Rancking ran in listaRancking)
+            {
+                ran.posicao = posicao;
+                db.Entry(ran).State = EntityState.Modified;
+                db.SaveChanges();
+                posicao++;
+            }
+        }
+
+        private void gerarRanckingPorClasse(int idRodada, int classeId)
+        {
+            int posicao = 1;
+            List<Rancking> listaRancking = db.Rancking.Where(r => r.rodada_id == idRodada && r.userProfile.classeId == classeId && r.userProfile.situacao != "desativado" && r.userProfile.situacao != "inativo").OrderByDescending(r => r.totalAcumulado).ToList();
+            foreach (Rancking ran in listaRancking)
+            {
+                ran.posicaoClasse = posicao;
+                db.Entry(ran).State = EntityState.Modified;
+                db.SaveChanges();
+                posicao++;
+            }
+        }
+
+        private void verificarSeJogoRealizadoNaRodadaAnterior(int idJogador, int rodada_id, int barragemId)
+        {
+            int idRodadaAnterior = db.Rodada.Where(r => r.isAberta == false && r.Id < rodada_id && r.barragemId == barragemId).Max(r => r.Id);
+            List<Jogo> jogoAnterior = db.Jogo.Where(j => j.rodada_id == idRodadaAnterior && (j.desafiado_id == idJogador || j.desafiante_id == idJogador))
+                .ToList();
+            if (jogoAnterior.Count > 0)
+            {
+                if (jogoAnterior[0].gamesJogados == 0)
+                {
+                    UserProfile jogador = db.UserProfiles.Find(idJogador);
+                    jogador.situacao = Tipos.Situacao.suspenso.ToString();
+                    db.SaveChanges();
+                }
+            }
+
+        }
+
+        private void verificarSeHouveWONaRodadaAnterior(int idJogador, int rodada_id, int barragemId)
+        {
+            int idRodadaAnterior = db.Rodada.Where(r => r.isAberta == false && r.Id < rodada_id && r.barragemId == barragemId).Max(r => r.Id);
+            List<Jogo> jogoAnterior = db.Jogo.Where(j => j.rodada_id == idRodadaAnterior && (j.desafiado_id == idJogador || j.desafiante_id == idJogador))
+                .ToList();
+            if (jogoAnterior.Count > 0)
+            {
+                if ((jogoAnterior[0].situacao_Id == 5) && (idJogador == jogoAnterior[0].idDoPerdedor))
+                {
+                    UserProfile jogador = db.UserProfiles.Find(idJogador);
+                    jogador.situacao = Tipos.Situacao.suspensoWO.ToString();
+                    db.SaveChanges();
+                }
+            }
+
+        }
+
+        public void SortearJogos(int id, int barragemId)
+        {
+            string mensagem = "ok";
+            var rodadaNegocio = new RodadaNegocio();
+            var barragem = db.BarragemView.Find(barragemId);
+            bool isClasseUnica = barragem.isClasseUnica;
+            try
+            {
+                List<Classe> classes = db.Classe.Where(c => c.barragemId == barragemId && c.ativa == true).ToList();
+                var jogos = new List<Jogo>();
+                for (int i = 0; i < classes.Count(); i++)
+                {
+                    if (isClasseUnica)
+                    {
+                        rodadaNegocio.EfetuarSorteioPorProximidade(barragemId, classes[i].Id, id);
+                    }
+                    else
+                    {
+                        jogos = rodadaNegocio.EfetuarSorteio(classes[i].Id, barragemId, null, id);
+                    }
+                    jogos = rodadaNegocio.definirDesafianteDesafiado(jogos, classes[i].Id, id);
+                    rodadaNegocio.salvarJogos(jogos, id);
+                }
+            }
+            catch (Exception e)
+            {
+                mensagem = e.Message;
+            }
+        }
     }
 }
