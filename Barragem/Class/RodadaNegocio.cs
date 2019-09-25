@@ -126,8 +126,18 @@ namespace Barragem.Class
                 double pontuacaoTotal = 0;
                 try
                 {
+                    int quantidadeDeRodadasParaPontuacao = 9;
+                    Rodada rodadaAtual = db.Rodada.Where(r => r.Id == idRodada).Single();
+                    if (rodadaAtual.temporada.iniciarZerada)
+                    {
+                        int quantidadeDeRodadasRealizadas = db.Rodada.Where(r => r.temporadaId == rodadaAtual.temporadaId).Count();
+                        if (quantidadeDeRodadasRealizadas < quantidadeDeRodadasParaPontuacao)
+                        {
+                            quantidadeDeRodadasParaPontuacao = quantidadeDeRodadasRealizadas;
+                        }
+                    }
                     pontuacaoTotal = db.Rancking.Where(r => r.rodada.isAberta == false && r.userProfile_id == jogador.UserId && r.rodada_id < idRodada).
-                    OrderByDescending(r => r.rodada_id).Take(9).Sum(r => r.pontuacao);
+                    OrderByDescending(r => r.rodada_id).Take(quantidadeDeRodadasParaPontuacao).Sum(r => r.pontuacao);
                 }
                 catch (Exception e)
                 {
