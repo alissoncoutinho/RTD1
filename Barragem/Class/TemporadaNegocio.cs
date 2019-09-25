@@ -15,11 +15,13 @@ namespace Barragem.Class
     {
         private BarragemDbContext db = new BarragemDbContext();
 
-        [HttpGet]
-        public void GerarRodadasAutomaticas()
+        public string GerarRodadasAutomaticas()
         {
+            if(DateTime.Now.Hour < 23)
+            {
+                return "0";
+            }
             DateTime hoje = DateTime.Now.Date;
-            hoje = new DateTime(2019, 09, 29).Date;
             RodadaNegocio rodadaNegocio = new RodadaNegocio();
             Dictionary<Temporada, string> temporadasComErro = new Dictionary<Temporada, string>();
 
@@ -75,6 +77,8 @@ namespace Barragem.Class
             {
                 notificarErros(temporadasComErro);
             }
+
+            return "1";
         }
 
         private void criarNovaRodadaComJogos(RodadaNegocio rodadaNegocio, Temporada temporada, DateTime hoje)
