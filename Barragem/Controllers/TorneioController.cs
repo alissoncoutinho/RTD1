@@ -236,10 +236,10 @@ namespace Barragem.Controllers
                 var qtddByes = getQtddByes(qtddJogadores);
                 if (torneio.temRepescagem)
                 {
+                    var onzejogadores = qtddJogadores;
                     qtddJogadores = qtddJogadores + (qtddJogadores / 2);
                     qtddByes = getQtddByes(qtddJogadores);
-                    if (qtddJogadores == 16)
-                    {
+                    if ((qtddJogadores == 16) && (onzejogadores != 11)){
                         qtddJogadores++;
                         qtddByes++;
                     }
@@ -382,7 +382,7 @@ namespace Barragem.Controllers
                     jogador = selecionarAdversario(inscritos);
                     jogo.desafiante_id = jogador.userId;
                     jogo.isPrimeiroJogoTorneio = true;
-                    if (jogador.classeTorneio.isDupla)
+                    if ((jogador.classeTorneio!=null) && (jogador.classeTorneio.isDupla))
                     {
                         jogo.desafiante2_id = jogador.parceiroDuplaId;
                     }
@@ -458,8 +458,9 @@ namespace Barragem.Controllers
         {
             if (temRepescagem)
             {
+                var onzejogadores = qtddJogadores;
                 qtddJogadores = qtddJogadores + (qtddJogadores / 2);
-                if (qtddJogadores == 16) qtddJogadores++;
+                if ((qtddJogadores == 16) && (onzejogadores!=11)) qtddJogadores++;
             }
             var qtddRodada = getQtddRodada(qtddJogadores);
             var qtddJogosDaRodada = 1;

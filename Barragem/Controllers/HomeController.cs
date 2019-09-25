@@ -184,10 +184,10 @@ namespace Barragem.Controllers
                     var usuario = db.UserProfiles.Find(WebSecurity.GetUserId(User.Identity.Name));
                     Funcoes.CriarCookieBarragem(Response, Server, usuario.barragemId, usuario.barragem.nome);
                 }
-                string perfil = Roles.GetRolesForUser(User.Identity.Name)[0];
-                if (perfil.Equals("admin") || perfil.Equals("organizador")){
-                    return RedirectToAction("Dashboard", "Home");
-                }
+                //string perfil = Roles.GetRolesForUser(User.Identity.Name)[0];
+                //if (perfil.Equals("admin") || perfil.Equals("organizador")){
+                //    return RedirectToAction("Dashboard", "Home");
+                //}
                 return RedirectToAction("Index3", "Home");
             }
 
