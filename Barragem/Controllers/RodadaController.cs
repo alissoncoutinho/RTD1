@@ -191,9 +191,10 @@ namespace Barragem.Controllers
                         else
                         {
                             jogos = rodadaNegocio.EfetuarSorteio(classes[i].Id, barragem.Id, null, rodadaCriada.Id);
+                            jogos = rodadaNegocio.definirDesafianteDesafiado(jogos, classes[i].Id, barragem.Id);
+                            rodadaNegocio.salvarJogos(jogos, rodadaCriada.Id);
                         }
-                        jogos = rodadaNegocio.definirDesafianteDesafiado(jogos, classes[i].Id, barragem.Id);
-                        rodadaNegocio.salvarJogos(jogos, rodadaCriada.Id);
+                        
                     }
                 }
                 catch (Exception e)
@@ -231,9 +232,10 @@ namespace Barragem.Controllers
                         rodadaNegocio.EfetuarSorteioPorProximidade(barragemId, classes[i].Id, id);
                     } else {
                         jogos = rodadaNegocio.EfetuarSorteio(classes[i].Id, barragemId, null, id);
+                        jogos = rodadaNegocio.definirDesafianteDesafiado(jogos, classes[i].Id, barragemId);
+                        rodadaNegocio.salvarJogos(jogos, id);
                     }
-                    jogos = rodadaNegocio.definirDesafianteDesafiado(jogos, classes[i].Id, id);
-                    rodadaNegocio.salvarJogos(jogos, id);
+                    
                 }
             }catch (Exception e){
                 mensagem = e.Message;

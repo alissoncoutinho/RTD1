@@ -367,21 +367,39 @@ namespace Barragem.Class
         public void EfetuarSorteioPorProximidade(int barragemId, int classeId, int rodadaId)
         {
             db.Database.ExecuteSqlCommand("DELETE j fROM jogo j INNER JOIN UserProfile u ON j.desafiado_id=u.UserId WHERE u.classeId = " + classeId + " AND j.rodada_id =" + rodadaId);
-            List<RankingView> rankingJogadores = db.RankingView.
-                    Where(r => r.barragemId == barragemId && r.classeId == classeId && r.situacao.Equals("ativo")).
-                    OrderByDescending(r => r.totalAcumulado).ToList();
+            var ultimaRodada = db.Rodada.Where(r => r.barragemId == barragemId && r.isAberta == false).Max(r => r.Id);
+            var rankingJogadores = db.Rancking.Include(r => r.userProfile).Include(r => r.rodada).
+                Where(r => r.rodada_id == ultimaRodada && r.userProfile.situacao == "ativo" && r.classe.Id == classeId).
+                OrderByDescending(r => r.totalAcumulado).Select(rk => new Classificacao()
+                {
+                    userId = rk.userProfile_id,
+                    nomeUser = rk.userProfile.nome,
+                    posicaoUser = (int)rk.posicao,
+                    pontuacao = rk.totalAcumulado,
+                    foto = rk.userProfile.fotoURL
+                }).ToList<Classificacao>();
+
+            //List<RankingView> rankingJogadores = db.RankingView.
+            //        Where(r => r.barragemId == barragemId && r.classeId == classeId && r.situacao.Equals("ativo")).
+            //        OrderByDescending(r => r.totalAcumulado).ToList();
             var jgs = new List<UserProfile>();
-            if (rankingJogadores.Count() == 0){
+            if (rankingJogadores.Count() == 0) {
                 jgs = db.UserProfiles.Where(u => u.classeId == classeId && u.situacao == "ativo").ToList();
+            // esse if é necessário para os casos de jogadores que estavam desativados e voltaram para a barragem, eles estarão sem ranking atualizado
+            } else if (rankingJogadores.Count() != db.UserProfiles.Where(u => u.classeId == classeId && u.situacao == "ativo").Count()){
+                var userIds = rankingJogadores.Select(r => r.userId).ToArray<int>();
+                var jogadores = db.UserProfiles.Where(u => u.classeId == classeId && u.situacao == "ativo" && !userIds.Contains(u.UserId)).ToList();
+                jgs = rankingJogadores.Select(j => new UserProfile() { UserId = j.userId, nome = j.nomeUser }).Distinct().ToList();
+                jgs.AddRange(jogadores);
             } else {
-                jgs = rankingJogadores.Select(j => new UserProfile() { UserId = j.userProfile_id, nome = j.nome }).Distinct().ToList();
+                jgs = rankingJogadores.Select(j => new UserProfile() { UserId = j.userId, nome = j.nomeUser }).Distinct().ToList();
             }
             var jogadoresPorBloco = 11;
             int divisaoPorClasse = 0;
             while (jogadoresPorBloco > 10)
             {
                 divisaoPorClasse++;
-                jogadoresPorBloco = rankingJogadores.Count() / divisaoPorClasse;
+                jogadoresPorBloco = jgs.Count() / divisaoPorClasse;
             }
             if (jogadoresPorBloco % 2 != 0) jogadoresPorBloco++;
 
@@ -398,7 +416,7 @@ namespace Barragem.Class
                     classeAtual++;
                     contador = 0;
                     var jogos = EfetuarSorteio(classeId, barragemId, jogadoresParaEnvio, rodadaId);
-                    jogos = definirDesafianteDesafiado(jogos, rankingJogadores[0].classeId, barragemId);
+                    jogos = definirDesafianteDesafiado(jogos, classeId, barragemId, rankingJogadores);
                     salvarJogos(jogos, rodadaId);
                     jogadoresParaEnvio = new List<UserProfile>();
                 }
@@ -432,15 +450,29 @@ namespace Barragem.Class
             return oponentes;
         }
 
-        public List<Jogo> definirDesafianteDesafiado(List<Jogo> jogos, int classeId, int barragemId)
+        public List<Jogo> definirDesafianteDesafiado(List<Jogo> jogos, int classeId, int barragemId, List<Classificacao> ranking = null)
         {
-            List<RankingView> ranking = db.RankingView.Where(r => r.classeId == classeId && r.situacao.Equals("ativo")).ToList();
-            RankingView rkDesafiante = null;
-            RankingView rkDesafiado = null;
+            if (ranking == null){
+                var ultimaRodada = db.Rodada.Where(r => r.barragemId == barragemId && r.isAberta == false).Max(r => r.Id);
+                ranking = db.Rancking.Include(r => r.userProfile).Include(r => r.rodada).
+                    Where(r => r.rodada_id == ultimaRodada && r.userProfile.situacao == "ativo" && r.classe.Id == classeId).
+                    OrderByDescending(r => r.totalAcumulado).Select(rk => new Classificacao()
+                    {
+                        userId = rk.userProfile_id,
+                        nomeUser = rk.userProfile.nome,
+                        posicaoUser = (int)rk.posicao,
+                        pontuacao = rk.totalAcumulado,
+                        foto = rk.userProfile.fotoURL
+                    }).ToList<Classificacao>();
+                //ranking = db.RankingView.Where(r => r.classeId == classeId && r.situacao.Equals("ativo")).ToList();
+            }
+            Classificacao rkDesafiante = null;
+            Classificacao rkDesafiado = null;
             foreach (var jogo in jogos)
             {
                 try
                 {
+                   
                     // quer dizer que o coringa está na posição errada.
                     if (jogo.desafiado_id == 8)
                     {
@@ -453,9 +485,19 @@ namespace Barragem.Class
                     }
                     else if (jogo.desafiante_id != 8) // não verificar se for coringa
                     {
-                        rkDesafiado = ranking.Where(r => r.userProfile_id == jogo.desafiado.UserId).FirstOrDefault();
-                        rkDesafiante = ranking.Where(r => r.userProfile_id == jogo.desafiante.UserId).FirstOrDefault();
-                        if ((rkDesafiado != null && rkDesafiante != null) && (rkDesafiante.posicao < rkDesafiado.posicao))
+                        rkDesafiado = ranking.Where(r => r.userId == jogo.desafiado.UserId).FirstOrDefault();
+                        rkDesafiante = ranking.Where(r => r.userId == jogo.desafiante.UserId).FirstOrDefault();
+                        // se a posicao for igual a zero o cara acabou de entrar ainda não tem posicao então verificar pelo totalAcumulado
+                        if ((rkDesafiado != null && rkDesafiante != null) && (rkDesafiante.totalAcumulado == rkDesafiado.totalAcumulado) && (rkDesafiante.posicaoUser < rkDesafiado.posicaoUser))
+                        {
+                            var desafiado = jogo.desafiante;
+                            var desafiante = jogo.desafiado;
+                            jogo.desafiado = desafiado;
+                            jogo.desafiado_id = desafiado.UserId;
+                            jogo.desafiante = desafiante;
+                            jogo.desafiante_id = desafiante.UserId;
+                        }
+                        if ((rkDesafiado != null && rkDesafiante != null) && (rkDesafiante.totalAcumulado > rkDesafiado.totalAcumulado))
                         {
                             var desafiado = jogo.desafiante;
                             var desafiante = jogo.desafiado;
