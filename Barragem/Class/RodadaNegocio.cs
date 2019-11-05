@@ -364,10 +364,23 @@ namespace Barragem.Class
 
         }
 
+        private void gravaLog(string dados)
+        {
+            var log2 = new Log();
+            log2.descricao = dados;
+            db.Log.Add(log2);
+            db.SaveChanges();
+        }
+
         public void EfetuarSorteioPorProximidade(int barragemId, int classeId, int rodadaId)
         {
+            var dadosBaseLog = "Sorteio:" + barragemId + " ";
+            var dadosLog = dadosBaseLog + " classe:" + classeId + " rodada:" + rodadaId;
+            gravaLog(dadosLog);
             db.Database.ExecuteSqlCommand("DELETE j fROM jogo j INNER JOIN UserProfile u ON j.desafiado_id=u.UserId WHERE u.classeId = " + classeId + " AND j.rodada_id =" + rodadaId);
             var ultimaRodada = db.Rodada.Where(r => r.barragemId == barragemId && r.isAberta == false).Max(r => r.Id);
+            dadosLog = dadosBaseLog + "ultima rodada:" + ultimaRodada;
+            gravaLog(dadosLog);
             var rankingJogadores = db.Rancking.Include(r => r.userProfile).Include(r => r.rodada).
                 Where(r => r.rodada_id == ultimaRodada && r.userProfile.situacao == "ativo" && r.classe.Id == classeId).
                 OrderByDescending(r => r.totalAcumulado).Select(rk => new Classificacao()
@@ -394,6 +407,8 @@ namespace Barragem.Class
             } else {
                 jgs = rankingJogadores.Select(j => new UserProfile() { UserId = j.userId, nome = j.nomeUser }).Distinct().ToList();
             }
+            dadosLog = dadosBaseLog + "qtdd Jogadores:" + jgs.Count();
+            gravaLog(dadosLog);
             var jogadoresPorBloco = 11;
             int divisaoPorClasse = 0;
             while (jogadoresPorBloco > 10)
@@ -402,8 +417,9 @@ namespace Barragem.Class
                 jogadoresPorBloco = jgs.Count() / divisaoPorClasse;
             }
             if (jogadoresPorBloco % 2 != 0) jogadoresPorBloco++;
+            dadosLog = dadosBaseLog + "qtdd classes:" + divisaoPorClasse + "qtdd Jogadores por bloco:" + jogadoresPorBloco;
+            gravaLog(dadosLog);
 
-            
             var contador = 0;
             var jogadoresParaEnvio = new List<UserProfile>();
             var classeAtual = 1;
@@ -413,12 +429,16 @@ namespace Barragem.Class
                 jogadoresParaEnvio.Add(jogador);
                 if ((contador == jogadoresPorBloco && divisaoPorClasse != classeAtual) || (jogador.UserId == jgs[jgs.Count() - 1].UserId))
                 {
+                    dadosLog = dadosBaseLog + "sorteando classe:" + classeAtual + "qtdd Jogadores incluidos:" + jogadoresParaEnvio.Count();
+                    gravaLog(dadosLog);
                     classeAtual++;
                     contador = 0;
                     var jogos = EfetuarSorteio(classeId, barragemId, jogadoresParaEnvio, rodadaId);
                     jogos = definirDesafianteDesafiado(jogos, classeId, barragemId, rankingJogadores);
                     salvarJogos(jogos, rodadaId);
                     jogadoresParaEnvio = new List<UserProfile>();
+                    dadosLog = dadosBaseLog + "sorteio efetuado - desafiantes definidos - jogos salvos - lista para envio: " + jogadoresParaEnvio.Count();
+                    gravaLog(dadosLog);
                 }
             }
 

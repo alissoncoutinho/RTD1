@@ -117,6 +117,9 @@
                                 @Html.DisplayName("Fase")
                             </th>
                             <th>
+                                @Html.DisplayName("Status")
+                            </th>
+                            <th>
                                 @Html.DisplayName("Data")
                             </th>
                             <th>
@@ -157,7 +160,24 @@
                         @Html.Raw(item.descricaoFaseTorneio)
                     </td>
                     <td>
-                        <div class="input-group date" data-date-format="dd/mm/yyyy">
+                        @if (item.situacao_Id == 1){
+                            @Html.Raw("<p  class='badge bg-red'>P</p>")
+                        }
+                        else if (item.situacao_Id == 2)
+                        {
+                            @Html.Raw("<p class='badge bg-yellow'>M</p>")
+                        }
+                        else if ((item.situacao_Id == 4) || (item.situacao_Id == 5) || (item.situacao_Id == 6))
+                        {
+                            @Html.Raw("<p class='badge bg-green'>F</p>")
+                        }
+                    </td>
+
+
+                            <td>
+
+
+                                <div class="input-group date" data-date-format="dd/mm/yyyy">
                             <input id="@Html.Raw("dataJogo" + i)" name="@Html.Raw("dataJogo" + i)" value="@Html.Raw(String.Format("{0:dd/MM/yyyy}", item.dataJogo))" placeholder="dd/mm/yyyy" type="text" class="form-control col-md-5 date" />
                             <span class="input-group-addon">
                                 <span class="glyphicon glyphicon-calendar">
