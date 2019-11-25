@@ -9,37 +9,24 @@ using System.Web.Script.Serialization;
 
 public class FirebaseNotification
 {
-    public void SendNotification(object data)
-    {
-        var serializer = new JavaScriptSerializer();
-        var json = serializer.Serialize(data);
-        Byte[] byteArray = Encoding.UTF8.GetBytes(json);
-        SendNotification(byteArray);
-    }
-    public void SendNotification(Byte[] byteArray)
+    public void SendNotification(FirebaseNotificationModel data)
     {
         try {
             string server_api_key = ConfigurationManager.AppSettings["SERVER_API_KEY"];
             string sender_id = ConfigurationManager.AppSettings["SENDER_ID"];
-            WebRequest httpRequest = WebRequest.Create("https://fcm.googleapis.com/fcm/send");
-            httpRequest.Method = "post";
-            httpRequest.ContentType = "application/json";
-            httpRequest. Headers. Add($"Authorization: key={server_api_key}");
-            httpRequest.Headers.Add($"Sender: id={sender_id}");
-
-            httpRequest.ContentLength = byteArray.Length;
-            //System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-            Stream dataStream = httpRequest.GetRequestStream();
-            dataStream.Write(byteArray, 0, byteArray.Length);
-            dataStream.Close();
-
-            WebResponse tresponse = httpRequest.GetResponse();
-            dataStream = tresponse.GetResponseStream();
-            StreamReader tReader = new StreamReader(dataStream);
-
-            string sResponseFromServer = tReader.ReadToEnd();
-            tReader.Close();
-            dataStream.Close();
+            var httpWebRequest = (HttpWebRequest) WebRequest.Create("https://fcm.googleapis.com/fcm/send");
+            httpWebRequest.Method = "post";
+            httpWebRequest.ContentType = "application/json";
+            httpWebRequest. Headers. Add($"Authorization: key={server_api_key}");
+            using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream())){
+                string json = new JavaScriptSerializer().Serialize(data);
+                streamWriter.Write(json);
+            }
+            var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
+            using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
+            {
+                var result = streamReader.ReadToEnd();
+            }
         } catch (Exception e) {
             throw e;
         }
@@ -84,14 +71,8 @@ public class FirebaseNotification
 
 public class FirebaseNotificationModel
 {
-    [JsonProperty(PropertyName = "message")]
-    public Message message { get; set; }
-}
-
-public class Message
-{
-    [JsonProperty(PropertyName = "topic")]
-    public string topic { get; set; }
+    [JsonProperty(PropertyName = "to")]
+    public string to { get; set; }
 
     [JsonProperty(PropertyName = "notification")]
     public NotificationModel notification { get; set; }
@@ -109,29 +90,4 @@ public class NotificationModel
 
 
 
-/*{
-  "message":{
-    "topic":"subscriber-updates",
-    "notification":{
-      "body" : "This week's edition is now available.",
-      "title" : "NewsMagazine.com",
-    },
-    "data" : {
-      "volume" : "3.21.15",
-      "contents" : "http://www.news-magazine.com/world-week/21659772"
-    },
-    "android":{
-      "priority":"normal"
-    },
-    "apns":{
-      "headers":{
-        "apns-priority":"5"
-      }
-    },
-    "webpush": {
-      "headers": {
-        "Urgency": "high"
-      }
-    }
-  }
-}*/
+

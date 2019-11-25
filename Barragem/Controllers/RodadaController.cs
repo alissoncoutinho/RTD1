@@ -201,6 +201,17 @@ namespace Barragem.Controllers
                 {
                     mensagem = e.Message;
                 }
+
+                try{
+                    var titulo = "Ranking atualizado e nova rodada gerada!";
+                    var conteudo = "Clique aqui e entre em contato com seu adversário o mais breve possível e bom jogo.";
+                    
+                    var fbmodel = new FirebaseNotificationModel() { to = "/topics/ranking"+rodadaCriada.barragemId, notification = new NotificationModel() { title = titulo, body = conteudo } };
+                    new FirebaseNotification().SendNotification(fbmodel);
+                }
+                catch (Exception e){
+                    
+                }
                 return RedirectToAction("Index", new { msg = mensagem });
                                 
             }
@@ -239,6 +250,18 @@ namespace Barragem.Controllers
                 }
             }catch (Exception e){
                 mensagem = e.Message;
+            }
+            try
+            {
+                var titulo = "Ranking atualizado e nova rodada gerada!";
+                var conteudo = "Clique aqui e entre em contato com seu adversário o mais breve possível e bom jogo.";
+
+                var fbmodel = new FirebaseNotificationModel() { to = "/topics/ranking" + barragemId, notification = new NotificationModel() { title = titulo, body = conteudo } };
+                new FirebaseNotification().SendNotification(fbmodel);
+            }
+            catch (Exception e)
+            {
+
             }
             return RedirectToAction("Index", new { msg=mensagem});
         }
