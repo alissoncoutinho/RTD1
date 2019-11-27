@@ -382,7 +382,7 @@ namespace Barragem.Class
             dadosLog = dadosBaseLog + "ultima rodada:" + ultimaRodada;
             gravaLog(dadosLog);
             var rankingJogadores = db.Rancking.Include(r => r.userProfile).Include(r => r.rodada).
-                Where(r => r.rodada_id == ultimaRodada && r.userProfile.situacao == "ativo" && r.classe.Id == classeId).
+                Where(r => r.rodada_id == ultimaRodada && r.userProfile.situacao == "ativo" && r.userProfile.classeId == classeId).
                 OrderByDescending(r => r.totalAcumulado).Select(rk => new Classificacao()
                 {
                     userId = rk.userProfile_id,
