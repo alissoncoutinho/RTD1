@@ -9,6 +9,7 @@ using Barragem.Context;
 using Barragem.Filters;
 using System.Web.Security;
 using WebMatrix.WebData;
+using Barragem.Class;
 
 namespace Barragem.Controllers
 {
@@ -116,7 +117,11 @@ namespace Barragem.Controllers
             ViewBag.barraId = barragemId;
             ViewBag.barragemId = new SelectList(db.BarragemView, "Id", "nome");
 
-            return View();
+            Temporada temporada = new Temporada();
+            temporada.isAutomatico = false;
+            temporada.iniciarZerada = false;
+
+            return View(temporada);
         }
 
         //
@@ -141,6 +146,13 @@ namespace Barragem.Controllers
             }
 
             return View(temporada);
+        }
+
+        [HttpGet]
+        public void GerarRodadasAutomaticas()
+        {
+            TemporadaNegocio temporadaNegocio = new TemporadaNegocio();
+            temporadaNegocio.GerarRodadasAutomaticas();
         }
 
     }

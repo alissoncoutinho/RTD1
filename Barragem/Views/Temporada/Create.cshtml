@@ -10,46 +10,100 @@
     {
         @Html.AntiForgeryToken()
         @Html.ValidationSummary(true)
-        <div class="box-body">
-            <div class="form-group">
-                @Html.LabelFor(model => model.nome, new { @class = "col-sm-2 control-label" })
-                <div class="col-sm-10">
-                    @Html.TextBoxFor(model => model.nome, new { @class = "form-control" })
-                </div>
-                @Html.ValidationMessageFor(model => model.nome)
+    <div class="box-body">
+        <div class="form-group">
+            @Html.LabelFor(model => model.nome, new { @class = "col-sm-2 control-label" })
+            <div class="col-sm-10">
+                @Html.TextBoxFor(model => model.nome, new { @class = "form-control" })
             </div>
-            <div class="form-group">
-                @Html.LabelFor(model => model.qtddRodadas, new { @class = "col-sm-2 control-label" })
-                <div class="col-sm-6">
-                    @Html.TextBoxFor(model => model.qtddRodadas, new { @class = "form-control", @placeholder = "Caso seja temporada" })
-                </div>
-                @Html.ValidationMessageFor(model => model.qtddRodadas)
-            </div>
-            <div class="form-group">
-                <div class="col-sm-offset-2 col-sm-6">
-                    <div class="checkbox">
-                        <label>
-                            @Html.CheckBoxFor(model => model.isAtivo, new { @checked = "checked" }) Ativo
-                        </label>
-                    </div>
-                </div>
-            </div>
-
-            @if (Roles.IsUserInRole("admin"))
-            {
-                <div class="form-group">
-                    @Html.LabelFor(model => model.barragem, new { @class = "col-sm-2 control-label" })
-                    <div class="col-sm-8">
-                        @Html.DropDownList("barragemId", null, new { @class = "form-control" })
-                    </div>
-                    @Html.ValidationMessageFor(model => model.barragemId)
-                </div>
-            }
-            else
-            {
-                <input type="hidden" name="barragemId" value="@ViewBag.barraId" />
-            }
+            @Html.ValidationMessageFor(model => model.nome)
         </div>
+        <div class="form-group">
+            @Html.LabelFor(model => model.qtddRodadas, new { @class = "col-sm-2 control-label" })
+            <div class="col-sm-6">
+                @Html.TextBoxFor(model => model.qtddRodadas, new { @class = "form-control", @placeholder = "Caso seja temporada" })
+            </div>
+            @Html.ValidationMessageFor(model => model.qtddRodadas)
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-6">
+                <div class="checkbox">
+                    <label>
+                        @Html.CheckBoxFor(model => model.isAtivo, new { @checked = "checked" }) Ativo
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.dataInicio, new { @class = "col-sm-2 control-label" })
+            <div class="col-sm-2">
+                <div class="input-group date" id="dataInicio" data-date-format="dd/mm/yyyy">
+                    <input id="dataInicio" name="dataInicio" value="@Html.Raw(String.Format("{0:dd/MM/yyyy}", Model.dataInicio))" placeholder="dd/mm/yyyy" type="text" autocomplete="off" />
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar">
+                        </span>
+                    </span>
+                </div>
+            </div>
+            @Html.LabelFor(model => model.dataFim, new { @class = "col-sm-2 control-label" })
+            <div class="col-sm-2">
+                <div class="input-group date" id="dataFim" data-date-format="dd/mm/yyyy">
+                    <input id="dataFim" name="dataFim" value="@Html.Raw(String.Format("{0:dd/MM/yyyy}", Model.dataFim))" placeholder="dd/mm/yyyy" type="text" autocomplete="off" />
+                    <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar">
+                        </span>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-6">
+                <div class="checkbox">
+                    <label>
+                        @Html.CheckBoxFor(model => model.iniciarZerada, new { @checked = "checked" }) Iniciar pontuação do zero
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-6">
+                <div class="checkbox">
+                    <label>
+                        @Html.CheckBoxFor(model => model.isAutomatico, new { @checked = "checked" }) Automatizar sorteio
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-6">
+                @Html.LabelFor(model => model.tamanhoRodada)
+                <select id="tamanhoRodada" name="tamanhoRodada" class="form-control">
+                    <option value="7">7</option>
+                    <option value="14">14</option>
+                    <option value="15">15</option>
+                </select>
+            </div>
+        </div>
+
+        @if (Roles.IsUserInRole("admin"))
+        {
+            <div class="form-group">
+                @Html.LabelFor(model => model.barragem, new { @class = "col-sm-2 control-label" })
+                <div class="col-sm-8">
+                    @Html.DropDownList("barragemId", null, new { @class = "form-control" })
+                </div>
+                @Html.ValidationMessageFor(model => model.barragemId)
+            </div>
+        }
+        else
+        {
+            <input type="hidden" name="barragemId" value="@ViewBag.barraId" />
+        }
+    </div>
         <!-- /.box-body -->
         <div class="box-footer">
             @Html.ActionLink("Voltar", "Index", new { @class = "btn btn-default" })
@@ -59,5 +113,19 @@
     }
 
 </div>
+
+@section Scripts{
+<script type="text/javascript">
+        $("#dataInicio").datepicker({
+            language: 'pt-BR',
+            pickTime: false
+        });
+        $("#dataFim").datepicker({
+            language: 'pt-BR',
+            pickTime: false
+        });
+        
+</script>
+    }
 
 
