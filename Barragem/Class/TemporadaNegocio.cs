@@ -17,10 +17,10 @@ namespace Barragem.Class
 
         public string GerarRodadasAutomaticas()
         {
-            if(DateTime.Now.Hour < 23)
-            {
-                return "0";
-            }
+            //if(DateTime.Now.Hour < 23)
+            //{
+                //return "0";
+            //}
             DateTime hoje = DateTime.Now.Date;
             RodadaNegocio rodadaNegocio = new RodadaNegocio();
             Dictionary<Temporada, string> temporadasComErro = new Dictionary<Temporada, string>();

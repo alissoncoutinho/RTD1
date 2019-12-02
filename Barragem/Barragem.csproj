@@ -225,11 +225,14 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Class\ClientePagHiper.cs" />
+    <Compile Include="Class\ExceptionRankingDesativado.cs" />
+    <Compile Include="Class\ExceptionRodadaEmAberto.cs" />
     <Compile Include="Class\FirebaseNotification.cs" />
     <Compile Include="Class\Funcoes.cs" />
     <Compile Include="Class\Mail.cs" />
     <Compile Include="Class\MD5Cript.cs" />
     <Compile Include="Class\RodadaNegocio.cs" />
+    <Compile Include="Class\TemporadaNegocio.cs" />
     <Compile Include="Class\Tipos.cs" />
     <Compile Include="Context\BarragemDbContext.cs" />
     <Compile Include="Controllers\AccountController.cs" />

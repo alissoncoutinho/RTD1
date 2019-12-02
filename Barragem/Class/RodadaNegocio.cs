@@ -130,14 +130,16 @@ namespace Barragem.Class
                     Rodada rodadaAtual = db.Rodada.Where(r => r.Id == idRodada).Single();
                     if (rodadaAtual.temporada.iniciarZerada)
                     {
-                        int quantidadeDeRodadasRealizadas = db.Rodada.Where(r => r.temporadaId == rodadaAtual.temporadaId).Count();
+                        int quantidadeDeRodadasRealizadas = db.Rodada.Where(r => r.temporadaId == rodadaAtual.temporadaId && r.Id!=idRodada).Count();
                         if (quantidadeDeRodadasRealizadas < quantidadeDeRodadasParaPontuacao)
                         {
                             quantidadeDeRodadasParaPontuacao = quantidadeDeRodadasRealizadas;
                         }
                     }
-                    pontuacaoTotal = db.Rancking.Where(r => r.rodada.isAberta == false && r.userProfile_id == jogador.UserId && r.rodada_id < idRodada).
-                    OrderByDescending(r => r.rodada_id).Take(quantidadeDeRodadasParaPontuacao).Sum(r => r.pontuacao);
+                    if (quantidadeDeRodadasParaPontuacao > 0){
+                        pontuacaoTotal = db.Rancking.Where(r => r.rodada.isAberta == false && r.userProfile_id == jogador.UserId && r.rodada_id < idRodada).
+                        OrderByDescending(r => r.rodada_id).Take(quantidadeDeRodadasParaPontuacao).Sum(r => r.pontuacao);
+                    }
                 }
                 catch (Exception e)
                 {
@@ -766,13 +768,11 @@ namespace Barragem.Class
 
         public void SortearJogos(int id, int barragemId)
         {
-            string mensagem = "ok";
             var rodadaNegocio = new RodadaNegocio();
-            var barragem = db.BarragemView.Find(barragemId);
-            bool isClasseUnica = barragem.isClasseUnica;
             try
             {
                 List<Classe> classes = db.Classe.Where(c => c.barragemId == barragemId && c.ativa == true).ToList();
+                var isClasseUnica = db.BarragemView.Find(barragemId).isClasseUnica;
                 var jogos = new List<Jogo>();
                 for (int i = 0; i < classes.Count(); i++)
                 {
@@ -783,14 +783,27 @@ namespace Barragem.Class
                     else
                     {
                         jogos = rodadaNegocio.EfetuarSorteio(classes[i].Id, barragemId, null, id);
+                        jogos = rodadaNegocio.definirDesafianteDesafiado(jogos, classes[i].Id, barragemId);
+                        rodadaNegocio.salvarJogos(jogos, id);
                     }
-                    jogos = rodadaNegocio.definirDesafianteDesafiado(jogos, classes[i].Id, id);
-                    rodadaNegocio.salvarJogos(jogos, id);
+
                 }
             }
             catch (Exception e)
             {
-                mensagem = e.Message;
+                throw e;
+            }
+            try
+            {
+                var titulo = "Ranking atualizado e nova rodada gerada!";
+                var conteudo = "Clique aqui e entre em contato com seu adversário o mais breve possível e bom jogo.";
+
+                var fbmodel = new FirebaseNotificationModel() { to = "/topics/ranking" + barragemId, notification = new NotificationModel() { title = titulo, body = conteudo } };
+                new FirebaseNotification().SendNotification(fbmodel);
+            }
+            catch (Exception e)
+            {
+
             }
         }
     }
