@@ -186,5 +186,22 @@ namespace Barragem.Controllers
             return Ok("Teste");
         }
 
+        [Route("api/RankingAPI/Teste2")]
+        [HttpGet]
+        [ResponseType(typeof(string))]
+        public IHttpActionResult Teste2()
+        {
+            try
+            {
+                var fbmodel = new FirebaseNotificationModel() { to = "/topics/ranking8", notification = new NotificationModel() { title = "Test Titulo", body = "Test body" }};
+                new FirebaseNotification().SendNotification(fbmodel);
+            }
+            catch (Exception e)
+            {
+                return InternalServerError(new Exception("Erro: " + e.Message));
+            }
+            return Ok("Teste");
+        }
+
     }
 }
