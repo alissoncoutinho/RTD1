@@ -53,6 +53,7 @@
         <br />
         <p>
             <input type="submit" value="Save" />
+            <input class="btn btn-success sortear" type="submit" value="Sortear Jogos" />
         </p>
         }
 
@@ -62,6 +63,7 @@
 
         @section Scripts {
             <script type="text/javascript">
+                var link = "/Rodada/SortearJogos?id=@Model.Id&barragemId=@Model.barragemId";
                 $(function () {
                     $("#dataInicio").datepicker({
                         language: 'pt-BR',
@@ -70,6 +72,11 @@
                     $("#dataFim").datepicker({
                         language: 'pt-BR',
                         pickTime: false
+                    });
+                    $(".sortear").click(function (event) {
+                        event.preventDefault();
+                        document.forms[1].action = link;
+                        document.forms[1].submit();
                     });
                 });
             </script>

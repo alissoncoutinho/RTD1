@@ -69,7 +69,7 @@
                                                   if (item.isAberta)
                                                   {
                                                       <a href="@Url.Action("Edit", new {id = @item.Id })" title="Editar/Detalhar" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-edit"></span></a>
-                                                      <button data-link="@Url.Action("SortearJogos", new {id = @item.Id, barragemId = @item.barragemId })" data-title="Sortear Jogos" title="Sortear Jogos" class="btn btn-default btn-xs confirmDialog"><span class="glyphicon glyphicon-random"></span></button>
+                                                      <!--button data-link="Url.Action("SortearJogos", new {id = item.Id, barragemId = item.barragemId })" data-title="Sortear Jogos" title="Sortear Jogos" class="btn btn-default btn-xs confirmDialog"><span class="glyphicon glyphicon-random"></span></button-->
                                                   }
                                               }
                                               <a href="@Url.Action("../Jogo/Index", new { rodadaId = item.Id })" title="Jogos da Rodada" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-list"></span></a>
