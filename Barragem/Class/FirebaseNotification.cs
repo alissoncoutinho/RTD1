@@ -76,7 +76,10 @@ public class FirebaseNotificationModel
 
     [JsonProperty(PropertyName = "notification")]
     public NotificationModel notification { get; set; }
-    
+
+    [JsonProperty(PropertyName = "data")]
+    public DataModel data { get; set; }
+
 }
 
 public class NotificationModel
@@ -87,6 +90,19 @@ public class NotificationModel
     [JsonProperty(PropertyName = "title")]
     public string title { get; set; }
     
+}
+public class DataModel
+{
+    [JsonProperty(PropertyName = "title")]
+    public string title { get; set; }
+
+    [JsonProperty(PropertyName = "body")]
+    public string body { get; set; }
+
+    [JsonProperty(PropertyName = "type")]
+    public string type { get; set; }
+
+
 }
 
 

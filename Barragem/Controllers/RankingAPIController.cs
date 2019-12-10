@@ -177,23 +177,10 @@ namespace Barragem.Controllers
         {
             try
             {
-                var fbmodel = new FirebaseNotificationModel() { to = "/topics/ranking8", notification = new NotificationModel() { title = "Test Titulo", body = "Test body" } };
-                new FirebaseNotification().SendNotification(fbmodel);
-            }catch(Exception e)
-            {
-                return InternalServerError(new Exception("Erro: " + e.Message));
-            }
-            return Ok("Teste");
-        }
+                var titulo = "Ranking atualizado e nova rodada gerada!";
+                var conteudo = "Clique aqui e entre em contato com seu adversário o mais breve possível e bom jogo.";
 
-        [Route("api/RankingAPI/Teste2")]
-        [HttpGet]
-        [ResponseType(typeof(string))]
-        public IHttpActionResult Teste2()
-        {
-            try
-            {
-                var fbmodel = new FirebaseNotificationModel() { to = "/topics/ranking8", notification = new NotificationModel() { title = "Test Titulo", body = "Test body" }};
+                var fbmodel = new FirebaseNotificationModel() { to = "/topics/ranking8", notification = new NotificationModel() { title = titulo, body = conteudo }, data = new DataModel() { title = titulo, body = conteudo, type = "nova_rodada_aberta" } };
                 new FirebaseNotification().SendNotification(fbmodel);
             }
             catch (Exception e)
@@ -201,7 +188,9 @@ namespace Barragem.Controllers
                 return InternalServerError(new Exception("Erro: " + e.Message));
             }
             return Ok("Teste");
+            
         }
 
+        
     }
 }
