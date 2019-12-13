@@ -27,18 +27,20 @@
                     </div>
                     @Html.ValidationMessageFor(model => model.qtddRodadas)
                 </div>
+
                 <div class="form-group">
-                    <div class="col-sm-offset-2 col-sm-6">
-                        <div class="checkbox">
-                            <label>
-                                @Html.CheckBoxFor(model => model.isAtivo, new { @checked = "checked" }) Ativo
-                            </label>
-                        </div>
+                    <label class="col-sm-2 control-label" for="isautomatico">Gostaria que o sistema fechasse e abrisse rodadas automaticamente? </label>
+                    <div class="col-md-2 col-xs-8">
+                        <select id="isautomatico" name="isautomatico" class="form-control" onchange="mostrarCamposAutomatizacao(this.options[this.selectedIndex].value)">
+                            <option value="false">NÃO</option>
+                            <option value="true" @if (Model.isAutomatico) { @Html.Raw("selected") }>SIM</option>
+                        </select>
                     </div>
                 </div>
 
-                <div class="form-group">
-                    @Html.LabelFor(model => model.dataInicio, new { @class = "col-sm-2 control-label" })
+
+                <div class="form-group" id="camposAutomatizacao" @if (Model.isAutomatico) { @Html.Raw("style=\"display:inline-block\"") } else {@Html.Raw("style=\"display:none\"") }>
+@Html.LabelFor(model => model.dataInicio, new { @class = "col-sm-2 control-label" })
                     <div class="col-sm-2">
                         <div class="input-group date" id="dataInicio" data-date-format="dd/mm/yyyy">
                             <input id="dataInicio" name="dataInicio" value="@Html.Raw(String.Format("{0:dd/MM/yyyy}", Model.dataInicio))" placeholder="dd/mm/yyyy" type="text" autocomplete="off" />
@@ -48,46 +50,21 @@
                             </span>
                         </div>
                     </div>
-                    @Html.LabelFor(model => model.dataFim, new { @class = "col-sm-2 control-label" })
-                    <div class="col-sm-2">
-                        <div class="input-group date" id="dataFim" data-date-format="dd/mm/yyyy">
-                            <input id="dataFim" name="dataFim" value="@Html.Raw(String.Format("{0:dd/MM/yyyy}", Model.dataFim))" placeholder="dd/mm/yyyy" type="text" autocomplete="off" />
-                            <span class="input-group-addon">
-                                <span class="glyphicon glyphicon-calendar">
-                                </span>
-                            </span>
-                        </div>
-                    </div>
-                </div>
 
-                <div class="form-group">
-                    <div class="col-sm-offset-2 col-sm-6">
-                        <div class="checkbox">
-                            <label>
-                                @Html.CheckBoxFor(model => model.iniciarZerada, new { @checked = "checked" }) Iniciar pontuação do zero
-                            </label>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <div class="col-sm-offset-2 col-sm-6">
-                        <div class="checkbox">
-                            <label>
-                                @Html.CheckBoxFor(model => model.isAutomatico, new { @checked = "checked" }) Automatizar sorteio
-                            </label>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-6">
                         @Html.LabelFor(model => model.tamanhoRodada)
-                        <select id="tamanhoRodada" name="tamanhoRodada" class="form-control">
+                        <select id="tamanhoRodada" name="tamanhoRodada" style="max-width:25%;">
                             <option value="7" @if (Model.tamanhoRodada == 7) { @Html.Raw("selected") }>7</option>
                             <option value="14" @if (Model.tamanhoRodada == 14) { @Html.Raw("selected") }>14</option>
                             <option value="15" @if (Model.tamanhoRodada == 15) { @Html.Raw("selected") }>15</option>
                         </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" for="iniciarZerada">Esta temporada iniciou com a pontuação zerada? </label>
+                    <div class="col-md-2 control-label">
+                        <input type="text" name="iniciouZerada" disabled  @if (Model.iniciarZerada) { @Html.Raw("value=\"SIM\"") } else {@Html.Raw("value=\"NÃO\"") }>
                     </div>
                 </div>
 
@@ -186,6 +163,16 @@
 @section Scripts {
 
 <script type="text/javascript">
+
+    function mostrarCamposAutomatizacao(teste) {
+        var element = document.getElementById("camposAutomatizacao");
+        if (teste == "true") {
+            element.style.display = 'inline-block';
+        } else {
+            element.style.display = 'none';
+        }
+    }
+
     $(function () {
         $("#sortable1, #sortable2, #sortable3, #sortable4").sortable({
                 connectWith: ".connectedSortable",

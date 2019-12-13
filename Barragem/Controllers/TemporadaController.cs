@@ -117,6 +117,15 @@ namespace Barragem.Controllers
             temporada.isAutomatico = false;
             temporada.iniciarZerada = false;
 
+            var list = new[]
+            {
+                new SelectListItem { Value = "0", Text = "Não" },
+                new SelectListItem { Value = "1", Text = "Sim" }
+            };
+
+            ViewBag.Automatico = new SelectList(list, "Value", "Text");
+            ViewBag.Zerar = new SelectList(list, "Value", "Text");
+
             return View(temporada);
         }
 

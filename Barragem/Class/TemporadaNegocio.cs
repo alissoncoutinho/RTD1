@@ -57,15 +57,8 @@ namespace Barragem.Class
                 {
                     if (temporada.isAutomatico)
                     {
-                        if (hoje.AddDays(temporada.tamanhoRodada.Value) < temporada.dataFim)
-                        {
-                            rodadaNegocio.FecharRodada(rodada.Id);
-                            criarNovaRodadaComJogos(rodadaNegocio, temporada, hoje);
-                        }
-                        else
-                        {
-                            temporadasComErro.Add(temporada, "Neste caso, a rodada terminaria depois da temporada. Ajustar o tamanho da rodada ou o fim da temporada");
-                        }
+                        rodadaNegocio.FecharRodada(rodada.Id);
+                        criarNovaRodadaComJogos(rodadaNegocio, temporada, hoje);
                     }
                 }catch(Exception e)
                 {
