@@ -1077,11 +1077,23 @@ namespace Barragem.Controllers
         [HttpPost]
         public ActionResult Inscricao(int torneioId, int classeInscricao = 0, string operacao = "", bool isMaisDeUmaClasse = false, int classeInscricao2 = 0, string observacao = "", bool isSocio = false, bool isClasseDupla = false, int userId=0)
         {
+            var mensagemRetorno = InscricaoNegocio(torneioId, classeInscricao, operacao, isMaisDeUmaClasse, classeInscricao2, observacao, isSocio, isClasseDupla, userId);
+            if (mensagemRetorno.nomePagina == "ConfirmacaoInscricao") {
+                return RedirectToAction(mensagemRetorno.nomePagina, new { torneioId = torneioId, msg= mensagemRetorno.mensagem, msgErro="", userId = userId });
+            } else  {
+                return RedirectToAction(mensagemRetorno.nomePagina, new { id = torneioId, userId = userId, Msg = mensagemRetorno.mensagem });
+            }
+        }
+
+        public MensagemRetorno InscricaoNegocio(int torneioId, int classeInscricao = 0, string operacao = "", bool isMaisDeUmaClasse = false, int classeInscricao2 = 0, string observacao = "", bool isSocio = false, bool isClasseDupla = false, int userId = 0)
+        {
+            var mensagemRetorno = new MensagemRetorno();
             try
             {
                 var gratuidade = false;
                 string perfil = Roles.GetRolesForUser(User.Identity.Name)[0];
-                if (perfil.Equals("usuario") || userId==0){
+                if (perfil.Equals("usuario") || userId == 0)
+                {
                     userId = WebSecurity.GetUserId(User.Identity.Name);
                 }
                 var torneio = db.Torneio.Find(torneioId);
@@ -1102,12 +1114,15 @@ namespace Barragem.Controllers
                         if ((classeInscricao == 0) || ((isMaisDeUmaClasse) && (classeInscricao2 == 0)))
                         {
 
-                            return RedirectToAction("Detalhes", new { id = torneioId, Msg = "Selecione uma categoria." });
+                            mensagemRetorno.nomePagina = "Detalhes";
+                            mensagemRetorno.mensagem = "Selecione uma categoria.";
+                            return mensagemRetorno;
                         }
                         if (classeInscricao == classeInscricao2)
                         {
-
-                            return RedirectToAction("Detalhes", new { id = torneioId, Msg = "Selecione uma categoria diferente na segunda opção de categoria." });
+                            mensagemRetorno.nomePagina = "Detalhes";
+                            mensagemRetorno.mensagem = "Selecione uma categoria diferente na segunda opção de categoria.";
+                            return mensagemRetorno;
                         }
                         it[0].classe = classeInscricao;
                         if (operacao == "alterarClasse")
@@ -1134,7 +1149,9 @@ namespace Barragem.Controllers
                             {
                                 if (it[0].isAtivo)
                                 {
-                                    return RedirectToAction("Detalhes", new { id = torneioId });
+                                    mensagemRetorno.nomePagina = "Detalhes";
+                                    mensagemRetorno.mensagem = "";
+                                    return mensagemRetorno;
                                 }
                                 it[0].valor = torneio.valorMaisClasses;
                                 db.Entry(it[0]).State = EntityState.Modified;
@@ -1157,9 +1174,13 @@ namespace Barragem.Controllers
                             db.SaveChanges();
                             if (isClasseDupla)
                             {
-                                return RedirectToAction("EscolherDupla", new { torneioId = torneioId, userId=userId });
+                                mensagemRetorno.nomePagina = "EscolherDupla";
+                                mensagemRetorno.mensagem = "";
+                                return mensagemRetorno;
                             }
-                            return RedirectToAction("Detalhes", new { id = torneioId, Msg = "ok" });
+                            mensagemRetorno.nomePagina = "Detalhes";
+                            mensagemRetorno.mensagem = "ok";
+                            return mensagemRetorno;
                         }
                     }
                 }
@@ -1167,13 +1188,15 @@ namespace Barragem.Controllers
                 {
                     if ((classeInscricao == 0) || ((isMaisDeUmaClasse) && (classeInscricao2 == 0)))
                     {
-
-                        return RedirectToAction("Detalhes", new { id = torneioId, Msg = "Selecione uma categoria." });
+                        mensagemRetorno.nomePagina = "Detalhes";
+                        mensagemRetorno.mensagem = "Selecione uma categoria.";
+                        return mensagemRetorno;
                     }
                     if (classeInscricao == classeInscricao2)
                     {
-
-                        return RedirectToAction("Detalhes", new { id = torneioId, Msg = "Selecione uma categoria diferente na segunda opção de categoria." });
+                        mensagemRetorno.nomePagina = "Detalhes";
+                        mensagemRetorno.mensagem = "Selecione uma categoria diferente na segunda opção de categoria.";
+                        return mensagemRetorno;
                     }
                     InscricaoTorneio inscricao = new InscricaoTorneio();
                     inscricao.classe = classeInscricao;
@@ -1240,26 +1263,35 @@ namespace Barragem.Controllers
                     }
                 }
                 db.SaveChanges();
-                var Msg = "Inscrição recebida.";
+                mensagemRetorno.mensagem = "Inscrição recebida.";
                 if ((torneio.valor == 0) || (gratuidade))
                 {
-                    Msg = "Inscrição realizada com sucesso.";
+                    mensagemRetorno.mensagem = "Inscrição realizada com sucesso.";
                 }
                 if (operacao == "cancelar")
                 {
-                    return RedirectToAction("Detalhes", new { id = torneioId });
+                    mensagemRetorno.nomePagina = "Detalhes";
+                    mensagemRetorno.mensagem = "Cancelamento realizado com sucesso.";
+                    return mensagemRetorno;
                 }
                 if (isClasseDupla)
                 {
-                    return RedirectToAction("EscolherDupla", new { torneioId = torneioId, userId=userId });
+                    mensagemRetorno.nomePagina = "EscolherDupla";
+                    mensagemRetorno.mensagem = "";
+                    return mensagemRetorno;
                 }
-                return RedirectToAction("ConfirmacaoInscricao", new { torneioId = torneioId, msg = Msg });
+                mensagemRetorno.nomePagina = "ConfirmacaoInscricao";
+                return mensagemRetorno;
+                
             }
             catch (Exception ex)
             {
-                return RedirectToAction("Detalhes", new { id = torneioId, Msg = ex.Message });
+                mensagemRetorno.nomePagina = "Detalhes";
+                mensagemRetorno.mensagem = ex.Message;
+                return mensagemRetorno;
             }
         }
+
         [Authorize(Roles = "admin, organizador")]
         public ActionResult Ativar(int inscricaoId)
         {

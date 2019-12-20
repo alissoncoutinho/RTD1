@@ -15,6 +15,7 @@ using Barragem.Filters;
 using System.IO;
 using System.Drawing;
 using System.Web.Hosting;
+using System.Web.Security;
 
 namespace Barragem.Controllers
 {
@@ -182,6 +183,88 @@ namespace Barragem.Controllers
                 return InternalServerError(e);
             }
 
+            return StatusCode(HttpStatusCode.NoContent);
+        }
+
+        [ResponseType(typeof(void))]
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("api/PerfilAPI/Perfil")]
+        public IHttpActionResult PostPerfil(string login, string email, string password, string nome, DateTime dataNascimento, string naturalidade, string celular,  string altura, string lateralidade, int rankingId, int classeId)
+        {
+            RegisterModel model = new RegisterModel();
+            model.UserName = login;
+            model.nome = nome;
+            model.dataNascimento = dataNascimento;
+            model.altura2 = altura;
+            model.telefoneCelular = celular;
+            model.email = email;
+            model.situacao = Tipos.Situacao.pendente.ToString();
+            model.dataInicioRancking = DateTime.Now;
+            model.naturalidade = naturalidade;
+            model.lateralidade = lateralidade;
+            model.barragemId = rankingId;
+            model.classeId = classeId;
+            if (ModelState.IsValid)
+            {
+                // Attempt to register the user
+                try
+                {
+                    if (!WebSecurity.UserExists(login))
+                    {
+                        if (!Funcoes.IsValidEmail(email))
+                        {
+                            return InternalServerError(new Exception(string.Format("E-mail inválido. '{0}'", email)));
+                        }
+
+                        WebSecurity.CreateUserAndAccount(login, password, new
+                        {
+                            nome = nome,
+                            dataNascimento = dataNascimento,
+                            altura2 = altura,
+                            telefoneCelular = celular,
+                            email = email,
+                            situacao = Tipos.Situacao.pendente.ToString(),
+                            dataInicioRancking = DateTime.Now,
+                            naturalidade = naturalidade,
+                            lateralidade = lateralidade,
+                            barragemId = rankingId,
+                            classeId = classeId
+                        });
+
+                        Roles.AddUserToRole(model.UserName, "usuario");
+                        WebSecurity.Login(model.UserName, model.Password);
+                        try
+                        {
+                            var accountController = new AccountController();
+                            accountController.notificarJogador(model.nome, model.email, model.barragemId);
+                            accountController.notificarOrganizadorCadastro(model.nome, model.barragemId, model.telefoneCelular);
+                        }
+                        catch (Exception ex) { } // não tratar o erro pois caso não seja possível notificar o administrador não prejudicará o cadastro do usuário
+
+                        
+                    }
+                    else
+                    {
+                        return InternalServerError(new Exception(string.Format("Login já existe. '{0}'", login)));
+                    }
+
+                }
+                catch (MembershipCreateUserException e)
+                {
+                    return InternalServerError(e);
+                }
+
+            } else {
+                var message = string.Join(" | ", ModelState.Values
+                                            .SelectMany(v => v.Errors)
+                                            .Select(e => e.ErrorMessage));
+
+                //Log This exception to ELMAH:
+                Exception exception = new Exception(message.ToString());
+                return InternalServerError(exception);
+            }
+                        
             return StatusCode(HttpStatusCode.NoContent);
         }
 

@@ -170,6 +170,31 @@ namespace Barragem.Controllers
             return db.BarragemView.Count(e => e.Id == id) > 0;
         }
 
+        [HttpGet]
+        [Route("api/RankingAPI/BuscaCidades/nome")]
+        public IList<string> GetBuscaCidades(string nome)
+        {
+            List<string> cidades = new List<string>();
+            if (nome.Length > 2) { 
+                cidades = db.BarragemView.Where(j => j.cidade.StartsWith(nome) && j.isAtiva==true).OrderBy(j => j.cidade).Select(j=>j.cidade).ToList<string>();
+            }
+            return cidades;
+        }
+
+        [HttpGet]
+        [Route("api/RankingAPI/cidade")]
+        // GET: api/RankingAPI/cidade
+        public IList<LoginRankingModel> GetRankingsByCidade(string nome)
+        {
+            var rankings = db.BarragemView.Where(b => b.isAtiva==true && b.cidade.ToLower() == nome.ToLower()).Select(rk => new LoginRankingModel()
+            {
+                idRanking = rk.Id,
+                nomeRanking = rk.nome
+            }).ToList();
+
+            return rankings;
+        }
+
         [Route("api/RankingAPI/Teste")]
         [HttpGet]
         [ResponseType(typeof(string))]
