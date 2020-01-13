@@ -46,6 +46,7 @@ namespace Barragem.Controllers
                 j.qtddGames2setDesafiado = jogo.qtddGames2setDesafiado;
                 j.qtddGames3setDesafiado = jogo.qtddGames3setDesafiado;
                 j.idVencedor = jogo.idDoVencedor;
+                j.situacao = jogo.situacao.descricao;
                 jogoRodada.Add(j);
                 
             }

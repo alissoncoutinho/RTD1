@@ -377,6 +377,7 @@ namespace Barragem.Models
         public int qtddGames2setDesafiado { get; set; }
         public int qtddGames3setDesafiado { get; set; }
         public int idVencedor { get; set; }
+        public string situacao { get; set; }
 
     }
 
