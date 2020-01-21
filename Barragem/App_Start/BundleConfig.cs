@@ -28,7 +28,8 @@ namespace Barragem
                             .Include("~/Content/jquery.Jcrop.css")
                             .Include("~/Content/font-awesome/css/font-awesome.css")
                             .Include("~/Content/AdminLTE.min.css")
-                            .Include("~/Content/toastr.min.css"));
+                            .Include("~/Content/toastr.min.css")
+                            .Include("~/Content/jquery-confirm.min.css"));
 
 
             bundles.Add(new StyleBundle("~/css0")
@@ -77,7 +78,7 @@ namespace Barragem
                             .Include("~/Scripts/flexslider/jquery.flexslider-min.js")
                             .Include("~/Scripts/barragem.js")
                             .Include("~/Scripts/jquery-placeholder/jquery.placeholder.js")
-                            .Include("~/Scripts/jquery.confirm.js")
+                            .Include("~/Scripts/jquery.confirm.min.js")
                             .Include("~/Scripts/main.js")
                             .Include("~/Scripts/adminlte.min.js")
                             .Include("~/Scripts/toastr.min.js"));

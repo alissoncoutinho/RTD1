@@ -19,18 +19,26 @@ $(document).ready(function () {
     $('.alert .close').on("click", function (e) {
         $(this).parent().hide();
     });
-    
+
+
     $(".confirmDialog").confirm({
         title: "Confirmar Operação",
-        text: "Tem certeza que deseja realizar esta operação?",
-        confirm: function (button) {
-            window.location.href = button.data("link");
-        },
-        cancel: function (button) {
-            
-        },
-        confirmButton: "Sim",
-        cancelButton: "Não"
+        content: "Tem certeza que deseja realizar esta operação?",
+        buttons: {
+            sim: {
+                text: 'Sim',
+                btnClass: 'btn-primary',
+                action: function () {
+                    if (this.$target.data("link") == "/Rodada/FecharRodada/8417") {
+                        $.alert('Vai executar!');
+                    }
+                    location.href = this.$target.data("link");
+                }
+            },
+            cancelar: function () {
+
+            }
+        }
     });
 
     $(".confirmExclusaoRodada").confirm({

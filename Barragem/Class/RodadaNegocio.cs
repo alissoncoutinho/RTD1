@@ -800,10 +800,11 @@ namespace Barragem.Class
         public void NotificacaoApp(int barragemId) {
             try
             {
-                var titulo = "Ranking atualizado e nova rodada gerada!";
+                var nomeRanking = db.BarragemView.Find(barragemId).nome;
+                var titulo = nomeRanking + " Ranking atualizado e nova rodada gerada!";
                 var conteudo = "Clique aqui e entre em contato com seu adversário o mais breve possível e bom jogo.";
 
-                var fbmodel = new FirebaseNotificationModel() { to = "/topics/ranking" + barragemId, notification = new NotificationModel() { title = titulo, body = conteudo }, data = new DataModel() { title = titulo, body = conteudo, type = "nova_rodada_aberta" } };
+                var fbmodel = new FirebaseNotificationModel() { to = "/topics/ranking" + barragemId, notification = new NotificationModel() { title = titulo, body = conteudo }, data = new DataModel() { title = titulo, body = conteudo, type = "nova_rodada_aberta", idRanking= barragemId } };
                 new FirebaseNotification().SendNotification(fbmodel);
             }
             catch (Exception e)

@@ -292,16 +292,17 @@
 
                 $(".confirm").confirm({
                     title: "Confirmação",
-                    text: "Tem certeza que deseja gerar os jogos? Caso já existam jogos eles serão excluídos!",
-                    confirm: function (button) {
-                        document.forms[1].submit();
-                        //window.location.href = "/Torneio/MontarChaveamento?torneioId=@ViewBag.TorneioId";
-                    },
-                    cancel: function (button) {
-
-                    },
-                    confirmButton: "Sim",
-                    cancelButton: "Não"
+                    content: "Tem certeza que deseja gerar os jogos? Caso já existam jogos eles serão excluídos!",
+                    buttons: {
+                        sim: {
+                            text: 'Sim',
+                            btnClass: 'btn-primary',
+                            action: function () {
+                                document.forms[1].submit();
+                            }
+                        },
+                        cancelar: {}
+                    }
                 });
 
             });
