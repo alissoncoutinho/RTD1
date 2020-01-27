@@ -105,6 +105,9 @@ namespace Barragem.Models
         [UIHint("tinymce_full_compressed"), AllowHtml]
         [Display(Name = "Dados Bancários")]
         public string dadosBancarios { get; set; }
+
+        public IList<int> liga { get; set; }
+        public string TipoTorneio { get; set; }
         
     }
 

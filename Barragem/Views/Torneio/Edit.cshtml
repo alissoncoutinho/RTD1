@@ -224,6 +224,32 @@
                 {
                     <input type="hidden" name="barragemId" value="@ViewBag.barraId" />
                 }
+
+                @if (ViewBag.LigasDoTorneio.Count > 0)
+                {
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">Este torneio conta pontos para as categorias selecionadas(aba "Classes") das ligas abaixo:</div>
+                        <div class="panel-body">
+                            @foreach (var liga in ViewBag.LigasDoTorneio)
+                            {
+                                <p>- @liga.Nome</p>
+                            }
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">Tipo do torneio: </label>
+                                <div class="col-sm-5">
+                                    <select id="TipoTorneio" name="TipoTorneio" class="form-control">
+                                        <option value="RDT250" @if (Model.TipoTorneio == "RDT250") { @Html.Raw("selected") }>RDT250</option>
+                                        <option value="RDT500" @if (Model.TipoTorneio == "RDT500") { @Html.Raw("selected") }>RDT500</option>
+                                        <option value="RDT1000" @if (Model.TipoTorneio == "RDT1000") { @Html.Raw("selected") }>RDT1000</option>
+                                        <option value="Major" @if (Model.TipoTorneio == "Major") { @Html.Raw("selected") }>Major</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    
+                }
                 <div class="form-group">
                     @Html.LabelFor(model => model.observacao, new { @class = "col-sm-2 control-label" })
                     <div class="col-sm-8 input-group">
@@ -239,7 +265,7 @@
                     @Html.ValidationMessageFor(model => model.dadosBancarios)
                 </div>
             </div>
-        <!-- /.box-body -->
+            <!-- /.box-body -->
             <div class="box-footer">
                 <a href="@Url.Action("Index")" title="Voltar" class="btn btn-default">Voltar</a>
                 <button type="submit" class="btn btn-info pull-right">Gravar</button>
@@ -284,16 +310,16 @@
                                         }
                                         @Html.Raw(nome)
                                     </li>
-                                                }
-                                                else if (item.classe > nivel)
-                                                {
-                                                    break;
-                                                }
-                                            }
+                                }
+                                else if (item.classe > nivel)
+                                {
+                                    break;
+                                }
+                            }
                         </ul>
                     </div>
                 </div>
-                                            }
+            }
         </div>
         <div class="box-footer">
             <button type="button" onclick="saveJogadoresAlterados()" class="btn btn-info">Gravar</button>
@@ -425,7 +451,7 @@
         function CadastrarValorDescontoSocio() {
             if (document.getElementById('isDescontoSocio').checked) {
                 document.getElementById('descontoSocio').style.opacity = "1";
-                document.getElementById('descontoSocio').style.display = "block"; 
+                document.getElementById('descontoSocio').style.display = "block";
                 document.getElementById('descontoSocioMaisClasses').style.opacity = "1";
                 document.getElementById('descontoSocioMaisClasses').style.display = "block";
             } else {

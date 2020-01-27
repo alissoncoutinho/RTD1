@@ -19,6 +19,9 @@ namespace Barragem.Models
         public bool isSegundaOpcao { get; set; }
         public bool isPrimeiraOpcao { get; set; }
         public bool isDupla { get; set; }
+        public int? categoriaId { get; set; }
+        [ForeignKey("categoriaId")]
+        public virtual Categoria Categoria { get; set; }
     }
 
     public class ClasseTorneioApp

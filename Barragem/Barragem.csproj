@@ -238,6 +238,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AguasClarasController.cs" />
     <Compile Include="Controllers\JogoAPIController.cs" />
+    <Compile Include="Controllers\LigaController.cs" />
     <Compile Include="Controllers\LuzianiaController.cs" />
     <Compile Include="Controllers\MeuRankingController.cs" />
     <Compile Include="Controllers\AsbacController.cs" />
@@ -273,14 +274,18 @@
     <Compile Include="Helper\HtmlHelpers.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountModels.cs" />
+    <Compile Include="Models\BarragemLiga.cs" />
     <Compile Include="Models\Barragens.cs" />
+    <Compile Include="Models\Categoria.cs" />
     <Compile Include="Models\Classe.cs" />
+    <Compile Include="Models\ClasseLiga.cs" />
     <Compile Include="Models\ClasseTorneio.cs" />
     <Compile Include="Models\Configuracao.cs" />
     <Compile Include="Models\Email.cs" />
     <Compile Include="Models\InscricaoTorneio.cs" />
     <Compile Include="Models\Jogo.cs" />
     <Compile Include="Models\JogoCabecaChave.cs" />
+    <Compile Include="Models\Liga.cs" />
     <Compile Include="Models\Log.cs" />
     <Compile Include="Models\Pagamento.cs" />
     <Compile Include="Models\PagamentoBarragem.cs" />
@@ -290,6 +295,7 @@
     <Compile Include="Models\SituacaoJogo.cs" />
     <Compile Include="Models\Temporada.cs" />
     <Compile Include="Models\Torneio.cs" />
+    <Compile Include="Models\TorneioLiga.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ProviderDeTokensDeAcesso.cs" />
     <Compile Include="Startup.cs" />
@@ -853,6 +859,12 @@
     <Content Include="Views\Barragens\EditClasse.cshtml" />
     <Content Include="Views\Barragens\_PartialTabsBarragem.cshtml" />
     <Content Include="Views\Home\Dashboard.cshtml" />
+    <Content Include="Views\Liga\Create.cshtml" />
+    <Content Include="Views\Liga\Index.cshtml" />
+    <Content Include="Views\Liga\EditClasses.cshtml" />
+    <Content Include="Views\Liga\_PartialTabs.cshtml" />
+    <Content Include="Views\Liga\Edit.cshtml" />
+    <Content Include="Views\Liga\EditBarragens.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

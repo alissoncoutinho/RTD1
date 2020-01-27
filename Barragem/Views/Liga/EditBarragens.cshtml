@@ -1,0 +1,129 @@
+﻿@model IEnumerable<Barragem.Models.BarragemLiga>
+
+    <h2>@Html.Raw(ViewBag.nomeLiga)</h2>
+
+    @Html.Partial("_PartialTabs")
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true)
+        <div>
+            <div class="tab-content">
+                <div class="tab-pane fade" id="tabClasses">
+                </div>
+
+                <div class="tab-pane fade in active" id="tabRankings">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Escolha o ranking para adicionar:</label>
+                        <div class="col-md-2 col-xs-8">
+                            <select id="barragens" name="barragens" class="form-control">
+                                @foreach (var barragem in ViewBag.Barragens)
+                                {
+                                    <option value="@barragem.Id">@barragem.nome</option>
+                                }
+                            </select>
+                        </div>
+                        <div>
+                            <input type="hidden" name="IdLiga" id="IdLiga" value="@ViewBag.idLiga">
+                            <button class="btn btn-info" id="add" onclick="addBarragem()">Adicionar</button>
+                        </div>
+                    </div>
+                    <table id="listaBarragens" class="table table-striped table-condensed table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Rankings que podem contar pontos para a sua liga</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var barragemLiga in Model)
+                            {
+                                <tr id="@Html.Raw("tr"+@barragemLiga.Id)">
+
+                                    <td>@barragemLiga.Barragem.nome</td>
+                                    <td>
+                                        <button title="excluir" id="@Html.Raw("buttonEx"+@barragemLiga.Id)" onclick="removeBarragem(this.id)" class="btn btn-danger btn-xs excluirButton">
+                                            Excluir
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+
+    @section Scripts {
+        <script type="text/javascript">
+            function addBarragem() {
+                var e = document.getElementById("barragens");
+                var idBarragem = e.options[e.selectedIndex].value;
+                var IdLiga = document.getElementById("IdLiga").value;
+
+                event.preventDefault();
+
+                $.ajax({
+                    type: "POST",
+                    url: "/Liga/AddBarragem",
+                    dataType: "json",
+                    data: "{'IdLiga':'" + IdLiga + "', 'IdBarragem':'" + idBarragem + "'}",
+                    contentType: "application/json; charset=utf-8",
+                    success: function (response) {
+                        if (typeof response == "object") {
+                            if (response.retorno === 0) {
+                                toastr.error(response.erro, "Erro");
+                            } else {
+                                var table = document.getElementById("listaBarragens");
+                                var row = table.insertRow(table.rows.length);
+                                row.setAttribute("id", "tr" + response.IdBarragemLiga);
+                                var cell1 = row.insertCell(0);
+                                var cell2 = row.insertCell(1);
+                                cell1.innerHTML = response.Nome;
+                                cell2.innerHTML = "<button title=\"excluir\" id=\"buttonEx" + response.IdBarragemLiga + "\" onclick=\"removeBarragem(this.id)\" class=\"btn btn-danger btn-xs excluirButton\">Excluir</button>";
+
+                                toastr.success("Atualização realizada com sucesso.", "Aviso");
+                            }
+                        }
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        location.reload(true);
+                    }
+                });
+            }
+
+            function removeBarragem(id) {
+                event.preventDefault();
+
+                var idBarragemLiga = id.replace("buttonEx", "");
+
+                $.ajax({
+                    type: "POST",
+                    url: "/Liga/RemoveBarragem",
+                    dataType: "json",
+                    data: "{'Id':'" + idBarragemLiga + "'}",
+                    contentType: "application/json; charset=utf-8",
+                    success: function (response) {
+                        if (typeof response == "object") {
+                            if (response.retorno === 0) {
+                                toastr.error(response.erro, "Erro");
+                            } else {
+                                var tr = document.getElementById("tr" + idBarragemLiga);
+                                tr.parentNode.removeChild(tr);
+
+                                toastr.success("Atualização realizada com sucesso.", "Aviso");
+                            }
+                        }
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        location.reload(true);
+                    }
+                });
+            }
+
+
+        </script>
+    }
+

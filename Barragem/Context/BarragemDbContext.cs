@@ -51,6 +51,15 @@ namespace Barragem.Context
         public DbSet<Pagamento> Pagamento { get; set; }
 
         public DbSet<PagamentoBarragem> PagamentoBarragem { get; set; }
-        
+
+        public DbSet<BarragemLiga> BarragemLiga { get; set; }
+
+        public DbSet<Liga> Liga { get; set; }
+
+        public DbSet<ClasseLiga> ClasseLiga { get; set; }
+
+        public DbSet<Categoria> Categoria { get; set; }
+
+        public DbSet<TorneioLiga> TorneioLiga { get; set; }
     }
 }

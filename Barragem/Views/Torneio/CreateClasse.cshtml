@@ -20,6 +20,18 @@
             @Html.ValidationMessageFor(model => model.nome)
         </div>
     </div>
+    if (ViewBag.Categorias.Count > 0)
+    {
+        <div class="col-sm-5 input-group">
+            <select id="CategoriaId" name="CategoriaId" class="form-control">
+                @foreach (var categoria in ViewBag.Categorias)
+                {
+                    <option value="@categoria.Id">@categoria.Nome</option>
+                }
+            </select>
+        </div>
+    }
+
     <div class="row">
         <div class="col-xs-2">
             <label>

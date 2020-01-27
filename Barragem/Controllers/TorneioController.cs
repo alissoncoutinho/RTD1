@@ -892,6 +892,7 @@ namespace Barragem.Controllers
         public ActionResult EditClasse(int torneioId)
         {
             var classes = db.ClasseTorneio.Where(c => c.torneioId == torneioId).ToList();
+            ViewBag.isLiga = db.TorneioLiga.Where(tl => tl.TorneioId == torneioId).ToList().Count > 0;
             ViewBag.flag = "classes";
             ViewBag.torneioId = torneioId;
             return View(classes);
@@ -921,7 +922,21 @@ namespace Barragem.Controllers
         public ActionResult CreateClasse(int torneioId)
         {
             ViewBag.torneioId = torneioId;
-            return View();
+            ///ViewBag.Categorias
+            List<Categoria> categorias = new List<Categoria>();
+            List<TorneioLiga> ligasDotorneio = db.TorneioLiga.Where(tl => tl.TorneioId == torneioId).ToList();
+            List<int> ligas = new List<int>();
+            foreach (TorneioLiga tl in ligasDotorneio)
+            {
+                ligas.Add(tl.LigaId);
+            }
+            foreach (ClasseLiga cl in db.ClasseLiga.Where(classeLiga => ligas.Contains(classeLiga.LigaId)).GroupBy(cl => cl.CategoriaId).Select(c => c.FirstOrDefault()).ToList())
+            {
+                categorias.Add(db.Categoria.Find(cl.CategoriaId));
+            }
+            ViewBag.Categorias = categorias;
+
+                return View();
         }
 
         [HttpPost]
@@ -979,6 +994,14 @@ namespace Barragem.Controllers
             ViewBag.barragemId = new SelectList(db.BarragemView, "Id", "nome", barragemId);
             ViewBag.TorneioId = id;
             ViewBag.JogadoresClasses = db.InscricaoTorneio.Where(i => i.torneioId == id && i.isAtivo == true).OrderBy(i => i.classe).ThenBy(i => i.participante.nome).ToList();
+
+            List<TorneioLiga> lts = db.TorneioLiga.Where(tl => tl.TorneioId == torneio.Id).ToList();
+            List<Liga> ligasDoTorneio = new List<Liga>();
+            foreach(TorneioLiga tl in lts)
+            {
+                ligasDoTorneio.Add(db.Liga.Find(tl.LigaId));
+            }
+            ViewBag.LigasDoTorneio = ligasDoTorneio;
 
             if (torneio == null)
             {
@@ -1319,6 +1342,16 @@ namespace Barragem.Controllers
             ViewBag.barraId = barragemId;
             ViewBag.barragemId = new SelectList(db.BarragemView, "Id", "nome");
 
+            List<BarragemLiga> ligasDoRanking = db.BarragemLiga.Where(bl => bl.BarragemId == barragemId).ToList();
+            List<Liga> ligasDisponiveis = new List<Liga>();
+            foreach (BarragemLiga bl in ligasDoRanking)
+            {
+                ligasDisponiveis.Add(db.Liga.Find(bl.LigaId));
+            }
+            ViewBag.LigasDisponiveis = ligasDisponiveis;
+            if (ligasDisponiveis.Count > 0)
+            ViewBag.mostraLigas = true;
+
             return View();
         }
 
@@ -1331,23 +1364,58 @@ namespace Barragem.Controllers
         public ActionResult Create(Torneio torneio)
         {
             var barragem = db.BarragemView.Find(torneio.barragemId);
-
+            
             if ((ModelState.IsValid) && (barragem.isAtiva))
             {
                 db.Torneio.Add(torneio);
                 db.SaveChanges();
-                ClasseTorneio classe = null;
-                for (int i = 1; i <= torneio.qtddClasses; i++)
+                IList<int> ligas = torneio.liga;
+                if (ligas != null)
                 {
-                    classe = new ClasseTorneio();
-                    classe.nivel = i;
-                    classe.nome = i + "ª Classe";
-                    classe.torneioId = torneio.Id;
-                    classe.isPrimeiraOpcao = true;
-                    classe.isSegundaOpcao = false;
-                    classe.isDupla = false;
-                    db.ClasseTorneio.Add(classe);
-                    db.SaveChanges();
+                    foreach(int idLiga in ligas)
+                    {
+                        TorneioLiga tl = new TorneioLiga
+                        {
+                            LigaId = idLiga,
+                            TorneioId = torneio.Id
+                        };
+                        db.TorneioLiga.Add(tl);
+                        db.SaveChanges();
+                    }
+                    int i = 1;
+                    ClasseTorneio classe = null;
+                    foreach (ClasseLiga cl in db.ClasseLiga.Where(classeLiga => ligas.Contains(classeLiga.LigaId)).GroupBy(cl => cl.CategoriaId).Select(c => c.FirstOrDefault()).ToList())
+                    {
+                        classe = new ClasseTorneio
+                        {
+                            nivel = i,
+                            nome = cl.Nome,
+                            categoriaId = cl.CategoriaId,
+                            torneioId = torneio.Id,
+                            isPrimeiraOpcao = true,
+                            isSegundaOpcao = false,
+                            isDupla = false
+                        };
+                        i++;
+                        db.ClasseTorneio.Add(classe);
+                        db.SaveChanges();
+                    }
+                }
+                else
+                {
+                    ClasseTorneio classe = null;
+                    for (int i = 1; i <= torneio.qtddClasses; i++)
+                    {
+                        classe = new ClasseTorneio();
+                        classe.nivel = i;
+                        classe.nome = i + "ª Classe";
+                        classe.torneioId = torneio.Id;
+                        classe.isPrimeiraOpcao = true;
+                        classe.isSegundaOpcao = false;
+                        classe.isDupla = false;
+                        db.ClasseTorneio.Add(classe);
+                        db.SaveChanges();
+                    }
                 }
                 return RedirectToAction("Index");
             }
@@ -1357,6 +1425,16 @@ namespace Barragem.Controllers
                 var barragemId = (from up in db.UserProfiles where up.UserId == userId select up.barragemId).Single();
                 ViewBag.barraId = barragemId;
                 ViewBag.barragemId = new SelectList(db.BarragemView, "Id", "nome");
+
+                List<BarragemLiga> ligasDoRanking = db.BarragemLiga.Where(bl => bl.BarragemId == barragemId).ToList();
+                List<Liga> ligasDisponiveis = new List<Liga>();
+                foreach (BarragemLiga bl in ligasDoRanking)
+                {
+                    ligasDisponiveis.Add(db.Liga.Find(bl.LigaId));
+                }
+                ViewBag.LigasDisponiveis = ligasDisponiveis;
+                if (ligasDisponiveis.Count > 0)
+                    ViewBag.mostraLigas = true;
             }
 
             return View(torneio);
