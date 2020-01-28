@@ -31,6 +31,12 @@
                     <th>
                         @Html.DisplayName("Dupla")
                     </th>
+                    <th>
+                        @Html.DisplayName("Fase Grupo")
+                    </th>
+                    <th>
+                        @Html.DisplayName("Mata-Mata")
+                    </th>
                     <th></th>
                 </tr>
                 @foreach (var item in Model)
@@ -72,6 +78,26 @@
                                 <input type="checkbox" value="true" name="@Html.Raw("isDupla" + i)" id="@Html.Raw("isDupla" + i)" />
                             }
                         </td>
+                        <td>
+                            @if (item.faseGrupo)
+                            {
+                                <input type="checkbox" checked value="true" name="@Html.Raw("faseGrupo" + i)" id="@Html.Raw("faseGrupo" + i)" />
+                            }
+                            else
+                            {
+                                <input type="checkbox" value="true" name="@Html.Raw("faseGrupo" + i)" id="@Html.Raw("faseGrupo" + i)" />
+                            }
+                        </td>
+                        <td>
+                            @if (item.faseMataMata)
+                            {
+                                <input type="checkbox" checked value="true" name="@Html.Raw("faseMataMata" + i)" id="@Html.Raw("faseMataMata" + i)" />
+                            }
+                            else
+                            {
+                                <input type="checkbox" value="true" name="@Html.Raw("faseMataMata" + i)" id="@Html.Raw("faseMataMata" + i)" />
+                            }
+                        </td>
                         <td align="center">
                             <form method="post" enctype="multipart/form-data" action="#" name="@Html.Raw("form"+i)" id="@Html.Raw("form"+i)" class="form">
                                 <input type="hidden" name="Id" id="Id" value="@item.Id">
@@ -99,12 +125,14 @@
                     var isSegundaOpcao = document.getElementById("isSegundaOpcao" + i).checked;
                     var isPrimeiraOpcao = document.getElementById("isPrimeiraOpcao" + i).checked;
                     var isDupla = document.getElementById("isDupla" + i).checked;
+                    var faseGrupo = document.getElementById("faseGrupo" + i).checked;
+                    var faseMataMata = document.getElementById("faseMataMata" + i).checked;
                     event.preventDefault();
                     $.ajax({
                         type: "POST",
                         url: "/Torneio/EditClasse",
                         dataType: "json",
-                        data: "{'Id':'" + Id + "', 'nome':'" + nome + "', 'isSegundaOpcao':'" + isSegundaOpcao + "', 'isDupla':'" + isDupla + "', 'isPrimeiraOpcao':'" + isPrimeiraOpcao + "'}",
+                        data: "{'Id':'" + Id + "', 'nome':'" + nome + "', 'isSegundaOpcao':'" + isSegundaOpcao + "', 'isDupla':'" + isDupla + "', 'isPrimeiraOpcao':'" + isPrimeiraOpcao + "', 'faseGrupo':'" + faseGrupo + "', 'faseMataMata':'" + faseMataMata + "'}",
                         contentType: "application/json; charset=utf-8",
                         success: function (response) {
                             if (typeof response == "object") {

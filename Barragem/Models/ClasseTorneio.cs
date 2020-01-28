@@ -19,6 +19,12 @@ namespace Barragem.Models
         public bool isSegundaOpcao { get; set; }
         public bool isPrimeiraOpcao { get; set; }
         public bool isDupla { get; set; }
+        public bool faseGrupo { get; set; }
+        public bool faseMataMata { get; set; }
+        public int qtddPassamFase { get; set; }
+        public int qtddJogadoresPorGrupo { get; set; }
+        public int maximoInscritos { get; set; }
+
     }
 
     public class ClasseTorneioApp

@@ -898,7 +898,7 @@ namespace Barragem.Controllers
         }
 
         [HttpPost]
-        public ActionResult EditClasse(int Id, string nome, bool isSegundaOpcao = false, bool isDupla = false, bool isPrimeiraOpcao = true)
+        public ActionResult EditClasse(int Id, string nome, bool isSegundaOpcao = false, bool isDupla = false, bool isPrimeiraOpcao = true, bool faseGrupo= false, bool faseMataMata = false)
         {
             try
             {
@@ -907,6 +907,8 @@ namespace Barragem.Controllers
                 classe.isSegundaOpcao = isSegundaOpcao;
                 classe.isPrimeiraOpcao = isPrimeiraOpcao;
                 classe.isDupla = isDupla;
+                classe.faseGrupo = faseGrupo;
+                classe.faseMataMata = faseMataMata;
                 db.Entry(classe).State = EntityState.Modified;
                 db.SaveChanges();
                 return Json(new { erro = "", retorno = 1 }, "text/plain", JsonRequestBehavior.AllowGet);
@@ -1629,6 +1631,35 @@ namespace Barragem.Controllers
             ViewBag.Inscritos = db.InscricaoTorneio.Where(c => c.torneioId == torneioId && c.classe == filtroClasse).ToList();
             return View(duplas);
         }
+
+        [Authorize(Roles = "admin,organizador")]
+        public ActionResult EditFaseGrupo(int torneioId, int filtroClasse = 0)
+        {
+            List<InscricaoTorneio> inscritos = null;
+            var classes = db.ClasseTorneio.Where(i => i.torneioId == torneioId && i.faseGrupo).OrderBy(c => c.nome).ToList();
+            ViewBag.Classes = classes;
+            ViewBag.TorneioId = torneioId;
+            ViewBag.flag = "fasegrupo";
+            if (classes.Count == 0)
+            {
+                return View(inscritos);
+            }
+            ViewBag.filtroClasse = filtroClasse;
+            if (filtroClasse == 0)
+            {
+                filtroClasse = classes[0].Id;
+                ViewBag.filtroClasse = filtroClasse;
+            }
+            var classe = db.ClasseTorneio.Find(filtroClasse);
+            if (classe.isDupla){
+                inscritos = db.InscricaoTorneio.Where(i => i.torneioId == torneioId && i.classe == filtroClasse && i.isAtivo && i.parceiroDuplaId!=null).ToList();
+            }else{
+                inscritos = db.InscricaoTorneio.Where(i => i.torneioId == torneioId && i.classe == filtroClasse && i.isAtivo).ToList();
+            }
+            ViewBag.Inscritos = db.InscricaoTorneio.Where(c => c.torneioId == torneioId && c.classe == filtroClasse).ToList();
+            return View(inscritos);
+        }
+
         [Authorize(Roles = "admin,organizador")]
         [HttpPost]
         public ActionResult EditDuplas(int inscricaoJogador1, int? jogador2)

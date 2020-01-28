@@ -854,6 +854,7 @@
     <Content Include="Views\Barragens\EditClasse.cshtml" />
     <Content Include="Views\Barragens\_PartialTabsBarragem.cshtml" />
     <Content Include="Views\Home\Dashboard.cshtml" />
+    <Content Include="Views\Torneio\EditFaseGrupo.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
