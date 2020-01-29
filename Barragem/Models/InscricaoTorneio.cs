@@ -118,6 +118,8 @@ namespace Barragem.Models
         [Display(Name = "Cabeça de Chave")]
         public int? cabecaChave { get; set; }
 
+        public int? grupo { get; set; }
+
     }
 
     public class ColocacaoTorneio {

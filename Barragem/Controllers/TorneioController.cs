@@ -1662,6 +1662,24 @@ namespace Barragem.Controllers
 
         [Authorize(Roles = "admin,organizador")]
         [HttpPost]
+        public ActionResult IncluirJogadorGrupo(int inscricaoJogador, int? grupo)
+        {
+            try
+            {
+                var inscricao = db.InscricaoTorneio.Find(inscricaoJogador);
+                inscricao.grupo = grupo;
+                db.Entry(inscricao).State = EntityState.Modified;
+                db.SaveChanges();
+                return Json(new { erro = "", retorno = 1 }, "text/plain", JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { erro = ex.Message, retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [Authorize(Roles = "admin,organizador")]
+        [HttpPost]
         public ActionResult EditDuplas(int inscricaoJogador1, int? jogador2)
         {
             try

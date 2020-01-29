@@ -64,37 +64,33 @@
                             </th>
                             <th></th>
                         </tr>
+                        @{int i = 1; }
                         @foreach (var item in Model)
                         {
                             <tr>
                                 <td>
                                     <input type="hidden" value="@item.userId" name="@Html.Raw("jogador_" + item.userId)" id="@Html.Raw("jogador_" + item.userId)">
-                                    @Html.Raw(item.participante.nome)
+                                    @Html.Raw(i++ + ") " + item.participante.nome)
                                     @if (item.parceiroDuplaId != null && item.parceiroDuplaId != 0)
                                     {
                                         @Html.Raw(" / " + item.parceiroDupla.nome)
                                     }
                                 </td>
                                 <td>
-                                    <select name="@Html.Raw("grupo_" + item.userId)" id="@Html.Raw("grupo_" + item.userId)" class="form-control">
-                                        <option value="0">Sem Grupo</option>
-                                        <option value="1">1</option>
-                                        <option value="2">2</option>
-                                        <option value="3">3</option>
-                                        <option value="4">4</option>
-                                        <option value="5">5</option>
-                                        <option value="6">6</option>
-                                        <option value="7">7</option>
-                                        <option value="8">8</option>
+                                    <select data-valor="@item.Id" name="@Html.Raw("grupo_" + item.Id)" id="@Html.Raw("grupo_" + item.Id)" class="form-control grupo">
+                                        <option @if (item.grupo==0) { @Html.Raw("selected") } value="0">Sem Grupo</option>
+                                        <option @if (item.grupo==1) { @Html.Raw("selected") } value="1">1</option>
+                                        <option @if (item.grupo==2) { @Html.Raw("selected") } value="2">2</option>
+                                        <option @if (item.grupo==3) { @Html.Raw("selected") } value="3">3</option>
+                                        <option @if (item.grupo==4) { @Html.Raw("selected") } value="4">4</option>
+                                        <option @if (item.grupo==5) { @Html.Raw("selected") } value="5">5</option>
+                                        <option @if (item.grupo==6) { @Html.Raw("selected") } value="6">6</option>
+                                        <option @if (item.grupo==7) { @Html.Raw("selected") } value="7">7</option>
+                                        <option @if (item.grupo==8) { @Html.Raw("selected") } value="8">8</option>
                                      </select>
                                 </td>
                                 <td align="center">
-                                    <form method="post" enctype="multipart/form-data" action="#" name="@Html.Raw("form" + item.Id)" id="@Html.Raw("form" + item.Id)" class="form">
-                                        <input type="hidden" name="Id" id="Id" value="@item.Id">
-                                        <button title="salvar" data-valor="@item.Id" name="@Html.Raw("button" + item.Id)" id="@Html.Raw("button" + item.Id)" class="btn btn-default btn-xs inscricaoButton">
-                                            Salvar
-                                        </button>
-                                    </form>
+                                    <input type="hidden" name="@Html.Raw("inscricaoJogador_" + item.Id)" id="@Html.Raw("inscricaoJogador_" + item.Id)" value="@item.Id">
                                 </td>
                             </tr>
                         }
@@ -107,24 +103,23 @@
         @Scripts.Render("~/bundles/jqueryform")
         <script type="text/javascript">
             $(document).ready(function () {
-                $(".inscricaoButton").click(function (event) {
+                $(".grupo").change(function (event) {
                     var i = $(this).data("valor");
-                    var Id = $("#form" + i).find("input[name=Id]").val();
-                    var jogador1 = document.getElementById("jogador1_" + i).value;
-                    var jogador2 = document.getElementById("jogador2_" + i).value;
+                    var inscricaoJogador = document.getElementById("inscricaoJogador_" + i).value;
+                    var grupo = document.getElementById("grupo_" + i).value;
                     event.preventDefault();
                     $.ajax({
                         type: "POST",
-                        url: "/Torneio/EditDuplas",
+                        url: "/Torneio/IncluirJogadorGrupo",
                         dataType: "json",
-                        data: "{'inscricaoJogador1':'" + jogador1 + "', 'jogador2':'" + jogador2 + "'}",
+                        data: "{'inscricaoJogador':'" + inscricaoJogador + "', 'grupo':'" + grupo + "'}",
                         contentType: "application/json; charset=utf-8",
                         success: function (response) {
                             if (typeof response == "object") {
                                 if (response.retorno === 0) {
                                     toastr.error(response.erro, "Erro");
                                 } else {
-                                    toastr.success("Atualização realizada com sucesso.", "Aviso");
+                                    toastr.success("Atualização realizada com sucesso.", "");
                                 }
                             }
                         },
@@ -133,12 +128,13 @@
                         }
                     });
                 });
+
             });
 
             function Selecionar() {
                 var torneioId = document.getElementById('torneioId').value;
                 var classeId = document.getElementById('filtroClasse').value;
-                window.location = "EditDuplas?torneioId=" + torneioId + "&filtroClasse=" + classeId;
+                window.location = "EditFaseGrupo?torneioId=" + torneioId + "&filtroClasse=" + classeId;
             }
 
         </script>
