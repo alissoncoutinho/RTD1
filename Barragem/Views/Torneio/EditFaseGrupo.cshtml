@@ -10,7 +10,12 @@
         <div class="tab-pane fade"  id="tabDuplas"></div>
             <div class="tab-pane fade in active" id="tabFaseGrupo">
                 <br>
-                <button class="btn btn-primary btn-small exibirClasses"><span class="glyphicon glyphicon-plus"></span> Gerar Jogos</button>
+                @using (Html.BeginForm("MontarTabelaFaseGrupo", "Torneio", FormMethod.Post, new { @class = "form-row", @name = "formClasses" }))
+                {
+                    <input type="hidden" value="@ViewBag.TorneioId" name="torneioId" id="torneioId">
+                    <button class="btn btn-primary btn-small confirm">Gerar Tabela de Grupos</button>
+                    <a href="@Url.Action("TabelaFaseGrupo", new { torneioId = ViewBag.torneioId })" target="_blank" class="btn btn-success btn-small">Ver Tabela</a>
+                }
                 <div class="form-horizontal">
                     <div class="form-group">
                         <label class="col-sm-2 control-label">Classes</label>
@@ -30,9 +35,9 @@
                         <label class="col-sm-2 control-label">Jogadores por grupo:</label>
                         <div class="col-sm-4 input-group">
                             <select name="jogadoresPorGrupo" id="jogadoresPorGrupo" class="form-control" onchange="QtddJogadorPorGrupo()">
-                                <option value="3">3</option>
-                                <option value="4">4</option>        
-                                <option value="5">5</option>                
+                                <option @if (ViewBag.qtddJogadoresPorGrupo == 3) { @Html.Raw("selected")} value="3">3</option>
+                                <option @if (ViewBag.qtddJogadoresPorGrupo == 4) { @Html.Raw("selected")} value="4">4</option>        
+                                <option @if (ViewBag.qtddJogadoresPorGrupo == 5) { @Html.Raw("selected")} value="5">5</option>                
                             </select>
                         </div>
                     </div>
@@ -42,8 +47,8 @@
                         <label class="col-sm-2 control-label">Qtdd passam de fase por grupo:</label>
                         <div class="col-sm-4 input-group">
                             <select name="qtddPassamFase" id="qtddPassamFase" class="form-control" onchange="QtddPassamFase()">
-                                <option value="1">1</option>
-                                <option value="2">2</option>
+                                <option @if (ViewBag.qtddPassamFase == 1) { @Html.Raw("selected")} value="1">1</option>
+                                <option @if (ViewBag.qtddPassamFase == 2) { @Html.Raw("selected")} value="2">2</option>
                             </select>
                         </div>
                     </div>
@@ -99,8 +104,7 @@
             </div>
     </div>
     @section Scripts {
-        @Scripts.Render("~/bundles/jqueryval")
-        @Scripts.Render("~/bundles/jqueryform")
+        
         <script type="text/javascript">
             $(document).ready(function () {
                 $(".grupo").change(function (event) {
@@ -127,6 +131,21 @@
                             location.reload(true);
                         }
                     });
+                });
+
+                $(".confirm").confirm({
+                    title: "Confirmação",
+                    content: "Tem certeza que deseja gerar as tabelas de grupo? Caso já existam jogos eles serão excluídos!",
+                    buttons: {
+                        sim: {
+                            text: 'Sim',
+                            btnClass: 'btn-primary',
+                            action: function () {
+                                document.forms[1].submit();
+                            }
+                        },
+                        cancelar: {}
+                    }
                 });
 
             });

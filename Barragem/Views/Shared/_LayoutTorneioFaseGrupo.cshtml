@@ -1,0 +1,155 @@
+﻿@{
+    Layout = null;
+    HttpCookie cookie = Request.Cookies["_barragemId"];
+    HttpCookie cookieNome = Request.Cookies["_barragemNome"];
+    var barraId = 0;
+    var barraNome = "Ranking de Tênis";
+    if (cookie != null)
+    {
+        barraId = Convert.ToInt32(cookie.Value.ToString());
+    }
+    if (cookieNome != null)
+    {
+        barraNome = Server.UrlDecode(cookieNome.Value);
+    }
+    var scrLogo = "/Content/image/logo" + barraId + ".png";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>@barraNome</title>
+    <!-- Meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="shortcut icon" href=@scrLogo>
+    <link href='http://fonts.googleapis.com/css?family=Roboto:400,400italic,500,500italic,700,700italic,900,900italic,300italic,300' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Roboto+Slab:400,700,300,100' rel='stylesheet' type='text/css'>
+
+    @Styles.Render("~/css")
+    @Styles.Render("~/tabela")
+    @if (barraId == 1081)
+    {
+        @Styles.Render("~/css3")
+    }
+    else if ((barraId == 1010) || (barraId == 1012))
+    {
+        @Styles.Render("~/css4")
+    }
+    else if (barraId > 7)
+    {
+        @Styles.Render("~/css7")
+    }
+    else
+    {
+        @Styles.Render("~/css" + barraId)
+    }
+
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body class="home-page">
+    <!-- ******HEADER****** -->
+    <header id="header" class="header navbar-fixed-top">
+        <div class="container">
+            <h1 class="logo">
+                <a href="~/Home/IndexTorneio2">
+                    <span class="text">
+                        @if ((barraId != 0) && (barraId < 9999))
+                        {<img width="50" height="50" src="@scrLogo">}&nbsp;@Html.Raw(barraNome)
+                    </span>
+                </a>
+            </h1><!--//logo-->
+            <nav class="main-nav navbar-right" role="navigation">
+                <div class="navbar-header">
+                    <button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#navbar-collapse">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        Menu
+                    </button><!--//nav-toggle-->
+                </div><!--//navbar-header-->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav">
+                        <li class="active nav-item"><a href="/Home/IndexTorneio2">Home</a></li>
+                        <li class="nav-item">@Html.ActionLink("Inscritos", "../Torneio/InscricoesTorneio2", new { url = "torneio", barra = barraId })</li>
+                        <li class="nav-item">@Html.ActionLink("Tabela", "../Torneio/Tabela", new { url = "torneio", barra = barraId })</li>
+                        <li class="nav-item">@Html.ActionLink("Lançar Placar", "../Torneio/LancarResultado", new { barragem = barraId })</li>
+                        <li class="nav-item">@Html.ActionLink("Regras", "../Torneio/Regulamento", new { barragem = barraId })</li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="login">
+                            @Html.Partial("_LoginPartial", "torneio")
+                        </li>
+                    </ul>
+                </div>
+
+            </nav><!--//main-nav-->
+        </div><!--//container-->
+    </header><!--//header-->
+    <div class="headline-bg">
+    </div>
+    <section class="features-video section section-on-bg">
+        <div class="container text-center">
+        </div>
+    </section>
+    <section class="signup-section access-section section">
+        <div class="container">
+            <div class="row">
+                <div class="form-box col-md-12 col-sm-12 col-xs-12">
+                    <div class="form-box-inner">
+                        @if ((ViewBag.MsgErro != "") && (ViewBag.MsgErro != null))
+                        {
+                            <div class="alert alert-danger alert-dismissable">
+                                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                                <strong>Erro!</strong> @ViewBag.MsgErro
+                            </div>
+                        }
+                        @if ((ViewBag.DetalheErro != "") && (ViewBag.DetalheErro != null))
+                        {
+                            <div class="alert alert-danger alert-dismissable">
+                                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                                <strong>Erro!</strong> @ViewBag.DetalheErro
+                            </div>
+                        }
+                        @if ((ViewBag.Ok != "") && (ViewBag.Ok != null))
+                        {
+                            <div class="alert alert-success alert-dismissable">
+                                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                                <strong>Operação realizada com sucesso!</strong>
+                            </div>
+                        }
+                        @if ((ViewBag.MsgAlert != "") && (ViewBag.MsgAlert != null))
+                        {
+                            <div class="alert alert-info alert-dismissable">
+                                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                                @ViewBag.MsgAlert
+                            </div>
+                        }
+
+
+
+                        @RenderBody()
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    @Html.Partial("_Rodape2")
+
+    <!-- Javascript -->
+    @Scripts.Render("~/js")
+    @Scripts.Render("~/bundles/load-image")
+    @RenderSection("scripts", required: false)
+   
+</body>
+</html>

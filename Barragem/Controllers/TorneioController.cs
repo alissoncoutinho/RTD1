@@ -570,16 +570,21 @@ namespace Barragem.Controllers
             }
         }
 
-        private void criarJogo(int jogador1, int jogador2, int torneioId, int classeTorneio, int faseTorneio, int ordemJogo)
+        private void criarJogo(int jogador1, int jogador2, int torneioId, int classeTorneio, int? faseTorneio, 
+            int ordemJogo, int? rodadaFaseGrupo = null, int? grupo = null, int? jogador1Dupla=null, int? jogador2Dupla=null)
         {
             Jogo jogo = new Jogo();
             jogo.desafiado_id = jogador1;
+            jogo.desafiado2_id = jogador1Dupla;
             jogo.desafiante_id = jogador2;
+            jogo.desafiante2_id = jogador2Dupla;
             jogo.torneioId = torneioId;
             jogo.situacao_Id = 1;
             jogo.classeTorneio = classeTorneio;
             jogo.faseTorneio = faseTorneio;
+            jogo.rodadaFaseGrupo = rodadaFaseGrupo;
             jogo.ordemJogo = ordemJogo;
+            jogo.grupoFaseGrupo = grupo; 
             if ((jogador2 == 10) && (jogador1 != 0))
             {
                 jogo.situacao_Id = 5;
@@ -710,6 +715,64 @@ namespace Barragem.Controllers
             ViewBag.torneioId = torneioId;
             ViewBag.nomeTorneio = torneio.nome;
             ViewBag.filtroClasse = filtroClasse;
+
+            mensagem(Msg);
+            return View(jogos);
+        }
+
+        public ActionResult TabelaFaseGrupo(int torneioId = 0, int filtroClasse = 0, int grupo=1, string Msg = "", string Url = "", int barra = 0)
+        {
+            if (Url == "torneio")
+            {
+                ViewBag.Torneio = "Sim";
+            }
+            ViewBag.tabelaLiberada = false;
+            if (torneioId == 0)
+            {
+                HttpCookie cookie = Request.Cookies["_barragemId"];
+                if (cookie != null)
+                {
+                    var barragemId = Convert.ToInt32(cookie.Value.ToString());
+                    BarragemView barragem = db.BarragemView.Find(barragemId);
+                    var tn = db.Torneio.Where(t => t.barragemId == barragemId && t.isAtivo).OrderByDescending(t => t.Id).ToList();
+                    if (tn.Count() == 0)
+                    {
+                        mensagem("Não localizamos nenhum torneio ativo no seu ranking.");
+                        return View();
+                    }
+                    torneioId = tn[0].Id;
+                }
+                else if (barra != 0)
+                {
+                    BarragemView barragem = db.BarragemView.Find(barra);
+                    var tn = db.Torneio.Where(t => t.barragemId == barra && t.isAtivo).OrderByDescending(t => t.Id).ToList();
+                    if (tn.Count() == 0)
+                    {
+                        mensagem("Não localizamos nenhum torneio ativo no seu ranking.");
+                        return View();
+                    }
+                    torneioId = tn[0].Id;
+                    Funcoes.CriarCookieBarragem(Response, Server, barragem.Id, barragem.nome);
+                }
+            }
+            var torneio = db.Torneio.Find(torneioId);
+            if (torneioId == 0)
+            {
+                mensagem("Não localizamos nenhum torneio.");
+                return View();
+            }
+            if (torneio.liberarTabela) ViewBag.tabelaLiberada = torneio.liberarTabela;
+            var classes = db.ClasseTorneio.Where(c => c.torneioId == torneioId && c.faseGrupo).OrderBy(c => c.nivel).ToList();
+            ViewBag.Classes = classes;
+            if (filtroClasse == 0)
+            {
+                filtroClasse = classes[0].Id;
+            }
+            var jogos = db.Jogo.Where(r => r.torneioId == torneioId && r.classeTorneio == filtroClasse && r.rodadaFaseGrupo!=null && r.grupoFaseGrupo==grupo).OrderBy(r => r.rodadaFaseGrupo).ToList();
+            ViewBag.torneioId = torneioId;
+            ViewBag.nomeTorneio = torneio.nome;
+            ViewBag.filtroClasse = filtroClasse;
+            ViewBag.grupo = grupo;
 
             mensagem(Msg);
             return View(jogos);
@@ -908,6 +971,8 @@ namespace Barragem.Controllers
                 classe.isPrimeiraOpcao = isPrimeiraOpcao;
                 classe.isDupla = isDupla;
                 classe.faseGrupo = faseGrupo;
+                classe.qtddJogadoresPorGrupo = 4;
+                classe.qtddPassamFase = 2;
                 classe.faseMataMata = faseMataMata;
                 db.Entry(classe).State = EntityState.Modified;
                 db.SaveChanges();
@@ -1651,10 +1716,12 @@ namespace Barragem.Controllers
                 ViewBag.filtroClasse = filtroClasse;
             }
             var classe = db.ClasseTorneio.Find(filtroClasse);
+            ViewBag.qtddJogadoresPorGrupo = classe.qtddJogadoresPorGrupo;
+            ViewBag.qtddPassamFase = classe.qtddPassamFase;
             if (classe.isDupla){
-                inscritos = db.InscricaoTorneio.Where(i => i.torneioId == torneioId && i.classe == filtroClasse && i.isAtivo && i.parceiroDuplaId!=null).ToList();
+                inscritos = db.InscricaoTorneio.Where(i => i.torneioId == torneioId && i.classe == filtroClasse && i.isAtivo && i.parceiroDuplaId!=null).OrderBy(i => i.grupo).ToList();
             }else{
-                inscritos = db.InscricaoTorneio.Where(i => i.torneioId == torneioId && i.classe == filtroClasse && i.isAtivo).ToList();
+                inscritos = db.InscricaoTorneio.Where(i => i.torneioId == torneioId && i.classe == filtroClasse && i.isAtivo).OrderBy(i=>i.grupo).ToList();
             }
             ViewBag.Inscritos = db.InscricaoTorneio.Where(c => c.torneioId == torneioId && c.classe == filtroClasse).ToList();
             return View(inscritos);
@@ -2046,5 +2113,137 @@ namespace Barragem.Controllers
             ViewBag.nomeClasse = jogos[0].classe.nome;
             return View(jogos);
         }
+
+        public ActionResult MontarTabelaFaseGrupo(int torneioId)
+        {
+            var classesComFaseDeGrupo = db.ClasseTorneio.Where(ct => ct.faseGrupo && ct.torneioId == torneioId).ToList();
+            foreach (var classe in classesComFaseDeGrupo){
+                int grupo = 1;
+                while (true){
+                    var inscritosNoGrupo = db.InscricaoTorneio.Where(it => it.torneioId == torneioId 
+                    && it.classe == classe.Id && it.grupo == grupo && it.isAtivo).ToList();
+                    var inscritosSemGrupo = db.InscricaoTorneio.Where(it => it.torneioId == torneioId 
+                    && it.classe == classe.Id && it.isAtivo && (it.grupo == null || it.grupo == 0)).ToList();
+                    // se for classe de dupla, trazer só o representante de cada dupla
+                    if (classe.isDupla){
+                        inscritosNoGrupo = inscritosNoGrupo.Where(it => it.parceiroDuplaId != null && it.parceiroDuplaId !=0).ToList();
+                        inscritosSemGrupo = inscritosSemGrupo.Where(it => it.parceiroDuplaId != null && it.parceiroDuplaId != 0).ToList();
+                    }
+
+                    // se todos os inscritos na classe já possuirem grupo, vai para a próxima classe
+                    if (inscritosSemGrupo.Count() == 0) { break; }
+                    // se restar menos de 3 inscritos para formar o próximo grupo, os inscritos serão distribuidos no 1º e 2º grupo já existente
+                    if ((inscritosSemGrupo.Count() + inscritosNoGrupo.Count()) <= 2){
+                        inscritosSemGrupo[0].grupo = 1;
+                        db.Entry(inscritosSemGrupo[0]).State = EntityState.Modified;
+                        db.SaveChanges();
+                        if ((inscritosSemGrupo.Count() + inscritosNoGrupo.Count()) == 1) { break; }
+                        inscritosSemGrupo[1].grupo = 2;
+                        db.Entry(inscritosSemGrupo[1]).State = EntityState.Modified;
+                        db.SaveChanges();
+                        break;
+                    }
+                    var vagasRestantesNoGrupo = classe.qtddJogadoresPorGrupo - inscritosNoGrupo.Count();
+                    for (int i = 0; i < vagasRestantesNoGrupo; i++){
+                        if (inscritosSemGrupo[i] == null) { break; }
+                        inscritosSemGrupo[i].grupo = grupo;
+                        db.Entry(inscritosSemGrupo[i]).State = EntityState.Modified;
+                        db.SaveChanges();
+                    }
+                    grupo++;
+                }
+            }
+            MontarJogosFaseGrupo(torneioId);
+            return View("");
+        }
+        
+        private void MontarJogosFaseGrupo(int torneioId)
+        {
+            var classes = db.ClasseTorneio.Where(ct => ct.faseGrupo && ct.torneioId == torneioId).ToList();
+            db.Database.ExecuteSqlCommand("delete from jogo where torneioId=" + torneioId + " and rodadaFaseGrupo is not null");
+            foreach (var classe in classes)
+            {
+
+                var inscritos = db.InscricaoTorneio.Where(it=> it.torneioId==torneioId && it.classe==classe.Id && it.isAtivo).OrderBy(it=>it.grupo).ToList();
+                if (classe.isDupla) {
+                    inscritos = inscritos.Where(i => i.parceiroDuplaId != null && i.parceiroDuplaId != 0).ToList();
+                }
+                var qtddGrupos = db.InscricaoTorneio.Where(it => it.torneioId == torneioId && it.classe == classe.Id).Max(it=>it.grupo);
+                for (int i = 1; i <= qtddGrupos; i++){
+                    var inscritosGrupo = inscritos.Where(it => it.grupo==i).ToList();
+                    criarRodadasJogosFaseGrupo(inscritosGrupo, torneioId, classe.Id, i);
+                }
+            }
+        }
+
+        private void criarRodadasJogosFaseGrupo(List<InscricaoTorneio> inscritos, int torneioId, int classeId, int grupo)
+        {
+            var qtddInscritos = inscritos.Count();
+            if (qtddInscritos==3 || qtddInscritos == 4)
+            {
+                var j1 = inscritos[0].participante.UserId;
+                var j1Dupla = inscritos[0].parceiroDuplaId;
+                var j2 = inscritos[1].participante.UserId;
+                var j2Dupla = inscritos[1].parceiroDuplaId;
+                var j3 = inscritos[2].participante.UserId;
+                var j3Dupla = inscritos[2].parceiroDuplaId;
+                var j4 = 10;
+                int? j4Dupla = null;
+                if (qtddInscritos == 4) {
+                    j4 = inscritos[3].participante.UserId;
+                    j4Dupla = inscritos[3].parceiroDuplaId;
+                }
+
+                criarJogo(j1, j2, torneioId, classeId, null, 1, 1, grupo, j1Dupla, j2Dupla);
+                criarJogo(j3, j4, torneioId, classeId, null, 2, 1, grupo, j3Dupla, j4Dupla);
+
+                criarJogo(j1, j3, torneioId, classeId, null, 1, 2, grupo, j1Dupla, j3Dupla);
+                criarJogo(j2, j4, torneioId, classeId, null, 2, 2, grupo, j2Dupla, j4Dupla);
+
+                criarJogo(j1, j4, torneioId, classeId, null, 1, 3, grupo, j1Dupla, j4Dupla);
+                criarJogo(j2, j3, torneioId, classeId, null, 2, 3, grupo, j2Dupla, j3Dupla);
+            }
+            else if (qtddInscritos == 5 || qtddInscritos == 6)
+            {
+                var j1 = inscritos[0].participante.UserId;
+                var j1Dupla = inscritos[0].parceiroDuplaId;
+                var j2 = inscritos[1].participante.UserId;
+                var j2Dupla = inscritos[1].parceiroDuplaId;
+                var j3 = inscritos[2].participante.UserId;
+                var j3Dupla = inscritos[2].parceiroDuplaId;
+                var j4 = inscritos[3].participante.UserId;
+                var j4Dupla = inscritos[3].parceiroDuplaId;
+                var j5 = inscritos[4].participante.UserId;
+                var j5Dupla = inscritos[4].parceiroDuplaId;
+                var j6 = 10;
+                int? j6Dupla = null;
+                if (qtddInscritos == 6) {
+                    j6 = inscritos[5].participante.UserId;
+                    j6Dupla = inscritos[5].parceiroDuplaId;
+                }
+
+                criarJogo(j1, j2, torneioId, classeId, null, 1, 1, grupo, j1Dupla, j2Dupla);
+                criarJogo(j3, j5, torneioId, classeId, null, 2, 1, grupo, j3Dupla, j5Dupla);
+                criarJogo(j4, j6, torneioId, classeId, null, 3, 1, grupo, j4Dupla, j6Dupla);
+
+                criarJogo(j1, j3, torneioId, classeId, null, 1, 2, grupo, j1Dupla, j3Dupla);
+                criarJogo(j2, j4, torneioId, classeId, null, 2, 2, grupo, j2Dupla, j4Dupla);
+                criarJogo(j5, j6, torneioId, classeId, null, 3, 2, grupo, j5Dupla, j6Dupla);
+
+                criarJogo(j1, j4, torneioId, classeId, null, 1, 3, grupo, j1Dupla, j4Dupla);
+                criarJogo(j2, j5, torneioId, classeId, null, 2, 3, grupo, j2Dupla, j5Dupla);
+                criarJogo(j3, j6, torneioId, classeId, null, 3, 3, grupo, j3Dupla, j6Dupla);
+
+                criarJogo(j1, j5, torneioId, classeId, null, 1, 4, grupo, j1Dupla, j5Dupla);
+                criarJogo(j2, j6, torneioId, classeId, null, 2, 4, grupo, j2Dupla, j6Dupla);
+                criarJogo(j3, j4, torneioId, classeId, null, 3, 4, grupo, j3Dupla, j4Dupla);
+
+                criarJogo(j1, j6, torneioId, classeId, null, 1, 5, grupo, j1Dupla, j6Dupla);
+                criarJogo(j2, j3, torneioId, classeId, null, 2, 5, grupo, j2Dupla, j3Dupla);
+                criarJogo(j4, j5, torneioId, classeId, null, 3, 5, grupo, j4Dupla, j5Dupla);
+            }
+            
+        }
+
     }
 }

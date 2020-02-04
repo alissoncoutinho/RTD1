@@ -1,0 +1,76 @@
+﻿@model IEnumerable<Barragem.Models.Jogo>
+    @{
+        Layout = "~/Views/Shared/_LayoutTorneioFaseGrupo.cshtml";
+
+        ViewBag.Title = "Tabela Torneio";
+        int? faseTorneio = 0;
+        string faseId = "";
+    }
+
+    <h4 class="info-box-text">@ViewBag.nomeTorneio</h4>
+
+    <div class="box-body table-responsive no-padding no-border table-hover">
+        @if ((!ViewBag.tabelaLiberada) && !((Roles.IsUserInRole("admin")) || (Roles.IsUserInRole("organizador"))))
+        {
+            <p>Aguarde. Tabela ainda não liberada.</p>
+        }
+        else
+        {
+            <div class="form-horizontal">
+                <div class="form-group">
+                    <label class="col-xs-12 col-sm-2 control-label">Classes</label>
+                    <div class="col-sm-4 col-xs-8">
+                        <select name="filtroClasse" id="filtroClasse" class="form-control" onchange="Selecionar()">
+                            @if (ViewBag.Classes != null)
+                            {
+                                foreach (var item2 in ViewBag.Classes)
+                                {
+                                    <option value="@item2.Id" @if (ViewBag.filtroClasse == item2.Id) { @Html.Raw("selected")  }>@item2.nome</option>
+                                }
+                            }
+                        </select>
+                        <label class="col-xs-12 col-sm-2 control-label">Grupo</label>
+                        <select name="grupo" id="grupo" class="form-control" onchange="Selecionar()">
+                            <option value="1" @if (ViewBag.grupo == 1) { @Html.Raw("selected")   }>1</option>
+                            <option value="2" @if (ViewBag.grupo == 2) { @Html.Raw("selected")    }>2</option>
+                        </select>
+
+                        <input type="hidden" value="@ViewBag.TorneioId" name="torneioId" id="torneioId">
+                    </div>
+                </div>
+            </div>
+
+            <div class="" id="tabFase2">
+                @{
+                    int? rodada = 0;
+                }
+                @if (Model != null)
+                {
+                    foreach (var item in Model)
+                    {
+                        if (rodada != item.rodadaFaseGrupo)
+                        {
+                            if (rodada != 0)
+                            {
+                                @Html.Raw("</div>");
+                            }
+                            rodada = item.rodadaFaseGrupo;
+                            @Html.Raw("<div class='col-xs-2 box_rodada'>");
+                            <div class="titulo">Rodada @item.rodadaFaseGrupo</div>
+                        }
+                        @Html.Partial("_PartialJogoTabelaFaseGrupo", (Barragem.Models.Jogo)item)
+                    }
+                }
+            </div>
+                    }
+    </div>
+    @section Scripts {
+        <script type="text/javascript">
+            function Selecionar() {
+                var torneioId = document.getElementById('torneioId').value;
+                var classeId = document.getElementById('filtroClasse').value;
+                var grupo = document.getElementById('grupo').value;
+                window.location = "TabelaFaseGrupo?torneioId=" + torneioId + "&filtroClasse=" + classeId + "&grupo=" + grupo ;
+            }
+        </script>
+    }
