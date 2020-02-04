@@ -855,6 +855,9 @@
     <Content Include="Views\Barragens\_PartialTabsBarragem.cshtml" />
     <Content Include="Views\Home\Dashboard.cshtml" />
     <Content Include="Views\Torneio\EditFaseGrupo.cshtml" />
+    <Content Include="Views\Torneio\TabelaFaseGrupo.cshtml" />
+    <Content Include="Views\Torneio\_PartialJogoTabelaFaseGrupo.cshtml" />
+    <Content Include="Views\Shared\_LayoutTorneioFaseGrupo.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
