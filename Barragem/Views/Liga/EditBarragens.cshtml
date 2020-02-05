@@ -15,13 +15,22 @@
 
                 <div class="tab-pane fade in active" id="tabRankings">
                     <div class="form-group">
-                        <label class="col-sm-2 control-label">Escolha o ranking para adicionar:</label>
-                        <div class="col-md-2 col-xs-8">
+                        <label class="col-sm-3 control-label">Escolha o ranking para adicionar:</label>
+                        <div class="col-sm-9 col-xs-8">
                             <select id="barragens" name="barragens" class="form-control">
                                 @foreach (var barragem in ViewBag.Barragens)
                                 {
                                     <option value="@barragem.Id">@barragem.nome</option>
                                 }
+                            </select>
+                        </div>
+                        <label class="col-sm-3 control-label" for="tipoDoTorneio">Tipo de torneio que o ranking irá criar: </label>
+                        <div class="col-sm-9">
+                            <select id="TipoTorneio" name="TipoTorneio" class="form-control">
+                                <option value="RDT250">RDT250</option>
+                                <option value="RDT500">RDT500</option>
+                                <option value="RDT1000">RDT1000</option>
+                                <option value="Major">Major</option>
                             </select>
                         </div>
                         <div>
@@ -33,6 +42,7 @@
                         <thead>
                             <tr>
                                 <th>Rankings que podem contar pontos para a sua liga</th>
+                                <th>Tipo de torneio</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -42,6 +52,7 @@
                                 <tr id="@Html.Raw("tr"+@barragemLiga.Id)">
 
                                     <td>@barragemLiga.Barragem.nome</td>
+                                    <td>@barragemLiga.TipoTorneio</td>
                                     <td>
                                         <button title="excluir" id="@Html.Raw("buttonEx"+@barragemLiga.Id)" onclick="removeBarragem(this.id)" class="btn btn-danger btn-xs excluirButton">
                                             Excluir
@@ -62,6 +73,7 @@
                 var e = document.getElementById("barragens");
                 var idBarragem = e.options[e.selectedIndex].value;
                 var IdLiga = document.getElementById("IdLiga").value;
+                var tipoTorneio = document.getElementById("TipoTorneio").value;
 
                 event.preventDefault();
 
@@ -69,7 +81,7 @@
                     type: "POST",
                     url: "/Liga/AddBarragem",
                     dataType: "json",
-                    data: "{'IdLiga':'" + IdLiga + "', 'IdBarragem':'" + idBarragem + "'}",
+                    data: "{'IdLiga':'" + IdLiga + "', 'IdBarragem':'" + idBarragem + "', 'TipoTorneio':'" + tipoTorneio + "'}",
                     contentType: "application/json; charset=utf-8",
                     success: function (response) {
                         if (typeof response == "object") {
@@ -81,8 +93,10 @@
                                 row.setAttribute("id", "tr" + response.IdBarragemLiga);
                                 var cell1 = row.insertCell(0);
                                 var cell2 = row.insertCell(1);
+                                var cell3 = row.insertCell(2);
                                 cell1.innerHTML = response.Nome;
-                                cell2.innerHTML = "<button title=\"excluir\" id=\"buttonEx" + response.IdBarragemLiga + "\" onclick=\"removeBarragem(this.id)\" class=\"btn btn-danger btn-xs excluirButton\">Excluir</button>";
+                                cell2.innerHTML = response.TipoTorneio;
+                                cell3.innerHTML = "<button title=\"excluir\" id=\"buttonEx" + response.IdBarragemLiga + "\" onclick=\"removeBarragem(this.id)\" class=\"btn btn-danger btn-xs excluirButton\">Excluir</button>";
 
                                 toastr.success("Atualização realizada com sucesso.", "Aviso");
                             }

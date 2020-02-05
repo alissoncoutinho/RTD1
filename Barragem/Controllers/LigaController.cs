@@ -164,22 +164,23 @@ namespace Barragem.Controllers
         }
 
         [HttpPost]
-        public ActionResult AddBarragem(String idLiga, String idBarragem)
+        public ActionResult AddBarragem(String idLiga, String idBarragem, String TipoTorneio)
         {
             try
             {
                 int idBarra = Int32.Parse(idBarragem);
-                if (idBarragem == "" || idBarra == 0)
+                if (idBarragem == "" || idBarra == 0 || TipoTorneio == "")
                 {
-                    throw new Exception("Por favor selecione o ranking a ser adicionado.");
+                    throw new Exception("Por favor selecione o ranking a ser adicionado e o tipo de torneio.");
                 }
                 BarragemLiga bl = new BarragemLiga();
                 bl.LigaId = Int32.Parse(idLiga);
                 bl.BarragemId = idBarra;
+                bl.TipoTorneio = TipoTorneio;
                 db.BarragemLiga.Add(bl);
                 db.SaveChanges();
                 Barragens barra = db.Barragens.Find(idBarra);
-                return Json(new { erro = "", retorno = 1, Nome = barra.nome, IdBarragemLiga = bl.Id }, "text/plain", JsonRequestBehavior.AllowGet);
+                return Json(new { erro = "", retorno = 1, Nome = barra.nome, IdBarragemLiga = bl.Id , TipoTorneio = TipoTorneio}, "text/plain", JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {

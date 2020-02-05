@@ -108,7 +108,7 @@ namespace Barragem.Models
 
         public IList<int> liga { get; set; }
         public string TipoTorneio { get; set; }
-        
+
     }
 
     public class TorneioApp

@@ -8,6 +8,8 @@ using System.Web.Mvc;
 using Barragem.Models;
 using Barragem.Context;
 using WebMatrix.WebData;
+using System.Web.Security;
+
 
 namespace Barragem.Controllers
 {
@@ -100,6 +102,36 @@ namespace Barragem.Controllers
         {
             db.Dispose();
             base.Dispose(disposing);
+        }
+
+        [Authorize(Roles = "admin,usuario,organizador")]
+        public ActionResult RankingDasLigas(int idLiga = 0, int idSnapshot = 0)
+        {
+            UserProfile usuario = db.UserProfiles.Find(WebSecurity.GetUserId(User.Identity.Name));
+            string perfil = Roles.GetRolesForUser(User.Identity.Name)[0];
+            List<Liga> ligas;
+            if (perfil.Equals("admin") || perfil.Equals("organizador"))
+            {
+                ligas = db.Liga.OrderBy(l => l.Nome).ToList();
+            }
+            else
+            {
+                ligas = (from liga in db.Liga
+                join tl in db.TorneioLiga on liga.Id equals tl.LigaId
+                join t in db.Torneio on tl.TorneioId equals t.Id
+                join it in db.InscricaoTorneio on t.Id equals it.torneioId
+                join up in db.UserProfiles on it.userId equals up.UserId
+                         where it.userId == usuario.UserId
+                select liga).ToList();
+            }
+            List<SnapshotRanking> snapshotsDaLiga = db.SnapshotRanking.Where(snap => snap.LigaId == idLiga).ToList();
+            List<SnapshotRanking> ranking = db.SnapshotRanking.Where(snap => snap.LigaId == idLiga && snap.Id == idSnapshot)
+                .Include(s => s.Categoria).Include(s => s.Jogador)
+                .OrderBy(snap => snap.Categoria.Nome).ThenBy(snap => snap.Posicao)
+                .ToList();
+            ViewBag.Ligas = ligas;
+            ViewBag.SnapshotsDaLiga = snapshotsDaLiga;
+            return View(ranking);
         }
     }
 }

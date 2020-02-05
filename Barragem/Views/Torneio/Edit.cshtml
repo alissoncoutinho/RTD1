@@ -234,17 +234,6 @@
                             {
                                 <p>- @liga.Nome</p>
                             }
-                            <div class="form-group">
-                                <label class="col-sm-2 control-label">Tipo do torneio: </label>
-                                <div class="col-sm-5">
-                                    <select id="TipoTorneio" name="TipoTorneio" class="form-control">
-                                        <option value="RDT250" @if (Model.TipoTorneio == "RDT250") { @Html.Raw("selected") }>RDT250</option>
-                                        <option value="RDT500" @if (Model.TipoTorneio == "RDT500") { @Html.Raw("selected") }>RDT500</option>
-                                        <option value="RDT1000" @if (Model.TipoTorneio == "RDT1000") { @Html.Raw("selected") }>RDT1000</option>
-                                        <option value="Major" @if (Model.TipoTorneio == "Major") { @Html.Raw("selected") }>Major</option>
-                                    </select>
-                                </div>
-                            </div>
                         </div>
                     </div>
 
