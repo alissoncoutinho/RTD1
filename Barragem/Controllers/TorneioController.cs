@@ -1381,6 +1381,10 @@ namespace Barragem.Controllers
                         };
                         db.TorneioLiga.Add(tl);
                         db.SaveChanges();
+                        //pesquisa o tipo de torneio
+                        BarragemLiga barraliga = db.BarragemLiga.Where(bl => bl.LigaId == idLiga && bl.BarragemId == torneio.barragemId).Single();
+                        torneio.TipoTorneio = barraliga.TipoTorneio;
+                        db.SaveChanges();
                     }
                     int i = 1;
                     ClasseTorneio classe = null;
