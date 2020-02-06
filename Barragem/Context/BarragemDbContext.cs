@@ -62,6 +62,8 @@ namespace Barragem.Context
 
         public DbSet<TorneioLiga> TorneioLiga { get; set; }
 
+        public DbSet<Snapshot> Snapshot { get; set; }
+
         public DbSet<SnapshotRanking> SnapshotRanking { get; set; }
     }
 }

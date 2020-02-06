@@ -293,6 +293,7 @@
     <Compile Include="Models\RankingView.cs" />
     <Compile Include="Models\Rodada.cs" />
     <Compile Include="Models\SituacaoJogo.cs" />
+    <Compile Include="Models\Snapshot.cs" />
     <Compile Include="Models\SnapshotRanking.cs" />
     <Compile Include="Models\Temporada.cs" />
     <Compile Include="Models\Torneio.cs" />

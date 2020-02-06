@@ -105,7 +105,7 @@ namespace Barragem.Controllers
         }
 
         [Authorize(Roles = "admin,usuario,organizador")]
-        public ActionResult RankingDasLigas(int idLiga = 0, int idSnapshot = 0)
+        public ActionResult RankingDasLigas(int idLiga = 3, int idSnapshot = 1)
         {
             UserProfile usuario = db.UserProfiles.Find(WebSecurity.GetUserId(User.Identity.Name));
             string perfil = Roles.GetRolesForUser(User.Identity.Name)[0];
@@ -124,13 +124,16 @@ namespace Barragem.Controllers
                          where it.userId == usuario.UserId
                 select liga).ToList();
             }
-            List<SnapshotRanking> snapshotsDaLiga = db.SnapshotRanking.Where(snap => snap.LigaId == idLiga).ToList();
-            List<SnapshotRanking> ranking = db.SnapshotRanking.Where(snap => snap.LigaId == idLiga && snap.Id == idSnapshot)
+            List<Snapshot> snapshotsDaLiga = db.Snapshot.Where(snap => snap.LigaId == idLiga).ToList();
+            List<SnapshotRanking> ranking = db.SnapshotRanking.Where(snapR => snapR.SnapshotId == idSnapshot)
                 .Include(s => s.Categoria).Include(s => s.Jogador)
                 .OrderBy(snap => snap.Categoria.Nome).ThenBy(snap => snap.Posicao)
                 .ToList();
+            List<Categoria> categorias = db.SnapshotRanking.Where(sr => sr.SnapshotId == idSnapshot)
+                .Include(sr => sr.Categoria).Select(sr => sr.Categoria).Distinct().ToList();
             ViewBag.Ligas = ligas;
             ViewBag.SnapshotsDaLiga = snapshotsDaLiga;
+            ViewBag.Categorias = categorias;
             return View(ranking);
         }
     }
