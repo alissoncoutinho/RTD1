@@ -23,6 +23,6 @@ namespace Barragem.Models
         [ForeignKey("LigaId")]
         public Liga Liga { get; set; }
 
-        public string TipoTorneio { get; set; }
+        public String TipoTorneio { get; set; }
     }
 }

@@ -276,6 +276,7 @@
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\BarragemLiga.cs" />
     <Compile Include="Models\Barragens.cs" />
+    <Compile Include="Models\CalculadoraDePontos.cs" />
     <Compile Include="Models\Categoria.cs" />
     <Compile Include="Models\Classe.cs" />
     <Compile Include="Models\ClasseLiga.cs" />
@@ -296,7 +297,12 @@
     <Compile Include="Models\Snapshot.cs" />
     <Compile Include="Models\SnapshotRanking.cs" />
     <Compile Include="Models\Temporada.cs" />
+    <Compile Include="Models\TipoTorneio.cs" />
     <Compile Include="Models\Torneio.cs" />
+    <Compile Include="Models\Torneio1000.cs" />
+    <Compile Include="Models\Torneio250.cs" />
+    <Compile Include="Models\Torneio500.cs" />
+    <Compile Include="Models\TorneioGenerico.cs" />
     <Compile Include="Models\TorneioLiga.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ProviderDeTokensDeAcesso.cs" />

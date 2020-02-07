@@ -107,9 +107,10 @@ namespace Barragem.Models
         public string dadosBancarios { get; set; }
 
         public IList<int> liga { get; set; }
-        public string TipoTorneio { get; set; }
 
+        public String TipoTorneio { get; set; }
     }
+
 
     public class TorneioApp
     {

@@ -1928,6 +1928,9 @@ namespace Barragem.Controllers
             if (inscricao.Count() > 0)
             {
                 inscricao[0].colocacao = colocacao;
+                Torneio torneio = db.Torneio.Where(t => t.Id == jogo.torneioId).Single();
+                int pontuacao = CalculadoraDePontos.AddTipoTorneio(torneio.TipoTorneio).CalculaPontos(jogo);
+                inscricao[0].Pontuacao = pontuacao;
                 db.SaveChanges();
             }
         }
@@ -2031,7 +2034,16 @@ namespace Barragem.Controllers
                     if (inscricao.Count() > 0)
                     {
                         inscricao[0].colocacao = 0; // vencedor
+                        jogo.faseTorneio = 0;
+                        int pontuacao = CalculadoraDePontos.AddTipoTorneio(torneio.TipoTorneio).CalculaPontos(jogo);
+                        inscricao[0].Pontuacao = pontuacao;
                         db.SaveChanges();
+                        /*
+                         * 
+                         * Aqui gerar os snapshots!!!!!!!!
+                         * 
+                         * 
+                         */
                     }
                 }
             }
