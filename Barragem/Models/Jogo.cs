@@ -98,7 +98,7 @@ namespace Barragem.Models
 
         public int? faseTorneio { get; set; }
 
-        public int? rodadaFaseGrupo { get; set; }
+        public int rodadaFaseGrupo { get; set; }
 
         public int? grupoFaseGrupo { get; set; }
 

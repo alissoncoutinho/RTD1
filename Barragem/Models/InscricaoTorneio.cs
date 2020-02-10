@@ -120,6 +120,8 @@ namespace Barragem.Models
 
         public int? grupo { get; set; }
 
+        public int pontuacaoFaseGrupo { get; set; }
+
     }
 
     public class ColocacaoTorneio {
