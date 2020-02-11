@@ -290,7 +290,16 @@ namespace Barragem.Controllers
                 j.qtddGames2setDesafiado = jogo.qtddGames2setDesafiado;
                 j.qtddGames3setDesafiado = jogo.qtddGames3setDesafiado;
                 j.idVencedor = jogo.idDoVencedor;
-                j.nomeRodada = "Rodada " + jogo.rodada.codigoSeq;
+                if (jogo.torneioId == null)
+                {
+                    j.nomeRodada = "Rodada " + jogo.rodada.codigoSeq;
+                }
+                else
+                {
+                    //var torneioId = (int)jogo.torneioId;
+                    //j.nomeRodada = db.Torneio.Find(torneioId).nome;
+                }
+                
                 var rankingDesafiado = db.Rancking.Where(r => r.rodada_id == jogo.rodada_id && r.userProfile_id == jogo.desafiado_id).FirstOrDefault();
                 var rankingDesafiante = db.Rancking.Where(r => r.rodada_id == jogo.rodada_id && r.userProfile_id == jogo.desafiante_id).FirstOrDefault();
                 if (rankingDesafiado != null)

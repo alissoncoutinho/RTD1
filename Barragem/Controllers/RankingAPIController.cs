@@ -43,6 +43,7 @@ namespace Barragem.Controllers
                 
                 ranking.userName = item.UserName;
                 ranking.userId = item.UserId;
+                ranking.situacao = item.situacao;
                 loginRankings.Add(ranking);
             }
             return loginRankings;
