@@ -1,8 +1,8 @@
 ﻿@model IEnumerable<Barragem.Models.SnapshotRanking>
 
     <div class="form-group">
-        <label class="col-sm-1 control-label">Liga:</label>
-        <div class="col-sm-4">
+        <label class="control-label">Liga:</label>
+        <div class="">
             <select id="idLiga" name="liga" class="form-control">
                 @foreach (var liga in ViewBag.Ligas)
                 {
@@ -11,7 +11,7 @@
             </select>
         </div>
 
-        <div class="col-sm-4">
+        <div class="">
             <select id="idSnapshot" name="snapshot" class="form-control">
                 @foreach (var snap in ViewBag.SnapshotsDaLiga)
                 {
@@ -21,16 +21,13 @@
         </div>
     </div>
 
-    <p>.</p>
-
-
     <ul class="nav nav-tabs" id="myTab">
         @{
             var categorias = ViewBag.Categorias;
             var i = 0;
             foreach (Barragem.Models.Categoria cat in categorias)
             {
-                var tabName = "#tabCat" + cat.Id;
+                var tabName = "#tab" + cat.Id;
                 if (i == 0)
                 {
                     <li class="active"><a href="@tabName" data-toggle="tab">@cat.Nome</a></li>
@@ -46,14 +43,13 @@
 
     <div class="tab-content">
         @{
-            i = 0;
+            int j = 0;
             foreach (Barragem.Models.Categoria cat in categorias)
             {
-                var tabName = "tabCat" + cat.Id;
-                var tabPane = "tab pane fade";
-                if (i == 0) { tabPane = "tab pane fade in active"; }
+                var tabName = "tab" + cat.Id;
+                var tabPane = "tab-pane fade";
+                if (j == 0) { tabPane = "tab-pane fade in active"; }
                 <div id="@tabName" class="@tabPane">
-                    <br>
                     <div class="box-body table-responsive no-padding">
                         <table class="table table-striped table-condensed table-bordered">
                             <thead>
@@ -79,7 +75,7 @@
                         </table>
                     </div>
                 </div>
-                i++;
+                j++;
             }
         }
     </div>
