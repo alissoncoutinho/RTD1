@@ -1860,7 +1860,7 @@ namespace Barragem.Controllers
             jogo = db.Jogo.Include(j => j.desafiado).Include(j => j.desafiante).Where(j => j.Id == jogo.Id).Single();
 
             ViewBag.situacao_Id = new SelectList(db.SituacaoJogo, "Id", "descricao", jogo.situacao_Id);
-
+            //calcula os pontos, posicao e monta proximo jogo
             MontarProximoJogoTorneio(jogo);
 
             return RedirectToAction("LancarResultado", "Torneio", new { torneioId = jogo.Id, msg = Mensagem });
@@ -2044,6 +2044,7 @@ namespace Barragem.Controllers
                          * 
                          * 
                          */
+                        new CalculadoraDePontos().GerarSnapshotDaLiga(jogo);
                     }
                 }
             }

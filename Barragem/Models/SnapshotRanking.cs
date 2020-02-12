@@ -19,6 +19,16 @@ namespace Barragem.Models
         [ForeignKey("SnapshotId")]
         public Snapshot Snapshot { get; set; }
 
+        public int LigaId { get; set; }
+
+        [ForeignKey("LigaId")]
+        public Liga Liga { get; set; }
+
+        public int CategoriaId { get; set; }
+
+        [ForeignKey("CategoriaId")]
+        public Categoria Categoria { get; set; }
+
         [Display(Name = "Jogador")]
         public int UserId { get; set; }
 
@@ -26,11 +36,6 @@ namespace Barragem.Models
         [ForeignKey("UserId")]
         public virtual UserProfile Jogador { get; set; }
 
-        public int CategoriaId { get; set; }
-
-        [ForeignKey("CategoriaId")]
-        public Categoria Categoria { get; set; }
-        
         public int Posicao { get; set; }
 
         public int Pontuacao { get; set; }
