@@ -30,11 +30,22 @@
                             foreach (var item2 in ViewBag.Classes)
                             {
                                 var ischecked = false;
-                                if (ViewBag.ClassesGeradas.Contains(item2.Id)) {
+                                if (ViewBag.ClassesGeradas.Contains(item2.Id))
+                                {
                                     ischecked = true;
                                 }
+                                var disabled = false;
+                                if (ViewBag.classesFaseGrupoNaoFinalizadas.Contains(item2.Id))
+                                {
+                                    disabled = true;
+                                }
                                 <div class="col-sm-4">
-                                    <input type="checkbox" value="@item2.Id" name="classeIds" id="classeIds" @if (!ischecked){ @Html.Raw("checked") } /> @Html.Raw(item2.nome)
+                                    <input type="checkbox" value="@item2.Id" name="classeIds" id="classeIds" @if (disabled) { @Html.Raw("disabled") } @if (!ischecked) { @Html.Raw("checked")  } /> 
+                                    @if (disabled){
+                                        @Html.Raw("<span style='color:grey'>" + item2.nome + "</span>")
+                                    } else{
+                                        @Html.Raw(item2.nome)
+                                    }
                                 </div>
                             }
                             <input type="hidden" value="@ViewBag.TorneioId" name="torneioId" id="torneioId">

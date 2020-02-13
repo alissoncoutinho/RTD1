@@ -1574,7 +1574,10 @@ namespace Barragem.Controllers
         {
             List<Jogo> listaJogos = null;
             var classes = db.ClasseTorneio.Where(i => i.torneioId == torneioId).OrderBy(c => c.nome).ToList();
-            var classesGeradas = db.Jogo.Where(i => i.torneioId == torneioId).Select(i => (int)i.classeTorneio).Distinct().ToList();
+            var classesGeradas = db.Jogo.Where(i => i.torneioId == torneioId && i.grupoFaseGrupo==null).Select(i => (int)i.classeTorneio)
+                .Distinct().ToList();
+            ViewBag.classesFaseGrupoNaoFinalizadas = db.Jogo.Where(i => i.torneioId == torneioId && i.grupoFaseGrupo != null && (i.situacao_Id ==1 || i.situacao_Id ==2)).
+                Select(i => (int)i.classeTorneio).Distinct().ToList();
             ViewBag.ClassesGeradas = classesGeradas;
             ViewBag.Classes = classes;
             ViewBag.fClasse = fClasse;
