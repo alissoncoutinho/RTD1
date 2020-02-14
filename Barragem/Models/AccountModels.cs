@@ -202,6 +202,8 @@ namespace Barragem.Models
         public int idRanking { get; set; }
 
         public int userId { get; set; }
+
+        public string situacao { get; set; }
     }
 
     public class RegisterModel

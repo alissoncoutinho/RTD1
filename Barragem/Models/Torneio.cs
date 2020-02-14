@@ -130,4 +130,11 @@ namespace Barragem.Models
         public List<MeuJogo> jogos { get; set; }
         public int faseTorneio { get; set; }
     }
+
+    public class MensagemRetorno
+    {
+        public string mensagem { get; set; }
+        public string tipo { get; set; } // erro ou ok
+        public string nomePagina { get; set; }
+    }
 }

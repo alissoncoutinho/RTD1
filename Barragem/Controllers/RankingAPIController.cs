@@ -43,6 +43,7 @@ namespace Barragem.Controllers
                 
                 ranking.userName = item.UserName;
                 ranking.userId = item.UserId;
+                ranking.situacao = item.situacao;
                 loginRankings.Add(ranking);
             }
             return loginRankings;
@@ -170,6 +171,31 @@ namespace Barragem.Controllers
             return db.BarragemView.Count(e => e.Id == id) > 0;
         }
 
+        [HttpGet]
+        [Route("api/RankingAPI/BuscaCidades/nome")]
+        public IList<string> GetBuscaCidades(string nome)
+        {
+            List<string> cidades = new List<string>();
+            if (nome.Length > 2) { 
+                cidades = db.BarragemView.Where(j => j.cidade.StartsWith(nome) && j.isAtiva==true).OrderBy(j => j.cidade).Select(j=>j.cidade).ToList<string>();
+            }
+            return cidades;
+        }
+
+        [HttpGet]
+        [Route("api/RankingAPI/cidade")]
+        // GET: api/RankingAPI/cidade
+        public IList<LoginRankingModel> GetRankingsByCidade(string nome)
+        {
+            var rankings = db.BarragemView.Where(b => b.isAtiva==true && b.cidade.ToLower() == nome.ToLower()).Select(rk => new LoginRankingModel()
+            {
+                idRanking = rk.Id,
+                nomeRanking = rk.nome
+            }).ToList();
+
+            return rankings;
+        }
+
         [Route("api/RankingAPI/Teste")]
         [HttpGet]
         [ResponseType(typeof(string))]
@@ -177,11 +203,13 @@ namespace Barragem.Controllers
         {
             try
             {
-                var titulo = "Ranking atualizado e nova rodada gerada!";
+                var nomeRanking = db.BarragemView.Find(8).nome;
+                var titulo = nomeRanking + " Ranking atualizado e nova rodada gerada!";
                 var conteudo = "Clique aqui e entre em contato com seu adversário o mais breve possível e bom jogo.";
 
-                var fbmodel = new FirebaseNotificationModel() { to = "/topics/ranking8", notification = new NotificationModel() { title = titulo, body = conteudo }, data = new DataModel() { title = titulo, body = conteudo, type = "nova_rodada_aberta" } };
+                var fbmodel = new FirebaseNotificationModel() { to = "/topics/ranking8", notification = new NotificationModel() { title = titulo, body = conteudo }, data = new DataModel() { title = titulo, body = conteudo, type = "nova_rodada_aberta", idRanking = 8 } };
                 new FirebaseNotification().SendNotification(fbmodel);
+                                
             }
             catch (Exception e)
             {

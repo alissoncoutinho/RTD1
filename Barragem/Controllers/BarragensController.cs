@@ -212,7 +212,20 @@ namespace Barragem.Controllers
             return RedirectToAction("Index");
         }
 
+        [Authorize(Roles = "admin")]
+        public ActionResult Painel()
+        {
+            ViewBag.TenistasCadastrados = db.UserProfiles.Count();
+            ViewBag.TenistasContribuintes = db.UserProfiles.Where(u=>u.barragem.isAtiva==true && (u.situacao == "ativo" || u.situacao == "licenciado" || u.situacao == "suspenso" || u.situacao == "suspensoWO")).Count();
+            ViewBag.TenistasAtivos = db.UserProfiles.Where(u => u.barragem.isAtiva == true && u.situacao == "ativo").Count();
+            ViewBag.TenistasLicenciados = db.UserProfiles.Where(u => u.barragem.isAtiva == true && u.situacao == "licenciado").Count();
+            ViewBag.TenistasSuspensos = db.UserProfiles.Where(u => u.barragem.isAtiva == true && (u.situacao == "suspenso" || u.situacao == "suspensoWO")).Count();
 
+            ViewBag.RankingsAtivos = db.Barragens.Where(u => u.isAtiva == true).Count();
+            ViewBag.RankingsInativos = db.Barragens.Where(u => u.isAtiva == false).Count();
+
+            return View();
+        }
 
         protected override void Dispose(bool disposing)
         {

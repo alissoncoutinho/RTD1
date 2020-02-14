@@ -392,17 +392,20 @@
 
             $(".confirmCancel").confirm({
                 title: "Confirmação",
-                text: "Aperte SIM para confirmar o cancelamento da inscrição!",
-                confirm: function (button) {
-                    //window.location.href = button.data("link");
-                    document.formInscricao.operacao.value = "cancelar";
-                    document.formInscricao.submit();
-                },
-                cancel: function (button) {
+                content: "Aperte SIM para confirmar o cancelamento da inscrição!",
+                buttons: {
+                    sim: {
+                        text: 'Sim',
+                        btnClass: 'btn-primary',
+                        action: function () {
+                            document.formInscricao.operacao.value = "cancelar";
+                            document.formInscricao.submit();
+                        }
+                    },
+                    cancelar: function () {
 
-                },
-                confirmButton: "Sim",
-                cancelButton: "Não"
+                    }
+                }
             });
 
             $(".escolherSegundaOpcaoClasse").change(function (event) {
@@ -458,16 +461,20 @@
 
             $.confirm({
                 title: "Confirmação",
-                text: "Aperte SIM para confirmar a alteração de classe!",
-                confirm: function (button) {
-                    document.formInscricao.operacao.value = "alterarClasse";
-                    document.formInscricao.submit();
-                },
-                cancel: function (button) {
+                content: "Aperte SIM para confirmar o cancelamento da inscrição!",
+                buttons: {
+                    sim: {
+                        text: 'Sim',
+                        btnClass: 'btn-primary',
+                        action: function () {
+                            document.formInscricao.operacao.value = "cancelar";
+                            document.formInscricao.submit();
+                        }
+                    },
+                    cancelar: function () {
 
-                },
-                confirmButton: "Sim",
-                cancelButton: "Não"
+                    }
+                }
             });
 
         });

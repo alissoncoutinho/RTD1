@@ -66,7 +66,7 @@ namespace Barragem.Controllers
                 ViewBag.barraId = barragemId;
                 ViewBag.barragemId = new SelectList(db.BarragemView, "Id", "nome");
 
-                ViewBag.temporadaId = new SelectList(db.Temporada.Where(c => c.isAtivo == true && c.barragemId == barragemId).OrderByDescending(c => c.Id), "Id", "nome");
+                ViewBag.temporadaId = new SelectList(db.Temporada.Where(c => c.barragemId == barragemId).OrderByDescending(c => c.Id), "Id", "nome");
 
             }
             catch (InvalidOperationException)
@@ -524,6 +524,10 @@ namespace Barragem.Controllers
             var pontosDesafiado = 0.0;
             Rodada rodada = db.Rodada.Find(id);
             BarragemView barragem = db.BarragemView.Find(rodada.barragemId);
+            var log2 = new Log();
+            log2.descricao = "Fecha data:" + DateTime.Now + " " + barragem.nome +" Fecha barragem";
+            db.Log.Add(log2);
+            db.SaveChanges();
             try
             {
                using (TransactionScope scope = new TransactionScope()){
