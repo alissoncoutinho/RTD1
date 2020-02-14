@@ -46,7 +46,15 @@ namespace Barragem.Models
             List<TorneioLiga> ligasDoTorneio = db.TorneioLiga.Include(tl => tl.Liga).Where(tl => tl.TorneioId == jogo.torneioId).ToList();
             foreach(TorneioLiga tl in ligasDoTorneio)
             {
-                Snapshot ultimoSnap = db.Snapshot.Last(s => s.LigaId == tl.LigaId);
+                Snapshot ultimoSnap;
+                try
+                {
+                    ultimoSnap = db.Snapshot.Where(s => s.LigaId == tl.LigaId).OrderByDescending(s => s.Id).Single();
+                }
+                catch (Exception e)
+                {
+                    ultimoSnap = null;
+                }
                 //para cada liga, gerar um snapshot
                 Liga liga = tl.Liga;
                 Snapshot novoSnap = new Snapshot { Data = DateTime.Now, LigaId = liga.Id};
@@ -58,8 +66,13 @@ namespace Barragem.Models
                 {
                     Categoria categoriaDaLiga = cl.Categoria;
                     //copia os resultados que ja existem para o novo ranking
-                    List<SnapshotRanking> ultimoRankingDaCategoriaNaLiga = db.SnapshotRanking
-                        .Where(sr => sr.CategoriaId == categoriaDaLiga.Id && sr.LigaId == liga.Id).ToList();
+                    List<SnapshotRanking> ultimoRankingDaCategoriaNaLiga = new List<SnapshotRanking>();
+                    if (ultimoSnap != null)
+                    {
+                        ultimoRankingDaCategoriaNaLiga = db.SnapshotRanking
+                            .Where(sr => sr.CategoriaId == categoriaDaLiga.Id 
+                                && sr.LigaId == liga.Id && sr.SnapshotId == ultimoSnap.Id).ToList();
+                    }
                     foreach(SnapshotRanking ultimoResultado in ultimoRankingDaCategoriaNaLiga)
                     {
                         SnapshotRanking novoResultado = new SnapshotRanking();
@@ -72,15 +85,24 @@ namespace Barragem.Models
                         db.SaveChanges();
                     }
                     //atualiza o ranking com os resultados do torneio
+                    ClasseTorneio classeTorneio = db.ClasseTorneio
+                        .Where(ct => ct.torneioId == jogo.torneioId && ct.categoriaId == categoriaDaLiga.Id)
+                        .Single();
                     List<InscricaoTorneio> resultadosDoTorneio = db.InscricaoTorneio
-                        .Where(it => it.torneioId == jogo.torneioId && it.classe == cl.Id).ToList();
+                        .Where(it => it.torneioId == jogo.torneioId && it.classe == classeTorneio.Id).ToList();
                     foreach(InscricaoTorneio resultado in resultadosDoTorneio)
                     {
-                        SnapshotRanking ultimoRankingDoJogador = db.SnapshotRanking.Where(sr => sr.LigaId == liga.Id 
-                            && sr.CategoriaId == categoriaDaLiga.Id 
-                            && sr.UserId == resultado.userId
-                            && sr.SnapshotId == novoSnap.Id).Single();
-                        if (ultimoRankingDoJogador == null)
+                        try
+                        {
+                            SnapshotRanking ultimoRankingDoJogador = db.SnapshotRanking.Where(sr => sr.LigaId == liga.Id 
+                                && sr.CategoriaId == categoriaDaLiga.Id 
+                                && sr.UserId == resultado.userId
+                                && sr.SnapshotId == novoSnap.Id).Single();
+                            int pontuacaoAtualizada = ultimoRankingDoJogador.Pontuacao + resultado.Pontuacao;
+                            ultimoRankingDoJogador.Pontuacao = pontuacaoAtualizada;
+                            db.SaveChanges();
+                        }
+                        catch (Exception e)
                         {
                             SnapshotRanking novoRanking = new SnapshotRanking();
                             novoRanking.SnapshotId = novoSnap.Id;
@@ -89,13 +111,8 @@ namespace Barragem.Models
                             novoRanking.UserId = resultado.userId;
                             novoRanking.Pontuacao = resultado.Pontuacao;
                             db.SnapshotRanking.Add(novoRanking);
+                            db.SaveChanges();
                         }
-                        else
-                        {
-                            int pontuacaoAtualizada = ultimoRankingDoJogador.Pontuacao + resultado.Pontuacao;
-                            ultimoRankingDoJogador.Pontuacao = pontuacaoAtualizada;
-                        }
-                        db.SaveChanges();
                     }
                     //coloca as posicoes do ranking
                     List<SnapshotRanking> rankingAtual = db.SnapshotRanking.Where(sr => sr.LigaId == liga.Id
@@ -105,7 +122,6 @@ namespace Barragem.Models
                     foreach (SnapshotRanking ranking in rankingAtual)
                     {
                         ranking.Posicao = i;
-                        db.SnapshotRanking.Add(ranking);
                         db.SaveChanges();
                         i++;
                     }

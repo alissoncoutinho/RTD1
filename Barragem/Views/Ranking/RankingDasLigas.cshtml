@@ -1,25 +1,29 @@
 ﻿@model IEnumerable<Barragem.Models.SnapshotRanking>
 
-    <div class="form-group">
-        <label class="control-label">Liga:</label>
-        <div class="">
-            <select id="idLiga" name="liga" class="form-control">
-                @foreach (var liga in ViewBag.Ligas)
-                {
-                    <option value="@liga.Id">@liga.Nome</option>
-                }
-            </select>
-        </div>
+    @using (Html.BeginForm("RankingDasLigas", "Ranking", FormMethod.Post, new { @class = "form-horizontal" }))
+    {
+        <div class="form-group">
+            <label class="control-label">Liga:</label>
+            <div class="">
+                <select id="idLiga" name="idLiga" class="form-control" onchange="this.form.submit()">
+                    @foreach (var liga in ViewBag.Ligas)
+                    {
+                        <option value="@liga.Id">@liga.Nome</option>
+                    }
+                </select>
+            </div>
 
-        <div class="">
-            <select id="idSnapshot" name="snapshot" class="form-control">
-                @foreach (var snap in ViewBag.SnapshotsDaLiga)
-                {
-                    <option value="@snap.Id">@snap.Data</option>
-                }
-            </select>
+            <div class="">
+                <select id="idSnapshot" name="idSnapshot" class="form-control">
+                    @foreach (var snap in ViewBag.SnapshotsDaLiga)
+                    {
+                        <option value="@snap.Id">@snap.Data</option>
+                    }
+                </select>
+            </div>
+            <button type="submit">Pesquisar</button>
         </div>
-    </div>
+    }
 
     <ul class="nav nav-tabs" id="myTab">
         @{
