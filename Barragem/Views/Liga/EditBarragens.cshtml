@@ -32,7 +32,6 @@
                                 <option value="1000">1000</option>
                             </select>
                         </div>
-                        <select asp-for="TipoTorneio" asp-items="Html.GetEnumSelectList<EnumTipoTorneio>()"></select>
                         <div>
                             <input type="hidden" name="IdLiga" id="IdLiga" value="@ViewBag.idLiga">
                             <button class="btn btn-info" id="add" onclick="addBarragem()">Adicionar</button>
