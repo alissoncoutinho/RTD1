@@ -49,7 +49,7 @@ namespace Barragem.Models
                 Snapshot ultimoSnap;
                 try
                 {
-                    ultimoSnap = db.Snapshot.Where(s => s.LigaId == tl.LigaId).OrderByDescending(s => s.Id).Single();
+                    ultimoSnap = db.Snapshot.Where(s => s.LigaId == tl.LigaId).OrderByDescending(s => s.Id).ToList().First();
                 }
                 catch (Exception e)
                 {
@@ -87,7 +87,7 @@ namespace Barragem.Models
                     //atualiza o ranking com os resultados do torneio
                     ClasseTorneio classeTorneio = db.ClasseTorneio
                         .Where(ct => ct.torneioId == jogo.torneioId && ct.categoriaId == categoriaDaLiga.Id)
-                        .Single();
+                        .ToList().First();
                     List<InscricaoTorneio> resultadosDoTorneio = db.InscricaoTorneio
                         .Where(it => it.torneioId == jogo.torneioId && it.classe == classeTorneio.Id).ToList();
                     foreach(InscricaoTorneio resultado in resultadosDoTorneio)

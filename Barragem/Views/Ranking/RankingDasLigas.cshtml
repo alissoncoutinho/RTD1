@@ -3,25 +3,24 @@
     @using (Html.BeginForm("RankingDasLigas", "Ranking", FormMethod.Post, new { @class = "form-horizontal" }))
     {
         <div class="form-group">
-            <label class="control-label">Liga:</label>
-            <div class="">
+            <label class="col-sm-2 control-label">Liga:</label>
+            <div class="col-sm-6">
                 <select id="idLiga" name="idLiga" class="form-control" onchange="this.form.submit()">
                     @foreach (var liga in ViewBag.Ligas)
                     {
-                        <option value="@liga.Id">@liga.Nome</option>
+                        <option value="@liga.Id" @if (liga.Id == ViewBag.idLiga) { @Html.Raw("selected") }>@liga.Nome</option>
                     }
                 </select>
             </div>
 
-            <div class="">
-                <select id="idSnapshot" name="idSnapshot" class="form-control">
+            <div class="col-sm-4">
+                <select id="idSnapshot" name="idSnapshot" class="form-control" onchange="this.form.submit()">
                     @foreach (var snap in ViewBag.SnapshotsDaLiga)
                     {
-                        <option value="@snap.Id">@snap.Data</option>
+                        <option value="@snap.Id" @if (snap.Id == ViewBag.idSnapshot) { @Html.Raw("selected") }>@snap.Data</option>
                     }
                 </select>
             </div>
-            <button type="submit">Pesquisar</button>
         </div>
     }
 
