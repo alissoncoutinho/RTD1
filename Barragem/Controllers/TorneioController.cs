@@ -2062,7 +2062,8 @@ namespace Barragem.Controllers
                 else
                 {
                     //cadastrar a pontuacao do vice 
-                    var inscricaoPerdedor = db.InscricaoTorneio.Where(i => i.userId == jogo.idDoPerdedor && i.torneioId == jogo.torneioId).ToList();
+                    var inscricaoPerdedor = db.InscricaoTorneio.Where(i => i.userId == jogo.idDoPerdedor 
+                        && i.torneioId == jogo.torneioId && i.classe == jogo.classeTorneio).ToList();
                     if (inscricaoPerdedor.Count() > 0)
                     {
                         inscricaoPerdedor[0].colocacao = 1; // vice
@@ -2072,7 +2073,8 @@ namespace Barragem.Controllers
                         db.SaveChanges();    
                     }
                     // indicar o vencedor do torneio
-                    var inscricao = db.InscricaoTorneio.Where(i => i.userId == jogo.idDoVencedor && i.torneioId == jogo.torneioId).ToList();
+                    var inscricao = db.InscricaoTorneio.Where(i => i.userId == jogo.idDoVencedor 
+                        && i.torneioId == jogo.torneioId && i.classe == jogo.classeTorneio).ToList();
                     if (inscricao.Count() > 0)
                     {
                         inscricao[0].colocacao = 0; // vencedor
