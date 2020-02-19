@@ -17,10 +17,10 @@ namespace Barragem.Class
 
         public string GerarRodadasAutomaticas()
         {
-            //if(DateTime.Now.Hour < 23)
-            //{
-                //return "0";
-            //}
+            if(DateTime.Now.Hour < 22)
+            {
+                return "0";
+            }
             DateTime hoje = DateTime.Now.Date;
             RodadaNegocio rodadaNegocio = new RodadaNegocio();
             Dictionary<Temporada, string> temporadasComErro = new Dictionary<Temporada, string>();
@@ -141,6 +141,7 @@ namespace Barragem.Class
                 Mail mail = new Mail();
                 mail.de = System.Configuration.ConfigurationManager.AppSettings.Get("UsuarioMail");
                 mail.para = "barragemdocerrado@gmail.com";
+                mail.bcc = new List<String>() { "coutinho.alisson@gmail.com" };
                 mail.assunto = "Atenção: houve erros ao gerar rodadas automaticamente.";
                 mail.conteudo = mensagem;
                 mail.formato = Tipos.FormatoEmail.Html;

@@ -23,7 +23,7 @@ namespace Barragem.Controllers
             var dataHoje = DateTime.Now.AddDays(-5);
             var Torneios = (from inscricao in db.InscricaoTorneio
                            join torneio in db.Torneio on inscricao.torneioId equals torneio.Id into colocacaoJogador
-                           where inscricao.userId == userId && inscricao.isAtivo && inscricao.torneio.isAtivo && inscricao.torneio.dataFim > dataHoje
+                           where inscricao.userId == userId && inscricao.torneio.isAtivo && inscricao.torneio.dataFim > dataHoje
                 select new TorneioApp
                 {
                     Id = inscricao.torneio.Id,
@@ -489,6 +489,110 @@ namespace Barragem.Controllers
                 return "Final";
             }
             return "";
+        }
+
+        [HttpGet]
+        [Route("api/TorneioAPI/BuscaCidades/nome")]
+        public IList<string> GetBuscaCidades(string nome)
+        {
+            List<string> cidades = new List<string>();
+            if (nome.Length > 2)
+            {
+                var dataHoje = DateTime.Now;
+                cidades = db.Torneio.Where(j => j.dataFim> dataHoje && j.isAtivo == true).OrderBy(j => j.cidade).Select(j => j.cidade).ToList<string>();
+            }
+            return cidades;
+        }
+
+        [HttpGet]
+        [Route("api/TorneioAPI/cidade")]
+        // GET: api/TorneioAPI/cidade
+        public IList<TorneioApp> GetTorneioByCidade(string nome)
+        {
+            var dataHoje = DateTime.Now;
+            var torneios = db.Torneio.Where(b => b.isAtivo == true && b.dataFim > dataHoje && b.cidade.ToLower() == nome.ToLower()).Select(rk => new TorneioApp()
+            {
+                Id = rk.Id,
+                nome = rk.nome,
+                dataFim = rk.dataFimInscricoes
+            }).ToList();
+
+            return torneios;
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("api/TorneioAPI/RegistroInscricao")]
+        public MensagemRetorno PostRegistroInscricao(string login, string email, string password, string nome, DateTime dataNascimento, string naturalidade, string celular, string altura, string lateralidade, int classeInscricao2,  bool isMaisDeUmaClasse, int rankingId, int classeId, int torneioId, bool isSocio, bool isClasseDupla)
+        {
+            var model = new RegisterInscricao();
+            model.register.UserName = login;
+            model.register.Password = password;
+            model.register.nome =nome;
+            model.register.dataNascimento =dataNascimento;
+            model.register.altura2 =altura;
+            model.register.telefoneCelular =celular;
+            model.register.email = email;
+            model.register.lateralidade = lateralidade;
+            model.register.barragemId = rankingId;
+            model.inscricao.torneioId = torneioId;
+            model.inscricao.classe = classeId;
+            model.isMaisDeUmaClasse = isMaisDeUmaClasse;
+            model.classeInscricao2 = classeInscricao2;
+
+            var mensagemRetorno = new AccountController().RegisterTorneioNegocio(model, torneioId, isSocio, isClasseDupla);
+            return mensagemRetorno;
+        }
+
+        [ResponseType(typeof(void))]
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("api/TorneioAPI/Inscricao")]
+        public IHttpActionResult PostInscricao(int torneioId, int classeInscricao, string operacao, bool isMaisDeUmaClasse = false, int classeInscricao2 = 0, string observacao = "", bool isSocio = false, bool isClasseDupla = false, int userId = 0)
+        {
+            var mensagemRetorno = new TorneioController().InscricaoNegocio(torneioId, classeInscricao, operacao, isMaisDeUmaClasse, classeInscricao2, observacao, isSocio, isClasseDupla, userId);
+            if (mensagemRetorno.nomePagina == "ConfirmacaoInscricao")
+            {
+                return StatusCode(HttpStatusCode.NoContent);
+            }
+            else {
+                return InternalServerError(new Exception(mensagemRetorno.mensagem));
+            }
+            
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("api/TorneioAPI/Disponivel/{rankingId}")]
+        public IList<TorneioApp> GetTorneioDisponivel(int rankingId)
+        {
+            var dataHoje = DateTime.Now;
+            var ranking = db.BarragemView.Find(rankingId);
+            var torneio = (from t in db.Torneio
+                           where t.dataFimInscricoes >= dataHoje && t.isAtivo && t.isOpen
+                           select new TorneioApp
+                           {
+                               Id = t.Id, logoId = t.barragemId, nome = t.nome, dataInicio = t.dataInicio, valor = t.valor,
+                               dataFim = t.dataFim, cidade = t.cidade, premiacao = t.premiacao, contato = t.barragem.email
+                           }).Union(
+                            from t in db.Torneio
+                            where t.dataFimInscricoes >= dataHoje && t.isAtivo && t.divulgaCidade 
+                            && t.cidade.ToUpper() == ranking.cidade.ToUpper()
+                            select new TorneioApp
+                            {
+                                Id = t.Id, logoId = t.barragemId, nome = t.nome, dataInicio = t.dataInicio, valor = t.valor,
+                                dataFim = t.dataFim, cidade = t.cidade, premiacao = t.premiacao, contato = t.barragem.email
+                            }).Union(
+                            from t in db.Torneio
+                            where t.dataFimInscricoes >= dataHoje && t.isAtivo && t.barragemId == rankingId
+                            select new TorneioApp
+                            {
+                                Id = t.Id, logoId = t.barragemId, nome = t.nome, dataInicio = t.dataInicio, valor = t.valor,
+                                dataFim = t.dataFim, cidade = t.cidade, premiacao = t.premiacao, contato = t.barragem.email
+                            }).Distinct<TorneioApp>().ToList();
+
+            return torneio;
+           
         }
 
     }

@@ -23,7 +23,7 @@
                 <div class="form-group">
                     @Html.LabelFor(model => model.qtddRodadas, new { @class = "col-sm-2 control-label" })
                     <div class="col-sm-6">
-                        @Html.TextBoxFor(model => model.qtddRodadas, new { @class = "form-control", @placeholder = "Caso seja temporada" })
+                        @Html.TextBoxFor(model => model.qtddRodadas, new { @class = "form-control" })
                     </div>
                     @Html.ValidationMessageFor(model => model.qtddRodadas)
                 </div>
@@ -55,8 +55,10 @@
                         @Html.LabelFor(model => model.tamanhoRodada)
                         <select id="tamanhoRodada" name="tamanhoRodada" style="max-width:25%;">
                             <option value="7" @if (Model.tamanhoRodada == 7) { @Html.Raw("selected") }>7</option>
+                            <option value="10"@if (Model.tamanhoRodada == 10) { @Html.Raw("selected") }>10</option>
                             <option value="14" @if (Model.tamanhoRodada == 14) { @Html.Raw("selected") }>14</option>
                             <option value="15" @if (Model.tamanhoRodada == 15) { @Html.Raw("selected") }>15</option>
+                            <option value="21" @if (Model.tamanhoRodada == 21) { @Html.Raw("selected")  }>21</option>
                         </select>
                     </div>
                 </div>

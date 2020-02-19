@@ -102,6 +102,9 @@ public class DataModel
     [JsonProperty(PropertyName = "type")]
     public string type { get; set; }
 
+    [JsonProperty(PropertyName = "idRanking")]
+    public int idRanking { get; set; }
+
 
 }
 

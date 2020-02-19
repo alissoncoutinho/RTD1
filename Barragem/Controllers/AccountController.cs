@@ -227,6 +227,148 @@ namespace Barragem.Controllers
             return View();
         }
 
+
+        [AllowAnonymous]
+        public MensagemRetorno RegisterTorneioNegocio(RegisterInscricao model, int torneioId, bool isSocio = false, bool isClasseDupla = false)
+        {
+            var torneio = db.Torneio.Find(torneioId);
+            var classesBarragem = db.Classe.Where(c => c.barragemId == torneio.barragemId).ToList();
+            var mensagemRetorno = new MensagemRetorno();
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    if (WebSecurity.UserExists(model.register.UserName))
+                    {
+                        mensagemRetorno.mensagem = "Login já existente.Favor escolha outro nome." + model.register.UserName;
+                        mensagemRetorno.tipo = "erro";
+                        return mensagemRetorno;
+                    }
+                    if (!Funcoes.IsValidEmail(model.register.email))
+                    {
+                        mensagemRetorno.mensagem = "E-mail inválido. " + model.register.email;
+                        mensagemRetorno.tipo = "erro";
+                        return mensagemRetorno;
+                    }
+                    if ((model.inscricao.classe == 0) || ((model.isMaisDeUmaClasse) && (model.classeInscricao2 == 0)))
+                    {
+                        mensagemRetorno.mensagem = "Selecione uma categoria.";
+                        mensagemRetorno.tipo = "erro";
+                        return mensagemRetorno;
+                    }
+                    if (model.inscricao.classe == model.classeInscricao2)
+                    {
+                        mensagemRetorno.mensagem = "Selecione uma categoria diferente na segunda opção de categoria.";
+                        mensagemRetorno.tipo = "erro";
+                        return mensagemRetorno;
+                    }
+                    WebSecurity.CreateUserAndAccount(model.register.UserName, model.register.Password, new
+                    {
+                        nome = model.register.nome,
+                        dataNascimento = model.register.dataNascimento,
+                        altura2 = model.register.altura2,
+                        altura = model.register.altura,
+                        telefoneFixo = "",
+                        telefoneCelular = model.register.telefoneCelular,
+                        telefoneCelular2 = "",
+                        email = model.register.email,
+                        situacao = Tipos.Situacao.torneio.ToString(),
+                        bairro = model.register.bairro,
+                        dataInicioRancking = DateTime.Now,
+                        naturalidade = "",
+                        lateralidade = model.register.lateralidade,
+                        nivelDeJogo = model.register.nivelDeJogo,
+                        barragemId = model.register.barragemId,
+                        classeId = classesBarragem[0].Id,
+
+                    });
+                    Roles.AddUserToRole(model.register.UserName, "usuario");
+                    WebSecurity.Login(model.register.UserName, model.register.Password);
+
+                    // incluir inscrição
+                    model.inscricao.userId = WebSecurity.GetUserId(model.register.UserName);
+                    if (model.isMaisDeUmaClasse)
+                    {
+                        if ((isSocio) && (torneio.valorMaisClassesSocio != null || torneio.valorMaisClassesSocio != 0))
+                        {
+                            model.inscricao.valor = torneio.valorMaisClassesSocio;
+                        }
+                        else
+                        {
+                            model.inscricao.valor = torneio.valorMaisClasses;
+                        }
+
+                    }
+                    else
+                    {
+                        if ((isSocio) && (torneio.valorSocio != null || torneio.valorSocio != 0))
+                        {
+                            model.inscricao.valor = torneio.valorSocio;
+                        }
+                        else
+                        {
+                            model.inscricao.valor = torneio.valor;
+                        }
+
+                    }
+                    if (torneio.valor > 0)
+                    {
+                        model.inscricao.isAtivo = false;
+                    }
+                    else
+                    {
+                        model.inscricao.isAtivo = true;
+                    }
+                    model.inscricao.isSocio = isSocio;
+                    db.InscricaoTorneio.Add(model.inscricao);
+                    if (model.isMaisDeUmaClasse)
+                    {
+                        InscricaoTorneio inscricao2 = new InscricaoTorneio();
+                        inscricao2.formaPagamento = model.inscricao.formaPagamento;
+                        inscricao2.classe = model.classeInscricao2;
+                        inscricao2.valor = model.inscricao.valor;
+                        inscricao2.isAtivo = model.inscricao.isAtivo;
+                        inscricao2.isSocio = model.inscricao.isSocio;
+                        inscricao2.observacao = model.inscricao.observacao;
+                        inscricao2.userId = model.inscricao.userId;
+                        inscricao2.torneioId = model.inscricao.torneioId;
+                        db.InscricaoTorneio.Add(inscricao2);
+                    }
+                    db.SaveChanges();
+                    if (isClasseDupla)
+                    {
+                        mensagemRetorno.mensagem = "";
+                        mensagemRetorno.tipo = "redirect";
+                        mensagemRetorno.nomePagina = "EscolherDupla";
+                        return mensagemRetorno;
+                    }
+                    mensagemRetorno.mensagem = "Inscrição realizada.";
+                    mensagemRetorno.tipo = "redirect";
+                    mensagemRetorno.nomePagina = "ConfirmacaoInscricao";
+                    return mensagemRetorno;
+                    
+                }
+                catch (MembershipCreateUserException e)
+                {
+                    ModelState.AddModelError("", ErrorCodeToString(e.StatusCode));
+                    mensagemRetorno.mensagem = e.Message;
+                    mensagemRetorno.tipo = "erro";
+                    return mensagemRetorno;
+                }
+            }
+            else
+            {
+                var message = string.Join(" | ", ModelState.Values
+                                            .SelectMany(v => v.Errors)
+                                            .Select(e => e.ErrorMessage));
+                mensagemRetorno.mensagem = message.ToString();
+                mensagemRetorno.tipo = "erro";
+                return mensagemRetorno;
+            }
+           
+        }
+
+
         [HttpPost]
         [AllowAnonymous]
         public ActionResult RegisterTorneio(RegisterInscricao model, int torneioId, bool isSocio=false, bool isClasseDupla = false)
@@ -244,98 +386,17 @@ namespace Barragem.Controllers
             var classes2Opcao = db.ClasseTorneio.Where(i => i.torneioId == torneioId && i.isSegundaOpcao).OrderBy(c => c.nome).ToList();
             ViewBag.Classes2Opcao = classes2Opcao;
             var classesBarragem = db.Classe.Where(c => c.barragemId == torneio.barragemId).ToList();
-            
-            if (ModelState.IsValid){
-                try{
-                    if (WebSecurity.UserExists(model.register.UserName)){
-                        ViewBag.MsgErro = string.Format("Login já existente. Favor escolha outro nome. '{0}'", model.register.UserName);
-                        return View(model);
-                    }
-                    if (!Funcoes.IsValidEmail(model.register.email)){
-                        ViewBag.MsgErro = string.Format("E-mail inválido. '{0}'", model.register.email);
-                        return View(model);
-                    }
-                    if ((model.inscricao.classe==0)||((model.isMaisDeUmaClasse)&&(model.classeInscricao2==0))){
-                        ViewBag.MsgErro = "Selecione uma categoria.";
-                        return View(model);
-                    }
-                    if (model.inscricao.classe == model.classeInscricao2){
-                        ViewBag.MsgErro = "Selecione uma categoria diferente na segunda opção de categoria.";
-                        return View(model);
-                    }
-                    WebSecurity.CreateUserAndAccount(model.register.UserName, model.register.Password, new{
-                        nome = model.register.nome,
-                        dataNascimento = model.register.dataNascimento,
-                        altura2 = model.register.altura2,
-                        altura = model.register.altura,
-                        telefoneFixo = "",
-                        telefoneCelular = model.register.telefoneCelular,
-                        telefoneCelular2 = "",
-                        email = model.register.email,
-                        situacao = Tipos.Situacao.torneio.ToString(),
-                        bairro = model.register.bairro,
-                        dataInicioRancking = DateTime.Now,
-                        naturalidade = "",
-                        lateralidade = model.register.lateralidade,
-                        nivelDeJogo = model.register.nivelDeJogo,
-                        barragemId = model.register.barragemId,
-                        classeId = classesBarragem[0].Id,
-                        
-                    });
-                    Roles.AddUserToRole(model.register.UserName, "usuario");
-                    WebSecurity.Login(model.register.UserName, model.register.Password);
-                    
-                    // incluir inscrição
-                    model.inscricao.userId = WebSecurity.GetUserId(model.register.UserName);
-                    if (model.isMaisDeUmaClasse){
-                        if ((isSocio) && (torneio.valorMaisClassesSocio != null || torneio.valorMaisClassesSocio != 0)){
-                            model.inscricao.valor = torneio.valorMaisClassesSocio;
-                        }else{
-                            model.inscricao.valor = torneio.valorMaisClasses;
-                        }
-
-                    }else{
-                        if ((isSocio) && (torneio.valorSocio != null || torneio.valorSocio != 0))
-                        {
-                            model.inscricao.valor = torneio.valorSocio;
-                        }
-                        else
-                        {
-                            model.inscricao.valor = torneio.valor;
-                        }
-
-                    }
-                    if (torneio.valor > 0){
-                        model.inscricao.isAtivo = false;
-                    }else{
-                        model.inscricao.isAtivo = true;
-                    }
-                    model.inscricao.isSocio = isSocio;
-                    db.InscricaoTorneio.Add(model.inscricao);
-                    if (model.isMaisDeUmaClasse){
-                        InscricaoTorneio inscricao2 = new InscricaoTorneio();
-                        inscricao2.formaPagamento = model.inscricao.formaPagamento;
-                        inscricao2.classe = model.classeInscricao2;
-                        inscricao2.valor = model.inscricao.valor;
-                        inscricao2.isAtivo = model.inscricao.isAtivo;
-                        inscricao2.isSocio = model.inscricao.isSocio;
-                        inscricao2.observacao = model.inscricao.observacao;
-                        inscricao2.userId = model.inscricao.userId;
-                        inscricao2.torneioId = model.inscricao.torneioId;
-                        db.InscricaoTorneio.Add(inscricao2);
-                    }
-                    db.SaveChanges();
-                    if (isClasseDupla){
-                        return RedirectToAction("EscolherDupla", "Torneio", new { torneioId = torneioId });
-                    }
-                    return RedirectToAction("ConfirmacaoInscricao", "Torneio", new { torneioId = torneio.Id, msg="Inscrição realizada." });            
-                }catch (MembershipCreateUserException e){
-                    ModelState.AddModelError("", ErrorCodeToString(e.StatusCode));
-                    return View(model);
-                }
+            var mensagemRetorno = RegisterTorneioNegocio(model, torneioId, isSocio, isClasseDupla);
+            if (mensagemRetorno.tipo == "erro")
+            {
+                ViewBag.MsgErro = mensagemRetorno.mensagem;
+                return View(model);
+            }else if (mensagemRetorno.tipo == "redirect")
+            {
+                return RedirectToAction(mensagemRetorno.nomePagina, "Torneio", new { torneioId = torneioId, msg = mensagemRetorno.mensagem });
+            } else {
+                return View(model);
             }
-            return View(model);            
-            
         }
 
         public ActionResult RegisterCoordenador()
@@ -462,7 +523,7 @@ namespace Barragem.Controllers
             return filePath;
         }
 
-        private void notificarOrganizadorCadastro(string nome, int idBarragem, string telefoneCelular)
+        public void notificarOrganizadorCadastro(string nome, int idBarragem, string telefoneCelular)
         {
             Mail mail = new Mail();
             mail.de = System.Configuration.ConfigurationManager.AppSettings.Get("UsuarioMail");
@@ -501,7 +562,7 @@ namespace Barragem.Controllers
             mail.EnviarMail();
         }
 
-        private void notificarJogador(string nome, string email, int barragemId)
+        public void notificarJogador(string nome, string email, int barragemId)
         {
             var barragem = db.BarragemView.Find(barragemId);
             Mail mail = new Mail();

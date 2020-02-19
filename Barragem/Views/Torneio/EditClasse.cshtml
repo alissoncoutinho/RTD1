@@ -135,32 +135,36 @@
                 
                 $(".excluirButton").confirm({
                     title: "Confirmação",
-                    text: "Tem certeza que deseja excluir esta classe?",
-                    confirm: function (button) {
-                        var Id = button.data("valor");
-                        event.preventDefault();
-                        $.ajax({
-                            url: "/Torneio/ExcluirClasse?Id="+Id,
-                            dataType: "json",
-                            contentType: "application/json; charset=utf-8",
-                            success: function (response) {
-                                if (typeof response == "object") {
-                                    if (response.retorno === 0) {
-                                        toastr.error(response.erro, "Erro");
-                                    } else {
-                                        $("#"+Id).remove();
-                                        toastr.success("Exlusão realizada com sucesso.", "Aviso");
+                    content: "Tem certeza que deseja excluir esta classe?",
+                    buttons: {
+                        sim: {
+                            text: 'Sim',
+                            btnClass: 'btn-primary',
+                            action: function () {
+                                var Id = this.$target.data("valor");
+                                event.preventDefault();
+                                $.ajax({
+                                    url: "/Torneio/ExcluirClasse?Id=" + Id,
+                                    dataType: "json",
+                                    contentType: "application/json; charset=utf-8",
+                                    success: function (response) {
+                                        if (typeof response == "object") {
+                                            if (response.retorno === 0) {
+                                                toastr.error(response.erro, "Erro");
+                                            } else {
+                                                $("#" + Id).remove();
+                                                toastr.success("Exlusão realizada com sucesso.", "Aviso");
+                                            }
+                                        }
+                                    },
+                                    error: function (jqXHR, textStatus, errorThrown) {
+                                        toastr.error(textStatus, "Erro");
                                     }
-                                }
-                            },
-                            error: function (jqXHR, textStatus, errorThrown) {
-                                toastr.error(textStatus, "Erro");
+                                });
                             }
-                        });
-                    },
-                    cancel: function (button) { },
-                    confirmButton: "Sim",
-                    cancelButton: "Não"
+                        },
+                        cancelar: function () { },
+                    }
                 });
             });
         </script>

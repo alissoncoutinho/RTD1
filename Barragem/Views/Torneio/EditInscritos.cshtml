@@ -196,16 +196,18 @@
 
         $(".confirmExclusao").confirm({
             title: "Confirmação",
-            text: "Tem certeza que deseja excluir esta inscrição?",
-            confirm: function (button) {
-                var i = button.data("valor");
-                window.location.href = "/Torneio/ExcluirInscricao?Id="+i;
-            },
-            cancel: function (button) {
-
-            },
-            confirmButton: "Sim",
-            cancelButton: "Não"
+            content: "Tem certeza que deseja excluir esta inscrição?",
+            buttons: {
+                sim: {
+                    text: 'Sim',
+                    btnClass: 'btn-primary',
+                    action: function () {
+                        var i = this.$target.data("valor");
+                        window.location.href = "/Torneio/ExcluirInscricao?Id=" + i;
+                    }
+                },
+                cancelar: {}
+            }
         });
 
         $(".detalhe").click(function (event) {
