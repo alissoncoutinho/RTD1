@@ -323,6 +323,7 @@
     <Content Include="Content\font-awesome\css\font-awesome.min.css" />
     <Content Include="Content\font-awesome\fonts\fontawesome-webfont.svg" />
     <Content Include="Content\image\doc.png" />
+    <Content Include="Content\image\googlePlay.png" />
     <Content Include="Content\image\pdf.png" />
     <Content Include="Content\image\ppt.png" />
     <Content Include="Content\image\sem-foto.jpg" />
