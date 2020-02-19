@@ -924,6 +924,7 @@ namespace Barragem.Controllers
             ViewBag.torneioId = torneioId;
             ///ViewBag.Categorias
             List<Categoria> categorias = new List<Categoria>();
+            categorias.Add(new Categoria() { Id = 0 , Nome = "Criar classe que não contará pontos para a liga" });
             List<TorneioLiga> ligasDotorneio = db.TorneioLiga.Where(tl => tl.TorneioId == torneioId).ToList();
             List<int> ligas = new List<int>();
             foreach (TorneioLiga tl in ligasDotorneio)
@@ -944,6 +945,8 @@ namespace Barragem.Controllers
         {
             if (ModelState.IsValid)
             {
+                if (classe.categoriaId == 0)
+                    classe.categoriaId = null;
                 db.ClasseTorneio.Add(classe);
                 db.SaveChanges();
                 return RedirectToAction("EditClasse", new { torneioId = classe.torneioId });
