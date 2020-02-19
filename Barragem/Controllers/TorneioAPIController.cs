@@ -23,7 +23,7 @@ namespace Barragem.Controllers
             var dataHoje = DateTime.Now.AddDays(-5);
             var Torneios = (from inscricao in db.InscricaoTorneio
                            join torneio in db.Torneio on inscricao.torneioId equals torneio.Id into colocacaoJogador
-                           where inscricao.userId == userId && inscricao.isAtivo && inscricao.torneio.isAtivo && inscricao.torneio.dataFim > dataHoje
+                           where inscricao.userId == userId && inscricao.torneio.isAtivo && inscricao.torneio.dataFim > dataHoje
                 select new TorneioApp
                 {
                     Id = inscricao.torneio.Id,
@@ -561,6 +561,39 @@ namespace Barragem.Controllers
             
         }
 
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("api/TorneioAPI/Disponivel/{rankingId}")]
+        public IList<TorneioApp> GetTorneioDisponivel(int rankingId)
+        {
+            var dataHoje = DateTime.Now;
+            var ranking = db.BarragemView.Find(rankingId);
+            var torneio = (from t in db.Torneio
+                           where t.dataFimInscricoes >= dataHoje && t.isAtivo && t.isOpen
+                           select new TorneioApp
+                           {
+                               Id = t.Id, logoId = t.barragemId, nome = t.nome, dataInicio = t.dataInicio, valor = t.valor,
+                               dataFim = t.dataFim, cidade = t.cidade, premiacao = t.premiacao, contato = t.barragem.email
+                           }).Union(
+                            from t in db.Torneio
+                            where t.dataFimInscricoes >= dataHoje && t.isAtivo && t.divulgaCidade 
+                            && t.cidade.ToUpper() == ranking.cidade.ToUpper()
+                            select new TorneioApp
+                            {
+                                Id = t.Id, logoId = t.barragemId, nome = t.nome, dataInicio = t.dataInicio, valor = t.valor,
+                                dataFim = t.dataFim, cidade = t.cidade, premiacao = t.premiacao, contato = t.barragem.email
+                            }).Union(
+                            from t in db.Torneio
+                            where t.dataFimInscricoes >= dataHoje && t.isAtivo && t.barragemId == rankingId
+                            select new TorneioApp
+                            {
+                                Id = t.Id, logoId = t.barragemId, nome = t.nome, dataInicio = t.dataInicio, valor = t.valor,
+                                dataFim = t.dataFim, cidade = t.cidade, premiacao = t.premiacao, contato = t.barragem.email
+                            }).Distinct<TorneioApp>().ToList();
+
+            return torneio;
+           
+        }
 
     }
 }

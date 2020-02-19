@@ -118,6 +118,7 @@ namespace Barragem.Models
         public string cidade { get; set; }
         public string premiacao { get; set; }
         public string contato { get; set; }
+        public double? valor { get; set; }
     }
     public class TabelaApp
     {
