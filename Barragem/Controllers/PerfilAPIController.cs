@@ -281,6 +281,7 @@ namespace Barragem.Controllers
                 j.dataJogo = jogo.dataJogo;
                 j.horaJogo = jogo.horaJogo;
                 j.localJogo = jogo.localJogo;
+                j.situacao = jogo.situacao.descricao;
                 j.fotoDesafiado = jogo.desafiado.fotoURL;
                 j.fotoDesafiante = jogo.desafiante.fotoURL;
                 j.qtddGames1setDesafiante = jogo.qtddGames1setDesafiante;
