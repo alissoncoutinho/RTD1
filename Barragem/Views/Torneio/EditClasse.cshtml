@@ -49,7 +49,14 @@
                         @if (ViewBag.isLiga)
                         {
                             <th>
-                                @item.Categoria.Nome
+                                @if (@item.Categoria != null)
+                                {
+                                    @item.Categoria.Nome
+                                }
+                                else
+                                {
+                                    @Html.Raw("Sem categoria(não conta pontos na liga)")
+                                }
                             </th>
                         }
                         <td>

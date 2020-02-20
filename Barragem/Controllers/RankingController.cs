@@ -105,7 +105,7 @@ namespace Barragem.Controllers
         }
 
         [Authorize(Roles = "admin,usuario,organizador")]
-        public ActionResult RankingDasLigas(int idLiga = 3, int idSnapshot = 1)
+        public ActionResult RankingDasLigas(int idLiga = 0, int idSnapshot = 0, int idLigaAtual = 0, int idSnapshotAtual = 0)
         {
             UserProfile usuario = db.UserProfiles.Find(WebSecurity.GetUserId(User.Identity.Name));
             string perfil = Roles.GetRolesForUser(User.Identity.Name)[0];
@@ -124,16 +124,32 @@ namespace Barragem.Controllers
                          where it.userId == usuario.UserId
                 select liga).ToList();
             }
-            List<Snapshot> snapshotsDaLiga = db.Snapshot.Where(snap => snap.LigaId == idLiga).ToList();
-            List<SnapshotRanking> ranking = db.SnapshotRanking.Where(snapR => snapR.SnapshotId == idSnapshot)
+            if (idLiga == 0 && ligas.Count()>0)
+            {
+                idLiga = ligas.First().Id;
+            }
+            List<Snapshot> snapshotsDaLiga = db.Snapshot.Where(snap => snap.LigaId == idLiga).OrderByDescending(s=>s.Id).ToList();
+            List<SnapshotRanking> ranking = new List<SnapshotRanking>();
+            List<Categoria> categorias = new List<Categoria>();
+            if (snapshotsDaLiga.Count()>0)
+            {
+                if (idSnapshot == 0)
+                {
+                    idSnapshot = snapshotsDaLiga.First().Id;
+                }
+                ranking = db.SnapshotRanking.Where(snapR => snapR.SnapshotId == idSnapshot)
                 .Include(s => s.Categoria).Include(s => s.Jogador)
                 .OrderBy(snap => snap.Categoria.Nome).ThenBy(snap => snap.Posicao)
                 .ToList();
-            List<Categoria> categorias = db.SnapshotRanking.Where(sr => sr.SnapshotId == idSnapshot)
-                .Include(sr => sr.Categoria).Select(sr => sr.Categoria).Distinct().ToList();
+                categorias = db.SnapshotRanking.Where(sr => sr.SnapshotId == idSnapshot)
+                    .Include(sr => sr.Categoria).Select(sr => sr.Categoria).Distinct().ToList();
+            }
+            
             ViewBag.Ligas = ligas;
             ViewBag.SnapshotsDaLiga = snapshotsDaLiga;
             ViewBag.Categorias = categorias;
+            ViewBag.idLiga = idLiga;
+            ViewBag.idSnapshot = idSnapshot;
             return View(ranking);
         }
     }

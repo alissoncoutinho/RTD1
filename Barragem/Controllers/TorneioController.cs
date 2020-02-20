@@ -924,6 +924,7 @@ namespace Barragem.Controllers
             ViewBag.torneioId = torneioId;
             ///ViewBag.Categorias
             List<Categoria> categorias = new List<Categoria>();
+            categorias.Add(new Categoria() { Id = 0 , Nome = "Criar classe que não contará pontos para a liga" });
             List<TorneioLiga> ligasDotorneio = db.TorneioLiga.Where(tl => tl.TorneioId == torneioId).ToList();
             List<int> ligas = new List<int>();
             foreach (TorneioLiga tl in ligasDotorneio)
@@ -944,6 +945,8 @@ namespace Barragem.Controllers
         {
             if (ModelState.IsValid)
             {
+                if (classe.categoriaId == 0)
+                    classe.categoriaId = null;
                 db.ClasseTorneio.Add(classe);
                 db.SaveChanges();
                 return RedirectToAction("EditClasse", new { torneioId = classe.torneioId });
@@ -2061,8 +2064,20 @@ namespace Barragem.Controllers
                 }
                 else
                 {
+                    //cadastrar a pontuacao do vice 
+                    var inscricaoPerdedor = db.InscricaoTorneio.Where(i => i.userId == jogo.idDoPerdedor 
+                        && i.torneioId == jogo.torneioId && i.classe == jogo.classeTorneio).ToList();
+                    if (inscricaoPerdedor.Count() > 0)
+                    {
+                        inscricaoPerdedor[0].colocacao = 1; // vice
+                        jogo.faseTorneio = 1;
+                        int pontuacao = CalculadoraDePontos.AddTipoTorneio(torneio.TipoTorneio).CalculaPontos(jogo);
+                        inscricaoPerdedor[0].Pontuacao = pontuacao;
+                        db.SaveChanges();    
+                    }
                     // indicar o vencedor do torneio
-                    var inscricao = db.InscricaoTorneio.Where(i => i.userId == jogo.idDoVencedor && i.torneioId == jogo.torneioId).ToList();
+                    var inscricao = db.InscricaoTorneio.Where(i => i.userId == jogo.idDoVencedor 
+                        && i.torneioId == jogo.torneioId && i.classe == jogo.classeTorneio).ToList();
                     if (inscricao.Count() > 0)
                     {
                         inscricao[0].colocacao = 0; // vencedor
@@ -2070,12 +2085,7 @@ namespace Barragem.Controllers
                         int pontuacao = CalculadoraDePontos.AddTipoTorneio(torneio.TipoTorneio).CalculaPontos(jogo);
                         inscricao[0].Pontuacao = pontuacao;
                         db.SaveChanges();
-                        /*
-                         * 
-                         * Aqui gerar os snapshots!!!!!!!!
-                         * 
-                         * 
-                         */
+                        //
                         new CalculadoraDePontos().GerarSnapshotDaLiga(jogo);
                     }
                 }
