@@ -7,6 +7,6 @@ namespace Barragem.Models
 {
     public abstract class TipoTorneio
     {
-        public abstract int CalculaPontos(Jogo jogo);
+        public abstract int CalculaPontos(InscricaoTorneio inscricao);
     }
 }

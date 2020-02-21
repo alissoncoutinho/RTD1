@@ -7,9 +7,9 @@ namespace Barragem.Models
 {
     public class Torneio1000 : TipoTorneio
     {
-        public override int CalculaPontos(Jogo jogo)
+        public override int CalculaPontos(InscricaoTorneio inscricao)
         {
-            switch (jogo.faseTorneio)
+            switch (inscricao.colocacao)
             {
                 case 0:
                     return 1000;
