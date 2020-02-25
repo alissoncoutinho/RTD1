@@ -118,7 +118,7 @@ namespace Barragem.Models
         [Display(Name = "Cabeça de Chave")]
         public int? cabecaChave { get; set; }
 
-        public int Pontuacao { get; set; }
+        public int? Pontuacao { get; set; }
 
     }
 

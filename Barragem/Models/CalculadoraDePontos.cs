@@ -98,7 +98,7 @@ namespace Barragem.Models
                                 && sr.CategoriaId == categoriaDaLiga.Id 
                                 && sr.UserId == resultado.userId
                                 && sr.SnapshotId == novoSnap.Id).Single();
-                            int pontuacaoAtualizada = ultimoRankingDoJogador.Pontuacao + resultado.Pontuacao;
+                            int pontuacaoAtualizada = ultimoRankingDoJogador.Pontuacao + resultado.Pontuacao ?? 0;
                             ultimoRankingDoJogador.Pontuacao = pontuacaoAtualizada;
                             db.SaveChanges();
                         }
@@ -109,7 +109,7 @@ namespace Barragem.Models
                             novoRanking.LigaId = liga.Id;
                             novoRanking.CategoriaId = categoriaDaLiga.Id;
                             novoRanking.UserId = resultado.userId;
-                            novoRanking.Pontuacao = resultado.Pontuacao;
+                            novoRanking.Pontuacao = resultado.Pontuacao ?? 0;
                             db.SnapshotRanking.Add(novoRanking);
                             db.SaveChanges();
                         }
