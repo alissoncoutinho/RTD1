@@ -1013,6 +1013,29 @@ namespace Barragem.Controllers
             return View(torneio);
         }
 
+        [AllowAnonymous]
+        public ActionResult LoginInscricaoApp(int torneioId, string credenciais)
+        {
+            try
+            {
+                var bytes = Convert.FromBase64String(credenciais);
+                var userPass = System.Text.Encoding.UTF8.GetString(bytes);
+                var userName = userPass.Split('|')[0];
+                var password = userPass.Split('|')[1];
+                if (WebSecurity.Login(userName, password))
+                {
+                    return RedirectToAction("Detalhes", new { id = torneioId });
+                }
+                else
+                {
+                    return RedirectToAction("Login", "Account", new { torneioId = torneioId, returnUrl = "torneio" });
+                }
+            }catch(Exception e)
+            {
+                return RedirectToAction("Login", "Account", new { torneioId = torneioId, returnUrl = "torneio" });
+            }
+        }
+
         [Authorize(Roles = "admin,usuario,organizador")]
         public ActionResult Detalhes(int id = 0, String Msg = "", int userId=0)
         {
