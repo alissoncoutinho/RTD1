@@ -38,11 +38,16 @@ namespace Barragem.Models
 
         public void GerarSnapshotDaLiga(Jogo jogo)
         {
-            //testa se é o jogo da final
-            /*if (!"0".Equals(jogo.faseTorneio))
+            //verifica se todas as finais foram lançadas
+            List<Jogo> finaisDoTorneio = db.Jogo.Where(j => j.torneioId == jogo.torneioId && j.faseTorneio == 1).ToList();
+            foreach(Jogo finalDeClasse in finaisDoTorneio)
             {
-                return;
-            }*/
+                if (!(finalDeClasse.situacao_Id==4 || finalDeClasse.situacao_Id == 5 || finalDeClasse.situacao_Id == 6))
+                {
+                    //não gera novo ranking enquanto nao finalizar todas as classes do torneio
+                    return;
+                }
+            }
             List<TorneioLiga> ligasDoTorneio = db.TorneioLiga.Include(tl => tl.Liga).Where(tl => tl.TorneioId == jogo.torneioId).ToList();
             foreach(TorneioLiga tl in ligasDoTorneio)
             {

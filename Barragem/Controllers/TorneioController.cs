@@ -1959,12 +1959,13 @@ namespace Barragem.Controllers
             {
                 colocacao = (int)jogo.faseTorneio;
             }
-            var inscricao = db.InscricaoTorneio.Where(i => i.userId == jogo.idDoPerdedor && i.torneioId == jogo.torneioId).ToList();
+            var inscricao = db.InscricaoTorneio.Where(i => i.userId == jogo.idDoPerdedor 
+                && i.torneioId == jogo.torneioId && i.classe == jogo.classeTorneio).ToList();
             if (inscricao.Count() > 0)
             {
                 inscricao[0].colocacao = colocacao;
                 Torneio torneio = db.Torneio.Where(t => t.Id == jogo.torneioId).Single();
-                int pontuacao = CalculadoraDePontos.AddTipoTorneio(torneio.TipoTorneio).CalculaPontos(jogo);
+                int pontuacao = CalculadoraDePontos.AddTipoTorneio(torneio.TipoTorneio).CalculaPontos(inscricao[0]);
                 inscricao[0].Pontuacao = pontuacao;
                 db.SaveChanges();
             }
@@ -2071,7 +2072,7 @@ namespace Barragem.Controllers
                     {
                         inscricaoPerdedor[0].colocacao = 1; // vice
                         jogo.faseTorneio = 1;
-                        int pontuacao = CalculadoraDePontos.AddTipoTorneio(torneio.TipoTorneio).CalculaPontos(jogo);
+                        int pontuacao = CalculadoraDePontos.AddTipoTorneio(torneio.TipoTorneio).CalculaPontos(inscricaoPerdedor[0]);
                         inscricaoPerdedor[0].Pontuacao = pontuacao;
                         db.SaveChanges();    
                     }
@@ -2081,13 +2082,13 @@ namespace Barragem.Controllers
                     if (inscricao.Count() > 0)
                     {
                         inscricao[0].colocacao = 0; // vencedor
-                        jogo.faseTorneio = 0;
-                        int pontuacao = CalculadoraDePontos.AddTipoTorneio(torneio.TipoTorneio).CalculaPontos(jogo);
+                        jogo.faseTorneio = 1;
+                        int pontuacao = CalculadoraDePontos.AddTipoTorneio(torneio.TipoTorneio).CalculaPontos(inscricao[0]);
                         inscricao[0].Pontuacao = pontuacao;
                         db.SaveChanges();
-                        //
-                        new CalculadoraDePontos().GerarSnapshotDaLiga(jogo);
                     }
+                    //
+                    new CalculadoraDePontos().GerarSnapshotDaLiga(jogo);
                 }
             }
         }

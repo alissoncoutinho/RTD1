@@ -7,7 +7,7 @@ namespace Barragem.Models
 {
     public class TorneioGenerico : TipoTorneio
     {
-        public override int CalculaPontos(Jogo jogo)
+        public override int CalculaPontos(InscricaoTorneio inscricao)
         {
             return 0;
         }
