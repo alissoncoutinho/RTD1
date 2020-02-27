@@ -69,7 +69,7 @@ namespace Barragem.Controllers
                     }
                 }
                 if ((!String.IsNullOrEmpty(returnUrl)) && (returnUrl.Equals("EscolherDupla")) && (torneioId != 0)){
-                    return RedirectToAction("EscolherDupla", "Torneio", new {torneioId = torneioId });
+                    return RedirectToAction("EscolherDupla", "Torneio", new {id = torneioId });
                 }
                 if ((!String.IsNullOrEmpty(returnUrl)) && (returnUrl.Equals("torneio")) && (torneioId!=0)) {
                     return RedirectToAction("Detalhes", "Torneio", new {id=torneioId });    

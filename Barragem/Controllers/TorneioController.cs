@@ -158,8 +158,9 @@ namespace Barragem.Controllers
         }
 
         [Authorize(Roles = "admin,usuario,organizador")]
-        public ActionResult EscolherDupla(int torneioId, int classe = 0, bool segundaClasseDupla = false, int userId=0)
+        public ActionResult EscolherDupla(int id, int classe = 0, bool segundaClasseDupla = false, int userId=0)
         {
+            var torneioId = id;
 
             string perfil = Roles.GetRolesForUser(User.Identity.Name)[0];
             if (perfil.Equals("usuario")|| userId==0){
@@ -1266,7 +1267,7 @@ namespace Barragem.Controllers
                     }
                     else
                     {
-                        if ((isSocio) && (torneio.valorSocio != null || torneio.valorSocio != 0))
+                        if ((isSocio) && (torneio.isDesconto != null && (bool)torneio.isDesconto))
                         {
                             inscricao.valor = torneio.valorSocio;
                         }

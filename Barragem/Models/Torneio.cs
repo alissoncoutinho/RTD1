@@ -55,13 +55,13 @@ namespace Barragem.Models
         [Display(Name = "Valor da Inscrição")]
         public double? valor { get; set; }
 
-        [Display(Name = "Valor para sócio")]
+        [Display(Name = "Valor com desconto")]
         public double? valorSocio { get; set; }
 
         [Display(Name = "Valor para +1 classe")]
         public double? valorMaisClasses { get; set; }
 
-        [Display(Name = "Valor sócio +1 classe")]
+        [Display(Name = "Valor desconto +1 classe")]
         public double? valorMaisClassesSocio { get; set; }
 
         [Display(Name = "Tem Repescagem")]
@@ -109,6 +109,9 @@ namespace Barragem.Models
         public IList<int> liga { get; set; }
 
         public String TipoTorneio { get; set; }
+
+        public string descontoPara { get; set; }
+        public bool? isDesconto { get; set; }
     }
 
 
@@ -123,6 +126,7 @@ namespace Barragem.Models
         public string premiacao { get; set; }
         public string contato { get; set; }
         public double? valor { get; set; }
+        public double? valorSocio { get; set; }
     }
     public class TabelaApp
     {

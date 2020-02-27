@@ -80,7 +80,7 @@
                 <div class="col-sm-offset-2 col-sm-6">
                     <div class="checkbox">
                         <label>
-                            <input type="checkbox" value="true" name="isDescontoSocio" id="isDescontoSocio" onclick="CadastrarValorDescontoSocio()" /> @Html.Raw("Tem desconto para sócio")
+                            <input type="checkbox" value="true" name="isDesconto" id="isDesconto" onclick="CadastrarValorDescontoSocio()" /> @Html.Raw("Tem desconto para") <select name="descontoPara"><option value="sócio">sócio</option><option value="barragista">barragista</option><option value="federado">federado</option></select>
                         </label>
                     </div>
                 </div>
@@ -284,7 +284,7 @@
      });
 
     function CadastrarValorDescontoSocio() {
-        if (document.getElementById('isDescontoSocio').checked) {
+        if (document.getElementById('isDesconto').checked) {
             document.getElementById('descontoSocio').style.opacity = "1";
             document.getElementById('descontoSocio').style.display = "block";
             document.getElementById('descontoSocioMaisClasses').style.opacity = "1";

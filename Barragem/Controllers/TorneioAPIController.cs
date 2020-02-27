@@ -587,7 +587,7 @@ namespace Barragem.Controllers
                             where t.dataFimInscricoes >= dataHoje && t.isAtivo && t.barragemId == rankingId
                             select new TorneioApp
                             {
-                                Id = t.Id, logoId = t.barragemId, nome = t.nome, dataInicio = t.dataInicio, valor = t.valor,
+                                Id = t.Id, logoId = t.barragemId, nome = t.nome, dataInicio = t.dataInicio, valor = t.valor, valorSocio = t.valorSocio,
                                 dataFim = t.dataFim, cidade = t.cidade, premiacao = t.premiacao, contato = t.barragem.email
                             }).Distinct<TorneioApp>().ToList();
 

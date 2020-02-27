@@ -77,37 +77,40 @@
                     var url = "/Torneio/ConfirmacaoInscricao?torneioId=" + torneio + "&msg=Inscrição realizada com sucesso&userId="+userId;
                     if (temMaisClassesDuplas) {
                         textoButton = "Ok. Ir para a escolha da próxima categoria."
-                        url = "/Torneio/EscolherDupla?torneioId=" + torneio + "&classe=0&segundaClasseDupla=true&userId="+userId;
+                        url = "/Torneio/EscolherDupla?id=" + torneio + "&classe=0&segundaClasseDupla=true&userId="+userId;
                     }
                     $.confirm({
-                        text: "Você está escolhendo <b>" + participante + "</b>, telefone <b>" + fone + "</b> como sua dupla. <b>Deseja prosseguir?</b>",
-                        confirm: function (button) {
-                            $.ajax({
-                                type: "POST",
-                                url: "/Torneio/EscolherDupla",
-                                dataType: "json",
-                                data: "{'inscricaoJogador':'" + id + "', 'torneioId':'" + torneio + "', 'classe':'" + classe + "', 'userId':'" + userId + "'}",
-                                contentType: "application/json; charset=utf-8",
-                                success: function (response) {
-                                    if (typeof response == "object") {
-                                        if (response.retorno === 0) {
-                                            toastr.error(response.erro, "Erro");
-                                        } else {
-                                            //$('#escolhaTd' + id).html('<small style="color:green;"><b>Parceiro Escolhido</b></small>');
-                                            window.location.href = url;
+                        title: "",
+                        content: "Você está escolhendo <b>" + participante + "</b>, telefone <b>" + fone + "</b> como sua dupla. <b>Deseja prosseguir?</b>",
+                        buttons: {
+                            sim: {
+                                text: textoButton,
+                                btnClass: 'btn-primary',
+                                action: function () {
+                                    $.ajax({
+                                        type: "POST",
+                                        url: "/Torneio/EscolherDupla",
+                                        dataType: "json",
+                                        data: "{'inscricaoJogador':'" + id + "', 'torneioId':'" + torneio + "', 'classe':'" + classe + "', 'userId':'" + userId + "'}",
+                                        contentType: "application/json; charset=utf-8",
+                                        success: function (response) {
+                                            if (typeof response == "object") {
+                                                if (response.retorno === 0) {
+                                                    toastr.error(response.erro, "Erro");
+                                                } else {
+                                                    //$('#escolhaTd' + id).html('<small style="color:green;"><b>Parceiro Escolhido</b></small>');
+                                                    window.location.href = url;
+                                                }
+                                            }
+                                        },
+                                        error: function (jqXHR, textStatus, errorThrown) {
+                                            location.reload(true);
                                         }
-                                    }
-                                },
-                                error: function (jqXHR, textStatus, errorThrown) {
-                                    location.reload(true);
+                                    });
                                 }
-                            });
-                        },
-                        cancel: function (button) {
-
-                        },
-                        confirmButton: textoButton,
-                        cancelButton: "Não"
+                            },
+                            cancelar: { text: "Não" }
+                        }
                     });
 
                 });
@@ -121,20 +124,23 @@
                     var url = "/Torneio/ConfirmacaoInscricao?torneioId=" + torneio + "&msg=Inscrição realizada com sucesso&userId=" + userId;
                     if (temMaisClassesDuplas) {
                         textoButton = "Ok. Ir para escolha do parceiro da outra categoria."
-                        url = "/Torneio/EscolherDupla?torneioId=" + torneio + "&classe=0&segundaClasseDupla=true&userId="+userId;
+                        url = "/Torneio/EscolherDupla?id=" + torneio + "&classe=0&segundaClasseDupla=true&userId="+userId;
                     }
                     $.confirm({
-                        text: "Isso acontece porque o seu parceiro ainda não se inscreveu. Não se preocupe, ele poderá te escolher como parceiro no momento da inscrição dele.",
-                        confirm: function (button) {
-                            window.location.href = url;
-                        },
-                        confirmButton: textoButton,
-                        cancelButton: "Voltar"
+                        title: "",
+                        content: "Isso acontece porque o seu parceiro ainda não se inscreveu. Não se preocupe, ele poderá te escolher como parceiro no momento da inscrição dele.",
+                        buttons: {
+                            sim: {
+                                text: textoButton,
+                                btnClass: 'btn-primary',
+                                action: function () {
+                                    window.location.href = url;
+                                }
+                            },
+                            cancelar: { text: "Voltar" }
+                        }
                     });
-
                 });
-
-
             });
 
         </script>

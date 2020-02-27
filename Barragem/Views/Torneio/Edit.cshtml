@@ -86,14 +86,19 @@
                     <div class="col-sm-offset-2 col-sm-6">
                         <div class="checkbox">
                             <label>
-                                @if ((Model.valorSocio != null) && (Model.valorSocio != 0))
+                                @if (Model.isDesconto != null && (bool)Model.isDesconto)
                                 {
-                                    <input type="checkbox" checked value="true" name="isDescontoSocio" id="isDescontoSocio" onclick="CadastrarValorDescontoSocio()" /> @Html.Raw("Tem desconto para sócio")
+                                    <input type="checkbox" checked value="true" name="isDesconto" id="isDesconto" onclick="CadastrarValorDescontoSocio()" /> 
                                 }
                                 else
                                 {
-                                    <input type="checkbox" value="true" name="isDescontoSocio" id="isDescontoSocio" onclick="CadastrarValorDescontoSocio()" /> @Html.Raw("Tem desconto para sócio")
+                                    <input type="checkbox" value="true" name="isDesconto" id="isDesconto" onclick="CadastrarValorDescontoSocio()" /> 
                                 }
+                                @Html.Raw("Tem desconto para ") <select name="descontoPara">
+                                <option @if (Model.descontoPara!=null && Model.descontoPara.Equals("sócio")){ @Html.Raw("selected")} value="sócio">sócio</option>
+                                <option @if (Model.descontoPara!=null && Model.descontoPara.Equals("barragista")){ @Html.Raw("selected")} value="barragista">barragista</option>
+                                <option @if (Model.descontoPara!=null && Model.descontoPara.Equals("federado")){ @Html.Raw("selected")} value="federado">federado</option>
+                                </select>
                             </label>
                         </div>
                     </div>
@@ -438,7 +443,7 @@
         }
 
         function CadastrarValorDescontoSocio() {
-            if (document.getElementById('isDescontoSocio').checked) {
+            if (document.getElementById('isDesconto').checked) {
                 document.getElementById('descontoSocio').style.opacity = "1";
                 document.getElementById('descontoSocio').style.display = "block";
                 document.getElementById('descontoSocioMaisClasses').style.opacity = "1";
@@ -453,7 +458,7 @@
             }
         }
 
-        if (!document.getElementById('isDescontoSocio').checked) {
+        if (!document.getElementById('isDesconto').checked) {
             document.getElementById('descontoSocio').style.opacity = "0";
             document.getElementById('descontoSocio').style.display = "none";
             document.getElementById('descontoSocioMaisClasses').style.opacity = "0";
