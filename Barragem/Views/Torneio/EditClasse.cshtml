@@ -51,11 +51,11 @@
                             <th>
                                 @if (@item.Categoria != null)
                                 {
-                                    @item.Categoria.Nome
+                                    @Html.Raw(item.Categoria.Nome + "- Liga")
                                 }
                                 else
                                 {
-                                    @Html.Raw("Sem categoria(não conta pontos na liga)")
+                                    @Html.Raw("não conta pontos para liga")
                                 }
                             </th>
                         }
