@@ -876,6 +876,7 @@
     <Content Include="Views\Liga\Edit.cshtml" />
     <Content Include="Views\Liga\EditBarragens.cshtml" />
     <Content Include="Views\Ranking\RankingDasLigas.cshtml" />
+    <Content Include="Views\Torneio\EditObs.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

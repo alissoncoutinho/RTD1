@@ -890,6 +890,16 @@ namespace Barragem.Controllers
         }
 
         [Authorize(Roles = "admin,organizador")]
+        public ActionResult EditObs(int torneioId)
+        {
+            List<InscricaoTorneio> inscricao = db.InscricaoTorneio.Where(i => i.torneioId == torneioId && i.observacao !=null && i.observacao != "").ToList();
+            ViewBag.flag = "obs";
+            ViewBag.TorneioId = torneioId;
+            return View(inscricao);
+        }
+
+
+        [Authorize(Roles = "admin,organizador")]
         public ActionResult EditClasse(int torneioId)
         {
             var classes = db.ClasseTorneio.Where(c => c.torneioId == torneioId).ToList();
