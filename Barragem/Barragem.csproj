@@ -299,6 +299,7 @@
     <Compile Include="Models\Temporada.cs" />
     <Compile Include="Models\TipoTorneio.cs" />
     <Compile Include="Models\Torneio.cs" />
+    <Compile Include="Models\Torneio100.cs" />
     <Compile Include="Models\Torneio1000.cs" />
     <Compile Include="Models\Torneio250.cs" />
     <Compile Include="Models\Torneio500.cs" />

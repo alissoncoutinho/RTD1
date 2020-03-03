@@ -25,6 +25,8 @@ namespace Barragem.Models
         {
             switch (tipo)
             {
+                case "100":
+                    return new Torneio100();
                 case "250":
                     return new Torneio250();
                 case "500":

@@ -89,12 +89,12 @@ namespace Barragem.Controllers
         {
             var userId = WebSecurity.GetUserId(User.Identity.Name);
             var inscricoes = db.InscricaoTorneio.Where(i => i.torneioId == torneioId && i.participante.UserId == userId).ToList();
-            var classes = db.ClasseTorneio.Where(i => i.torneioId == torneioId).OrderBy(c => c.nome).ToList();
+            var classes = db.ClasseTorneio.Where(i => i.torneioId == torneioId).OrderBy(c => c.Id).ToList();
             ViewBag.ClasseTorneio = classes;
             if (inscricoes.Count() > 1)
             {
                 ViewBag.Classe2Opcao = inscricoes[1].classe;
-                var classes2 = db.ClasseTorneio.Where(i => i.torneioId == torneioId).OrderBy(c => c.nome).ToList();
+                var classes2 = db.ClasseTorneio.Where(i => i.torneioId == torneioId).OrderBy(c => c.Id).ToList();
                 ViewBag.ClasseTorneio2 = classes2;
             }
             return View(inscricoes[0]);
@@ -1061,8 +1061,8 @@ namespace Barragem.Controllers
                 userId = WebSecurity.GetUserId(User.Identity.Name);
             }
             var inscricao = db.InscricaoTorneio.Where(i => i.torneio.Id == id && i.userId == userId).ToList();
-            var classes = db.ClasseTorneio.Where(i => i.torneioId == id && i.isPrimeiraOpcao).OrderBy(c => c.nome).ToList();
-            var classes2 = db.ClasseTorneio.Where(i => i.torneioId == id && i.isSegundaOpcao).OrderBy(c => c.nome).ToList();
+            var classes = db.ClasseTorneio.Where(i => i.torneioId == id && i.isPrimeiraOpcao).OrderBy(c => c.Id).ToList();
+            var classes2 = db.ClasseTorneio.Where(i => i.torneioId == id && i.isSegundaOpcao).OrderBy(c => c.Id).ToList();
             ViewBag.Classes = classes;
             ViewBag.Classes2 = classes2;
             ViewBag.ClasseInscricao2 = "";
@@ -1613,7 +1613,7 @@ namespace Barragem.Controllers
         public ActionResult EditJogos(int torneioId, int fClasse = 0, string fData = "", string fHora = "", int fQuadra = 0, int fase = 0)
         {
             List<Jogo> listaJogos = null;
-            var classes = db.ClasseTorneio.Where(i => i.torneioId == torneioId).OrderBy(c => c.nome).ToList();
+            var classes = db.ClasseTorneio.Where(i => i.torneioId == torneioId).OrderBy(c => c.Id).ToList();
             var classesGeradas = db.Jogo.Where(i => i.torneioId == torneioId).Select(i => (int)i.classeTorneio).Distinct().ToList();
             ViewBag.ClassesGeradas = classesGeradas;
             ViewBag.Classes = classes;
@@ -1728,7 +1728,7 @@ namespace Barragem.Controllers
         public ActionResult EditDuplas(int torneioId, int filtroClasse = 0, bool naoFazNada = false)
         {
             List<InscricaoTorneio> duplas = null;
-            var classes = db.ClasseTorneio.Where(i => i.torneioId == torneioId && i.isDupla).OrderBy(c => c.nome).ToList();
+            var classes = db.ClasseTorneio.Where(i => i.torneioId == torneioId && i.isDupla).OrderBy(c => c.Id).ToList();
             ViewBag.Classes = classes;
             ViewBag.TorneioId = torneioId;
             ViewBag.flag = "duplas";
