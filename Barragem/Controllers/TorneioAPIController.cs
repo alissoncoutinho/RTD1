@@ -566,13 +566,14 @@ namespace Barragem.Controllers
         [Route("api/TorneioAPI/Disponivel/{rankingId}")]
         public IList<TorneioApp> GetTorneioDisponivel(int rankingId)
         {
+
             var dataHoje = DateTime.Now;
             var ranking = db.BarragemView.Find(rankingId);
             var torneio = (from t in db.Torneio
                            where t.dataFimInscricoes >= dataHoje && t.isAtivo && t.isOpen
                            select new TorneioApp
                            {
-                               Id = t.Id, logoId = t.barragemId, nome = t.nome, dataInicio = t.dataInicio, valor = t.valor,
+                               Id = t.Id, logoId = t.barragemId, nome = t.nome, dataInicio = t.dataInicio, valor = t.valor, valorSocio = t.valorSocio,
                                dataFim = t.dataFim, cidade = t.cidade, premiacao = t.premiacao, contato = t.barragem.email
                            }).Union(
                             from t in db.Torneio
@@ -580,7 +581,7 @@ namespace Barragem.Controllers
                             && t.cidade.ToUpper() == ranking.cidade.ToUpper()
                             select new TorneioApp
                             {
-                                Id = t.Id, logoId = t.barragemId, nome = t.nome, dataInicio = t.dataInicio, valor = t.valor,
+                                Id = t.Id, logoId = t.barragemId, nome = t.nome, dataInicio = t.dataInicio, valor = t.valor, valorSocio = t.valorSocio,
                                 dataFim = t.dataFim, cidade = t.cidade, premiacao = t.premiacao, contato = t.barragem.email
                             }).Union(
                             from t in db.Torneio
