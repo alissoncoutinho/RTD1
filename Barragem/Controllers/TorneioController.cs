@@ -2048,57 +2048,52 @@ namespace Barragem.Controllers
         private void MontarProximoJogoTorneio(Jogo jogo)
         {
             var ordemJogo = 0;
-            if (jogo.torneioId != null)
-            {
-                if (jogo.ordemJogo % 2 != 0)
-                {
+            if (jogo.torneioId != null){
+                if (jogo.ordemJogo % 2 != 0){
                     ordemJogo = (int)(jogo.ordemJogo / 2) + 1;
-                }
-                else
-                {
+                }else{
                     ordemJogo = (int)(jogo.ordemJogo / 2);
                 }
                 var torneioId = jogo.torneioId;
                 var torneio = db.Torneio.Find(torneioId);
                 var classeId = jogo.classeTorneio;
                 var isPrimeiroJogo = false;
-                if (jogo.isPrimeiroJogoTorneio != null)
-                {
-                    isPrimeiroJogo = (bool)jogo.isPrimeiroJogoTorneio;
-                }
-                if ((torneio.temRepescagem) && (isPrimeiroJogo))
-                {
+                if (jogo.isPrimeiroJogoTorneio != null) isPrimeiroJogo = (bool)jogo.isPrimeiroJogoTorneio;
+                
+                if ((torneio.temRepescagem) && (isPrimeiroJogo)){
                     CadastrarPerdedorNaRepescagem(jogo);
                 }
                 if (db.Jogo.Where(r => r.torneioId == jogo.torneioId && r.classeTorneio == jogo.classeTorneio &&
-                   r.faseTorneio == jogo.faseTorneio - 1 && r.ordemJogo == ordemJogo).Count() > 0)
-                {
+                   r.faseTorneio == jogo.faseTorneio - 1 && r.ordemJogo == ordemJogo).Count() > 0){
                     var proximoJogo = db.Jogo.Where(r => r.torneioId == jogo.torneioId && r.classeTorneio == jogo.classeTorneio &&
                         r.faseTorneio == jogo.faseTorneio - 1 && r.ordemJogo == ordemJogo).Single();
-                    if (jogo.desafiante_id == 10)
-                    {
+                    if (jogo.desafiante_id == 10){
                         proximoJogo.isPrimeiroJogoTorneio = true;
-                    }
-                    else
-                    {
+                    } else {
                         proximoJogo.isPrimeiroJogoTorneio = false;
                     }
-                    if (jogo.ordemJogo % 2 != 0)
-                    {
+                    if (jogo.ordemJogo % 2 != 0){
                         proximoJogo.desafiado_id = jogo.idDoVencedor;
                         proximoJogo.desafiado2_id = getParceiroDuplaProximoJogo(jogo, jogo.idDoVencedor);
-                    }
-                    else
-                    {
+                        if (jogo.idDoVencedor == jogo.desafiado_id){
+                            proximoJogo.cabecaChave = jogo.cabecaChave;
+                        }else{
+                            proximoJogo.cabecaChave = jogo.cabecaChaveDesafiante;
+                        }
+                    } else{
                         proximoJogo.desafiante_id = jogo.idDoVencedor;
                         proximoJogo.desafiante2_id = getParceiroDuplaProximoJogo(jogo, jogo.idDoVencedor);
+                        if (jogo.idDoVencedor == jogo.desafiado_id){
+                            proximoJogo.cabecaChaveDesafiante = jogo.cabecaChave;
+                        } else {
+                            proximoJogo.cabecaChaveDesafiante = jogo.cabecaChaveDesafiante;
+                        }
                     }
-                    proximoJogo.cabecaChave = jogo.cabecaChave;
+                    
                     cadastrarColocacaoPerdedorTorneio(jogo);
+                    db.Entry(proximoJogo).State = EntityState.Modified;
                     db.SaveChanges();
-                }
-                else
-                {
+                } else {
                     //cadastrar a pontuacao do vice 
                     var inscricaoPerdedor = db.InscricaoTorneio.Where(i => i.userId == jogo.idDoPerdedor 
                         && i.torneioId == jogo.torneioId && i.classe == jogo.classeTorneio).ToList();
@@ -2125,6 +2120,10 @@ namespace Barragem.Controllers
                     new CalculadoraDePontos().GerarSnapshotDaLiga(jogo);
                 }
             }
+        }
+
+        private int getCabecaChaveVencedor(Jogo jogo) {
+            return 0;
         }
 
         public ActionResult TabelaImprimir(int torneioId, int fClasse = 0)

@@ -21,6 +21,8 @@ namespace Barragem.Models
 
         public int? cabecaChave { get; set; }
 
+        public int? cabecaChaveDesafiante { get; set; }
+
         [Display(Name = "Data")]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:d}", ConvertEmptyStringToNull = true)]
         public DateTime? dataCadastroResultado { get; set; }

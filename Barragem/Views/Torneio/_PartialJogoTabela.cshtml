@@ -56,6 +56,9 @@
                 @Html.Raw("aguardando")
             }else{
                 <a href="@Url.Action("../Account/Detalhes", new { userId = @Model.desafiante.UserId, mostrarClasse = false })" title="Detalhes do jogador">
+                    @if ((Model.cabecaChaveDesafiante != null) && (Model.cabecaChaveDesafiante > 0) && (Model.cabecaChaveDesafiante < 100)){
+                        @Html.Raw("(" + Model.cabecaChaveDesafiante + ") ")
+                    }
                     @Html.Raw(Model.desafiante.nome)
                 </a>
                 if (Model.desafiante2 != null){

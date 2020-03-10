@@ -68,6 +68,10 @@
             }
             else
             {
+                if ((Model.cabecaChaveDesafiante != null) && (Model.cabecaChaveDesafiante > 0) && (Model.cabecaChaveDesafiante < 100))
+                {
+                    @Html.Raw("(" + Model.cabecaChaveDesafiante + ") ")
+                }
                 @Html.Raw(Model.desafiante.nome)
                 if (Model.desafiante2 != null)
                 {
