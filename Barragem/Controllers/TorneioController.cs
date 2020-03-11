@@ -2045,7 +2045,7 @@ namespace Barragem.Controllers
             return View();
         }
 
-        private void MontarProximoJogoTorneio(Jogo jogo)
+        public void MontarProximoJogoTorneio(Jogo jogo)
         {
             var ordemJogo = 0;
             if (jogo.torneioId != null){
