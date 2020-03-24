@@ -4,6 +4,86 @@
 @model IEnumerable<Barragem.Models.Jogo>
     @Html.Partial("_PartialTabs")
 
+
+    <div id="placar-modal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <a class="close" data-dismiss="modal">×</a>
+                    <h3>Placar</h3>
+                </div>
+                <form id="placarForm" name="placar" role="form">
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <input type="hidden" name="idJogo" id="idJogo" class="form-control">
+                        </div>
+                        <div class="row clearfix">
+                            <div class="form-group col-md-2 col-xs-6">
+                                
+                            </div>
+                            <div class="form-group col-md-3 col-xs-6" style="color:#40898e">
+                                Fulano da Silva
+                            </div>
+                            <div class="form-group col-md-1 col-xs-6">
+                                
+                            </div>
+                            <div class="form-group col-md-4 col-xs-6" style="color:#ff6a00">
+                                Ciclano de Souza
+                            </div>
+                        </div>
+                        <div class="row clearfix">
+                            <div class="form-group col-md-2 col-xs-6" style="margin-top: 10px;">
+                                1º set
+                            </div>
+                            <div class="form-group col-md-3 col-xs-6">
+                                <input type="text" id="qtddGames1setDesafiante" class="col-md-2 form-control" style="border-color:#40898e"> 
+                            </div>
+                            <div class="form-group col-md-1 col-xs-6" style="margin-top: 10px;">
+                                X
+                            </div>
+                            <div class="form-group col-md-3 col-xs-6" >
+                                <input type="text" id="qtddGames1setDesafiado" class="col-md-2 form-control" style="border-color:#ff6a00">
+                            </div>
+                        </div>
+                        <div class="row clearfix">
+                            <div class="form-group col-md-2 col-xs-6" style="margin-top: 10px;">
+                                2º set
+                            </div>
+                            <div class="form-group col-md-3 col-xs-6">
+                                <input type="text" id="qtddGames2setDesafiante" class="col-md-2 form-control" style="border-color:#40898e">
+                            </div>
+                            <div class="form-group col-md-1 col-xs-6" style="margin-top: 10px;">
+                                X
+                            </div>
+                            <div class="form-group col-md-3 col-xs-6">
+                                <input type="text" id="qtddGames2setDesafiado" class="col-md-2 form-control" style="border-color:#ff6a00">
+                            </div>
+                        </div>
+                        <div class="row clearfix">
+                            <div class="form-group col-md-2 col-xs-6" style="margin-top: 10px;">
+                                3º set
+                            </div>
+                            <div class="form-group col-md-3 col-xs-6">
+                                <input type="text" id="qtddGames3setDesafiante" class="col-md-2 form-control" style="border-color:#40898e">
+                            </div>
+                            <div class="form-group col-md-1 col-xs-6" style="margin-top: 10px;">
+                                X
+                            </div>
+                            <div class="form-group col-md-3 col-xs-6">
+                                <input type="text" id="qtddGames3setDesafiado" class="col-md-2 form-control" style="border-color:#ff6a00">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                        <input type="submit" value="Salvar" class="btn btn-success" id="submit">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
     <div class="tab-content">
         <div class="tab-pane fade" id="tabCadastro"></div>
         <div class="tab-pane fade" id="tabClasses"></div>
@@ -218,10 +298,12 @@
                             <button title="salvar" data-valor="@Html.Raw(i)" name="@Html.Raw("button"+i)" id="@Html.Raw("button"+i)" class="btn btn-default btn-xs inscricaoButton">
                                 Salvar
                             </button><br>
-                            <a href="@Url.Action("LancarResultado", new {id=item.Id })" title="placar" class="btn btn-default btn-xs inscricaoButton">
+                            <!--a href="Url.Action("LancarResultado", new {id=item.Id })" title="placar" class="btn btn-default btn-xs inscricaoButton">
                                 Placar
-                            </a>
+                            </a-->
                         </form>
+                        <button type="button" id="btnPlacar" class="btn btn-info btn" data-toggle="modal" data-placar="1|6|1|6|0|0" data-idJogo="@item.Id" data-target="#placar-modal">Placar</button>
+                        
                     </td>
 
                 </tr>
@@ -245,6 +327,46 @@
                 @Scripts.Render("~/bundles/jqueryval")
                 @Scripts.Render("~/bundles/jqueryform")
                 <script type="text/javascript">
+            $(document).ready(function () {
+                $("#placarForm").submit(function (event) {
+                    submitForm();
+                    return false;
+                });
+            });
+
+            $(document).on("click", "#btnPlacar", function () {
+                var id = $(this).attr('data-idJogo');
+                var placar = $(this).attr('data-placar');
+                var str = placar.split('|');
+                var set1Desafiante = str[0];
+                var set1Desafiado = str[1];
+                var set2Desafiante = str[2];
+                var set2Desafiado = str[3];
+                var set3Desafiante = str[4];
+                var set3Desafiado = str[5];
+                $(".modal-body #idJogo").val(id);
+                $(".modal-body #qtddGames1setDesafiante").val(set1Desafiante);
+                $(".modal-body #qtddGames1setDesafiado").val(set1Desafiado);
+                $(".modal-body #qtddGames2setDesafiante").val(set2Desafiante);
+                $(".modal-body #qtddGames2setDesafiado").val(set2Desafiado);
+                $(".modal-body #qtddGames3setDesafiante").val(set3Desafiante);
+                $(".modal-body #qtddGames3setDesafiado").val(set3Desafiado);
+            });
+            function submitForm() {
+                $.ajax({
+                    type: "POST",
+                    url: "saveContact.php",
+                    cache: false,
+                    data: $('form#placarForm').serialize(),
+                    success: function (response) {
+                        $("#placar").html(response)
+                        $("#placar-modal").modal('hide');
+                    },
+                    error: function () {
+                        alert("Error");
+                    }
+                });
+            }
             $(".date").datepicker({
                 language: 'pt-BR',
                 pickTime: false
