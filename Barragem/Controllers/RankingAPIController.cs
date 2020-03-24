@@ -243,7 +243,7 @@ namespace Barragem.Controllers
         public Cabecalho GetCabecalhoLiga(int ligaId, int userId)
         {
             var ultsnapshot = db.Snapshot.Where(snap => snap.LigaId == ligaId).Max(s => s.Id);
-
+            var snapshot = db.Snapshot.Find(ultsnapshot); 
             var categorias = db.SnapshotRanking.Where(sr => sr.SnapshotId == ultsnapshot)
             .Include(sr => sr.Categoria).Select(sr => sr.Categoria).Distinct().ToList();
 
@@ -260,6 +260,7 @@ namespace Barragem.Controllers
             Cabecalho rankingCabecalho = new Cabecalho();
             rankingCabecalho.temporada = liga;
             rankingCabecalho.categoria = categorias;
+            rankingCabecalho.dataRodada = snapshot.Data;
             if (classeLiga.Count() > 0) rankingCabecalho.classeUserId = classeLiga[0].CategoriaId;
             return rankingCabecalho;
         }
@@ -281,7 +282,8 @@ namespace Barragem.Controllers
                     nomeUser = rk.Jogador.nome,
                     posicaoUser = rk.Posicao,
                     pontuacao = rk.Pontuacao,
-                    foto = rk.Jogador.fotoURL
+                    foto = rk.Jogador.fotoURL,
+                    dataRodada = rk.Snapshot.Data
                 }).ToList();
             }
 

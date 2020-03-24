@@ -208,7 +208,11 @@ namespace Barragem.Controllers
                 }
                 else
                 {
-                    meuJogo.nomeDesafiante = j.desafiante.nome;
+                    if ((j.cabecaChaveDesafiante != null) && (j.cabecaChaveDesafiante > 0) && (j.cabecaChaveDesafiante < 100)){
+                        meuJogo.nomeDesafiante = "(" + j.cabecaChaveDesafiante + ")" + j.desafiante.nome;
+                    } else {
+                        meuJogo.nomeDesafiante = j.desafiante.nome;
+                    }
                     meuJogo.fotoDesafiante = j.desafiante.fotoURL;
                 }
                 meuJogo.idDesafiado = j.desafiado_id;
@@ -222,7 +226,13 @@ namespace Barragem.Controllers
                 }
                 else
                 {
-                    meuJogo.nomeDesafiado = j.desafiado.nome;
+                    if ((j.cabecaChave != null) && (j.cabecaChave > 0) && (j.cabecaChave < 100)) {
+                        meuJogo.nomeDesafiado = "(" + j.cabecaChave + ")" + j.desafiado.nome;
+                    }
+                    else
+                    {
+                        meuJogo.nomeDesafiado = j.desafiado.nome;
+                    }
                     meuJogo.fotoDesafiado = j.desafiado.fotoURL;
                 }
                 meuJogo.qtddGames1setDesafiado = j.qtddGames1setDesafiado;
@@ -275,7 +285,11 @@ namespace Barragem.Controllers
                     meuJogo.nomeDesafiante = "Aguardando Adversário";
                 }else
                 {
-                    meuJogo.nomeDesafiante = j.desafiante.nome;
+                    if ((j.cabecaChaveDesafiante != null) && (j.cabecaChaveDesafiante > 0) && (j.cabecaChaveDesafiante < 100)){
+                        meuJogo.nomeDesafiante = "(" + j.cabecaChaveDesafiante +")" + j.desafiante.nome;
+                    } else { 
+                        meuJogo.nomeDesafiante = j.desafiante.nome;
+                    }
                     meuJogo.fotoDesafiante = j.desafiante.fotoURL;
                 }
                 meuJogo.idDesafiado = j.desafiado_id;
@@ -289,7 +303,14 @@ namespace Barragem.Controllers
                 }
                 else
                 {
-                    meuJogo.nomeDesafiado = j.desafiado.nome;
+                    if ((j.cabecaChave != null) && (j.cabecaChave > 0) && (j.cabecaChave < 100))
+                    {
+                        meuJogo.nomeDesafiado = "(" + j.cabecaChave + ")" + j.desafiado.nome;
+                    }
+                    else
+                    {
+                        meuJogo.nomeDesafiado = j.desafiado.nome;
+                    }
                     meuJogo.fotoDesafiado = j.desafiado.fotoURL;
                 }
                 meuJogo.qtddGames1setDesafiado = j.qtddGames1setDesafiado;

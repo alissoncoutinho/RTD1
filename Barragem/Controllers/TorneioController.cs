@@ -2019,12 +2019,7 @@ namespace Barragem.Controllers
                 mail.assunto = torneio.nome;
                 mail.conteudo = texto;
                 mail.formato = Tipos.FormatoEmail.Html;
-                List<InscricaoTorneio> users = db.InscricaoTorneio.Where(u => u.isAtivo == true && u.torneioId == torneioId).ToList();
-                List<string> bcc = new List<string>();
-                foreach (InscricaoTorneio user in users)
-                {
-                    bcc.Add(user.participante.email);
-                }
+                List<string> bcc = db.InscricaoTorneio.Where(u => u.isAtivo == true && u.torneioId == torneioId).Select(u=>u.participante.email).Distinct().ToList();
                 mail.bcc = bcc;
                 mail.EnviarMail();
                 retorno = "Notificação enviada com sucesso.";

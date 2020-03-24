@@ -29,10 +29,15 @@ namespace Barragem.Controllers
         [Route("api/PerfilAPI/ResetarSenha")]
         [ResponseType(typeof(void))]
         [HttpGet]
-        public IHttpActionResult ResetarSenha(string email) {
+        public IHttpActionResult ResetarSenha(string email="", string userName="") {
             UserProfile user = null;
             try {
-                user = db.UserProfiles.Where(u => u.email == email).FirstOrDefault();
+                if (userName != ""){
+                    user = db.UserProfiles.Where(u => u.UserName == userName).FirstOrDefault();
+                }
+                else { 
+                    user = db.UserProfiles.Where(u => u.email == email && u.situacao != "desativado").FirstOrDefault();
+                }
                 if (user != null) {
                     if (String.IsNullOrEmpty(user.email)) {
                         return InternalServerError(new Exception("Este usuário não possui e-mail cadastrado. Por favor, entre em contato com o administrador."));
@@ -46,7 +51,7 @@ namespace Barragem.Controllers
                         return StatusCode(HttpStatusCode.NoContent);
                     }
                 } else {
-                    return InternalServerError(new Exception("Este usuário não existe."));
+                    return InternalServerError(new Exception("Usuário não encontrado. Verifique se o email está correto ou se o usuário está desativado."));
                 }
             } catch (Exception ex) {
                 return InternalServerError(new Exception(ex.Message));
