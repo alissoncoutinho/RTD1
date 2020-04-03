@@ -171,6 +171,12 @@ namespace Barragem.Controllers
             meuJogo.nomeDesafiante = jogo.desafiante.nome;
             meuJogo.fotoDesafiante = jogo.desafiante.fotoURL;
             meuJogo.posicaoDesafiante = 0;
+            meuJogo.idDesafianteDupla = jogo.desafiante2_id;
+            if (jogo.desafiante2 != null)
+            {
+                meuJogo.nomeDesafianteDupla = jogo.desafiante2.nome;
+                meuJogo.fotoDesafianteDupla = jogo.desafiante2.fotoURL;
+            }
             try {
                 var r = db.Rancking.Where(rc => rc.userProfile_id == jogo.desafiante_id
                 && rc.posicaoClasse != null).OrderByDescending(rc => rc.rodada_id).FirstOrDefault();
@@ -181,6 +187,12 @@ namespace Barragem.Controllers
             meuJogo.nomeDesafiado = jogo.desafiado.nome;
             meuJogo.fotoDesafiado = jogo.desafiado.fotoURL;
             meuJogo.posicaoDesafiado = 0;
+            meuJogo.idDesafiadoDupla = jogo.desafiado2_id;
+            if (jogo.desafiado2 != null)
+            {
+                meuJogo.nomeDesafiadoDupla = jogo.desafiado2.nome;
+                meuJogo.fotoDesafiadoDupla = jogo.desafiado2.fotoURL;
+            }
             try {
                 var r2 = db.Rancking.Where(rc => rc.userProfile_id == jogo.desafiado_id
                 && rc.posicaoClasse != null).OrderByDescending(rc => rc.rodada_id).FirstOrDefault();

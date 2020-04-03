@@ -24,7 +24,7 @@ namespace Barragem.Controllers
         public IList<LoginRankingModel> GetRankingsByUserEmail(string email)
         {
             List<LoginRankingModel> loginRankings = new List<LoginRankingModel>();
-            var users = db.UserProfiles.Where(u => u.email.ToLower() == email.Trim().ToLower() && u.situacao!="desativado" && u.situacao!="inativo").ToList();
+            var users = db.UserProfiles.Where(u => u.email.ToLower() == email.Trim().ToLower() && u.situacao!="inativo").OrderBy(r=> r.situacao).ToList();
             if (users.Count() == 0){
                 return loginRankings;
                 //throw (new Exception("Não foi encontrado ranking com este email."));

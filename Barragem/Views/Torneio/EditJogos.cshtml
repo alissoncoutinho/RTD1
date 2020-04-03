@@ -298,11 +298,11 @@
                             <button title="salvar" data-valor="@Html.Raw(i)" name="@Html.Raw("button"+i)" id="@Html.Raw("button"+i)" class="btn btn-default btn-xs inscricaoButton">
                                 Salvar
                             </button><br>
-                            <!--a href="Url.Action("LancarResultado", new {id=item.Id })" title="placar" class="btn btn-default btn-xs inscricaoButton">
+                            <a href="@Url.Action("LancarResultado", new {id=item.Id })" title="placar" class="btn btn-default btn-xs inscricaoButton">
                                 Placar
-                            </a-->
+                            </a>
                         </form>
-                        <button type="button" id="btnPlacar" class="btn btn-info btn" data-toggle="modal" data-placar="1|6|1|6|0|0" data-idJogo="@item.Id" data-target="#placar-modal">Placar</button>
+                        <!--button type="button" id="btnPlacar" class="btn btn-info btn" data-toggle="modal" data-placar="1|6|1|6|0|0" data-idJogo="@item.Id" data-target="#placar-modal">Placar</button-->
                         
                     </td>
 

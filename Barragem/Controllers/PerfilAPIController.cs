@@ -37,6 +37,10 @@ namespace Barragem.Controllers
                 }
                 else { 
                     user = db.UserProfiles.Where(u => u.email == email && u.situacao != "desativado").FirstOrDefault();
+                    if (user == null)
+                    {
+                        user = db.UserProfiles.Where(u => u.email == email).FirstOrDefault();
+                    }
                 }
                 if (user != null) {
                     if (String.IsNullOrEmpty(user.email)) {
@@ -276,19 +280,33 @@ namespace Barragem.Controllers
         [Route("api/PerfilAPI/Ranking/{userId}")]
         public IList<JogoRodada> GetRanking(int userId)
         {
-            var jogos = db.Jogo.Where(j => (j.desafiado_id == userId || j.desafiante_id == userId) && j.torneioId==null).OrderByDescending(j=>j.Id).Take(10).ToList<Jogo>();
+            var jogos = db.Jogo.Where(j => (j.desafiado_id == userId || j.desafiante_id == userId)).OrderByDescending(j=>j.Id).Take(15).ToList<Jogo>();
             IList<JogoRodada> jogoRodada = new List<JogoRodada>();
             foreach (var jogo in jogos){
                 var j = new JogoRodada();
                 j.Id = jogo.Id;
-                j.nomeDesafiante = jogo.desafiante.nome;
-                j.nomeDesafiado = jogo.desafiado.nome;
+                if ((jogo.torneioId!=null)&&(jogo.desafiante_id == 10)){
+                    j.nomeDesafiante = "bye";
+                }
+                else if ((jogo.torneioId != null) && (jogo.desafiante_id == 0)){
+                    j.nomeDesafiante = "Aguardando Adversário";
+                }else{
+                    j.nomeDesafiante = jogo.desafiante.nome;
+                    j.fotoDesafiante = jogo.desafiante.fotoURL;
+                }
+                if ((jogo.torneioId!=null)&&(jogo.desafiado_id == 10)){
+                    j.nomeDesafiado = "bye";
+                }
+                else if ((jogo.torneioId != null) && (jogo.desafiado_id == 0)){
+                    j.nomeDesafiado = "Aguardando Adversário";
+                }else{
+                    j.nomeDesafiado = jogo.desafiado.nome;
+                    j.fotoDesafiado = jogo.desafiado.fotoURL;
+                }
                 j.dataJogo = jogo.dataJogo;
                 j.horaJogo = jogo.horaJogo;
                 j.localJogo = jogo.localJogo;
                 j.situacao = jogo.situacao.descricao;
-                j.fotoDesafiado = jogo.desafiado.fotoURL;
-                j.fotoDesafiante = jogo.desafiante.fotoURL;
                 j.qtddGames1setDesafiante = jogo.qtddGames1setDesafiante;
                 j.qtddGames2setDesafiante = jogo.qtddGames2setDesafiante;
                 j.qtddGames3setDesafiante = jogo.qtddGames3setDesafiante;
@@ -299,25 +317,26 @@ namespace Barragem.Controllers
                 if (jogo.torneioId == null)
                 {
                     j.nomeRodada = "Rodada " + jogo.rodada.codigoSeq;
+                    var rankingDesafiado = db.Rancking.Where(r => r.rodada_id == jogo.rodada_id && r.userProfile_id == jogo.desafiado_id).FirstOrDefault();
+                    var rankingDesafiante = db.Rancking.Where(r => r.rodada_id == jogo.rodada_id && r.userProfile_id == jogo.desafiante_id).FirstOrDefault();
+                    if (rankingDesafiado != null)
+                    {
+                        j.rankingDesafiado = rankingDesafiado.posicaoClasse != null ? (int)rankingDesafiado.posicaoClasse : 0;
+                        j.pontuacaoDesafiado = rankingDesafiado.pontuacao;
+                    }
+                    if (rankingDesafiante != null)
+                    {
+                        j.rankingDesafiante = rankingDesafiante.posicaoClasse != null ? (int)rankingDesafiante.posicaoClasse : 0;
+                        j.pontuacaoDesafiante = rankingDesafiante.pontuacao;
+                    }
                 }
                 else
                 {
-                    //var torneioId = (int)jogo.torneioId;
-                    //j.nomeRodada = db.Torneio.Find(torneioId).nome;
+                    var torneioId = (int)jogo.torneioId;
+                    j.nomeRodada = db.Torneio.Find(torneioId).nome;
                 }
                 
-                var rankingDesafiado = db.Rancking.Where(r => r.rodada_id == jogo.rodada_id && r.userProfile_id == jogo.desafiado_id).FirstOrDefault();
-                var rankingDesafiante = db.Rancking.Where(r => r.rodada_id == jogo.rodada_id && r.userProfile_id == jogo.desafiante_id).FirstOrDefault();
-                if (rankingDesafiado != null)
-                {
-                    j.rankingDesafiado = rankingDesafiado.posicaoClasse!=null ? (int)rankingDesafiado.posicaoClasse:0;
-                    j.pontuacaoDesafiado = rankingDesafiado.pontuacao;
-                }
-                if (rankingDesafiante != null)
-                {
-                    j.rankingDesafiante = rankingDesafiante.posicaoClasse != null ? (int)rankingDesafiante.posicaoClasse : 0;
-                    j.pontuacaoDesafiante = rankingDesafiante.pontuacao;
-                }
+                
                 jogoRodada.Add(j);
 
             }

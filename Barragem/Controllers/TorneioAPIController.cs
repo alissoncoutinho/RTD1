@@ -184,65 +184,7 @@ namespace Barragem.Controllers
             var ListJogos = new List<MeuJogo>();
             foreach (var j in jogos)
             {
-                var meuJogo = new MeuJogo();
-                meuJogo.dataJogo = j.dataJogo;
-                meuJogo.horaJogo = j.horaJogo;
-                var quadra = "";
-                if ((j.quadra!=null) && (j.quadra != 100)){
-                    quadra = " quadra " + j.quadra;
-                }
-                var local = "";
-                if (j.localJogo != null)
-                {
-                    local = j.localJogo;
-                }
-                meuJogo.localJogo = local + quadra;
-                meuJogo.idDesafiante = j.desafiante_id;
-                if (meuJogo.idDesafiante == 10)
-                {
-                    meuJogo.nomeDesafiante = "bye";
-                }
-                else if (meuJogo.idDesafiante == 0)
-                {
-                    meuJogo.nomeDesafiante = "Aguardando Adversário";
-                }
-                else
-                {
-                    if ((j.cabecaChaveDesafiante != null) && (j.cabecaChaveDesafiante > 0) && (j.cabecaChaveDesafiante < 100)){
-                        meuJogo.nomeDesafiante = "(" + j.cabecaChaveDesafiante + ")" + j.desafiante.nome;
-                    } else {
-                        meuJogo.nomeDesafiante = j.desafiante.nome;
-                    }
-                    meuJogo.fotoDesafiante = j.desafiante.fotoURL;
-                }
-                meuJogo.idDesafiado = j.desafiado_id;
-                if (meuJogo.idDesafiado == 10)
-                {
-                    meuJogo.nomeDesafiado = "bye";
-                }
-                else if (meuJogo.idDesafiado == 0)
-                {
-                    meuJogo.nomeDesafiado = "Aguardando Adversário";
-                }
-                else
-                {
-                    if ((j.cabecaChave != null) && (j.cabecaChave > 0) && (j.cabecaChave < 100)) {
-                        meuJogo.nomeDesafiado = "(" + j.cabecaChave + ")" + j.desafiado.nome;
-                    }
-                    else
-                    {
-                        meuJogo.nomeDesafiado = j.desafiado.nome;
-                    }
-                    meuJogo.fotoDesafiado = j.desafiado.fotoURL;
-                }
-                meuJogo.qtddGames1setDesafiado = j.qtddGames1setDesafiado;
-                meuJogo.qtddGames1setDesafiante = j.qtddGames1setDesafiante;
-                meuJogo.qtddGames2setDesafiado = j.qtddGames2setDesafiado;
-                meuJogo.qtddGames2setDesafiante = j.qtddGames2setDesafiante;
-                meuJogo.qtddGames3setDesafiado = j.qtddGames3setDesafiado;
-                meuJogo.qtddGames3setDesafiante = j.qtddGames3setDesafiante;
-                meuJogo.idDoVencedor = j.idDoVencedor;
-                ListJogos.Add(meuJogo);
+                ListJogos.Add(montaJogoTabela(j));
             }
             
             var tabelaApp = new TabelaApp();
@@ -272,61 +214,92 @@ namespace Barragem.Controllers
 
             var ListJogos = new List<MeuJogo>();
             foreach(var j in jogos){
-                var meuJogo = new MeuJogo();
-                meuJogo.dataJogo = j.dataJogo;
-                meuJogo.horaJogo = j.horaJogo;
-                meuJogo.localJogo = j.localJogo;
-                meuJogo.idDesafiante = j.desafiante_id;
-                if (meuJogo.idDesafiante == 10)
-                {
-                    meuJogo.nomeDesafiante = "bye";
-                }else if (meuJogo.idDesafiante == 0)
-                {
-                    meuJogo.nomeDesafiante = "Aguardando Adversário";
-                }else
-                {
-                    if ((j.cabecaChaveDesafiante != null) && (j.cabecaChaveDesafiante > 0) && (j.cabecaChaveDesafiante < 100)){
-                        meuJogo.nomeDesafiante = "(" + j.cabecaChaveDesafiante +")" + j.desafiante.nome;
-                    } else { 
-                        meuJogo.nomeDesafiante = j.desafiante.nome;
-                    }
-                    meuJogo.fotoDesafiante = j.desafiante.fotoURL;
-                }
-                meuJogo.idDesafiado = j.desafiado_id;
-                if (meuJogo.idDesafiado == 10)
-                {
-                    meuJogo.nomeDesafiado = "bye";
-                }
-                else if (meuJogo.idDesafiado == 0)
-                {
-                    meuJogo.nomeDesafiado = "Aguardando Adversário";
-                }
-                else
-                {
-                    if ((j.cabecaChave != null) && (j.cabecaChave > 0) && (j.cabecaChave < 100))
-                    {
-                        meuJogo.nomeDesafiado = "(" + j.cabecaChave + ")" + j.desafiado.nome;
-                    }
-                    else
-                    {
-                        meuJogo.nomeDesafiado = j.desafiado.nome;
-                    }
-                    meuJogo.fotoDesafiado = j.desafiado.fotoURL;
-                }
-                meuJogo.qtddGames1setDesafiado = j.qtddGames1setDesafiado;
-                meuJogo.qtddGames1setDesafiante = j.qtddGames1setDesafiante;
-                meuJogo.qtddGames2setDesafiado = j.qtddGames2setDesafiado;
-                meuJogo.qtddGames2setDesafiante = j.qtddGames2setDesafiante;
-                meuJogo.qtddGames3setDesafiado = j.qtddGames3setDesafiado;
-                meuJogo.qtddGames3setDesafiante = j.qtddGames3setDesafiante;
-                meuJogo.idDoVencedor = j.idDoVencedor;
-                ListJogos.Add(meuJogo);
+                ListJogos.Add(montaJogoTabela(j));
             }
             var tabelaApp = new TabelaApp();
             tabelaApp.descricaoFase = getDescricaoFaseTorneio((int)fase);
             tabelaApp.jogos = ListJogos;
             tabelaApp.faseTorneio = (int)fase;
             return tabelaApp;
+        }
+
+        private MeuJogo montaJogoTabela(Jogo j) {
+            var meuJogo = new MeuJogo();
+            meuJogo.dataJogo = j.dataJogo;
+            meuJogo.horaJogo = j.horaJogo;
+            var quadra = "";
+            if ((j.quadra != null) && (j.quadra != 100))
+            {
+                quadra = " quadra " + j.quadra;
+            }
+            var local = "";
+            if (j.localJogo != null)
+            {
+                local = j.localJogo;
+            }
+            meuJogo.localJogo = local + quadra;
+            meuJogo.idDesafiante = j.desafiante_id;
+            meuJogo.idDesafianteDupla = j.desafiante2_id;
+            if (meuJogo.idDesafiante == 10)
+            {
+                meuJogo.nomeDesafiante = "bye";
+            }
+            else if (meuJogo.idDesafiante == 0)
+            {
+                meuJogo.nomeDesafiante = "Aguardando Adversário";
+            }
+            else
+            {
+                if ((j.cabecaChaveDesafiante != null) && (j.cabecaChaveDesafiante > 0) && (j.cabecaChaveDesafiante < 100))
+                {
+                    meuJogo.nomeDesafiante = "(" + j.cabecaChaveDesafiante + ")" + j.desafiante.nome;
+                }
+                else
+                {
+                    meuJogo.nomeDesafiante = j.desafiante.nome;
+                }
+                meuJogo.fotoDesafiante = j.desafiante.fotoURL;
+                if (j.desafiante2 != null)
+                {
+                    meuJogo.nomeDesafianteDupla = j.desafiante2.nome;
+                    meuJogo.fotoDesafianteDupla = j.desafiante2.fotoURL;
+                }
+            }
+            meuJogo.idDesafiado = j.desafiado_id;
+            meuJogo.idDesafiadoDupla = j.desafiado2_id;
+            if (meuJogo.idDesafiado == 10)
+            {
+                meuJogo.nomeDesafiado = "bye";
+            }
+            else if (meuJogo.idDesafiado == 0)
+            {
+                meuJogo.nomeDesafiado = "Aguardando Adversário";
+            }
+            else
+            {
+                if ((j.cabecaChave != null) && (j.cabecaChave > 0) && (j.cabecaChave < 100))
+                {
+                    meuJogo.nomeDesafiado = "(" + j.cabecaChave + ")" + j.desafiado.nome;
+                }
+                else
+                {
+                    meuJogo.nomeDesafiado = j.desafiado.nome;
+                }
+                meuJogo.fotoDesafiado = j.desafiado.fotoURL;
+                if (j.desafiado2 != null)
+                {
+                    meuJogo.nomeDesafiadoDupla = j.desafiado2.nome;
+                    meuJogo.fotoDesafiadoDupla = j.desafiado2.fotoURL;
+                }
+            }
+            meuJogo.qtddGames1setDesafiado = j.qtddGames1setDesafiado;
+            meuJogo.qtddGames1setDesafiante = j.qtddGames1setDesafiante;
+            meuJogo.qtddGames2setDesafiado = j.qtddGames2setDesafiado;
+            meuJogo.qtddGames2setDesafiante = j.qtddGames2setDesafiante;
+            meuJogo.qtddGames3setDesafiado = j.qtddGames3setDesafiado;
+            meuJogo.qtddGames3setDesafiante = j.qtddGames3setDesafiante;
+            meuJogo.idDoVencedor = j.idDoVencedor;
+            return meuJogo;
         }
 
         private int? getParceiroDuplaProximoJogo(Jogo jogoAnterior, int idJogadorPrincipal)

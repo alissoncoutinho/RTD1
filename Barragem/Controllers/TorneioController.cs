@@ -1035,6 +1035,8 @@ namespace Barragem.Controllers
                 var password = userPass.Split('|')[1];
                 if (WebSecurity.Login(userName, password))
                 {
+                    var torneio = db.Torneio.Find(torneioId);
+                    Funcoes.CriarCookieBarragem(Response, Server, torneio.barragemId, torneio.barragem.nome);
                     return RedirectToAction("Detalhes", new { id = torneioId });
                 }
                 else
@@ -1145,6 +1147,18 @@ namespace Barragem.Controllers
             }
         }
 
+        private void mudarStatusSeDesativadoParaStatusTorneio(int userId) {
+            var usuario = db.UserProfiles.Find(userId);
+            if (usuario !=null){
+                if (usuario.situacao == "desativado") {
+                    usuario.situacao = "torneio";
+                    db.Entry(usuario).State = EntityState.Modified;
+                    db.SaveChanges();
+
+                }
+            }
+        }
+
         public MensagemRetorno InscricaoNegocio(int torneioId, int classeInscricao = 0, string operacao = "", bool isMaisDeUmaClasse = false, int classeInscricao2 = 0, string observacao = "", bool isSocio = false, bool isClasseDupla = false, int userId = 0)
         {
             var mensagemRetorno = new MensagemRetorno();
@@ -1156,6 +1170,7 @@ namespace Barragem.Controllers
                 {
                     userId = WebSecurity.GetUserId(User.Identity.Name);
                 }
+                mudarStatusSeDesativadoParaStatusTorneio(userId);
                 var torneio = db.Torneio.Find(torneioId);
                 var isInscricao = db.InscricaoTorneio.Where(i => i.torneioId == torneioId && i.userId == userId).Count();
                 if (isInscricao > 0)
@@ -1999,6 +2014,29 @@ namespace Barragem.Controllers
             {
                 inscricao[0].colocacao = colocacao;
                 Torneio torneio = db.Torneio.Where(t => t.Id == jogo.torneioId).Single();
+                int pontuacao = CalculadoraDePontos.AddTipoTorneio(torneio.TipoTorneio).CalculaPontos(inscricao[0]);
+                inscricao[0].Pontuacao = pontuacao;
+                db.SaveChanges();
+            }
+            if ((jogo.desafiado2_id != null) && (jogo.desafiante2_id != null)) {
+                int idPerdedorDupla = 0;
+                if (jogo.idDoPerdedor == jogo.desafiado_id) {
+                    idPerdedorDupla = (int) jogo.desafiado2_id;
+                } else if(jogo.idDoPerdedor == jogo.desafiante_id) {
+                    idPerdedorDupla = (int)jogo.desafiante2_id;
+                }
+                cadastrarColocacaoPerdedorDupla(idPerdedorDupla, colocacao, (int) jogo.torneioId, (int) jogo.classeTorneio);
+            }
+        }
+
+        private void cadastrarColocacaoPerdedorDupla(int idPerdedor, int colocacao, int torneioId, int classeTorneio)
+        {
+            var inscricao = db.InscricaoTorneio.Where(i => i.userId == idPerdedor
+                && i.torneioId == torneioId && i.classe == classeTorneio && i.isAtivo).ToList();
+            if (inscricao.Count() > 0)
+            {
+                inscricao[0].colocacao = colocacao;
+                Torneio torneio = db.Torneio.Where(t => t.Id == torneioId).Single();
                 int pontuacao = CalculadoraDePontos.AddTipoTorneio(torneio.TipoTorneio).CalculaPontos(inscricao[0]);
                 inscricao[0].Pontuacao = pontuacao;
                 db.SaveChanges();
