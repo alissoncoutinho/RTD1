@@ -104,7 +104,7 @@ namespace Barragem.Controllers
         [Authorize(Roles = "admin, organizador")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult CriaESorteia(Rodada rodada)
+        public ActionResult CriaESorteia(Rodada rodada, bool notificarApp=true)
         {
             string mensagem = "";
             if (ModelState.IsValid)
@@ -113,15 +113,15 @@ namespace Barragem.Controllers
                 try {
                     rodadaNegocio.Create(rodada);
                     mensagem = "ok";
-                    rodadaNegocio.SortearJogos(rodada.Id, rodada.barragemId);
+                    rodadaNegocio.SortearJogos(rodada.Id, rodada.barragemId, notificarApp);
                 }catch (Exception e){
-                    mensagem = e.Message;
+                    if (e.InnerException != null) { mensagem = e.Message + ": " + e.InnerException.Message; } else { mensagem = e.Message; }
                 }
                 return RedirectToAction("Index", new { msg = mensagem });
                                 
             }
-
-            return View(rodada);
+            return RedirectToAction("Create");
+            
         }
 
         private void setClasseUnica(int barragemId){
@@ -140,7 +140,7 @@ namespace Barragem.Controllers
             string mensagem = "ok";
             try
             {
-                new RodadaNegocio().SortearJogos(id, barragemId);
+                new RodadaNegocio().SortearJogos(id, barragemId, false);
             }catch(Exception e)
             {
                 mensagem = e.Message;
@@ -217,6 +217,15 @@ namespace Barragem.Controllers
              }
          }
          */
+
+
+        [Authorize(Roles = "admin, organizador")]
+        public ActionResult notificarViaApp(int barragemId)
+        {
+            new RodadaNegocio().NotificacaoApp(barragemId);
+
+            return RedirectToAction("Index", new { msg = "ok" });
+        }
 
         [Authorize(Roles = "admin, organizador")]
         public ActionResult notificarGeracaoRodada(int Id)

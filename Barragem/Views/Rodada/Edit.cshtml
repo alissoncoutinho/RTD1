@@ -52,13 +52,14 @@
         </div>
         <br />
         <p>
-            <input type="submit" value="Save" />
+            <input type="submit" class="btn btn-default" value="Save" />
             <input class="btn btn-success sortear" type="submit" value="Sortear Jogos" />
+            <input class="btn btn-primary notificar" id="buttonNotificar" type="submit" value="Notificar App" />
         </p>
         }
 
         <div>
-            @Html.ActionLink("Back to List", "Index")
+            @Html.ActionLink("Voltar", "Index")
         </div>
 
         @section Scripts {
@@ -78,6 +79,13 @@
                         document.forms[1].action = link;
                         document.forms[1].submit();
                     });
+                    $(".notificar").click(function (event) {
+                        event.preventDefault();
+                        document.forms[1].action = "/Rodada/notificarViaApp?barragemId=@Model.barragemId";
+                        document.forms[1].method = "GET";
+                        document.forms[1].submit();
+                    });
+                    notificarViaApp
                 });
             </script>
         }

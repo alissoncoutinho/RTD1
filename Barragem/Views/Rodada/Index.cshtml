@@ -76,7 +76,6 @@
                                               if (Roles.IsUserInRole("admin") || Roles.IsUserInRole("organizador"))
                                               {
                                                   <button data-link="@Url.Action("FecharRodada", new { id = item.Id })" data-title="Fechar Rodada!" title="Fechar Rodada" class="btn btn-default btn-xs confirmDialog"><span class="glyphicon glyphicon-remove-circle"></span></button>
-                                                  <a href="@Url.Action("notificarGeracaoRodada", new { Id = item.Id })" title="enviar email de criação de rodada" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-envelope"></span></a>
                                               }
                                               if (Roles.IsUserInRole("admin")){
                                                 <button data-link="@Url.Action("ExcluirRodada", new { id = item.Id })" data-title="Excluir Rodada!" title="Excluir Rodada" class="btn btn-default btn-xs confirmExclusaoRodada"><span class="glyphicon glyphicon-remove-sign"></span></button>

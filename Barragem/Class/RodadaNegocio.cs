@@ -766,7 +766,7 @@ namespace Barragem.Class
 
         }
 
-        public void SortearJogos(int id, int barragemId)
+        public void SortearJogos(int id, int barragemId, bool notificarApp=true)
         {
             var rodadaNegocio = new RodadaNegocio();
             try
@@ -793,7 +793,7 @@ namespace Barragem.Class
             {
                 throw e;
             }
-            NotificacaoApp(barragemId);
+            if (notificarApp) { NotificacaoApp(barragemId); }
             
         }
 
