@@ -4,7 +4,24 @@
     Layout = "~/Views/Shared/_LayoutTorneio2.cshtml";
 }
 
-@if (Model != null) { 
+<div class="alert alert-info alert-dismissable">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-sm-12">
+                    Baixe o APP para lançar os seus resultados com mais facilidade e rapidez. <br>
+                    <a class='btn' href='https://play.google.com/store/apps/details?id=com.rankingtennis&hl=pt_BR'><img src="/Content/image/googlePlay.png" alt="google play" height="30" width="91"></a>
+                    <a class='btn' href='https://apps.apple.com/us/app/ranking-de-t%C3%AAnis/id1483076354?l=pt&ls=1'><img src="/Content/image/appStore.png" alt="google play" height="30" width="91"></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (false)
+{
+    if (Model != null)
+    {
     <div class="container-dashboard">
         <h4><b>@ViewBag.NomeTorneio</b></h4>
         
@@ -14,9 +31,12 @@
         <div class="container-dashboard formato-desktop">
             <div class="row clearfix formato-desktop">
                 <div class="col-md-2 col-xs-2">
-                    @if ((Model.desafiado_id != 0) && (Model.desafiado.fotoURL != null)){
+                    @if ((Model.desafiado_id != 0) && (Model.desafiado.fotoURL != null))
+                    {
                         <img class="img-responsive center-block" src="@Url.Action("BuscaFoto", "Account", new { id = Model.desafiado_id })" style="width: 148px; height: 198px;" />
-                    }else{
+                    }
+                    else
+                    {
                         <img class="img-responsive center-block" src="/Content/image/sem-foto.jpg" style="width: 148px; height: 198px;" />
                     }
                     @Html.HiddenFor(model => model.desafiado_id)
@@ -25,9 +45,12 @@
                     <center>
                         <br><br>
                         <p id="jogo">
-                            @if (Model.desafiado_id == 0){
+                            @if (Model.desafiado_id == 0)
+                            {
                                 @Html.Raw("<b>Aguardando Adversário</b>");
-                            }else{
+                            }
+                            else
+                            {
                                 <a href="@Url.Action("../Account/Detalhes", new { userId = Model.desafiado_id })" title="Detalhes do jogador">
                                     <b style="font-size:15px">@Model.desafiado.nome</b>
                                 </a><br>
@@ -43,13 +66,19 @@
                     <center>
                         <br><br>
                         <p id="jogo">
-                            @if (Model.desafiante_id == 0){
-                                if (Model.faseTorneio == 1){
+                            @if (Model.desafiante_id == 0)
+                            {
+                                if (Model.faseTorneio == 1)
+                                {
                                     @Html.Raw("Bye");
-                                }else{
+                                }
+                                else
+                                {
                                     @Html.Raw("<b>Aguardando Adversário</b>");
                                 }
-                            }else{
+                            }
+                            else
+                            {
                                 <a href="@Url.Action("../Account/Detalhes", new { userId = Model.desafiante_id })" title="Detalhes do jogador">
                                     <b style="font-size:15px">@Model.desafiante.nome</b>
                                 </a><br>
@@ -61,9 +90,12 @@
                     </center>
                 </div>
                 <div class="col-md-2 col-xs-2">
-                    @if ((Model.desafiante_id != 0) && (Model.desafiante.fotoURL != null)){
+                    @if ((Model.desafiante_id != 0) && (Model.desafiante.fotoURL != null))
+                    {
                         <img class="img-responsive center-block" src="@Url.Action("BuscaFoto", "Account", new { id = Model.desafiante_id })" style="width:148px;height:198px;" />
-                    }else{
+                    }
+                    else
+                    {
                         <img class="img-responsive center-block" src="/Content/image/sem-foto.jpg" style="width: 148px; height: 198px;" />
                     }
                     @Html.HiddenFor(model => model.desafiante_id)
@@ -74,16 +106,22 @@
             <div class="row">
                 <div class="col-xs-1 col-mobile" style="color:white">.</div>
                 <div class="col-xs-5 col-mobile">
-                    @if ((Model.desafiado_id != 0) && (Model.desafiado.fotoURL != null)){
+                    @if ((Model.desafiado_id != 0) && (Model.desafiado.fotoURL != null))
+                    {
                         <img class="img-responsive center-block" src="@Url.Action("BuscaFoto", "Account", new { id = Model.desafiado_id })" style="width: 148px; height: 198px;" />
-                    }else{
+                    }
+                    else
+                    {
                         <img class="img-responsive center-block" src="/Content/image/sem-foto.jpg" style="width: 148px; height: 198px;" />
                     }
                 </div>
                 <div class="col-xs-5 col-mobile">
-                    @if ((Model.desafiante_id != 0) && (Model.desafiante.fotoURL != null)){
+                    @if ((Model.desafiante_id != 0) && (Model.desafiante.fotoURL != null))
+                    {
                         <img class="img-responsive center-block" src="@Url.Action("BuscaFoto", "Account", new { id = Model.desafiante_id })" style="width: 148px; height: 198px;" />
-                    }else{
+                    }
+                    else
+                    {
                         <img class="img-responsive center-block" src="/Content/image/sem-foto.jpg" style="width: 148px; height: 198px;" />
                     }
                 </div>
@@ -92,9 +130,12 @@
                 <div class="col-xs-1 col-mobile" style="color:white">.</div>
                 <div class="col-xs-5 col-mobile">
                     <p id="jogo">
-                        @if (Model.desafiado_id == 0){
+                        @if (Model.desafiado_id == 0)
+                        {
                             @Html.Raw("Aguardando Adversário");
-                        }else{
+                        }
+                        else
+                        {
                             <a href="@Model.desafiado.linkwhatsapp"><img width="25" height="25" src="/Content/image/whatsapp.png"></a>
                             <a href="@Url.Action("../Account/Detalhes", new { userId = Model.desafiado_id })" title="Detalhes do jogador">
                                 @Model.desafiado.nome
@@ -105,9 +146,12 @@
                 @Html.HiddenFor(model => model.desafiado_id)
                 <div class="col-xs-5 col-mobile">
                     <p id="jogo">
-                        @if (Model.desafiante_id == 0){
+                        @if (Model.desafiante_id == 0)
+                        {
                             @Html.Raw("Aguardando Adversário");
-                        }else{
+                        }
+                        else
+                        {
                             <a href="@Model.desafiante.linkwhatsapp"><img width="25" height="25" src="/Content/image/whatsapp.png"></a>
                             <a href="@Url.Action("../Account/Detalhes", new { userId = Model.desafiante_id })" title="Detalhes do jogador">
                                 @Model.desafiante.nome
@@ -124,7 +168,8 @@
             <h5><label>Ações</label></h5>
             <div class="row">
                 <div class="col-sm-3">
-                    <button class="btn btn-success btn-block" id="botaomarcarJogo" @if (Model.situacao_Id == 4 || Model.situacao_Id == 5) { @Html.Raw("disabled")  } onclick="mostrarMarcarJogo()">Marcar horário</button>
+                    <button class="btn btn-success btn-block" id="botaomarcarJogo" @if (Model.situacao_Id == 4 || Model.situacao_Id == 5)
+                    { @Html.Raw("disabled")  } onclick="mostrarMarcarJogo()">Marcar horário</button>
                 </div>
                 <div class="col-sm-3">
                     @if (Model.situacao_Id == 4)
@@ -137,13 +182,14 @@
                     }
                 </div>
                 <div class="col-sm-3">
-                    <button class="btn btn-success btn-block" id="botaolancarWO" @if (Model.situacao_Id == 4) { @Html.Raw("disabled")  } onclick="mostrarLancarWO()">Lançar WO</button>
+                    <button class="btn btn-success btn-block" id="botaolancarWO" @if (Model.situacao_Id == 4)
+                    { @Html.Raw("disabled")  } onclick="mostrarLancarWO()">Lançar WO</button>
                 </div>
             </div>
         </div>
 
         @using (Html.BeginForm("MarcarJogo", "Jogo", FormMethod.Post, new { @enctype = "multipart/form-data" }))
-                {
+        {
             @Html.AntiForgeryToken()
             @Html.ValidationSummary(true)
             @Html.HiddenFor(model => model.Id)
@@ -210,7 +256,7 @@
         }
 
         @using (Html.BeginForm("InserirResultado", "Jogo", FormMethod.Post, new { @enctype = "multipart/form-data" }))
-                {
+        {
             @Html.AntiForgeryToken()
             @Html.ValidationSummary(true)
             @Html.HiddenFor(model => model.Id)
@@ -239,16 +285,22 @@
                             <center>
                                 <div class="row clearfix">
                                     <div class="col-md-6 col-xs-6">
-                                    @if ((Model.desafiado_id != 0)) {
+                                    @if ((Model.desafiado_id != 0))
+                                    {
                                         <p id="jogo"><b>@Model.desafiado.nome</b></p>
-                                    } else {
+                                    }
+                                    else
+                                    {
                                             <p id="jogo"><b>Aguardando Adversário</b></p>
                                     }
                                     </div>
                                     <div lass="col-md-6 col-xs-6">
-                                        @if ((Model.desafiante_id != 0)) {
+                                        @if ((Model.desafiante_id != 0))
+                                        {
                                         <p id="jogo"><b>@Model.desafiante.nome</b></p>
-                                        } else {
+                                        }
+                                        else
+                                        {
                                             <p id="jogo"><b>Aguardando Adversário</b></p>
                                         }
                                     </div>
@@ -321,7 +373,7 @@
         }
 
         @using (Html.BeginForm("LancarWO", "Jogo", FormMethod.Post, new { @enctype = "multipart/form-data" }))
-                {
+        {
             @Html.AntiForgeryToken()
             @Html.ValidationSummary(true)
             @Html.HiddenFor(model => model.Id)
@@ -343,8 +395,10 @@
                         <div class="form-group">
                             <label class="col-md-12 col-xs-12" for="situacao">Vencedor da partida</label>
                             <div class="col-md-2 col-xs-12">
-                                <input type="radio" name="vencedorWO" value=@Html.Raw(Model.desafiado_id) checked> @if (Model.desafiado_id != 0) {@Html.Raw(Model.desafiado.nome)}<br>
-                                <input type="radio" name="vencedorWO" value=@Html.Raw(Model.desafiante_id)> @if (Model.desafiante_id != 0) {@Html.Raw(Model.desafiante.nome)}<br>
+                                <input type="radio" name="vencedorWO" value=@Html.Raw(Model.desafiado_id) checked> @if (Model.desafiado_id != 0)
+                                {@Html.Raw(Model.desafiado.nome)}<br>
+                                <input type="radio" name="vencedorWO" value=@Html.Raw(Model.desafiante_id)> @if (Model.desafiante_id != 0)
+                                {@Html.Raw(Model.desafiante.nome)}<br>
                             </div>
                             <div class="col-md-2 col-xs-12">
                                 @if ((ViewBag.Editar == null) || (ViewBag.Editar))
@@ -360,10 +414,10 @@
         }
     </div>
 
-}
+    }
 
-@if (ViewBag.JogosPendentes != null)
-{
+    if (ViewBag.JogosPendentes != null)
+    {
     <div class="container-dashboard">
         <div class="container-fluid">
             <legend>
@@ -396,9 +450,9 @@
             </div>
         </div>
     </div>
+    }
+
 }
-
-
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
     @Scripts.Render("~/bundles/jqueryform")

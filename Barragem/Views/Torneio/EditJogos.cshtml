@@ -8,75 +8,80 @@
     <div id="placar-modal" class="modal fade" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
-                <div class="modal-header">
+                <div class="modal-header" style="padding:5px">
                     <a class="close" data-dismiss="modal">×</a>
                     <h3>Placar</h3>
                 </div>
-                <form id="placarForm" name="placar" role="form">
+                <form id="placarForm" name="placarForm" role="form" method="post">
                     <div class="modal-body">
                         <div class="form-group">
-                            <input type="hidden" name="idJogo" id="idJogo" class="form-control">
+                            <input type="hidden" name="Id" id="Id" class="form-control">
+                            <input type="hidden" id="desafiante_id" name="desafiante_id" value="0">
+                            <input type="hidden" id="desafiado_id" name="desafiado_id"  value="0">
                         </div>
                         <div class="row clearfix">
-                            <div class="form-group col-md-2 col-xs-6">
-                                
-                            </div>
-                            <div class="form-group col-md-3 col-xs-6" style="color:#40898e">
-                                Fulano da Silva
-                            </div>
-                            <div class="form-group col-md-1 col-xs-6">
-                                
-                            </div>
-                            <div class="form-group col-md-4 col-xs-6" style="color:#ff6a00">
-                                Ciclano de Souza
-                            </div>
+                            <div id="nomeDesafiante" class="form-group col-md-3 col-xs-5" style="color:#40898e"></div>
+                            <div class="form-group col-md-1 col-xs-1"></div>
+                            <div id="nomeDesafiado" class="form-group col-md-4 col-xs-5" style="color:#ff6a00"></div>
                         </div>
                         <div class="row clearfix">
-                            <div class="form-group col-md-2 col-xs-6" style="margin-top: 10px;">
-                                1º set
+                            <div class="form-group col-md-3 col-xs-5">
+                                <input type="text" name="qtddGames1setDesafiante" id="qtddGames1setDesafiante" class="col-md-2 form-control" style="border-color:#40898e">
                             </div>
-                            <div class="form-group col-md-3 col-xs-6">
-                                <input type="text" id="qtddGames1setDesafiante" class="col-md-2 form-control" style="border-color:#40898e"> 
-                            </div>
-                            <div class="form-group col-md-1 col-xs-6" style="margin-top: 10px;">
+                            <div class="form-group col-md-1 col-xs-1" style="margin-top: 10px;">
                                 X
                             </div>
-                            <div class="form-group col-md-3 col-xs-6" >
-                                <input type="text" id="qtddGames1setDesafiado" class="col-md-2 form-control" style="border-color:#ff6a00">
+                            <div class="form-group col-md-3 col-xs-5">
+                                <input type="text" name="qtddGames1setDesafiado" id="qtddGames1setDesafiado" class="col-md-2 form-control" style="border-color:#ff6a00">
                             </div>
                         </div>
                         <div class="row clearfix">
-                            <div class="form-group col-md-2 col-xs-6" style="margin-top: 10px;">
-                                2º set
+                            <div class="form-group col-md-3 col-xs-5">
+                                <input type="text" name="qtddGames2setDesafiante" id="qtddGames2setDesafiante" class="col-md-2 form-control" style="border-color:#40898e">
                             </div>
-                            <div class="form-group col-md-3 col-xs-6">
-                                <input type="text" id="qtddGames2setDesafiante" class="col-md-2 form-control" style="border-color:#40898e">
-                            </div>
-                            <div class="form-group col-md-1 col-xs-6" style="margin-top: 10px;">
+                            <div class="form-group col-md-1 col-xs-1" style="margin-top: 10px;">
                                 X
                             </div>
-                            <div class="form-group col-md-3 col-xs-6">
-                                <input type="text" id="qtddGames2setDesafiado" class="col-md-2 form-control" style="border-color:#ff6a00">
+                            <div class="form-group col-md-3 col-xs-5">
+                                <input type="text" name="qtddGames2setDesafiado" id="qtddGames2setDesafiado" class="col-md-2 form-control" style="border-color:#ff6a00">
                             </div>
                         </div>
                         <div class="row clearfix">
-                            <div class="form-group col-md-2 col-xs-6" style="margin-top: 10px;">
-                                3º set
+                            <div class="form-group col-md-3 col-xs-5">
+                                <input type="text" name="qtddGames3setDesafiante" id="qtddGames3setDesafiante" class="col-md-2 form-control" style="border-color:#40898e">
                             </div>
-                            <div class="form-group col-md-3 col-xs-6">
-                                <input type="text" id="qtddGames3setDesafiante" class="col-md-2 form-control" style="border-color:#40898e">
-                            </div>
-                            <div class="form-group col-md-1 col-xs-6" style="margin-top: 10px;">
+                            <div class="form-group col-md-1 col-xs-1" style="margin-top: 10px;">
                                 X
                             </div>
-                            <div class="form-group col-md-3 col-xs-6">
-                                <input type="text" id="qtddGames3setDesafiado" class="col-md-2 form-control" style="border-color:#ff6a00">
+                            <div class="form-group col-md-3 col-xs-5">
+                                <input type="text" name="qtddGames3setDesafiado" id="qtddGames3setDesafiado" class="col-md-2 form-control" style="border-color:#ff6a00">
                             </div>
                         </div>
-                    </div>
+                        <div class="row clearfix">
+                            <div class="form-group">
+                                <label class="control-label col-md-3">Situação</label>
+                                <div class="col-sm-5">
+                                    <select class="form-control input-sm valid" onchange="exibirOpcaoVencedores()" id="situacao_id" name="situacao_id" aria-invalid="false">
+                                        <option value="1">pendente</option>
+                                        <option value="2">marcado</option>
+                                        <option value="4">finalizado</option>
+                                        <option value="5">WO</option>
+                                        <option value="6">desistência</option>
+                                    </select>
+                                </div>
+                            </div>
+                         </div>
+                            <div class="row clearfix exibir-inserirResultados" style="margin-top:5px;padding:0px" id="IndicadorVencedor">
+                                <div class="form-group col-md-12 col-xs-12" style="margin-bottom:5px">Vencedor da partida:</div>
+                                <div class="col-md-12 col-xs-12">
+                                    <input type="radio" id="vDesafiante" name="vencedorWO" value="0"> <label id="vencedorDesafianteNome" style="color:#40898e"></label><br>
+                                    <input type="radio" id="vDesafiado" name="vencedorWO" value="0"> <label id="vencedorDesafiadoNome" style="color:#ff6a00"></label>
+                                </div>
+                            </div>
+                        </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-                        <input type="submit" value="Salvar" class="btn btn-success" id="submit">
+                        <input type="submit" value="Salvar" class="btn btn-success"/>
                     </div>
                 </form>
             </div>
@@ -241,15 +246,15 @@
                     </td>
                     <td>
                         @if (item.situacao_Id == 1){
-                            @Html.Raw("<p  class='badge bg-red'>P</p>")
+                            @Html.Raw("<p id='badge"+ item.Id +"' class='badge bg-red'>P</p>")
                         }
                         else if (item.situacao_Id == 2)
                         {
-                            @Html.Raw("<p class='badge bg-yellow'>M</p>")
+                            @Html.Raw("<p id='badge" + item.Id + "' class='badge bg-yellow'>M</p>")
                         }
                         else if ((item.situacao_Id == 4) || (item.situacao_Id == 5) || (item.situacao_Id == 6))
                         {
-                            @Html.Raw("<p class='badge bg-green'>F</p>")
+                            @Html.Raw("<p id='badge" + item.Id + "' class='badge bg-green'>F</p>")
                         }
                     </td>
 
@@ -298,11 +303,13 @@
                             <button title="salvar" data-valor="@Html.Raw(i)" name="@Html.Raw("button"+i)" id="@Html.Raw("button"+i)" class="btn btn-default btn-xs inscricaoButton">
                                 Salvar
                             </button><br>
-                            <a href="@Url.Action("LancarResultado", new {id=item.Id })" title="placar" class="btn btn-default btn-xs inscricaoButton">
+                            <!--a href="//Url.Action("LancarResultado", new {id=item.Id })" title="placar" class="btn btn-default btn-xs inscricaoButton">
                                 Placar
-                            </a>
+                            </a-->
                         </form>
-                        <!--button type="button" id="btnPlacar" class="btn btn-info btn" data-toggle="modal" data-placar="1|6|1|6|0|0" data-idJogo="@item.Id" data-target="#placar-modal">Placar</button-->
+                        <button type="button" id="@Html.Raw("btnPlacar"+item.Id)" class="btn btn-info btn-xs btnLancarPlacar" data-vencedor="@item.idDoVencedor" data-toggle="modal" data-situacao="@item.situacao_Id" data-indice="@i" 
+                                data-placar="@item.qtddGames1setDesafiante|@item.qtddGames1setDesafiado|@item.qtddGames2setDesafiante|@item.qtddGames2setDesafiado|@item.qtddGames3setDesafiante|@item.qtddGames3setDesafiado" 
+                                data-idJogo="@item.Id" data-desafianteId="@item.desafiante_id" data-desafiadoId="@item.desafiado_id" data-target="#placar-modal">Placar</button>
                         
                     </td>
 
@@ -327,139 +334,200 @@
                 @Scripts.Render("~/bundles/jqueryval")
                 @Scripts.Render("~/bundles/jqueryform")
                 <script type="text/javascript">
-            $(document).ready(function () {
-                $("#placarForm").submit(function (event) {
-                    submitForm();
-                    return false;
-                });
-            });
 
-            $(document).on("click", "#btnPlacar", function () {
-                var id = $(this).attr('data-idJogo');
-                var placar = $(this).attr('data-placar');
-                var str = placar.split('|');
-                var set1Desafiante = str[0];
-                var set1Desafiado = str[1];
-                var set2Desafiante = str[2];
-                var set2Desafiado = str[3];
-                var set3Desafiante = str[4];
-                var set3Desafiado = str[5];
-                $(".modal-body #idJogo").val(id);
-                $(".modal-body #qtddGames1setDesafiante").val(set1Desafiante);
-                $(".modal-body #qtddGames1setDesafiado").val(set1Desafiado);
-                $(".modal-body #qtddGames2setDesafiante").val(set2Desafiante);
-                $(".modal-body #qtddGames2setDesafiado").val(set2Desafiado);
-                $(".modal-body #qtddGames3setDesafiante").val(set3Desafiante);
-                $(".modal-body #qtddGames3setDesafiado").val(set3Desafiado);
-            });
-            function submitForm() {
-                $.ajax({
-                    type: "POST",
-                    url: "saveContact.php",
-                    cache: false,
-                    data: $('form#placarForm').serialize(),
-                    success: function (response) {
-                        $("#placar").html(response)
-                        $("#placar-modal").modal('hide');
-                    },
-                    error: function () {
-                        alert("Error");
+                    $(document).on("click", ".btnLancarPlacar", function () {
+                        var indice = $(this).attr('data-indice');
+                        var id = $(this).attr('data-idJogo');
+                        var situacao = $(this).attr('data-situacao');
+                        var vencedorWO = $(this).attr('data-vencedor');
+                        var desafiante_id = $(this).attr('data-desafianteId');
+                        var desafiado_id = $(this).attr('data-desafiadoId');
+                        console.log("vencedor: "+vencedorWO)
+                        var placar = $(this).attr('data-placar');
+                        var desafiante = document.querySelector("#jogador1_" + indice);
+                        var nomeDesafiante = desafiante.options[desafiante.selectedIndex].text;
+                        var desafiado = document.querySelector("#jogador2_" + indice);
+                        var nomeDesafiado = desafiado.options[desafiado.selectedIndex].text;
+                        var str = placar.split('|');
+                        var set1Desafiante = str[0];
+                        var set1Desafiado = str[1];
+                        var set2Desafiante = str[2];
+                        var set2Desafiado = str[3];
+                        var set3Desafiante = str[4];
+                        var set3Desafiado = str[5];
+                        $(".modal-body #Id").val(id);
+                        $(".modal-body #qtddGames1setDesafiante").val(set1Desafiante);
+                        $(".modal-body #qtddGames1setDesafiado").val(set1Desafiado);
+                        $(".modal-body #qtddGames2setDesafiante").val(set2Desafiante);
+                        $(".modal-body #qtddGames2setDesafiado").val(set2Desafiado);
+                        $(".modal-body #qtddGames3setDesafiante").val(set3Desafiante);
+                        $(".modal-body #qtddGames3setDesafiado").val(set3Desafiado);
+                        $(".modal-body #vDesafiante").val(desafiante_id);
+                        $(".modal-body #vDesafiado").val(desafiado_id);
+                        $(".modal-body #desafiante_id").val(desafiante_id);
+                        $(".modal-body #desafiado_id").val(desafiado_id);
+                        if (vencedorWO == desafiante_id) {
+                            $(".modal-body #vDesafiante").attr('checked', true);
+                        } else {
+                            $(".modal-body #vDesafiado").attr('checked', true);
+                        }
+
+                        $("select#situacao_id").val(situacao);
+                        exibirOpcaoVencedores()
+                        $(".modal-body #nomeDesafiante").html(nomeDesafiante);
+                        $(".modal-body #nomeDesafiado").html(nomeDesafiado);
+                        $(".modal-body #vencedorDesafiadoNome").html(nomeDesafiado);
+                        $(".modal-body #vencedorDesafianteNome").html(nomeDesafiante);
+                    });
+
+                    $(".date").datepicker({
+                        language: 'pt-BR',
+                        pickTime: false
+                    });
+
+                    $(document).ready(function () {
+                        $(".hora").mask("99:99");
+
+                        $(".inscricaoButton").click(function (event) {
+                            var i = $(this).data("valor");
+                            var Id = $("#form" + i).find("input[name=Id]").val();
+                            var jogador1 = document.getElementById("jogador1_" + i).value;
+                            var jogador2 = document.getElementById("jogador2_" + i).value;
+                            var dataJogo = document.getElementById("dataJogo" + i).value;
+                            var horaJogo = document.getElementById("horaJogo" + i).value;
+                            var quadra = document.getElementById("quadra" + i).value;
+                            event.preventDefault();
+                            //var data1 = $(this).closest('.form');
+                            //console.log(data1);
+                            $.ajax({
+                                type: "POST",
+                                url: "/Torneio/EditJogos",
+                                dataType: "json",
+                                data: "{'Id':'" + Id + "', 'jogador1':'" + jogador1 + "', 'jogador2':'" + jogador2 + "', 'dataJogo':'" + dataJogo + "', 'horaJogo':'" + horaJogo + "', 'quadra':'" + quadra + "'}",
+                                contentType: "application/json; charset=utf-8",
+                                success: function (response) {
+                                    if (typeof response == "object") {
+                                        if (response.retorno === 0) {
+                                            toastr.error(response.erro, "Erro");
+                                        } else {
+                                            toastr.success("Atualização realizada com sucesso.", "Aviso");
+                                        }
+                                    }
+                                },
+                                error: function (jqXHR, textStatus, errorThrown) {
+                                    location.reload(true);
+                                }
+                            });
+                        });
+
+                        $(".exibirClasses").click(function (event) {
+                            var element = document.getElementById("classes");
+                            element.classList.add("show");
+                        });
+
+                        $(".confirm").confirm({
+                            title: "Confirmação",
+                            content: "Tem certeza que deseja gerar os jogos? Caso já existam jogos eles serão excluídos!",
+                            buttons: {
+                                sim: {
+                                    text: 'Sim',
+                                    btnClass: 'btn-primary',
+                                    action: function () {
+                                        document.forms[1].submit();
+                                    }
+                                },
+                                cancelar: {}
+                            }
+                        });
+
+                    });
+
+                    function marcarTodos() {
+                        var isChecked = false;
+                        if (document.getElementById('todos').checked) {
+                            isChecked = true;
+                        }
+                        var checkboxes = document.getElementsByTagName("input");
+                        for (var i = 0; i < checkboxes.length; i++) {
+                            if (checkboxes[i].type == "checkbox") {
+                                checkboxes[i].checked = isChecked;
+                            }
+                        }
                     }
-                });
-            }
-            $(".date").datepicker({
-                language: 'pt-BR',
-                pickTime: false
-            });
 
-            $(document).ready(function () {
-                $(".hora").mask("99:99");
+                    function Pesquisar() {
+                        var torneioId = document.getElementById('torneioId').value;
+                        var classeId = document.getElementById('fClasse').value;
+                        var data = document.getElementById('fData').value;
+                        var hora = document.getElementById('fHora').value;
+                        var quadra = document.getElementById('fQuadra').value;
+                        var fase = document.getElementById('fase').value;
+                        window.location = "EditJogos?torneioId=" + torneioId + "&fClasse=" + classeId + "&fData=" + data + "&fHora=" + hora + "&fQuadra=" + quadra + "&fase=" + fase;
+                    }
+                    function Imprimir() {
+                        var torneioId = document.getElementById('torneioId').value;
+                        var classeId = document.getElementById('fClasse').value;
+                        var data = document.getElementById('fData').value;
+                        var hora = document.getElementById('fHora').value;
+                        var quadra = document.getElementById('fQuadra').value;
+                        var fase = document.getElementById('fase').value;
+                        window.location = "ImprimirJogos?torneioId=" + torneioId + "&fClasse=" + classeId + "&fData=" + data + "&fHora=" + hora + "&fQuadra=" + quadra + "&fase=" + fase;
+                            }
 
-                $(".inscricaoButton").click(function (event) {
-                    var i = $(this).data("valor");
-                    var Id = $("#form" + i).find("input[name=Id]").val();
-                    var jogador1 = document.getElementById("jogador1_" + i).value;
-                    var jogador2 = document.getElementById("jogador2_" + i).value;
-                    var dataJogo = document.getElementById("dataJogo" + i).value;
-                    var horaJogo = document.getElementById("horaJogo" + i).value;
-                    var quadra = document.getElementById("quadra" + i).value;
-                    event.preventDefault();
-                    //var data1 = $(this).closest('.form');
-                    //console.log(data1);
-                    $.ajax({
-                        type: "POST",
-                        url: "/Torneio/EditJogos",
-                        dataType: "json",
-                        data: "{'Id':'" + Id + "', 'jogador1':'" + jogador1 + "', 'jogador2':'" + jogador2 + "', 'dataJogo':'" + dataJogo + "', 'horaJogo':'" + horaJogo + "', 'quadra':'" + quadra + "'}",
-                        contentType: "application/json; charset=utf-8",
-                        success: function (response) {
-                            if (typeof response == "object") {
-                                if (response.retorno === 0) {
-                                    toastr.error(response.erro, "Erro");
+                    document.getElementById("IndicadorVencedor").classList.remove("show");
+
+                    function exibirOpcaoVencedores() {
+                        console.log("entrou")
+                        if (document.getElementById("situacao_id").value == '5' || document.getElementById("situacao_id").value == '6') {
+                            document.getElementById("IndicadorVencedor").classList.add("show");
+                        } else {
+                            document.getElementById("IndicadorVencedor").classList.remove("show");
+                        }
+                    }
+
+                    $("#placarForm").submit(function (event) {
+                        event.preventDefault();
+                        var url = "LancarResultado"
+                        if (document.getElementById("situacao_id").value == '5' || document.getElementById("situacao_id").value == '6') {
+                            url = "LancarWO";
+                        }
+                        submitForm(url);
+                        return false;
+                    });
+
+                    function submitForm(url) {
+                        $.ajax({
+                            type: "POST",
+                            url: url,
+                            cache: false,
+                            dataType: "json",
+                            data: $('form#placarForm').serialize(),
+                            success: function (resp) {
+                                if (resp.retorno == 0) {
+                                    toastr.error(resp.erro, "Erro");
                                 } else {
+                                    var id = $(".modal-body #Id").val();
+                                    if ((document.getElementById("situacao_id").value == 2) && (($(".modal-body #qtddGames1setDesafiado").val() != 0) || ($(".modal-body #qtddGames1setDesafiante").val() != 0))) {
+                                        $("#btnPlacar" + id).attr('data-situacao', 4);
+                                        $("#badge" + id).attr('class', 'badge bg-green');
+                                        $("#badge" + id).html('F');
+                                    } else {
+                                        $("#btnPlacar" + id).attr('data-situacao', document.getElementById("situacao_id").value);
+                                    }
+                                    $("#btnPlacar" + id).attr('data-placar', $(".modal-body #qtddGames1setDesafiante").val() + "|" + $(".modal-body #qtddGames1setDesafiado").val() + "|" +
+                                        $(".modal-body #qtddGames2setDesafiante").val() + "|" + $(".modal-body #qtddGames2setDesafiado").val() + "|" + $(".modal-body #qtddGames3setDesafiante").val() + "|" + $(".modal-body #qtddGames3setDesafiado").val());
+                                    if (document.getElementById("situacao_id").value == '5' || document.getElementById("situacao_id").value == '6' || document.getElementById("situacao_id").value == '4') {
+                                        $("#badge" + id).attr('class', 'badge bg-green');
+                                        $("#badge" + id).html('F');
+                                    }
+                                    $("#placar-modal").modal('hide');
                                     toastr.success("Atualização realizada com sucesso.", "Aviso");
                                 }
+
                             }
-                        },
-                        error: function (jqXHR, textStatus, errorThrown) {
-                            location.reload(true);
-                        }
-                    });
-                });
-
-                $(".exibirClasses").click(function (event) {
-                    var element = document.getElementById("classes");
-                    element.classList.add("show");
-                });
-
-                $(".confirm").confirm({
-                    title: "Confirmação",
-                    content: "Tem certeza que deseja gerar os jogos? Caso já existam jogos eles serão excluídos!",
-                    buttons: {
-                        sim: {
-                            text: 'Sim',
-                            btnClass: 'btn-primary',
-                            action: function () {
-                                document.forms[1].submit();
-                            }
-                        },
-                        cancelar: {}
+                        });
                     }
-                });
 
-            });
-            
-            function marcarTodos() {
-                var isChecked = false;
-                if (document.getElementById('todos').checked) {
-                    isChecked = true;
-                }
-                var checkboxes = document.getElementsByTagName("input");
-                for (var i = 0; i < checkboxes.length; i++) {
-                    if (checkboxes[i].type == "checkbox") {
-                        checkboxes[i].checked = isChecked;
-                    }
-                }
-            }
 
-            function Pesquisar() {
-                var torneioId = document.getElementById('torneioId').value;
-                var classeId = document.getElementById('fClasse').value;
-                var data = document.getElementById('fData').value;
-                var hora = document.getElementById('fHora').value;
-                var quadra = document.getElementById('fQuadra').value;
-                var fase = document.getElementById('fase').value;
-                window.location = "EditJogos?torneioId=" + torneioId + "&fClasse=" + classeId + "&fData=" + data + "&fHora=" + hora + "&fQuadra=" + quadra + "&fase=" + fase;
-            }
-            function Imprimir() {
-                var torneioId = document.getElementById('torneioId').value;
-                var classeId = document.getElementById('fClasse').value;
-                var data = document.getElementById('fData').value;
-                var hora = document.getElementById('fHora').value;
-                var quadra = document.getElementById('fQuadra').value;
-                var fase = document.getElementById('fase').value;
-                window.location = "ImprimirJogos?torneioId=" + torneioId + "&fClasse=" + classeId + "&fData=" + data + "&fHora=" + hora + "&fQuadra=" + quadra + "&fase=" + fase;
-            }
-
-                </script>
+               </script>
             }

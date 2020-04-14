@@ -1893,100 +1893,117 @@ namespace Barragem.Controllers
 
         
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        [Authorize(Roles = "admin,usuario,organizador")]
-        public ActionResult LancarResultado(Jogo jogo)
+        [Authorize(Roles = "admin,organizador")]
+        public ActionResult LancarResultado(Jogo j)
         {
-            var Mensagem = "";
-            int setDesafiante = 0;
-            int setDesafiado = 0;
-            if (ModelState.IsValid)
-            {
-                jogo.dataCadastroResultado = DateTime.Now;
-                jogo.usuarioInformResultado = User.Identity.Name;
-                if (jogo.desafiado_id == WebSecurity.GetUserId(User.Identity.Name))
+            try {
+                Jogo jogo = db.Jogo.Find(j.Id);
+                jogo.situacao_Id = j.situacao_Id;
+                if ((j.situacao_Id==2) && ((j.qtddGames1setDesafiado!=0)|| (j.qtddGames1setDesafiante != 0)))
                 {
-                    setDesafiado = 6;
-                    setDesafiante = 1;
+                    jogo.situacao_Id = 4;
+                }
+                int setDesafiante = 0;
+                int setDesafiado = 0;
+                jogo.qtddGames1setDesafiado = j.qtddGames1setDesafiado;
+                jogo.qtddGames2setDesafiado = j.qtddGames2setDesafiado;
+                jogo.qtddGames3setDesafiado = j.qtddGames3setDesafiado;
+                jogo.qtddGames1setDesafiante = j.qtddGames1setDesafiante;
+                jogo.qtddGames2setDesafiante = j.qtddGames2setDesafiante;
+                jogo.qtddGames3setDesafiante = j.qtddGames3setDesafiante;
+                if (ModelState.IsValid)
+                {
+                    jogo.dataCadastroResultado = DateTime.Now;
+                    jogo.usuarioInformResultado = User.Identity.Name;
+                    if (jogo.desafiado_id == WebSecurity.GetUserId(User.Identity.Name))
+                    {
+                        setDesafiado = 6;
+                        setDesafiante = 1;
+                    }
+                    else
+                    {
+                        setDesafiado = 1;
+                        setDesafiante = 6;
+                    }
+                    jogo.idVencedor = 0;
+                    jogo.idPerderdor = 0;
+                    if (jogo.situacao_Id == 5)
+                    { //WO
+                        jogo.qtddGames1setDesafiado = setDesafiado;
+                        jogo.qtddGames1setDesafiante = setDesafiante;
+                        jogo.qtddGames2setDesafiado = setDesafiado;
+                        jogo.qtddGames2setDesafiante = setDesafiante;
+                    }
+                    if (jogo.situacao_Id == 1 || jogo.situacao_Id == 2) // pendente ou marcado
+                    {
+                        jogo.qtddGames1setDesafiado = 0;
+                        jogo.qtddGames1setDesafiante = 0;
+                        jogo.qtddGames2setDesafiado = 0;
+                        jogo.qtddGames2setDesafiante = 0;
+                        jogo.qtddGames3setDesafiado = 0;
+                        jogo.qtddGames3setDesafiante = 0;
+                    }
+                    db.Entry(jogo).State = EntityState.Modified;
+                    db.SaveChanges();
                 }
                 else
                 {
-                    setDesafiado = 1;
-                    setDesafiante = 6;
+                    //Mensagem = "Não foi possível alterar os dados.";
+                    return Json(new { erro = "Dados Inválidos.", retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
                 }
-                jogo.idVencedor = 0;
-                jogo.idPerderdor = 0;
-                if (jogo.situacao_Id == 5)
-                { //WO
-                    jogo.qtddGames1setDesafiado = setDesafiado;
-                    jogo.qtddGames1setDesafiante = setDesafiante;
-                    jogo.qtddGames2setDesafiado = setDesafiado;
-                    jogo.qtddGames2setDesafiante = setDesafiante;
-                }
-                if (jogo.situacao_Id == 1 || jogo.situacao_Id == 2) // pendente ou marcado
-                {
-                    jogo.qtddGames1setDesafiado = 0;
-                    jogo.qtddGames1setDesafiante = 0;
-                    jogo.qtddGames2setDesafiado = 0;
-                    jogo.qtddGames2setDesafiante = 0;
-                    jogo.qtddGames3setDesafiado = 0;
-                    jogo.qtddGames3setDesafiante = 0;
-                }
-                db.Entry(jogo).State = EntityState.Modified;
-                db.SaveChanges();
-                Mensagem = "ok";
-            }
-            else
-            {
-                Mensagem = "Não foi possível alterar os dados.";
+
+                //jogo = db.Jogo.Include(j => j.desafiado).Include(j => j.desafiante).Where(j => j.Id == jogo.Id).Single();
+                //ViewBag.situacao_Id = new SelectList(db.SituacaoJogo, "Id", "descricao", jogo.situacao_Id);
+                //calcula os pontos, posicao e monta proximo jogo
+                MontarProximoJogoTorneio(jogo);
+
+                return Json(new { erro = "", retorno = 1 }, "text/plain", JsonRequestBehavior.AllowGet);
+            } catch (Exception ex) {
+                return Json(new { erro = ex.Message, retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
             }
 
-            jogo = db.Jogo.Include(j => j.desafiado).Include(j => j.desafiante).Where(j => j.Id == jogo.Id).Single();
-
-            ViewBag.situacao_Id = new SelectList(db.SituacaoJogo, "Id", "descricao", jogo.situacao_Id);
-            //calcula os pontos, posicao e monta proximo jogo
-            MontarProximoJogoTorneio(jogo);
-
-            return RedirectToAction("LancarResultado", "Torneio", new { torneioId = jogo.Id, msg = Mensagem });
+            //return RedirectToAction("LancarResultado", "Torneio", new { torneioId = jogo.Id, msg = Mensagem });
 
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
         [Authorize(Roles = "admin,usuario,organizador")]
-        public ActionResult LancarWO(int Id, int vencedorWO, int situacao_id=5)
+        public ActionResult LancarWO(int Id, int vencedorWO=0, int situacao_id=5)
         {
-            Jogo jogoAtual = db.Jogo.Find(Id);
-            //alterar quantidade de games para desafiado e desafiante
-            int gamesDesafiante = 0;
-            int gamesDesafiado = 0;
-            if (jogoAtual.desafiado_id == vencedorWO)
-            {
-                gamesDesafiado = 6;
-                gamesDesafiante = 1;
-            }
-            else
-            {
-                gamesDesafiado = 1;
-                gamesDesafiante = 6;
-            }
-            jogoAtual.qtddGames1setDesafiado = gamesDesafiado;
-            jogoAtual.qtddGames1setDesafiante = gamesDesafiante;
-            jogoAtual.qtddGames2setDesafiado = gamesDesafiado;
-            jogoAtual.qtddGames2setDesafiante = gamesDesafiante;
-            jogoAtual.qtddGames3setDesafiado = 0;
-            jogoAtual.qtddGames3setDesafiante = 0;
-            //alterar status do jogo WO
-            jogoAtual.situacao_Id = situacao_id;
-            jogoAtual.usuarioInformResultado = User.Identity.Name;
-            jogoAtual.dataCadastroResultado = DateTime.Now;
-            db.Entry(jogoAtual).State = EntityState.Modified;
-            db.SaveChanges();
+            try { 
+                if (vencedorWO == 0) {
+                    return Json(new { erro = "Informe o vencedor do jogo.", retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
+                }
+                Jogo jogoAtual = db.Jogo.Find(Id);
+                //alterar quantidade de games para desafiado e desafiante
+                int gamesDesafiante = 0;
+                int gamesDesafiado = 0;
+                if (jogoAtual.desafiado_id == vencedorWO){
+                    gamesDesafiado = 6;
+                    gamesDesafiante = 1;
+                } else {
+                    gamesDesafiado = 1;
+                    gamesDesafiante = 6;
+                }
+                jogoAtual.qtddGames1setDesafiado = gamesDesafiado;
+                jogoAtual.qtddGames1setDesafiante = gamesDesafiante;
+                jogoAtual.qtddGames2setDesafiado = gamesDesafiado;
+                jogoAtual.qtddGames2setDesafiante = gamesDesafiante;
+                jogoAtual.qtddGames3setDesafiado = 0;
+                jogoAtual.qtddGames3setDesafiante = 0;
+                //alterar status do jogo WO
+                jogoAtual.situacao_Id = situacao_id;
+                jogoAtual.usuarioInformResultado = User.Identity.Name;
+                jogoAtual.dataCadastroResultado = DateTime.Now;
+                db.Entry(jogoAtual).State = EntityState.Modified;
+                db.SaveChanges();
 
-            MontarProximoJogoTorneio(jogoAtual);
+                MontarProximoJogoTorneio(jogoAtual);
 
-            var barragemId = 0;
-            return RedirectToAction("LancarResultado", "Torneio", new { Id, barragemId, msg="ok"});
+                return Json(new { erro = "", retorno = 1 }, "text/plain", JsonRequestBehavior.AllowGet);
+            } catch (Exception ex) {
+                return Json(new { erro = ex.Message, retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
+            }
 
         }
 
