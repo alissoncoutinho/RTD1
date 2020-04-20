@@ -342,7 +342,6 @@
                         var vencedorWO = $(this).attr('data-vencedor');
                         var desafiante_id = $(this).attr('data-desafianteId');
                         var desafiado_id = $(this).attr('data-desafiadoId');
-                        console.log("vencedor: "+vencedorWO)
                         var placar = $(this).attr('data-placar');
                         var desafiante = document.querySelector("#jogador1_" + indice);
                         var nomeDesafiante = desafiante.options[desafiante.selectedIndex].text;
@@ -397,8 +396,6 @@
                             var horaJogo = document.getElementById("horaJogo" + i).value;
                             var quadra = document.getElementById("quadra" + i).value;
                             event.preventDefault();
-                            //var data1 = $(this).closest('.form');
-                            //console.log(data1);
                             $.ajax({
                                 type: "POST",
                                 url: "/Torneio/EditJogos",
@@ -477,7 +474,6 @@
                     document.getElementById("IndicadorVencedor").classList.remove("show");
 
                     function exibirOpcaoVencedores() {
-                        console.log("entrou")
                         if (document.getElementById("situacao_id").value == '5' || document.getElementById("situacao_id").value == '6') {
                             document.getElementById("IndicadorVencedor").classList.add("show");
                         } else {
@@ -514,11 +510,19 @@
                                     } else {
                                         $("#btnPlacar" + id).attr('data-situacao', document.getElementById("situacao_id").value);
                                     }
-                                    $("#btnPlacar" + id).attr('data-placar', $(".modal-body #qtddGames1setDesafiante").val() + "|" + $(".modal-body #qtddGames1setDesafiado").val() + "|" +
-                                        $(".modal-body #qtddGames2setDesafiante").val() + "|" + $(".modal-body #qtddGames2setDesafiado").val() + "|" + $(".modal-body #qtddGames3setDesafiante").val() + "|" + $(".modal-body #qtddGames3setDesafiado").val());
+                                    if(document.getElementById("situacao_id").value == 1){
+                                        $("#btnPlacar" + id).attr('data-placar', "0|0|0|0|0|0")
+                                    }else{
+                                        $("#btnPlacar" + id).attr('data-placar', $(".modal-body #qtddGames1setDesafiante").val() + "|" + $(".modal-body #qtddGames1setDesafiado").val() + "|" +
+                                            $(".modal-body #qtddGames2setDesafiante").val() + "|" + $(".modal-body #qtddGames2setDesafiado").val() + "|" +
+                                            $(".modal-body #qtddGames3setDesafiante").val() + "|" + $(".modal-body #qtddGames3setDesafiado").val());
+                                    }
                                     if (document.getElementById("situacao_id").value == '5' || document.getElementById("situacao_id").value == '6' || document.getElementById("situacao_id").value == '4') {
                                         $("#badge" + id).attr('class', 'badge bg-green');
                                         $("#badge" + id).html('F');
+                                    } else if (document.getElementById("situacao_id").value == '1') {
+                                        $("#badge" + id).attr('class', 'badge bg-red');
+                                        $("#badge" + id).html('P');
                                     }
                                     $("#placar-modal").modal('hide');
                                     toastr.success("Atualização realizada com sucesso.", "Aviso");
