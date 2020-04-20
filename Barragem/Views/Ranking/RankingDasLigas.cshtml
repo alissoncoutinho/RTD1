@@ -1,0 +1,84 @@
+﻿@model IEnumerable<Barragem.Models.SnapshotRanking>
+
+    @using (Html.BeginForm("RankingDasLigas", "Ranking", FormMethod.Post, new { @class = "form-horizontal" }))
+    {
+        <div class="form-group">
+            <label class="col-sm-2 control-label">Liga:</label>
+            <div class="col-sm-6">
+                <select id="idLiga" name="idLiga" class="form-control" onchange="this.form.submit()">
+                    @foreach (var liga in ViewBag.Ligas)
+                    {
+                        <option value="@liga.Id" @if (liga.Id == ViewBag.idLiga) { @Html.Raw("selected") }>@liga.Nome</option>
+                    }
+                </select>
+            </div>
+
+            <div class="col-sm-4">
+                <select id="idSnapshot" name="idSnapshot" class="form-control" onchange="this.form.submit()">
+                    @foreach (var snap in ViewBag.SnapshotsDaLiga)
+                    {
+                        <option value="@snap.Id" @if (snap.Id == ViewBag.idSnapshot) { @Html.Raw("selected") }>@snap.Data</option>
+                    }
+                </select>
+            </div>
+        </div>
+    }
+
+    <ul class="nav nav-tabs" id="myTab">
+        @{
+            var categorias = ViewBag.Categorias;
+            var i = 0;
+            foreach (Barragem.Models.Categoria cat in categorias)
+            {
+                var tabName = "#tab" + cat.Id;
+                if (i == 0)
+                {
+                    <li class="active"><a href="@tabName" data-toggle="tab">@cat.Nome</a></li>
+                }
+                else
+                {
+                    <li><a href="@tabName" data-toggle="tab">@cat.Nome</a></li>
+                }
+                i++;
+            }
+        }
+    </ul>
+
+    <div class="tab-content">
+        @{
+            int j = 0;
+            foreach (Barragem.Models.Categoria cat in categorias)
+            {
+                var tabName = "tab" + cat.Id;
+                var tabPane = "tab-pane fade";
+                if (j == 0) { tabPane = "tab-pane fade in active"; }
+                <div id="@tabName" class="@tabPane">
+                    <div class="box-body table-responsive no-padding">
+                        <table class="table table-striped table-condensed table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Posição</th>
+                                    <th>Nome</th>
+                                    <th>Pontuação</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (Barragem.Models.SnapshotRanking ranking in Model)
+                                {
+                                    if (ranking.CategoriaId == cat.Id)
+                                    {
+                                        <tr>
+                                            <td>@ranking.Posicao</td>
+                                            <td>@ranking.Jogador.nome</td>
+                                            <td>@ranking.Pontuacao</td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                j++;
+            }
+        }
+    </div>

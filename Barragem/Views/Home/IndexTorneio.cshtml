@@ -38,14 +38,13 @@
                         }else{ 
                             @Html.Raw("Valor da inscrição: R$ " + Model.valor + ",00")<br>
                         }
-                        @if ((Model.valorSocio != null)&&(Model.valorSocio != 0)){
-                            @Html.Raw("Valor para sócio: R$ " + Model.valorSocio + ",00") <br>
+                        @if (Model.isDesconto != null && (bool)Model.isDesconto) { 
+                            @Html.Raw("Valor para " + Model.descontoPara + ": R$ " + Model.valorSocio + ",00") <br>
                         }
                         @if (Model.isMaisUmaClasse){
                             @Html.Raw("Valor para 2 classes: R$ " + Model.valorMaisClasses + ",00") <br>
-                            if ((Model.valorSocio != null) && (Model.valorSocio != 0))
-                            {
-                                @Html.Raw("Valor para 2 classes sócio: R$ " + Model.valorMaisClassesSocio + ",00") <br>
+                            if (Model.isDesconto != null && (bool)Model.isDesconto){
+                                @Html.Raw("Valor para 2 classes " + Model.descontoPara + ": R$ " + Model.valorMaisClassesSocio + ",00") <br>
                             }
                         }
 

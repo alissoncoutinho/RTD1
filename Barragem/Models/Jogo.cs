@@ -21,6 +21,8 @@ namespace Barragem.Models
 
         public int? cabecaChave { get; set; }
 
+        public int? cabecaChaveDesafiante { get; set; }
+
         [Display(Name = "Data")]
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:d}", ConvertEmptyStringToNull = true)]
         public DateTime? dataCadastroResultado { get; set; }
@@ -324,6 +326,10 @@ namespace Barragem.Models
 
         public int idDesafiado { get; set; }
 
+        public int? idDesafianteDupla { get; set; }
+
+        public int? idDesafiadoDupla { get; set; }
+
         public int qtddGames1setDesafiante { get; set; }
         public int qtddGames2setDesafiante { get; set; }
         public int qtddGames3setDesafiante { get; set; }
@@ -334,13 +340,21 @@ namespace Barragem.Models
 
         public string nomeDesafiado { get; set; }
 
+        public string nomeDesafiadoDupla { get; set; }
+
         public int posicaoDesafiado { get; set; }
 
         public string nomeDesafiante { get; set; }
 
+        public string nomeDesafianteDupla { get; set; }
+
         public string fotoDesafiado { get; set; }
 
         public string fotoDesafiante { get; set; }
+
+        public string fotoDesafiadoDupla { get; set; }
+
+        public string fotoDesafianteDupla { get; set; }
 
         public int posicaoDesafiante { get; set; }
 

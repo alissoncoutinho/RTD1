@@ -25,6 +25,9 @@ namespace Barragem.Models
         public int qtddJogadoresPorGrupo { get; set; }
         public int maximoInscritos { get; set; }
 
+        public int? categoriaId { get; set; }
+        [ForeignKey("categoriaId")]
+        public virtual Categoria Categoria { get; set; }
     }
 
     public class ClasseTorneioApp

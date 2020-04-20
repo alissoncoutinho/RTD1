@@ -104,10 +104,10 @@
                                 }
                             </div>
                         </div>
-                        @if ((Model.valorSocio != null) && (Model.valorSocio != 0) && (inscricao == null))
+                        @if ((Model.isDesconto != null && (bool)Model.isDesconto) && (inscricao == null))
                         {
                             <div class="row">
-                                @Html.Label("Uma categoria p/ sócio", new { @class = "col-sm-5" })
+                                @Html.Label("Uma categoria p/ " + Model.descontoPara, new { @class = "col-sm-5" })
                                 <div class="col-sm-7 info-box-text">
                                     @Html.Raw("R$ " + Model.valorSocio + ",00")
                                 </div>
@@ -153,7 +153,7 @@
                                 if ((Model.valorMaisClassesSocio != null) && (Model.valorMaisClassesSocio != 0))
                                 {
                                     <div class="row">
-                                        @Html.Label("Duas Categorias p/sócio", new { @class = "col-sm-5" })
+                                        @Html.Label("Duas Categorias p/" + Model.descontoPara, new { @class = "col-sm-5" })
                                         <div class="col-sm-7 info-box-text">
                                             @Html.Raw("R$ " + Model.valorMaisClassesSocio + ",00")
                                         </div>
@@ -166,11 +166,11 @@
                                     @Html.Raw(Model.dataFimInscricoes.ToShortDateString())
                                 </div>
                             </div>
-                            if ((Model.valorSocio != null) && (Model.valorSocio != 0))
+                            if (Model.isDesconto!=null && (bool)Model.isDesconto)
                             {
                                 <div class="row">
                                     <label id="labelIsSocio" class="col-sm-5">
-                                        É sócio do clube? *
+                                        @Html.Raw("É " + Model.descontoPara + "? *")
                                     </label>
                                     <div class="col-sm-7 info-box-text">
                                         <input type="radio" name="isSocio" id="isSocio" value="true">Sim
@@ -422,16 +422,18 @@
                 if (classe2 == "True") {
                     $.confirm({
                         title: "",
-                        text: "Deseja jogar em mais de uma classe?",
-                        confirm: function (button) {
-                            document.getElementById('isMaisDeUmaClasse').checked = true;
-                            segundaOpcaoDeClasse();
-                        },
-                        cancel: function (button) {
-
-                        },
-                        confirmButton: "Sim",
-                        cancelButton: "Não"
+                        content: "Deseja jogar em mais de uma classe?",
+                        buttons: {
+                            sim: {
+                                text: 'Sim',
+                                btnClass: 'btn-primary',
+                                action: function () {
+                                    document.getElementById('isMaisDeUmaClasse').checked = true;
+                                    segundaOpcaoDeClasse();
+                                }
+                            },
+                            cancelar: {text:'Não'}
+                        }
                     });
                 }
             });
@@ -461,13 +463,13 @@
 
             $.confirm({
                 title: "Confirmação",
-                content: "Aperte SIM para confirmar o cancelamento da inscrição!",
+                content: "Aperte SIM para confirmar a alteração de classe!",
                 buttons: {
                     sim: {
                         text: 'Sim',
                         btnClass: 'btn-primary',
                         action: function () {
-                            document.formInscricao.operacao.value = "cancelar";
+                            document.formInscricao.operacao.value = "alterarClasse";
                             document.formInscricao.submit();
                         }
                     },
@@ -514,7 +516,7 @@
             var radioButtons = document.getElementsByName("isSocio");
             var labelisSocio = document.getElementById("labelIsSocio");
             if ((labelisSocio!=null) && (radioButtons[0].checked == false) && (radioButtons[1].checked == false)) {
-                alert("Favor informar se você é sócio do clube ou não.");
+                alert("Favor informar se você é sócio ou não.");
                 labelisSocio.style.color = "red";
                 return false;
             } else {

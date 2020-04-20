@@ -80,7 +80,7 @@
                 <div class="col-sm-offset-2 col-sm-6">
                     <div class="checkbox">
                         <label>
-                            <input type="checkbox" value="true" name="isDescontoSocio" id="isDescontoSocio" onclick="CadastrarValorDescontoSocio()" /> @Html.Raw("Tem desconto para sócio")
+                            <input type="checkbox" value="true" name="isDesconto" id="isDesconto" onclick="CadastrarValorDescontoSocio()" /> @Html.Raw("Tem desconto para") <select name="descontoPara"><option value="sócio">sócio</option><option value="barragista">barragista</option><option value="federado">federado</option><option value="barragista ou federado">barragista ou federado</option></select>
                         </label>
                     </div>
                 </div>
@@ -205,6 +205,21 @@
             {
                     <input type="hidden" name="barragemId" value="@ViewBag.barraId" />
             }
+
+            @if(ViewBag.LigasDisponiveis.Count > 0)
+            {
+                <div class="panel panel-primary">
+                    <div class="panel-heading">Ligas disponíveis</div>
+                    <div class="panel-body">
+                        @foreach (var liga in ViewBag.LigasDisponiveis)
+                        {
+                            <input type="checkbox" name="liga" value="@liga.Id"> @liga.Nome<br>
+                        }
+                    </div>
+                </div>
+            }
+            
+
             <div class="form-group">
                 @Html.LabelFor(model => model.observacao, new { @class = "col-sm-2 control-label" })
                 <div class="col-sm-8 input-group">
@@ -269,7 +284,7 @@
      });
 
     function CadastrarValorDescontoSocio() {
-        if (document.getElementById('isDescontoSocio').checked) {
+        if (document.getElementById('isDesconto').checked) {
             document.getElementById('descontoSocio').style.opacity = "1";
             document.getElementById('descontoSocio').style.display = "block";
             document.getElementById('descontoSocioMaisClasses').style.opacity = "1";

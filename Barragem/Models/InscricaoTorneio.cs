@@ -122,6 +122,8 @@ namespace Barragem.Models
 
         public int pontuacaoFaseGrupo { get; set; }
 
+        public int? Pontuacao { get; set; }
+
     }
 
     public class ColocacaoTorneio {

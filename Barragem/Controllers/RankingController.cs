@@ -8,6 +8,8 @@ using System.Web.Mvc;
 using Barragem.Models;
 using Barragem.Context;
 using WebMatrix.WebData;
+using System.Web.Security;
+
 
 namespace Barragem.Controllers
 {
@@ -100,6 +102,55 @@ namespace Barragem.Controllers
         {
             db.Dispose();
             base.Dispose(disposing);
+        }
+
+        [Authorize(Roles = "admin,usuario,organizador")]
+        public ActionResult RankingDasLigas(int idLiga = 0, int idSnapshot = 0, int idLigaAtual = 0, int idSnapshotAtual = 0)
+        {
+            UserProfile usuario = db.UserProfiles.Find(WebSecurity.GetUserId(User.Identity.Name));
+            string perfil = Roles.GetRolesForUser(User.Identity.Name)[0];
+            List<Liga> ligas;
+            if (perfil.Equals("admin") || perfil.Equals("organizador"))
+            {
+                ligas = db.Liga.OrderBy(l => l.Nome).ToList();
+            }
+            else
+            {
+                ligas = (from liga in db.Liga
+                join tl in db.TorneioLiga on liga.Id equals tl.LigaId
+                join t in db.Torneio on tl.TorneioId equals t.Id
+                join it in db.InscricaoTorneio on t.Id equals it.torneioId
+                join up in db.UserProfiles on it.userId equals up.UserId
+                         where it.userId == usuario.UserId
+                select liga).ToList();
+            }
+            if (idLiga == 0 && ligas.Count()>0)
+            {
+                idLiga = ligas.First().Id;
+            }
+            List<Snapshot> snapshotsDaLiga = db.Snapshot.Where(snap => snap.LigaId == idLiga).OrderByDescending(s=>s.Id).ToList();
+            List<SnapshotRanking> ranking = new List<SnapshotRanking>();
+            List<Categoria> categorias = new List<Categoria>();
+            if (snapshotsDaLiga.Count()>0)
+            {
+                if (idSnapshot == 0)
+                {
+                    idSnapshot = snapshotsDaLiga.First().Id;
+                }
+                ranking = db.SnapshotRanking.Where(snapR => snapR.SnapshotId == idSnapshot)
+                .Include(s => s.Categoria).Include(s => s.Jogador)
+                .OrderBy(snap => snap.Categoria.Nome).ThenBy(snap => snap.Posicao)
+                .ToList();
+                categorias = db.SnapshotRanking.Where(sr => sr.SnapshotId == idSnapshot)
+                    .Include(sr => sr.Categoria).Select(sr => sr.Categoria).Distinct().ToList();
+            }
+            
+            ViewBag.Ligas = ligas;
+            ViewBag.SnapshotsDaLiga = snapshotsDaLiga;
+            ViewBag.Categorias = categorias;
+            ViewBag.idLiga = idLiga;
+            ViewBag.idSnapshot = idSnapshot;
+            return View(ranking);
         }
     }
 }

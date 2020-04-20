@@ -14,7 +14,7 @@
             }
             else
             {
-                <p class="data" style="background-color:#f8f8f8; color:black">@Html.Raw(Model.dataHorarioQuadra)</p>
+                <p class="data">@Html.Raw(Model.dataHorarioQuadra)</p>
             }
 
         }
@@ -68,6 +68,10 @@
             }
             else
             {
+                if ((Model.cabecaChaveDesafiante != null) && (Model.cabecaChaveDesafiante > 0) && (Model.cabecaChaveDesafiante < 100))
+                {
+                    @Html.Raw("(" + Model.cabecaChaveDesafiante + ") ")
+                }
                 @Html.Raw(Model.desafiante.nome)
                 if (Model.desafiante2 != null)
                 {

@@ -123,7 +123,7 @@ namespace Barragem.Controllers
             foreach(var i in classesUser)
             {
                 try{
-                    var jogo = db.Jogo.Where(u => u.classeTorneio == i && (u.desafiado_id == userId || u.desafiante_id == userId) &&
+                    var jogo = db.Jogo.Where(u => u.classeTorneio == i && (u.desafiado_id == userId || u.desafiante_id == userId || u.desafiado2_id == userId || u.desafiante2_id == userId) &&
                     !(u.desafiado_id == 0 || u.desafiante_id == 0))
                             .OrderBy(u => u.faseTorneio).Take(1).SingleOrDefault();
                     MeuJogo meuJogo = montarMeuJogo(jogo, userId);
@@ -171,6 +171,19 @@ namespace Barragem.Controllers
             meuJogo.nomeDesafiante = jogo.desafiante.nome;
             meuJogo.fotoDesafiante = jogo.desafiante.fotoURL;
             meuJogo.posicaoDesafiante = 0;
+            meuJogo.idDesafianteDupla = jogo.desafiante2_id;
+            if (jogo.desafiante2 != null){
+                if (userId == jogo.desafiante2_id){
+                    meuJogo.nomeDesafianteDupla = jogo.desafiante.nome;
+                    meuJogo.fotoDesafianteDupla = jogo.desafiante.fotoURL;
+                    meuJogo.nomeDesafiante = jogo.desafiante2.nome;
+                    meuJogo.fotoDesafiante = jogo.desafiante2.fotoURL;
+                }
+                else{
+                    meuJogo.nomeDesafianteDupla = jogo.desafiante2.nome;
+                    meuJogo.fotoDesafianteDupla = jogo.desafiante2.fotoURL;
+                }
+            }
             try {
                 var r = db.Rancking.Where(rc => rc.userProfile_id == jogo.desafiante_id
                 && rc.posicaoClasse != null).OrderByDescending(rc => rc.rodada_id).FirstOrDefault();
@@ -181,6 +194,22 @@ namespace Barragem.Controllers
             meuJogo.nomeDesafiado = jogo.desafiado.nome;
             meuJogo.fotoDesafiado = jogo.desafiado.fotoURL;
             meuJogo.posicaoDesafiado = 0;
+            meuJogo.idDesafiadoDupla = jogo.desafiado2_id;
+            if (jogo.desafiado2 != null)
+            {
+                if (userId == jogo.desafiado2_id)
+                {
+                    meuJogo.nomeDesafiadoDupla = jogo.desafiado.nome;
+                    meuJogo.fotoDesafiadoDupla = jogo.desafiado.fotoURL;
+                    meuJogo.nomeDesafiado = jogo.desafiado2.nome;
+                    meuJogo.fotoDesafiado = jogo.desafiado2.fotoURL;
+                }
+                else
+                {
+                    meuJogo.nomeDesafiadoDupla = jogo.desafiado2.nome;
+                    meuJogo.fotoDesafiadoDupla = jogo.desafiado2.fotoURL;
+                }
+            }
             try {
                 var r2 = db.Rancking.Where(rc => rc.userProfile_id == jogo.desafiado_id
                 && rc.posicaoClasse != null).OrderByDescending(rc => rc.rodada_id).FirstOrDefault();

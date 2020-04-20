@@ -15,7 +15,7 @@ namespace Barragem.Controllers
     public class TorneioAPIController : ApiController
     {
         private BarragemDbContext db = new BarragemDbContext();
-
+        private TorneioController tc = new TorneioController();
         [HttpGet]
         [Route("api/TorneioAPI/{userId}")]
         public IList<TorneioApp> GetTorneio(int userId)
@@ -23,7 +23,7 @@ namespace Barragem.Controllers
             var dataHoje = DateTime.Now.AddDays(-5);
             var Torneios = (from inscricao in db.InscricaoTorneio
                            join torneio in db.Torneio on inscricao.torneioId equals torneio.Id into colocacaoJogador
-                           where inscricao.userId == userId && inscricao.isAtivo && inscricao.torneio.isAtivo && inscricao.torneio.dataFim > dataHoje
+                           where inscricao.userId == userId && inscricao.torneio.isAtivo && inscricao.torneio.dataFim > dataHoje
                 select new TorneioApp
                 {
                     Id = inscricao.torneio.Id,
@@ -104,7 +104,7 @@ namespace Barragem.Controllers
             {
 
                 db.SaveChanges();
-                MontarProximoJogoTorneio(jogo);
+                tc.MontarProximoJogoTorneio(jogo);
             }
             catch (Exception)
             {
@@ -146,7 +146,7 @@ namespace Barragem.Controllers
             try
             {
                 db.SaveChanges();
-                MontarProximoJogoTorneio(jogoAtual);
+                tc.MontarProximoJogoTorneio(jogoAtual);
             }
             catch (Exception e)
             {
@@ -184,55 +184,7 @@ namespace Barragem.Controllers
             var ListJogos = new List<MeuJogo>();
             foreach (var j in jogos)
             {
-                var meuJogo = new MeuJogo();
-                meuJogo.dataJogo = j.dataJogo;
-                meuJogo.horaJogo = j.horaJogo;
-                var quadra = "";
-                if ((j.quadra!=null) && (j.quadra != 100)){
-                    quadra = " quadra " + j.quadra;
-                }
-                var local = "";
-                if (j.localJogo != null)
-                {
-                    local = j.localJogo;
-                }
-                meuJogo.localJogo = local + quadra;
-                meuJogo.idDesafiante = j.desafiante_id;
-                if (meuJogo.idDesafiante == 10)
-                {
-                    meuJogo.nomeDesafiante = "bye";
-                }
-                else if (meuJogo.idDesafiante == 0)
-                {
-                    meuJogo.nomeDesafiante = "Aguardando Adversário";
-                }
-                else
-                {
-                    meuJogo.nomeDesafiante = j.desafiante.nome;
-                    meuJogo.fotoDesafiante = j.desafiante.fotoURL;
-                }
-                meuJogo.idDesafiado = j.desafiado_id;
-                if (meuJogo.idDesafiado == 10)
-                {
-                    meuJogo.nomeDesafiado = "bye";
-                }
-                else if (meuJogo.idDesafiado == 0)
-                {
-                    meuJogo.nomeDesafiado = "Aguardando Adversário";
-                }
-                else
-                {
-                    meuJogo.nomeDesafiado = j.desafiado.nome;
-                    meuJogo.fotoDesafiado = j.desafiado.fotoURL;
-                }
-                meuJogo.qtddGames1setDesafiado = j.qtddGames1setDesafiado;
-                meuJogo.qtddGames1setDesafiante = j.qtddGames1setDesafiante;
-                meuJogo.qtddGames2setDesafiado = j.qtddGames2setDesafiado;
-                meuJogo.qtddGames2setDesafiante = j.qtddGames2setDesafiante;
-                meuJogo.qtddGames3setDesafiado = j.qtddGames3setDesafiado;
-                meuJogo.qtddGames3setDesafiante = j.qtddGames3setDesafiante;
-                meuJogo.idDoVencedor = j.idDoVencedor;
-                ListJogos.Add(meuJogo);
+                ListJogos.Add(montaJogoTabela(j));
             }
             
             var tabelaApp = new TabelaApp();
@@ -262,50 +214,92 @@ namespace Barragem.Controllers
 
             var ListJogos = new List<MeuJogo>();
             foreach(var j in jogos){
-                var meuJogo = new MeuJogo();
-                meuJogo.dataJogo = j.dataJogo;
-                meuJogo.horaJogo = j.horaJogo;
-                meuJogo.localJogo = j.localJogo;
-                meuJogo.idDesafiante = j.desafiante_id;
-                if (meuJogo.idDesafiante == 10)
-                {
-                    meuJogo.nomeDesafiante = "bye";
-                }else if (meuJogo.idDesafiante == 0)
-                {
-                    meuJogo.nomeDesafiante = "Aguardando Adversário";
-                }else
-                {
-                    meuJogo.nomeDesafiante = j.desafiante.nome;
-                    meuJogo.fotoDesafiante = j.desafiante.fotoURL;
-                }
-                meuJogo.idDesafiado = j.desafiado_id;
-                if (meuJogo.idDesafiado == 10)
-                {
-                    meuJogo.nomeDesafiado = "bye";
-                }
-                else if (meuJogo.idDesafiado == 0)
-                {
-                    meuJogo.nomeDesafiado = "Aguardando Adversário";
-                }
-                else
-                {
-                    meuJogo.nomeDesafiado = j.desafiado.nome;
-                    meuJogo.fotoDesafiado = j.desafiado.fotoURL;
-                }
-                meuJogo.qtddGames1setDesafiado = j.qtddGames1setDesafiado;
-                meuJogo.qtddGames1setDesafiante = j.qtddGames1setDesafiante;
-                meuJogo.qtddGames2setDesafiado = j.qtddGames2setDesafiado;
-                meuJogo.qtddGames2setDesafiante = j.qtddGames2setDesafiante;
-                meuJogo.qtddGames3setDesafiado = j.qtddGames3setDesafiado;
-                meuJogo.qtddGames3setDesafiante = j.qtddGames3setDesafiante;
-                meuJogo.idDoVencedor = j.idDoVencedor;
-                ListJogos.Add(meuJogo);
+                ListJogos.Add(montaJogoTabela(j));
             }
             var tabelaApp = new TabelaApp();
             tabelaApp.descricaoFase = getDescricaoFaseTorneio((int)fase);
             tabelaApp.jogos = ListJogos;
             tabelaApp.faseTorneio = (int)fase;
             return tabelaApp;
+        }
+
+        private MeuJogo montaJogoTabela(Jogo j) {
+            var meuJogo = new MeuJogo();
+            meuJogo.dataJogo = j.dataJogo;
+            meuJogo.horaJogo = j.horaJogo;
+            var quadra = "";
+            if ((j.quadra != null) && (j.quadra != 100))
+            {
+                quadra = " quadra " + j.quadra;
+            }
+            var local = "";
+            if (j.localJogo != null)
+            {
+                local = j.localJogo;
+            }
+            meuJogo.localJogo = local + quadra;
+            meuJogo.idDesafiante = j.desafiante_id;
+            meuJogo.idDesafianteDupla = j.desafiante2_id;
+            if (meuJogo.idDesafiante == 10)
+            {
+                meuJogo.nomeDesafiante = "bye";
+            }
+            else if (meuJogo.idDesafiante == 0)
+            {
+                meuJogo.nomeDesafiante = "Aguardando Adversário";
+            }
+            else
+            {
+                if ((j.cabecaChaveDesafiante != null) && (j.cabecaChaveDesafiante > 0) && (j.cabecaChaveDesafiante < 100))
+                {
+                    meuJogo.nomeDesafiante = "(" + j.cabecaChaveDesafiante + ")" + j.desafiante.nome;
+                }
+                else
+                {
+                    meuJogo.nomeDesafiante = j.desafiante.nome;
+                }
+                meuJogo.fotoDesafiante = j.desafiante.fotoURL;
+                if (j.desafiante2 != null)
+                {
+                    meuJogo.nomeDesafianteDupla = j.desafiante2.nome;
+                    meuJogo.fotoDesafianteDupla = j.desafiante2.fotoURL;
+                }
+            }
+            meuJogo.idDesafiado = j.desafiado_id;
+            meuJogo.idDesafiadoDupla = j.desafiado2_id;
+            if (meuJogo.idDesafiado == 10)
+            {
+                meuJogo.nomeDesafiado = "bye";
+            }
+            else if (meuJogo.idDesafiado == 0)
+            {
+                meuJogo.nomeDesafiado = "Aguardando Adversário";
+            }
+            else
+            {
+                if ((j.cabecaChave != null) && (j.cabecaChave > 0) && (j.cabecaChave < 100))
+                {
+                    meuJogo.nomeDesafiado = "(" + j.cabecaChave + ")" + j.desafiado.nome;
+                }
+                else
+                {
+                    meuJogo.nomeDesafiado = j.desafiado.nome;
+                }
+                meuJogo.fotoDesafiado = j.desafiado.fotoURL;
+                if (j.desafiado2 != null)
+                {
+                    meuJogo.nomeDesafiadoDupla = j.desafiado2.nome;
+                    meuJogo.fotoDesafiadoDupla = j.desafiado2.fotoURL;
+                }
+            }
+            meuJogo.qtddGames1setDesafiado = j.qtddGames1setDesafiado;
+            meuJogo.qtddGames1setDesafiante = j.qtddGames1setDesafiante;
+            meuJogo.qtddGames2setDesafiado = j.qtddGames2setDesafiado;
+            meuJogo.qtddGames2setDesafiante = j.qtddGames2setDesafiante;
+            meuJogo.qtddGames3setDesafiado = j.qtddGames3setDesafiado;
+            meuJogo.qtddGames3setDesafiante = j.qtddGames3setDesafiante;
+            meuJogo.idDoVencedor = j.idDoVencedor;
+            return meuJogo;
         }
 
         private int? getParceiroDuplaProximoJogo(Jogo jogoAnterior, int idJogadorPrincipal)
@@ -324,143 +318,158 @@ namespace Barragem.Controllers
             }
         }
 
-        private void CadastrarPerdedorNaRepescagem(Jogo jogo)
-        {
-            // cadastrar perderdor
-            int? primeiraFase = db.Jogo.Where(r => r.torneioId == jogo.torneioId && r.classeTorneio == jogo.classeTorneio).Max(r => r.faseTorneio);
-            var jogosPrimeiraFase = db.Jogo.Where(r => r.torneioId == jogo.torneioId && r.classeTorneio == jogo.classeTorneio &&
-                r.faseTorneio == primeiraFase && (r.desafiado_id == 0 || r.desafiante_id == 0)).OrderBy(r => r.ordemJogo).ToList();
-            // para evitar que seja cadastrado duas vezes caso o placar seja alterado
-            var isPerderdorJaCadastradoNaRepescagem = jogosPrimeiraFase.Where(j => j.torneioId == jogo.torneioId && j.classeTorneio == jogo.classeTorneio
-                && j.faseTorneio == primeiraFase && (j.desafiado_id == jogo.idDoPerdedor || j.desafiado_id == jogo.idDoPerdedor)).Count();
-            if (isPerderdorJaCadastradoNaRepescagem < 2)
-            {
-                foreach (Jogo j in jogosPrimeiraFase)
-                {
-                    if (j.desafiado_id == 0)
-                    {
-                        j.desafiado_id = jogo.idDoPerdedor;
-                        j.desafiado2_id = getParceiroDuplaProximoJogo(jogo, jogo.idDoPerdedor);
-                        db.Entry(j).State = EntityState.Modified;
-                        db.SaveChanges();
-                        // verificar se caiu com o bye e avançar para próxima fase
-                        if (j.desafiante_id == 10)
-                        {
-                            j.dataCadastroResultado = DateTime.Now;
-                            j.usuarioInformResultado = User.Identity.Name;
-                            j.situacao_Id = 5;
-                            j.qtddGames1setDesafiado = 6;
-                            j.qtddGames1setDesafiante = 1;
-                            j.qtddGames2setDesafiado = 6;
-                            j.qtddGames2setDesafiante = 1;
-                            db.Entry(j).State = EntityState.Modified;
-                            db.SaveChanges();
-                            MontarProximoJogoTorneio(j);
-                        }
-                        break;
-                    }
-                    if (j.desafiante_id == 0)
-                    {
-                        j.desafiante_id = jogo.idDoPerdedor;
-                        j.desafiante2_id = getParceiroDuplaProximoJogo(jogo, jogo.idDoPerdedor);
-                        db.Entry(j).State = EntityState.Modified;
-                        db.SaveChanges();
-                        break;
-                    }
-                }
-            }
-        }
+        //private void CadastrarPerdedorNaRepescagem(Jogo jogo)
+        //{
+        //    // cadastrar perderdor
+        //    int? primeiraFase = db.Jogo.Where(r => r.torneioId == jogo.torneioId && r.classeTorneio == jogo.classeTorneio).Max(r => r.faseTorneio);
+        //    var jogosPrimeiraFase = db.Jogo.Where(r => r.torneioId == jogo.torneioId && r.classeTorneio == jogo.classeTorneio &&
+        //        r.faseTorneio == primeiraFase && (r.desafiado_id == 0 || r.desafiante_id == 0)).OrderBy(r => r.ordemJogo).ToList();
+        //    // para evitar que seja cadastrado duas vezes caso o placar seja alterado
+        //    var isPerderdorJaCadastradoNaRepescagem = jogosPrimeiraFase.Where(j => j.torneioId == jogo.torneioId && j.classeTorneio == jogo.classeTorneio
+        //        && j.faseTorneio == primeiraFase && (j.desafiado_id == jogo.idDoPerdedor || j.desafiado_id == jogo.idDoPerdedor)).Count();
+        //    if (isPerderdorJaCadastradoNaRepescagem < 2)
+        //    {
+        //        foreach (Jogo j in jogosPrimeiraFase)
+        //        {
+        //            if (j.desafiado_id == 0)
+        //            {
+        //                j.desafiado_id = jogo.idDoPerdedor;
+        //                j.desafiado2_id = getParceiroDuplaProximoJogo(jogo, jogo.idDoPerdedor);
+        //                db.Entry(j).State = EntityState.Modified;
+        //                db.SaveChanges();
+        //                // verificar se caiu com o bye e avançar para próxima fase
+        //                if (j.desafiante_id == 10)
+        //                {
+        //                    j.dataCadastroResultado = DateTime.Now;
+        //                    j.usuarioInformResultado = User.Identity.Name;
+        //                    j.situacao_Id = 5;
+        //                    j.qtddGames1setDesafiado = 6;
+        //                    j.qtddGames1setDesafiante = 1;
+        //                    j.qtddGames2setDesafiado = 6;
+        //                    j.qtddGames2setDesafiante = 1;
+        //                    db.Entry(j).State = EntityState.Modified;
+        //                    db.SaveChanges();
+        //                    tc.MontarProximoJogoTorneio(j);
+        //                }
+        //                break;
+        //            }
+        //            if (j.desafiante_id == 0)
+        //            {
+        //                j.desafiante_id = jogo.idDoPerdedor;
+        //                j.desafiante2_id = getParceiroDuplaProximoJogo(jogo, jogo.idDoPerdedor);
+        //                db.Entry(j).State = EntityState.Modified;
+        //                db.SaveChanges();
+        //                break;
+        //            }
+        //        }
+        //    }
+        //}
 
-        private void cadastrarColocacaoPerdedorTorneio(Jogo jogo)
-        {
-            if (jogo.idDoPerdedor == 10)
-            {
-                return; // sai se for o bye;
-            }
-            // cadastrar a colocação do perdedor no torneio 
-            var qtddFases = db.Jogo.Where(r => r.torneioId == jogo.torneioId && r.classeTorneio == jogo.classeTorneio && r.faseTorneio < 100)
-                .Max(r => r.faseTorneio);
-            int colocacao = 0;
-            if ((jogo.faseTorneio == 100) || (jogo.faseTorneio == 101))
-            { // fase repescagem
-                colocacao = 100;
-            }
-            else
-            {
-                colocacao = (int)jogo.faseTorneio;
-            }
-            var inscricao = db.InscricaoTorneio.Where(i => i.userId == jogo.idDoPerdedor && i.torneioId == jogo.torneioId).ToList();
-            if (inscricao.Count() > 0)
-            {
-                inscricao[0].colocacao = colocacao;
-                db.SaveChanges();
-            }
-        }
+        //private void cadastrarColocacaoPerdedorTorneio(Jogo jogo)
+        //{
+        //    if (jogo.idDoPerdedor == 10)
+        //    {
+        //        return; // sai se for o bye;
+        //    }
+        //    // cadastrar a colocação do perdedor no torneio 
+        //    var qtddFases = db.Jogo.Where(r => r.torneioId == jogo.torneioId && r.classeTorneio == jogo.classeTorneio && r.faseTorneio < 100)
+        //        .Max(r => r.faseTorneio);
+        //    int colocacao = 0;
+        //    if ((jogo.faseTorneio == 100) || (jogo.faseTorneio == 101))
+        //    { // fase repescagem
+        //        colocacao = 100;
+        //    }
+        //    else
+        //    {
+        //        colocacao = (int)jogo.faseTorneio;
+        //    }
+        //    var inscricao = db.InscricaoTorneio.Where(i => i.userId == jogo.idDoPerdedor && i.torneioId == jogo.torneioId).ToList();
+        //    if (inscricao.Count() > 0)
+        //    {
+        //        inscricao[0].colocacao = colocacao;
+        //        db.SaveChanges();
+        //    }
+        //}
 
-        private void MontarProximoJogoTorneio(Jogo jogo)
-        {
-            var ordemJogo = 0;
-            if (jogo.torneioId != null)
-            {
-                if (jogo.ordemJogo % 2 != 0)
-                {
-                    ordemJogo = (int)(jogo.ordemJogo / 2) + 1;
-                }
-                else
-                {
-                    ordemJogo = (int)(jogo.ordemJogo / 2);
-                }
-                var torneioId = jogo.torneioId;
-                var torneio = db.Torneio.Find(torneioId);
-                var classeId = jogo.classeTorneio;
-                var isPrimeiroJogo = false;
-                if (jogo.isPrimeiroJogoTorneio != null)
-                {
-                    isPrimeiroJogo = (bool)jogo.isPrimeiroJogoTorneio;
-                }
-                if ((torneio.temRepescagem) && (isPrimeiroJogo))
-                {
-                    CadastrarPerdedorNaRepescagem(jogo);
-                }
-                if (db.Jogo.Where(r => r.torneioId == jogo.torneioId && r.classeTorneio == jogo.classeTorneio &&
-                   r.faseTorneio == jogo.faseTorneio - 1 && r.ordemJogo == ordemJogo).Count() > 0)
-                {
-                    var proximoJogo = db.Jogo.Where(r => r.torneioId == jogo.torneioId && r.classeTorneio == jogo.classeTorneio &&
-                        r.faseTorneio == jogo.faseTorneio - 1 && r.ordemJogo == ordemJogo).Single();
-                    if (jogo.desafiante_id == 10)
-                    {
-                        proximoJogo.isPrimeiroJogoTorneio = true;
-                    }
-                    else
-                    {
-                        proximoJogo.isPrimeiroJogoTorneio = false;
-                    }
-                    if (jogo.ordemJogo % 2 != 0)
-                    {
-                        proximoJogo.desafiado_id = jogo.idDoVencedor;
-                        proximoJogo.desafiado2_id = getParceiroDuplaProximoJogo(jogo, jogo.idDoVencedor);
-                    }
-                    else
-                    {
-                        proximoJogo.desafiante_id = jogo.idDoVencedor;
-                        proximoJogo.desafiante2_id = getParceiroDuplaProximoJogo(jogo, jogo.idDoVencedor);
-                    }
-                    proximoJogo.cabecaChave = jogo.cabecaChave;
-                    cadastrarColocacaoPerdedorTorneio(jogo);
-                    db.SaveChanges();
-                }
-                else
-                {
-                    // indicar o vencedor do torneio
-                    var inscricao = db.InscricaoTorneio.Where(i => i.userId == jogo.idDoVencedor && i.torneioId == jogo.torneioId).ToList();
-                    if (inscricao.Count() > 0)
-                    {
-                        inscricao[0].colocacao = 0; // vencedor
-                        db.SaveChanges();
-                    }
-                }
-            }
-        }
+        //private void MontarProximoJogoTorneio(Jogo jogo)
+        //{
+        //    var ordemJogo = 0;
+        //    if (jogo.torneioId != null)
+        //    {
+        //        if (jogo.ordemJogo % 2 != 0)
+        //        {
+        //            ordemJogo = (int)(jogo.ordemJogo / 2) + 1;
+        //        }
+        //        else
+        //        {
+        //            ordemJogo = (int)(jogo.ordemJogo / 2);
+        //        }
+        //        var torneioId = jogo.torneioId;
+        //        var torneio = db.Torneio.Find(torneioId);
+        //        var classeId = jogo.classeTorneio;
+        //        var isPrimeiroJogo = false;
+        //        if (jogo.isPrimeiroJogoTorneio != null)
+        //        {
+        //            isPrimeiroJogo = (bool)jogo.isPrimeiroJogoTorneio;
+        //        }
+        //        if ((torneio.temRepescagem) && (isPrimeiroJogo))
+        //        {
+        //            CadastrarPerdedorNaRepescagem(jogo);
+        //        }
+        //        if (db.Jogo.Where(r => r.torneioId == jogo.torneioId && r.classeTorneio == jogo.classeTorneio &&
+        //           r.faseTorneio == jogo.faseTorneio - 1 && r.ordemJogo == ordemJogo).Count() > 0)
+        //        {
+        //            var proximoJogo = db.Jogo.Where(r => r.torneioId == jogo.torneioId && r.classeTorneio == jogo.classeTorneio &&
+        //                r.faseTorneio == jogo.faseTorneio - 1 && r.ordemJogo == ordemJogo).Single();
+        //            if (jogo.desafiante_id == 10)
+        //            {
+        //                proximoJogo.isPrimeiroJogoTorneio = true;
+        //            }
+        //            else
+        //            {
+        //                proximoJogo.isPrimeiroJogoTorneio = false;
+        //            }
+        //            if (jogo.ordemJogo % 2 != 0)
+        //            {
+        //                proximoJogo.desafiado_id = jogo.idDoVencedor;
+        //                proximoJogo.desafiado2_id = getParceiroDuplaProximoJogo(jogo, jogo.idDoVencedor);
+        //                if (jogo.idDoVencedor == jogo.desafiado_id)
+        //                {
+        //                    proximoJogo.cabecaChave = jogo.cabecaChave;
+        //                }
+        //                else
+        //                {
+        //                    proximoJogo.cabecaChave = jogo.cabecaChaveDesafiante;
+        //                }
+        //            }
+        //            else
+        //            {
+        //                proximoJogo.desafiante_id = jogo.idDoVencedor;
+        //                proximoJogo.desafiante2_id = getParceiroDuplaProximoJogo(jogo, jogo.idDoVencedor);
+        //                if (jogo.idDoVencedor == jogo.desafiado_id)
+        //                {
+        //                    proximoJogo.cabecaChaveDesafiante = jogo.cabecaChave;
+        //                }
+        //                else
+        //                {
+        //                    proximoJogo.cabecaChaveDesafiante = jogo.cabecaChaveDesafiante;
+        //                }
+        //            }
+        //            cadastrarColocacaoPerdedorTorneio(jogo);
+        //            db.SaveChanges();
+        //        }
+        //        else
+        //        {
+        //            // indicar o vencedor do torneio
+        //            var inscricao = db.InscricaoTorneio.Where(i => i.userId == jogo.idDoVencedor && i.torneioId == jogo.torneioId).ToList();
+        //            if (inscricao.Count() > 0)
+        //            {
+        //                inscricao[0].colocacao = 0; // vencedor
+        //                db.SaveChanges();
+        //            }
+        //        }
+        //    }
+        //}
 
         private string getDescricaoFaseTorneio(int faseTorneio)
         {
@@ -561,6 +570,40 @@ namespace Barragem.Controllers
             
         }
 
+        [HttpGet]
+        [AllowAnonymous]
+        [Route("api/TorneioAPI/Disponivel/{rankingId}")]
+        public IList<TorneioApp> GetTorneioDisponivel(int rankingId)
+        {
+
+            var dataHoje = DateTime.Now;
+            var ranking = db.BarragemView.Find(rankingId);
+            var torneio = (from t in db.Torneio
+                           where t.dataFimInscricoes >= dataHoje && t.isAtivo && t.isOpen
+                           select new TorneioApp
+                           {
+                               Id = t.Id, logoId = t.barragemId, nome = t.nome, dataInicio = t.dataInicio, valor = t.valor, valorSocio = t.valorSocio,
+                               dataFim = t.dataFim, cidade = t.cidade, premiacao = t.premiacao, contato = t.barragem.email
+                           }).Union(
+                            from t in db.Torneio
+                            where t.dataFimInscricoes >= dataHoje && t.isAtivo && t.divulgaCidade 
+                            && t.cidade.ToUpper() == ranking.cidade.ToUpper()
+                            select new TorneioApp
+                            {
+                                Id = t.Id, logoId = t.barragemId, nome = t.nome, dataInicio = t.dataInicio, valor = t.valor, valorSocio = t.valorSocio,
+                                dataFim = t.dataFim, cidade = t.cidade, premiacao = t.premiacao, contato = t.barragem.email
+                            }).Union(
+                            from t in db.Torneio
+                            where t.dataFimInscricoes >= dataHoje && t.isAtivo && t.barragemId == rankingId
+                            select new TorneioApp
+                            {
+                                Id = t.Id, logoId = t.barragemId, nome = t.nome, dataInicio = t.dataInicio, valor = t.valor, valorSocio = t.valorSocio,
+                                dataFim = t.dataFim, cidade = t.cidade, premiacao = t.premiacao, contato = t.barragem.email
+                            }).Distinct<TorneioApp>().ToList();
+
+            return torneio;
+           
+        }
 
     }
 }

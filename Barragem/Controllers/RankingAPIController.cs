@@ -24,7 +24,7 @@ namespace Barragem.Controllers
         public IList<LoginRankingModel> GetRankingsByUserEmail(string email)
         {
             List<LoginRankingModel> loginRankings = new List<LoginRankingModel>();
-            var users = db.UserProfiles.Where(u => u.email.ToLower() == email.Trim().ToLower() && u.situacao!="desativado" && u.situacao!="inativo").ToList();
+            var users = db.UserProfiles.Where(u => u.email.ToLower() == email.Trim().ToLower() && u.situacao!="inativo").OrderBy(r=> r.situacao).ToList();
             if (users.Count() == 0){
                 return loginRankings;
                 //throw (new Exception("Não foi encontrado ranking com este email."));
@@ -43,6 +43,7 @@ namespace Barragem.Controllers
                 
                 ranking.userName = item.UserName;
                 ranking.userId = item.UserId;
+                ranking.situacao = item.situacao;
                 loginRankings.Add(ranking);
             }
             return loginRankings;
@@ -203,7 +204,7 @@ namespace Barragem.Controllers
             try
             {
                 var nomeRanking = db.BarragemView.Find(8).nome;
-                var titulo = nomeRanking + " Ranking atualizado e nova rodada gerada!";
+                var titulo = nomeRanking + ": classificação atualizada e nova rodada gerada!";
                 var conteudo = "Clique aqui e entre em contato com seu adversário o mais breve possível e bom jogo.";
 
                 var fbmodel = new FirebaseNotificationModel() { to = "/topics/ranking8", notification = new NotificationModel() { title = titulo, body = conteudo }, data = new DataModel() { title = titulo, body = conteudo, type = "nova_rodada_aberta", idRanking = 8 } };
@@ -218,6 +219,79 @@ namespace Barragem.Controllers
             
         }
 
+
+        [HttpGet]
+        [Route("api/RankingAPI/Ligas/{userId}")]
+        // GET: api/RankingAPI/Ligas
+        public IList<LoginRankingModel> GetRankingsLigas(int userId)
+        {
+            var ligas = (from liga in db.Liga
+                     join tl in db.TorneioLiga on liga.Id equals tl.LigaId
+                     join t in db.Torneio on tl.TorneioId equals t.Id
+                     join it in db.InscricaoTorneio on t.Id equals it.torneioId
+                     where it.userId == userId && it.isAtivo
+                     select new LoginRankingModel
+                     {
+                         idRanking = liga.Id,
+                         nomeRanking = liga.Nome
+                     }).Distinct<LoginRankingModel>().ToList();
+
+            return ligas;
+        }
+
+        [Route("api/RankingAPI/Liga/cabecalho/{ligaId}")]
+        public Cabecalho GetCabecalhoLiga(int ligaId, int userId)
+        {
+            var ultsnapshot = db.Snapshot.Where(snap => snap.LigaId == ligaId).Max(s => s.Id);
+            var snapshot = db.Snapshot.Find(ultsnapshot); 
+            var categorias = db.SnapshotRanking.Where(sr => sr.SnapshotId == ultsnapshot)
+            .Include(sr => sr.Categoria).Select(sr => sr.Categoria).Distinct().ToList();
+
+            var classeLiga = (from tl in db.TorneioLiga
+                               join it in db.InscricaoTorneio on tl.TorneioId equals it.torneioId
+                               join cl in db.ClasseLiga on tl.LigaId equals cl.LigaId
+                               join ct in db.ClasseTorneio on cl.Id equals ct.categoriaId
+                               where it.userId == userId && it.isAtivo
+                               select cl).ToList();
+
+
+            var liga = db.Liga.Find(ligaId).Nome;
+
+            Cabecalho rankingCabecalho = new Cabecalho();
+            rankingCabecalho.temporada = liga;
+            rankingCabecalho.categoria = categorias;
+            rankingCabecalho.dataRodada = snapshot.Data;
+            if (classeLiga.Count() > 0) rankingCabecalho.classeUserId = classeLiga[0].CategoriaId;
+            return rankingCabecalho;
+        }
+
+        [HttpGet]
+        [Route("api/RankingAPI/ClassificacaoLiga/{ligaId}")]
+        // GET: api/RankingAPI/ClassificacaoLiga/
+        public IList<Classificacao> GetRankingLigas(int ligaId, int categoriaId=0)
+        {
+            var ultsnapshot = db.Snapshot.Where(snap => snap.LigaId == ligaId).Max(s => s.Id);
+            List<Classificacao> ranking = new List<Classificacao>();
+            if (ultsnapshot > 0)
+            {
+                ranking = db.SnapshotRanking.Where(sp => sp.SnapshotId == ultsnapshot && sp.CategoriaId == categoriaId)
+                .Include(s => s.Categoria).Include(s => s.Jogador).OrderBy(sp => sp.Posicao).
+                Select(rk => new Classificacao()
+                {
+                    userId = rk.Jogador.UserId,
+                    nomeUser = rk.Jogador.nome,
+                    posicaoUser = rk.Posicao,
+                    pontuacao = rk.Pontuacao,
+                    foto = rk.Jogador.fotoURL,
+                    dataRodada = rk.Snapshot.Data
+                }).ToList();
+            }
+
+            return ranking;
+        }
+
         
+
+
     }
 }

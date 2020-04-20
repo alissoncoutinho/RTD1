@@ -94,6 +94,8 @@ namespace Barragem.Controllers
             torneioLess.dataFimInscricoes = torneio.dataFimInscricoes;
             torneioLess.premiacao = torneio.premiacao;
             torneioLess.barragemId = torneio.barragemId;
+            torneioLess.isDesconto = torneio.isDesconto;
+            torneioLess.descontoPara = torneio.descontoPara;
             return torneioLess;
 
         }

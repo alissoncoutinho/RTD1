@@ -766,7 +766,7 @@ namespace Barragem.Class
 
         }
 
-        public void SortearJogos(int id, int barragemId)
+        public void SortearJogos(int id, int barragemId, bool notificarApp=true)
         {
             var rodadaNegocio = new RodadaNegocio();
             try
@@ -793,7 +793,7 @@ namespace Barragem.Class
             {
                 throw e;
             }
-            NotificacaoApp(barragemId);
+            if (notificarApp) { NotificacaoApp(barragemId); }
             
         }
 
@@ -801,7 +801,7 @@ namespace Barragem.Class
             try
             {
                 var nomeRanking = db.BarragemView.Find(barragemId).nome;
-                var titulo = nomeRanking + " Ranking atualizado e nova rodada gerada!";
+                var titulo = nomeRanking + ": Classificação atualizada e nova rodada gerada!";
                 var conteudo = "Clique aqui e entre em contato com seu adversário o mais breve possível e bom jogo.";
 
                 var fbmodel = new FirebaseNotificationModel() { to = "/topics/ranking" + barragemId, notification = new NotificationModel() { title = titulo, body = conteudo }, data = new DataModel() { title = titulo, body = conteudo, type = "nova_rodada_aberta", idRanking= barragemId } };

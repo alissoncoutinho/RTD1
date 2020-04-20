@@ -131,10 +131,10 @@
                                 }
                             </div>
                         </div>
-                        @if ((torneio.valorSocio != null) && (torneio.valorSocio != 0))
+                        @if (torneio.isDesconto!=null && (bool) torneio.isDesconto)
                         {
                             <div class="row">
-                                @Html.Label("Uma categoria p/ sócio", new { @class = "col-sm-5" })
+                                @Html.Label("Uma categoria p/ " + torneio.descontoPara, new { @class = "col-sm-5" })
                                 <div class="col-sm-7 info-box-text">
                                     @Html.Raw("R$ " + torneio.valorSocio + ",00")
                                 </div>
@@ -150,7 +150,7 @@
                             if ((torneio.valorMaisClassesSocio != null) && (torneio.valorMaisClassesSocio != 0))
                             {
                                 <div class="row">
-                                    @Html.Label("Duas Categorias p/sócio", new { @class = "col-sm-5" })
+                                    @Html.Label("Duas Categorias p/" + torneio.descontoPara, new { @class = "col-sm-5" })
                                     <div class="col-sm-7 info-box-text">
                                         @Html.Raw("R$ " + torneio.valorMaisClassesSocio + ",00")
                                     </div>
@@ -163,12 +163,12 @@
                                 @Html.Raw(torneio.dataFimInscricoes.ToShortDateString())
                             </div>
                         </div>
-                        @if ((torneio.valorSocio != null) && (torneio.valorSocio != 0))
+                        @if (torneio.isDesconto != null && (bool)torneio.isDesconto)
                         {
                             <div class="row">
                                 <div class="form-group">
                                     <label id="labelIsSocio" class="col-sm-5">
-                                        É sócio do clube? *
+                                        @Html.Raw("É " + torneio.descontoPara + "? *")
                                     </label>
                                     <div class="col-sm-7 info-box-text">
                                         <input type="radio" name="isSocio" id="isSocio" value="true" @if (ViewBag.isSocio != null && ViewBag.isSocio) {@Html.Raw("checked") } >Sim
@@ -280,16 +280,18 @@
                 if (classe2 == "True") {
                     $.confirm({
                         title: "",
-                        text: "Deseja jogar em mais de uma classe?",
-                        confirm: function (button) {
-                            document.getElementById('isMaisDeUmaClasse').checked = true;
-                            segundaOpcaoDeClasse();
-                        },
-                        cancel: function (button) {
-
-                        },
-                        confirmButton: "Sim",
-                        cancelButton: "Não"
+                        content: "Deseja jogar em mais de uma classe?",
+                        buttons: {
+                            sim: {
+                                text: 'Sim',
+                                btnClass: 'btn-primary',
+                                action: function () {
+                                    document.getElementById('isMaisDeUmaClasse').checked = true;
+                                    segundaOpcaoDeClasse();
+                                }
+                            },
+                            cancelar: {text:'Não'}
+                        }
                     });
                 }
             });

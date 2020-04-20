@@ -19,6 +19,12 @@
                     <th>
                         <b>#</b>
                     </th>
+                    @if (ViewBag.isLiga)
+                    {
+                        <th>
+                            @Html.DisplayName("categoria")
+                        </th>
+                    }
                     <th>
                         @Html.DisplayName("nome")
                     </th>
@@ -46,6 +52,19 @@
                         <td>
                             @i
                         </td>
+                        @if (ViewBag.isLiga)
+                        {
+                            <th>
+                                @if (@item.Categoria != null)
+                                {
+                                    @Html.Raw(item.Categoria.Nome + "- Liga")
+                                }
+                                else
+                                {
+                                    @Html.Raw("não conta pontos para liga")
+                                }
+                            </th>
+                        }
                         <td>
                             <input type="text" class="col-md-6 form-control" name="@Html.Raw("nome" + i)" id="@Html.Raw("nome" + i)" value="@item.nome">
                         </td>

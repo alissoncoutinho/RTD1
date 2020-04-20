@@ -3,7 +3,8 @@
     <li @if (@ViewBag.flag == "classes") { @Html.Raw("class='active'")  }><a href="@Url.Action("EditClasse", new { torneioId = @ViewBag.TorneioId })"><b>Classes</b></a></li>
     <li @if (@ViewBag.flag == "inscritos") { @Html.Raw("class='active'")   }><a href="@Url.Action("EditInscritos", new { torneioId = @ViewBag.TorneioId })"><b>Inscritos</b></a></li>
     <li @if (@ViewBag.flag == "jogos") { @Html.Raw("class='active'")      }><a href="@Url.Action("EditJogos", new { torneioId = @ViewBag.TorneioId })"><b>Jogos</b></a>
-    <li @if (@ViewBag.flag == "duplas") { @Html.Raw("class='active'")        }><a href="@Url.Action("EditDuplas", new { torneioId = @ViewBag.TorneioId })"><b>Duplas</b></a>
-    <li @if (@ViewBag.flag == "fasegrupo") { @Html.Raw("class='active'") }><a href="@Url.Action("EditFaseGrupo", new { torneioId = @ViewBag.TorneioId })"><b>Fase Grupo</b></a>
-        <!--li if (ViewBag.flag == "notificacao") { Html.Raw("class='active'")       }><a href="Url.Action("EditNotificacao", new { torneioId = ViewBag.TorneioId })"><b>Notificação</b></a-->
+    <li @if (@ViewBag.flag= ="duplas" ) { @Html.Raw("class='active' ")       }><a href="@Url.Action(" EditDuplas", new { torneioId=@ViewBag.TorneioId })"><b>Duplas</b></a>
+    <li @if (@ViewBag.flag= ="fasegrupo" ) { @Html.Raw("class='active' ") }><a href="@Url.Action(" EditFaseGrupo", new { torneioId=@ViewBag.TorneioId })"><b>Fase Grupo</b></a>
+    <li @if (@ViewBag.flag= ="obs" ) { @Html.Raw("class='active' ")        }><a href="@Url.Action(" EditObs", new { torneioId=@ViewBag.TorneioId })"><b>Observações</b></a>
+    
 </ul>

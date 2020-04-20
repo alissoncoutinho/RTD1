@@ -75,6 +75,7 @@ namespace Barragem.Models
         public DateTime dataRodada { get; set; }
         public string temporada { get; set; }
         public IList<Classe> classes { get; set; }
+        public IList<Categoria> categoria { get; set; }
         public int classeUserId { get; set; }
 
     }
