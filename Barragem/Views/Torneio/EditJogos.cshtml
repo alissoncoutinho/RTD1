@@ -185,6 +185,7 @@
                 <div class="form-group col-sm-2">
                     <select name="fase" id="fase" class="form-control">
                         <option value="0" @if (ViewBag.fase == 0) { @Html.Raw("selected")  }>Fases</option>
+                        <option value="700" @if (ViewBag.fase == 700) { @Html.Raw("selected")  }>Grupo</option>
                         <option value="6" @if (ViewBag.fase == 6) { @Html.Raw("selected")  }>R1</option>
                         <option value="5" @if (ViewBag.fase == 5) { @Html.Raw("selected")  }>R2</option>
                         <option value="4" @if (ViewBag.fase == 4) { @Html.Raw("selected")  }>Oitavas</option>
@@ -488,6 +489,14 @@
                         if (document.getElementById("situacao_id").value == '5' || document.getElementById("situacao_id").value == '6') {
                             document.getElementById("IndicadorVencedor").classList.add("show");
                         } else {
+                            if (document.getElementById("situacao_id").value == '1') {
+                                $(".modal-body #qtddGames1setDesafiante").val(0);
+                                $(".modal-body #qtddGames1setDesafiado").val(0);
+                                $(".modal-body #qtddGames2setDesafiante").val(0);
+                                $(".modal-body #qtddGames2setDesafiado").val(0);
+                                $(".modal-body #qtddGames3setDesafiante").val(0);
+                                $(".modal-body #qtddGames3setDesafiado").val(0);
+                            }
                             document.getElementById("IndicadorVencedor").classList.remove("show");
                         }
                     }

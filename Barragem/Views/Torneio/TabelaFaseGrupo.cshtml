@@ -6,7 +6,7 @@
         int? faseTorneio = 0;
         string faseId = "";
         int grupo = ViewBag.qtddGrupos;
-        var inscritosGrupo = (List<Barragem.Models.InscricaoTorneio>) ViewBag.inscritosGrupo;
+        var classificacaoGrupo = (List<Barragem.Models.ClassificacaoFaseGrupo>) ViewBag.classificacaoGrupo;
     }
 
     <h4 class="info-box-text">@ViewBag.nomeTorneio</h4>
@@ -53,24 +53,32 @@
                         <tr class="active">
                             <th class="col-sm-1 col-xs-1">#</th>
                             <th>Classificação</th>
-                            <th>pt.</th>
+                            <th title="número de vitórias">V</th>
+                            <th title="confronto direto">CF</th>
+                            <th title="Saldo de Sets/Saldo de Games">S.S/S.G.</th>
                         </tr>
                     </thead>
                     @{
                         var posicao = 0;
-                        foreach (var item in inscritosGrupo)
+                        foreach (var item in classificacaoGrupo)
                         {
                             posicao++;
                             <tr>
                                 <td> @posicao º</td>
                                 <td>
-                                    @item.participante.nome
-                                    @if (item.parceiroDupla != null){
-                                        @Html.Raw("/ " + item.parceiroDupla.nome)
+                                    @item.nome
+                                    @if (item.inscricao.parceiroDupla != null) {
+                                        @Html.Raw("/ " + item.inscricao.parceiroDupla.nome)
                                     }
                                 </td>
-                                <td>@item.pontuacaoFaseGrupo</td>
-                            </tr>
+                                <td>@item.inscricao.pontuacaoFaseGrupo</td>
+                                <td>@if (item.confrontoDireto > 0) { @Html.Raw("V") } </td>
+                                <td>@if ((item.saldoSets == 0) && (item.saldoGames == 0))
+                                { @Html.Raw("-/-") }
+                                else
+                                { @Html.Raw(item.saldoSets + "/" + item.saldoGames) }</td>
+
+                        </tr>
                         }
                     }
                 </table>
