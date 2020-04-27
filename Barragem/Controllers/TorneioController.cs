@@ -258,7 +258,7 @@ namespace Barragem.Controllers
 
         private List<InscricaoTorneio> getClassificadosFaseGrupo(ClasseTorneio classe)
         {
-            var qtddClassificadosPorgrupo = classe.qtddPassamFase;
+            //var qtddClassificadosPorgrupo = classe.qtddPassamFase;
             var qtddGrupos = db.InscricaoTorneio.Where(i => i.classe == classe.Id && i.isAtivo).Max(i => i.grupo);
             var totalClassificados = new List<InscricaoTorneio>();
             for (int i = 1; i <= qtddGrupos; i++)
@@ -271,7 +271,7 @@ namespace Barragem.Controllers
                 }
                 var classificacao = ordenarClassificacaoFaseGrupo(inscritos);
 
-                var classificados = classificacao.Take(qtddClassificadosPorgrupo).ToList();
+                var classificados = classificacao.Take(2).ToList();
                 foreach (var item in classificados)
                 {
                     totalClassificados.Add(item.inscricao);
@@ -1119,23 +1119,23 @@ namespace Barragem.Controllers
             }
         }
 
-        [HttpPost]
-        public ActionResult EditClasseFaseGrupo(int Id, int qtddJogadoresPorGrupo, int qtddPassamFase)
-        {
-            try
-            {
-                var classe = db.ClasseTorneio.Find(Id);
-                classe.qtddJogadoresPorGrupo = qtddJogadoresPorGrupo;
-                classe.qtddPassamFase = qtddPassamFase;
-                db.Entry(classe).State = EntityState.Modified;
-                db.SaveChanges();
-                return Json(new { erro = "", retorno = 1 }, "text/plain", JsonRequestBehavior.AllowGet);
-            }
-            catch (Exception ex)
-            {
-                return Json(new { erro = ex.Message, retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
-            }
-        }
+        //[HttpPost]
+        //public ActionResult EditClasseFaseGrupo(int Id, int qtddJogadoresPorGrupo, int qtddPassamFase)
+        //{
+        //    try
+        //    {
+        //        var classe = db.ClasseTorneio.Find(Id);
+        //        classe.qtddJogadoresPorGrupo = qtddJogadoresPorGrupo;
+        //        classe.qtddPassamFase = qtddPassamFase;
+        //        db.Entry(classe).State = EntityState.Modified;
+        //        db.SaveChanges();
+        //        return Json(new { erro = "", retorno = 1 }, "text/plain", JsonRequestBehavior.AllowGet);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return Json(new { erro = ex.Message, retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
+        //    }
+        //}
 
         [Authorize(Roles = "admin,organizador")]
         public ActionResult CreateClasse(int torneioId)
@@ -2499,45 +2499,90 @@ namespace Barragem.Controllers
         {
             var classesComFaseDeGrupo = db.ClasseTorneio.Where(ct => ct.faseGrupo && ct.torneioId == torneioId).ToList();
             foreach (var classe in classesComFaseDeGrupo){
-                int grupo = 1;
-                while (true){
-                    var inscritosNoGrupo = db.InscricaoTorneio.Where(it => it.torneioId == torneioId 
-                    && it.classe == classe.Id && it.grupo == grupo && it.isAtivo).ToList();
-                    var inscritosSemGrupo = db.InscricaoTorneio.Where(it => it.torneioId == torneioId 
-                    && it.classe == classe.Id && it.isAtivo && (it.grupo == null || it.grupo == 0)).ToList();
-                    // se for classe de dupla, trazer só o representante de cada dupla
-                    if (classe.isDupla){
-                        inscritosNoGrupo = inscritosNoGrupo.Where(it => it.parceiroDuplaId != null && it.parceiroDuplaId !=0).ToList();
-                        inscritosSemGrupo = inscritosSemGrupo.Where(it => it.parceiroDuplaId != null && it.parceiroDuplaId != 0).ToList();
-                    }
+                int totalDeInscritos = 0;
+                if (classe.isDupla) {
+                    totalDeInscritos = db.InscricaoTorneio.Where(it => it.classe == classe.Id && it.isAtivo && it.parceiroDuplaId != null && it.parceiroDuplaId != 0).Count();
+                } else {
+                    totalDeInscritos = db.InscricaoTorneio.Where(it => it.classe == classe.Id && it.isAtivo).Count();
+                }
+                if (totalDeInscritos < 3) {
+                    continue;
+                }
+                var qtddDeGrupos = getQtddGruposFaseGrupos(totalDeInscritos);
+                for (int idGrupo = 1; idGrupo <= qtddDeGrupos; idGrupo++){
+                    var inscritosNoGrupo = getInscritosNoGrupo(classe, idGrupo);
+                    var inscritosSemGrupo = getInscritosSemGrupo(classe);
 
-                    // se todos os inscritos na classe já possuirem grupo, vai para a próxima classe
-                    if (inscritosSemGrupo.Count() == 0) { break; }
-                    // se restar menos de 3 inscritos para formar o próximo grupo, os inscritos serão distribuidos no 1º e 2º grupo já existente
-                    if ((inscritosSemGrupo.Count() + inscritosNoGrupo.Count()) <= 2){
-                        inscritosSemGrupo[0].grupo = 1;
-                        db.Entry(inscritosSemGrupo[0]).State = EntityState.Modified;
-                        db.SaveChanges();
-                        if ((inscritosSemGrupo.Count() + inscritosNoGrupo.Count()) == 1) { break; }
-                        inscritosSemGrupo[1].grupo = 2;
-                        db.Entry(inscritosSemGrupo[1]).State = EntityState.Modified;
-                        db.SaveChanges();
-                        break;
-                    }
-                    var vagasRestantesNoGrupo = classe.qtddJogadoresPorGrupo - inscritosNoGrupo.Count();
-                    for (int i = 0; i < vagasRestantesNoGrupo; i++){
-                        if (inscritosSemGrupo[i] == null) { break; }
-                        inscritosSemGrupo[i].grupo = grupo;
-                        db.Entry(inscritosSemGrupo[i]).State = EntityState.Modified;
+                    var vagasRestantesNoGrupo = 3 - inscritosNoGrupo.Count();
+                    for (int j = 0; j < vagasRestantesNoGrupo; j++){
+                        inscritosSemGrupo[j].grupo = idGrupo;
+                        db.Entry(inscritosSemGrupo[j]).State = EntityState.Modified;
                         db.SaveChanges();
                     }
-                    grupo++;
+                }
+                var inscritosRestantes = getInscritosSemGrupo(classe);
+                // Os inscritos restantes serão distribuídos nos grupos já existentes
+                var grupo = 1;
+                for (int i = 0; i < inscritosRestantes.Count(); i++){
+                    inscritosRestantes[i].grupo = grupo;
+                    db.Entry(inscritosRestantes[i]).State = EntityState.Modified;
+                    db.SaveChanges();
+                    if (grupo<qtddDeGrupos) {
+                        grupo++;
+                    }
                 }
             }
             MontarJogosFaseGrupo(torneioId);
             return RedirectToAction("EditFaseGrupo", new { torneioId = torneioId, Msg = "OK" });
         }
-        
+
+        private List<InscricaoTorneio> getInscritosNoGrupo(ClasseTorneio classeTorneio, int idGrupo)
+        {
+            var inscritosNoGrupo = db.InscricaoTorneio.Where(it => it.classe == classeTorneio.Id && it.grupo == idGrupo && it.isAtivo).ToList();
+            if (classeTorneio.isDupla){
+                inscritosNoGrupo = inscritosNoGrupo.Where(it => it.parceiroDuplaId != null && it.parceiroDuplaId != 0).ToList();
+            }
+            return inscritosNoGrupo;
+        }
+        private List<InscricaoTorneio> getInscritosSemGrupo(ClasseTorneio classeTorneio){
+            var inscritosSemGrupo = db.InscricaoTorneio.Where(it => it.classe == classeTorneio.Id && it.isAtivo && (it.grupo == null || it.grupo == 0)).ToList();
+            // se for classe de dupla, trazer só o representante de cada dupla
+            if (classeTorneio.isDupla)
+            {
+                inscritosSemGrupo = inscritosSemGrupo.Where(it => it.parceiroDuplaId != null && it.parceiroDuplaId != 0).ToList();
+            }
+            return inscritosSemGrupo;
+        }
+    private int getQtddGruposFaseGrupos(int qtddInscritosPorClasse)
+        {
+            if((qtddInscritosPorClasse>=3) && (qtddInscritosPorClasse <= 5)){
+                return 1;
+            } else if((qtddInscritosPorClasse >=6) && (qtddInscritosPorClasse <= 8)){
+                return 2;
+            } else if ((qtddInscritosPorClasse >= 9) && (qtddInscritosPorClasse <= 11)){
+                return 3;
+            } else if ((qtddInscritosPorClasse >= 12) && (qtddInscritosPorClasse <= 14)){
+                return 4;
+            } else if ((qtddInscritosPorClasse >= 15) && (qtddInscritosPorClasse <= 17)) {
+                return 5;
+            } else if ((qtddInscritosPorClasse >= 18) && (qtddInscritosPorClasse <= 20)) {
+                return 6;
+            } else if ((qtddInscritosPorClasse >= 21) && (qtddInscritosPorClasse <= 23)) {
+                return 7;
+            } else if ((qtddInscritosPorClasse >= 24) && (qtddInscritosPorClasse <= 26)) {
+                return 8;
+            } else if ((qtddInscritosPorClasse >= 27) && (qtddInscritosPorClasse <= 29)) {
+                return 9;
+            } else if ((qtddInscritosPorClasse >= 30) && (qtddInscritosPorClasse <= 32)) {
+                return 10;
+            } else if ((qtddInscritosPorClasse >= 33) && (qtddInscritosPorClasse <= 35)) {
+                return 11;
+            } else if ((qtddInscritosPorClasse >= 36) && (qtddInscritosPorClasse <= 37)) {
+                return 12;
+            }
+            return 0;
+        }
+
         private void MontarJogosFaseGrupo(int torneioId)
         {
             var classes = db.ClasseTorneio.Where(ct => ct.faseGrupo && ct.torneioId == torneioId).ToList();
