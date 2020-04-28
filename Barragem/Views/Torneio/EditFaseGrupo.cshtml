@@ -13,7 +13,6 @@
                 @using (Html.BeginForm("MontarTabelaFaseGrupo", "Torneio", FormMethod.Post, new { @class = "form-row", @name = "formClasses" }))
                 {
                     <input type="hidden" value="@ViewBag.TorneioId" name="torneioId" id="torneioId">
-                    <button class="btn btn-primary btn-small confirm">Gerar Tabela de Grupos</button>
                     <a href="@Url.Action("TabelaFaseGrupo", new { torneioId = ViewBag.torneioId })" target="_blank" class="btn btn-success btn-small">Ver Tabela</a>
                 }
                 <div class="form-horizontal">

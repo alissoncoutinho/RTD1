@@ -73,10 +73,7 @@
                                 </td>
                                 <td>@item.inscricao.pontuacaoFaseGrupo</td>
                                 <td>@if (item.confrontoDireto > 0) { @Html.Raw("V") } </td>
-                                <td>@if ((item.saldoSets == 0) && (item.saldoGames == 0))
-                                { @Html.Raw("-/-") }
-                                else
-                                { @Html.Raw(item.saldoSets + "/" + item.saldoGames) }</td>
+                                <td>@Html.Raw(item.saldoSets + "/" + item.saldoGames)</td>
 
                         </tr>
                         }

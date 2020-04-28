@@ -110,7 +110,7 @@ namespace Barragem.Models
             {
                 if (grupoFaseGrupo != null)
                 {
-                    return "GR" + grupoFaseGrupo + ": " + rodadaFaseGrupo + "ªR";
+                    return rodadaFaseGrupo + "ªR: GR" + grupoFaseGrupo;
                 }
                 if (faseTorneio == null)
                 {

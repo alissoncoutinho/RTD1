@@ -206,6 +206,9 @@ namespace Barragem.Controllers
         [HttpPost]
         public ActionResult MontarChaveamento(int torneioId, IEnumerable<int> classeIds = null)
         {
+            ViewBag.classesFaseGrupoNaoFinalizadas = db.Jogo.Where(i => i.torneioId == torneioId && i.grupoFaseGrupo != null && (i.situacao_Id == 1 || i.situacao_Id == 2)).
+                Select(i => (int)i.classeTorneio).Distinct().ToList();
+
             List<ClasseTorneio> classes = new List<ClasseTorneio>();
             if (classeIds == null) { 
                 db.Database.ExecuteSqlCommand("delete from jogo where torneioId=" + torneioId);
@@ -220,38 +223,51 @@ namespace Barragem.Controllers
             List<InscricaoTorneio> inscricoes = null;
             var torneio = db.Torneio.Find(torneioId);
             var qtddJogadores = 0;
-            
+            bool faseGrupoFinalizada = true;
             foreach (ClasseTorneio classe in classes)
             {
-                if (classe.faseGrupo) {
-                    inscricoes = getClassificadosFaseGrupo(classe);
-                } else { 
-                    if (classe.isDupla){
-                        inscricoes = db.InscricaoTorneio.Where(r => r.torneioId == torneioId && r.classe == classe.Id && r.isAtivo && r.parceiroDuplaId != null).ToList();
+                if (classe.faseGrupo){
+                    var jogosFaseGrupo = db.Jogo.Where(i => i.classeTorneio == classe.Id && i.grupoFaseGrupo != null).ToList();
+                    if (jogosFaseGrupo.Count() == 0){
+                        faseGrupoFinalizada = false;
                     }else{
-                        inscricoes = db.InscricaoTorneio.Where(r => r.torneioId == torneioId && r.classe == classe.Id && r.isAtivo).ToList();
+                        var jogosFaseGrupoPendentes = jogosFaseGrupo.Where(j => j.situacao_Id == 1 || j.situacao_Id == 2).Count();
+                        if (jogosFaseGrupoPendentes == 0){
+                            faseGrupoFinalizada = true;
+                        }
                     }
                 }
-                qtddJogadores = inscricoes.Count();
-                if (qtddJogadores < 2) continue;
-                //if (torneio.temRepescagem){
-                //    qtddJogadores = montarRepescagem(torneio.Id, qtddJogadores, classe.Id);
-                //}
-                montarFaseEliminatoria(torneio.Id, qtddJogadores, classe.Id, torneio.temRepescagem);
-                var qtddByes = getQtddByes(qtddJogadores);
-                if (torneio.temRepescagem)
-                {
-                    var onzejogadores = qtddJogadores;
-                    qtddJogadores = qtddJogadores + (qtddJogadores / 2);
-                    qtddByes = getQtddByes(qtddJogadores);
-                    if ((qtddJogadores == 16) && (onzejogadores != 11)){
-                        qtddJogadores++;
-                        qtddByes++;
+                if ((classe.faseGrupo) && (!faseGrupoFinalizada)){
+                    db.Database.ExecuteSqlCommand("delete from jogo where classeTorneio=" + classe.Id + " and grupoFaseGrupo is not null ");
+                    MontarGruposFaseGrupo(classe);
+                    MontarJogosFaseGrupo(classe);
+                } else {
+                    if ((classe.faseGrupo) && (classe.faseMataMata) && (faseGrupoFinalizada)) {
+                        inscricoes = getClassificadosFaseGrupo(classe);
+                    } else {
+                        if (classe.isDupla){
+                            inscricoes = db.InscricaoTorneio.Where(r => r.torneioId == torneioId && r.classe == classe.Id && r.isAtivo && r.parceiroDuplaId != null).ToList();
+                        } else {
+                            inscricoes = db.InscricaoTorneio.Where(r => r.torneioId == torneioId && r.classe == classe.Id && r.isAtivo).ToList();
+                        }
                     }
+                    qtddJogadores = inscricoes.Count();
+                    if (qtddJogadores < 2) continue;
+                    montarFaseEliminatoria(torneio.Id, qtddJogadores, classe.Id, torneio.temRepescagem);
+                    var qtddByes = getQtddByes(qtddJogadores);
+                    if (torneio.temRepescagem)
+                    {
+                        var onzejogadores = qtddJogadores;
+                        qtddJogadores = qtddJogadores + (qtddJogadores / 2);
+                        qtddByes = getQtddByes(qtddJogadores);
+                        if ((qtddJogadores == 16) && (onzejogadores != 11))
+                        {
+                            qtddJogadores++;
+                            qtddByes++;
+                        }
+                    }
+                    popularJogosIniciais(torneio.Id, classe.Id, torneio.temRepescagem, inscricoes, qtddByes);
                 }
-
-
-                popularJogosIniciais(torneio.Id, classe.Id, torneio.temRepescagem, inscricoes, qtddByes);
             }
             return RedirectToAction("EditJogos", new { torneioId = torneioId });
         }
@@ -288,14 +304,15 @@ namespace Barragem.Controllers
             {
                 var isUltimo = i == inscritos.Count() - 1;
                 // caso seja a última verificação e ainda exista vaga, adiciona na lista de classificados
-                if (isUltimo) {
-                    ordemClassificacao.Add(new ClassificacaoFaseGrupo { inscricao = inscritos[i], userId = inscritos[i].userId, nome= inscritos[i].participante.nome, saldoSets = 0, saldoGames = 0 });
-                    break;
-                }
+                //if (isUltimo) {
+                    //ordemClassificacao.Add(new ClassificacaoFaseGrupo { inscricao = inscritos[i], userId = inscritos[i].userId, nome= inscritos[i].participante.nome, saldoSets = 0, saldoGames = 0 });
+                //  break;
+                //}
                 // 1ª verificação: caso jogador fez uma maior pontuação sozinho, adicionar na lista de classificados
-                if (inscritos[i].pontuacaoFaseGrupo > inscritos[i + 1].pontuacaoFaseGrupo)
+                if ((isUltimo)||(inscritos[i].pontuacaoFaseGrupo > inscritos[i + 1].pontuacaoFaseGrupo))
                 {
-                    ordemClassificacao.Add(new ClassificacaoFaseGrupo {inscricao=inscritos[i], userId = inscritos[i].userId, nome = inscritos[i].participante.nome, saldoSets = 0, saldoGames = 0 });
+                    ordemClassificacao.Add(getSaldoDeSetsEGamesFaseGrupo(inscritos[i]));
+                    //ordemClassificacao.Add(new ClassificacaoFaseGrupo {inscricao=inscritos[i], userId = inscritos[i].userId, nome = inscritos[i].participante.nome, saldoSets = 0, saldoGames = 0 });
                     // 2ª verificação: caso não tenha feito maior pontuação sozinho:
                 } else {
                     // 3ª verificação: verificar quantidade de empates com esta mesma pontuação:
@@ -304,8 +321,8 @@ namespace Barragem.Controllers
                     // 4ª verificação: caso tenha havido empate entre 2 jogadores apenas: Irá se classificar o vencedor do confronto direto
                     var classe = inscritos[i].classe;
                     if (jogadoresEmpatados.Count == 2){
-                        var jogador1 = new ClassificacaoFaseGrupo { inscricao = jogadoresEmpatados[0], userId = jogadoresEmpatados[0].userId, nome = jogadoresEmpatados[0].participante.nome, saldoSets = 0, saldoGames = 0 };
-                        var jogador2 = new ClassificacaoFaseGrupo { inscricao = jogadoresEmpatados[1], userId = jogadoresEmpatados[1].userId, nome = jogadoresEmpatados[1].participante.nome, saldoSets = 0, saldoGames = 0 };
+                        var jogador1 = getSaldoDeSetsEGamesFaseGrupo(inscritos[i]);
+                        var jogador2 = getSaldoDeSetsEGamesFaseGrupo(inscritos[i+1]);
                         var jogo = db.Jogo.Where(j => j.classeTorneio == classe && (j.desafiado_id == jogador1.userId && j.desafiante_id == jogador2.userId) || 
                             ((j.desafiado_id == jogador2.userId && j.desafiante_id == jogador1.userId))).ToList();
                         if (jogo[0].idDoVencedor == jogador1.userId) {
@@ -318,8 +335,13 @@ namespace Barragem.Controllers
                             ordemClassificacao.Add(jogador1);
                         } else {
                             // caso o jogo ainda não tenha sido realizado
-                            ordemClassificacao.Add(jogador1);
-                            ordemClassificacao.Add(jogador2);
+                            if ((jogador1.saldoSets > jogador2.saldoSets) || ((jogador1.saldoSets == jogador2.saldoSets) && (jogador1.saldoGames > jogador2.saldoGames))){
+                                ordemClassificacao.Add(jogador1);
+                                ordemClassificacao.Add(jogador2);
+                            } else {
+                                ordemClassificacao.Add(jogador2);
+                                ordemClassificacao.Add(jogador1);
+                            }
                         }
                         // como já foi incluído os 2 jogadores, já pula para o próximo:
                         i++;
@@ -327,8 +349,7 @@ namespace Barragem.Controllers
                     } else {
                         List<ClassificacaoFaseGrupo> temp = new List<ClassificacaoFaseGrupo>();
                         foreach (var item in jogadoresEmpatados){
-                            var jogos = db.Jogo.Where(j => j.classeTorneio == item.classe && j.desafiante_id!=10 && j.grupoFaseGrupo != null && (j.desafiado_id == item.userId || j.desafiante_id == item.userId)).ToList();
-                            temp.Add(getSaldoDeSetsEGamesFaseGrupo(item, jogos));
+                            temp.Add(getSaldoDeSetsEGamesFaseGrupo(item));
                         }
                         temp = temp.OrderByDescending(oc => oc.saldoSets).ThenByDescending(oc=>oc.saldoGames).ToList();
                         ordemClassificacao.AddRange(temp);
@@ -339,7 +360,9 @@ namespace Barragem.Controllers
             return ordemClassificacao;
         }
 
-        private ClassificacaoFaseGrupo getSaldoDeSetsEGamesFaseGrupo(InscricaoTorneio inscrito, List<Jogo> jogos) {
+        private ClassificacaoFaseGrupo getSaldoDeSetsEGamesFaseGrupo(InscricaoTorneio inscrito) {
+            var jogos = db.Jogo.Where(j => j.classeTorneio == inscrito.classe && j.desafiante_id != 10 && j.grupoFaseGrupo != null && 
+            (j.desafiado_id == inscrito.userId || j.desafiante_id == inscrito.userId)).ToList();
             var setsGanhos = 0;
             var setsPerdidos = 0;
             var gamesGanhos = 0;
@@ -1837,10 +1860,12 @@ namespace Barragem.Controllers
         {
             List<Jogo> listaJogos = null;
             var classes = db.ClasseTorneio.Where(i => i.torneioId == torneioId).OrderBy(c => c.Id).ToList();
-            var classesGeradas = db.Jogo.Where(i => i.torneioId == torneioId && i.grupoFaseGrupo==null).Select(i => (int)i.classeTorneio)
+            var classesGeradas = db.Jogo.Where(i => i.torneioId == torneioId).Select(i => (int)i.classeTorneio)
                 .Distinct().ToList();
             ViewBag.classesFaseGrupoNaoFinalizadas = db.Jogo.Where(i => i.torneioId == torneioId && i.grupoFaseGrupo != null && (i.situacao_Id ==1 || i.situacao_Id ==2)).
                 Select(i => (int)i.classeTorneio).Distinct().ToList();
+            ViewBag.ClassesGeradasMataMata = db.Jogo.Where(i => i.torneioId == torneioId && i.grupoFaseGrupo == null).Select(i => (int)i.classeTorneio)
+                .Distinct().ToList();
             ViewBag.ClassesGeradas = classesGeradas;
             ViewBag.Classes = classes;
             ViewBag.fClasse = fClasse;
@@ -1913,7 +1938,7 @@ namespace Barragem.Controllers
             if (isImprimir) {
                 return jogos.OrderBy(r => r.dataJogo).ThenBy(r => r.horaJogo).ToList();
             } else {
-                return jogos.OrderBy(r => r.rodadaFaseGrupo).ThenByDescending(r=> r.faseTorneio).ThenBy(r => r.ordemJogo).ToList();
+                return jogos.OrderBy(r => r.rodadaFaseGrupo).ThenBy(j => j.grupoFaseGrupo).ThenByDescending(r=> r.faseTorneio).ThenBy(r => r.ordemJogo).ToList();
             }
             
         }
@@ -2495,45 +2520,40 @@ namespace Barragem.Controllers
             return View(jogos);
         }
 
-        public ActionResult MontarTabelaFaseGrupo(int torneioId)
+        private void MontarGruposFaseGrupo(ClasseTorneio classe)
         {
-            var classesComFaseDeGrupo = db.ClasseTorneio.Where(ct => ct.faseGrupo && ct.torneioId == torneioId).ToList();
-            foreach (var classe in classesComFaseDeGrupo){
-                int totalDeInscritos = 0;
-                if (classe.isDupla) {
-                    totalDeInscritos = db.InscricaoTorneio.Where(it => it.classe == classe.Id && it.isAtivo && it.parceiroDuplaId != null && it.parceiroDuplaId != 0).Count();
-                } else {
-                    totalDeInscritos = db.InscricaoTorneio.Where(it => it.classe == classe.Id && it.isAtivo).Count();
-                }
-                if (totalDeInscritos < 3) {
-                    continue;
-                }
-                var qtddDeGrupos = getQtddGruposFaseGrupos(totalDeInscritos);
-                for (int idGrupo = 1; idGrupo <= qtddDeGrupos; idGrupo++){
-                    var inscritosNoGrupo = getInscritosNoGrupo(classe, idGrupo);
-                    var inscritosSemGrupo = getInscritosSemGrupo(classe);
+            int totalDeInscritos = 0;
+            if (classe.isDupla){
+                totalDeInscritos = db.InscricaoTorneio.Where(it => it.classe == classe.Id && it.isAtivo && it.parceiroDuplaId != null && it.parceiroDuplaId != 0).Count();
+            }else{
+                totalDeInscritos = db.InscricaoTorneio.Where(it => it.classe == classe.Id && it.isAtivo).Count();
+            }
+            if (totalDeInscritos < 3){
+                return;
+            }
+            var qtddDeGrupos = getQtddGruposFaseGrupos(totalDeInscritos);
+            for (int idGrupo = 1; idGrupo <= qtddDeGrupos; idGrupo++){
+                var inscritosNoGrupo = getInscritosNoGrupo(classe, idGrupo);
+                var inscritosSemGrupo = getInscritosSemGrupo(classe);
 
-                    var vagasRestantesNoGrupo = 3 - inscritosNoGrupo.Count();
-                    for (int j = 0; j < vagasRestantesNoGrupo; j++){
-                        inscritosSemGrupo[j].grupo = idGrupo;
-                        db.Entry(inscritosSemGrupo[j]).State = EntityState.Modified;
-                        db.SaveChanges();
-                    }
-                }
-                var inscritosRestantes = getInscritosSemGrupo(classe);
-                // Os inscritos restantes serão distribuídos nos grupos já existentes
-                var grupo = 1;
-                for (int i = 0; i < inscritosRestantes.Count(); i++){
-                    inscritosRestantes[i].grupo = grupo;
-                    db.Entry(inscritosRestantes[i]).State = EntityState.Modified;
+                var vagasRestantesNoGrupo = 3 - inscritosNoGrupo.Count();
+                for (int j = 0; j < vagasRestantesNoGrupo; j++){
+                    inscritosSemGrupo[j].grupo = idGrupo;
+                    db.Entry(inscritosSemGrupo[j]).State = EntityState.Modified;
                     db.SaveChanges();
-                    if (grupo<qtddDeGrupos) {
-                        grupo++;
-                    }
                 }
             }
-            MontarJogosFaseGrupo(torneioId);
-            return RedirectToAction("EditFaseGrupo", new { torneioId = torneioId, Msg = "OK" });
+            var inscritosRestantes = getInscritosSemGrupo(classe);
+            // Os inscritos restantes serão distribuídos nos grupos já existentes
+            var grupo = 1;
+            for (int i = 0; i < inscritosRestantes.Count(); i++){
+                inscritosRestantes[i].grupo = grupo;
+                db.Entry(inscritosRestantes[i]).State = EntityState.Modified;
+                db.SaveChanges();
+                if (grupo < qtddDeGrupos){
+                    grupo++;
+                }
+            }
         }
 
         private List<InscricaoTorneio> getInscritosNoGrupo(ClasseTorneio classeTorneio, int idGrupo)
@@ -2583,22 +2603,16 @@ namespace Barragem.Controllers
             return 0;
         }
 
-        private void MontarJogosFaseGrupo(int torneioId)
+        private void MontarJogosFaseGrupo(ClasseTorneio classe)
         {
-            var classes = db.ClasseTorneio.Where(ct => ct.faseGrupo && ct.torneioId == torneioId).ToList();
-            db.Database.ExecuteSqlCommand("delete from jogo where torneioId=" + torneioId + " and rodadaFaseGrupo is not null");
-            foreach (var classe in classes)
-            {
-
-                var inscritos = db.InscricaoTorneio.Where(it=> it.torneioId==torneioId && it.classe==classe.Id && it.isAtivo).OrderBy(it=>it.grupo).ToList();
-                if (classe.isDupla) {
-                    inscritos = inscritos.Where(i => i.parceiroDuplaId != null && i.parceiroDuplaId != 0).ToList();
-                }
-                var qtddGrupos = db.InscricaoTorneio.Where(it => it.torneioId == torneioId && it.classe == classe.Id).Max(it=>it.grupo);
-                for (int i = 1; i <= qtddGrupos; i++){
-                    var inscritosGrupo = inscritos.Where(it => it.grupo==i).ToList();
-                    criarRodadasJogosFaseGrupo(inscritosGrupo, torneioId, classe.Id, i);
-                }
+            var inscritos = db.InscricaoTorneio.Where(it=> it.classe==classe.Id && it.isAtivo).OrderBy(it=>it.grupo).ToList();
+            if (classe.isDupla) {
+                inscritos = inscritos.Where(i => i.parceiroDuplaId != null && i.parceiroDuplaId != 0).ToList();
+            }
+            var qtddGrupos = db.InscricaoTorneio.Where(it => it.classe == classe.Id).Max(it=>it.grupo);
+            for (int i = 1; i <= qtddGrupos; i++){
+                var inscritosGrupo = inscritos.Where(it => it.grupo==i).ToList();
+                criarRodadasJogosFaseGrupo(inscritosGrupo, classe.torneioId, classe.Id, i);
             }
         }
 
