@@ -1,18 +1,24 @@
 ﻿@model IEnumerable<Barragem.Models.Jogo>
 @{
-    Layout = "~/Views/Shared/_LayoutTorneio2.cshtml";
-
+    if (ViewBag.classeFaseGrupo != true){
+        Layout = "~/Views/Shared/_LayoutTorneio2.cshtml";
+    }else{
+        Layout = "~/Views/Shared/_LayoutTorneioFaseGrupo.cshtml";
+    }
     ViewBag.Title = "Tabela Torneio";
     int? faseTorneio = 0;
     string faseId = "";
-}
+    }
 
     <h4 class="info-box-text">@ViewBag.nomeTorneio</h4>
 
     <div class="box-body table-responsive no-padding no-border table-hover">
-    @if ((!ViewBag.tabelaLiberada) && !((Roles.IsUserInRole("admin")) || (Roles.IsUserInRole("organizador")))){
+    @if ((!ViewBag.tabelaLiberada) && !((Roles.IsUserInRole("admin")) || (Roles.IsUserInRole("organizador"))))
+    {
         <p>Aguarde. Tabela ainda não liberada.</p>
-    }else{
+    }
+    else
+    {
         <div class="form-horizontal">
             <div class="form-group">
                 <label class="col-xs-12 col-sm-2 control-label">Classes</label>
@@ -29,13 +35,30 @@
                     </select>
                     <input type="hidden" value="@ViewBag.TorneioId" name="torneioId" id="torneioId">
                 </div>
-                <div class="col-sm-2 col-xs-3">
-                    <input type="button" value="imprimir" class="btn btn-primary" onclick="Imprimir()">
-                </div>
             </div>
+            @if (ViewBag.classeFaseGrupo == true)
+            {
+                int grupo = ViewBag.qtddGrupos;
+                <div class="form-group">
+                    <label class="col-xs-12 col-sm-2 control-label">Grupo</label>
+                    <div class="col-sm-4 col-xs-8">
+                        <select name="grupo" id="grupo" class="form-control" onchange="Selecionar()">
+                            @for (int i = 1; i <= ViewBag.qtddGrupos; i++)
+                            {
+                                <option value="@i" @if (ViewBag.grupo == i)
+                                { @Html.Raw("selected")  }>@i</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+            }
+            <!--div class="col-sm-2 col-xs-3">
+                <input type="button" value="imprimir" class="btn btn-primary" onclick="Imprimir()">
+            </div-->
         </div>
-                
-        <div class="" id="tabFase2">
+        if (ViewBag.classeFaseGrupo != true)
+        {
+            <div class="" id="tabFase2">
                 <div id="conteudo_tabela_jogos">
                     <div class="display_jogos">
                         <div class="mover_esquerda"><img src="~/Images/seta.png"></div>
@@ -68,6 +91,72 @@
                     </div>
                 </div>
             </div>
+        }
+        else
+        {
+            <br>
+            <div class="col-sm-6 col-xs-10 box-body table-responsive no-padding">
+                <table class="table table table-hover">
+                    <thead>
+                        <tr class="active">
+                            <th class="col-sm-1 col-xs-1">#</th>
+                            <th>Classificação</th>
+                            <th title="número de vitórias">V</th>
+                            <th title="confronto direto">CF</th>
+                            <th title="Saldo de Sets/Saldo de Games">S.S/S.G.</th>
+                        </tr>
+                    </thead>
+                    @{
+                        var posicao = 0;
+                        foreach (var item in ViewBag.classificacaoGrupo)
+                        {
+                            posicao++;
+                            <tr>
+                                <td> @posicao º</td>
+                                <td>
+                                    @item.nome
+                                    @if (item.inscricao.parceiroDupla != null)
+                                    {
+                                        @Html.Raw("/ " + item.inscricao.parceiroDupla.nome)
+                                    }
+                                </td>
+                                <td>@item.inscricao.pontuacaoFaseGrupo</td>
+                                <td>@if (item.confrontoDireto > 0)
+                                { @Html.Raw("V") } </td>
+                                <td>@Html.Raw(item.saldoSets + "/" + item.saldoGames)</td>
+
+                            </tr>
+                        }
+                    }
+                </table>
+            </div>
+            <div class="" id="tabFase2">
+                    <div id="conteudo_tabela_jogos">
+                        <div class="display_jogos">
+                            @{
+                                int? rodada = 0;
+                            }
+                            @if (Model != null)
+                            {
+                                foreach (var item in Model)
+                                {
+                                    if (rodada != item.rodadaFaseGrupo)
+                                    {
+                                        if (rodada != 0)
+                                        {
+                                            @Html.Raw("</div>");
+                                        }
+                                        rodada = item.rodadaFaseGrupo;
+                                        @Html.Raw("<div class='col-xs-2 box_rodada'>");
+                                        <div class="titulo">Rodada @item.rodadaFaseGrupo</div>
+                                    }
+                                    @Html.Partial("_PartialJogoTabelaFaseGrupo", (Barragem.Models.Jogo)item)
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>                
+        }
     }
     </div>
     @section Scripts {
@@ -75,7 +164,11 @@
             function Selecionar() {
                 var torneioId = document.getElementById('torneioId').value;
                 var classeId = document.getElementById('filtroClasse').value;
-                window.location = "Tabela?torneioId=" + torneioId + "&filtroClasse=" + classeId;
+                var grupo = 1;
+                if (document.getElementById('grupo') != undefined) {
+                    var grupo = document.getElementById('grupo').value;
+                }
+                window.location = "Tabela?torneioId=" + torneioId + "&filtroClasse=" + classeId + "&grupo=" + grupo;
             }
 
             function Imprimir() {
