@@ -234,6 +234,7 @@
     <Compile Include="Class\RodadaNegocio.cs" />
     <Compile Include="Class\TemporadaNegocio.cs" />
     <Compile Include="Class\Tipos.cs" />
+    <Compile Include="Class\TorneioNegocio.cs" />
     <Compile Include="Context\BarragemDbContext.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AguasClarasController.cs" />

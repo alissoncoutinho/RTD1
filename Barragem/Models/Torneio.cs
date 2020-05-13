@@ -131,6 +131,7 @@ namespace Barragem.Models
     public class TabelaApp
     {
         public List<ClasseTorneioApp> classes { get; set; }
+        public List<ClassificacaoFaseGrupoApp> classificacaoFaseGrupoApp { get; set; }
         public string descricaoFase { get; set; }
         public List<MeuJogo> jogos { get; set; }
         public int faseTorneio { get; set; }

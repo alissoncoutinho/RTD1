@@ -14,4 +14,14 @@ namespace Barragem.Models
         public int confrontoDireto { get; set; }
         public InscricaoTorneio inscricao { get; set; }
     }
+
+    public class ClassificacaoFaseGrupoApp
+    {
+        public int userId { get; set; }
+        public int saldoSets { get; set; }
+        public int saldoGames { get; set; }
+        public string nome { get; set; }
+        public int confrontoDireto { get; set; }
+        public int pontucacao { get; set; }
+    }
 }
