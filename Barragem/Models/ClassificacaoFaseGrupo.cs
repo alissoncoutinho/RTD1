@@ -10,6 +10,8 @@ namespace Barragem.Models
         public int userId { get; set; }
         public int saldoSets { get; set; }
         public int saldoGames { get; set; }
+        public float averageSets { get; set; }
+        public float averageGames { get; set; }
         public string nome { get; set; }
         public int confrontoDireto { get; set; }
         public InscricaoTorneio inscricao { get; set; }
@@ -24,4 +26,20 @@ namespace Barragem.Models
         public int confrontoDireto { get; set; }
         public int pontucacao { get; set; }
     }
+
+    public class ClassificadosEmCadaGrupo
+    {
+        public int userId { get; set; }
+        public int? userIdParceiro { get; set; }
+        public int userId2oColocado { get; set; }
+        public int? userIdParceiro2oColocado { get; set; }
+        public float averageSets { get; set; }
+        public float averageGames { get; set; }
+        public int saldoSets { get; set; }
+        public int saldoGames { get; set; }
+        public int pontucacao { get; set; }
+        public int grupo { get; set; }
+    }
+
+    
 }

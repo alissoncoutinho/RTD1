@@ -231,7 +231,7 @@ namespace Barragem.Class
 
         //////////////////////////////// FASE DE GRUPO //////////////////////////////////////////
 
-        private ClassificacaoFaseGrupo getSaldoDeSetsEGamesFaseGrupo(InscricaoTorneio inscrito)
+        private ClassificacaoFaseGrupo getDadosClassificatoriosFaseGrupo(InscricaoTorneio inscrito)
         {
             var jogos = db.Jogo.Where(j => j.classeTorneio == inscrito.classe && j.desafiante_id != 10 && j.grupoFaseGrupo != null &&
             (j.desafiado_id == inscrito.userId || j.desafiante_id == inscrito.userId)).ToList();
@@ -239,6 +239,8 @@ namespace Barragem.Class
             var setsPerdidos = 0;
             var gamesGanhos = 0;
             var gamesPerdidos = 0;
+            float averageSets = 0.0f;
+            float averageGames = 0.0f;
             foreach (var item in jogos)
             {
                 if (item.desafiado_id == inscrito.userId)
@@ -256,7 +258,11 @@ namespace Barragem.Class
                     gamesPerdidos = gamesPerdidos + item.gamesGanhosDesafiado;
                 }
             }
-            var classificadoFaseGrupo = new ClassificacaoFaseGrupo { inscricao = inscrito, userId = inscrito.userId, nome = inscrito.participante.nome, saldoSets = setsGanhos - setsPerdidos, saldoGames = gamesGanhos - gamesPerdidos };
+            averageSets = (setsGanhos + setsPerdidos) != 0 ? setsGanhos / (float)(setsGanhos + setsPerdidos) : 0;
+            averageGames = (gamesGanhos + gamesPerdidos) != 0 ? gamesGanhos / (float)(gamesGanhos + gamesPerdidos) : 0;
+            var classificadoFaseGrupo = new ClassificacaoFaseGrupo { inscricao = inscrito, userId = inscrito.userId, nome = inscrito.participante.nome,
+                saldoSets = setsGanhos - setsPerdidos, saldoGames = gamesGanhos - gamesPerdidos,
+                averageSets = (float)Math.Round(averageSets, 1), averageGames= (float)Math.Round(averageGames,1) };
             return classificadoFaseGrupo;
         }
 
@@ -275,15 +281,10 @@ namespace Barragem.Class
             for (int i = 0; i < classificacaoGrupo.Count(); i++)
             {
                 var isUltimo = i == classificacaoGrupo.Count() - 1;
-                // caso seja a última verificação e ainda exista vaga, adiciona na lista de classificados
-                //if (isUltimo) {
-                //ordemClassificacao.Add(new ClassificacaoFaseGrupo { inscricao = inscritos[i], userId = inscritos[i].userId, nome= inscritos[i].participante.nome, saldoSets = 0, saldoGames = 0 });
-                //  break;
-                //}
                 // 1ª verificação: caso jogador fez uma maior pontuação sozinho, adicionar na lista de classificados
                 if ((isUltimo) || (classificacaoGrupo[i].pontuacaoFaseGrupo > classificacaoGrupo[i + 1].pontuacaoFaseGrupo))
                 {
-                    ordemClassificacao.Add(getSaldoDeSetsEGamesFaseGrupo(classificacaoGrupo[i]));
+                    ordemClassificacao.Add(getDadosClassificatoriosFaseGrupo(classificacaoGrupo[i]));
                     //ordemClassificacao.Add(new ClassificacaoFaseGrupo {inscricao=inscritos[i], userId = inscritos[i].userId, nome = inscritos[i].participante.nome, saldoSets = 0, saldoGames = 0 });
                     // 2ª verificação: caso não tenha feito maior pontuação sozinho:
                 }
@@ -295,8 +296,8 @@ namespace Barragem.Class
                     // 4ª verificação: caso tenha havido empate entre 2 jogadores apenas: Irá se classificar o vencedor do confronto direto
                     if (jogadoresEmpatados.Count == 2)
                     {
-                        var jogador1 = getSaldoDeSetsEGamesFaseGrupo(classificacaoGrupo[i]);
-                        var jogador2 = getSaldoDeSetsEGamesFaseGrupo(classificacaoGrupo[i + 1]);
+                        var jogador1 = getDadosClassificatoriosFaseGrupo(classificacaoGrupo[i]);
+                        var jogador2 = getDadosClassificatoriosFaseGrupo(classificacaoGrupo[i + 1]);
                         var jogo = db.Jogo.Where(j => j.classeTorneio == classe.Id && (j.desafiado_id == jogador1.userId && j.desafiante_id == jogador2.userId) ||
                             ((j.desafiado_id == jogador2.userId && j.desafiante_id == jogador1.userId))).ToList();
                         if (jogo[0].idDoVencedor == jogador1.userId)
@@ -334,7 +335,7 @@ namespace Barragem.Class
                         List<ClassificacaoFaseGrupo> temp = new List<ClassificacaoFaseGrupo>();
                         foreach (var item in jogadoresEmpatados)
                         {
-                            temp.Add(getSaldoDeSetsEGamesFaseGrupo(item));
+                            temp.Add(getDadosClassificatoriosFaseGrupo(item));
                         }
                         temp = temp.OrderByDescending(oc => oc.saldoSets).ThenByDescending(oc => oc.saldoGames).ToList();
                         ordemClassificacao.AddRange(temp);
@@ -343,6 +344,245 @@ namespace Barragem.Class
                 }
             }
             return ordemClassificacao;
+        }
+
+        public List<Jogo> getJogosPrimeiraRodada(int classeId)
+        {
+            var jogo = db.Jogo.Where(j => j.classeTorneio == classeId).OrderByDescending(j => j.faseTorneio).First<Jogo>();
+            var primeiraFase = (int)jogo.faseTorneio;
+            var jogosRodada1 = db.Jogo.Where(j => j.classeTorneio == classeId && j.faseTorneio == primeiraFase).OrderBy(j => j.ordemJogo).ToList();
+            return jogosRodada1;
+        }
+
+        public void montarJogosRegraCBT(ClasseTorneio classe)
+        {
+            var totalGrupos = getQtddDeGrupos(classe.Id);
+            var classificados = getClassificadosEmCadaGrupo(classe, totalGrupos);
+            var montaJogosTorneioRegraCBT = InstanciaClassePorGrupo.getInstancia(totalGrupos);
+            var jogosPrimeiraRodada = getJogosPrimeiraRodada(classe.Id);
+            montaJogosTorneioRegraCBT.MontarJogosPrimeiraRodada(jogosPrimeiraRodada, classificados, db);
+            return;
+        }
+
+        public List<InscricaoTorneio> getInscritosPorClasse(ClasseTorneio classe)
+        {
+            if (classe.isDupla)
+            {
+                return db.InscricaoTorneio.Where(it => it.classe == classe.Id && it.isAtivo && it.parceiroDuplaId != null && it.parceiroDuplaId != 0).ToList();
+            }
+            else
+            {
+                return db.InscricaoTorneio.Where(it => it.classe == classe.Id && it.isAtivo).ToList();
+            }
+        }
+
+        public void fecharJogosComBye(List<Jogo> jogosRodada1)
+        {
+            foreach (Jogo jogo in jogosRodada1)
+            {
+                if (jogo.desafiante_id == 10)
+                {
+                    jogo.dataCadastroResultado = DateTime.Now;
+                    jogo.usuarioInformResultado = "sistema";
+                    jogo.situacao_Id = 5;
+                    jogo.qtddGames1setDesafiado = 6;
+                    jogo.qtddGames1setDesafiante = 1;
+                    jogo.qtddGames2setDesafiado = 6;
+                    jogo.qtddGames2setDesafiante = 1;
+                    db.Entry(jogo).State = EntityState.Modified;
+                    db.SaveChanges();
+                    MontarProximoJogoTorneio(jogo);
+                }
+
+            }
+        }
+
+        private List<ClassificadosEmCadaGrupo> getClassificadosEmCadaGrupo(ClasseTorneio classe, int qtddGrupos)
+        {
+            List<ClassificadosEmCadaGrupo> listClassificadosEmCadaGrupo = new List<ClassificadosEmCadaGrupo>();
+            for (int gp = 1; gp <= qtddGrupos; gp++) {
+                // Pega a ordem de classificação de cada grupo
+                var classificacaoFaseGrupo = ordenarClassificacaoFaseGrupo(classe, gp);
+                // mantem apenas os 2 primeiros de cada grupo
+                var classificadosEmCadaGrupo = new ClassificadosEmCadaGrupo()
+                {
+                    userId = classificacaoFaseGrupo[0].userId,
+                    userIdParceiro = classificacaoFaseGrupo[0].inscricao.parceiroDuplaId,
+                    userId2oColocado = classificacaoFaseGrupo[1].userId,
+                    userIdParceiro2oColocado = classificacaoFaseGrupo[1].inscricao.parceiroDuplaId,
+                    grupo = (int)classificacaoFaseGrupo[0].inscricao.grupo,
+                    saldoSets = classificacaoFaseGrupo[0].saldoSets,
+                    saldoGames = classificacaoFaseGrupo[0].saldoGames,
+                    pontucacao = classificacaoFaseGrupo[0].inscricao.pontuacaoFaseGrupo,
+                    averageSets = classificacaoFaseGrupo[0].averageSets,
+                    averageGames = classificacaoFaseGrupo[0].averageGames
+                };
+                listClassificadosEmCadaGrupo.Add(classificadosEmCadaGrupo);
+            }
+            int qtddInscritos = getInscritosPorClasse(classe).Count();
+            if (qtddInscritos % 3 == 0 || qtddInscritos % 4 == 0){
+                listClassificadosEmCadaGrupo = listClassificadosEmCadaGrupo.OrderByDescending(l => l.pontucacao).ThenByDescending(l => l.saldoSets).ThenByDescending(l => l.saldoGames).ToList();
+            } else {
+                listClassificadosEmCadaGrupo = listClassificadosEmCadaGrupo.OrderByDescending(l => l.averageSets).ThenByDescending(l => l.averageGames).ToList();
+            }
+            
+            
+            return listClassificadosEmCadaGrupo;
+        }
+
+        private int getQtddDeGrupos(int classeId)
+        {
+            var qtddGrupos = (int) db.InscricaoTorneio.Where(it => it.classe == classeId && it.isAtivo).Max(it => it.grupo);
+            return qtddGrupos;
+        }
+
+        private double calcularSetsAverage(List<Jogo> jogos, int userId){
+            //var jogos = db.Jogo.Where(j => j.classeTorneio == classe.Id && (j.desafiado_id == userId || j.desafiante_id == userId) && j.grupoFaseGrupo!=null).ToList();
+            var setsJogados = 0;
+            var setsGanhos = 0;
+            foreach (var j in jogos){
+                setsJogados = setsJogados + j.setsJogados;
+                setsGanhos = setsGanhos + ((j.desafiado_id == userId) ? j.qtddSetsGanhosDesafiado : j.qtddSetsGanhosDesafiante);
+            }
+            var setsAverage = setsGanhos / setsJogados;
+            return setsAverage;
+        }
+
+        private double calcularGamesAverage(List<Jogo> jogos, int userId){
+            var gamesJogados = 0;
+            var gamesGanhos = 0;
+            foreach (var j in jogos)
+            {
+                gamesJogados = gamesJogados + (j.gamesGanhosDesafiado + j.gamesGanhosDesafiante);
+                gamesGanhos = gamesGanhos + ((j.desafiado_id == userId) ? j.gamesGanhosDesafiado : j.gamesGanhosDesafiante);
+            }
+            var gamesAverage = gamesGanhos / gamesJogados;
+            return gamesAverage;
+        }
+
+        private InscricaoTorneio selecionarAdversario(List<InscricaoTorneio> participantes)
+        {
+            var adversario = new InscricaoTorneio();
+            if (participantes.Count == 0)
+            {
+                adversario.Id = 0;
+                return adversario;
+            }
+            else if (participantes.Count == 1)
+            {
+                adversario = participantes[0]; //add it 
+                participantes.RemoveAt(0);
+                return adversario;
+            }
+            Random r = new Random();
+            int randomIndex = r.Next(1, participantes.Count); //Choose a random object in the list
+            adversario = participantes[randomIndex]; //add it 
+            participantes.RemoveAt(randomIndex);
+            return adversario;
+        }
+
+        public void montarJogosPorSorteio(List<Jogo> jogosRodada1, List<InscricaoTorneio> inscritos, bool temRepescagem)
+        {
+            InscricaoTorneio jogador = null;
+            foreach (Jogo jogo in jogosRodada1)
+            {
+                if (jogo.desafiante_id == 0)
+                {
+                    jogador = selecionarAdversario(inscritos);
+                    jogo.desafiante_id = jogador.userId;
+                    jogo.isPrimeiroJogoTorneio = true;
+                    if ((jogador.classeTorneio != null) && (jogador.classeTorneio.isDupla))
+                    {
+                        jogo.desafiante2_id = jogador.parceiroDuplaId;
+                    }
+                }
+                if (jogo.desafiado_id == 0)
+                {
+                    jogador = selecionarAdversario(inscritos);
+                    if (jogo.desafiante_id != 10)
+                    {
+                        jogo.isPrimeiroJogoTorneio = true;
+                    }
+                    jogo.desafiado_id = jogador.userId;
+                    if ((jogador.classeTorneio != null) && (jogador.classeTorneio.isDupla))
+                    {
+                        jogo.desafiado2_id = jogador.parceiroDuplaId;
+                    }
+                }
+                db.Entry(jogo).State = EntityState.Modified;
+                db.SaveChanges();
+            }
+            if (temRepescagem)
+            {
+                // indicar os jogos que são de repescagem
+                var jogosRepescagem = jogosRodada1.Where(j => j.desafiado_id == 0 || j.desafiante_id == 0).ToList();
+                foreach (Jogo jogo in jogosRepescagem)
+                {
+                    jogo.isRepescagem = true;
+                    db.Entry(jogo).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+            }
+        }
+
+        public void montarJogosComCabecaDeChave(List<Jogo> jogosRodada1, List<InscricaoTorneio> cabecasDeChave, bool temRepescagem)
+        {
+            var chaveamento = jogosRodada1.Count();
+            var ordemJogo = 0;
+            foreach (InscricaoTorneio cabecaDeChave in cabecasDeChave)
+            {
+                var numCabecaChave = cabecaDeChave.cabecaChave;
+                var listJogoCChave = db.JogoCabecaChave.Where(j => j.cabecaChave == numCabecaChave && j.chaveamento == chaveamento && j.temRepescagem == temRepescagem && j.isFaseGrupo==false).ToList();
+                if (listJogoCChave.Count() > 0)
+                {
+                    ordemJogo = listJogoCChave[0].ordemJogo;
+
+                    var jogo = jogosRodada1.Where(j => j.ordemJogo == ordemJogo).ToList();
+                    if (jogo.Count() > 0)
+                    {
+                        if (jogo[0].desafiante_id != 10)
+                        {
+                            jogo[0].isPrimeiroJogoTorneio = true;
+                        }
+                        jogo[0].desafiado_id = cabecaDeChave.userId;
+                        jogo[0].desafiado2_id = cabecaDeChave.parceiroDuplaId;
+                        jogo[0].cabecaChave = numCabecaChave;
+                        db.Entry(jogo[0]).State = EntityState.Modified;
+                        db.SaveChanges();
+                    }
+                }
+            }
+        }
+
+        public void montarJogosComByes(List<Jogo> jogosRodada1, int qtddByes, bool temRepescagem, int qtddIncritos, bool isFaseGrupo = false)
+        {
+            var qtddJogos = jogosRodada1.Count();
+            bool umaVez = true;
+            for (int i = 1; i <= qtddByes; i++)
+            {
+                var listJogoCChave = db.JogoCabecaChave.Where(j => j.cabecaChave == i && j.chaveamento == qtddJogos && j.temRepescagem == temRepescagem && j.isFaseGrupo == isFaseGrupo).ToList();
+                Jogo jogo = null;
+                if ((listJogoCChave.Count() > 0) && (!temRepescagem))
+                {
+                    var ordemJogo = listJogoCChave[0].ordemJogo;
+                    jogo = jogosRodada1.Where(j => j.ordemJogo == ordemJogo).FirstOrDefault();
+                }
+                else
+                {
+                    if (((qtddIncritos / 2) % 2 != 0) && (umaVez))
+                    {
+                        umaVez = false;
+                        jogo = jogosRodada1.Where(j => j.desafiante_id == 0).OrderByDescending(j => j.ordemJogo).FirstOrDefault();
+                    }
+                    else
+                    {
+                        jogo = jogosRodada1.Where(j => j.desafiante_id == 0).OrderBy(j => j.ordemJogo).FirstOrDefault();
+                    }
+                }
+                jogo.desafiante_id = 10;
+                db.Entry(jogo).State = EntityState.Modified;
+                db.SaveChanges();
+            }
         }
     }
 }

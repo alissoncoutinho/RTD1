@@ -21,6 +21,8 @@ namespace Barragem.Models
 
         public bool? temRepescagem { get; set; }
 
+        public bool isFaseGrupo { get; set; }
+
 
     }
 }

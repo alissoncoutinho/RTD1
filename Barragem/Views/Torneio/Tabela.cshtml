@@ -21,7 +21,7 @@
     {
         <div class="form-horizontal">
             <div class="form-group">
-                <label class="col-xs-12 col-sm-2 control-label">Classes</label>
+                <label class="col-xs-4 col-sm-2 control-label">Classes</label>
                 <div class="col-sm-4 col-xs-8">
                     <select name="filtroClasse" id="filtroClasse" class="form-control" onchange="Selecionar()">
                         @if (ViewBag.Classes != null)
@@ -35,6 +35,12 @@
                     </select>
                     <input type="hidden" value="@ViewBag.TorneioId" name="torneioId" id="torneioId">
                 </div>
+                @if (ViewBag.viewFaseGrupo == true){
+                    <div class="col-sm-2 col-xs-4">
+                        <input type="button" value="Fase Grupo" name="verFaseGrupo" id="verFaseGrupo" class="form-control btn btn-primary" onclick="Selecionar()">
+                        <!--input type="button" value="imprimir" class="btn btn-primary" onclick="Imprimir()"-->
+                    </div>
+                }
             </div>
             @if (ViewBag.classeFaseGrupo == true)
             {
@@ -43,6 +49,7 @@
                     <label class="col-xs-12 col-sm-2 control-label">Grupo</label>
                     <div class="col-sm-4 col-xs-8">
                         <select name="grupo" id="grupo" class="form-control" onchange="Selecionar()">
+                            <option value="1000" >Fase Mata-Mata</option>
                             @for (int i = 1; i <= ViewBag.qtddGrupos; i++)
                             {
                                 <option value="@i" @if (ViewBag.grupo == i)
@@ -52,9 +59,7 @@
                     </div>
                 </div>
             }
-            <!--div class="col-sm-2 col-xs-3">
-                <input type="button" value="imprimir" class="btn btn-primary" onclick="Imprimir()">
-            </div-->
+            
         </div>
         if (ViewBag.classeFaseGrupo != true)
         {
@@ -104,6 +109,7 @@
                             <th title="número de vitórias">V</th>
                             <th title="confronto direto">CF</th>
                             <th title="Saldo de Sets/Saldo de Games">S.S/S.G.</th>
+                            <th title="Média de Sets/Saldo de Games">A.S/A.G.</th>
                         </tr>
                     </thead>
                     @{
@@ -124,6 +130,7 @@
                                 <td>@if (item.confrontoDireto > 0)
                                 { @Html.Raw("V") } </td>
                                 <td>@Html.Raw(item.saldoSets + "/" + item.saldoGames)</td>
+                                <td>@Html.Raw(item.averageSets + "/" + item.averageGames)</td>
 
                             </tr>
                         }

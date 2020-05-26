@@ -232,7 +232,9 @@ namespace Barragem.Controllers
                     fase = 1;
                 }
                 jogos = db.Jogo.Where(c => c.classeTorneio == classeId && c.grupoFaseGrupo == grupo && c.rodadaFaseGrupo == fase).ToList();
-                tabelaApp.classificacaoFaseGrupoApp = getClassificacaoFaseGrupoApp(classeId, grupo);
+                if (faseSolicitada == ""){
+                    tabelaApp.classificacaoFaseGrupoApp = getClassificacaoFaseGrupoApp(classeId, grupo);
+                }
                 tabelaApp.descricaoFase = "Rodada " + grupo;
             } else if (faseAtual == 0) {
                 fase = db.Jogo.Where(r => r.classeTorneio == classeId && r.faseTorneio < 100).Max(r => r.faseTorneio);
