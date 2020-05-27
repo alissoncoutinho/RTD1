@@ -30,14 +30,18 @@ namespace Barragem.Models
     public class ClassificadosEmCadaGrupo
     {
         public int userId { get; set; }
+        public string nomeUser { get; set; }
         public int? userIdParceiro { get; set; }
+        public string nomeParceiro { get; set; }
         public int userId2oColocado { get; set; }
+        public string nome2oColocado { get; set; }
         public int? userIdParceiro2oColocado { get; set; }
+        public string nomeParceiro2oColocado { get; set; }
         public float averageSets { get; set; }
         public float averageGames { get; set; }
         public int saldoSets { get; set; }
         public int saldoGames { get; set; }
-        public int pontucacao { get; set; }
+        public int pontuacao { get; set; }
         public int grupo { get; set; }
     }
 

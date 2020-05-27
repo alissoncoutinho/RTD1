@@ -52,6 +52,12 @@ namespace Barragem.Class
                     return new MontaJogosTorneioRegraCBTCom4Grupos();
                 case 5:
                     return new MontaJogosTorneioRegraCBTCom5Grupos();
+                case 6:
+                    return new MontaJogosTorneioRegraCBTCom6Grupos();
+                case 7:
+                    return new MontaJogosTorneioRegraCBTCom7Grupos();
+                case 8:
+                    return new MontaJogosTorneioRegraCBTCom8Grupos();
                 default:
                     return null;
 
@@ -129,6 +135,99 @@ namespace Barragem.Class
                     return "1-S|4";
                 case 8:
                     return "2|0";
+                default:
+                    return "0|0";
+            }
+        }
+    }
+
+    public class MontaJogosTorneioRegraCBTCom6Grupos : MontaJogosTorneioRegraCBT
+    {
+
+        public override string GetPosicaoPorOrdemJogo(int ordemJogo)
+        {
+            // 2|3 onde 2 é a colocação dos primeiros colocados em cada grupo e 3 é o segundo colocado do grupo do 3o colocado entre os primeiros;
+            // 2-S|3 quando tem S ao lado do primeiro número, quer dizer que a regra nesse caso é igual ao do exemplo do número 3;
+            switch (ordemJogo)
+            {
+                case 1:
+                    return "1|0";
+                case 2:
+                    return "5-S|2";
+                case 3:
+                    return "6|3";
+                case 4:
+                    return "4|0";
+                case 5:
+                    return "3|0";
+                case 6:
+                    return "5|6";
+                case 7:
+                    return "1-S|4";
+                case 8:
+                    return "2|0";
+                default:
+                    return "0|0";
+            }
+        }
+    }
+
+    public class MontaJogosTorneioRegraCBTCom7Grupos : MontaJogosTorneioRegraCBT
+    {
+
+        public override string GetPosicaoPorOrdemJogo(int ordemJogo)
+        {
+            // 2|3 onde 2 é a colocação dos primeiros colocados em cada grupo e 3 é o segundo colocado do grupo do 3o colocado entre os primeiros;
+            // 2-S|3 quando tem S ao lado do primeiro número, quer dizer que a regra nesse caso é igual ao do exemplo do número 3;
+            switch (ordemJogo)
+            {
+                case 1:
+                    return "1|0";
+                case 2:
+                    return "7|2";
+                case 3:
+                    return "6|3";
+                case 4:
+                    return "4|5";
+                case 5:
+                    return "3|4";
+                case 6:
+                    return "5|6";
+                case 7:
+                    return "1-S|7";
+                case 8:
+                    return "2|0";
+                default:
+                    return "0|0";
+            }
+        }
+    }
+
+    public class MontaJogosTorneioRegraCBTCom8Grupos : MontaJogosTorneioRegraCBT
+    {
+
+        public override string GetPosicaoPorOrdemJogo(int ordemJogo)
+        {
+            // 2|3 onde 2 é a colocação dos primeiros colocados em cada grupo e 3 é o segundo colocado do grupo do 3o colocado entre os primeiros;
+            // 2-S|3 quando tem S ao lado do primeiro número, quer dizer que a regra nesse caso é igual ao do exemplo do número 3;
+            switch (ordemJogo)
+            {
+                case 1:
+                    return "1|8";
+                case 2:
+                    return "7|2";
+                case 3:
+                    return "6|3";
+                case 4:
+                    return "4|5";
+                case 5:
+                    return "3|6";
+                case 6:
+                    return "5|4";
+                case 7:
+                    return "8|1";
+                case 8:
+                    return "2|7";
                 default:
                     return "0|0";
             }

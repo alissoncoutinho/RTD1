@@ -13,7 +13,7 @@
                 @using (Html.BeginForm("MontarTabelaFaseGrupo", "Torneio", FormMethod.Post, new { @class = "form-row", @name = "formClasses" }))
                 {
                     <input type="hidden" value="@ViewBag.TorneioId" name="torneioId" id="torneioId">
-                    <a href="@Url.Action("TabelaFaseGrupo", new { torneioId = ViewBag.torneioId })" target="_blank" class="btn btn-success btn-small">Ver Tabela</a>
+                    <a href="@Url.Action("Tabela", new { torneioId = ViewBag.torneioId })" target="_blank" class="btn btn-success btn-small">Ver Tabela</a>
                 }
                 <div class="form-horizontal">
                     <div class="form-group">
@@ -36,6 +36,51 @@
                 }
                 else
                 {
+                    if (ViewBag.Classificados != null)
+                    {
+                        <div class="col-sm-6 col-xs-10 box-body table-responsive no-padding">
+                            <table class="table table table-hover">
+                                <thead>
+                                    <tr class="active">
+                                        <th class="col-sm-1 col-xs-1">#</th>
+                                        <th>Classificação</th>
+                                        <th title="número de vitórias">V</th>
+                                        <th title="Saldo de Sets/Saldo de Games">S.S/S.G.</th>
+                                        <th title="Média de Sets/Saldo de Games">A.S/A.G.</th>
+                                        <th title="Segundo colocado do grupo">2o do Grupo</th>
+                                    </tr>
+                                </thead>
+                                @{
+                                    var posicao = 0;
+                                    foreach (var item in ViewBag.Classificados)
+                                    {
+                                        posicao++;
+                                        <tr>
+                                            <td> @posicao º</td>
+                                            <td>
+                                                @item.nomeUser
+                                                @if (item.userIdParceiro != null)
+                                                {
+                                                    @Html.Raw("/ " + item.nomeParceiro)
+                                                }
+                                            </td>
+                                            <td>@item.pontuacao</td>
+                                            <td>@Html.Raw(item.saldoSets + "/" + item.saldoGames)</td>
+                                            <td>@Html.Raw(item.averageSets + "/" + item.averageGames)</td>
+                                            <td>
+                                                @item.nome2oColocado
+                                                @if (item.userIdParceiro2oColocado != null)
+                                                {
+                                                    @Html.Raw("/ " + item.nomeParceiro2oColocado)
+                                                }
+                                            </td>
+
+                                    </tr>
+                                    }
+                                }
+                            </table>
+                        </div>
+                                    }
                     <table class="table table-striped table-condensed table-bordered">
                         <tr>
                             <th>
@@ -109,35 +154,7 @@
                         }
                     });
                 });
-
-
-                //$(".itemClasseFaseGrupo").change(function (event) {
-                //    var Id = document.getElementById("filtroClasse").value;
-                //    var qtddJogadoresPorGrupo = document.getElementById("jogadoresPorGrupo").value;
-                //    var qtddPassamFase = document.getElementById("qtddPassamFase").value;
-                //    event.preventDefault();
-                //    $.ajax({
-                //        type: "POST",
-                //        url: "/Torneio/EditClasseFaseGrupo",
-                //        dataType: "json",
-                //        data: "{'Id':'" + Id + "','qtddJogadoresPorGrupo':'" + qtddJogadoresPorGrupo + "', 'qtddPassamFase':'" + qtddPassamFase + "'}",
-                //        contentType: "application/json; charset=utf-8",
-                //        success: function (response) {
-                //            if (typeof response == "object") {
-                //                if (response.retorno === 0) {
-                //                    toastr.error(response.erro, "Erro");
-                //                } else {
-                //                    toastr.success("Atualização realizada com sucesso.", "");
-                //                }
-                //            }
-                //        },
-                //        error: function (jqXHR, textStatus, errorThrown) {
-                //            toastr.success("Erro ao enviar a requisição.", "Erro");
-                //        }
-                //    });
-                //});
-
-
+                                                
                 $(".confirm").confirm({
                     title: "Confirmação",
                     content: "Tem certeza que deseja gerar as tabelas de grupo? Caso já existam jogos eles serão excluídos!",
@@ -154,12 +171,7 @@
                 });
 
             });
-
-
-            function SetClasseFaseGrupo() {
-                
-            }
-
+            
             function Selecionar() {
                 var torneioId = document.getElementById('torneioId').value;
                 var classeId = document.getElementById('filtroClasse').value;

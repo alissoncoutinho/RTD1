@@ -356,9 +356,8 @@ namespace Barragem.Class
 
         public void montarJogosRegraCBT(ClasseTorneio classe)
         {
-            var totalGrupos = getQtddDeGrupos(classe.Id);
-            var classificados = getClassificadosEmCadaGrupo(classe, totalGrupos);
-            var montaJogosTorneioRegraCBT = InstanciaClassePorGrupo.getInstancia(totalGrupos);
+            var classificados = getClassificadosEmCadaGrupo(classe);
+            var montaJogosTorneioRegraCBT = InstanciaClassePorGrupo.getInstancia(getQtddDeGrupos(classe.Id));
             var jogosPrimeiraRodada = getJogosPrimeiraRodada(classe.Id);
             montaJogosTorneioRegraCBT.MontarJogosPrimeiraRodada(jogosPrimeiraRodada, classificados, db);
             return;
@@ -397,8 +396,214 @@ namespace Barragem.Class
             }
         }
 
-        private List<ClassificadosEmCadaGrupo> getClassificadosEmCadaGrupo(ClasseTorneio classe, int qtddGrupos)
+        private List<InscricaoTorneio> getInscritosNoGrupo(ClasseTorneio classeTorneio, int idGrupo)
         {
+            var inscritos = getInscritosPorClasse(classeTorneio);
+            var inscritosNoGrupo = inscritos.Where(it => it.grupo == idGrupo).ToList();
+            return inscritosNoGrupo;
+        }
+
+        private List<InscricaoTorneio> getInscritosSemGrupo(ClasseTorneio classeTorneio)
+        {
+            var inscritos = getInscritosPorClasse(classeTorneio);
+            var inscritosSemGrupo = inscritos.Where(it => it.grupo == null || it.grupo == 0).ToList();
+            return inscritosSemGrupo;
+        }
+
+        private int getQtddGruposFaseGrupos(int qtddInscritosPorClasse)
+        {
+            if ((qtddInscritosPorClasse >= 3) && (qtddInscritosPorClasse <= 5))
+            {
+                return 1;
+            }
+            else if ((qtddInscritosPorClasse >= 6) && (qtddInscritosPorClasse <= 8))
+            {
+                return 2;
+            }
+            else if ((qtddInscritosPorClasse >= 9) && (qtddInscritosPorClasse <= 11))
+            {
+                return 3;
+            }
+            else if ((qtddInscritosPorClasse >= 12) && (qtddInscritosPorClasse <= 14))
+            {
+                return 4;
+            }
+            else if ((qtddInscritosPorClasse >= 15) && (qtddInscritosPorClasse <= 17))
+            {
+                return 5;
+            }
+            else if ((qtddInscritosPorClasse >= 18) && (qtddInscritosPorClasse <= 20))
+            {
+                return 6;
+            }
+            else if ((qtddInscritosPorClasse >= 21) && (qtddInscritosPorClasse <= 23))
+            {
+                return 7;
+            }
+            else if ((qtddInscritosPorClasse >= 24) && (qtddInscritosPorClasse <= 26))
+            {
+                return 8;
+            }
+            else if ((qtddInscritosPorClasse >= 27) && (qtddInscritosPorClasse <= 29))
+            {
+                return 9;
+            }
+            else if ((qtddInscritosPorClasse >= 30) && (qtddInscritosPorClasse <= 32))
+            {
+                return 10;
+            }
+            else if ((qtddInscritosPorClasse >= 33) && (qtddInscritosPorClasse <= 35))
+            {
+                return 11;
+            }
+            else if ((qtddInscritosPorClasse >= 36) && (qtddInscritosPorClasse <= 37))
+            {
+                return 12;
+            }
+            return 0;
+        }
+
+        public void MontarJogosFaseGrupo(ClasseTorneio classe)
+        {
+            var inscritos = getInscritosPorClasse(classe);
+            var qtddGrupos = inscritos.Max(it => it.grupo);
+            for (int i = 1; i <= qtddGrupos; i++)
+            {
+                var inscritosGrupo = inscritos.Where(it => it.grupo == i).ToList();
+                criarRodadasJogosFaseGrupo(inscritosGrupo, classe.torneioId, classe.Id, i);
+            }
+        }
+
+        private void criarRodadasJogosFaseGrupo(List<InscricaoTorneio> inscritos, int torneioId, int classeId, int grupo)
+        {
+            var qtddInscritos = inscritos.Count();
+            if (qtddInscritos == 3 || qtddInscritos == 4)
+            {
+                var j1 = inscritos[0].participante.UserId;
+                var j1Dupla = inscritos[0].parceiroDuplaId;
+                var j2 = inscritos[1].participante.UserId;
+                var j2Dupla = inscritos[1].parceiroDuplaId;
+                var j3 = inscritos[2].participante.UserId;
+                var j3Dupla = inscritos[2].parceiroDuplaId;
+                var j4 = 10;
+                int? j4Dupla = null;
+                if (qtddInscritos == 4)
+                {
+                    j4 = inscritos[3].participante.UserId;
+                    j4Dupla = inscritos[3].parceiroDuplaId;
+                }
+
+                criarJogo(j1, j2, torneioId, classeId, null, 1, 1, grupo, j1Dupla, j2Dupla);
+                criarJogo(j3, j4, torneioId, classeId, null, 2, 1, grupo, j3Dupla, j4Dupla);
+
+                criarJogo(j1, j3, torneioId, classeId, null, 1, 2, grupo, j1Dupla, j3Dupla);
+                criarJogo(j2, j4, torneioId, classeId, null, 2, 2, grupo, j2Dupla, j4Dupla);
+
+                criarJogo(j1, j4, torneioId, classeId, null, 1, 3, grupo, j1Dupla, j4Dupla);
+                criarJogo(j2, j3, torneioId, classeId, null, 2, 3, grupo, j2Dupla, j3Dupla);
+            }
+            else if (qtddInscritos == 5 || qtddInscritos == 6)
+            {
+                var j1 = inscritos[0].participante.UserId;
+                var j1Dupla = inscritos[0].parceiroDuplaId;
+                var j2 = inscritos[1].participante.UserId;
+                var j2Dupla = inscritos[1].parceiroDuplaId;
+                var j3 = inscritos[2].participante.UserId;
+                var j3Dupla = inscritos[2].parceiroDuplaId;
+                var j4 = inscritos[3].participante.UserId;
+                var j4Dupla = inscritos[3].parceiroDuplaId;
+                var j5 = inscritos[4].participante.UserId;
+                var j5Dupla = inscritos[4].parceiroDuplaId;
+                var j6 = 10;
+                int? j6Dupla = null;
+                if (qtddInscritos == 6)
+                {
+                    j6 = inscritos[5].participante.UserId;
+                    j6Dupla = inscritos[5].parceiroDuplaId;
+                }
+
+                criarJogo(j1, j2, torneioId, classeId, null, 1, 1, grupo, j1Dupla, j2Dupla);
+                criarJogo(j3, j5, torneioId, classeId, null, 2, 1, grupo, j3Dupla, j5Dupla);
+                criarJogo(j4, j6, torneioId, classeId, null, 3, 1, grupo, j4Dupla, j6Dupla);
+
+                criarJogo(j1, j3, torneioId, classeId, null, 1, 2, grupo, j1Dupla, j3Dupla);
+                criarJogo(j2, j4, torneioId, classeId, null, 2, 2, grupo, j2Dupla, j4Dupla);
+                criarJogo(j5, j6, torneioId, classeId, null, 3, 2, grupo, j5Dupla, j6Dupla);
+
+                criarJogo(j1, j4, torneioId, classeId, null, 1, 3, grupo, j1Dupla, j4Dupla);
+                criarJogo(j2, j5, torneioId, classeId, null, 2, 3, grupo, j2Dupla, j5Dupla);
+                criarJogo(j3, j6, torneioId, classeId, null, 3, 3, grupo, j3Dupla, j6Dupla);
+
+                criarJogo(j1, j5, torneioId, classeId, null, 1, 4, grupo, j1Dupla, j5Dupla);
+                criarJogo(j2, j6, torneioId, classeId, null, 2, 4, grupo, j2Dupla, j6Dupla);
+                criarJogo(j3, j4, torneioId, classeId, null, 3, 4, grupo, j3Dupla, j4Dupla);
+
+                criarJogo(j1, j6, torneioId, classeId, null, 1, 5, grupo, j1Dupla, j6Dupla);
+                criarJogo(j2, j3, torneioId, classeId, null, 2, 5, grupo, j2Dupla, j3Dupla);
+                criarJogo(j4, j5, torneioId, classeId, null, 3, 5, grupo, j4Dupla, j5Dupla);
+            }
+
+        }
+
+        public int MontarGruposFaseGrupo(ClasseTorneio classe)
+        {
+            var totalDeInscritos = getInscritosPorClasse(classe);
+            if (totalDeInscritos.Count() < 3)
+            {
+                return 0;
+            }
+            // zera a pontuação caso o sorteio esteja sendo feito novamente
+            foreach (var item in totalDeInscritos.Where(t => t.grupo != 0).ToList())
+            {
+                item.pontuacaoFaseGrupo = 0;
+                db.Entry(item).State = EntityState.Modified;
+                db.SaveChanges();
+            }
+            var qtddDeGrupos = getQtddGruposFaseGrupos(totalDeInscritos.Count());
+            for (int idGrupo = 1; idGrupo <= qtddDeGrupos; idGrupo++)
+            {
+                var inscritosNoGrupo = getInscritosNoGrupo(classe, idGrupo);
+                var inscritosSemGrupo = getInscritosSemGrupo(classe);
+
+                var vagasRestantesNoGrupo = 3 - inscritosNoGrupo.Count();
+                // pode acontecer caso o organizador cadastre mais de 3 participantes no grupo ou esteja realizando o sorteio novamente
+                if (vagasRestantesNoGrupo < 0)
+                {
+                    inscritosNoGrupo[2].grupo = 0;
+                    db.Entry(inscritosNoGrupo[2]).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+                else
+                {
+                    for (int j = 0; j < vagasRestantesNoGrupo; j++)
+                    {
+                        inscritosSemGrupo[j].grupo = idGrupo;
+                        inscritosSemGrupo[j].pontuacaoFaseGrupo = 0;
+                        db.Entry(inscritosSemGrupo[j]).State = EntityState.Modified;
+                        db.SaveChanges();
+                    }
+                }
+            }
+            var inscritosRestantes = getInscritosSemGrupo(classe);
+            // Os inscritos restantes serão distribuídos nos grupos já existentes
+            var grupo = 1;
+            for (int i = 0; i < inscritosRestantes.Count(); i++)
+            {
+                inscritosRestantes[i].grupo = grupo;
+                inscritosRestantes[i].pontuacaoFaseGrupo = 0;
+                db.Entry(inscritosRestantes[i]).State = EntityState.Modified;
+                db.SaveChanges();
+                if (grupo < qtddDeGrupos)
+                {
+                    grupo++;
+                }
+            }
+            return qtddDeGrupos;
+        }
+
+        public List<ClassificadosEmCadaGrupo> getClassificadosEmCadaGrupo(ClasseTorneio classe)
+        {
+            var qtddGrupos = getQtddDeGrupos(classe.Id);
             List<ClassificadosEmCadaGrupo> listClassificadosEmCadaGrupo = new List<ClassificadosEmCadaGrupo>();
             for (int gp = 1; gp <= qtddGrupos; gp++) {
                 // Pega a ordem de classificação de cada grupo
@@ -407,13 +612,17 @@ namespace Barragem.Class
                 var classificadosEmCadaGrupo = new ClassificadosEmCadaGrupo()
                 {
                     userId = classificacaoFaseGrupo[0].userId,
+                    nomeUser = classificacaoFaseGrupo[0].nome,
                     userIdParceiro = classificacaoFaseGrupo[0].inscricao.parceiroDuplaId,
+                    nomeParceiro = (classificacaoFaseGrupo[0].inscricao.parceiroDuplaId!=null) ? classificacaoFaseGrupo[0].inscricao.parceiroDupla.nome : "" ,
                     userId2oColocado = classificacaoFaseGrupo[1].userId,
+                    nome2oColocado = classificacaoFaseGrupo[1].nome,
                     userIdParceiro2oColocado = classificacaoFaseGrupo[1].inscricao.parceiroDuplaId,
+                    nomeParceiro2oColocado = (classificacaoFaseGrupo[1].inscricao.parceiroDuplaId != null) ? classificacaoFaseGrupo[1].inscricao.parceiroDupla.nome : "",
                     grupo = (int)classificacaoFaseGrupo[0].inscricao.grupo,
                     saldoSets = classificacaoFaseGrupo[0].saldoSets,
                     saldoGames = classificacaoFaseGrupo[0].saldoGames,
-                    pontucacao = classificacaoFaseGrupo[0].inscricao.pontuacaoFaseGrupo,
+                    pontuacao = classificacaoFaseGrupo[0].inscricao.pontuacaoFaseGrupo,
                     averageSets = classificacaoFaseGrupo[0].averageSets,
                     averageGames = classificacaoFaseGrupo[0].averageGames
                 };
@@ -421,7 +630,7 @@ namespace Barragem.Class
             }
             int qtddInscritos = getInscritosPorClasse(classe).Count();
             if (qtddInscritos % 3 == 0 || qtddInscritos % 4 == 0){
-                listClassificadosEmCadaGrupo = listClassificadosEmCadaGrupo.OrderByDescending(l => l.pontucacao).ThenByDescending(l => l.saldoSets).ThenByDescending(l => l.saldoGames).ToList();
+                listClassificadosEmCadaGrupo = listClassificadosEmCadaGrupo.OrderByDescending(l => l.pontuacao).ThenByDescending(l => l.saldoSets).ThenByDescending(l => l.saldoGames).ToList();
             } else {
                 listClassificadosEmCadaGrupo = listClassificadosEmCadaGrupo.OrderByDescending(l => l.averageSets).ThenByDescending(l => l.averageGames).ToList();
             }
@@ -584,5 +793,35 @@ namespace Barragem.Class
                 db.SaveChanges();
             }
         }
+
+        public void criarJogo(int jogador1, int jogador2, int torneioId, int classeTorneio, int? faseTorneio,
+            int ordemJogo, int rodadaFaseGrupo = 0, int? grupo = null, int? jogador1Dupla = null, int? jogador2Dupla = null)
+        {
+            Jogo jogo = new Jogo();
+            jogo.desafiado_id = jogador1;
+            jogo.desafiado2_id = jogador1Dupla;
+            jogo.desafiante_id = jogador2;
+            jogo.desafiante2_id = jogador2Dupla;
+            jogo.torneioId = torneioId;
+            jogo.situacao_Id = 1;
+            jogo.classeTorneio = classeTorneio;
+            jogo.faseTorneio = faseTorneio;
+            jogo.rodadaFaseGrupo = rodadaFaseGrupo;
+            jogo.ordemJogo = ordemJogo;
+            jogo.grupoFaseGrupo = grupo;
+            if ((jogador2 == 10) && (jogador1 != 0))
+            {
+                jogo.situacao_Id = 5;
+                jogo.qtddGames1setDesafiado = 6;
+                jogo.qtddGames2setDesafiado = 6;
+                jogo.qtddGames1setDesafiante = 1;
+                jogo.qtddGames2setDesafiante = 1;
+
+            }
+            db.Jogo.Add(jogo);
+            db.SaveChanges();
+        }
+
+
     }
 }
