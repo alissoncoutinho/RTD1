@@ -14,7 +14,11 @@ namespace Barragem.Class
 
         public void MontarProximoJogoTorneio(Jogo jogo)
         {
-            var ordemJogo = 0;
+            if (jogo.rodadaFaseGrupo != 0)
+            {
+                return;
+            }
+                var ordemJogo = 0;
             if (jogo.torneioId != null)
             {
                 if (jogo.ordemJogo % 2 != 0)
@@ -233,8 +237,8 @@ namespace Barragem.Class
 
         private ClassificacaoFaseGrupo getDadosClassificatoriosFaseGrupo(InscricaoTorneio inscrito)
         {
-            var jogos = db.Jogo.Where(j => j.classeTorneio == inscrito.classe && j.desafiante_id != 10 && j.grupoFaseGrupo != null &&
-            (j.desafiado_id == inscrito.userId || j.desafiante_id == inscrito.userId)).ToList();
+            var jogos = db.Jogo.Where(j => j.classeTorneio == inscrito.classe && j.desafiante_id != 10 && j.grupoFaseGrupo != null 
+            && (j.situacao_Id == 4 || j.situacao_Id == 6) && (j.desafiado_id == inscrito.userId || j.desafiante_id == inscrito.userId)).ToList();
             var setsGanhos = 0;
             var setsPerdidos = 0;
             var gamesGanhos = 0;
@@ -266,16 +270,28 @@ namespace Barragem.Class
             return classificadoFaseGrupo;
         }
 
+        private int calcularPontuacaoFaseGrupo(int userId, int classeId)
+        {
+            var jogos = db.Jogo.Where(j => j.classeTorneio == classeId && j.rodadaFaseGrupo != 0 && (j.situacao_Id == 4 || j.situacao_Id == 6) && (j.desafiado_id == userId || j.desafiante_id == userId)).ToList();
+            var pontuacao = 0;
+            foreach (var j in jogos){
+                if (j.idDoVencedor == userId) pontuacao++;
+            }
+            return pontuacao;
+        }
+
+        private List<InscricaoTorneio> inserirPontuacaoFaseGrupo(List<InscricaoTorneio> inscricoes)
+        {
+            foreach (var i in inscricoes)
+            {
+                i.pontuacaoFaseGrupo = calcularPontuacaoFaseGrupo(i.userId, i.classe);
+            }
+            return inscricoes.OrderByDescending(i=>i.pontuacaoFaseGrupo).ToList();
+        }
+
         public List<ClassificacaoFaseGrupo> ordenarClassificacaoFaseGrupo(ClasseTorneio classe, int grupo)
         {
-            var inscritosGrupo = db.InscricaoTorneio.Where(it => it.classe == classe.Id && it.grupo == grupo);
-            List<InscricaoTorneio> classificacaoGrupo;
-            if (classe.isDupla) {
-                classificacaoGrupo = inscritosGrupo.Where(i => i.parceiroDuplaId != null && i.parceiroDuplaId != 0).
-                    OrderByDescending(it => it.pontuacaoFaseGrupo).ThenBy(it => it.participante.nome).ToList();
-            } else {
-                classificacaoGrupo = inscritosGrupo.OrderByDescending(it => it.pontuacaoFaseGrupo).ThenBy(it => it.participante.nome).ToList();
-            }
+            var classificacaoGrupo = inserirPontuacaoFaseGrupo(getInscritosNoGrupo(classe, grupo));
             var ordemClassificacao = new List<ClassificacaoFaseGrupo>();
             // percorre todos os inscritos em determinado grupo ordenado pela maior pontuação conquistada
             for (int i = 0; i < classificacaoGrupo.Count(); i++)
@@ -298,8 +314,8 @@ namespace Barragem.Class
                     {
                         var jogador1 = getDadosClassificatoriosFaseGrupo(classificacaoGrupo[i]);
                         var jogador2 = getDadosClassificatoriosFaseGrupo(classificacaoGrupo[i + 1]);
-                        var jogo = db.Jogo.Where(j => j.classeTorneio == classe.Id && (j.desafiado_id == jogador1.userId && j.desafiante_id == jogador2.userId) ||
-                            ((j.desafiado_id == jogador2.userId && j.desafiante_id == jogador1.userId))).ToList();
+                        var jogo = db.Jogo.Where(j => j.classeTorneio == classe.Id && ((j.desafiado_id == jogador1.userId && j.desafiante_id == jogador2.userId) ||
+                            ((j.desafiado_id == jogador2.userId && j.desafiante_id == jogador1.userId)))).ToList();
                         if (jogo[0].idDoVencedor == jogador1.userId)
                         {
                             jogador1.confrontoDireto = 1;
@@ -363,15 +379,20 @@ namespace Barragem.Class
             return;
         }
 
-        public List<InscricaoTorneio> getInscritosPorClasse(ClasseTorneio classe)
+        public List<InscricaoTorneio> getInscritosPorClasse(ClasseTorneio classe, bool incluirDesclassificadosFaseGrupo=false)
         {
+            var pontuacaoFaseGrupo = 0;
+            if (incluirDesclassificadosFaseGrupo){
+                pontuacaoFaseGrupo = -100;
+            }
+            // obs.: (filtro: it.pontuacaoFaseGrupo>=0) existe este filtro pois o jogador que receber um WO em algum jogo da fase de grupo será desclassificado e a indicação de desclassificação é: pontuacaoFaseGrupo = -100 (gambiarra, eu sei.)
             if (classe.isDupla)
             {
-                return db.InscricaoTorneio.Where(it => it.classe == classe.Id && it.isAtivo && it.parceiroDuplaId != null && it.parceiroDuplaId != 0).ToList();
+                return db.InscricaoTorneio.Where(it => it.classe == classe.Id && it.isAtivo && it.parceiroDuplaId != null && it.parceiroDuplaId != 0 && it.pontuacaoFaseGrupo>= pontuacaoFaseGrupo).ToList();
             }
             else
             {
-                return db.InscricaoTorneio.Where(it => it.classe == classe.Id && it.isAtivo).ToList();
+                return db.InscricaoTorneio.Where(it => it.classe == classe.Id && it.isAtivo && it.pontuacaoFaseGrupo >= pontuacaoFaseGrupo).ToList();
             }
         }
 
@@ -399,7 +420,7 @@ namespace Barragem.Class
         private List<InscricaoTorneio> getInscritosNoGrupo(ClasseTorneio classeTorneio, int idGrupo)
         {
             var inscritos = getInscritosPorClasse(classeTorneio);
-            var inscritosNoGrupo = inscritos.Where(it => it.grupo == idGrupo).ToList();
+            var inscritosNoGrupo = inscritos.Where(it => it.grupo == idGrupo && it.pontuacaoFaseGrupo>=0).ToList();
             return inscritosNoGrupo;
         }
 
@@ -547,7 +568,7 @@ namespace Barragem.Class
 
         public int MontarGruposFaseGrupo(ClasseTorneio classe)
         {
-            var totalDeInscritos = getInscritosPorClasse(classe);
+            var totalDeInscritos = getInscritosPorClasse(classe, true);
             if (totalDeInscritos.Count() < 3)
             {
                 return 0;

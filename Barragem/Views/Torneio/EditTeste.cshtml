@@ -1,0 +1,92 @@
+﻿@model IEnumerable<Barragem.Models.ClasseTorneio>
+    @Html.Partial("_PartialTabs")
+
+    <div class="tab-content">
+        <div class="tab-pane fade" id="tabCadastro"></div>
+        <div class="tab-pane fade" id="tabClasses"></div>
+        <div class="tab-pane fade" id="tabInscritos"></div>
+        <div class="tab-pane fade" id="tabEditClasses"></div>
+        <div class="tab-pane fade" id="tabJogos"></div>
+        <div class="tab-pane fade" id="tabDuplas"></div>
+        <div class="tab-pane fade in active" id="tabTestes">
+                <br>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Classes</label>
+                        <div class="col-sm-4 input-group">
+                            <select name="filtroClasse" id="filtroClasse" class="form-control" onchange="Selecionar()">
+                                @foreach (var item2 in Model)
+                                {
+                                    <option value="@item2.Id" @if (ViewBag.filtroClasse == item2.Id) { @Html.Raw("selected")        }>@item2.nome</option>
+                                }
+                            </select>
+                            <input type="hidden" value="@ViewBag.TorneioId" name="torneioId" id="torneioId">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Fase</label>
+                        <div class="col-sm-2 input-group">
+                            <select name="fase" id="fase" class="form-control">
+                                <option value="700-1">Grupo R1</option>
+                                <option value="700-2">Grupo R2</option>
+                                <option value="700-3">Grupo R3</option>
+                                <option value="6">Mata-mata 32</option>
+                                <option value="5">Mata-mata 16</option>
+                                <option value="4">Oitavas</option>
+                                <option value="3">Quartas</option>
+                                <option value="2">Semi</option>
+                                <option value="1">Final</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group col-sm-6">
+                        <input type="button" value="Gerar Placares" class="btn btn-primary" onclick="GerarPlacar()">
+                        <a href="@Url.Action("Tabela", new { torneioId = ViewBag.torneioId })" target="_blank" class="btn btn-success btn-small">Ver Tabela</a>
+                    </div>
+                </div>
+            <br><br>
+                   
+            </div>
+    </div>
+    @section Scripts {
+        @Scripts.Render("~/bundles/jqueryval")
+        @Scripts.Render("~/bundles/jqueryform")
+        <script type="text/javascript">
+            $(document).ready(function () {
+                $(".inscricaoButton").click(function (event) {
+                    var i = $(this).data("valor");
+                    var Id = $("#form" + i).find("input[name=Id]").val();
+                    var jogador1 = document.getElementById("jogador1_" + i).value;
+                    var jogador2 = document.getElementById("jogador2_" + i).value;
+                    event.preventDefault();
+                    $.ajax({
+                        type: "POST",
+                        url: "/Torneio/EditDuplas",
+                        dataType: "json",
+                        data: "{'inscricaoJogador1':'" + jogador1 + "', 'jogador2':'" + jogador2 + "'}",
+                        contentType: "application/json; charset=utf-8",
+                        success: function (response) {
+                            if (typeof response == "object") {
+                                if (response.retorno === 0) {
+                                    toastr.error(response.erro, "Erro");
+                                } else {
+                                    toastr.success("Atualização realizada com sucesso.", "Aviso");
+                                }
+                            }
+                        },
+                        error: function (jqXHR, textStatus, errorThrown) {
+                            location.reload(true);
+                        }
+                    });
+                });
+            });
+
+            function GerarPlacar() {
+                var torneioId = document.getElementById('torneioId').value;
+                var classeId = document.getElementById('filtroClasse').value;
+                var fase = document.getElementById('fase').value;
+                window.location = "GerarPlacaresTeste?torneioId=" + torneioId + "&classeId=" + classeId + "&fase=" + fase;
+            }
+
+        </script>
+    }
