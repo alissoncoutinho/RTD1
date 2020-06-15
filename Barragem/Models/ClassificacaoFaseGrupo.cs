@@ -24,7 +24,7 @@ namespace Barragem.Models
         public int saldoGames { get; set; }
         public string nome { get; set; }
         public int confrontoDireto { get; set; }
-        public int pontucacao { get; set; }
+        public int pontuacao { get; set; }
     }
 
     public class ClassificadosEmCadaGrupo

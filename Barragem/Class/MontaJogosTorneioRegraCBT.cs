@@ -46,6 +46,8 @@ namespace Barragem.Class
         public static MontaJogosTorneioRegraCBT getInstancia(int grupo) {
             switch (grupo)
             {
+                case 2:
+                    return new MontaJogosTorneioRegraCBTCom2Grupos();
                 case 3:
                     return new MontaJogosTorneioRegraCBTCom3Grupos();
                 case 4:
@@ -69,6 +71,25 @@ namespace Barragem.Class
                 default:
                     return null;
 
+            }
+        }
+    }
+
+    public class MontaJogosTorneioRegraCBTCom2Grupos : MontaJogosTorneioRegraCBT
+    {
+
+        public override string GetPosicaoPorOrdemJogo(int ordemJogo)
+        {
+            // 2|3 onde 2 é a colocação dos primeiros colocados em cada grupo e 3 é o segundo colocado do grupo do 3o colocado entre os primeiros;
+            // 2-S|3 quando tem S ao lado do primeiro número, quer dizer que a regra nesse caso é igual ao do exemplo do número 3;
+            switch (ordemJogo)
+            {
+                case 1:
+                    return "1|2";
+                case 2:
+                    return "2|1";
+                default:
+                    return "0|0";
             }
         }
     }
@@ -350,7 +371,7 @@ namespace Barragem.Class
                 case 4:
                     return posicao4 + "|0";
                 case 5:
-                    return posicao5 + "|6";
+                    return posicao5 + "|0";
                 case 6:
                     return "2-S|0";
                 case 7:
@@ -490,25 +511,6 @@ namespace Barragem.Class
         }
         public override string GetPosicaoPorOrdemJogo(int ordemJogo)
         {
-            var posicao8 = new Random().Next(3, 5); // sorteia entre 3 e 4
-            var posicao9 = (posicao8 == 3) ? 4 : 3;
-
-            List<int> listNumbers = new List<int>();
-            int number;
-            for (int i = 0; i < 6; i++)
-            {
-                do {
-                    number = new Random().Next(5, 12);
-                } while ((listNumbers.Contains(number)) || (number == 10));
-                listNumbers.Add(number);
-            }
-
-            var posicao3 = listNumbers[0];
-            var posicao4 = listNumbers[1];
-            var posicao5 = listNumbers[2];
-            var posicao7 = listNumbers[3];
-            var posicao12 = listNumbers[4];
-            var posicao13 = listNumbers[5];
             // 2|3 onde 2 é a colocação dos primeiros colocados em cada grupo e 3 é o segundo colocado do grupo do 3o colocado entre os primeiros;
             // 2-S|3 quando tem S ao lado do primeiro número, quer dizer que a regra nesse caso é igual ao do exemplo do número 3;
             switch (ordemJogo)

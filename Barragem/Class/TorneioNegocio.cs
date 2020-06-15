@@ -477,7 +477,7 @@ namespace Barragem.Class
             {
                 return 11;
             }
-            else if ((qtddInscritosPorClasse >= 36) && (qtddInscritosPorClasse <= 37))
+            else if ((qtddInscritosPorClasse >= 36) && (qtddInscritosPorClasse <= 38))
             {
                 return 12;
             }

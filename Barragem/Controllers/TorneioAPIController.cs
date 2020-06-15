@@ -232,7 +232,7 @@ namespace Barragem.Controllers
                     fase = 1;
                 }
                 jogos = db.Jogo.Where(c => c.classeTorneio == classeId && c.grupoFaseGrupo == grupo && c.rodadaFaseGrupo == fase).ToList();
-                if (faseSolicitada == ""){
+                if (String.IsNullOrEmpty(faseSolicitada)){
                     tabelaApp.classificacaoFaseGrupoApp = getClassificacaoFaseGrupoApp(classeId, grupo);
                 }
                 tabelaApp.descricaoFase = "Rodada " + grupo;
@@ -261,16 +261,23 @@ namespace Barragem.Controllers
 
         private List<ClassificacaoFaseGrupoApp> getClassificacaoFaseGrupoApp(int classeId, int grupoUser)
         {
-            var classificacaoFaseGrupo = tn.ordenarClassificacaoFaseGrupo(db.ClasseTorneio.Find(classeId), grupoUser);
-            return classificacaoFaseGrupo.Select(cfg => new ClassificacaoFaseGrupoApp
+            try
             {
-                userId = cfg.userId,
-                nome = cfg.nome,
-                pontucacao = cfg.inscricao.pontuacaoFaseGrupo,
-                saldoSets = cfg.saldoSets,
-                saldoGames = cfg.saldoGames,
-                confrontoDireto = cfg.confrontoDireto
-            }).ToList();
+                var classificacaoFaseGrupo = tn.ordenarClassificacaoFaseGrupo(db.ClasseTorneio.Find(classeId), grupoUser);
+                var classif = classificacaoFaseGrupo.Select(cfg => new ClassificacaoFaseGrupoApp
+                {
+                    userId = cfg.userId,
+                    nome = cfg.nome,
+                    pontuacao = cfg.inscricao.pontuacaoFaseGrupo,
+                    saldoSets = cfg.saldoSets,
+                    saldoGames = cfg.saldoGames,
+                    confrontoDireto = cfg.confrontoDireto
+                }).ToList();
+                return classif;
+            }
+            catch (Exception e) {
+                return null;
+            }
         }
 
         private MeuJogo montaJogoTabela(Jogo j) {
