@@ -13,6 +13,7 @@ namespace Barragem.Models
         public float averageSets { get; set; }
         public float averageGames { get; set; }
         public string nome { get; set; }
+        public string nomeDupla { get; set; }
         public int confrontoDireto { get; set; }
         public InscricaoTorneio inscricao { get; set; }
     }
@@ -23,6 +24,7 @@ namespace Barragem.Models
         public int saldoSets { get; set; }
         public int saldoGames { get; set; }
         public string nome { get; set; }
+        public string nomeDupla { get; set; }
         public int confrontoDireto { get; set; }
         public int pontuacao { get; set; }
     }

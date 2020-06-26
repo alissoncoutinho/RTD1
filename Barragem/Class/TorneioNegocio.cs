@@ -264,8 +264,12 @@ namespace Barragem.Class
             }
             averageSets = (setsGanhos + setsPerdidos) != 0 ? setsGanhos / (float)(setsGanhos + setsPerdidos) : 0;
             averageGames = (gamesGanhos + gamesPerdidos) != 0 ? gamesGanhos / (float)(gamesGanhos + gamesPerdidos) : 0;
+            var nomeDupla = "";
+            if (inscrito.parceiroDupla != null){
+                nomeDupla = inscrito.parceiroDupla.nome;
+            }
             var classificadoFaseGrupo = new ClassificacaoFaseGrupo { inscricao = inscrito, userId = inscrito.userId, nome = inscrito.participante.nome,
-                saldoSets = setsGanhos - setsPerdidos, saldoGames = gamesGanhos - gamesPerdidos,
+                nomeDupla = nomeDupla, saldoSets = setsGanhos - setsPerdidos, saldoGames = gamesGanhos - gamesPerdidos,
                 averageSets = (float)Math.Round(averageSets, 1), averageGames= (float)Math.Round(averageGames,1) };
             return classificadoFaseGrupo;
         }

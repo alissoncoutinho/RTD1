@@ -135,6 +135,8 @@ namespace Barragem.Models
         public string descricaoFase { get; set; }
         public List<MeuJogo> jogos { get; set; }
         public int faseTorneio { get; set; }
+        public bool isFaseGrupo { get; set; }
+        public int userGrupo { get; set; }
     }
 
     public class MensagemRetorno

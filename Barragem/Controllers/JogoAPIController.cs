@@ -122,17 +122,17 @@ namespace Barragem.Controllers
             var torneio = db.Torneio.Find(torneioId);
             foreach(var i in classesUser)
             {
-                try{
-                    var jogo = db.Jogo.Where(u => u.classeTorneio == i && (u.desafiado_id == userId || u.desafiante_id == userId || u.desafiado2_id == userId || u.desafiante2_id == userId) &&
-                    !(u.desafiado_id == 0 || u.desafiante_id == 0))
-                            .OrderBy(u => u.faseTorneio).Take(1).SingleOrDefault();
-                    MeuJogo meuJogo = montarMeuJogo(jogo, userId);
-                    meuJogo.naoPodelancarResultado = torneio.jogadorNaoLancaResult;
-                    jogosTorneio.Add(meuJogo);
+                var jogos = db.Jogo.Where(u => u.classeTorneio == i && (u.situacao_Id==1 || u.situacao_Id == 2) && 
+                    (u.desafiado_id == userId || u.desafiante_id == userId || u.desafiado2_id == userId || u.desafiante2_id == userId) &&
+                    !(u.desafiado_id == 0 || u.desafiante_id == 0 || u.desafiado_id == 10 || u.desafiante_id == 10)).OrderBy(u => u.Id).ToList();
+                foreach (var jogo in jogos){
+                    try { 
+                        MeuJogo meuJogo = montarMeuJogo(jogo, userId);
+                        meuJogo.naoPodelancarResultado = torneio.jogadorNaoLancaResult;
+                        jogosTorneio.Add(meuJogo);
+                    }catch (Exception e) { }
                 }
-                catch (Exception e) { }
             }
-            
             return jogosTorneio;
         }
 

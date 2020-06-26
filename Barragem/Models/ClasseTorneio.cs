@@ -36,6 +36,10 @@ namespace Barragem.Models
         public string nome { get; set; }
         public bool selected { get; set; }
         public bool faseGrupo { get; set; }
+        public int grupoUser { get; set; }
+        public int qtddRodadaFaseGrupo { get; set; }
+        public int qtddRodadaMataMata { get; set; }
+        public bool faseMataMata { get; set; }
         public int qtddGruposFaseGrupo { get; set; }
     }
 }
