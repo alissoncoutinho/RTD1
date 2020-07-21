@@ -23,7 +23,7 @@
             <div class="form-group">
                 <label class="col-xs-4 col-sm-2 control-label">Classes</label>
                 <div class="col-sm-4 col-xs-8">
-                    <select name="filtroClasse" id="filtroClasse" class="form-control" onchange="Selecionar()">
+                    <select name="filtroClasse" id="filtroClasse" class="form-control" onchange="Selecionar(false)">
                         @if (ViewBag.Classes != null)
                         {
                             foreach (var item2 in ViewBag.Classes)
@@ -37,7 +37,7 @@
                 </div>
                 @if (ViewBag.viewFaseGrupo == true){
                     <div class="col-sm-2 col-xs-4">
-                        <input type="button" value="Fase Grupo" name="verFaseGrupo" id="verFaseGrupo" class="form-control btn btn-primary" onclick="Selecionar()">
+                        <input type="button" value="Fase Grupo" name="verFaseGrupo" id="verFaseGrupo" class="form-control btn btn-primary" onclick="Selecionar(false)">
                         <!--input type="button" value="imprimir" class="btn btn-primary" onclick="Imprimir()"-->
                     </div>
                 }
@@ -48,8 +48,7 @@
                 <div class="form-group">
                     <label class="col-xs-12 col-sm-2 control-label">Grupo</label>
                     <div class="col-sm-4 col-xs-8">
-                        <select name="grupo" id="grupo" class="form-control" onchange="Selecionar()">
-                            <option value="1000" >Fase Mata-Mata</option>
+                        <select name="grupo" id="grupo" class="form-control" onchange="Selecionar(false)">
                             @for (int i = 1; i <= ViewBag.qtddGrupos; i++)
                             {
                                 <option value="@i" @if (ViewBag.grupo == i)
@@ -57,7 +56,14 @@
                             }
                         </select>
                     </div>
+                    @if (ViewBag.temMataMata == true)
+                    {
+                    <div class="col-sm-2 col-xs-4">
+                        <input type="button" value="Fase Mata-Mata" name="verMataMata" id="verMataMata" class="form-control btn btn-primary" onclick="Selecionar(true)">
+                    </div>
+                    }
                 </div>
+               
             }
             
         </div>
@@ -168,12 +174,15 @@
     </div>
     @section Scripts {
         <script type="text/javascript">
-            function Selecionar() {
+            function Selecionar(verMataMata) {
                 var torneioId = document.getElementById('torneioId').value;
                 var classeId = document.getElementById('filtroClasse').value;
                 var grupo = 1;
                 if (document.getElementById('grupo') != undefined) {
-                    var grupo = document.getElementById('grupo').value;
+                    grupo = document.getElementById('grupo').value;
+                }
+                if (verMataMata) {
+                    grupo = 1000;
                 }
                 window.location = "Tabela?torneioId=" + torneioId + "&filtroClasse=" + classeId + "&grupo=" + grupo;
             }

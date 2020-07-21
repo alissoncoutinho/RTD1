@@ -270,7 +270,7 @@ namespace Barragem.Class
             }
             var classificadoFaseGrupo = new ClassificacaoFaseGrupo { inscricao = inscrito, userId = inscrito.userId, nome = inscrito.participante.nome,
                 nomeDupla = nomeDupla, saldoSets = setsGanhos - setsPerdidos, saldoGames = gamesGanhos - gamesPerdidos,
-                averageSets = (float)Math.Round(averageSets, 1), averageGames= (float)Math.Round(averageGames,1) };
+                averageSets = 1000 * (float)Math.Round(averageSets, 3), averageGames= 1000 * (float)Math.Round(averageGames,3) };
             return classificadoFaseGrupo;
         }
 
@@ -432,10 +432,25 @@ namespace Barragem.Class
         {
             var inscritos = getInscritosPorClasse(classeTorneio);
             var inscritosSemGrupo = inscritos.Where(it => it.grupo == null || it.grupo == 0).ToList();
-            return inscritosSemGrupo;
+            return embaralhar(inscritosSemGrupo);
         }
 
-        private int getQtddGruposFaseGrupos(int qtddInscritosPorClasse)
+        private List<InscricaoTorneio> embaralhar(List<InscricaoTorneio> list)
+        {
+            int n = list.Count;
+            Random rnd = new Random();
+            while (n > 1)
+            {
+                int k = (rnd.Next(0, n) % n);
+                n--;
+                InscricaoTorneio value = list[k];
+                list[k] = list[n];
+                list[n] = value;
+            }
+            return list;
+        }
+
+        public int getQtddGruposFaseGrupos(int qtddInscritosPorClasse)
         {
             if ((qtddInscritosPorClasse >= 3) && (qtddInscritosPorClasse <= 5))
             {
@@ -578,9 +593,10 @@ namespace Barragem.Class
                 return 0;
             }
             // zera a pontuação caso o sorteio esteja sendo feito novamente
-            foreach (var item in totalDeInscritos.Where(t => t.grupo != 0).ToList())
+            foreach (var item in totalDeInscritos)
             {
                 item.pontuacaoFaseGrupo = 0;
+                if((item.cabecaChave == null || item.cabecaChave == 100)) item.grupo = 0;
                 db.Entry(item).State = EntityState.Modified;
                 db.SaveChanges();
             }
@@ -666,7 +682,14 @@ namespace Barragem.Class
 
         private int getQtddDeGrupos(int classeId)
         {
-            var qtddGrupos = (int) db.InscricaoTorneio.Where(it => it.classe == classeId && it.isAtivo).Max(it => it.grupo);
+            var classe = db.ClasseTorneio.Find(classeId);
+            var qtddGrupos = 0;
+            if (classe.isDupla) {
+                qtddGrupos = (int)db.InscricaoTorneio.Where(it => it.classe == classeId && it.isAtivo && it.parceiroDuplaId != null && it.parceiroDuplaId != 0).Max(it => it.grupo);
+            } else {
+                qtddGrupos = (int)db.InscricaoTorneio.Where(it => it.classe == classeId && it.isAtivo).Max(it => it.grupo);
+            }
+            
             return qtddGrupos;
         }
 

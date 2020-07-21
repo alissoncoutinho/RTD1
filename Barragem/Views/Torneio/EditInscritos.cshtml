@@ -71,6 +71,11 @@
                         </th>
                         <th>
                             @Html.DisplayName("cabeça de chave")
+                            @if (ViewBag.CabecasDeChave == null)
+                            {
+                                <br>
+                                <span style="font-size:10px; font-weight:normal">* Selecione uma classe para editar</span>
+                            }
                         </th>
                         <th>
                             @Html.DisplayName("pago")
@@ -105,25 +110,23 @@
                                 </select>
                             </td>
                             <td>
-                                <select name="@Html.Raw("cabecaChave" + i)" id="@Html.Raw("cabecaChave" + i)" class="form-control">
-                                    <option value="100" @if (item.cabecaChave == 100) { @Html.Raw("selected")  }>não</option>
-                                    <option value="1" @if (item.cabecaChave == 1) { @Html.Raw("selected")   }>1</option>
-                                    <option value="2" @if (item.cabecaChave == 2) { @Html.Raw("selected")   }>2</option>
-                                    <option value="3" @if (item.cabecaChave == 3) { @Html.Raw("selected")   }>3</option>
-                                    <option value="4" @if (item.cabecaChave == 4) { @Html.Raw("selected")   }>4</option>
-                                    <option value="5" @if (item.cabecaChave == 5) { @Html.Raw("selected")   }>5</option>
-                                    <option value="6" @if (item.cabecaChave == 6) { @Html.Raw("selected")   }>6</option>
-                                    <option value="7" @if (item.cabecaChave == 7) { @Html.Raw("selected")   }>7</option>
-                                    <option value="8" @if (item.cabecaChave == 8) { @Html.Raw("selected")   }>8</option>
-                                    <option value="9" @if (item.cabecaChave == 9) { @Html.Raw("selected")   }>9</option>
-                                    <option value="10" @if (item.cabecaChave == 10) { @Html.Raw("selected")   }>10</option>
-                                    <option value="11" @if (item.cabecaChave == 11) { @Html.Raw("selected")   }>11</option>
-                                    <option value="12" @if (item.cabecaChave == 12) { @Html.Raw("selected")   }>12</option>
-                                    <option value="13" @if (item.cabecaChave == 13) { @Html.Raw("selected")   }>13</option>
-                                    <option value="14" @if (item.cabecaChave == 14) { @Html.Raw("selected")   }>14</option>
-                                    <option value="15" @if (item.cabecaChave == 15) { @Html.Raw("selected")   }>15</option>
-                                    <option value="16" @if (item.cabecaChave == 16) { @Html.Raw("selected")   }>16</option>
-                                </select>
+                                @if (ViewBag.CabecasDeChave != null)
+                                {
+                                    <select name="@Html.Raw("cabecaChave" + i)" id="@Html.Raw("cabecaChave" + i)" class="form-control">
+                                        <option value="100" @if (item.cabecaChave == 100) { @Html.Raw("selected")   }>não</option>
+                                        @for (int j = 1; j <= ViewBag.CabecasDeChave; j++)
+                                        {
+                                            <option value="@j" @if (item.cabecaChave == j) { @Html.Raw("selected")   }>@j</option>
+                                        }
+                                    </select>
+                                }
+                                else {
+                                    <input type="hidden" name="@Html.Raw("cabecaChave" + i)" id="@Html.Raw("cabecaChave" + i)" @if (item.cabecaChave == 100) { @Html.Raw("value = 'não'") } else { @Html.Raw("value =" + item.cabecaChave) } />
+                                    if (item.cabecaChave == 100)
+                                    { @Html.Raw("não") }
+                                    else
+                                    { @Html.Raw(item.cabecaChave) }
+                                }
                             </td>
                             <td>
                                 @if (item.isAtivo)

@@ -12,7 +12,7 @@
     <legend>Criar Classe</legend>
 
     <div class="row">
-        <div class="col-sm-4">
+        <div class="col-sm-4" style="padding:15px">
             @Html.LabelFor(model => model.nome)
             <div class="input-group">
                 @Html.TextBoxFor(model => model.nome, new { @class = "form-control" })
@@ -20,46 +20,65 @@
             @Html.ValidationMessageFor(model => model.nome)
         </div>
     </div>
-    if (ViewBag.Categorias.Count > 0)
+    if (ViewBag.Categorias.Count > 1)
     {
-        <div class="col-sm-5 input-group">
-            <select id="CategoriaId" name="CategoriaId" class="form-control">
-                @foreach (var categoria in ViewBag.Categorias)
-                {
-                    <option value="@categoria.Id">@categoria.Nome</option>
-                }
-            </select>
+        <div class="row">
+            <div class="col-sm-5">
+                <div class="input-group">
+                    <select id="CategoriaId" name="CategoriaId" class="form-control">
+                        @foreach (var categoria in ViewBag.Categorias)
+                        {
+                            <option value="@categoria.Id">@categoria.Nome</option>
+                        }
+                    </select>
+                </div>
+            </div>
         </div>
+    } else {
+        <input type="hidden" id="CategoriaId" name="CategoriaId" value="0">
     }
-
-    <div class="row">
-        <div class="col-xs-2">
-            <label>
-                @Html.CheckBoxFor(model => model.isSegundaOpcao) Segunda Opção
-            </label>
+        <div class="row">
+            <div class="col-xs-2">
+                <label>
+                    @Html.CheckBoxFor(model => model.isSegundaOpcao) Segunda Opção
+                </label>
+            </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-xs-2">
-            <label>
-                @Html.CheckBoxFor(model => model.isDupla) Dupla
-            </label>
+        <div class="row">
+            <div class="col-xs-2">
+                <label>
+                    @Html.CheckBoxFor(model => model.isDupla) Dupla
+                </label>
+            </div>
         </div>
-    </div>
-
-    <br />
-    <div class="row">
-        <div class="col-xs-2">
-            <input type="hidden" name="nivel" value="1">
-            <input type="hidden" name="torneioId" value="@ViewBag.torneioId">
-            <input type="submit" class="btn btn-primary" value="Criar" />
+        <div class="row">
+            <div class="col-xs-2">
+                <label>
+                    @Html.CheckBoxFor(model => model.faseGrupo) Tem Fase de grupo
+                </label>
+            </div>
         </div>
-    </div>
-}
+        <div class="row">
+            <div class="col-xs-2">
+                <label>
+                    @Html.CheckBoxFor(model => model.faseMataMata) Tem Mata-mata
+                </label>
+            </div>
+        </div>
+
+        <br />
+        <div class="row">
+            <div class="col-xs-2">
+                <input type="hidden" name="nivel" value="1">
+                <input type="hidden" name="torneioId" value="@ViewBag.torneioId">
+                <input type="submit" class="btn btn-primary" value="Criar" />
+            </div>
+        </div>
+ }
 
 
-@section Scripts {
+            @section Scripts {
 
 
-}
+            }
 

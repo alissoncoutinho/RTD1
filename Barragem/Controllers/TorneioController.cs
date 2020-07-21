@@ -533,14 +533,15 @@ namespace Barragem.Controllers
                     && r.faseTorneio != 100 && r.faseTorneio != 101 && r.rodadaFaseGrupo == 0).OrderByDescending(r => r.faseTorneio).ThenBy(r => r.ordemJogo).ToList();
                 if (grupo != 1000){
                     jogos = db.Jogo.Where(r => r.torneioId == torneioId && r.classeTorneio == filtroClasse && r.rodadaFaseGrupo != 0 && r.grupoFaseGrupo == grupo).OrderBy(r => r.rodadaFaseGrupo).ToList();
-                    ViewBag.qtddGrupos = db.InscricaoTorneio.Where(it => it.torneioId == torneioId && it.classe == filtroClasse && it.isAtivo).Max(it => it.grupo);
                     var inscritosGrupo = db.InscricaoTorneio.Where(it => it.torneioId == torneioId && it.classe == filtroClasse
                                        && it.grupo == grupo && it.isAtivo);
                     List<InscricaoTorneio> classificacaoGrupo;
                     if (classe.isDupla) {
+                        ViewBag.qtddGrupos = db.InscricaoTorneio.Where(it => it.torneioId == torneioId && it.classe == filtroClasse && it.isAtivo && it.parceiroDuplaId != null && it.parceiroDuplaId != 0).Max(it => it.grupo);
                         classificacaoGrupo = inscritosGrupo.Where(i => i.parceiroDuplaId != null && i.parceiroDuplaId != 0).
                             OrderByDescending(it => it.pontuacaoFaseGrupo).ThenBy(it => it.participante.nome).ToList();
                     }else{
+                        ViewBag.qtddGrupos = db.InscricaoTorneio.Where(it => it.torneioId == torneioId && it.classe == filtroClasse && it.isAtivo).Max(it => it.grupo);
                         classificacaoGrupo = inscritosGrupo.OrderByDescending(it => it.pontuacaoFaseGrupo).ThenBy(it => it.participante.nome).ToList();
                     }
                     ViewBag.classificacaoGrupo = tn.ordenarClassificacaoFaseGrupo(classe, grupo);
@@ -550,6 +551,10 @@ namespace Barragem.Controllers
                     ViewBag.viewFaseGrupo = true;
                     jogos = db.Jogo.Where(r => r.torneioId == torneioId && r.classeTorneio == filtroClasse
                         && r.faseTorneio != 100 && r.faseTorneio != 101 && r.rodadaFaseGrupo == 0).OrderByDescending(r => r.faseTorneio).ThenBy(r => r.ordemJogo).ToList();
+                }
+                if (classe.faseMataMata)
+                {
+                    ViewBag.temMataMata = true;
                 }
             } else {
                 ViewBag.classeFaseGrupo = false;
@@ -795,6 +800,7 @@ namespace Barragem.Controllers
             if (filtroClasse != 0)
             {
                 inscricao = inscricao.Where(i => i.classe == filtroClasse).ToList();
+                ViewBag.CabecasDeChave = getOpcoesCabecaDeChave(filtroClasse);
             }
             ViewBag.Classes = db.ClasseTorneio.Where(c => c.torneioId == torneioId).ToList();
             ViewBag.filtroClasse = filtroClasse;
@@ -808,6 +814,17 @@ namespace Barragem.Controllers
                 Select(i => (int)i.userId).Distinct().Count();
             mensagem(Msg);
             return View(inscricao);
+        }
+
+        private int getOpcoesCabecaDeChave(int classeId) {
+            var classe = db.ClasseTorneio.Find(classeId);
+            int qtddCabecaChave = 0;
+            if (classe.faseGrupo){
+                qtddCabecaChave = tn.getQtddGruposFaseGrupos(tn.getInscritosPorClasse(classe, true).Count());
+            } else {
+                qtddCabecaChave = 16;
+            }
+            return qtddCabecaChave;
         }
 
         [Authorize(Roles = "admin,organizador")]
@@ -976,6 +993,10 @@ namespace Barragem.Controllers
             try
             {
                 var inscricao = db.InscricaoTorneio.Find(Id);
+                if (inscricao.classeTorneio.faseGrupo)
+                {
+                    inscricao.grupo = cabecaChave;
+                }
                 inscricao.classe = classe;
                 inscricao.isAtivo = isAtivo;
                 inscricao.cabecaChave = cabecaChave;
@@ -1708,7 +1729,10 @@ namespace Barragem.Controllers
             if (isImprimir) {
                 return jogos.OrderBy(r => r.dataJogo).ThenBy(r => r.horaJogo).ToList();
             } else {
-                return jogos.OrderBy(r => r.rodadaFaseGrupo).ThenBy(j => j.grupoFaseGrupo).ThenByDescending(r=> r.faseTorneio).ThenBy(r => r.ordemJogo).ToList();
+                var jogosFaseGrupo = jogos.Where(j => j.rodadaFaseGrupo != 0).OrderBy(r => r.rodadaFaseGrupo).ThenBy(j => j.grupoFaseGrupo).ToList();
+                var jogosMataMata = jogos.Where(j => j.rodadaFaseGrupo == 0).OrderByDescending(r => r.faseTorneio).ThenBy(r => r.ordemJogo).ToList();
+                jogosFaseGrupo.AddRange(jogosMataMata);
+                return jogosFaseGrupo;
             }
             
         }

@@ -89,11 +89,15 @@
                             <th>
                                 @Html.DisplayName("Grupos")
                             </th>
-                            <th></th>
                         </tr>
-                        @{int i = 1; }
+                        @{int i = 1;
+                          int grupo = 0;}
                         @foreach (var item in Model)
                         {
+                            if((grupo!= item.grupo) && (grupo != 0))
+                            {
+                                <tr><td colspan="2">&nbsp;</td></tr>
+                            }
                             <tr>
                                 <td>
                                     <input type="hidden" value="@item.userId" name="@Html.Raw("jogador_" + item.userId)" id="@Html.Raw("jogador_" + item.userId)">
@@ -104,26 +108,15 @@
                                     }
                                 </td>
                                 <td>
-                                    <select data-valor="@item.Id" name="@Html.Raw("grupo_" + item.Id)" id="@Html.Raw("grupo_" + item.Id)" class="form-control grupo">
-                                        <option @if (item.grupo==0) { @Html.Raw("selected") } value="0">Sem Grupo</option>
-                                        <option @if (item.grupo==1) { @Html.Raw("selected") } value="1">1</option>
-                                        <option @if (item.grupo==2) { @Html.Raw("selected") } value="2">2</option>
-                                        <option @if (item.grupo==3) { @Html.Raw("selected") } value="3">3</option>
-                                        <option @if (item.grupo==4) { @Html.Raw("selected") } value="4">4</option>
-                                        <option @if (item.grupo==5) { @Html.Raw("selected") } value="5">5</option>
-                                        <option @if (item.grupo==6) { @Html.Raw("selected") } value="6">6</option>
-                                        <option @if (item.grupo==7) { @Html.Raw("selected") } value="7">7</option>
-                                        <option @if (item.grupo==8) { @Html.Raw("selected") } value="8">8</option>
-                                        <option @if (item.grupo==9) { @Html.Raw("selected") } value="9">9</option>
-                                        <option @if (item.grupo==10) { @Html.Raw("selected") } value="10">10</option>
-                                        <option @if (item.grupo==11) { @Html.Raw("selected") } value="11">11</option>
-                                        <option @if (item.grupo==12) { @Html.Raw("selected") } value="12">12</option>
-                                     </select>
-                                </td>
-                                <td align="center">
-                                    <input type="hidden" name="@Html.Raw("inscricaoJogador_" + item.Id)" id="@Html.Raw("inscricaoJogador_" + item.Id)" value="@item.Id">
+                                    @if (item.grupo == 0)
+                                    { @Html.Raw("sem grupo") }
+                                    else
+                                    {
+                                        @item.grupo
+                                    }
                                 </td>
                             </tr>
+                            { grupo = (int)item.grupo; }
                         }
                     </table>
                 }
@@ -132,50 +125,6 @@
     @section Scripts {
         
         <script type="text/javascript">
-            $(document).ready(function () {
-                $(".grupo").change(function (event) {
-                    var i = $(this).data("valor");
-                    var inscricaoJogador = document.getElementById("inscricaoJogador_" + i).value;
-                    var grupo = document.getElementById("grupo_" + i).value;
-                    event.preventDefault();
-                    $.ajax({
-                        type: "POST",
-                        url: "/Torneio/IncluirJogadorGrupo",
-                        dataType: "json",
-                        data: "{'inscricaoJogador':'" + inscricaoJogador + "', 'grupo':'" + grupo + "'}",
-                        contentType: "application/json; charset=utf-8",
-                        success: function (response) {
-                            if (typeof response == "object") {
-                                if (response.retorno === 0) {
-                                    toastr.error(response.erro, "Erro");
-                                } else {
-                                    toastr.success("Atualização realizada com sucesso.", "");
-                                }
-                            }
-                        },
-                        error: function (jqXHR, textStatus, errorThrown) {
-                            location.reload(true);
-                        }
-                    });
-                });
-                                                
-                $(".confirm").confirm({
-                    title: "Confirmação",
-                    content: "Tem certeza que deseja gerar as tabelas de grupo? Caso já existam jogos eles serão excluídos!",
-                    buttons: {
-                        sim: {
-                            text: 'Sim',
-                            btnClass: 'btn-primary',
-                            action: function () {
-                                document.forms[1].submit();
-                            }
-                        },
-                        cancelar: {}
-                    }
-                });
-
-            });
-            
             function Selecionar() {
                 var torneioId = document.getElementById('torneioId').value;
                 var classeId = document.getElementById('filtroClasse').value;
