@@ -231,6 +231,7 @@ namespace Barragem.Controllers
         [AllowAnonymous]
         public MensagemRetorno RegisterTorneioNegocio(RegisterInscricao model, int torneioId, bool isSocio = false, bool isClasseDupla = false)
         {
+            var torneioController = new TorneioController();
             var torneio = db.Torneio.Find(torneioId);
             var classesBarragem = db.Classe.Where(c => c.barragemId == torneio.barragemId).ToList();
             var mensagemRetorno = new MensagemRetorno();
@@ -250,16 +251,12 @@ namespace Barragem.Controllers
                         mensagemRetorno.tipo = "erro";
                         return mensagemRetorno;
                     }
-                    if ((model.inscricao.classe == 0) || ((model.isMaisDeUmaClasse) && (model.classeInscricao2 == 0)))
+                    string msgValidacaoClasse = torneioController.validarEscolhasDeClasses(model.inscricao.classe, model.classeInscricao2, model.classeInscricao3, model.classeInscricao4);
+                    if (msgValidacaoClasse != "")
                     {
-                        mensagemRetorno.mensagem = "Selecione uma categoria.";
+                        mensagemRetorno.nomePagina = "Detalhes";
                         mensagemRetorno.tipo = "erro";
-                        return mensagemRetorno;
-                    }
-                    if (model.inscricao.classe == model.classeInscricao2)
-                    {
-                        mensagemRetorno.mensagem = "Selecione uma categoria diferente na segunda opção de categoria.";
-                        mensagemRetorno.tipo = "erro";
+                        mensagemRetorno.mensagem = msgValidacaoClasse;
                         return mensagemRetorno;
                     }
                     WebSecurity.CreateUserAndAccount(model.register.UserName, model.register.Password, new
@@ -287,52 +284,25 @@ namespace Barragem.Controllers
 
                     // incluir inscrição
                     model.inscricao.userId = WebSecurity.GetUserId(model.register.UserName);
-                    if (model.isMaisDeUmaClasse)
-                    {
-                        if ((isSocio) && (torneio.valorMaisClassesSocio != null || torneio.valorMaisClassesSocio != 0))
-                        {
-                            model.inscricao.valor = torneio.valorMaisClassesSocio;
-                        }
-                        else
-                        {
-                            model.inscricao.valor = torneio.valorMaisClasses;
-                        }
 
-                    }
-                    else
+                    double valorInscricao = torneioController.calcularValorInscricao(model.classeInscricao2, model.classeInscricao3, model.classeInscricao4, isSocio, torneio, model.inscricao.userId);
+                                        
+                    InscricaoTorneio insc = torneioController.preencherInscricaoTorneio(model.inscricao.torneioId, model.inscricao.userId, model.inscricao.classe, valorInscricao, model.inscricao.observacao, isSocio);
+                    db.InscricaoTorneio.Add(insc);
+                    if (model.classeInscricao2 > 0)
                     {
-                        if ((isSocio) && (torneio.valorSocio != null || torneio.valorSocio != 0))
-                        {
-                            model.inscricao.valor = torneio.valorSocio;
-                        }
-                        else
-                        {
-                            model.inscricao.valor = torneio.valor;
-                        }
-
+                        InscricaoTorneio insc2 = torneioController.preencherInscricaoTorneio(model.inscricao.torneioId, model.inscricao.userId, model.classeInscricao2, valorInscricao, model.inscricao.observacao, isSocio);
+                        db.InscricaoTorneio.Add(insc2);
                     }
-                    if (torneio.valor > 0)
+                    if (model.classeInscricao3 > 0)
                     {
-                        model.inscricao.isAtivo = false;
+                        InscricaoTorneio insc3 = torneioController.preencherInscricaoTorneio(model.inscricao.torneioId, model.inscricao.userId, model.classeInscricao3, valorInscricao, model.inscricao.observacao, isSocio);
+                        db.InscricaoTorneio.Add(insc3);
                     }
-                    else
+                    if (model.classeInscricao4 > 0)
                     {
-                        model.inscricao.isAtivo = true;
-                    }
-                    model.inscricao.isSocio = isSocio;
-                    db.InscricaoTorneio.Add(model.inscricao);
-                    if (model.isMaisDeUmaClasse)
-                    {
-                        InscricaoTorneio inscricao2 = new InscricaoTorneio();
-                        inscricao2.formaPagamento = model.inscricao.formaPagamento;
-                        inscricao2.classe = model.classeInscricao2;
-                        inscricao2.valor = model.inscricao.valor;
-                        inscricao2.isAtivo = model.inscricao.isAtivo;
-                        inscricao2.isSocio = model.inscricao.isSocio;
-                        inscricao2.observacao = model.inscricao.observacao;
-                        inscricao2.userId = model.inscricao.userId;
-                        inscricao2.torneioId = model.inscricao.torneioId;
-                        db.InscricaoTorneio.Add(inscricao2);
+                        InscricaoTorneio insc4 = torneioController.preencherInscricaoTorneio(model.inscricao.torneioId, model.inscricao.userId, model.classeInscricao4, valorInscricao, model.inscricao.observacao, isSocio);
+                        db.InscricaoTorneio.Add(insc4);
                     }
                     db.SaveChanges();
                     if (isClasseDupla)
@@ -384,7 +354,7 @@ namespace Barragem.Controllers
             var classes = db.ClasseTorneio.Where(i => i.torneioId == torneioId && i.isPrimeiraOpcao).OrderBy(c => c.Id).ToList();
             ViewBag.Classes = classes;
             var classes2Opcao = db.ClasseTorneio.Where(i => i.torneioId == torneioId && i.isSegundaOpcao).OrderBy(c => c.Id).ToList();
-            ViewBag.Classes2Opcao = classes2Opcao;
+            ViewBag.Classes2 = classes2Opcao;
             var classesBarragem = db.Classe.Where(c => c.barragemId == torneio.barragemId).ToList();
             var mensagemRetorno = RegisterTorneioNegocio(model, torneioId, isSocio, isClasseDupla);
             if (mensagemRetorno.tipo == "erro")
@@ -393,7 +363,11 @@ namespace Barragem.Controllers
                 return View(model);
             }else if (mensagemRetorno.tipo == "redirect")
             {
-                return RedirectToAction(mensagemRetorno.nomePagina, "Torneio", new { torneioId = torneioId, msg = mensagemRetorno.mensagem });
+                if (mensagemRetorno.nomePagina == "ConfirmacaoInscricao") {
+                    return RedirectToAction(mensagemRetorno.nomePagina, "Torneio", new { torneioId = torneioId, msg = mensagemRetorno.mensagem, msgErro = "" });
+                } else {
+                    return RedirectToAction(mensagemRetorno.nomePagina, "Torneio", new { id = torneioId, Msg = mensagemRetorno.mensagem });
+                }
             } else {
                 return View(model);
             }

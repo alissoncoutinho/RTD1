@@ -1335,7 +1335,7 @@ namespace Barragem.Controllers
             }
         }
 
-        private String validarEscolhasDeClasses(int classeInscricao, int classeInscricao2, int classeInscricao3, int classeInscricao4)
+        public String validarEscolhasDeClasses(int classeInscricao, int classeInscricao2, int classeInscricao3, int classeInscricao4)
         {
             if (classeInscricao == 0)
             {
@@ -1368,7 +1368,7 @@ namespace Barragem.Controllers
             return "";
         }
 
-        private InscricaoTorneio preencherInscricaoTorneio(int torneioId, int userId, int classeInscricao, double? valorInscricao, string observacao, bool isSocio)
+        public InscricaoTorneio preencherInscricaoTorneio(int torneioId, int userId, int classeInscricao, double? valorInscricao, string observacao, bool isSocio)
         {
             InscricaoTorneio inscricao = new InscricaoTorneio();
             inscricao.classe = classeInscricao;
@@ -1388,7 +1388,7 @@ namespace Barragem.Controllers
             return inscricao;
         }
 
-        private double calcularValorInscricao(int classeInscricao2, int classeInscricao3, int classeInscricao4, bool isSocio, Torneio torneio, int userId) {
+        public double calcularValorInscricao(int classeInscricao2, int classeInscricao3, int classeInscricao4, bool isSocio, Torneio torneio, int userId) {
             int qtddInscricoes = 1;
             double valorInscricao = 0.0;
             bool gratuidade = VerificarGratuidade(torneio, userId);

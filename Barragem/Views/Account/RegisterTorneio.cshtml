@@ -209,104 +209,113 @@
                         <div class="row">
                             @Html.Label("Classe", new { @class = "col-sm-4" })
                             <div class="col-sm-8 info-box-text">
-                                <select name="classeInscricao" id="classeInscricao" data-classe2="@(torneio.qtddCategoriasPorJogador>1)" class="form-control escolherSegundaOpcaoClasse">
+                                <select name="inscricao.classe" id="inscricao.classe" data-classe2="@(torneio.qtddCategoriasPorJogador>1)" class="form-control escolherSegundaOpcaoClasse">
                                     <option value="0">Selecione uma classe...</option>
                                     @foreach (var item in ViewBag.Classes)
                                     {
-                                        <option value="@item.Id" data-isDupla="@item.isDupla" @if (ViewBag.ClasseInscricao == item.Id) { @Html.Raw("selected")    }>@item.nome</option>
+                                        <option value="@item.Id" data-isDupla="@item.isDupla" >@item.nome</option>
                                     }
                                 </select>
                             </div>
                         </div>
-                        @if (torneio.qtddCategoriasPorJogador>1)
+                        @if (torneio.qtddCategoriasPorJogador > 1)
                         {
-                        <div id="checkSegundaOpcaoClasse" class="form-group">
-                            <div class="col-sm-8">
-                                <div class="checkbox">
-                                    <label>
-                                        <input type="checkbox" value="true" name="isSegundaOpcaoClasse" id="isSegundaOpcaoClasse" onclick="segundaOpcaoDeClasse()" /> @Html.Raw("Quero escolher mais uma categoria")
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                        <div id="segundaOpcaoClasse" class="row">
-                            @Html.Label("2ª Opção", new { @class = "col-sm-4" })
-                            <div class="col-sm-8 info-box-text">
-                                <select name="classeInscricao2" class="form-control segundaOpcaoClasse escolherTerceiraOpcaoClasse" data-classe3="@(torneio.qtddCategoriasPorJogador>2)">
-                                    <option value="0">Selecione uma classe...</option>
-                                    @foreach (var item in ViewBag.Classes2)
-                                    {
-                                        <option value="@item.Id" data-isDupla="@item.isDupla" @if ((!String.IsNullOrEmpty(ViewBag.ClasseInscricao2)) && (ViewBag.ClasseInscricao2 == item.Id)) { @Html.Raw("selected")    }>@item.nome</option>
-                                    }
-                                </select>
-                            </div>
-                        </div>
-
-                        }
-                        @if (torneio.qtddCategoriasPorJogador > 2)
-                        {
-                        <div id="checkTerceiraOpcaoClasse" class="form-group">
-                            <div class="col-sm-8">
-                                <div class="checkbox">
-                                    <label>
-                                        <input type="checkbox" value="true" name="isTerceiraOpcaoClasse" id="isTerceiraOpcaoClasse" onclick="terceiraOpcaoDeClasse()" /> @Html.Raw("Quero escolher mais uma categoria")
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                        <div id="terceiraOpcaoClasse" class="row">
-                            @Html.Label("3ª Opção", new { @class = "col-sm-4" })
-                            <div class="col-sm-8 info-box-text">
-                                <select name="classeInscricao3" class="form-control terceiraOpcaoClasse escolherQuartaOpcaoClasse" data-classe3="@(torneio.qtddCategoriasPorJogador>3)">
-                                    <option value="0">Selecione uma classe...</option>
-                                    @foreach (var item in ViewBag.Classes2)
-                                    {
-                                        <option value="@item.Id" data-isDupla="@item.isDupla" @if ((!String.IsNullOrEmpty(ViewBag.ClasseInscricao3)) && (ViewBag.ClasseInscricao3 == item.Id)) { @Html.Raw("selected")     }>@item.nome</option>
-                                    }
-                                </select>
-                            </div>
-                        </div>
-
-                        }
-                        @if (torneio.qtddCategoriasPorJogador > 3)
-                        {
-                        <div id="checkQuartaOpcaoClasse" class="form-group">
-                            <div class="col-sm-8">
-                                <div class="checkbox">
-                                    <label>
-                                        <input type="checkbox" value="true" name="isQuartaOpcaoClasse" id="isQuartaOpcaoClasse" onclick="quartaOpcaoDeClasse()" /> @Html.Raw("Quero escolher mais uma categoria")
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                        <div id="quartaOpcaoClasse" class="row">
-                            @Html.Label("4ª Opção", new { @class = "col-sm-4" })
-                            <div class="col-sm-8 info-box-text">
-                                <select name="classeInscricao4" class="form-control quartaOpcaoClasse">
-                                    <option value="0">Selecione uma classe...</option>
-                                    @foreach (var item in ViewBag.Classes2)
-                                    {
-                                        <option value="@item.Id" data-isDupla="@item.isDupla" @if ((!String.IsNullOrEmpty(ViewBag.ClasseInscricao4)) && (ViewBag.ClasseInscricao4 == item.Id)) { @Html.Raw("selected")      }>@item.nome</option>
-                                    }
-                                </select>
-                            </div>
-                        </div>
-
-                        }
-                                @if (!String.IsNullOrEmpty(torneio.observacao))
-                                {
-                                    <br>
-                                    <div class="boxPadrao">
-                                        <div class="row">
-                                            <div class="col-sm-12">@Html.Raw(torneio.observacao)</div>
+                            <div class="row">
+                                <div id="checkSegundaOpcaoClasse" class="form-group">
+                                    <div class="col-sm-8">
+                                        <div class="checkbox">
+                                            <label>
+                                                <input type="checkbox" value="true" name="isSegundaOpcaoClasse" id="isSegundaOpcaoClasse" onclick="segundaOpcaoDeClasse()" /> @Html.Raw("Quero escolher mais uma categoria")
+                                            </label>
                                         </div>
-                                        <div class="row form-group input-group-sm">
-                                            <div class="col-sm-12">
-                                                @Html.TextBoxFor(m => m.inscricao.observacao, new { @class = "form-control", placeholder = "Responda aqui..." })
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div id="segundaOpcaoClasse">
+                                    @Html.Label("2ª Opção", new { @class = "col-sm-4" })
+                                    <div class="col-sm-8 info-box-text">
+                                        <select name="classeInscricao2" class="form-control segundaOpcaoClasse escolherTerceiraOpcaoClasse" data-classe3="@(torneio.qtddCategoriasPorJogador>2)">
+                                            <option value="0">Selecione uma classe...</option>
+                                            @foreach (var item in ViewBag.Classes2)
+                                            {
+                                                <option value="@item.Id" data-isDupla="@item.isDupla">@item.nome</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                                @if (torneio.qtddCategoriasPorJogador > 2)
+                                {
+                                    <div class="row">
+                                        <div id="checkTerceiraOpcaoClasse" class="form-group">
+                                            <div class="col-sm-8">
+                                                <div class="checkbox">
+                                                    <label>
+                                                        <input type="checkbox" value="true" name="isTerceiraOpcaoClasse" id="isTerceiraOpcaoClasse" onclick="terceiraOpcaoDeClasse()" /> @Html.Raw("Quero escolher mais uma categoria")
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                     </div>
+                                     <div class="row">
+                                        <div id="terceiraOpcaoClasse">
+                                            @Html.Label("3ª Opção", new { @class = "col-sm-4" })
+                                            <div class="col-sm-8 info-box-text">
+                                                <select name="classeInscricao3" class="form-control terceiraOpcaoClasse escolherQuartaOpcaoClasse" data-classe3="@(torneio.qtddCategoriasPorJogador>3)">
+                                                    <option value="0">Selecione uma classe...</option>
+                                                    @foreach (var item in ViewBag.Classes2)
+                                                    {
+                                                        <option value="@item.Id" data-isDupla="@item.isDupla">@item.nome</option>
+                                                    }
+                                                </select>
+                                            </div>
+                                        </div>
+                                     </div>
+                                 }
+                                @if (torneio.qtddCategoriasPorJogador > 3)
+                                {
+                                    <div class="row">
+                                        <div id="checkQuartaOpcaoClasse" class="form-group">
+                                            <div class="col-sm-8">
+                                                <div class="checkbox">
+                                                    <label>
+                                                        <input type="checkbox" value="true" name="isQuartaOpcaoClasse" id="isQuartaOpcaoClasse" onclick="quartaOpcaoDeClasse()" /> @Html.Raw("Quero escolher mais uma categoria")
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div id="quartaOpcaoClasse">
+                                            @Html.Label("4ª Opção", new { @class = "col-sm-4" })
+                                            <div class="col-sm-8 info-box-text">
+                                                <select name="classeInscricao4" class="form-control quartaOpcaoClasse">
+                                                    <option value="0">Selecione uma classe...</option>
+                                                    @foreach (var item in ViewBag.Classes2)
+                                                    {
+                                                        <option value="@item.Id" data-isDupla="@item.isDupla">@item.nome</option>
+                                                    }
+                                                </select>
                                             </div>
                                         </div>
                                     </div>
                                 }
+                                    @if (!String.IsNullOrEmpty(torneio.observacao))
+                                    {
+                                        <br>
+                                        <div class="boxPadrao">
+                                            <div class="row">
+                                                <div class="col-sm-12">@Html.Raw(torneio.observacao)</div>
+                                            </div>
+                                            <div class="row form-group input-group-sm">
+                                                <div class="col-sm-12">
+                                                    @Html.TextBoxFor(m => m.inscricao.observacao, new { @class = "form-control", placeholder = "Responda aqui..." })
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
                             </div>
                     <!-- /.box-body -->
                     <div class="box-footer">
