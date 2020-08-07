@@ -55,6 +55,18 @@ namespace Barragem.Models
         [Display(Name = "Valor da Inscrição")]
         public double? valor { get; set; }
 
+        [Display(Name = "Valor de 2 Inscrições")]
+        public double? valor2 { get; set; }
+
+        [Display(Name = "Valor de 3 Inscrições")]
+        public double? valor3 { get; set; }
+
+        [Display(Name = "Valor de 4 Inscrições")]
+        public double? valor4 { get; set; }
+
+        [Display(Name = "Qtdd Categoria por Jogador")]
+        public int qtddCategoriasPorJogador { get; set; }
+
         [Display(Name = "Valor com desconto")]
         public double? valorSocio { get; set; }
 

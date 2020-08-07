@@ -70,11 +70,43 @@
                 @Html.ValidationMessageFor(model => model.qtddClasses)
             </div>
             <div class="form-group">
-                @Html.LabelFor(model => model.valor, new { @class = "col-sm-2 control-label" })
+                @Html.Label("Em quantas categorias o jogador poderá se inscrever?", new { @class = "col-sm-2 control-label" })
+                <div class="col-sm-6 input-group">
+                    <select name="qtddCategoriasPorJogador" id="qtddCategoriasPorJogador" class="form-control" onchange="habilibarValoresInscricao()">
+                        <option value="1">1 categoria</option>
+                        <option value="2">2 categoria</option>
+                        <option value="3">3 categoria</option>
+                        <option value="4">4 categoria</option>
+                    </select>
+                </div>
+            </div>
+            <div id="valorDiv" class="form-group">
+                @Html.Label("Valor da inscrição para 1 categoria", new { @class = "col-sm-2 control-label" })
                 <div class="col-sm-4 input-group">
                     @Html.TextBoxFor(model => model.valor, new { @class = "form-control", @placeholder = "Informe 0 para torneio gratuito" })
                 </div>
                 @Html.ValidationMessageFor(model => model.valor)
+            </div>
+            <div id="valorDiv2" class="form-group">
+                @Html.Label("Valor da inscrição para 2 categoria", new { @class = "col-sm-2 control-label" })
+                <div class="col-sm-4 input-group">
+                    @Html.TextBoxFor(model => model.valor2, new { @class = "form-control" })
+                </div>
+                @Html.ValidationMessageFor(model => model.valor2)
+            </div>
+            <div id="valorDiv3" class="form-group">
+                @Html.Label("Valor da inscrição para 3 categoria", new { @class = "col-sm-2 control-label" })
+                <div class="col-sm-4 input-group">
+                    @Html.TextBoxFor(model => model.valor3, new { @class = "form-control" })
+                </div>
+                @Html.ValidationMessageFor(model => model.valor3)
+            </div>
+            <div id="valorDiv4" class="form-group">
+                @Html.Label("Valor da inscrição para 4 categoria", new { @class = "col-sm-2 control-label" })
+                <div class="col-sm-4 input-group">
+                    @Html.TextBoxFor(model => model.valor4, new { @class = "form-control" })
+                </div>
+                @Html.ValidationMessageFor(model => model.valor4)
             </div>
             <div class="form-group">
                 <div class="col-sm-offset-2 col-sm-6">
@@ -86,43 +118,19 @@
                 </div>
             </div>
             <div id="descontoSocio" class="form-group">
-                @Html.LabelFor(model => model.valorSocio, new { @class = "col-sm-2 control-label" })
+                @Html.Label("Valor de desconto", new { @class = "col-sm-2 control-label" })
                 <div class="col-sm-4 input-group">
                     @Html.TextBoxFor(model => model.valorSocio, new { @class = "form-control" })
                 </div>
                 @Html.ValidationMessageFor(model => model.valorSocio)
             </div>
-            
             <div class="form-group">
-                <div class="col-sm-offset-2 col-sm-6">
-                    <div class="checkbox">
-                        <label>
-                            <input type="checkbox" value="true" name="isMaisUmaClasse" /> @Html.Raw("Inscrição em + de 1 classe")
-                        </label>
-                    </div>
+                @Html.LabelFor(model => model.premiacao, new { @class = "col-sm-2 control-label" })
+                <div class="col-sm-8 input-group">
+                    @Html.TextBoxFor(model => model.premiacao, new { @class = "form-control", @placeholder = "" })
                 </div>
+                @Html.ValidationMessageFor(model => model.premiacao)
             </div>
-            <div class="form-group">
-                @Html.LabelFor(model => model.valorMaisClasses, new { @class = "col-sm-2 control-label" })
-                <div class="col-sm-4 input-group">
-                    @Html.TextBoxFor(model => model.valorMaisClasses, new { @class = "form-control", @placeholder = "Informe 0 para torneio gratuito" })
-                </div>
-                @Html.ValidationMessageFor(model => model.valorMaisClasses)
-            </div>
-            <div id="descontoSocioMaisClasses" class="form-group">
-                @Html.LabelFor(model => model.valorMaisClassesSocio, new { @class = "col-sm-2 control-label" })
-                <div class="col-sm-4 input-group">
-                    @Html.TextBoxFor(model => model.valorMaisClassesSocio, new { @class = "form-control" })
-                </div>
-                @Html.ValidationMessageFor(model => model.valorMaisClassesSocio)
-            </div>
-                <div class="form-group">
-                    @Html.LabelFor(model => model.premiacao, new { @class = "col-sm-2 control-label" })
-                    <div class="col-sm-8 input-group">
-                        @Html.TextBoxFor(model => model.premiacao, new { @class = "form-control", @placeholder = "" })
-                    </div>
-                    @Html.ValidationMessageFor(model => model.premiacao)
-                </div>
             <div class="form-group">
                 <label class="col-sm-2 control-label" for="premiacao">Configurações</label>
                 <div class="col-sm-3">
@@ -287,21 +295,57 @@
         if (document.getElementById('isDesconto').checked) {
             document.getElementById('descontoSocio').style.opacity = "1";
             document.getElementById('descontoSocio').style.display = "block";
-            document.getElementById('descontoSocioMaisClasses').style.opacity = "1";
-            document.getElementById('descontoSocioMaisClasses').style.display = "block";
         } else {
             document.getElementById('descontoSocio').value = "0";
             document.getElementById('descontoSocioMaisClasses').value = "0";
             document.getElementById('descontoSocio').style.opacity = "0 !important";
             document.getElementById('descontoSocio').style.display = "none";
-            document.getElementById('descontoSocioMaisClasses').style.opacity = "0 !important";
-            document.getElementById('descontoSocioMaisClasses').style.display = "none";
         }
     }
+
+    function habilibarValoresInscricao() {
+        if (document.getElementById('qtddCategoriasPorJogador').value == 1) {
+            document.getElementById('valor2').value = "0";
+            document.getElementById('valorDiv2').style.opacity = "0 !important";
+            document.getElementById('valorDiv2').style.display = "none";
+            document.getElementById('valor3').value = "0";
+            document.getElementById('valorDiv3').style.opacity = "0 !important";
+            document.getElementById('valorDiv3').style.display = "none";
+            document.getElementById('valor4').value = "0";
+            document.getElementById('valorDiv4').style.opacity = "0 !important";
+            document.getElementById('valorDiv4').style.display = "none";
+        } else if (document.getElementById('qtddCategoriasPorJogador').value == 2) {
+            document.getElementById('valorDiv2').style.opacity = "1";
+            document.getElementById('valorDiv2').style.display = "block";
+            document.getElementById('valor3').value = "0";
+            document.getElementById('valorDiv3').style.opacity = "0 !important";
+            document.getElementById('valorDiv3').style.display = "none";
+            document.getElementById('valor4').value = "0";
+            document.getElementById('valorDiv4').style.opacity = "0 !important";
+            document.getElementById('valorDiv4').style.display = "none";
+        } else if (document.getElementById('qtddCategoriasPorJogador').value == 3) {
+            document.getElementById('valorDiv2').style.opacity = "1";
+            document.getElementById('valorDiv2').style.display = "block";
+            document.getElementById('valorDiv3').style.opacity = "1";
+            document.getElementById('valorDiv3').style.display = "block";
+            document.getElementById('valor4').value = "0";
+            document.getElementById('valorDiv4').style.opacity = "0 !important";
+            document.getElementById('valorDiv4').style.display = "none";
+        } else if (document.getElementById('qtddCategoriasPorJogador').value == 4) {
+            document.getElementById('valorDiv2').style.opacity = "1";
+            document.getElementById('valorDiv2').style.display = "block";
+            document.getElementById('valorDiv3').style.opacity = "1";
+            document.getElementById('valorDiv3').style.display = "block";
+            document.getElementById('valorDiv4').style.opacity = "1";
+            document.getElementById('valorDiv4').style.display = "block";
+        }
+    }
+
     document.getElementById('descontoSocio').style.opacity = "0";
     document.getElementById('descontoSocio').style.display = "none";
-    document.getElementById('descontoSocioMaisClasses').style.opacity = "0";
-    document.getElementById('descontoSocioMaisClasses').style.display = "none";
+
+    habilibarValoresInscricao()
+    
 </script>
 
 }

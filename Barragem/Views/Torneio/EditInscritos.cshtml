@@ -74,7 +74,7 @@
                             @if (ViewBag.CabecasDeChave == null)
                             {
                                 <br>
-                                <span style="font-size:10px; font-weight:normal">* Selecione uma classe para editar</span>
+                                <span style="font-size:10px; font-weight:normal">* Filtre por classe para editar esta coluna</span>
                             }
                         </th>
                         <th>
@@ -121,7 +121,7 @@
                                     </select>
                                 }
                                 else {
-                                    <input type="hidden" name="@Html.Raw("cabecaChave" + i)" id="@Html.Raw("cabecaChave" + i)" @if (item.cabecaChave == 100) { @Html.Raw("value = 'não'") } else { @Html.Raw("value =" + item.cabecaChave) } />
+                                    <input type="hidden" name="@Html.Raw("cabecaChave" + i)" id="@Html.Raw("cabecaChave" + i)" value =@item.cabecaChave />
                                     if (item.cabecaChave == 100)
                                     { @Html.Raw("não") }
                                     else

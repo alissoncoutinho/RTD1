@@ -98,6 +98,24 @@
                                         </div>
                                     </div>
                                 }
+                                @if (!String.IsNullOrEmpty(ViewBag.TerceiraOpcaoClasse))
+                                {
+                                    <div class="row">
+                                        @Html.Label("Classe", new { @class = "col-sm-3" })
+                                        <div class="col-sm-8 info-box-text">
+                                            @Html.Raw(ViewBag.TerceiraOpcaoClasse)
+                                        </div>
+                                    </div>
+                                }
+                                @if (!String.IsNullOrEmpty(ViewBag.QuartaOpcaoClasse))
+                                {
+                                    <div class="row">
+                                        @Html.Label("Classe", new { @class = "col-sm-3" })
+                                        <div class="col-sm-8 info-box-text">
+                                            @Html.Raw(ViewBag.QuartaOpcaoClasse)
+                                        </div>
+                                    </div>
+                                }
                                 @if (Model.valor != 0)
                                 {
                                     <div class="row">

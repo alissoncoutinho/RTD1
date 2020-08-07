@@ -345,6 +345,8 @@ namespace Barragem.Models
         public bool isMaisDeUmaClasse { get; set; }
 
         public int classeInscricao2 { get; set; }
+        public int classeInscricao3 { get; set; }
+        public int classeInscricao4 { get; set; }
 
 
     }

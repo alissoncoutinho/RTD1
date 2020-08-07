@@ -159,7 +159,7 @@ namespace Barragem.Controllers
         }
 
         [Authorize(Roles = "admin,usuario,organizador")]
-        public ActionResult EscolherDupla(int id, int classe = 0, bool segundaClasseDupla = false, int userId=0)
+        public ActionResult EscolherDupla(int id, int classe = 0, int userId=0)
         {
             var torneioId = id;
 
@@ -167,25 +167,31 @@ namespace Barragem.Controllers
             if (perfil.Equals("usuario")|| userId==0){
                 userId = WebSecurity.GetUserId(User.Identity.Name);
             }
-            var inscricao = db.InscricaoTorneio.Where(i => i.userId == userId && i.torneioId == torneioId && i.classeTorneio.isDupla).OrderBy(i=>i.Id).ToList();
+            var inscricao = db.InscricaoTorneio.Where(i => i.userId == userId && i.torneioId == torneioId && i.classeTorneio.isDupla).OrderBy(i=>i.classe).ToList();
             IQueryable<InscricaoTorneio> inscricoesRealizadas = null;
             List<InscricaoTorneio> selectInscricoesDisp = null;
             List<InscricaoTorneio> inscricoesDuplas = null;
             ViewBag.isDisponivel = false;
             ViewBag.torneioId = torneioId;
             ViewBag.userId = userId;
-            if (inscricao.Count() > 0)
-            {
-                if (classe == 0)
-                {
+            if (inscricao.Count() > 0){
+                if (classe == 0){
                     classe = inscricao[0].classe;
                     ViewBag.classeNome = inscricao[0].classeTorneio.nome;
-                    if (segundaClasseDupla) {
-                        classe = inscricao[1].classe;
-                        ViewBag.classeNome = inscricao[1].classeTorneio.nome;
+                    if (inscricao.Count() > 1) {
+                        ViewBag.proximaClasse = inscricao[1].classe;
+                    } else {
+                        ViewBag.proximaClasse = 0;
+                    }
+                } else {
+                    ViewBag.classeNome = inscricao.Where(i=>i.classe==classe).Single().classeTorneio.nome;
+                    var inscProximaClasse = inscricao.Where(i => i.classe > classe).OrderBy(i => i.classe).ToList();
+                    ViewBag.proximaClasse = 0;
+                    if (inscProximaClasse.Count() > 0){
+                        ViewBag.proximaClasse = inscProximaClasse[0].classe;
                     }
                 }
-                
+                               
                 inscricoesRealizadas = db.InscricaoTorneio.Where(c => c.torneioId == torneioId && c.classe == classe && c.parceiroDuplaId > 0).OrderBy(c => c.participante.nome);
                 var inscricoesDisponiveis = db.InscricaoTorneio.Where(c => c.torneioId == torneioId && c.classe == classe && (c.parceiroDuplaId == null || c.parceiroDuplaId == 0));
                 var inscricoesIndisp = from insD in inscricoesDisponiveis join insR in inscricoesRealizadas on insD.userId equals insR.parceiroDuplaId select insD;
@@ -196,10 +202,7 @@ namespace Barragem.Controllers
                 inscricoesDuplas = selectInscricoesDisp;
                 inscricoesDuplas.AddRange(inscricoesRealizadas.ToList());
             }
-            ViewBag.temMaisClassesDuplas = false;
-            if ((!segundaClasseDupla)&&(inscricao.Count()>1)){
-                ViewBag.temMaisClassesDuplas = true;
-            }
+            
             return View(inscricoesDuplas);
         }
 
@@ -1090,9 +1093,10 @@ namespace Barragem.Controllers
             ViewBag.Classes = classes;
             ViewBag.Classes2 = classes2;
             ViewBag.ClasseInscricao2 = "";
+            ViewBag.ClasseInscricao3 = "";
+            ViewBag.ClasseInscricao4 = "";
             ViewBag.ClasseInscricao = 0;
-            ViewBag.ClasseInsc2 = 0;
-
+            
             ViewBag.isGratuito = false;
             if (VerificarGratuidade(torneio, userId))
             {
@@ -1102,13 +1106,10 @@ namespace Barragem.Controllers
             {
                 ViewBag.inscricao = inscricao[0];
                 ViewBag.ClasseInscricao = inscricao[0].classe;
-                if (inscricao.Count > 1)
-                {
-                    ViewBag.ClasseInscricao2 = inscricao[1].classeTorneio.nome;
-                    ViewBag.ClasseInsc2 = inscricao[1].classe;
-                }
+                if (inscricao.Count > 1) ViewBag.ClasseInscricao2 = inscricao[1].classeTorneio.nome;
+                if (inscricao.Count > 2) ViewBag.ClasseInscricao3 = inscricao[2].classeTorneio.nome;
+                if (inscricao.Count > 3) ViewBag.ClasseInscricao4 = inscricao[3].classeTorneio.nome;
             }
-            //var jogador = db.UserProfiles.Find(userId);
             mensagem(Msg);
             return View(torneio);
         }
@@ -1150,18 +1151,17 @@ namespace Barragem.Controllers
             {
                 ViewBag.isAceitaCartao = true;
             }
-            var inscricao = db.InscricaoTorneio.Where(i => i.torneioId == torneioId && i.userId == userId).ToList();
-            if (inscricao.Count() > 1)
-            {
-                ViewBag.SegundaOpcaoClasse = inscricao[1].classeTorneio.nome;
-            }
-            return View(inscricao[0]);
+            var inscricoes = db.InscricaoTorneio.Where(i => i.torneioId == torneioId && i.userId == userId).ToList();
+            if (inscricoes.Count() > 1) ViewBag.SegundaOpcaoClasse = inscricoes[1].classeTorneio.nome;
+            if (inscricoes.Count() > 2) ViewBag.TerceiraOpcaoClasse = inscricoes[2].classeTorneio.nome;
+            if (inscricoes.Count() > 3) ViewBag.QuartaOpcaoClasse = inscricoes[3].classeTorneio.nome;
+            return View(inscricoes[0]);
         }
         [Authorize(Roles = "admin,usuario,organizador")]
         [HttpPost]
-        public ActionResult Inscricao(int torneioId, int classeInscricao = 0, string operacao = "", bool isMaisDeUmaClasse = false, int classeInscricao2 = 0, string observacao = "", bool isSocio = false, bool isClasseDupla = false, int userId=0)
+        public ActionResult Inscricao(int torneioId, int classeInscricao = 0, string operacao = "", bool isMaisDeUmaClasse = false, int classeInscricao2 = 0, int classeInscricao3 = 0, int classeInscricao4 = 0, string observacao = "", bool isSocio = false, bool isClasseDupla = false, int userId=0)
         {
-            var mensagemRetorno = InscricaoNegocio(torneioId, classeInscricao, operacao, isMaisDeUmaClasse, classeInscricao2, observacao, isSocio, isClasseDupla, userId);
+            var mensagemRetorno = InscricaoNegocio(torneioId, classeInscricao, operacao, isMaisDeUmaClasse, classeInscricao2, classeInscricao3, classeInscricao4, observacao, isSocio, isClasseDupla, userId);
             if (mensagemRetorno.nomePagina == "ConfirmacaoInscricao") {
                 return RedirectToAction(mensagemRetorno.nomePagina, new { torneioId = torneioId, msg= mensagemRetorno.mensagem, msgErro="", userId = userId });
             } else  {
@@ -1181,7 +1181,7 @@ namespace Barragem.Controllers
             }
         }
 
-        public MensagemRetorno InscricaoNegocio(int torneioId, int classeInscricao = 0, string operacao = "", bool isMaisDeUmaClasse = false, int classeInscricao2 = 0, string observacao = "", bool isSocio = false, bool isClasseDupla = false, int userId = 0)
+        public MensagemRetorno InscricaoNegocio(int torneioId, int classeInscricao = 0, string operacao = "", bool isMaisDeUmaClasse = false, int classeInscricao2 = 0, int classeInscricao3 = 0, int classeInscricao4 = 0, string observacao = "", bool isSocio = false, bool isClasseDupla = false, int userId = 0)
         {
             var mensagemRetorno = new MensagemRetorno();
             try
@@ -1200,77 +1200,64 @@ namespace Barragem.Controllers
                     var it = db.InscricaoTorneio.Where(i => i.torneioId == torneioId && i.userId == userId).ToList();
                     if (operacao == "cancelar")
                     {
-                        db.InscricaoTorneio.Remove(it[0]);
-                        if (it.Count() > 1)
-                        {
-                            db.InscricaoTorneio.Remove(it[1]);
+                        foreach (var item in it){
+                            db.InscricaoTorneio.Remove(item);
                         }
                     }
                     else
                     {
-                        if ((classeInscricao == 0) || ((isMaisDeUmaClasse) && (classeInscricao2 == 0)))
-                        {
-
-                            mensagemRetorno.nomePagina = "Detalhes";
-                            mensagemRetorno.mensagem = "Selecione uma categoria.";
-                            return mensagemRetorno;
-                        }
-                        if (classeInscricao == classeInscricao2)
+                        string msgValidacaoClasse = validarEscolhasDeClasses(classeInscricao, classeInscricao2, classeInscricao3, classeInscricao4);
+                        if (msgValidacaoClasse != "")
                         {
                             mensagemRetorno.nomePagina = "Detalhes";
-                            mensagemRetorno.mensagem = "Selecione uma categoria diferente na segunda opção de categoria.";
+                            mensagemRetorno.mensagem = msgValidacaoClasse;
                             return mensagemRetorno;
                         }
-                        it[0].classe = classeInscricao;
+                        var valorInscricao = calcularValorInscricao(classeInscricao2, classeInscricao3, classeInscricao4, isSocio, torneio, userId);
                         if (operacao == "alterarClasse")
                         {
                             it[0].classe = classeInscricao;
+                            it[0].valor = valorInscricao;
                             db.Entry(it[0]).State = EntityState.Modified;
-                            if (it.Count() > 1)
-                            {
-                                if (isMaisDeUmaClasse)
-                                {
-                                    it[1].classe = classeInscricao2;
-                                    db.Entry(it[1]).State = EntityState.Modified;
-                                }
-                                else
-                                {
-                                    //remover 2 classe
-                                    db.InscricaoTorneio.Remove(it[1]);
-                                    //atualizar valor inscr
-                                    it[0].valor = torneio.valor;
-                                    db.Entry(it[0]).State = EntityState.Modified;
-                                }
-                            }
-                            else if (isMaisDeUmaClasse)
-                            {
+                            if (it.Count() > 1){
+                                alterarClasseInscricao(it[1], classeInscricao2, valorInscricao);
+                            } else if (classeInscricao2 != 0) {
                                 if (it[0].isAtivo)
                                 {
                                     mensagemRetorno.nomePagina = "Detalhes";
-                                    mensagemRetorno.mensagem = "";
+                                    mensagemRetorno.mensagem = "Não é possível incluir nova classe, inscrição já está ativada.";
                                     return mensagemRetorno;
                                 }
-                                it[0].valor = torneio.valorMaisClasses;
-                                db.Entry(it[0]).State = EntityState.Modified;
-                                InscricaoTorneio inscricao2 = new InscricaoTorneio();
-                                inscricao2.classe = classeInscricao2;
-                                inscricao2.torneioId = torneioId;
-                                inscricao2.userId = userId;
-                                inscricao2.valor = torneio.valorMaisClasses;
-                                inscricao2.observacao = observacao;
-                                if (torneio.valor > 0)
+                                InscricaoTorneio insc2 = preencherInscricaoTorneio(torneioId, userId, classeInscricao2, valorInscricao, observacao, isSocio);
+                                db.InscricaoTorneio.Add(insc2);
+                            }
+                            if (it.Count() > 2){
+                                alterarClasseInscricao(it[2], classeInscricao3, valorInscricao);
+                            }
+                            else if (classeInscricao3 != 0){
+                                if (it[0].isAtivo)
                                 {
-                                    inscricao2.isAtivo = false;
+                                    mensagemRetorno.nomePagina = "Detalhes";
+                                    mensagemRetorno.mensagem = "Não é possível incluir nova classe, inscrição já está ativada.";
+                                    return mensagemRetorno;
                                 }
-                                else
-                                {
-                                    inscricao2.isAtivo = true;
+                                InscricaoTorneio insc3 = preencherInscricaoTorneio(torneioId, userId, classeInscricao3, valorInscricao, observacao, isSocio);
+                                db.InscricaoTorneio.Add(insc3);
+                            }
+                            if (it.Count() > 3){
+                                alterarClasseInscricao(it[3], classeInscricao4, valorInscricao);
+                            }
+                            else if (classeInscricao4 != 0){
+                                if (it[0].isAtivo) {
+                                    mensagemRetorno.nomePagina = "Detalhes";
+                                    mensagemRetorno.mensagem = "Não é possível incluir nova classe, inscrição já está ativada.";
+                                    return mensagemRetorno;
                                 }
-                                db.InscricaoTorneio.Add(inscricao2);
+                                InscricaoTorneio insc4 = preencherInscricaoTorneio(torneioId, userId, classeInscricao4, valorInscricao, observacao, isSocio);
+                                db.InscricaoTorneio.Add(insc4);
                             }
                             db.SaveChanges();
-                            if (isClasseDupla)
-                            {
+                            if (isClasseDupla){
                                 mensagemRetorno.nomePagina = "EscolherDupla";
                                 mensagemRetorno.mensagem = "";
                                 return mensagemRetorno;
@@ -1283,84 +1270,32 @@ namespace Barragem.Controllers
                 }
                 else
                 {
-                    if ((classeInscricao == 0) || ((isMaisDeUmaClasse) && (classeInscricao2 == 0)))
-                    {
+                    string msgValidacaoClasse = validarEscolhasDeClasses(classeInscricao, classeInscricao2, classeInscricao3, classeInscricao4);
+                    if(msgValidacaoClasse != "") { 
                         mensagemRetorno.nomePagina = "Detalhes";
-                        mensagemRetorno.mensagem = "Selecione uma categoria.";
+                        mensagemRetorno.mensagem = msgValidacaoClasse;
                         return mensagemRetorno;
                     }
-                    if (classeInscricao == classeInscricao2)
-                    {
-                        mensagemRetorno.nomePagina = "Detalhes";
-                        mensagemRetorno.mensagem = "Selecione uma categoria diferente na segunda opção de categoria.";
-                        return mensagemRetorno;
-                    }
-                    InscricaoTorneio inscricao = new InscricaoTorneio();
-                    inscricao.classe = classeInscricao;
-                    inscricao.torneioId = torneioId;
-                    inscricao.userId = userId;
-                    inscricao.isSocio = isSocio;
-                    if (isMaisDeUmaClasse)
-                    {
-                        if ((isSocio) && (torneio.valorMaisClassesSocio != null || torneio.valorMaisClassesSocio != 0))
-                        {
-                            inscricao.valor = torneio.valorMaisClassesSocio;
-                        }
-                        else
-                        {
-                            inscricao.valor = torneio.valorMaisClasses;
-                        }
+                    double valorInscricao = calcularValorInscricao(classeInscricao2, classeInscricao3, classeInscricao4, isSocio, torneio, userId);
 
-                    }
-                    else
-                    {
-                        if ((isSocio) && (torneio.isDesconto != null && (bool)torneio.isDesconto))
-                        {
-                            inscricao.valor = torneio.valorSocio;
-                        }
-                        else
-                        {
-                            inscricao.valor = torneio.valor;
-                        }
-
-                    }
-                    gratuidade = VerificarGratuidade(torneio, userId);
-                    if (gratuidade)
-                    {
-                        inscricao.valor = 0;
-                    }
-                    inscricao.observacao = observacao;
-                    if ((torneio.valor == 0) || (gratuidade))
-                    {
-                        inscricao.isAtivo = true;
-                    }
-                    else
-                    {
-                        inscricao.isAtivo = false;
-                    }
+                    InscricaoTorneio inscricao = preencherInscricaoTorneio(torneioId, userId, classeInscricao, valorInscricao, observacao, isSocio);
                     db.InscricaoTorneio.Add(inscricao);
-                    if (isMaisDeUmaClasse)
-                    {
-                        InscricaoTorneio inscricao2 = new InscricaoTorneio();
-                        inscricao2.classe = classeInscricao2;
-                        inscricao2.torneioId = torneioId;
-                        inscricao2.userId = userId;
-                        inscricao2.valor = inscricao.valor;
-                        inscricao2.observacao = observacao;
-                        inscricao2.isSocio = isSocio;
-                        if (torneio.valor > 0)
-                        {
-                            inscricao2.isAtivo = false;
-                        }
-                        else
-                        {
-                            inscricao2.isAtivo = true;
-                        }
-                        db.InscricaoTorneio.Add(inscricao2);
+                    if (classeInscricao2 > 0){
+                        InscricaoTorneio insc2 = preencherInscricaoTorneio(torneioId, userId, classeInscricao2, valorInscricao, observacao, isSocio);
+                        db.InscricaoTorneio.Add(insc2);
+                    }
+                    if (classeInscricao3 > 0){
+                        InscricaoTorneio insc3 = preencherInscricaoTorneio(torneioId, userId, classeInscricao3, valorInscricao, observacao, isSocio);
+                        db.InscricaoTorneio.Add(insc3);
+                    }
+                    if (classeInscricao4 > 0){
+                        InscricaoTorneio insc4 = preencherInscricaoTorneio(torneioId, userId, classeInscricao4, valorInscricao, observacao, isSocio);
+                        db.InscricaoTorneio.Add(insc4);
                     }
                 }
                 db.SaveChanges();
                 mensagemRetorno.mensagem = "Inscrição recebida.";
+                gratuidade = VerificarGratuidade(torneio, userId);
                 if ((torneio.valor == 0) || (gratuidade))
                 {
                     mensagemRetorno.mensagem = "Inscrição realizada com sucesso.";
@@ -1387,6 +1322,96 @@ namespace Barragem.Controllers
                 mensagemRetorno.mensagem = ex.Message;
                 return mensagemRetorno;
             }
+        }
+
+        private void alterarClasseInscricao(InscricaoTorneio it, int classeInscricao, double valorInscricao)
+        {
+            if (classeInscricao != 0){
+                it.classe = classeInscricao;
+                it.valor = valorInscricao;
+                db.Entry(it).State = EntityState.Modified;
+            }else{
+                db.InscricaoTorneio.Remove(it);
+            }
+        }
+
+        private String validarEscolhasDeClasses(int classeInscricao, int classeInscricao2, int classeInscricao3, int classeInscricao4)
+        {
+            if (classeInscricao == 0)
+            {
+                return "Escolha uma categoria para jogar o torneio.";
+            }
+            else if (classeInscricao == classeInscricao2)
+            {
+                return "Escolha uma categoria diferente na 2ª opção.";
+            }
+            else if (classeInscricao == classeInscricao3)
+            {
+                return "Escolha uma categoria diferente na 3ª opção.";
+            }
+            else if (classeInscricao == classeInscricao4)
+            {
+                return "Escolha uma categoria diferente na 4ª opção.";
+            }
+            else if ((classeInscricao2 != 0) && (classeInscricao2 == classeInscricao3))
+            {
+                return "Escolha uma categoria diferente na 3ª opção.";
+            }
+            else if ((classeInscricao2 != 0) && (classeInscricao2 == classeInscricao4))
+            {
+                return "Escolha uma categoria diferente na 4ª opção.";
+            }
+            else if ((classeInscricao3 != 0) && (classeInscricao3 == classeInscricao4))
+            {
+                return "Escolha uma categoria diferente na 4ª opção.";
+            }
+            return "";
+        }
+
+        private InscricaoTorneio preencherInscricaoTorneio(int torneioId, int userId, int classeInscricao, double? valorInscricao, string observacao, bool isSocio)
+        {
+            InscricaoTorneio inscricao = new InscricaoTorneio();
+            inscricao.classe = classeInscricao;
+            inscricao.torneioId = torneioId;
+            inscricao.userId = userId;
+            inscricao.valor = valorInscricao;
+            inscricao.observacao = observacao;
+            inscricao.isSocio = isSocio;
+            if (valorInscricao > 0)
+            {
+                inscricao.isAtivo = false;
+            }
+            else
+            {
+                inscricao.isAtivo = true;
+            }
+            return inscricao;
+        }
+
+        private double calcularValorInscricao(int classeInscricao2, int classeInscricao3, int classeInscricao4, bool isSocio, Torneio torneio, int userId) {
+            int qtddInscricoes = 1;
+            double valorInscricao = 0.0;
+            bool gratuidade = VerificarGratuidade(torneio, userId);
+            if (gratuidade)
+            {
+                return 0.0;
+            }
+
+            if (classeInscricao2 != 0)  qtddInscricoes++;
+            if (classeInscricao3 != 0)  qtddInscricoes++;
+            if (classeInscricao4 != 0)  qtddInscricoes++;
+
+            if (qtddInscricoes == 1) valorInscricao = (double)torneio.valor;
+            if (qtddInscricoes == 2) valorInscricao = (double)torneio.valor2;
+            if (qtddInscricoes == 3) valorInscricao = (double)torneio.valor3;
+            if (qtddInscricoes == 4) valorInscricao = (double)torneio.valor4;
+            if ((isSocio) && (torneio.valorSocio != null)) {
+                valorInscricao = valorInscricao - (double)torneio.valorSocio;
+                if (valorInscricao < 0) valorInscricao = 0;
+            }
+            return valorInscricao;
+
+            
         }
 
         [Authorize(Roles = "admin, organizador")]

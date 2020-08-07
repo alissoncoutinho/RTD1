@@ -215,7 +215,7 @@ namespace Barragem.Controllers
             var classes = db.ClasseTorneio.Where(i => i.torneioId == torneioId && i.isPrimeiraOpcao).OrderBy(c => c.Id).ToList();
             ViewBag.Classes = classes;
             var classes2Opcao = db.ClasseTorneio.Where(i => i.torneioId == torneioId && i.isSegundaOpcao).OrderBy(c => c.Id).ToList();
-            ViewBag.Classes2Opcao = classes2Opcao;
+            ViewBag.Classes2 = classes2Opcao;
             ViewBag.email = "";
             ViewBag.login = "";
             if (Funcoes.ValidateEmail(email)){

@@ -560,7 +560,7 @@ namespace Barragem.Controllers
         [Route("api/TorneioAPI/Inscricao")]
         public IHttpActionResult PostInscricao(int torneioId, int classeInscricao, string operacao, bool isMaisDeUmaClasse = false, int classeInscricao2 = 0, string observacao = "", bool isSocio = false, bool isClasseDupla = false, int userId = 0)
         {
-            var mensagemRetorno = new TorneioController().InscricaoNegocio(torneioId, classeInscricao, operacao, isMaisDeUmaClasse, classeInscricao2, observacao, isSocio, isClasseDupla, userId);
+            var mensagemRetorno = new TorneioController().InscricaoNegocio(torneioId, classeInscricao, operacao, isMaisDeUmaClasse, classeInscricao2,0,0, observacao, isSocio, isClasseDupla, userId);
             if (mensagemRetorno.nomePagina == "ConfirmacaoInscricao")
             {
                 return StatusCode(HttpStatusCode.NoContent);

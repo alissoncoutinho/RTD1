@@ -106,6 +106,7 @@
                                     {
                                         @Html.Raw(" / " + item.parceiroDupla.nome)
                                     }
+                                    @if (item.cabecaChave < 100) { @Html.Raw(" (" + @item.cabecaChave + ")") }
                                 </td>
                                 <td>
                                     @if (item.grupo == 0)
