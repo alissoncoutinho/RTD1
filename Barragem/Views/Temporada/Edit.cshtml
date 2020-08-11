@@ -67,6 +67,7 @@
                     <label class="col-sm-2 control-label" for="iniciarZerada">Esta temporada iniciou com a pontuação zerada? </label>
                     <div class="col-md-2 control-label">
                         <input type="text" name="iniciouZerada" disabled  @if (Model.iniciarZerada) { @Html.Raw("value=\"SIM\"") } else {@Html.Raw("value=\"NÃO\"") }>
+                        @Html.HiddenFor(model => model.iniciarZerada)
                     </div>
                 </div>
 
