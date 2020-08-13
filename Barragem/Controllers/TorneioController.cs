@@ -2216,7 +2216,7 @@ namespace Barragem.Controllers
             ViewBag.nomeTorneio = torneio.nome;
             ViewBag.nomeRanking = torneio.barragem.nome;
             ViewBag.idBarragem = torneio.barragemId;
-            var jogos = db.Jogo.Where(r => r.torneioId == torneioId && r.classeTorneio == fClasse && r.faseTorneio != 100 && r.faseTorneio != 101).OrderByDescending(r => r.faseTorneio).ThenBy(r => r.ordemJogo).ToList();
+            var jogos = db.Jogo.Where(r => r.torneioId == torneioId && r.classeTorneio == fClasse && r.faseTorneio != 100 && r.faseTorneio != 101 && r.rodadaFaseGrupo == 0).OrderByDescending(r => r.faseTorneio).ThenBy(r => r.ordemJogo).ToList();
             ViewBag.nomeClasse = jogos[0].classe.nome;
             return View(jogos);
         }

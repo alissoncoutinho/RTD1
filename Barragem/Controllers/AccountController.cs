@@ -1159,7 +1159,22 @@ namespace Barragem.Controllers
                     rodada = rodadas[0];
                 }
                 int totalAcumulado = getPontuacaoPorClasse(rodada, model.classeId);
-                double pontuacao = (double)totalAcumulado / 10;
+                int qtddRodadasSeraoGeradas = 0;
+                double pontuacaoAtual = 0;
+                double pontuacao = 0;
+                foreach (var item in rodadas)
+                {
+                    int existe = db.Rancking.Where(r => r.rodada_id == item.Id && r.userProfile_id == model.UserId).Count();
+                    if (existe == 0){
+                        qtddRodadasSeraoGeradas++;
+                    }else {
+                        var pontuacaoNaRodada = db.Rancking.Where(r => r.rodada_id == item.Id && r.userProfile_id == model.UserId).SingleOrDefault().pontuacao;
+                        pontuacaoAtual = pontuacaoAtual + pontuacaoNaRodada;
+                    }
+                }
+                if (qtddRodadasSeraoGeradas > 0){
+                    pontuacao = Math.Round((totalAcumulado - pontuacaoAtual) / qtddRodadasSeraoGeradas, 1);
+                }
                 foreach (var item in rodadas)
                 {
                     int existe = db.Rancking.Where(r => r.rodada_id == item.Id && r.userProfile_id == model.UserId).Count();
