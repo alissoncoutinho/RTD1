@@ -84,17 +84,43 @@ namespace Barragem.Controllers
         [ResponseType(typeof(void))]
         [HttpPut]
         [Route("api/TorneioAPI/LancarResultado/{id}")]
-        public IHttpActionResult PutLancarResultado(int id, int games1setDesafiante = 0, int games2setDesafiante = 0, int games3setDesafiante = 0, int games1setDesafiado = 0, int games2setDesafiado = 0, int games3setDesafiado = 0)
+        public IHttpActionResult PutLancarResultado(int id, string games1setDesafiante = "0", string games2setDesafiante = "0", string games3setDesafiante = "0", string games1setDesafiado = "0", string games2setDesafiado = "0", string games3setDesafiado = "0")
         {
             var jogo = db.Jogo.Find(id);
+            double num;
+            int set1Desafiante=0, set2Desafiante=0, set3Desafiante=0, set1Desafiado=0, set2Desafiado=0, set3Desafiado = 0;
+            if (double.TryParse(games1setDesafiante, out num))
+            {
+                set1Desafiante = Convert.ToInt32(games1setDesafiante);
+            }
+            if (double.TryParse(games2setDesafiante, out num))
+            {
+                set2Desafiante = Convert.ToInt32(games2setDesafiante);
+            }
+            if (double.TryParse(games3setDesafiante, out num))
+            {
+                set3Desafiante = Convert.ToInt32(games3setDesafiante);
+            }
+            if (double.TryParse(games1setDesafiado, out num))
+            {
+                set1Desafiado = Convert.ToInt32(games1setDesafiado);
+            }
+            if (double.TryParse(games2setDesafiado, out num))
+            {
+                set2Desafiado = Convert.ToInt32(games2setDesafiado);
+            }
+            if (double.TryParse(games3setDesafiado, out num))
+            {
+                set3Desafiado = Convert.ToInt32(games3setDesafiado);
+            }
 
-            jogo.qtddGames1setDesafiante = games1setDesafiante;
-            jogo.qtddGames2setDesafiante = games2setDesafiante;
-            jogo.qtddGames3setDesafiante = games3setDesafiante;
+            jogo.qtddGames1setDesafiante = set1Desafiante;
+            jogo.qtddGames2setDesafiante = set2Desafiante;
+            jogo.qtddGames3setDesafiante = set3Desafiante;
 
-            jogo.qtddGames1setDesafiado = games1setDesafiado;
-            jogo.qtddGames2setDesafiado = games2setDesafiado;
-            jogo.qtddGames3setDesafiado = games3setDesafiado;
+            jogo.qtddGames1setDesafiado = set1Desafiado;
+            jogo.qtddGames2setDesafiado = set2Desafiado;
+            jogo.qtddGames3setDesafiado = set3Desafiado;
             jogo.usuarioInformResultado = ""; //User.Identity.Name; TODO: PEGAR O NOME DO USUÁRIO
             jogo.dataCadastroResultado = DateTime.Now;
             jogo.situacao_Id = 4;
