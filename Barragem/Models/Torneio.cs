@@ -139,6 +139,7 @@ namespace Barragem.Models
         public string contato { get; set; }
         public double? valor { get; set; }
         public double? valorSocio { get; set; }
+        public DateTime dataFimInscricoes { get; set; }
     }
     public class TabelaApp
     {

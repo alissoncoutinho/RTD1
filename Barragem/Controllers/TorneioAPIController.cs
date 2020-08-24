@@ -31,7 +31,8 @@ namespace Barragem.Controllers
                     logoId = inscricao.torneio.barragemId,
                     nome = inscricao.torneio.nome,
                     dataInicio = inscricao.torneio.dataInicio,
-                    dataFim = inscricao.torneio.dataFim,
+                    dataFim = inscricao.torneio.dataFimInscricoes,
+                    dataFimInscricoes = inscricao.torneio.dataFimInscricoes,
                     cidade = inscricao.torneio.cidade,
                     premiacao = inscricao.torneio.premiacao,
                     contato = inscricao.torneio.barragem.email
@@ -225,7 +226,8 @@ namespace Barragem.Controllers
                         c.qtddRodadaFaseGrupo = 3;
                     }
                 }
-                if (c.faseMataMata){
+                if ((c.faseMataMata)||(!c.faseGrupo)){
+                    c.faseMataMata = true;
                     var jgs = db.Jogo.Where(r => r.classeTorneio == c.Id && r.faseTorneio < 100 && r.faseTorneio != null).ToList();
                     if (jgs.Count() > 0){
                         c.qtddRodadaMataMata = (int)jgs.Max(r => r.faseTorneio);
@@ -550,7 +552,7 @@ namespace Barragem.Controllers
             {
                 Id = rk.Id,
                 nome = rk.nome,
-                dataFim = rk.dataFimInscricoes
+                dataFim = rk.dataFimInscricoes,
             }).ToList();
 
             return torneios;
@@ -610,7 +612,7 @@ namespace Barragem.Controllers
                            select new TorneioApp
                            {
                                Id = t.Id, logoId = t.barragemId, nome = t.nome, dataInicio = t.dataInicio, valor = t.valor, valorSocio = t.valorSocio,
-                               dataFim = t.dataFim, cidade = t.cidade, premiacao = t.premiacao, contato = t.barragem.email
+                               dataFim = t.dataFimInscricoes, dataFimInscricoes = t.dataFimInscricoes, cidade = t.cidade, premiacao = t.premiacao, contato = t.barragem.email
                            }).Union(
                             from t in db.Torneio
                             where t.dataFimInscricoes >= dataHoje && t.isAtivo && t.divulgaCidade 
@@ -618,14 +620,14 @@ namespace Barragem.Controllers
                             select new TorneioApp
                             {
                                 Id = t.Id, logoId = t.barragemId, nome = t.nome, dataInicio = t.dataInicio, valor = t.valor, valorSocio = t.valorSocio,
-                                dataFim = t.dataFim, cidade = t.cidade, premiacao = t.premiacao, contato = t.barragem.email
+                                dataFim = t.dataFimInscricoes, dataFimInscricoes = t.dataFimInscricoes, cidade = t.cidade, premiacao = t.premiacao, contato = t.barragem.email
                             }).Union(
                             from t in db.Torneio
                             where t.dataFimInscricoes >= dataHoje && t.isAtivo && t.barragemId == rankingId
                             select new TorneioApp
                             {
                                 Id = t.Id, logoId = t.barragemId, nome = t.nome, dataInicio = t.dataInicio, valor = t.valor, valorSocio = t.valorSocio,
-                                dataFim = t.dataFim, cidade = t.cidade, premiacao = t.premiacao, contato = t.barragem.email
+                                dataFim = t.dataFimInscricoes, dataFimInscricoes = t.dataFimInscricoes, cidade = t.cidade, premiacao = t.premiacao, contato = t.barragem.email
                             }).Distinct<TorneioApp>().ToList();
 
             return torneio;
