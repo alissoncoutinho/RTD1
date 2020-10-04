@@ -104,7 +104,7 @@ namespace Barragem.Controllers
         [Authorize(Roles = "admin, organizador")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult CriaESorteia(Rodada rodada, bool notificarApp=true)
+        public ActionResult CriaESorteia(Rodada rodada, String notificarApp="off")
         {
             string mensagem = "";
             if (ModelState.IsValid)
@@ -113,7 +113,7 @@ namespace Barragem.Controllers
                 try {
                     rodadaNegocio.Create(rodada);
                     mensagem = "ok";
-                    rodadaNegocio.SortearJogos(rodada.Id, rodada.barragemId, notificarApp);
+                    rodadaNegocio.SortearJogos(rodada.Id, rodada.barragemId, notificarApp=="on" ? true : false);
                 }catch (Exception e){
                     if (e.InnerException != null) { mensagem = e.Message + ": " + e.InnerException.Message; } else { mensagem = e.Message; }
                 }

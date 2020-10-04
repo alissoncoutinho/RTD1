@@ -2220,8 +2220,25 @@ namespace Barragem.Controllers
             ViewBag.nomeClasse = jogos[0].classe.nome;
             return View(jogos);
         }
-
-        
+        [Authorize(Roles = "admin")]
+        public ActionResult ajustarPontuacaoLiga(int torneioId)
+        {
+            var jogos = db.Jogo.Where(j => j.torneioId == torneioId && j.desafiante_id != 10 && j.faseTorneio != 1).ToList();
+            Torneio torneio = db.Torneio.Where(t => t.Id == torneioId).Single();
+            foreach (var jogo in jogos)
+            {
+                var inscricao = db.InscricaoTorneio.Where(i => i.userId == jogo.idDoPerdedor
+                && i.torneioId == jogo.torneioId && i.classe == jogo.classeTorneio).ToList();
+                if (inscricao.Count() > 0)
+                {
+                    int pontuacao = CalculadoraDePontos.AddTipoTorneio(torneio.TipoTorneio).CalculaPontos(inscricao[0]);
+                    inscricao[0].Pontuacao = pontuacao;
+                    db.SaveChanges();
+                }
+            }
+            
+            return View();
+        }       
 
     }
 }

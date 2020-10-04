@@ -106,11 +106,7 @@
 
             $(".criarESortear").click(function (event) {
                 event.preventDefault();
-                if (document.forms[1].notificarApp.checked){
-                    document.forms[1].action = "/Rodada/CriaESorteia";
-                } else {
-                    document.forms[1].action = "/Rodada/CriaESorteia?notificarApp=" + document.forms[1].notificarApp.checked;
-                }
+                document.forms[1].action = "/Rodada/CriaESorteia";
                 document.forms[1].submit();
             });
         });

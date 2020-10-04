@@ -372,6 +372,10 @@ namespace Barragem.Models
 
         public string linkWhatsapp { get; set; }
 
+        public string nomeWhatsapp { get; set; }
+
+        public string numeroWhatsapp { get; set; }
+
 
     }
 

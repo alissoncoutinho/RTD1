@@ -104,26 +104,26 @@ namespace Barragem.Controllers
             base.Dispose(disposing);
         }
 
-        [Authorize(Roles = "admin,usuario,organizador")]
+        [AllowAnonymous]
         public ActionResult RankingDasLigas(int idLiga = 0, int idSnapshot = 0, int idLigaAtual = 0, int idSnapshotAtual = 0)
         {
-            UserProfile usuario = db.UserProfiles.Find(WebSecurity.GetUserId(User.Identity.Name));
-            string perfil = Roles.GetRolesForUser(User.Identity.Name)[0];
+            // UserProfile usuario = db.UserProfiles.Find(WebSecurity.GetUserId(User.Identity.Name));
+            // string perfil = Roles.GetRolesForUser(User.Identity.Name)[0];
             List<Liga> ligas;
-            if (perfil.Equals("admin") || perfil.Equals("organizador"))
-            {
-                ligas = db.Liga.OrderBy(l => l.Nome).ToList();
-            }
-            else
-            {
-                ligas = (from liga in db.Liga
-                join tl in db.TorneioLiga on liga.Id equals tl.LigaId
-                join t in db.Torneio on tl.TorneioId equals t.Id
-                join it in db.InscricaoTorneio on t.Id equals it.torneioId
-                join up in db.UserProfiles on it.userId equals up.UserId
-                         where it.userId == usuario.UserId
-                select liga).ToList();
-            }
+            //if (perfil.Equals("admin") || perfil.Equals("organizador"))
+            //{
+                ligas = db.Liga.Where(l=>l.isAtivo).OrderBy(l => l.Nome).ToList();
+            //}
+            //else
+            //{
+            //    ligas = (from liga in db.Liga
+            //    join tl in db.TorneioLiga on liga.Id equals tl.LigaId
+            //    join t in db.Torneio on tl.TorneioId equals t.Id
+            //    join it in db.InscricaoTorneio on t.Id equals it.torneioId
+            //    join up in db.UserProfiles on it.userId equals up.UserId
+            //             where it.userId == usuario.UserId
+            //    select liga).ToList();
+            //}
             if (idLiga == 0 && ligas.Count()>0)
             {
                 idLiga = ligas.First().Id;

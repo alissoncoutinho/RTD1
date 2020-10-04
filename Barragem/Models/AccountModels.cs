@@ -72,6 +72,25 @@ namespace Barragem.Models
             }
         }
 
+        public virtual string numeroWhatsapp
+        {
+            get
+            {
+                var i = telefoneCelular.IndexOf("/");
+                var dddcel = "";
+                if (i < 1)
+                {
+                    dddcel = telefoneCelular.Trim().Replace("(", "").Replace(")", "").Replace(" ", "").Replace("-", "");
+                }
+                else
+                {
+                    dddcel = telefoneCelular.Substring(0, i).Trim().Replace("(", "").Replace(")", "").Replace(" ", "").Replace("-", "");
+                }
+
+                return dddcel;
+            }
+        }
+
         public virtual string linkwhatsappSemMsg
         {
             get

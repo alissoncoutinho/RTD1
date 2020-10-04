@@ -200,6 +200,11 @@ namespace Barragem.Controllers
         [Route("api/TorneioAPI/Tabela/{torneioId}")]
         public TabelaApp GetTabela(int torneioId)
         {
+            var torneio = db.Torneio.Find(torneioId);
+            if (!torneio.liberarTabela)
+            {
+                throw new Exception(message: "Tabela ainda não liberada.");
+            }
             var userId = getUsuarioLogado();
             
             var tabelaApp = new TabelaApp();
@@ -418,6 +423,7 @@ namespace Barragem.Controllers
             meuJogo.localJogo = local + quadra;
             meuJogo.idDesafiante = j.desafiante_id;
             meuJogo.idDesafianteDupla = j.desafiante2_id;
+            meuJogo.situacao = j.situacao.descricao;
             if (meuJogo.idDesafiante == 10)
             {
                 meuJogo.nomeDesafiante = "bye";

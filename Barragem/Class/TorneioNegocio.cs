@@ -622,6 +622,13 @@ namespace Barragem.Class
                         inscritosSemGrupo[j].pontuacaoFaseGrupo = 0;
                         db.Entry(inscritosSemGrupo[j]).State = EntityState.Modified;
                         db.SaveChanges();
+                        if (classe.isDupla) {
+                            var userIdDupla = inscritosSemGrupo[j].parceiroDuplaId;
+                            var parceiroDupla = db.InscricaoTorneio.Where(i=> i.userId== userIdDupla && i.isAtivo && i.classe == classe.Id).FirstOrDefault();
+                            parceiroDupla.grupo = idGrupo;
+                            db.Entry(parceiroDupla).State = EntityState.Modified;
+                            db.SaveChanges();
+                        }
                     }
                 }
             }
@@ -633,6 +640,13 @@ namespace Barragem.Class
                 inscritosRestantes[i].grupo = grupo;
                 inscritosRestantes[i].pontuacaoFaseGrupo = 0;
                 db.Entry(inscritosRestantes[i]).State = EntityState.Modified;
+                if (classe.isDupla){
+                    var userIdDupla = inscritosRestantes[i].parceiroDuplaId;
+                    var parceiroDupla = db.InscricaoTorneio.Where(ins => ins.userId == userIdDupla && ins.isAtivo && ins.classe == classe.Id).FirstOrDefault();
+                    parceiroDupla.grupo = grupo;
+                    db.Entry(parceiroDupla).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
                 db.SaveChanges();
                 if (grupo < qtddDeGrupos)
                 {

@@ -14,5 +14,7 @@ namespace Barragem.Models
         [Display(Name = "Nome da liga")]
         [Required(ErrorMessage = "Nome obrigatório")]
         public string Nome { get; set; }
+
+        public bool isAtivo { get; set; } = true;
     }
 }

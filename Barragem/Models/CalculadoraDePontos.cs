@@ -88,13 +88,21 @@ namespace Barragem.Models
                         novoResultado.CategoriaId = ultimoResultado.CategoriaId;
                         novoResultado.UserId = ultimoResultado.UserId;
                         novoResultado.Pontuacao = ultimoResultado.Pontuacao;
+                        novoResultado.Posicao = ultimoResultado.Posicao;
                         db.SnapshotRanking.Add(novoResultado);
                         db.SaveChanges();
                     }
                     //atualiza o ranking com os resultados do torneio
-                    ClasseTorneio classeTorneio = db.ClasseTorneio
-                        .Where(ct => ct.torneioId == jogo.torneioId && ct.categoriaId == categoriaDaLiga.Id)
-                        .ToList().First();
+                    ClasseTorneio classeTorneio = null;
+                    try
+                    {
+                        classeTorneio = db.ClasseTorneio
+                            .Where(ct => ct.torneioId == jogo.torneioId && ct.categoriaId == categoriaDaLiga.Id)
+                            .ToList().First();
+                    }catch(Exception e)
+                    {
+                        continue;
+                    }
                     List<InscricaoTorneio> resultadosDoTorneio = db.InscricaoTorneio
                         .Where(it => it.torneioId == jogo.torneioId && it.classe == classeTorneio.Id).ToList();
                     foreach(InscricaoTorneio resultado in resultadosDoTorneio)

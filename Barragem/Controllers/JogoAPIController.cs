@@ -223,11 +223,18 @@ namespace Barragem.Controllers
             meuJogo.qtddGames3setDesafiado = jogo.qtddGames3setDesafiado;
             meuJogo.qtddGames3setDesafiante = jogo.qtddGames3setDesafiante;
             meuJogo.situacao = jogo.situacao.descricao;
+            if (jogo.desafiante_id==10) {
+                meuJogo.situacao = "bye";
+            }
             meuJogo.idDoVencedor = jogo.idDoVencedor;
             if (jogo.desafiado_id == userId)
             {
+                meuJogo.numeroWhatsapp = jogo.desafiante.numeroWhatsapp;
+                meuJogo.nomeWhatsapp = jogo.desafiante.nome;
                 meuJogo.linkWhatsapp = jogo.desafiante.linkwhatsapp;
             } else {
+                meuJogo.numeroWhatsapp = jogo.desafiado.numeroWhatsapp;
+                meuJogo.nomeWhatsapp = jogo.desafiado.nome;
                 meuJogo.linkWhatsapp = jogo.desafiado.linkwhatsapp;
             }
             return meuJogo;
@@ -289,7 +296,7 @@ namespace Barragem.Controllers
         public IList<JogoRodada> ListarJogosPendentes(int userId)
         {
             var dataLimite = DateTime.Now.AddMonths(-10);
-            var jogosPendentes = db.Jogo.Where(u => (u.desafiado_id == userId || u.desafiante_id == userId) && !u.rodada.isAberta
+            var jogosPendentes = db.Jogo.Where(u => (u.desafiado_id == userId || u.desafiante_id == userId) 
                 && u.situacao_Id != 4 && u.situacao_Id != 5 && u.rodada.dataInicio > dataLimite && u.torneioId == null).OrderByDescending(u => u.Id).Take(3).
                 Select(jogo => new JogoRodada {
                     Id = jogo.Id,
