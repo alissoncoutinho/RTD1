@@ -223,6 +223,8 @@ namespace Barragem.Models
         public int userId { get; set; }
 
         public string situacao { get; set; }
+
+        public int logoId { get; set; }
     }
 
     public class RegisterModel

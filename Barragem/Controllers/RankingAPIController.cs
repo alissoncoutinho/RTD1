@@ -236,6 +236,16 @@ namespace Barragem.Controllers
                          nomeRanking = liga.Nome
                      }).Distinct<LoginRankingModel>().ToList();
 
+            foreach (var item in ligas)
+            {
+                var barragens = db.BarragemLiga.Where(b => b.LigaId == item.idRanking).ToList();
+                if (barragens.Count() == 1) {
+                    item.logoId = barragens[0].BarragemId;
+                } else {
+                    item.logoId = 10;
+                }
+            }
+
             return ligas;
         }
 

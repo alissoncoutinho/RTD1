@@ -6,6 +6,7 @@
 
 
     <div id="placar-modal" class="modal fade" role="dialog">
+        <div id="loader"></div>
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header" style="padding:5px">
@@ -80,8 +81,8 @@
                             </div>
                         </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-                        <input type="submit" value="Salvar" class="btn btn-success"/>
+                        <button type="button" class="btn btn-default" data-dismiss="modal"><span class="spinner-border spinner-border-sm"></span>Cancelar</button>
+                        <input type="submit" value="Salvar" class="btn btn-success" id="salvarPlacar" name="salvarPlacar"/>
                     </div>
                 </form>
             </div>
@@ -341,13 +342,23 @@
         .exibir-escolhaDeClasses.show {
             max-height: 700px;
         }
-
+        #loader {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            width: 100%;
+            background: rgba(0,0,0,0.75) url(../images/loading2.gif) no-repeat center center;
+            z-index: 10000;
+        }
     </style>
             @section Scripts {
                 @Scripts.Render("~/bundles/jqueryval")
                 @Scripts.Render("~/bundles/jqueryform")
                 <script type="text/javascript">
-
+                    var spinner = $('#loader');
                     $(document).on("click", ".btnLancarPlacar", function () {
                         var indice = $(this).attr('data-indice');
                         var id = $(this).attr('data-idJogo');
@@ -503,12 +514,15 @@
                     }
 
                     $("#placarForm").submit(function (event) {
+                        // document.getElementById("salvarPlacar").disabled = true;
                         event.preventDefault();
+                        spinner.show();
                         var url = "LancarResultado"
                         if (document.getElementById("situacao_id").value == '5' || document.getElementById("situacao_id").value == '6') {
                             url = "LancarWO";
                         }
                         submitForm(url);
+                        // document.getElementById("salvarPlacar").disabled = false;
                         return false;
                     });
 
@@ -545,6 +559,7 @@
                                         $("#badge" + id).attr('class', 'badge bg-red');
                                         $("#badge" + id).html('P');
                                     }
+                                    spinner.hide();
                                     $("#placar-modal").modal('hide');
                                     toastr.success("Atualização realizada com sucesso.", "Aviso");
                                 }
