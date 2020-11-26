@@ -6,6 +6,9 @@
  * Twitter: @3rdwave_themes
 */
 /* ======= Base ======= */
+.nav-tabs {
+    flex-wrap: wrap;
+}
 body {
   font-family: 'Roboto', arial, sans-serif;
   color: #444444;

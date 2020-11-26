@@ -3,6 +3,7 @@
     @using (Html.BeginForm("RankingDasLigas", "Ranking", FormMethod.Post, new { @class = "form-horizontal" }))
     {
         <div class="form-group">
+            <input type="hidden" name="showOneLiga" value="@Html.Raw(ViewBag.showOneLiga)" />
             <label class="col-sm-2 control-label">Liga:</label>
             <div class="col-sm-6">
                 <select id="idLiga" name="idLiga" class="form-control" onchange="this.form.submit()">
@@ -82,3 +83,8 @@
             }
         }
     </div>
+    <style>
+        .nav-tabs {
+            flex-wrap: wrap;
+        }
+    </style>

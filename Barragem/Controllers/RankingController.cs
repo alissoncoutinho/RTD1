@@ -105,15 +105,17 @@ namespace Barragem.Controllers
         }
 
         [AllowAnonymous]
-        public ActionResult RankingDasLigas(int idLiga = 0, int idSnapshot = 0, int idLigaAtual = 0, int idSnapshotAtual = 0)
+        public ActionResult RankingDasLigas(int idLiga = 0, int idSnapshot = 0, int idLigaAtual = 0, int idSnapshotAtual = 0, bool showOneLiga = false)
         {
             // UserProfile usuario = db.UserProfiles.Find(WebSecurity.GetUserId(User.Identity.Name));
             // string perfil = Roles.GetRolesForUser(User.Identity.Name)[0];
             List<Liga> ligas;
-            //if (perfil.Equals("admin") || perfil.Equals("organizador"))
-            //{
-                ligas = db.Liga.Where(l=>l.isAtivo).OrderBy(l => l.Nome).ToList();
-            //}
+            if (showOneLiga)
+            {
+                ligas = db.Liga.Where(l => l.Id == idLiga).OrderBy(l => l.Nome).ToList();
+            } else {
+                ligas = db.Liga.Where(l => l.isAtivo).OrderBy(l => l.Nome).ToList();
+            }
             //else
             //{
             //    ligas = (from liga in db.Liga
@@ -150,6 +152,7 @@ namespace Barragem.Controllers
             ViewBag.Categorias = categorias;
             ViewBag.idLiga = idLiga;
             ViewBag.idSnapshot = idSnapshot;
+            ViewBag.showOneLiga = showOneLiga;
             return View(ranking);
         }
     }

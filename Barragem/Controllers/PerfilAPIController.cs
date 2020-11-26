@@ -363,9 +363,9 @@ namespace Barragem.Controllers
             {
                 c.colocacao = c.getDescricaoColocacao(c.colocacaoId);
             }
-         
 
-            return listCT;
+            return listCT.OrderByDescending(c => c.dataTorneio).ToList();
+                        
         }
 
         [ResponseType(typeof(void))]

@@ -132,6 +132,7 @@
                                 <option @if (Model.descontoPara!=null && Model.descontoPara.Equals("barragista")){ @Html.Raw("selected")} value="barragista">barragista</option>
                                 <option @if (Model.descontoPara!=null && Model.descontoPara.Equals("federado")){ @Html.Raw("selected")} value="federado">federado</option>
                                 <option @if (Model.descontoPara != null && Model.descontoPara.Equals("barragista ou federado")) { @Html.Raw("selected") } value="barragista ou federado">barragista ou federado</option>
+                                <option @if (Model.descontoPara != null && Model.descontoPara.Equals("sócio ou federado")) { @Html.Raw("selected")  } value="sócio ou federado">sócio ou federado</option>
                                 </select>
                             </label>
                         </div>

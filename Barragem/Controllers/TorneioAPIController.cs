@@ -122,7 +122,7 @@ namespace Barragem.Controllers
             jogo.qtddGames1setDesafiado = set1Desafiado;
             jogo.qtddGames2setDesafiado = set2Desafiado;
             jogo.qtddGames3setDesafiado = set3Desafiado;
-            jogo.usuarioInformResultado = ""; //User.Identity.Name; TODO: PEGAR O NOME DO USUÁRIO
+            jogo.usuarioInformResultado = "app"; //User.Identity.Name; TODO: PEGAR O NOME DO USUÁRIO
             jogo.dataCadastroResultado = DateTime.Now;
             jogo.situacao_Id = 4;
 
@@ -168,7 +168,7 @@ namespace Barragem.Controllers
             jogoAtual.qtddGames3setDesafiante = 0;
             //alterar status do jogo WO
             jogoAtual.situacao_Id = 5;
-            jogoAtual.usuarioInformResultado = ""; // TODO User.Identity.Name;
+            jogoAtual.usuarioInformResultado = "app"; // TODO User.Identity.Name;
             jogoAtual.dataCadastroResultado = DateTime.Now;
             db.Entry(jogoAtual).State = EntityState.Modified;
             try

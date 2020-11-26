@@ -20,6 +20,7 @@ namespace Barragem.Controllers
     {
         private BarragemDbContext db = new BarragemDbContext();
         private RodadaNegocio rn = new RodadaNegocio();
+        private TorneioNegocio tn = new TorneioNegocio();
 
         // GET: api/JogoAPI
         [Route("api/JogoAPI/ListarJogos/{classeId}")]
@@ -62,7 +63,7 @@ namespace Barragem.Controllers
         public Cabecalho GetCabecalho(int userId)
         {
             var claimsIdentity = User.Identity as ClaimsIdentity;
-            var teste = claimsIdentity.FindFirst("sub").Value;
+            //var teste = claimsIdentity.FindFirst("sub").Value;
             var user = db.UserProfiles.Find(userId);
             int barragemId = user.barragemId;
             var qtddRodada = 0;
@@ -128,7 +129,7 @@ namespace Barragem.Controllers
             {
                 var jogos = db.Jogo.Where(u => u.classeTorneio == i && (u.situacao_Id==1 || u.situacao_Id == 2) && 
                     (u.desafiado_id == userId || u.desafiante_id == userId || u.desafiado2_id == userId || u.desafiante2_id == userId) &&
-                    !(u.desafiado_id == 0 || u.desafiante_id == 0 || u.desafiado_id == 10 || u.desafiante_id == 10)).OrderBy(u => u.Id).ToList();
+                    !(u.desafiado_id == 10 || u.desafiante_id == 10)).OrderBy(u => u.Id).ToList();
                 foreach (var jogo in jogos){
                     try { 
                         MeuJogo meuJogo = montarMeuJogo(jogo, userId);
@@ -172,8 +173,14 @@ namespace Barragem.Controllers
             }
             meuJogo.localJogo = local + quadra;
             meuJogo.idDesafiante = jogo.desafiante_id;
-            meuJogo.nomeDesafiante = jogo.desafiante.nome;
-            meuJogo.fotoDesafiante = jogo.desafiante.fotoURL;
+            if (jogo.desafiante_id == 0)
+            {
+                meuJogo.nomeDesafiante = "Aguardando adversário";
+                meuJogo.fotoDesafiante = null;
+            } else {
+                meuJogo.nomeDesafiante = jogo.desafiante.nome;
+                meuJogo.fotoDesafiante = jogo.desafiante.fotoURL;
+            }
             meuJogo.posicaoDesafiante = 0;
             meuJogo.idDesafianteDupla = jogo.desafiante2_id;
             if (jogo.desafiante2 != null){
@@ -195,8 +202,16 @@ namespace Barragem.Controllers
             } catch (Exception e) { }
             
             meuJogo.idDesafiado = jogo.desafiado_id;
-            meuJogo.nomeDesafiado = jogo.desafiado.nome;
-            meuJogo.fotoDesafiado = jogo.desafiado.fotoURL;
+            if (jogo.desafiado_id == 0)
+            {
+                meuJogo.nomeDesafiado = "Aguardando adversário";
+                meuJogo.fotoDesafiado = null;
+            }
+            else
+            {
+                meuJogo.nomeDesafiado = jogo.desafiado.nome;
+                meuJogo.fotoDesafiado = jogo.desafiado.fotoURL;
+            }
             meuJogo.posicaoDesafiado = 0;
             meuJogo.idDesafiadoDupla = jogo.desafiado2_id;
             if (jogo.desafiado2 != null)
@@ -233,13 +248,19 @@ namespace Barragem.Controllers
             meuJogo.idDoVencedor = jogo.idDoVencedor;
             if (jogo.desafiado_id == userId)
             {
-                meuJogo.numeroWhatsapp = jogo.desafiante.numeroWhatsapp;
-                meuJogo.nomeWhatsapp = jogo.desafiante.nome;
-                meuJogo.linkWhatsapp = jogo.desafiante.linkwhatsapp;
+                if (jogo.desafiante_id != 0)
+                {
+                    meuJogo.numeroWhatsapp = jogo.desafiante.numeroWhatsapp;
+                    meuJogo.nomeWhatsapp = jogo.desafiante.nome;
+                    meuJogo.linkWhatsapp = jogo.desafiante.linkwhatsapp;
+                }
             } else {
-                meuJogo.numeroWhatsapp = jogo.desafiado.numeroWhatsapp;
-                meuJogo.nomeWhatsapp = jogo.desafiado.nome;
-                meuJogo.linkWhatsapp = jogo.desafiado.linkwhatsapp;
+                if (jogo.desafiado_id != 0)
+                {
+                    meuJogo.numeroWhatsapp = jogo.desafiado.numeroWhatsapp;
+                    meuJogo.nomeWhatsapp = jogo.desafiado.nome;
+                    meuJogo.linkWhatsapp = jogo.desafiado.linkwhatsapp;
+                }
             }
             return meuJogo;
         }
@@ -365,6 +386,7 @@ namespace Barragem.Controllers
             try{
 
                 db.SaveChanges();
+                tn.MontarProximoJogoTorneio(jogo);
                 rn.ProcessarJogoAtrasado(jogo);
             }catch (Exception){
                 return InternalServerError(new Exception("Erro ao lançar resultado."));
@@ -399,12 +421,15 @@ namespace Barragem.Controllers
             jogoAtual.qtddGames3setDesafiante = 0;
             //alterar status do jogo WO
             jogoAtual.situacao_Id = 5;
-            jogoAtual.usuarioInformResultado = ""; // TODO User.Identity.Name;
+            var claimsIdentity = User.Identity as ClaimsIdentity;
+            jogoAtual.usuarioInformResultado = claimsIdentity.FindFirst("sub").Value;  // TODO User.Identity.Name;
             jogoAtual.dataCadastroResultado = DateTime.Now;
             db.Entry(jogoAtual).State = EntityState.Modified;
             try{
                 db.SaveChanges();
+                tn.MontarProximoJogoTorneio(jogoAtual);
                 rn.ProcessarJogoAtrasado(jogoAtual);
+
             }catch (DbUpdateConcurrencyException){
                 if (!JogoExists(id)){
                     return NotFound();
