@@ -302,28 +302,59 @@
                                     </select>
                                 </div>
                             </div>
-                            
-                            if (!String.IsNullOrEmpty(ViewBag.ClasseInscricao2))
+
+                            //if (!String.IsNullOrEmpty(ViewBag.ClasseInscricao2)) {
+                            if (Model.qtddCategoriasPorJogador > 1)
                             {
-                                <div class="row">
+                                <div id="checkSegundaOpcaoClasse" class="form-group">
+                                    <div class="col-sm-8">
+                                        <div class="checkbox">
+                                            <label>
+                                                <input type="checkbox" value="true" name="isSegundaOpcaoClasse" id="isSegundaOpcaoClasse" onclick="segundaOpcaoDeClasse()" 
+                                                       @if (!String.IsNullOrEmpty(ViewBag.ClasseInscricao2)){ @Html.Raw("checked") } />
+                                                            @Html.Raw("Quero escolher mais uma categoria")
+                                                        </label>
+            
+                                                    </div>
+            
+                                                </div>
+            
+                                            </div>
+            
+                                  <div id="segundaOpcaoClasse" class="row">
                                     @Html.Label("2ª Classe", new { @class = "col-sm-4" })
                                     <div class="col-sm-8 info-box-text">
-                                        <select name="classeInscricao2" class="form-control">
+                                        <select name="classeInscricao2" class="form-control segundaOpcaoClasse escolherTerceiraOpcaoClasse" data-classe3="@(Model.qtddCategoriasPorJogador>2)">
                                             <option value="0">Selecione uma classe...</option>
                                             @foreach (var item in ViewBag.Classes2)
-                                            {
+                                                           {
                                                 <option value="@item.Id" data-isDupla="@item.isDupla" @if ((!String.IsNullOrEmpty(ViewBag.ClasseInscricao2)) && (ViewBag.ClasseInscricao2 == item.nome)) { @Html.Raw("selected")   }>@item.nome</option>
                                             }
                                         </select>
                                     </div>
                                 </div>
                             }
-                            if (!String.IsNullOrEmpty(ViewBag.ClasseInscricao3))
+                            //if (!String.IsNullOrEmpty(ViewBag.ClasseInscricao3))
+                            if (Model.qtddCategoriasPorJogador > 2)
                             {
-                                <div class="row">
+                                <div id="checkTerceiraOpcaoClasse" class="form-group">
+                                    <div class="col-sm-8">
+                                        <div class="checkbox">
+                                            <label>
+                                                <input type="checkbox" value="true" name="isTerceiraOpcaoClasse" id="isTerceiraOpcaoClasse" onclick="terceiraOpcaoDeClasse()"
+                                                       @if (!String.IsNullOrEmpty(ViewBag.ClasseInscricao3)) { @Html.Raw("checked")  } />
+                                                @Html.Raw("Quero escolher mais uma categoria")
+                                            </label>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+                                <div id="terceiraOpcaoClasse" class="row">
                                     @Html.Label("3ª Classe", new { @class = "col-sm-4" })
                                     <div class="col-sm-8 info-box-text">
-                                        <select name="classeInscricao3" class="form-control">
+                                        <select name="classeInscricao3" class="form-control terceiraOpcaoClasse escolherQuartaOpcaoClasse" data-classe3="@(Model.qtddCategoriasPorJogador>3)">
                                             <option value="0">Selecione uma classe...</option>
                                             @foreach (var item in ViewBag.Classes2)
                                             {
@@ -333,16 +364,27 @@
                                     </div>
                                 </div>
                             }
-                            if (!String.IsNullOrEmpty(ViewBag.ClasseInscricao4))
+                            if (Model.qtddCategoriasPorJogador > 3)
                             {
-                                <div id="segundaOpcaoClasse" class="row">
+                                <div id="checkQuartaOpcaoClasse" class="form-group">
+                                    <div class="col-sm-8">
+                                        <div class="checkbox">
+                                            <label>
+                                                <input type="checkbox" value="true" name="isQuartaOpcaoClasse" id="isQuartaOpcaoClasse" onclick="quartaOpcaoDeClasse()"
+                                                       @if (!String.IsNullOrEmpty(ViewBag.ClasseInscricao4)) { @Html.Raw("checked")   } />
+                                                @Html.Raw("Quero escolher mais uma categoria")
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="quartaOpcaoClasse" class="row">
                                     @Html.Label("4ª Classe", new { @class = "col-sm-4" })
                                     <div class="col-sm-8 info-box-text">
-                                        <select name="classeInscricao4" class="form-control">
+                                        <select name="classeInscricao4" class="form-control quartaOpcaoClasse">
                                             <option value="0">Selecione uma classe...</option>
                                             @foreach (var item in ViewBag.Classes2)
                                             {
-                                                <option value="@item.Id" data-isDupla="@item.isDupla" @if ((!String.IsNullOrEmpty(ViewBag.ClasseInscricao4)) && (ViewBag.ClasseInscricao4 == item.nome)) { @Html.Raw("selected")    }>@item.nome</option>
+                                                <option value="@item.Id" data-isDupla="@item.isDupla" @if ((!String.IsNullOrEmpty(ViewBag.ClasseInscricao4)) && (ViewBag.ClasseInscricao4 == item.nome)) { @Html.Raw("selected")     }>@item.nome</option>
                                             }
                                         </select>
                                     </div>
@@ -470,8 +512,8 @@
             $(".escolherSegundaOpcaoClasse").change(function (event) {
                 event.preventDefault();
                 var classe2 = $(this).data("classe2");
-                isDupla = $(this).children(':selected').data("isdupla")=="True";
-                if ((isDupla)||(isDupla2)) {
+                isDupla = $(this).children(':selected').data("isdupla") == "True";
+                if ((isDupla) || (isDupla2)) {
                     $("#btnIncricao").text("Escolher Parceiro");
                     document.formInscricao.isClasseDupla.value = true;
                 } else {
@@ -493,7 +535,7 @@
                                     segundaOpcaoDeClasse();
                                 }
                             },
-                            cancelar: {text:'Não'}
+                            cancelar: { text: 'Não' }
                         }
                     });
                 }
@@ -565,7 +607,7 @@
 
             $(".segundaOpcaoClasse").change(function (event) {
                 event.preventDefault();
-                isDupla2 = $(this).children(':selected').data("isdupla")=="True";
+                isDupla2 = $(this).children(':selected').data("isdupla") == "True";
                 if ((isDupla) || (isDupla2)) {
                     $("#btnIncricao").text("Escolher Parceiro");
                     document.formInscricao.isClasseDupla.value = true;
@@ -607,7 +649,7 @@
 
         $(".confirmAlterarClasse").click(function (event) {
             event.preventDefault();
-            
+
             $.confirm({
                 title: "Confirmação",
                 content: "Aperte SIM para confirmar a alteração de classe!",
@@ -689,11 +731,30 @@
             }
         }
 
+
+        $(".validarSeSocio").click(function (event) {
+            event.preventDefault();
+            var radioButtons = document.getElementsByName("isSocio");
+            var labelisSocio = document.getElementById("labelIsSocio");
+            if ((labelisSocio != null) && (radioButtons[0].checked == false) && (radioButtons[1].checked == false)) {
+                alert("Favor informar se você é sócio ou não.");
+                labelisSocio.style.color = "red";
+                return false;
+            } else {
+                document.formInscricao.submit();
+            }
+        });
+
+
+
         if (!document.getElementById('isSegundaOpcaoClasse').checked) {
             document.getElementById('segundaOpcaoClasse').style.opacity = "0";
             document.getElementById('segundaOpcaoClasse').style.display = "none";
             document.getElementById('checkSegundaOpcaoClasse').style.opacity = "0";
             document.getElementById('checkSegundaOpcaoClasse').style.display = "none";
+        }
+        @if (inscricao != null) {
+            @Html.Raw("document.getElementById('checkSegundaOpcaoClasse').style.opacity = '1'; document.getElementById('checkSegundaOpcaoClasse').style.display = 'block'; ");
         }
 
         if (!document.getElementById('isTerceiraOpcaoClasse').checked) {
@@ -703,25 +764,20 @@
             document.getElementById('checkTerceiraOpcaoClasse').style.display = "none";
         }
 
+        @if (inscricao != null) {
+            @Html.Raw("if (document.getElementById('isSegundaOpcaoClasse').checked) { document.getElementById('checkTerceiraOpcaoClasse').style.opacity = '1'; document.getElementById('checkTerceiraOpcaoClasse').style.display = 'block'; }");
+        }
+
         if (!document.getElementById('isQuartaOpcaoClasse').checked) {
             document.getElementById('quartaOpcaoClasse').style.opacity = "0";
             document.getElementById('quartaOpcaoClasse').style.display = "none";
             document.getElementById('checkQuartaOpcaoClasse').style.opacity = "0";
             document.getElementById('checkQuartaOpcaoClasse').style.display = "none";
         }
+        @if (inscricao != null) {
+            @Html.Raw("if (document.getElementById('isTerceiraOpcaoClasse').checked) { document.getElementById('checkQuartaOpcaoClasse').style.opacity = '1'; document.getElementById('checkQuartaOpcaoClasse').style.display = 'block'; }");
+        }
 
-        $(".validarSeSocio").click(function (event) {
-            event.preventDefault();
-            var radioButtons = document.getElementsByName("isSocio");
-            var labelisSocio = document.getElementById("labelIsSocio");
-            if ((labelisSocio!=null) && (radioButtons[0].checked == false) && (radioButtons[1].checked == false)) {
-                alert("Favor informar se você é sócio ou não.");
-                labelisSocio.style.color = "red";
-                return false;
-            } else {
-                document.formInscricao.submit();
-            }
-        });
 
     </script>
 }

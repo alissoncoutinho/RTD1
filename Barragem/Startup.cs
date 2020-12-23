@@ -33,7 +33,7 @@ namespace Barragem
             {
                 AllowInsecureHttp = true,
                 TokenEndpointPath = new PathString("/token"),
-                AccessTokenExpireTimeSpan = TimeSpan.FromHours(1),
+                AccessTokenExpireTimeSpan = TimeSpan.FromDays(7),
                 Provider = new ProviderDeTokensDeAcesso()
             };
             app.UseOAuthAuthorizationServer(opcoesConfiguracaoToken);

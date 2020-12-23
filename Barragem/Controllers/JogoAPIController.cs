@@ -33,6 +33,8 @@ namespace Barragem.Controllers
             {
                 var j = new JogoRodada();
                 j.Id = jogo.Id;
+                j.idDesafiante = jogo.desafiante_id;
+                j.idDesafiado = jogo.desafiado_id;
                 j.nomeDesafiante = jogo.desafiante.nome;
                 j.nomeDesafiado = jogo.desafiado.nome;
                 j.dataJogo = jogo.dataJogo;

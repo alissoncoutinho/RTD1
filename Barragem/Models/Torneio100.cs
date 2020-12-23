@@ -18,9 +18,9 @@ namespace Barragem.Models
                 case 2:
                     return 50;
                 case 3:
-                    return 35;
+                    return 30;
                 case 4:
-                    return 20;
+                    return 15;
                 case 5:
                     return 10;
                 default:

@@ -134,10 +134,23 @@ namespace Barragem.Models
                         && sr.CategoriaId == categoriaDaLiga.Id
                         && sr.SnapshotId == novoSnap.Id).OrderByDescending(sr => sr.Pontuacao).ToList();
                     int i = 1;
+                    int pontuacaoAnterior = 0;
+                    int posicaoAnterior = 0;
+                    bool isPrimeiraVez = true;
                     foreach (SnapshotRanking ranking in rankingAtual)
                     {
-                        ranking.Posicao = i;
+                        if ((ranking.Pontuacao == pontuacaoAnterior)&&(!isPrimeiraVez)) {
+                            ranking.Posicao = posicaoAnterior;
+                        } else {
+                            ranking.Posicao = i;
+                            posicaoAnterior = i;
+                        }
                         db.SaveChanges();
+                        pontuacaoAnterior = ranking.Pontuacao;
+                        if (isPrimeiraVez){
+                            posicaoAnterior = i;
+                            isPrimeiraVez = false;
+                        }
                         i++;
                     }
                 }

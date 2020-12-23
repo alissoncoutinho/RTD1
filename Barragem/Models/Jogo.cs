@@ -389,6 +389,8 @@ namespace Barragem.Models
         public string localJogo { get; set; }
         public string nomeDesafiante { get; set; }
         public string nomeDesafiado { get; set; }
+        public int idDesafiante { get; set; }
+        public int idDesafiado { get; set; }
         public int rankingDesafiante { get; set; }
         public int rankingDesafiado { get; set; }
         public double pontuacaoDesafiante { get; set; }
