@@ -37,6 +37,8 @@ namespace Barragem.Models
 
         public bool? isSocio { get; set; }
 
+        public bool? isFederado { get; set; }
+
         [Display(Name = "Classe")]
         [ForeignKey("classe")]
         public virtual ClasseTorneio classeTorneio { get; set; }

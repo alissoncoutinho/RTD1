@@ -293,6 +293,7 @@ namespace Barragem.Controllers
                 }else{
                     j.nomeDesafiante = jogo.desafiante.nome;
                     j.fotoDesafiante = jogo.desafiante.fotoURL;
+                    j.idDesafiante = jogo.desafiante_id;
                 }
                 if ((jogo.torneioId!=null)&&(jogo.desafiado_id == 10)){
                     j.nomeDesafiado = "bye";
@@ -302,6 +303,7 @@ namespace Barragem.Controllers
                 }else{
                     j.nomeDesafiado = jogo.desafiado.nome;
                     j.fotoDesafiado = jogo.desafiado.fotoURL;
+                    j.idDesafiado = jogo.desafiado_id;
                 }
                 j.dataJogo = jogo.dataJogo;
                 j.horaJogo = jogo.horaJogo;
@@ -314,6 +316,7 @@ namespace Barragem.Controllers
                 j.qtddGames2setDesafiado = jogo.qtddGames2setDesafiado;
                 j.qtddGames3setDesafiado = jogo.qtddGames3setDesafiado;
                 j.idVencedor = jogo.idDoVencedor;
+                j.idDoVencedor = jogo.idDoVencedor;
                 if (jogo.torneioId == null)
                 {
                     j.nomeRodada = "Rodada " + jogo.rodada.codigoSeq;

@@ -811,6 +811,7 @@ namespace Barragem.Controllers
             ViewBag.flag = "inscritos";
             ViewBag.InscIndividuais = db.InscricaoTorneio.Where(i => i.torneioId == torneioId).Select(i => (int)i.userId).Distinct().Count();
             ViewBag.InscIndividuaisSocios = db.InscricaoTorneio.Where(i => i.torneioId == torneioId && i.isSocio == true).Select(i => (int)i.userId).Distinct().Count();
+            ViewBag.InscIndividuaisFederados = db.InscricaoTorneio.Where(i => i.torneioId == torneioId && i.isFederado == true).Select(i => (int)i.userId).Distinct().Count();
             ViewBag.TotalPagantes = db.InscricaoTorneio.Where(i => i.torneioId == torneioId && i.isAtivo == true).Select(i => (int)i.userId).Distinct().Count();
             ViewBag.ValorPago = db.InscricaoTorneio.Where(i => i.torneioId == torneioId && i.isAtivo == true).Select(i => new { user = (int)i.userId, valor=i.valor }).Distinct().Sum(i => i.valor);
             ViewBag.PagoNoCartao = db.InscricaoTorneio.Where(i => i.torneioId == torneioId && i.isAtivo == true && (i.statusPagamento == "3" || i.statusPagamento=="4")).
@@ -1159,9 +1160,9 @@ namespace Barragem.Controllers
         }
         [Authorize(Roles = "admin,usuario,organizador")]
         [HttpPost]
-        public ActionResult Inscricao(int torneioId, int classeInscricao = 0, string operacao = "", bool isMaisDeUmaClasse = false, int classeInscricao2 = 0, int classeInscricao3 = 0, int classeInscricao4 = 0, string observacao = "", bool isSocio = false, bool isClasseDupla = false, int userId=0)
+        public ActionResult Inscricao(int torneioId, int classeInscricao = 0, string operacao = "", bool isMaisDeUmaClasse = false, int classeInscricao2 = 0, int classeInscricao3 = 0, int classeInscricao4 = 0, string observacao = "", bool isSocio = false, bool isFederado = false, bool isClasseDupla = false, int userId=0)
         {
-            var mensagemRetorno = InscricaoNegocio(torneioId, classeInscricao, operacao, isMaisDeUmaClasse, classeInscricao2, classeInscricao3, classeInscricao4, observacao, isSocio, isClasseDupla, userId);
+            var mensagemRetorno = InscricaoNegocio(torneioId, classeInscricao, operacao, isMaisDeUmaClasse, classeInscricao2, classeInscricao3, classeInscricao4, observacao, isSocio, isClasseDupla, userId, isFederado);
             if (mensagemRetorno.nomePagina == "ConfirmacaoInscricao") {
                 return RedirectToAction(mensagemRetorno.nomePagina, new { torneioId = torneioId, msg= mensagemRetorno.mensagem, msgErro="", userId = userId });
             } else  {
@@ -1181,7 +1182,7 @@ namespace Barragem.Controllers
             }
         }
 
-        public MensagemRetorno InscricaoNegocio(int torneioId, int classeInscricao = 0, string operacao = "", bool isMaisDeUmaClasse = false, int classeInscricao2 = 0, int classeInscricao3 = 0, int classeInscricao4 = 0, string observacao = "", bool isSocio = false, bool isClasseDupla = false, int userId = 0)
+        public MensagemRetorno InscricaoNegocio(int torneioId, int classeInscricao = 0, string operacao = "", bool isMaisDeUmaClasse = false, int classeInscricao2 = 0, int classeInscricao3 = 0, int classeInscricao4 = 0, string observacao = "", bool isSocio = false, bool isClasseDupla = false, int userId = 0, bool isFederado=false)
         {
             var mensagemRetorno = new MensagemRetorno();
             try
@@ -1213,7 +1214,7 @@ namespace Barragem.Controllers
                             mensagemRetorno.mensagem = msgValidacaoClasse;
                             return mensagemRetorno;
                         }
-                        var valorInscricao = calcularValorInscricao(classeInscricao2, classeInscricao3, classeInscricao4, isSocio, torneio, userId);
+                        var valorInscricao = calcularValorInscricao(classeInscricao2, classeInscricao3, classeInscricao4, isSocio, torneio, userId, isFederado);
                         if (operacao == "alterarClasse")
                         {
                             it[0].classe = classeInscricao;
@@ -1228,7 +1229,7 @@ namespace Barragem.Controllers
                                     mensagemRetorno.mensagem = "Não é possível incluir nova classe, inscrição já está ativada.";
                                     return mensagemRetorno;
                                 }
-                                InscricaoTorneio insc2 = preencherInscricaoTorneio(torneioId, userId, classeInscricao2, valorInscricao, observacao, isSocio);
+                                InscricaoTorneio insc2 = preencherInscricaoTorneio(torneioId, userId, classeInscricao2, valorInscricao, observacao, isSocio, isFederado);
                                 db.InscricaoTorneio.Add(insc2);
                             }
                             if (it.Count() > 2){
@@ -1241,7 +1242,7 @@ namespace Barragem.Controllers
                                     mensagemRetorno.mensagem = "Não é possível incluir nova classe, inscrição já está ativada.";
                                     return mensagemRetorno;
                                 }
-                                InscricaoTorneio insc3 = preencherInscricaoTorneio(torneioId, userId, classeInscricao3, valorInscricao, observacao, isSocio);
+                                InscricaoTorneio insc3 = preencherInscricaoTorneio(torneioId, userId, classeInscricao3, valorInscricao, observacao, isSocio, isFederado);
                                 db.InscricaoTorneio.Add(insc3);
                             }
                             if (it.Count() > 3){
@@ -1253,7 +1254,7 @@ namespace Barragem.Controllers
                                     mensagemRetorno.mensagem = "Não é possível incluir nova classe, inscrição já está ativada.";
                                     return mensagemRetorno;
                                 }
-                                InscricaoTorneio insc4 = preencherInscricaoTorneio(torneioId, userId, classeInscricao4, valorInscricao, observacao, isSocio);
+                                InscricaoTorneio insc4 = preencherInscricaoTorneio(torneioId, userId, classeInscricao4, valorInscricao, observacao, isSocio, isFederado);
                                 db.InscricaoTorneio.Add(insc4);
                             }
                             db.SaveChanges();
@@ -1276,20 +1277,20 @@ namespace Barragem.Controllers
                         mensagemRetorno.mensagem = msgValidacaoClasse;
                         return mensagemRetorno;
                     }
-                    double valorInscricao = calcularValorInscricao(classeInscricao2, classeInscricao3, classeInscricao4, isSocio, torneio, userId);
+                    double valorInscricao = calcularValorInscricao(classeInscricao2, classeInscricao3, classeInscricao4, isSocio, torneio, userId, isFederado);
 
-                    InscricaoTorneio inscricao = preencherInscricaoTorneio(torneioId, userId, classeInscricao, valorInscricao, observacao, isSocio);
+                    InscricaoTorneio inscricao = preencherInscricaoTorneio(torneioId, userId, classeInscricao, valorInscricao, observacao, isSocio, isFederado);
                     db.InscricaoTorneio.Add(inscricao);
                     if (classeInscricao2 > 0){
-                        InscricaoTorneio insc2 = preencherInscricaoTorneio(torneioId, userId, classeInscricao2, valorInscricao, observacao, isSocio);
+                        InscricaoTorneio insc2 = preencherInscricaoTorneio(torneioId, userId, classeInscricao2, valorInscricao, observacao, isSocio, isFederado);
                         db.InscricaoTorneio.Add(insc2);
                     }
                     if (classeInscricao3 > 0){
-                        InscricaoTorneio insc3 = preencherInscricaoTorneio(torneioId, userId, classeInscricao3, valorInscricao, observacao, isSocio);
+                        InscricaoTorneio insc3 = preencherInscricaoTorneio(torneioId, userId, classeInscricao3, valorInscricao, observacao, isSocio, isFederado);
                         db.InscricaoTorneio.Add(insc3);
                     }
                     if (classeInscricao4 > 0){
-                        InscricaoTorneio insc4 = preencherInscricaoTorneio(torneioId, userId, classeInscricao4, valorInscricao, observacao, isSocio);
+                        InscricaoTorneio insc4 = preencherInscricaoTorneio(torneioId, userId, classeInscricao4, valorInscricao, observacao, isSocio, isFederado);
                         db.InscricaoTorneio.Add(insc4);
                     }
                 }
@@ -1368,7 +1369,7 @@ namespace Barragem.Controllers
             return "";
         }
 
-        public InscricaoTorneio preencherInscricaoTorneio(int torneioId, int userId, int classeInscricao, double? valorInscricao, string observacao, bool isSocio)
+        public InscricaoTorneio preencherInscricaoTorneio(int torneioId, int userId, int classeInscricao, double? valorInscricao, string observacao, bool isSocio, bool isFederado)
         {
             InscricaoTorneio inscricao = new InscricaoTorneio();
             inscricao.classe = classeInscricao;
@@ -1377,6 +1378,7 @@ namespace Barragem.Controllers
             inscricao.valor = valorInscricao;
             inscricao.observacao = observacao;
             inscricao.isSocio = isSocio;
+            inscricao.isFederado = isFederado;
             if (valorInscricao > 0)
             {
                 inscricao.isAtivo = false;
@@ -1388,9 +1390,11 @@ namespace Barragem.Controllers
             return inscricao;
         }
 
-        public double calcularValorInscricao(int classeInscricao2, int classeInscricao3, int classeInscricao4, bool isSocio, Torneio torneio, int userId) {
+        public double calcularValorInscricao(int classeInscricao2, int classeInscricao3, int classeInscricao4, bool isSocio, Torneio torneio, int userId, bool isFederado) {
             int qtddInscricoes = 1;
             double valorInscricao = 0.0;
+            double valorInscricaoSocio = 0.0;
+            double valorInscricaoFederado = 0.0;
             bool gratuidade = VerificarGratuidade(torneio, userId);
             if (gratuidade)
             {
@@ -1406,8 +1410,22 @@ namespace Barragem.Controllers
             if (qtddInscricoes == 3) valorInscricao = (double)torneio.valor3;
             if (qtddInscricoes == 4) valorInscricao = (double)torneio.valor4;
             if ((isSocio) && (torneio.valorSocio != null)) {
-                valorInscricao = valorInscricao - (double)torneio.valorSocio;
-                if (valorInscricao < 0) valorInscricao = 0;
+                valorInscricaoSocio = valorInscricao - (double)torneio.valorSocio;
+                if (valorInscricaoSocio < 0) valorInscricaoSocio = 0;
+            }
+            if ((isFederado) && ((torneio.valorDescontoFederado != null) && (torneio.valorDescontoFederado > 0)))
+            {
+                valorInscricaoFederado = valorInscricao - (double)torneio.valorDescontoFederado;
+                if (valorInscricaoFederado < 0) valorInscricaoFederado = 0;
+                if ((isSocio) && (valorInscricaoSocio < valorInscricaoFederado))
+                {
+                    return valorInscricaoSocio;
+                } else {
+                    return valorInscricaoFederado;
+                }
+            }else if (isSocio)
+            {
+                return valorInscricaoSocio;
             }
             return valorInscricao;
 

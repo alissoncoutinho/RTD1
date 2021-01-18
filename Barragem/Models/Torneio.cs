@@ -124,6 +124,9 @@ namespace Barragem.Models
 
         public string descontoPara { get; set; }
         public bool? isDesconto { get; set; }
+
+        [Display(Name = "Desconto para Federado")]
+        public double? valorDescontoFederado { get; set; }
     }
 
 

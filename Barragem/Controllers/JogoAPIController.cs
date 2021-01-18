@@ -49,6 +49,7 @@ namespace Barragem.Controllers
                 j.qtddGames2setDesafiado = jogo.qtddGames2setDesafiado;
                 j.qtddGames3setDesafiado = jogo.qtddGames3setDesafiado;
                 j.idVencedor = jogo.idDoVencedor;
+                j.idDoVencedor = jogo.idDoVencedor;
                 j.situacao = jogo.situacao.descricao;
                 if (jogo.desafiante_id == 10)
                 {

@@ -188,6 +188,15 @@
                             </div>
                         </div>
                         }
+                        @if ((torneio.valorDescontoFederado != null) && (torneio.valorDescontoFederado > 0))
+                        {
+                        <div class="row">
+                            @Html.Label("Desconto p/ federado de", new { @class = "col-sm-5" })
+                            <div class="col-sm-7 info-box-text">
+                                @Html.Raw("R$ " + torneio.valorDescontoFederado + ",00")
+                            </div>
+                        </div>
+                        }
                         <div class="row">
                             @Html.Label("Inscrições até", new { @class = "col-sm-5" })
                             <div class="col-sm-7 info-box-text">
@@ -203,6 +212,18 @@
                             <div class="col-sm-7 info-box-text">
                                 <input type="radio" name="isSocio" id="isSocio" value="true">Sim
                                 <input type="radio" name="isSocio" id="isSocio" value="false">Não
+                            </div>
+                        </div>
+                        }
+                        @if ((torneio.valorDescontoFederado != null) && (torneio.valorDescontoFederado > 0))
+                        {
+                        <div class="row">
+                            <label id="labelIsFederado" class="col-sm-5">
+                                @Html.Raw("É Federado? *")
+                            </label>
+                            <div class="col-sm-7 info-box-text">
+                                <input type="radio" name="isFederado" id="isFederado" value="true">Sim
+                                <input type="radio" name="isFederado" id="isFederado" value="false">Não
                             </div>
                         </div>
                         }
@@ -327,7 +348,7 @@
                             }
                             else
                             {
-                                <button type="submit" id="btnIncricao" class="btn btn-primary pull-right validarSeSocio">Inscrever-me</button>
+                                <button type="submit" id="btnIncricao" class="btn btn-primary pull-right validarSeSocioOuFederado">Inscrever-me</button>
                             }
                         }
                         else
@@ -596,19 +617,24 @@
             document.getElementById('checkQuartaOpcaoClasse').style.display = "none";
         }
 
-        $(".validarSeSocio").click(function (event) {
+        $(".validarSeSocioOuFederado").click(function (event) {
             event.preventDefault();
             var radioButtons = document.getElementsByName("isSocio");
+            var radioButtonsFed = document.getElementsByName("isFederado");
             var labelisSocio = document.getElementById("labelIsSocio");
+            var labelisFederado = document.getElementById("labelIsFederado");
             if ((labelisSocio != null) && (radioButtons[0].checked == false) && (radioButtons[1].checked == false)) {
-                alert("Favor informar se você é sócio do clube ou não.");
+                alert("Favor informar se você é sócio ou não.");
                 labelisSocio.style.color = "red";
+                return false;
+            } else if ((labelisFederado != null) && (radioButtonsFed[0].checked == false) && (radioButtonsFed[1].checked == false)) {
+                alert("Favor informar se você é federado ou não.");
+                labelisFederado.style.color = "red";
                 return false;
             } else {
                 document.forms[0].submit();
             }
         });
-
         
 
     </script>

@@ -159,7 +159,7 @@ namespace Barragem.Controllers
                     e.conteudo = "Nome do contato: " + nome + "<br>telefone de contato: " + fone;
                     e.formato = Class.Tipos.FormatoEmail.Html;
                     e.de = "postmaster@rankingdetenis.com";
-                    e.para = "esmartins@gmail.com";
+                    e.para = "tecnologia.btd@gmail.com";
                     e.bcc = new List<String>() { "coutinho.alisson@gmail.com" };
                     e.EnviarMail();
                 }

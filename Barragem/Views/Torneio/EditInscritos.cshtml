@@ -40,6 +40,9 @@
                             @Html.DisplayName("Sócios")
                         </th>
                         <th>
+                            @Html.DisplayName("Federados")
+                        </th>
+                        <th>
                             @Html.DisplayName("Pagantes")
                         </th>
                         <th>
@@ -52,6 +55,7 @@
                     <tr>
                         <td>@ViewBag.InscIndividuais</td>
                         <td>@ViewBag.InscIndividuaisSocios</td>
+                        <td>@ViewBag.InscIndividuaisFederados</td>
                         <td>@ViewBag.TotalPagantes</td>
                         <td>@ViewBag.PagoNoCartao</td>
                         <td>R$ @string.Format("{0:N}", valor)</td>
@@ -84,7 +88,7 @@
                             @Html.DisplayName("PagSeguro")
                         </th>
                         <th>
-                            @Html.DisplayName("Sócio")
+                            @Html.DisplayName("Sócio/Fed.")
                         </th>
                         <th></th>
                     </tr>
@@ -145,7 +149,7 @@
                                 }
                             </td>
 
-                            <td>@if ((item.isSocio != null) && ((bool)item.isSocio))
+                            <td>@if (((item.isSocio != null) && ((bool)item.isSocio)) || ((item.isFederado != null) && ((bool)item.isFederado)))
                             { @Html.Raw("Sim")}</td>
                             <td align="center">
                                 <form method="post" enctype="multipart/form-data" action="#" name="@Html.Raw("form"+i)" id="@Html.Raw("form"+i)" class="form">

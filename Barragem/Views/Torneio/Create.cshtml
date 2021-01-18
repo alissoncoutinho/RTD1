@@ -112,7 +112,7 @@
                 <div class="col-sm-offset-2 col-sm-6">
                     <div class="checkbox">
                         <label>
-                            <input type="checkbox" value="true" name="isDesconto" id="isDesconto" onclick="CadastrarValorDescontoSocio()" /> @Html.Raw("Tem desconto para") <select name="descontoPara"><option value="sócio">sócio</option><option value="barragista">barragista</option><option value="federado">federado</option><option value="barragista ou federado">barragista ou federado</option><option value="sócio ou federado">sócio ou federado</option></select>
+                            <input type="checkbox" value="true" name="isDesconto" id="isDesconto" onclick="CadastrarValorDescontoSocio()" /> @Html.Raw("Tem desconto para") <select name="descontoPara"><option value="sócio">sócio</option><option value="barragista">barragista</option></select>
                         </label>
                     </div>
                 </div>
@@ -123,6 +123,13 @@
                     @Html.TextBoxFor(model => model.valorSocio, new { @class = "form-control" })
                 </div>
                 @Html.ValidationMessageFor(model => model.valorSocio)
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.valorDescontoFederado, new { @class = "col-sm-2 control-label" })
+                <div class="col-sm-8 input-group">
+                    @Html.TextBoxFor(model => model.valorDescontoFederado, new { @class = "form-control", @placeholder = "Informar valor caso haja desconto" })
+                </div>
+                @Html.ValidationMessageFor(model => model.valorDescontoFederado)
             </div>
             <div class="form-group">
                 @Html.LabelFor(model => model.premiacao, new { @class = "col-sm-2 control-label" })
