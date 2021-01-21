@@ -128,7 +128,7 @@
                                     <input type="checkbox" value="true" name="isDesconto" id="isDesconto" onclick="CadastrarValorDescontoSocio()" /> 
                                 }
                                 @Html.Raw("Tem desconto para ") <select name="descontoPara">
-                                <option @if (Model.descontoPara!=null && Model.descontoPara.Equals("sócio")){ @Html.Raw("selected")} value="sócio">sócio</option>
+                                <option @if (Model.descontoPara!=null && Model.descontoPara.Equals("sócio do clube")){ @Html.Raw("selected")} value="sócio do clube">sócio do clube</option>
                                 <option @if (Model.descontoPara!=null && Model.descontoPara.Equals("barragista")){ @Html.Raw("selected")} value="barragista">barragista</option>
                                 </select>
                             </label>

@@ -246,7 +246,7 @@
                                 <div id="segundaOpcaoClasse" class="row">
                                     @Html.Label("2ª Opção", new { @class = "col-sm-4" })
                                     <div class="col-sm-8 info-box-text">
-                                        <select name="classeInscricao2" class="form-control segundaOpcaoClasse escolherTerceiraOpcaoClasse" data-classe3="@(Model.qtddCategoriasPorJogador>2)">
+                                        <select id="classeInscricao2" name="classeInscricao2" class="form-control segundaOpcaoClasse escolherTerceiraOpcaoClasse" data-classe3="@(Model.qtddCategoriasPorJogador>2)">
                                             <option value="0">Selecione uma classe...</option>
                                             @foreach (var item in ViewBag.Classes2)
                                             {
@@ -296,7 +296,7 @@
                                 <div id="quartaOpcaoClasse" class="row">
                                     @Html.Label("4ª Opção", new { @class = "col-sm-4" })
                                     <div class="col-sm-8 info-box-text">
-                                        <select name="classeInscricao4" class="form-control quartaOpcaoClasse">
+                                        <select name="classeInscricao4" id="classeInscricao4" class="form-control quartaOpcaoClasse">
                                             <option value="0">Selecione uma classe...</option>
                                             @foreach (var item in ViewBag.Classes2)
                                             {
@@ -345,7 +345,7 @@
                                   <div id="segundaOpcaoClasse" class="row">
                                     @Html.Label("2ª Classe", new { @class = "col-sm-4" })
                                     <div class="col-sm-8 info-box-text">
-                                        <select name="classeInscricao2" class="form-control segundaOpcaoClasse escolherTerceiraOpcaoClasse" data-classe3="@(Model.qtddCategoriasPorJogador>2)">
+                                        <select id="classeInscricao2" name="classeInscricao2" class="form-control segundaOpcaoClasse escolherTerceiraOpcaoClasse" data-classe3="@(Model.qtddCategoriasPorJogador>2)">
                                             <option value="0">Selecione uma classe...</option>
                                             @foreach (var item in ViewBag.Classes2)
                                                            {
@@ -375,7 +375,7 @@
                                 <div id="terceiraOpcaoClasse" class="row">
                                     @Html.Label("3ª Classe", new { @class = "col-sm-4" })
                                     <div class="col-sm-8 info-box-text">
-                                        <select name="classeInscricao3" class="form-control terceiraOpcaoClasse escolherQuartaOpcaoClasse" data-classe3="@(Model.qtddCategoriasPorJogador>3)">
+                                        <select name="classeInscricao3"  id="classeInscricao3" class="form-control terceiraOpcaoClasse escolherQuartaOpcaoClasse" data-classe3="@(Model.qtddCategoriasPorJogador>3)">
                                             <option value="0">Selecione uma classe...</option>
                                             @foreach (var item in ViewBag.Classes2)
                                             {
@@ -703,8 +703,10 @@
                 document.getElementById('segundaOpcaoClasse').style.opacity = "1";
                 document.getElementById('segundaOpcaoClasse').style.display = "block";
             } else {
+                document.getElementById('classeInscricao2').selectedIndex = 0;
                 document.getElementById('segundaOpcaoClasse').style.opacity = "0 !important";
                 document.getElementById('segundaOpcaoClasse').style.display = "none";
+                
                 isDupla2 = false;
                 if ((isDupla) || (isDupla2)) {
                     $("#btnIncricao").text("Escolher Parceiro");
@@ -721,6 +723,7 @@
                 document.getElementById('terceiraOpcaoClasse').style.opacity = "1";
                 document.getElementById('terceiraOpcaoClasse').style.display = "block";
             } else {
+                document.getElementById('classeInscricao3').selectedIndex = 0;
                 document.getElementById('terceiraOpcaoClasse').style.opacity = "0 !important";
                 document.getElementById('terceiraOpcaoClasse').style.display = "none";
                 isDupla2 = false;
@@ -739,6 +742,7 @@
                 document.getElementById('quartaOpcaoClasse').style.opacity = "1";
                 document.getElementById('quartaOpcaoClasse').style.display = "block";
             } else {
+                document.getElementById('classeInscricao4').selectedIndex = 0;
                 document.getElementById('quartaOpcaoClasse').style.opacity = "0 !important";
                 document.getElementById('quartaOpcaoClasse').style.display = "none";
                 isDupla2 = false;
@@ -782,7 +786,7 @@
             @Html.Raw("document.getElementById('checkSegundaOpcaoClasse').style.opacity = '1'; document.getElementById('checkSegundaOpcaoClasse').style.display = 'block'; ");
         }
 
-        if (!document.getElementById('isTerceiraOpcaoClasse').checked) {
+        if ((document.getElementById('isTerceiraOpcaoClasse')!=null) && (!document.getElementById('isTerceiraOpcaoClasse').checked)) {
             document.getElementById('terceiraOpcaoClasse').style.opacity = "0";
             document.getElementById('terceiraOpcaoClasse').style.display = "none";
             document.getElementById('checkTerceiraOpcaoClasse').style.opacity = "0";
@@ -790,17 +794,17 @@
         }
 
         @if (inscricao != null) {
-            @Html.Raw("if (document.getElementById('isSegundaOpcaoClasse').checked) { document.getElementById('checkTerceiraOpcaoClasse').style.opacity = '1'; document.getElementById('checkTerceiraOpcaoClasse').style.display = 'block'; }");
+            @Html.Raw("if ((document.getElementById('isSegundaOpcaoClasse').checked)&&(document.getElementById('isTerceiraOpcaoClasse')!=null)) { document.getElementById('checkTerceiraOpcaoClasse').style.opacity = '1'; document.getElementById('checkTerceiraOpcaoClasse').style.display = 'block'; }");
         }
 
-        if (!document.getElementById('isQuartaOpcaoClasse').checked) {
+        if ((document.getElementById('isQuartaOpcaoClasse') != null) && (!document.getElementById('isQuartaOpcaoClasse').checked)) {
             document.getElementById('quartaOpcaoClasse').style.opacity = "0";
             document.getElementById('quartaOpcaoClasse').style.display = "none";
             document.getElementById('checkQuartaOpcaoClasse').style.opacity = "0";
             document.getElementById('checkQuartaOpcaoClasse').style.display = "none";
         }
         @if (inscricao != null) {
-            @Html.Raw("if (document.getElementById('isTerceiraOpcaoClasse').checked) { document.getElementById('checkQuartaOpcaoClasse').style.opacity = '1'; document.getElementById('checkQuartaOpcaoClasse').style.display = 'block'; }");
+            @Html.Raw("if ((document.getElementById('isTerceiraOpcaoClasse')!=null) && (document.getElementById('isTerceiraOpcaoClasse').checked)&&(document.getElementById('isQuartaOpcaoClasse')!=null)) { document.getElementById('checkQuartaOpcaoClasse').style.opacity = '1'; document.getElementById('checkQuartaOpcaoClasse').style.display = 'block'; }");
         }
 
 

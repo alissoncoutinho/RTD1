@@ -1214,6 +1214,8 @@ namespace Barragem.Controllers
                             mensagemRetorno.mensagem = msgValidacaoClasse;
                             return mensagemRetorno;
                         }
+                        isSocio = (it[0].isSocio == null) ? false : (bool) it[0].isSocio;
+                        isFederado = (it[0].isFederado == null) ? false : (bool) it[0].isFederado;
                         var valorInscricao = calcularValorInscricao(classeInscricao2, classeInscricao3, classeInscricao4, isSocio, torneio, userId, isFederado);
                         if (operacao == "alterarClasse")
                         {
@@ -1304,7 +1306,7 @@ namespace Barragem.Controllers
                 if (operacao == "cancelar")
                 {
                     mensagemRetorno.nomePagina = "Detalhes";
-                    mensagemRetorno.mensagem = "Cancelamento realizado com sucesso.";
+                    mensagemRetorno.mensagem = "OK";
                     return mensagemRetorno;
                 }
                 if (isClasseDupla)
