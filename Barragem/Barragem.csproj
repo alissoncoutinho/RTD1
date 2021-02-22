@@ -886,6 +886,8 @@
     <Content Include="Views\Torneio\_PartialJogoTabelaFaseGrupo.cshtml" />
     <Content Include="Views\Shared\_LayoutTorneioFaseGrupo.cshtml" />
     <Content Include="Views\Torneio\EditTeste.cshtml" />
+    <Content Include="Views\Torneio\CreateTorneio.cshtml" />
+    <Content Include="Views\Torneio\_PartialTabsTorneio.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

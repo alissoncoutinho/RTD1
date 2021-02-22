@@ -17,5 +17,7 @@ namespace Barragem.Models
         [Display(Name = "Categoria")]
         [Required(ErrorMessage = "Categoria")]
         public string Nome { get; set; }
+
+        public bool isDupla { get; set; }
     }
 }

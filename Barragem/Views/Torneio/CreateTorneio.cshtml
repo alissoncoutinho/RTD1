@@ -1,0 +1,476 @@
+﻿@model Barragem.Models.Torneio
+
+<ul class="nav nav-tabs" id="myTab">
+    <li id="tab1" class='active'><a href="#tabPrimario" data-toggle="tab"><b>básico</b></a></li>
+    <li id="tab2" class=""><a href="#tabInscricao" data-toggle="tab">inscrição</a></li>
+    <li id="tab3" class=""><a href="#tabClasse" data-toggle="tab">classes</a></li>
+    <li id="tab4" class=""><a href="#tabConfigFinais" data-toggle="tab">config.</a></li>
+</ul>
+@using (Html.BeginForm("CreateTorneio", "Torneio", FormMethod.Post, new { @class = "form-horizontal" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(false)
+    <div class="tab-content">
+
+
+        <!-- PRIMEIRA ABA: INFORMAÇÕES BÁSICAS -->
+        <div id="tabPrimario" class="tab-pane fade in active">
+            <div class="box-header with-border">
+                <h4 class="box-title">Informações Básicas</h4>
+            </div>
+            <div class="box-body">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.nome, new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-8 col-xs-12 input-group">
+                        @Html.TextBoxFor(model => model.nome, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.nome)
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.dataInicio, new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-4 input-group date" id="dataInicio" data-date-format="dd/mm/yyyy">
+                        @Html.TextBoxFor(model => model.dataInicio, new { @class = "form-control", @type="dataTorneio" })
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar">
+                            </span>
+                        </span>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.dataInicio)
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.dataFim, new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-4 input-group date" id="dataFim" data-date-format="dd/mm/yyyy">
+                        @Html.TextBoxFor(model => model.dataFim, new { @class = "form-control", @type="dataTorneio" })
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar">
+                            </span>
+                        </span>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.dataFim)
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.cidade, new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-8 col-xs-12 input-group">
+                        @Html.TextBoxFor(model => model.cidade, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.cidade)
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.local, new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-8 col-xs-12 input-group">
+                        @Html.TextBoxFor(model => model.local, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.local)
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.premiacao, new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-8 col-xs-12 input-group">
+                        @Html.TextBoxFor(model => model.premiacao, new { @class = "form-control", @placeholder = "" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.premiacao)
+                </div>
+                <a href="#tabInscricao" id="btnTab1" class="btn btn-info" data-toggle="tab"><b>Avançar</b></a>
+            </div>
+        </div>
+
+
+        <!-- SEGUNDA ABA: INSCRIÇÕES -->
+        <div id="tabInscricao" class="tab-pane fade">
+            <div class="box-header with-border">
+                <h4 class="box-title">Inscrições</h4>
+            </div>
+            <div class="box-body">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.dataFimInscricoes, new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-4 input-group date" id="dataFimInscricoes" data-date-format="dd/mm/yyyy">
+                        @Html.TextBoxFor(model => model.dataFimInscricoes, new { @class = "form-control", @type = "datatorneio" })
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar">
+                            </span>
+                        </span>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.dataFimInscricoes)
+                </div>
+                <div class="form-group">
+                    @Html.Label("Em quantas categorias o jogador poderá se inscrever?", new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-4 col-xs-12 input-group">
+                        <select name="qtddCategoriasPorJogador" id="qtddCategoriasPorJogador" class="form-control" onchange="habilibarValoresInscricao()">
+                            <option value="1">1 categoria</option>
+                            <option value="2">2 categoria</option>
+                            <option value="3">3 categoria</option>
+                            <option value="4">4 categoria</option>
+                        </select>
+                    </div>
+                </div>
+                @Html.Label("Valor da Inscrição para:")
+                <div id="valorDiv" class="form-group">
+                    @Html.Label("1 categoria", new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-4 col-xs-10 input-group">
+                        @Html.TextBoxFor(model => model.valor, new { @class = "form-control", @placeholder = "Informe 0 para torneio gratuito" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.valor)
+                </div>
+                <div id="valorDiv2" class="form-group">
+                    @Html.Label("2 categoria", new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-4 col-xs-10 input-group">
+                        @Html.TextBoxFor(model => model.valor2, new { @class = "form-control", @placeholder = "informe o valor total da inscrição" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.valor2)
+                </div>
+                <div id="valorDiv3" class="form-group">
+                    @Html.Label("3 categoria", new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-4 col-xs-10 input-group">
+                        @Html.TextBoxFor(model => model.valor3, new { @class = "form-control", @placeholder = "informe o valor total da inscrição" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.valor3)
+                </div>
+                <div id="valorDiv4" class="form-group">
+                    @Html.Label("4 categoria", new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-4 col-xs-10 input-group">
+                        @Html.TextBoxFor(model => model.valor4, new { @class = "form-control", @placeholder = "informe o valor total da inscrição" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.valor4)
+                </div>
+                @Html.Label("Haverá desconto para: (opcional)", new { @class = "control-label" })
+                <div class="form-group">
+                    <div class="col-md-6 col-xs-12">
+                        <div class="row">
+                            <div class="col-xs-1 col-md-1">
+                                <input type="checkbox" value="true" name="isDesconto" id="isDesconto" onclick="CadastrarValorDescontoSocio()" />
+                            </div>
+                            <div class="col-xs-6 col-md-4">
+                                <select name="descontoPara" class="form-control"><option value="sócio do clube">sócio do clube</option><option value="barragista">barragista</option></select>
+                            </div>
+                            <div class="col-xs-4 col-md-4">
+                                <div class="form-group">
+                                    @Html.Label("R$", new { @class = "col-xs-5 col-md-3 control-label" })
+                                    <div class="col-xs-6 col-md-6 input-group">
+                                        @Html.TextBoxFor(model => model.valorSocio, new { @class = "form-control" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-6 col-xs-12">
+                        <div class="row">
+                            <div class="col-xs-1 col-md-1">
+                                <input type="checkbox" value="true" name="isDescontoFederado" id="isDescontoFederado" />
+                            </div>
+                            <div class="col-xs-6 col-md-4">
+                                @Html.Label("Federado", new { @class = "control-label" })
+                            </div>
+                            <div class="col-xs-4 col-md-4">
+                                <div class="form-group">
+                                    @Html.Label("R$", new { @class = "col-xs-5 col-md-3 control-label" })
+                                    <div class="col-xs-6 col-md-6 input-group">
+                                        @Html.TextBoxFor(model => model.valorDescontoFederado, new { @class = "form-control" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <a href="#tabClasse" id="btnTab2" class="btn btn-info" data-toggle="tab"><b>Avançar</b></a>
+                <!--input type="submit" class="btn btn-cta-secondary" name="salvar" value="salvar" /-->
+            </div>
+        </div>
+
+
+        <div id="tabClasse" class="tab-pane fade">
+            <div class="box-header with-border">
+                <h4 class="box-title">Categorias</h4>
+            </div>
+            <div class="box-body">
+                @if (ViewBag.LigasDisponiveis.Count > 0)
+                {
+                    <div class="panel panel-default">
+                    @if (ViewBag.LigasDisponiveis.Count == 1){
+                        <div class="panel-heading"><b>Este torneio pontuará para o ranking?</b></div>
+                    } else {
+                        <div class="panel-heading"><b>Este torneio pontuará para quais rankings?</b></div>
+                    }
+                    <div class="panel-body">
+                        @foreach (var liga in ViewBag.LigasDisponiveis)
+                        {
+                            <input type="checkbox" name="liga" value="@liga.Id"> @liga.Nome<br>
+                        }
+                    </div>
+                </div>
+                }
+
+                <div class="panel panel-default">
+                    <div class="panel-heading"><b>Marque as categorias que deseja incluir no torneio:</b><br>
+                        <small style="color:red">O nome da categoria poderá ser editado depois</small>
+                    </div>
+                    <div class="panel-body">
+                        @foreach (var categoria in ViewBag.Categorias)
+                        {
+                            <input type="checkbox" name="classes" value="@categoria.Id"> @categoria.Nome<br>
+                        }
+                    </div>
+                </div>
+                <a href="#tabConfigFinais" id="btnTab3" class="btn btn-info" data-toggle="tab"><b>Avançar</b></a>
+            </div>
+        </div>
+
+        <!-- QUARTA ABA: CONFIGURAÇÕES -->
+        <div id="tabConfigFinais" class="tab-pane fade">
+            <div class="box-header with-border">
+                <h4 class="box-title">Configurações finais</h4>
+            </div>
+            <div class="box-body">
+                <div class="form-group">
+                    @Html.Label("O próprio jogador poderá lançar o resultado do jogo?", new { @class = "col-xs-12 col-md-12" })
+                    <div class="col-xs-8 col-md-3 input-group">
+                        <select name="jogadorNaoLancaResult" id="jogadorNaoLancaResult" class="form-control">
+                            <option value=true>Não</option>
+                            <option value=false>Sim</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.Label("Seu torneio será gratuito para associado?", new { @class = "col-xs-12 col-md-12" })
+                    <div class="col-xs-8 col-md-3 input-group">
+                        <select name="isGratuitoSocio" id="isGratuitoSocio" class="form-control">
+                            <option value=false>Não</option>
+                            <option value=true>Sim</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.Label("Seu torneio terá repescagem?", new { @class = "col-xs-12 col-md-12" })
+                    <div class="col-xs-8 col-md-3 input-group">
+                        <select name="temRepescagem" id="temRepescagem" class="form-control">
+                            <option value=false>Não</option>
+                            <option value=true>Sim</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.Label("Onde gostaria de divulgar o torneio?", new { @class = "col-xs-12 col-md-12" })
+                    <div class="col-xs-8 col-md-3 input-group">
+                        <select name="divulgacao" id="divulgacao" class="form-control">
+                            <option value="nao divulgar">Não divulgar por enquanto</option>
+                            <option value="ranking">no meu ranking</option>
+                            <option value="cidade">na minha cidade</option>
+                            <option value="brasil">no Brasil inteiro</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.Label("Caso queira colocar uma observação na ficha de inscrição, insira o texto abaixo", new { @class = "col-xs-12 col-md-12" })
+                    <div class="col-sm-8 input-group">
+                        @Html.TextBoxFor(model => model.observacao, new { @class = "form-control", @placeholder = "Não" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.observacao)
+                </div>
+                <input type="checkbox" name="transferencia" id="transferencia" value="true" checked onclick="isTransferenciaBancaria()"> <b>Usar transferência como forma de pagamento</b><br>
+                <div id="isTransferencia">
+                    <div class="editor-label">
+                        <small style="color:red">Complete abaixo os dados para pagamento via transferência</small>
+                    </div>
+                    <div class="editor-field">
+                        <textarea id="dadosBancarios" name="dadosBancarios">
+                            <p><b>PIX:</b>*chave pix* ou</p>                    
+                            <p>*Nome do Banco*</p>
+                            <p><b>Ag.:</b>*Número da agência*  <b>Conta.:</b>*Número da conta*</p>
+                            <p><b>CPF.:</b>*Número do cpf do titular da conta*</p>
+                            <p>Ao finalizar envie o comprovante para:</p>
+                            <p>*Nome do organizador* - *whatsapp do organizador*</p>
+                        </textarea>
+                    </div>
+                </div>
+                <br>
+                <input type="submit" id="criarTorneio" class="btn btn-primary" value="Criar Torneio" />
+            </div>
+        </div>
+    
+</div>
+}
+<style>
+    .nav-tabs {
+        flex-wrap: wrap;
+    }
+    select {
+        appearance: auto;
+    }
+</style>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/editor")
+    <script type="text/javascript">
+        tinyMCE.baseURL = '@Url.Content("~/Scripts/tinymce/")'
+        tinyMCE.init({
+            selector: 'textarea#dadosBancarios',
+            language: 'pt_BR',
+            theme: "modern",
+            theme_advanced_font_sizes: "10px,12px,13px,14px,16px,18px,20px",
+            font_size_style_values: "12px,13px,14px,16px,18px,20px",
+            width: 700,
+            height: 150,
+            toolbar1: "bold italic | underline | alignleft aligncenter alignright alignjustify | forecolor backcolor"
+
+        });
+
+    $(function () {
+        $("#dataInicio").datepicker({
+            language: 'pt-BR',
+            pickTime: false
+        });
+        $("#dataFim").datepicker({
+            language: 'pt-BR',
+            pickTime: false
+        });
+        $("#dataFimInscricoes").datepicker({
+            language: 'pt-BR',
+            pickTime: false
+        });
+        $('#valor').mask('#.##0,00', { reverse: true });
+        $('#valor2').mask('#.##0,00', { reverse: true });
+        $('#valor3').mask('#.##0,00', { reverse: true });
+        $('#valor4').mask('#.##0,00', { reverse: true });
+        $('#valorSocio').mask('#.##0,00', { reverse: true });
+        $('#valorDescontoFederado').mask('#.##0,00', { reverse: true });
+
+
+     });
+
+    function CadastrarValorDescontoSocio() {
+        if (document.getElementById('isDesconto').checked) {
+            document.getElementById('descontoSocio').style.opacity = "1";
+            document.getElementById('descontoSocio').style.display = "block";
+        } else {
+            document.getElementById('descontoSocio').value = "0";
+            document.getElementById('descontoSocioMaisClasses').value = "0";
+            document.getElementById('descontoSocio').style.opacity = "0 !important";
+            document.getElementById('descontoSocio').style.display = "none";
+        }
+    }
+
+    function isTransferenciaBancaria() {
+        if (document.getElementById('transferencia').checked) {
+            document.getElementById('isTransferencia').style.opacity = "1";
+            document.getElementById('isTransferencia').style.display = "block";
+        } else {
+            document.getElementById('isTransferencia').style.opacity = "0 !important";
+            document.getElementById('isTransferencia').style.display = "none";
+        }
+    }
+
+        $('[type="datatorneio"]').on("keydown", function () {
+            event.preventDefault();
+            return false;
+        });
+
+        $('#criarTorneio').on('click', function (event) {
+            if (document.getElementById('transferencia').checked == false) {
+                document.forms[1].dadosBancarios.value = ''
+            }
+        });
+
+        $('#btnTab1').on('click', function (event) {
+            event.preventDefault();
+           if (document.getElementById('nome').value == '') {
+               toastr.error("Informe um nome para o seu torneio.", "Erro");
+               $("#btnTab1").attr("href", "#tabPrimario");
+           } else if (document.forms[1].dataInicio.value == '') {
+               toastr.error("Informe a data de início do seu torneio.", "Erro");
+               $("#btnTab1").attr("href", "#tabPrimario");
+           } else if (document.forms[1].dataFim.value == '') {
+               toastr.error("Informe a data de encerramento do seu torneio.", "Erro");
+               $("#btnTab1").attr("href", "#tabPrimario");
+           } else if (document.forms[1].cidade.value == '') {
+               toastr.error("Informe o nome da cidade onde ocorrerá o torneio.", "Erro");
+               $("#btnTab1").attr("href", "#tabPrimario");
+           } else {
+               $("#btnTab1").attr("href", "#tabInscricao");
+                document.getElementById('tab1').className = '';
+                document.getElementById('tab2').className = 'active';
+           }
+        });
+
+        $('#btnTab2').on('click', function (event) {
+            event.preventDefault();
+            if (document.forms[1].dataFimInscricoes.value == '') {
+                toastr.error("Informe a data de encerramento das inscrições.", "Erro");
+                $("#btnTab2").attr("href", "#tabInscricao");
+            } else {
+                $("#btnTab2").attr("href", "#tabClasse");
+                document.getElementById('tab2').className = '';
+                document.getElementById('tab3').className = 'active';
+            }
+        });
+
+        $('#btnTab3').on('click', function (event) {
+            event.preventDefault();
+            if (false) {
+                toastr.error("Informe um nome para o seu torneio.", "Erro");
+                $("#btnTab3").attr("href", "#tabClasse");
+            } else {
+                $("#btnTab3").attr("href", "#tabConfigFinais");
+                document.getElementById('tab3').className = '';
+                document.getElementById('tab4').className = 'active';
+            }
+        });
+
+            
+
+    function habilibarValoresInscricao() {
+        if (document.getElementById('qtddCategoriasPorJogador').value == 1) {
+            document.getElementById('valor2').value = "0";
+            document.getElementById('valorDiv2').style.opacity = "0 !important";
+            document.getElementById('valorDiv2').style.display = "none";
+            document.getElementById('valor3').value = "0";
+            document.getElementById('valorDiv3').style.opacity = "0 !important";
+            document.getElementById('valorDiv3').style.display = "none";
+            document.getElementById('valor4').value = "0";
+            document.getElementById('valorDiv4').style.opacity = "0 !important";
+            document.getElementById('valorDiv4').style.display = "none";
+        } else if (document.getElementById('qtddCategoriasPorJogador').value == 2) {
+            document.getElementById('valor2').value = ""
+            document.getElementById('valorDiv2').style.opacity = "1";
+            document.getElementById('valorDiv2').style.display = "block";
+            document.getElementById('valor3').value = "0";
+            document.getElementById('valorDiv3').style.opacity = "0 !important";
+            document.getElementById('valorDiv3').style.display = "none";
+            document.getElementById('valor4').value = "0";
+            document.getElementById('valorDiv4').style.opacity = "0 !important";
+            document.getElementById('valorDiv4').style.display = "none";
+        } else if (document.getElementById('qtddCategoriasPorJogador').value == 3) {
+            document.getElementById('valor2').value = ""
+            document.getElementById('valor3').value = ""
+            document.getElementById('valorDiv2').style.opacity = "1";
+            document.getElementById('valorDiv2').style.display = "block";
+            document.getElementById('valorDiv3').style.opacity = "1";
+            document.getElementById('valorDiv3').style.display = "block";
+            document.getElementById('valor4').value = "0";
+            document.getElementById('valorDiv4').style.opacity = "0 !important";
+            document.getElementById('valorDiv4').style.display = "none";
+        } else if (document.getElementById('qtddCategoriasPorJogador').value == 4) {
+            document.getElementById('valor2').value = ""
+            document.getElementById('valor3').value = ""
+            document.getElementById('valor4').value = ""
+            document.getElementById('valorDiv2').style.opacity = "1";
+            document.getElementById('valorDiv2').style.display = "block";
+            document.getElementById('valorDiv3').style.opacity = "1";
+            document.getElementById('valorDiv3').style.display = "block";
+            document.getElementById('valorDiv4').style.opacity = "1";
+            document.getElementById('valorDiv4').style.display = "block";
+        }
+    }
+
+    //document.getElementById('descontoSocio').style.opacity = "0";
+    //document.getElementById('descontoSocio').style.display = "none";
+
+        habilibarValoresInscricao()
+
+
+
+    </script>
+
+}
+
+

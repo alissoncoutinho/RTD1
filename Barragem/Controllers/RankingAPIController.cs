@@ -233,7 +233,8 @@ namespace Barragem.Controllers
                      select new LoginRankingModel
                      {
                          idRanking = liga.Id,
-                         nomeRanking = liga.Nome
+                         nomeRanking = liga.Nome,
+                         userId = userId
                      }).Distinct<LoginRankingModel>().ToList();
 
             foreach (var item in ligas)
@@ -266,10 +267,19 @@ namespace Barragem.Controllers
 
 
             var liga = db.Liga.Find(ligaId).Nome;
-
+            var classes = new List<Classe>();
             Cabecalho rankingCabecalho = new Cabecalho();
             rankingCabecalho.temporada = liga;
-            rankingCabecalho.categoria = categorias;
+            //rankingCabecalho.categoria = categorias;
+            Classe classe = null;
+            foreach (var cat in categorias)
+            {
+                classe = new Classe();
+                classe.Id = cat.Id;
+                classe.nome = cat.Nome;
+                classes.Add(classe);
+            }
+            rankingCabecalho.classes = classes;
             rankingCabecalho.dataRodada = snapshot.Data;
             if (classeLiga.Count() > 0) rankingCabecalho.classeUserId = classeLiga[0].CategoriaId;
             return rankingCabecalho;

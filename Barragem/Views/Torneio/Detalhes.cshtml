@@ -271,7 +271,7 @@
                                 <div id="terceiraOpcaoClasse" class="row">
                                     @Html.Label("3ª Opção", new { @class = "col-sm-4" })
                                     <div class="col-sm-8 info-box-text">
-                                        <select name="classeInscricao3" class="form-control terceiraOpcaoClasse escolherQuartaOpcaoClasse" data-classe3="@(Model.qtddCategoriasPorJogador>3)">
+                                        <select id="classeInscricao3" name="classeInscricao3" class="form-control terceiraOpcaoClasse escolherQuartaOpcaoClasse" data-classe3="@(Model.qtddCategoriasPorJogador>3)">
                                             <option value="0">Selecione uma classe...</option>
                                             @foreach (var item in ViewBag.Classes2)
                                             {
@@ -401,7 +401,7 @@
                                 <div id="quartaOpcaoClasse" class="row">
                                     @Html.Label("4ª Classe", new { @class = "col-sm-4" })
                                     <div class="col-sm-8 info-box-text">
-                                        <select name="classeInscricao4" class="form-control quartaOpcaoClasse">
+                                        <select id="classeInscricao4" name="classeInscricao4" class="form-control quartaOpcaoClasse">
                                             <option value="0">Selecione uma classe...</option>
                                             @foreach (var item in ViewBag.Classes2)
                                             {
@@ -763,7 +763,16 @@
             var radioButtonsFed = document.getElementsByName("isFederado");
             var labelisSocio = document.getElementById("labelIsSocio");
             var labelisFederado = document.getElementById("labelIsFederado");
-            if ((labelisSocio != null) && (radioButtons[0].checked == false) && (radioButtons[1].checked == false)) {
+            if ((document.getElementById('isSegundaOpcaoClasse') != null) && (document.getElementById('isSegundaOpcaoClasse').checked) && (document.getElementById('classeInscricao2').selectedIndex == 0)) {
+                alert("Favor informar a 2ª opção de classe.");
+                return false;
+            } else if ((document.getElementById('isTerceiraOpcaoClasse') != null) && (document.getElementById('isTerceiraOpcaoClasse').checked) && (document.getElementById('classeInscricao3').selectedIndex == 0)) {
+                alert("Favor informar a 3ª opção de classe.");
+                return false;
+            } else if ((document.getElementById('isQuartaOpcaoClasse') != null) && (document.getElementById('isQuartaOpcaoClasse').checked) && (document.getElementById('classeInscricao4').selectedIndex == 0)) {
+                alert("Favor informar a 4ª opção de classe.");
+                return false;
+            } else if ((labelisSocio != null) && (radioButtons[0].checked == false) && (radioButtons[1].checked == false)) {
                 alert("Favor informar se você é sócio ou não.");
                 labelisSocio.style.color = "red";
                 return false;

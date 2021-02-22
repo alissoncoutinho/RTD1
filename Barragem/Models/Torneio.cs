@@ -20,6 +20,7 @@ namespace Barragem.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
+        [Required(AllowEmptyStrings = false)]
         public string nome { get; set; }
 
         [Display(Name = "Observação")]
@@ -28,19 +29,19 @@ namespace Barragem.Models
         [Display(Name = "Data Fim da Inscrição")]
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}")]
         [DataType(DataType.Date)]
-        [Required(ErrorMessage = "Este campo é obrigatório")]
+        [Required(ErrorMessage = "Data fim da inscrição é obrigatório")]
         public DateTime dataFimInscricoes { get; set; }
 
         [Display(Name = "Data Início")]
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}")]
         [DataType(DataType.Date)]
-        [Required(ErrorMessage = "Este campo é obrigatório")]
+        [Required(ErrorMessage = "Data Início é obrigatório")]
         public DateTime dataInicio { get; set; }
 
         [Display(Name = "Data Fim")]
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}")]
         [DataType(DataType.Date)]
-        [Required(ErrorMessage = "Este campo é obrigatório")]
+        [Required(ErrorMessage = "Data Fim é obrigatório")]
         public DateTime dataFim { get; set; }
 
         [Display(Name = "Periodicidade dos jogos")]
@@ -88,6 +89,8 @@ namespace Barragem.Models
         [Display(Name = "Divulgar apenas na cidade")]
         public bool divulgaCidade { get; set; }
 
+        public string divulgacao { get; set; }
+
         [Display(Name = "Inscrição +1 classe")]
         public bool isMaisUmaClasse { get; set; }
 
@@ -120,6 +123,8 @@ namespace Barragem.Models
 
         public IList<int> liga { get; set; }
 
+        public IList<int> classes { get; set; }
+
         public String TipoTorneio { get; set; }
 
         public string descontoPara { get; set; }
@@ -127,6 +132,8 @@ namespace Barragem.Models
 
         [Display(Name = "Desconto para Federado")]
         public double? valorDescontoFederado { get; set; }
+
+
     }
 
 

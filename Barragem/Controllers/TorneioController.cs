@@ -910,14 +910,12 @@ namespace Barragem.Controllers
         }
 
         [HttpPost]
-        public ActionResult EditClasse(int Id, string nome, bool isSegundaOpcao = false, bool isDupla = false, bool isPrimeiraOpcao = true, bool faseGrupo= false, bool faseMataMata = false)
+        public ActionResult EditClasse(int Id, string nome, bool isDupla = false, bool faseGrupo= false, bool faseMataMata = false)
         {
             try
             {
                 var classe = db.ClasseTorneio.Find(Id);
                 classe.nome = nome;
-                classe.isSegundaOpcao = isSegundaOpcao;
-                classe.isPrimeiraOpcao = isPrimeiraOpcao;
                 classe.isDupla = isDupla;
                 classe.faseGrupo = faseGrupo;
                 classe.qtddJogadoresPorGrupo = 4;
@@ -2258,7 +2256,105 @@ namespace Barragem.Controllers
             }
             
             return View();
-        }       
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "admin,organizador")]
+        public ActionResult CreateTorneio(Torneio torneio)
+        {
+            var userId = WebSecurity.GetUserId(User.Identity.Name);
+            var barragemId = (from up in db.UserProfiles where up.UserId == userId select up.barragemId).Single();
+            torneio.barragemId = barragemId;
+            var barragem = db.BarragemView.Find(torneio.barragemId);
+            torneio.isAtivo = true;
+            torneio.divulgaCidade = false;
+            torneio.isOpen = false;
+            if (torneio.divulgacao == "nao divulgar"){
+                torneio.isAtivo = false;
+            }
+            if (torneio.divulgacao == "cidade"){
+                torneio.divulgaCidade = true;
+            }
+            if (torneio.divulgacao == "brasil"){
+                torneio.isOpen = true;
+            }
+            
+            if ((ModelState.IsValid) && (barragem.isAtiva))
+            {
+                db.Torneio.Add(torneio);
+                db.SaveChanges();
+                IList<int> ligas = torneio.liga;
+                if (ligas != null)
+                {
+                    foreach (int idLiga in ligas)
+                    {
+                        TorneioLiga tl = new TorneioLiga
+                        {
+                            LigaId = idLiga,
+                            TorneioId = torneio.Id
+                        };
+                        db.TorneioLiga.Add(tl);
+                        db.SaveChanges();
+                        //pesquisa o tipo de torneio
+                        BarragemLiga barraliga = db.BarragemLiga.Where(bl => bl.LigaId == idLiga && bl.BarragemId == torneio.barragemId).Single();
+                        torneio.TipoTorneio = barraliga.TipoTorneio;
+                        db.SaveChanges();
+                    }
+                }
+                int i = 1;
+                ClasseTorneio classe = null;
+                foreach (int idCategoria in torneio.classes)
+                {
+                    var categoria = db.Categoria.Find(idCategoria);
+                    classe = new ClasseTorneio
+                    {
+                        nivel = i,
+                        nome = categoria.Nome,
+                        categoriaId = idCategoria,
+                        torneioId = torneio.Id,
+                        isPrimeiraOpcao = true,
+                        isSegundaOpcao = true,
+                        faseMataMata = true,
+                        faseGrupo = false,
+                        isDupla = categoria.isDupla
+                    };
+                    i++;
+                    db.ClasseTorneio.Add(classe);
+                    db.SaveChanges();
+                }
+
+                return RedirectToAction("Edit", new { id = torneio.Id, Msg = "OK" });
+            } else {
+                List<BarragemLiga> ligasDoRanking = db.BarragemLiga.Where(bl => bl.BarragemId == barragemId).ToList();
+                List<Liga> ligasDisponiveis = new List<Liga>();
+                foreach (BarragemLiga bl in ligasDoRanking)
+                {
+                    ligasDisponiveis.Add(db.Liga.Find(bl.LigaId));
+                }
+                ViewBag.LigasDisponiveis = ligasDisponiveis;
+
+                ViewBag.Categorias = db.Categoria.ToList();
+            }
+            return View();
+        }
+        [Authorize(Roles = "admin,organizador")]
+        public ActionResult CreateTorneio()
+        {
+            var userId = WebSecurity.GetUserId(User.Identity.Name);
+            var barragemId = (from up in db.UserProfiles where up.UserId == userId select up.barragemId).Single();
+            List<BarragemLiga> ligasDoRanking = db.BarragemLiga.Where(bl => bl.BarragemId == barragemId && bl.Liga.isAtivo).ToList();
+            List<Liga> ligasDisponiveis = new List<Liga>();
+            foreach (BarragemLiga bl in ligasDoRanking)
+            {
+                ligasDisponiveis.Add(db.Liga.Find(bl.LigaId));
+            }
+            ViewBag.LigasDisponiveis = ligasDisponiveis;
+
+            ViewBag.Categorias = db.Categoria.ToList();
+            return View();
+        }
+
+        
 
     }
 }

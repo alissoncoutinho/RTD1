@@ -29,12 +29,6 @@
                         @Html.DisplayName("nome")
                     </th>
                     <th>
-                        @Html.DisplayName("primeira opção")
-                    </th>
-                    <th>
-                        @Html.DisplayName("segunda opção")
-                    </th>
-                    <th>
                         @Html.DisplayName("Dupla")
                     </th>
                     <th>
@@ -67,25 +61,6 @@
                         }
                         <td>
                             <input type="text" class="col-md-6 form-control" name="@Html.Raw("nome" + i)" id="@Html.Raw("nome" + i)" value="@item.nome">
-                        </td>
-                        <td>
-                            @if (item.isPrimeiraOpcao){
-                                <input type="checkbox" checked value="true" name="@Html.Raw("isPrimeiraOpcao" + i)" id="@Html.Raw("isPrimeiraOpcao" + i)" />
-                            }
-                            else
-                            {
-                                <input type="checkbox" value="true" name="@Html.Raw("isPrimeiraOpcao" + i)" id="@Html.Raw("isPrimeiraOpcao" + i)" />
-                            }
-                        </td>
-                        <td>
-                            @if (item.isSegundaOpcao)
-                            {
-                                <input type="checkbox" checked value="true" name="@Html.Raw("isSegundaOpcao" + i)" id="@Html.Raw("isSegundaOpcao" + i)" />
-                            }
-                            else
-                            {
-                                <input type="checkbox" value="true" name="@Html.Raw("isSegundaOpcao" + i)" id="@Html.Raw("isSegundaOpcao" + i)" />
-                            }
                         </td>
                         <td>
                             @if (item.isDupla)
@@ -141,8 +116,6 @@
                     var i = $(this).data("valor");
                     var Id = $("#form"+i).find("input[name=Id]").val();
                     var nome = document.getElementById("nome"+i).value;
-                    var isSegundaOpcao = document.getElementById("isSegundaOpcao" + i).checked;
-                    var isPrimeiraOpcao = document.getElementById("isPrimeiraOpcao" + i).checked;
                     var isDupla = document.getElementById("isDupla" + i).checked;
                     var faseGrupo = document.getElementById("faseGrupo" + i).checked;
                     var faseMataMata = document.getElementById("faseMataMata" + i).checked;
@@ -151,7 +124,7 @@
                         type: "POST",
                         url: "/Torneio/EditClasse",
                         dataType: "json",
-                        data: "{'Id':'" + Id + "', 'nome':'" + nome + "', 'isSegundaOpcao':'" + isSegundaOpcao + "', 'isDupla':'" + isDupla + "', 'isPrimeiraOpcao':'" + isPrimeiraOpcao + "', 'faseGrupo':'" + faseGrupo + "', 'faseMataMata':'" + faseMataMata + "'}",
+                        data: "{'Id':'" + Id + "', 'nome':'" + nome + "', 'isDupla':'" + isDupla + "', 'faseGrupo':'" + faseGrupo + "', 'faseMataMata':'" + faseMataMata + "'}",
                         contentType: "application/json; charset=utf-8",
                         success: function (response) {
                             if (typeof response == "object") {
