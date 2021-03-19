@@ -203,7 +203,7 @@
 
                 <div class="panel panel-default">
                     <div class="panel-heading"><b>Marque as categorias que deseja incluir no torneio:</b><br>
-                        <small style="color:red">O nome da categoria poderá ser editado depois</small>
+                        <small style="color:red">Você poderá adicionar e editar nome de categorias depois</small>
                     </div>
                     <div class="panel-body">
                         @foreach (var categoria in ViewBag.Categorias)
@@ -365,12 +365,6 @@
             return false;
         });
 
-        $('#criarTorneio').on('click', function (event) {
-            if (document.getElementById('transferencia').checked == false) {
-                document.forms[1].dadosBancarios.value = ''
-            }
-        });
-
         $('#btnTab1').on('click', function (event) {
             event.preventDefault();
            if (document.getElementById('nome').value == '') {
@@ -396,6 +390,18 @@
             event.preventDefault();
             if (document.forms[1].dataFimInscricoes.value == '') {
                 toastr.error("Informe a data de encerramento das inscrições.", "Erro");
+                $("#btnTab2").attr("href", "#tabInscricao");
+            } else if ((document.getElementById('qtddCategoriasPorJogador').value == 1) && (document.getElementById('valor').value == "")) {
+                toastr.error("Informe o valor da inscrição.", "Erro");
+                $("#btnTab2").attr("href", "#tabInscricao");    
+            } else if ((document.getElementById('qtddCategoriasPorJogador').value == 2) && ((document.getElementById('valor').value == "") || (document.getElementById('valor2').value == ""))) {
+                toastr.error("Informe todos os valores das inscrições.", "Erro");
+                $("#btnTab2").attr("href", "#tabInscricao");  
+            } else if ((document.getElementById('qtddCategoriasPorJogador').value == 3) && ((document.getElementById('valor').value == "") || (document.getElementById('valor2').value == "") || (document.getElementById('valor3').value == ""))) {
+                toastr.error("Informe todos os valores das inscrições.", "Erro");
+                $("#btnTab2").attr("href", "#tabInscricao");
+            } else if ((document.getElementById('qtddCategoriasPorJogador').value == 4) && ((document.getElementById('valor').value == "") || (document.getElementById('valor2').value == "") || (document.getElementById('valor3').value == "") || (document.getElementById('valor4').value == ""))) {
+                toastr.error("Informe todos os valores das inscrições.", "Erro");
                 $("#btnTab2").attr("href", "#tabInscricao");
             } else {
                 $("#btnTab2").attr("href", "#tabClasse");

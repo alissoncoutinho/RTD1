@@ -133,6 +133,10 @@ namespace Barragem.Models
         [Display(Name = "Desconto para Federado")]
         public double? valorDescontoFederado { get; set; }
 
+        [UIHint("tinymce_full_compressed"), AllowHtml]
+        [Display(Name = "Regulamento")]
+        public string regulamento { get; set; }
+
 
     }
 

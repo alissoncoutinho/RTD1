@@ -212,9 +212,9 @@ namespace Barragem.Controllers
                 return RedirectToAction("Detalhes", "Torneio", new {id=torneioId});
             }
             ViewBag.torneio = db.Torneio.Find(torneioId);
-            var classes = db.ClasseTorneio.Where(i => i.torneioId == torneioId && i.isPrimeiraOpcao).OrderBy(c => c.Id).ToList();
+            var classes = db.ClasseTorneio.Where(i => i.torneioId == torneioId && i.isPrimeiraOpcao).OrderBy(c => c.nivel).ToList();
             ViewBag.Classes = classes;
-            var classes2Opcao = db.ClasseTorneio.Where(i => i.torneioId == torneioId && i.isSegundaOpcao).OrderBy(c => c.Id).ToList();
+            var classes2Opcao = db.ClasseTorneio.Where(i => i.torneioId == torneioId && i.isSegundaOpcao).OrderBy(c => c.nivel).ToList();
             ViewBag.Classes2 = classes2Opcao;
             ViewBag.email = "";
             ViewBag.login = "";
@@ -351,9 +351,9 @@ namespace Barragem.Controllers
             ViewBag.isClasseDupla = isClasseDupla;
             ViewBag.ClasseInscricao = model.inscricao.classe;
             ViewBag.ClasseInscricao2 = model.classeInscricao2;
-            var classes = db.ClasseTorneio.Where(i => i.torneioId == torneioId && i.isPrimeiraOpcao).OrderBy(c => c.Id).ToList();
+            var classes = db.ClasseTorneio.Where(i => i.torneioId == torneioId && i.isPrimeiraOpcao).OrderBy(c => c.nivel).ToList();
             ViewBag.Classes = classes;
-            var classes2Opcao = db.ClasseTorneio.Where(i => i.torneioId == torneioId && i.isSegundaOpcao).OrderBy(c => c.Id).ToList();
+            var classes2Opcao = db.ClasseTorneio.Where(i => i.torneioId == torneioId && i.isSegundaOpcao).OrderBy(c => c.nivel).ToList();
             ViewBag.Classes2 = classes2Opcao;
             var classesBarragem = db.Classe.Where(c => c.barragemId == torneio.barragemId).ToList();
             var mensagemRetorno = RegisterTorneioNegocio(model, torneioId, isSocio, isClasseDupla, isFederado);

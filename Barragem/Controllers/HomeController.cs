@@ -84,7 +84,6 @@ namespace Barragem.Controllers
             torneioLess.local = torneio.local;
             torneioLess.cidade = torneio.cidade;
             torneioLess.Id = torneio.Id;
-            torneioLess.liberarEscolhaDuplas = torneio.liberarEscolhaDuplas;
             torneioLess.dataFimInscricoes = torneio.dataFimInscricoes;
             torneioLess.valor = torneio.valor;
             torneioLess.valorSocio = torneio.valorSocio;

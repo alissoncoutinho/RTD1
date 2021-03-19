@@ -34,7 +34,7 @@
                                 @Html.DisplayFor(modelItem => item.barragem.nome)
                             </td>
                             <td>
-                                <a href="@Url.Action("Edit", new {id = @item.Id })" title="Editar/Detalhar" class="btn btn-default btn-xs">
+                                <a href="@Url.Action("EditTorneio", new {id = @item.Id })" title="Editar/Detalhar" class="btn btn-default btn-xs">
                                     <span class="glyphicon glyphicon-edit"></span>
                                 </a>
                                 <!--a href="Url.Action("InscricoesTorneio", new {torneioId = item.Id })" title="Inscrições" class="btn btn-default btn-xs">

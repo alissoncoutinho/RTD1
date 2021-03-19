@@ -19,5 +19,7 @@ namespace Barragem.Models
         public string Nome { get; set; }
 
         public bool isDupla { get; set; }
+
+        public int ordemExibicao { get; set; }
     }
 }
