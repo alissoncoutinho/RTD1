@@ -1510,7 +1510,7 @@ namespace Barragem.Controllers
         [Authorize(Roles = "admin, organizador")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult EditTorneio(Torneio torneio)
+        public ActionResult EditTorneio(Torneio torneio, bool transferencia = false)
         {
             var userId = WebSecurity.GetUserId(User.Identity.Name);
             string perfil = Roles.GetRolesForUser(User.Identity.Name)[0];
@@ -1518,6 +1518,10 @@ namespace Barragem.Controllers
             torneio.isAtivo = true;
             torneio.divulgaCidade = false;
             torneio.isOpen = false;
+            if (transferencia == false)
+            {
+                torneio.dadosBancarios = "";
+            }
             if (torneio.divulgacao == "nao divulgar")
             {
                 torneio.isAtivo = false;
@@ -1584,6 +1588,8 @@ namespace Barragem.Controllers
             }
             ViewBag.LigasDoTorneio = ligasDoTorneio;
             torneio.barragem = db.BarragemView.Find(torneio.barragemId);
+            ViewBag.TorneioId = torneio.Id;
+            ViewBag.flag = "edit";
             return View(torneio);
         }
 

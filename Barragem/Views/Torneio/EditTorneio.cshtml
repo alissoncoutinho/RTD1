@@ -266,13 +266,20 @@
                                 </div>
                                 @Html.ValidationMessageFor(model => model.observacao)
                             </div>
-                            <div class="editor-label">
-                                @Html.LabelFor(model => model.dadosBancarios)
-                            </div>
+                        @if (Model.dadosBancarios == "")
+                        {
+                            <input type="checkbox" name="transferencia" id="transferencia" value="true" onclick="isTransferenciaBancaria()"> <b>Usar transferência como forma de pagamento</b><br>
+                        }
+                        else
+                        {
+                            <input type="checkbox" name="transferencia" id="transferencia" value="true" checked onclick="isTransferenciaBancaria()"> <b>Usar transferência como forma de pagamento</b><br>
+                        }
+                        <div id="isTransferencia">
                             <div class="editor-field">
                                 @Html.TextAreaFor(model => model.dadosBancarios)
                                 @Html.ValidationMessageFor(model => model.dadosBancarios)
                             </div>
+                        </div>
                     </div>
                </div>
                         <div class="box box-primary">
@@ -435,6 +442,17 @@
             toolbar1: "bold italic | underline | alignleft aligncenter alignright alignjustify | forecolor backcolor | fontselect |  fontsizeselect"
 
         });
+
+        function isTransferenciaBancaria() {
+            if (document.getElementById('transferencia').checked) {
+                document.getElementById('isTransferencia').style.opacity = "1";
+                document.getElementById('isTransferencia').style.display = "block";
+            } else {
+                document.getElementById('isTransferencia').style.opacity = "0 !important";
+                document.getElementById('isTransferencia').style.display = "none";
+            }
+        }
+
         $(function () {
             $("#dataInicio").datepicker({
                 language: 'pt-BR',
@@ -483,6 +501,7 @@
         $('#btnCopiarLink').on('click', function (event) {
             event.preventDefault();
             navigator.clipboard.writeText($(this).attr('data-link'));
+            toastr.success("Link copiado com sucesso.", "Aviso");
         });
 
         function getJogadoresAlterados() {
@@ -598,6 +617,7 @@
             //document.getElementById('descontoSocio').style.display = "none";
         }
 
-        habilibarValoresInscricao()
+        isTransferenciaBancaria();
+        habilibarValoresInscricao();
     </script>
 }
