@@ -86,16 +86,19 @@ namespace Barragem.Class
                 else
                 {
                     //cadastrar a pontuacao do vice 
-                    var inscricaoPerdedor = db.InscricaoTorneio.Where(i => i.userId == jogo.idDoPerdedor
-                        && i.torneioId == jogo.torneioId && i.classe == jogo.classeTorneio).ToList();
-                    if (inscricaoPerdedor.Count() > 0)
-                    {
-                        inscricaoPerdedor[0].colocacao = 1; // vice
-                        jogo.faseTorneio = 1;
-                        int pontuacao = CalculadoraDePontos.AddTipoTorneio(torneio.TipoTorneio).CalculaPontos(inscricaoPerdedor[0]);
-                        inscricaoPerdedor[0].Pontuacao = pontuacao;
-                        db.SaveChanges();
-                    }
+                    //var inscricaoPerdedor = db.InscricaoTorneio.Where(i => i.userId == jogo.idDoPerdedor
+                    //    && i.torneioId == jogo.torneioId && i.classe == jogo.classeTorneio).ToList();
+                    //if (inscricaoPerdedor.Count() > 0)
+                   //{
+                   //     inscricaoPerdedor[0].colocacao = 1; // vice
+                   //     jogo.faseTorneio = 1;
+                   //     int pontuacao = CalculadoraDePontos.AddTipoTorneio(torneio.TipoTorneio).CalculaPontos(inscricaoPerdedor[0]);
+                   //     inscricaoPerdedor[0].Pontuacao = pontuacao;
+                   //     db.SaveChanges();
+                   // }
+
+                    cadastrarColocacaoPerdedorTorneio(jogo);
+
                     // indicar o vencedor do torneio
                     var inscricao = db.InscricaoTorneio.Where(i => i.userId == jogo.idDoVencedor
                         && i.torneioId == jogo.torneioId && i.classe == jogo.classeTorneio).ToList();
@@ -106,6 +109,18 @@ namespace Barragem.Class
                         int pontuacao = CalculadoraDePontos.AddTipoTorneio(torneio.TipoTorneio).CalculaPontos(inscricao[0]);
                         inscricao[0].Pontuacao = pontuacao;
                         db.SaveChanges();
+                        if ((jogo.desafiado2_id != null) && (jogo.desafiante2_id != null)){
+                            int idVencedorDupla = 0;
+                            if (jogo.idDoVencedor == jogo.desafiado_id)
+                            {
+                                idVencedorDupla = (int)jogo.desafiado2_id;
+                            }
+                            else if (jogo.idDoVencedor == jogo.desafiante_id)
+                            {
+                                idVencedorDupla = (int)jogo.desafiante2_id;
+                            }
+                            cadastrarColocacaoDupla(idVencedorDupla, 0, (int)jogo.torneioId, (int)jogo.classeTorneio);
+                        }
                     }
                     //
                     new CalculadoraDePontos().GerarSnapshotDaLiga(jogo);
@@ -215,13 +230,13 @@ namespace Barragem.Class
                 {
                     idPerdedorDupla = (int)jogo.desafiante2_id;
                 }
-                cadastrarColocacaoPerdedorDupla(idPerdedorDupla, colocacao, (int)jogo.torneioId, (int)jogo.classeTorneio);
+                cadastrarColocacaoDupla(idPerdedorDupla, colocacao, (int)jogo.torneioId, (int)jogo.classeTorneio);
             }
         }
 
-        private void cadastrarColocacaoPerdedorDupla(int idPerdedor, int colocacao, int torneioId, int classeTorneio)
+        private void cadastrarColocacaoDupla(int userId, int colocacao, int torneioId, int classeTorneio)
         {
-            var inscricao = db.InscricaoTorneio.Where(i => i.userId == idPerdedor
+            var inscricao = db.InscricaoTorneio.Where(i => i.userId == userId
                 && i.torneioId == torneioId && i.classe == classeTorneio && i.isAtivo).ToList();
             if (inscricao.Count() > 0)
             {
@@ -374,6 +389,18 @@ namespace Barragem.Class
             return jogosRodada1;
         }
 
+        public void pontuarEliminadosFaseGrupo(ClasseTorneio classe) {
+            var desclassificados = getDesclassificadosEmCadaGrupo(classe);
+            var torneio = db.Torneio.Find(classe.torneioId);
+            foreach (var inscricao in desclassificados)
+            {
+                inscricao.colocacao = 100;
+                inscricao.Pontuacao = CalculadoraDePontos.AddTipoTorneio(torneio.TipoTorneio).CalculaPontos(inscricao);
+                db.Entry(inscricao).State = EntityState.Modified;
+                db.SaveChanges();
+            }
+        }
+
         public void montarJogosRegraCBT(ClasseTorneio classe)
         {
             var classificados = getClassificadosEmCadaGrupo(classe);
@@ -392,7 +419,17 @@ namespace Barragem.Class
             // obs.: (filtro: it.pontuacaoFaseGrupo>=0) existe este filtro pois o jogador que receber um WO em algum jogo da fase de grupo será desclassificado e a indicação de desclassificação é: pontuacaoFaseGrupo = -100 (gambiarra, eu sei.)
             if (classe.isDupla)
             {
-                return db.InscricaoTorneio.Where(it => it.classe == classe.Id && it.isAtivo && it.parceiroDuplaId != null && it.parceiroDuplaId != 0 && it.pontuacaoFaseGrupo>= pontuacaoFaseGrupo).ToList();
+                List<InscricaoTorneio> inscritosAtualizada = new List<InscricaoTorneio>();
+                var inscritosTorneio = db.InscricaoTorneio.Where(it => it.classe == classe.Id && it.isAtivo && it.parceiroDuplaId != null && it.parceiroDuplaId != 0 && it.pontuacaoFaseGrupo>= pontuacaoFaseGrupo).ToList();
+                foreach (var item in inscritosTorneio)
+                {
+                    var inscricaoParceiroAtiva = db.InscricaoTorneio.Where(it => it.classe == classe.Id && it.isAtivo && it.userId == item.parceiroDuplaId).Count();
+                    if (inscricaoParceiroAtiva != 0)
+                    {
+                        inscritosAtualizada.Add(item);
+                    }
+                }
+                return inscritosAtualizada;
             }
             else
             {
@@ -692,6 +729,34 @@ namespace Barragem.Class
             
             
             return listClassificadosEmCadaGrupo;
+        }
+
+
+        public List<InscricaoTorneio> getDesclassificadosEmCadaGrupo(ClasseTorneio classe)
+        {
+            var qtddGrupos = getQtddDeGrupos(classe.Id);
+            List<InscricaoTorneio> listDesclassificadosEmCadaGrupo = new List<InscricaoTorneio>();
+            for (int gp = 1; gp <= qtddGrupos; gp++)
+            {
+                // Pega a ordem de classificação de cada grupo
+                var classificacaoFaseGrupo = ordenarClassificacaoFaseGrupo(classe, gp);
+                var i = 1;
+                foreach (var classificado in classificacaoFaseGrupo) {
+                    if (i > 2)
+                    {
+                        if((classificado.inscricao.parceiroDuplaId!=null) || (classificado.inscricao.parceiroDuplaId != 0)){
+                            var inscricaoParceiro = db.InscricaoTorneio.Where(it => it.isAtivo && it.userId == classificado.inscricao.parceiroDuplaId && it.classe == classe.Id).ToList();
+                            if (inscricaoParceiro.Count() > 0)
+                            {
+                                listDesclassificadosEmCadaGrupo.Add(inscricaoParceiro[0]);
+                            }
+                        }
+                        listDesclassificadosEmCadaGrupo.Add(classificado.inscricao);
+                    }
+                    i++;
+                }
+            }
+            return listDesclassificadosEmCadaGrupo;
         }
 
         private int getQtddDeGrupos(int classeId)

@@ -162,26 +162,28 @@
                     </div>
                 </div>
                 <div class="form-group col-sm-2">
-                    <input type="text" name="fHora" id="fHora" value="@ViewBag.fHora" placeholder="Hora" class="form-control hora">
+                    <input type="text" name="fNomeJogador" id="fNomeJogador" value="@ViewBag.fNomeJogador" placeholder="Jogador" class="form-control">
                 </div>
                 <div class="form-group col-sm-2">
                     <select name="fQuadra" id="fQuadra" class="form-control">
-                        <option value="0" @if (ViewBag.fQuadra == 0) { @Html.Raw("selected")        }>Quadras</option>
-                        <option value="1" @if (ViewBag.fQuadra == 1) { @Html.Raw("selected")         }>quadra 1</option>
-                        <option value="2" @if (ViewBag.fQuadra == 2) { @Html.Raw("selected")         }>quadra 2</option>
-                        <option value="3" @if (ViewBag.fQuadra == 3) { @Html.Raw("selected")         }>quadra 3</option>
-                        <option value="4" @if (ViewBag.fQuadra == 4) { @Html.Raw("selected")         }>quadra 4</option>
-                        <option value="5" @if (ViewBag.fQuadra == 5) { @Html.Raw("selected")         }>quadra 5</option>
-                        <option value="6" @if (ViewBag.fQuadra == 6) { @Html.Raw("selected")         }>quadra 6</option>
-                        <option value="7" @if (ViewBag.fQuadra == 7) { @Html.Raw("selected")         }>quadra 7</option>
-                        <option value="8" @if (ViewBag.fQuadra == 8) { @Html.Raw("selected")         }>quadra 8</option>
-                        <option value="9" @if (ViewBag.fQuadra == 9) { @Html.Raw("selected")         }>quadra 9</option>
-                        <option value="10" @if (ViewBag.fQuadra == 10) { @Html.Raw("selected")         }>quadra 10</option>
-                        <option value="11" @if (ViewBag.fQuadra == 11) { @Html.Raw("selected")         }>quadra 11</option>
-                        <option value="12" @if (ViewBag.fQuadra == 12) { @Html.Raw("selected")         }>quadra 12</option>
-                        <option value="13" @if (ViewBag.fQuadra == 13) { @Html.Raw("selected")         }>quadra 13</option>
-                        <option value="14" @if (ViewBag.fQuadra == 14) { @Html.Raw("selected")         }>quadra 14</option>
-                        <option value="15" @if (ViewBag.fQuadra == 15) { @Html.Raw("selected")         }>quadra 15</option>
+                        <option value="0" @if (ViewBag.fQuadra == "0") { @Html.Raw("selected")        }>Quadras</option>
+                        <option value="1" @if (ViewBag.fQuadra == "1") { @Html.Raw("selected")         }>quadra 1</option>
+                        <option value="2" @if (ViewBag.fQuadra == "2") { @Html.Raw("selected")         }>quadra 2</option>
+                        <option value="3" @if (ViewBag.fQuadra == "3") { @Html.Raw("selected")         }>quadra 3</option>
+                        <option value="4" @if (ViewBag.fQuadra == "4") { @Html.Raw("selected")         }>quadra 4</option>
+                        <option value="5" @if (ViewBag.fQuadra == "5") { @Html.Raw("selected")         }>quadra 5</option>
+                        <option value="6" @if (ViewBag.fQuadra == "6") { @Html.Raw("selected")         }>quadra 6</option>
+                        <option value="7" @if (ViewBag.fQuadra == "7") { @Html.Raw("selected")         }>quadra 7</option>
+                        <option value="8" @if (ViewBag.fQuadra == "8") { @Html.Raw("selected")         }>quadra 8</option>
+                        <option value="9" @if (ViewBag.fQuadra == "9") { @Html.Raw("selected")         }>quadra 9</option>
+                        <option value="10" @if (ViewBag.fQuadra == "10") { @Html.Raw("selected")         }>quadra 10</option>
+                        <option value="11" @if (ViewBag.fQuadra == "11") { @Html.Raw("selected")         }>quadra 11</option>
+                        <option value="12" @if (ViewBag.fQuadra == "12") { @Html.Raw("selected")         }>quadra 12</option>
+                        <option value="13" @if (ViewBag.fQuadra == "13") { @Html.Raw("selected")         }>quadra 13</option>
+                        <option value="14" @if (ViewBag.fQuadra == "14") { @Html.Raw("selected")         }>quadra 14</option>
+                        <option value="15" @if (ViewBag.fQuadra == "15") { @Html.Raw("selected")         }>quadra 15</option>
+                        <option value="G1" @if (ViewBag.fQuadra == "G1") { @Html.Raw("selected")          }>quadra G1</option>
+                        <option value="G2" @if (ViewBag.fQuadra == "G2") { @Html.Raw("selected")          }>quadra G2</option>
                     </select>
                 </div>
                 <div class="form-group col-sm-2">
@@ -293,22 +295,24 @@
                     </td>
                     <td>
                         <select name="@Html.Raw("quadra" + i)" id="@Html.Raw("quadra" + i)" class="form-control">
-                            <option value="100" @if (item.quadra == 100) { @Html.Raw("selected")      }></option>
-                            <option value="1" @if (item.quadra == 1) { @Html.Raw("selected")       }>quadra 1</option>
-                            <option value="2" @if (item.quadra == 2) { @Html.Raw("selected")       }>quadra 2</option>
-                            <option value="3" @if (item.quadra == 3) { @Html.Raw("selected")       }>quadra 3</option>
-                            <option value="4" @if (item.quadra == 4) { @Html.Raw("selected")       }>quadra 4</option>
-                            <option value="5" @if (item.quadra == 5) { @Html.Raw("selected")       }>quadra 5</option>
-                            <option value="6" @if (item.quadra == 6) { @Html.Raw("selected")       }>quadra 6</option>
-                            <option value="7" @if (item.quadra == 7) { @Html.Raw("selected")       }>quadra 7</option>
-                            <option value="8" @if (item.quadra == 8) { @Html.Raw("selected")       }>quadra 8</option>
-                            <option value="9" @if (item.quadra == 9) { @Html.Raw("selected")       }>quadra 9</option>
-                            <option value="10" @if (item.quadra == 10) { @Html.Raw("selected")       }>quadra 10</option>
-                            <option value="11" @if (item.quadra == 11) { @Html.Raw("selected")       }>quadra 11</option>
-                            <option value="12" @if (item.quadra == 12) { @Html.Raw("selected")       }>quadra 12</option>
-                            <option value="13" @if (item.quadra == 13) { @Html.Raw("selected")       }>quadra 13</option>
-                            <option value="14" @if (item.quadra == 14) { @Html.Raw("selected")       }>quadra 14</option>
-                            <option value="15" @if (item.quadra == 15) { @Html.Raw("selected")       }>quadra 15</option>
+                            <option value="100" @if (item.quadra == "100") { @Html.Raw("selected")      }></option>
+                            <option value="1" @if (item.quadra == "1") { @Html.Raw("selected")       }>quadra 1</option>
+                            <option value="2" @if (item.quadra == "2") { @Html.Raw("selected")       }>quadra 2</option>
+                            <option value="3" @if (item.quadra == "3") { @Html.Raw("selected")       }>quadra 3</option>
+                            <option value="4" @if (item.quadra == "4") { @Html.Raw("selected")       }>quadra 4</option>
+                            <option value="5" @if (item.quadra == "5") { @Html.Raw("selected")       }>quadra 5</option>
+                            <option value="6" @if (item.quadra == "6") { @Html.Raw("selected")       }>quadra 6</option>
+                            <option value="7" @if (item.quadra == "7") { @Html.Raw("selected")       }>quadra 7</option>
+                            <option value="8" @if (item.quadra == "8") { @Html.Raw("selected")       }>quadra 8</option>
+                            <option value="9" @if (item.quadra == "9") { @Html.Raw("selected")       }>quadra 9</option>
+                            <option value="10" @if (item.quadra == "10") { @Html.Raw("selected")       }>quadra 10</option>
+                            <option value="11" @if (item.quadra == "11") { @Html.Raw("selected")       }>quadra 11</option>
+                            <option value="12" @if (item.quadra == "12") { @Html.Raw("selected")       }>quadra 12</option>
+                            <option value="13" @if (item.quadra == "13") { @Html.Raw("selected")       }>quadra 13</option>
+                            <option value="14" @if (item.quadra == "14") { @Html.Raw("selected")       }>quadra 14</option>
+                            <option value="15" @if (item.quadra == "15") { @Html.Raw("selected")       }>quadra 15</option>
+                            <option value="G1" @if (item.quadra == "G1") { @Html.Raw("selected")        }>quadra G1</option>
+                            <option value="G2" @if (item.quadra == "G2") { @Html.Raw("selected")        }>quadra G2</option>
                         </select>
                     </td>
                     <td align="center">
@@ -480,19 +484,19 @@
                         var torneioId = document.getElementById('torneioId').value;
                         var classeId = document.getElementById('fClasse').value;
                         var data = document.getElementById('fData').value;
-                        var hora = document.getElementById('fHora').value;
+                        var nomeJogador = document.getElementById('fNomeJogador').value;
                         var quadra = document.getElementById('fQuadra').value;
                         var fase = document.getElementById('fase').value;
-                        window.location = "EditJogos?torneioId=" + torneioId + "&fClasse=" + classeId + "&fData=" + data + "&fHora=" + hora + "&fQuadra=" + quadra + "&fase=" + fase;
+                        window.location = "EditJogos?torneioId=" + torneioId + "&fClasse=" + classeId + "&fData=" + data + "&fNomeJogador=" + nomeJogador + "&fQuadra=" + quadra + "&fase=" + fase + "&nomeJogador=" + nomeJogador;
                     }
                     function Imprimir() {
                         var torneioId = document.getElementById('torneioId').value;
                         var classeId = document.getElementById('fClasse').value;
                         var data = document.getElementById('fData').value;
-                        var hora = document.getElementById('fHora').value;
+                        var nomeJogador = document.getElementById('fNomeJogador').value;
                         var quadra = document.getElementById('fQuadra').value;
                         var fase = document.getElementById('fase').value;
-                        window.location = "ImprimirJogos?torneioId=" + torneioId + "&fClasse=" + classeId + "&fData=" + data + "&fHora=" + hora + "&fQuadra=" + quadra + "&fase=" + fase;
+                        window.location = "ImprimirJogos?torneioId=" + torneioId + "&fClasse=" + classeId + "&fData=" + data + "&fNomeJogador=" + nomeJogador + "&fQuadra=" + quadra + "&fase=" + fase;
                             }
 
                     document.getElementById("IndicadorVencedor").classList.remove("show");

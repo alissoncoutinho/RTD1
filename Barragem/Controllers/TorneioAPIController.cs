@@ -411,7 +411,7 @@ namespace Barragem.Controllers
             meuJogo.dataJogo = j.dataJogo;
             meuJogo.horaJogo = j.horaJogo;
             var quadra = "";
-            if ((j.quadra != null) && (j.quadra != 100))
+            if ((j.quadra != null) && (j.quadra != "100"))
             {
                 quadra = " quadra " + j.quadra;
             }

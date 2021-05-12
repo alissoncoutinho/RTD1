@@ -90,7 +90,7 @@ namespace Barragem.Models
         [ForeignKey("situacao_Id")]
         public virtual SituacaoJogo situacao { get; set; }
 
-        public int? quadra { get; set; }
+        public string quadra { get; set; }
 
         public int? torneioId { get; set; }
 
@@ -165,7 +165,7 @@ namespace Barragem.Models
                     descricao = ((DateTime)dataJogo).ToShortDateString();
                     descricao = descricao + " " + horaJogo + " ";
                 }
-                if ((quadra != null) && (quadra > 0) && (quadra<100)){
+                if ((quadra != null) && (quadra != "0") && (quadra!="100")){
                     descricao = descricao + " quadra " + quadra;
                 }
                 

@@ -22,4 +22,15 @@ namespace Barragem.Models
 
         public int ordemExibicao { get; set; }
     }
+
+    public class CategoriaDeLiga
+    {
+        public int Id { get; set; }
+
+        public string Nome { get; set; }
+
+        public List<String> Ligas { get; set; }
+
+        
+    }
 }

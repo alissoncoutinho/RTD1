@@ -1,5 +1,6 @@
 ﻿@{
     int i = 0;
+    int qtddClasses = Model.Count();
 }
 @model IEnumerable<Barragem.Models.ClasseTorneio>
     @Html.Partial("_PartialTabs")
@@ -12,17 +13,19 @@
         <div class="tab-pane fade in active" id="tabEditClasses">
             <br>
             <p>
-                <a href="@Url.Action("CreateClasse", new {torneioId = ViewBag.TorneioId })" class="btn btn-primary btn-small"><span class="glyphicon glyphicon-plus"></span> Nova</a>
+                <a href="@Url.Action("CreateClasse", new {torneioId = ViewBag.TorneioId, qtddClasses = qtddClasses })" class="btn btn-primary btn-small"><span class="glyphicon glyphicon-plus"></span> Nova</a>
             </p>
+@using (Html.BeginForm("EditOrdemExibicaoClasse", "Torneio", FormMethod.Post, new { @class = "form-horizontal" }))
+{
             <table class="table table-striped table-condensed table-bordered">
                 <tr>
                     <th>
-                        <b>#</b>
+                        <b>Ordem Exibição</b>
                     </th>
                     @if (ViewBag.isLiga)
                     {
                         <th>
-                            @Html.DisplayName("categoria")
+                            @Html.DisplayName("Categoria na Liga")
                         </th>
                     }
                     <th>
@@ -44,18 +47,24 @@
                     i++;
                     <tr id="@item.Id">
                         <td>
-                            @i
+                            <select name="ordemExibicao">
+                                @for (int j = 1; j <= Model.Count(); j++)
+                                {
+                                    <option @if (item.nivel == j)
+                                    { @Html.Raw(" selected ")  }>@j</option>
+                                }
+                            </select>
                         </td>
                         @if (ViewBag.isLiga)
                         {
                             <th>
                                 @if (@item.Categoria != null)
                                 {
-                                    @Html.Raw(item.Categoria.Nome + "- Liga")
+                                    @Html.Raw(item.Categoria.Nome)
                                 }
                                 else
                                 {
-                                    @Html.Raw("não conta pontos para liga")
+                                    @Html.Raw("não pontua para liga")
                                 }
                             </th>
                         }
@@ -93,12 +102,11 @@
                             }
                         </td>
                         <td align="center">
-                            <form method="post" enctype="multipart/form-data" action="#" name="@Html.Raw("form"+i)" id="@Html.Raw("form"+i)" class="form">
-                                <input type="hidden" name="Id" id="Id" value="@item.Id">
-                                <button title="salvar" data-valor="@Html.Raw(i)" name="@Html.Raw("button"+i)" id="@Html.Raw("button"+i)" class="btn btn-default btn-xs inscricaoButton">
+                            <form method="post" enctype="multipart/form-data" action="#" name="@Html.Raw("form" + i)" id="@Html.Raw("form" + i)" class="form">
+                                <button title="salvar" data-valor="@Html.Raw(i)" data-ident="@item.Id" name="@Html.Raw("button" + i)" id="@Html.Raw("button" + i)" class="btn btn-default btn-xs inscricaoButton">
                                     Salvar
                                 </button>
-                                <button title="excluir" data-valor="@item.Id" name="@Html.Raw("buttonEx"+i)" id="@Html.Raw("buttonEx"+i)" class="btn btn-danger btn-xs excluirButton">
+                                <button title="excluir" data-valor="@item.Id" name="@Html.Raw("buttonEx" + i)" id="@Html.Raw("buttonEx" + i)" class="btn btn-danger btn-xs excluirButton">
                                     Excluir
                                 </button>
                             </form>
@@ -107,6 +115,11 @@
                     </tr>
                 }
             </table>
+            <p>
+                <input type="hidden" name="torneioId" value="@ViewBag.torneioId"/>
+                <button class="btn btn-cta-secondary btn-small" type="submit">Salvar ordem de exibição</button>
+            </p>
+}
         </div>
     </div>
     @section Scripts {
@@ -114,7 +127,7 @@
             $(document).ready(function () {
                 $(".inscricaoButton").click(function (event) {
                     var i = $(this).data("valor");
-                    var Id = $("#form"+i).find("input[name=Id]").val();
+                    var Id = $(this).data("ident");
                     var nome = document.getElementById("nome"+i).value;
                     var isDupla = document.getElementById("isDupla" + i).checked;
                     var faseGrupo = document.getElementById("faseGrupo" + i).checked;

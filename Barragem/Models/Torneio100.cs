@@ -23,6 +23,8 @@ namespace Barragem.Models
                     return 15;
                 case 5:
                     return 10;
+                case 100:  // eliminado na fase de grupo
+                    return (int) (0.05 * 100);
                 default:
                     return 5;
             }

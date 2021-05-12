@@ -139,13 +139,14 @@ input[type="email"],
 input[type="password"],
 input[type="submit"],
 input[type="button"],
-textarea,
-select {
-  appearance: none;
-  /* for mobile safari */
-  
+textarea {
+    appearance: none;
 }
 
+select {
+    /* appearance: none; */
+    /* for mobile safari */
+}
 .video-container iframe {
   max-width: 100%;
 }

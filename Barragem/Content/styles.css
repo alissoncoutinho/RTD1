@@ -162,9 +162,12 @@ input[type="email"],
 input[type="password"],
 input[type="submit"],
 input[type="button"],
-textarea,
-select {
+textarea {
     appearance: none;
+}
+
+select {
+    /* appearance: none; */
     /* for mobile safari */
 }
 

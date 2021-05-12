@@ -203,12 +203,25 @@
 
                 <div class="panel panel-default">
                     <div class="panel-heading"><b>Marque as categorias que deseja incluir no torneio:</b><br>
-                        <small style="color:red">Você poderá adicionar e editar nome de categorias depois</small>
+                        <small style="color:red">Você poderá adicionar e editar nome de categorias depois</small><br>
+                        <small><span class="glyphicon glyphicon-flag"></span> Categorias que pontuam para liga</small>
                     </div>
                     <div class="panel-body">
                         @foreach (var categoria in ViewBag.Categorias)
                         {
-                            <input type="checkbox" name="classes" value="@categoria.Id"> @categoria.Nome<br>
+                            <div class="row">
+                                <div class="col-sm-3 col-xs-8"><input type="checkbox" name="classes" value="@categoria.Id"> @categoria.Nome</div>
+                            @if (categoria.Ligas.Count > 0)
+                            {
+                                var title = "";
+                                foreach (var item in categoria.Ligas)
+                                {
+                                    title = title + item + "; ";
+                                }
+                                <div class="col-sm-2 col-xs-2"><span class="glyphicon glyphicon-flag" title="@title">
+                                </span></div>
+                            }
+                            </div>
                         }
                     </div>
                 </div>
@@ -267,6 +280,23 @@
                     </div>
                     @Html.ValidationMessageFor(model => model.observacao)
                 </div>
+                @if ((ViewBag.tokenPagSeguro == "") || (ViewBag.tokenPagSeguro == null))
+                {
+                    <br><input type="checkbox" name="cartao" id="cartao" value="true" onclick="isCartaoCredito()"> <b>Deseja aceitar inscrição no cartão?</b><br>
+                    <div id="isCartao">
+                        <div class="editor-label">
+                            <small style="color:red">Para fazer a configuração do PagSeguro, contate o suporte via whatsapp (61-98408-6580).</small>
+                        </div>
+                    </div>
+                    <script>
+                        document.getElementById('isCartao').style.opacity = "0 !important";
+                        document.getElementById('isCartao').style.display = "none";</script>
+                }
+                else
+                {
+                    <br><div class="editor-label"> <b>Torneio configurado para pagamento da inscrição no cartão de crédito.</b></div>
+                }
+                <br>
                 <input type="checkbox" name="transferencia" id="transferencia" value="true" checked onclick="isTransferenciaBancaria()"> <b>Usar transferência como forma de pagamento</b><br>
                 <div id="isTransferencia">
                     <div class="editor-label">
@@ -283,7 +313,7 @@
                         </textarea>
                     </div>
                 </div>
-                <br>
+                
                 <input type="submit" id="criarTorneio" class="btn btn-primary" value="Criar Torneio" />
             </div>
         </div>
@@ -357,6 +387,16 @@
         } else {
             document.getElementById('isTransferencia').style.opacity = "0 !important";
             document.getElementById('isTransferencia').style.display = "none";
+        }
+    }
+
+    function isCartaoCredito() {
+        if (document.getElementById('cartao').checked) {
+            document.getElementById('isCartao').style.opacity = "1";
+            document.getElementById('isCartao').style.display = "block";
+        } else {
+            document.getElementById('isCartao').style.opacity = "0 !important";
+            document.getElementById('isCartao').style.display = "none";
         }
     }
 

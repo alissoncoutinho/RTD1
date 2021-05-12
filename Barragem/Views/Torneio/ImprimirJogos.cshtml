@@ -91,7 +91,7 @@
                     @Html.Raw(item.horaJogo)
                 </td>
                 <td>
-                    @if ((item.quadra != null) && (item.quadra != 100))
+                    @if ((item.quadra != null) && (item.quadra != "100"))
                     {
                         @Html.Raw("quadra " + item.quadra)
                     }

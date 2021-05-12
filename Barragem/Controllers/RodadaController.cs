@@ -625,6 +625,10 @@ namespace Barragem.Controllers
 
         private void verificarSeHouveWONaRodadaAnterior(int idJogador, int rodada_id, int barragemId)
         {
+            if (idJogador == 8) // se for coringa não suspende-lo;
+            {
+                return;
+            }
             int idRodadaAnterior = db.Rodada.Where(r => r.isAberta == false && r.Id < rodada_id && r.barragemId == barragemId).Max(r => r.Id);
             List<Jogo> jogoAnterior = db.Jogo.Where(j => j.rodada_id == idRodadaAnterior && (j.desafiado_id == idJogador || j.desafiante_id == idJogador))
                 .ToList();

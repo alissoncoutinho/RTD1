@@ -167,7 +167,7 @@ namespace Barragem.Controllers
             meuJogo.dataJogo = jogo.dataJogo;
             meuJogo.horaJogo = jogo.horaJogo;
             var quadra = "";
-            if ((jogo.quadra != null) && (jogo.quadra != 100)){
+            if ((jogo.quadra != null) && (jogo.quadra != "100")){
                 quadra = " quadra " + jogo.quadra;
             }
             var local = "";

@@ -266,6 +266,24 @@
                                 </div>
                                 @Html.ValidationMessageFor(model => model.observacao)
                             </div>
+                        @if ((ViewBag.tokenPagSeguro == "") || (ViewBag.tokenPagSeguro == null))
+                        {
+                            <br><input type="checkbox" name="cartao" id="cartao" value="true" onclick="isCartaoCredito()"> <b>Deseja aceitar inscrição no cartão?</b><br>
+                            <div id="isCartao">
+                                <div class="editor-label">
+                                    <small style="color:red">Para fazer a configuração do PagSeguro, contate o suporte via whatsapp.</small>
+                                </div>
+                            </div>
+                            <script>
+                                document.getElementById('isCartao').style.opacity = "0 !important";
+                                document.getElementById('isCartao').style.display = "none";
+                            </script>
+                        }
+                        else
+                        {
+                            <div class="editor-label"> <b>Torneio configurado para pagamento da inscrição no cartão de crédito.</b></div>
+                        }
+                        <br>
                         @if (Model.dadosBancarios == "")
                         {
                             <input type="checkbox" name="transferencia" id="transferencia" value="true" onclick="isTransferenciaBancaria()"> <b>Usar transferência como forma de pagamento</b><br>
@@ -280,6 +298,7 @@
                                 @Html.ValidationMessageFor(model => model.dadosBancarios)
                             </div>
                         </div>
+                        
                     </div>
                </div>
                         <div class="box box-primary">
@@ -450,6 +469,16 @@
             } else {
                 document.getElementById('isTransferencia').style.opacity = "0 !important";
                 document.getElementById('isTransferencia').style.display = "none";
+            }
+        }
+
+        function isCartaoCredito() {
+            if (document.getElementById('cartao').checked) {
+                document.getElementById('isCartao').style.opacity = "1";
+                document.getElementById('isCartao').style.display = "block";
+            } else {
+                document.getElementById('isCartao').style.opacity = "0 !important";
+                document.getElementById('isCartao').style.display = "none";
             }
         }
 
