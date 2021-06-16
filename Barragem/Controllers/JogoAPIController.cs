@@ -27,7 +27,7 @@ namespace Barragem.Controllers
         public IList<JogoRodada> GetListarJogos(int classeId, int rankingId)
         {
             var rodadaId = db.Rodada.Where(r => r.isRodadaCarga == false && r.barragemId == rankingId).Max(r => r.Id);
-            var jogos = db.Jogo.Where(j => j.rodada_id == rodadaId && j.desafiado.classeId == classeId).ToList<Jogo>();
+            var jogos = db.Jogo.Where(j => j.rodada_id == rodadaId && j.desafiado.classeId == classeId).ToList<Jogo>(); 
             IList<JogoRodada> jogoRodada = new List<JogoRodada>();
             foreach (var jogo in jogos)
             {
@@ -130,9 +130,10 @@ namespace Barragem.Controllers
             var torneio = db.Torneio.Find(torneioId);
             foreach(var i in classesUser)
             {
-                var jogos = db.Jogo.Where(u => u.classeTorneio == i && (u.situacao_Id==1 || u.situacao_Id == 2) && 
-                    (u.desafiado_id == userId || u.desafiante_id == userId || u.desafiado2_id == userId || u.desafiante2_id == userId) &&
-                    !(u.desafiado_id == 10 || u.desafiante_id == 10)).OrderBy(u => u.Id).ToList();
+                    var jogos = db.Jogo.Where(u => u.classeTorneio == i && (u.situacao_Id==1 || u.situacao_Id == 2) && 
+                        (u.desafiado_id == userId || u.desafiante_id == userId || u.desafiado2_id == userId || u.desafiante2_id == userId) &&
+                        !(u.desafiado_id == 10 || u.desafiante_id == 10)).OrderBy(u => u.Id).ToList(); 
+                
                 foreach (var jogo in jogos){
                     try { 
                         MeuJogo meuJogo = montarMeuJogo(jogo, userId);

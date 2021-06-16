@@ -193,9 +193,9 @@
                         <div class="panel-heading"><b>Este torneio pontuará para quais rankings?</b></div>
                     }
                     <div class="panel-body">
-                        @foreach (var liga in ViewBag.LigasDisponiveis)
+                        @foreach (var lg in ViewBag.LigasDisponiveis)
                         {
-                            <input type="checkbox" name="liga" value="@liga.Id"> @liga.Nome<br>
+                            <input type="checkbox" name="liga" value="@lg.Liga.Id"> @Html.Raw(lg.Liga.Nome + " - Pt. " + lg.TipoTorneio)<br>
                         }
                     </div>
                 </div>

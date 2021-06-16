@@ -1,10 +1,25 @@
 ﻿@{
     int i = 0;
+    Barragem.Models.CobrancaTorneio cobrancaTorneio = ViewBag.CobrancaTorneio;
 }
 @model IEnumerable<Barragem.Models.Jogo>
     @Html.Partial("_PartialTabs")
 
-
+    @if (ViewBag.CobrancaTorneio != null)
+    {
+        <br>
+    <div class="alert alert-info alert-dismissable">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        Para gerar a tabela é necessário realizar o pagamento via PIX referente aos inscritos no torneio. <br><br> 
+        Inscritos no torneio: @cobrancaTorneio.qtddInscritos <br>
+        Valor por inscrito: R$ 5,00 <br><br>
+        @if (cobrancaTorneio.valorDescontoParaRanking > 0) {
+            @Html.Raw("Desconto para usuários que jogam o ranking: R$ " + cobrancaTorneio.valorDescontoParaRanking +",00<br><br>")
+        }
+        Valor final a pagar: R$ @cobrancaTorneio.valorASerPago,00 <br><br>
+        Realize o pagamento via PIX CNPJ 24.770.955/000196 (Bola de Tênis Delivery) e envie o comprovante para Ricardo (61) 98408-6580 solicitando a liberação.
+    </div>
+    }
     <div id="placar-modal" class="modal fade" role="dialog">
         <div id="loader"></div>
         <div class="modal-dialog">
@@ -239,24 +254,71 @@
                         @i
                     </td>
                     <td>
-                        <select name="@Html.Raw("jogador1_" + i)" id="@Html.Raw("jogador1_" + i)" class="form-control">
-                            <option value="0">aguardando adversário</option>
-                            <option value="10" @if (item.desafiante_id == 10) { @Html.Raw("selected")    }>bye</option>
-                            @foreach (var item2 in ViewBag.Inscritos)
+                        @if ((ViewBag.primeirafase!=null) && (ViewBag.primeirafase==item.faseTorneio)) {
+                            <select name="@Html.Raw("jogador1_" + i)" id="@Html.Raw("jogador1_" + i)" class="form-control">
+                                <option value="0">aguardando adversário</option>
+                                <option value="10" @if (item.desafiante_id == 10) { @Html.Raw("selected")    }>bye</option>
+                                @foreach (var item2 in ViewBag.Inscritos)
                                 {
-                                <option value="@item2.userId" @if (item.desafiante_id == item2.userId) { @Html.Raw("selected")      }>@item2.participante.nome</option>
+                                    <option value="@item2.userId" @if (item.desafiante_id == item2.userId) { @Html.Raw("selected")      }>@item2.participante.nome</option>
                                 }
-                        </select>
+                            </select>
+                        } else {
+                            <input type="hidden" name="@Html.Raw("jogador1_" + i)" id="@Html.Raw("jogador1_" + i)" value="@item.desafiante_id">
+                            if (item.desafiante_id == 10){
+                                @Html.Raw("Bye");
+                                <input type="hidden" name="@Html.Raw("jogador1Nome_" + i)" id="@Html.Raw("jogador1Nome_" + i)" value="Bye">
+                            }
+                            else if (item.desafiante_id == 0)
+                            {
+                                @Html.Raw("Aguardando Adversário");
+                                <input type="hidden" name="@Html.Raw("jogador1Nome_" + i)" id="@Html.Raw("jogador1Nome_" + i)" value="Aguardando Adversário">
+                            }
+                            else
+                            {
+                                <input type="hidden" name="@Html.Raw("jogador1Nome_" + i)" id="@Html.Raw("jogador1Nome_" + i)" value="@item.desafiante.nome">
+                                <a href="@Url.Action("../Account/Detalhes", new { userId = item.desafiante_id, mostrarClasse = false })" title="Detalhes do jogador">
+                                    @item.desafiante.nome
+                                </a>
+                                    <a href="@item.desafiante.linkwhatsapp">
+                                        <img width="25" height="25" src="/Content/image/whatsapp.png">
+                                </a>
+                            }
+                        }
                     </td>
                     <td>
-                        <select name="@Html.Raw("jogador2_" + i)" id="@Html.Raw("jogador2_" + i)" class="form-control">
-                            <option value="0">aguardando adversário</option>
-                            @foreach (var item2 in ViewBag.Inscritos)
+                        @if ((ViewBag.primeirafase != null) && (ViewBag.primeirafase == item.faseTorneio))
+                        {
+                            <select name="@Html.Raw("jogador2_" + i)" id="@Html.Raw("jogador2_" + i)" class="form-control">
+                                <option value="0">aguardando adversário</option>
+                                @foreach (var item2 in ViewBag.Inscritos)
                                 {
-                                <option value="@item2.userId" @if (item.desafiado_id == item2.userId) { @Html.Raw("selected")       }>@item2.participante.nome</option>
+                                    <option value="@item2.userId" @if (item.desafiado_id == item2.userId)
+                                    { @Html.Raw("selected")       }>@item2.participante.nome</option>
                                 }
-                        </select>
-                    </td>
+                            </select>
+                        }else{
+                            <input type="hidden" name="@Html.Raw("jogador2_" + i)" id="@Html.Raw("jogador2_" + i)" value="@item.desafiado_id">
+                            if (item.desafiado_id == 10){
+                                @Html.Raw("Bye");
+                                <input type="hidden" name="@Html.Raw("jogador2Nome_" + i)" id="@Html.Raw("jogador2Nome_" + i)" value="Bye">
+                            }
+                            else if (item.desafiado_id == 0)
+                            {
+                                @Html.Raw("Aguardando Adversário");
+                                <input type="hidden" name="@Html.Raw("jogador2Nome_" + i)" id="@Html.Raw("jogador2Nome_" + i)" value="Aguardando Adversário">
+                            }
+                            else
+                            {
+                                <input type="hidden" name="@Html.Raw("jogador2Nome_" + i)" id="@Html.Raw("jogador2Nome_" + i)" value="@item.desafiado.nome">
+                                <a href="@Url.Action("../Account/Detalhes", new { userId = item.desafiado_id, mostrarClasse = false })" title="Detalhes do jogador">
+                                    @item.desafiado.nome
+                                </a>
+                                    <a href="@item.desafiado.linkwhatsapp">
+                                        <img width="25" height="25" src="/Content/image/whatsapp.png">
+                                </a>
+                            }
+                        }</td>
                     <td>
                         @Html.Raw(item.descricaoFaseTorneio)
                     </td>
@@ -372,9 +434,15 @@
                         var desafiado_id = $(this).attr('data-desafiadoId');
                         var placar = $(this).attr('data-placar');
                         var desafiante = document.querySelector("#jogador1_" + indice);
-                        var nomeDesafiante = desafiante.options[desafiante.selectedIndex].text;
                         var desafiado = document.querySelector("#jogador2_" + indice);
-                        var nomeDesafiado = desafiado.options[desafiado.selectedIndex].text;
+                        if (typeof desafiante.options === "undefined") {
+                            var nomeDesafiante = document.getElementById("jogador1Nome_" + indice).value;
+                            var nomeDesafiado = document.getElementById("jogador2Nome_" + indice).value;
+                        } else {
+                            var nomeDesafiante = desafiante.options[desafiante.selectedIndex].text;
+                            var nomeDesafiado = desafiado.options[desafiado.selectedIndex].text;
+
+                        }
                         var str = placar.split('|');
                         var set1Desafiante = str[0];
                         var set1Desafiado = str[1];

@@ -137,6 +137,9 @@ namespace Barragem.Models
         [Display(Name = "Regulamento")]
         public string regulamento { get; set; }
 
+        [Display(Name = "Torneio Foi Pago?")]
+        public bool torneioFoiPago { get; set; }
+
 
     }
 
@@ -150,6 +153,7 @@ namespace Barragem.Models
         public DateTime dataFim { get; set; }
         public string cidade { get; set; }
         public string premiacao { get; set; }
+        [UIHint("tinymce_full_compressed"), AllowHtml]
         public string contato { get; set; }
         public double? valor { get; set; }
         public double? valorSocio { get; set; }
@@ -171,5 +175,12 @@ namespace Barragem.Models
         public string mensagem { get; set; }
         public string tipo { get; set; } // erro ou ok
         public string nomePagina { get; set; }
+    }
+
+    public class CobrancaTorneio
+    {
+        public int qtddInscritos { get; set; }
+        public int valorASerPago { get; set; }
+        public int valorDescontoParaRanking { get; set; }
     }
 }

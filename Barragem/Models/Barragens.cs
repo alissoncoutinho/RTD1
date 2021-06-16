@@ -98,5 +98,7 @@ namespace Barragem.Models
         public bool suspensaoPorAtraso { get; set; }
         [Display(Name = "Suspensao por WO")]
         public bool suspensaoPorWO { get; set; }
+        [UIHint("tinymce_full_compressed"), AllowHtml]
+        public string contato { get; set; }
     }
 }

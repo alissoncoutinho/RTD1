@@ -35,7 +35,8 @@ namespace Barragem.Controllers
                     dataFimInscricoes = inscricao.torneio.dataFimInscricoes,
                     cidade = inscricao.torneio.cidade,
                     premiacao = inscricao.torneio.premiacao,
-                    contato = inscricao.torneio.barragem.email
+                    //contato = inscricao.torneio.barragem.email
+                    contato = inscricao.torneio.barragem.contato
                 }).Distinct<TorneioApp>();
             var listTorneio = new List<TorneioApp>(Torneios);
             return listTorneio;
@@ -619,7 +620,7 @@ namespace Barragem.Controllers
                            select new TorneioApp
                            {
                                Id = t.Id, logoId = t.barragemId, nome = t.nome, dataInicio = t.dataInicio, valor = t.valor, valorSocio = t.valorSocio,
-                               dataFim = t.dataFim, dataFimInscricoes = t.dataFimInscricoes, cidade = t.cidade, premiacao = t.premiacao, contato = t.barragem.email
+                               dataFim = t.dataFim, dataFimInscricoes = t.dataFimInscricoes, cidade = t.cidade, premiacao = t.premiacao, contato = t.barragem.contato
                            }).Union(
                             from t in db.Torneio
                             where t.dataFimInscricoes >= dataHoje && t.isAtivo && t.divulgaCidade 
@@ -627,14 +628,14 @@ namespace Barragem.Controllers
                             select new TorneioApp
                             {
                                 Id = t.Id, logoId = t.barragemId, nome = t.nome, dataInicio = t.dataInicio, valor = t.valor, valorSocio = t.valorSocio,
-                                dataFim = t.dataFim, dataFimInscricoes = t.dataFimInscricoes, cidade = t.cidade, premiacao = t.premiacao, contato = t.barragem.email
+                                dataFim = t.dataFim, dataFimInscricoes = t.dataFimInscricoes, cidade = t.cidade, premiacao = t.premiacao, contato = t.barragem.contato
                             }).Union(
                             from t in db.Torneio
                             where t.dataFimInscricoes >= dataHoje && t.isAtivo && t.barragemId == rankingId
                             select new TorneioApp
                             {
                                 Id = t.Id, logoId = t.barragemId, nome = t.nome, dataInicio = t.dataInicio, valor = t.valor, valorSocio = t.valorSocio,
-                                dataFim = t.dataFim, dataFimInscricoes = t.dataFimInscricoes, cidade = t.cidade, premiacao = t.premiacao, contato = t.barragem.email
+                                dataFim = t.dataFim, dataFimInscricoes = t.dataFimInscricoes, cidade = t.cidade, premiacao = t.premiacao, contato = t.barragem.contato
                             }).Distinct<TorneioApp>().ToList();
 
             return torneio;

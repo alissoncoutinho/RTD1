@@ -2,7 +2,7 @@
     Layout = "~/Views/Shared/_LayoutLogin.cshtml";
 }
 
-@model IEnumerable<Barragem.Models.UserProfile>
+@model IEnumerable<Barragem.Models.LoginRankingModel>
     @{
         ViewBag.Title = "Login";
 
@@ -17,13 +17,17 @@
                     <div class="box-body">
                         @foreach (var item in Model)
                         {
-                            var scrLogo = "/Content/image/logo" + item.barragemId + ".png";
-                            <div class="col-md-6 col-xs-6">
-                                <a href="@Url.Action("LoginPassword", new { userName = @item.UserName, returnUrl=ViewBag.ReturnUrl, torneioId=ViewBag.torneioId })" >
+                            var scrLogo = "/Content/image/logo" + item.logoId + ".png";
+                            <div class="col-md-6 col-xs-12 text-center" style="margin-bottom: 15px;">
+                                <a href="@Url.Action("LoginPassword", new { userName = @item.userName, returnUrl=ViewBag.ReturnUrl, torneioId=ViewBag.torneioId })" >
                                     <img id="imgFoto" src=@scrLogo class="profile-image img-circle" style="width:40px;height:40px;"><br>
-                                    @Html.DisplayFor(modelItem => item.UserName) <br>
-                                    @Html.DisplayFor(modelItem => item.barragem.nome)
+                                    @Html.DisplayFor(modelItem => item.userName) 
+                                    <!-- Html.DisplayFor(modelItem => item.nomeRanking) --> 
                                 </a>
+                                @if (item.idRanking != 0 && ViewBag.ReturnUrl=="torneio") {
+                                    <br>
+                                    @Html.Raw("<p style='font-size: 12px'>Este usuário possui pontuação para: " + item.nomeLiga + "</p>");
+                                 }
                             </div>
                          }
                     </div>

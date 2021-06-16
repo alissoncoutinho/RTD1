@@ -24,7 +24,7 @@ namespace Barragem.Controllers
         public IList<LoginRankingModel> GetRankingsByUserEmail(string email)
         {
             List<LoginRankingModel> loginRankings = new List<LoginRankingModel>();
-            var users = db.UserProfiles.Where(u => u.email.ToLower() == email.Trim().ToLower() && u.situacao!="inativo").OrderBy(r=> r.situacao).ToList();
+            var users = db.UserProfiles.Where(u => u.email.ToLower() == email.Trim().ToLower() && u.situacao!="inativo" && u.situacao != "desativado").OrderBy(r=> r.situacao).ToList();
             if (users.Count() == 0){
                 return loginRankings;
                 //throw (new Exception("Não foi encontrado ranking com este email."));
@@ -40,7 +40,7 @@ namespace Barragem.Controllers
                 } else {
                     ranking.nomeRanking = item.barragem.nome;
                 }
-                
+                ranking.cidade = Funcoes.RemoveAcentosEspacosMaiusculas(item.barragem.cidade);
                 ranking.userName = item.UserName;
                 ranking.userId = item.UserId;
                 ranking.situacao = item.situacao;
@@ -267,6 +267,7 @@ namespace Barragem.Controllers
 
 
             var liga = db.Liga.Find(ligaId).Nome;
+            var classesLg = db.ClasseLiga.Where(c => c.LigaId == ligaId).ToList();
             var classes = new List<Classe>();
             Cabecalho rankingCabecalho = new Cabecalho();
             rankingCabecalho.temporada = liga;
@@ -276,7 +277,11 @@ namespace Barragem.Controllers
             {
                 classe = new Classe();
                 classe.Id = cat.Id;
-                classe.nome = cat.Nome;
+                try{
+                    classe.nome = classesLg.Where(c => c.CategoriaId == cat.Id).SingleOrDefault().Nome; //cat.Nome;
+                }catch(Exception e){
+                    classe.nome = cat.Nome;
+                }
                 classes.Add(classe);
             }
             rankingCabecalho.classes = classes;
@@ -295,7 +300,7 @@ namespace Barragem.Controllers
             if (ultsnapshot > 0)
             {
                 ranking = db.SnapshotRanking.Where(sp => sp.SnapshotId == ultsnapshot && sp.CategoriaId == categoriaId)
-                .Include(s => s.Categoria).Include(s => s.Jogador).OrderBy(sp => sp.Posicao).
+                .Include(s => s.Categoria).Include(s => s.Jogador).OrderBy(sp => sp.Posicao).ThenBy(sp => sp.Jogador.nome).
                 Select(rk => new Classificacao()
                 {
                     userId = rk.Jogador.UserId,

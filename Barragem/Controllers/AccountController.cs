@@ -200,9 +200,24 @@ namespace Barragem.Controllers
         public ActionResult ListaLogins(VerificacaoCadastro model)
         {
             var registers = db.UserProfiles.Where(u => (u.email.Equals(model.email) || u.UserName.ToLower() == model.email.ToLower())).ToList();
+            var loginRegisters = new List<LoginRankingModel>();
+            foreach (var item in registers){
+                var loginRankingModel = new LoginRankingModel();
+                loginRankingModel.logoId = item.barragemId;
+                loginRankingModel.userName = item.UserName;
+                loginRankingModel.nomeRanking = item.barragem.nome;
+                loginRankingModel.idRanking = 0;
+                var snapshotRanking = db.SnapshotRanking.Where(s => s.UserId == item.UserId).Include(s=> s.Liga).OrderByDescending(s => s.Id).Take(1).ToList();
+                if (snapshotRanking.Count() > 0){
+                    loginRankingModel.nomeLiga = snapshotRanking[0].Liga.Nome;
+                    loginRankingModel.idRanking = 1;
+                }
+                loginRegisters.Add(loginRankingModel);
+            }
+            loginRegisters = loginRegisters.OrderByDescending(l => l.idRanking).ToList();
             ViewBag.ReturnUrl=model.returnUrl;
             ViewBag.torneioId = model.torneioId;
-            return View(registers);
+            return View(loginRegisters);
         }
 
         [AllowAnonymous]

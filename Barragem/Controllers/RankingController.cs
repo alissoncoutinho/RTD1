@@ -141,12 +141,17 @@ namespace Barragem.Controllers
                 }
                 ranking = db.SnapshotRanking.Where(snapR => snapR.SnapshotId == idSnapshot)
                 .Include(s => s.Categoria).Include(s => s.Jogador)
-                .OrderBy(snap => snap.Categoria.Nome).ThenBy(snap => snap.Posicao)
+                .OrderBy(snap => snap.Categoria.Nome).ThenBy(snap => snap.Posicao).ThenBy(snap => snap.Jogador.nome)
                 .ToList();
                 categorias = db.SnapshotRanking.Where(sr => sr.SnapshotId == idSnapshot)
                     .Include(sr => sr.Categoria).Select(sr => sr.Categoria).Distinct().ToList();
             }
-            
+            var classesLg = db.ClasseLiga.Where(c => c.LigaId == idLiga).ToList();
+            foreach (var cat in categorias){
+                try{
+                    cat.Nome = classesLg.Where(c => c.CategoriaId == cat.Id).SingleOrDefault().Nome; //cat.Nome;
+                }catch (Exception e){}
+            }
             ViewBag.Ligas = ligas;
             ViewBag.SnapshotsDaLiga = snapshotsDaLiga;
             ViewBag.Categorias = categorias;

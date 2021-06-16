@@ -225,6 +225,10 @@ namespace Barragem.Models
         public string situacao { get; set; }
 
         public int logoId { get; set; }
+
+        public string cidade { get; set; }
+
+        public string nomeLiga { get; set; }
     }
 
     public class RegisterModel

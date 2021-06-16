@@ -1,4 +1,7 @@
 ﻿@model Barragem.Models.Torneio
+@{
+    Barragem.Models.CobrancaTorneio cobrancaTorneio = ViewBag.CobrancaTorneio;
+ }
 
 @Html.Partial("_PartialTabs", "")
 
@@ -37,7 +40,14 @@
                     </div>
                 </div>
 
-                }
+                <div class="form-group">
+                    @Html.Label("Divulgar no APP", new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-8 input-group">
+                        <button id="btnNotificarApp" data-torneioid="@Model.Id" class="btn btn-default">Enviar Notificação</button>
+                    </div>
+                </div>
+
+                    }
                     <div class="form-group">
                         @Html.LabelFor(model => model.nome, new { @class = "col-sm-2 control-label" })
                         <div class="col-sm-8 input-group">
@@ -320,6 +330,20 @@
                                         </label>
                                     </div>
                                 </div>
+                                @if (Roles.IsUserInRole("admin"))
+                                {
+                                    <div class="col-sm-3">
+                                        <div class="checkbox">
+                                            <label>
+                                                @Html.CheckBoxFor(model => model.torneioFoiPago) @Html.Raw(" Torneio Foi Pago: R$ " + cobrancaTorneio.valorASerPago + ",00 ?")
+                                            </label>
+                                        </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <input type="hidden" name="torneioFoiPago" value="@if (Model.torneioFoiPago) { @Html.Raw("true")  } else { @Html.Raw("false") }" />
+                                }
                             </div>
                         </div>
                         <div class="box box-primary">
@@ -327,22 +351,17 @@
                                 <h4 class="box-title">Pontuação para ranking</h4>
                             </div>
                             <div class="box-body">
-                                @if (ViewBag.LigasDoTorneio.Count > 0)
-                                {
-                                    <div class="panel panel-primary">
-                                        <div class="panel-heading">Este torneio conta pontos para quais liga(s) abaixo:</div>
-                                        <div class="panel-body">
-                                            @{ List<Barragem.Models.Liga> ligasTorneio = ViewBag.LigasDoTorneio;
-                                                foreach (var liga in ViewBag.LigasDisponiveis)
-                                                {
-                                                    <input type="checkbox" @if (ligasTorneio.Where(l => l.Id == liga.Id).Count() > 0) { @Html.Raw("checked")  } name="liga" value="@liga.Id"> @liga.Nome<br>
-                                                }
+                                <div class="panel panel-primary">
+                                    <div class="panel-heading">Este torneio conta pontos para quais liga(s) abaixo:</div>
+                                    <div class="panel-body">
+                                        @{ List<Barragem.Models.Liga> ligasTorneio = ViewBag.LigasDoTorneio;
+                                            foreach (var lg in ViewBag.LigasDisponiveis)
+                                            {
+                                                <input type="checkbox" @if (ligasTorneio.Where(l => l.Id == lg.Liga.Id).Count() > 0) { @Html.Raw("checked")  } name="liga" value="@lg.Liga.Id"> @Html.Raw(lg.Liga.Nome + " - Pt. " + lg.TipoTorneio)<br>
                                             }
-                                        </div>
+                                        }
                                     </div>
-
-
-                                                }
+                                </div>
                             </div>
                         </div>
 
@@ -531,6 +550,30 @@
             event.preventDefault();
             navigator.clipboard.writeText($(this).attr('data-link'));
             toastr.success("Link copiado com sucesso.", "Aviso");
+        });
+
+        $('#btnNotificarApp').on('click', function (event) {
+            event.preventDefault();
+            $.ajax(
+                {
+                    type: 'GET',
+                    url: '/Torneio/NotificarViaApp',
+                    data: "torneioId=" + $(this).attr('data-torneioid'),
+                    contentType: "application/json; charset=utf-8",
+                    success: function (response) {
+                        if (typeof response == "object") {
+                            if (response.retorno === 1) {
+                                toastr.success("Notificação enviada com sucesso: " + response.segmento, "Aviso");
+                            } else {
+                                toastr.error("Erro ao enviar notificação via APP.", "Erro");
+                            }
+                        }
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        toastr.error("Erro ao enviar notificação via APP.", "Erro");
+                    }
+                }
+            );
         });
 
         function getJogadoresAlterados() {

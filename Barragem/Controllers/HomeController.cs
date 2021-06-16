@@ -180,10 +180,16 @@ namespace Barragem.Controllers
             HttpCookie cookie = Request.Cookies["_barragemId"];
             if (User.Identity.IsAuthenticated)
             {
+                var usuario = db.UserProfiles.Find(WebSecurity.GetUserId(User.Identity.Name));
                 if (cookie == null)
                 {
-                    var usuario = db.UserProfiles.Find(WebSecurity.GetUserId(User.Identity.Name));
                     Funcoes.CriarCookieBarragem(Response, Server, usuario.barragemId, usuario.barragem.nome);
+                } else {
+                    if (cookie.Value != usuario.barragemId + "")
+                    {
+                        WebSecurity.Logout();
+                        return RedirectToAction("IndexBarragem", "Home", new { id = id });
+                    }
                 }
                 //string perfil = Roles.GetRolesForUser(User.Identity.Name)[0];
                 //if (perfil.Equals("admin") || perfil.Equals("organizador")){
