@@ -352,13 +352,15 @@ namespace Barragem.Controllers
             var colocacoesEmTorneios =
                 from inscricao in db.InscricaoTorneio
                 join torneio in db.Torneio on inscricao.torneioId equals torneio.Id into colocacaoJogador
-                where inscricao.userId == userId && inscricao.torneio.dataFim < DateTime.Now && inscricao.colocacao != null
+                where inscricao.userId == userId && inscricao.colocacao != null
                 select new ColocacaoTorneio()
                 {
                     colocacaoId = inscricao.colocacao,
                     nomeTorneio = inscricao.torneio.nome,
                     classe = inscricao.classeTorneio.nome,
                     dataTorneio = inscricao.torneio.dataInicio,
+                    pontuacao = inscricao.Pontuacao,
+                    nomeLiga = "Ranking"
                     
                 };
             var listCT = new List<ColocacaoTorneio>(colocacoesEmTorneios);
@@ -370,6 +372,20 @@ namespace Barragem.Controllers
             return listCT.OrderByDescending(c => c.dataTorneio).ToList();
                         
         }
+
+        [Route("api/PerfilAPI/GraficoVitoriasTorneio/{userId}")]
+        public Estatistica GetGraficoVitoriasTorneio(int userId)
+        {
+            // gráfico rosca - desempenho nos jogos
+            var estatistica = new Estatistica();
+            var meusJogos = db.Jogo.Where(j => (j.desafiado_id == userId || j.desafiante_id == userId || j.desafiante2_id== userId || j.desafiado2_id== userId) && (j.situacao_Id == 5 || j.situacao_Id == 4 || j.situacao_Id == 6) && j.torneioId != null).ToList();
+            estatistica.qtddTotalDerrotas = meusJogos.Where(j => j.idDoVencedor != userId && j.idDoVencedorDupla != userId).Count();
+            estatistica.qtddTotalVitorias = meusJogos.Where(j => j.idDoVencedor == userId || j.idDoVencedorDupla == userId).Count();
+            return estatistica;
+
+        }
+
+
 
         [ResponseType(typeof(void))]
         [HttpPut]

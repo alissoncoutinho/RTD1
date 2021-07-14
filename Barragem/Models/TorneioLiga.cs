@@ -23,5 +23,8 @@ namespace Barragem.Models
 
         [ForeignKey("LigaId")]
         public Liga Liga { get; set; }
+
+        public int? snapshotId { get; set; }
+                
     }
 }

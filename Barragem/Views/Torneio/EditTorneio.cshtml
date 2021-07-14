@@ -278,7 +278,7 @@
                             </div>
                         @if ((ViewBag.tokenPagSeguro == "") || (ViewBag.tokenPagSeguro == null))
                         {
-                            <br><input type="checkbox" name="cartao" id="cartao" value="true" onclick="isCartaoCredito()"> <b>Deseja aceitar inscrição no cartão?</b><br>
+                            <br><input type="checkbox" name="cartao" id="cartao" value="true" onclick="isCartaoCredito()"> <b>Deseja aceitar inscrição no cartão e PIX?</b><br>
                             <div id="isCartao">
                                 <div class="editor-label">
                                     <small style="color:red">Para fazer a configuração do PagSeguro, contate o suporte via whatsapp.</small>
@@ -291,7 +291,7 @@
                         }
                         else
                         {
-                            <div class="editor-label"> <b>Torneio configurado para pagamento da inscrição no cartão de crédito.</b></div>
+                            <div class="editor-label"> <b>Torneio configurado para pagamento da inscrição no cartão de crédito e PIX.</b></div>
                         }
                         <br>
                         @if (Model.dadosBancarios == "")
@@ -477,6 +477,9 @@
             font_size_style_values: "12px,13px,14px,16px,18px,20px",
             width: 700,
             height: 150,
+            plugins: [
+                "code"
+            ],
             toolbar1: "bold italic | underline | alignleft aligncenter alignright alignjustify | forecolor backcolor | fontselect |  fontsizeselect"
 
         });

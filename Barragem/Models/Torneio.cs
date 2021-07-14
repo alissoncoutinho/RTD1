@@ -155,10 +155,36 @@ namespace Barragem.Models
         public string premiacao { get; set; }
         [UIHint("tinymce_full_compressed"), AllowHtml]
         public string contato { get; set; }
+        [UIHint("tinymce_full_compressed"), AllowHtml]
+        public string regulamento { get; set; }
         public double? valor { get; set; }
         public double? valorSocio { get; set; }
         public DateTime dataFimInscricoes { get; set; }
+        public List<Patrocinador> patrocinadores { get; set; }
+        public string pontuacaoLiga { get; set; }
+        public string nomeLiga { get; set; }
     }
+
+    public class Patrocinador
+    {
+        public int Id { get; set; }
+        public string urlImagem { get; set; }
+        public string urllink { get; set; }
+        public int torneioId { get; set; }
+    }
+
+    public class CriterioDesempateFaseGrupo
+    {
+        [UIHint("tinymce_full_compressed"), AllowHtml]
+        public string descricao { get; set; }
+    }
+
+    public class PontuacaoLiga
+    {
+        public string descricao { get; set; }
+        public string pontuacao { get; set; }
+    }
+
     public class TabelaApp
     {
         public List<ClasseTorneioApp> classes { get; set; }

@@ -135,7 +135,7 @@ namespace Barragem.Controllers
             List<Categoria> categorias = new List<Categoria>();
             if (snapshotsDaLiga.Count()>0)
             {
-                if (idSnapshot == 0)
+                if ((idSnapshot == 0) || (snapshotsDaLiga.Where(s=>s.Id==idSnapshot).Count()==0))
                 {
                     idSnapshot = snapshotsDaLiga.First().Id;
                 }
@@ -144,7 +144,7 @@ namespace Barragem.Controllers
                 .OrderBy(snap => snap.Categoria.Nome).ThenBy(snap => snap.Posicao).ThenBy(snap => snap.Jogador.nome)
                 .ToList();
                 categorias = db.SnapshotRanking.Where(sr => sr.SnapshotId == idSnapshot)
-                    .Include(sr => sr.Categoria).Select(sr => sr.Categoria).Distinct().ToList();
+                    .Include(sr => sr.Categoria).Select(sr => sr.Categoria).OrderBy(sr=> sr.ordemExibicao).Distinct().ToList();
             }
             var classesLg = db.ClasseLiga.Where(c => c.LigaId == idLiga).ToList();
             foreach (var cat in categorias){

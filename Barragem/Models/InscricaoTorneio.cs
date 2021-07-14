@@ -169,7 +169,9 @@ namespace Barragem.Models
         public string  nomeTorneio { get; set; }
         public string  classe { get; set; }
         public DateTime dataTorneio { get; set; }
-        
+        public int? pontuacao { get; set; }
+        public string nomeLiga { get; set; }
+
     }
 
     public class Inscrito

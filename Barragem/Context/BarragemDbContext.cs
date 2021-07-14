@@ -65,5 +65,7 @@ namespace Barragem.Context
         public DbSet<Snapshot> Snapshot { get; set; }
 
         public DbSet<SnapshotRanking> SnapshotRanking { get; set; }
+
+        public DbSet<Patrocinador> Patrocinador { get; set; }
     }
 }

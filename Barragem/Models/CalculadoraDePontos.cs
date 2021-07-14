@@ -57,6 +57,13 @@ namespace Barragem.Models
                 try
                 {
                     ultimoSnap = db.Snapshot.Where(s => s.LigaId == tl.LigaId).OrderByDescending(s => s.Id).ToList().First();
+                    if ((tl.snapshotId != null) && (tl.snapshotId != ultimoSnap.Id)){
+                        continue;
+                    }else if ((tl.snapshotId != null) && (tl.snapshotId == ultimoSnap.Id)){
+                        db.Database.ExecuteSqlCommand("delete from SnapshotRanking where SnapshotId=" + ultimoSnap.Id);
+                        db.Database.ExecuteSqlCommand("delete from Snapshot where Id=" + ultimoSnap.Id);
+                        ultimoSnap = db.Snapshot.Where(s => s.LigaId == tl.LigaId).OrderByDescending(s => s.Id).ToList().First();
+                    }
                 }
                 catch (Exception e)
                 {
@@ -66,6 +73,9 @@ namespace Barragem.Models
                 Liga liga = tl.Liga;
                 Snapshot novoSnap = new Snapshot { Data = DateTime.Now, LigaId = liga.Id};
                 db.Snapshot.Add(novoSnap);
+                db.SaveChanges();
+                tl.snapshotId = novoSnap.Id;
+                db.Entry(tl).State = EntityState.Modified;
                 db.SaveChanges();
                 //para cada categoria da liga, gerar um ranking
                 List<ClasseLiga> classesDaLiga = db.ClasseLiga.Include(cl => cl.Categoria).Where(cl => cl.LigaId == liga.Id).ToList();
@@ -99,12 +109,17 @@ namespace Barragem.Models
                         classeTorneio = db.ClasseTorneio
                             .Where(ct => ct.torneioId == jogo.torneioId && ct.categoriaId == categoriaDaLiga.Id)
                             .ToList().First();
-                    }catch(Exception e)
+                        // esta linha foi inserida para que não inclua classes que não houveram jogos: se não houveram jogos dará erro e cairá na exception para dar continue;
+                        var jgs = db.Jogo
+                            .Where(j => j.classeTorneio == classeTorneio.Id).First();
+
+                    }
+                    catch(Exception e)
                     {
                         continue;
                     }
                     List<InscricaoTorneio> resultadosDoTorneio = db.InscricaoTorneio
-                        .Where(it => it.torneioId == jogo.torneioId && it.classe == classeTorneio.Id).ToList();
+                        .Where(it => it.torneioId == jogo.torneioId && it.classe == classeTorneio.Id && it.isAtivo).ToList();
                     foreach(InscricaoTorneio resultado in resultadosDoTorneio)
                     {
                         try

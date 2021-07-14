@@ -116,7 +116,7 @@
                             <td>
                                 @if (ViewBag.CabecasDeChave != null)
                                 {
-                                    <select name="@Html.Raw("cabecaChave" + i)" id="@Html.Raw("cabecaChave" + i)" class="form-control">
+                                    <select name="@Html.Raw("cabecaChave" + i)" id="@Html.Raw("cabecaChave" + i)" class="form-control validarCabecaChave">
                                         <option value="100" @if (item.cabecaChave == 100) { @Html.Raw("selected")   }>não</option>
                                         @for (int j = 1; j <= ViewBag.CabecasDeChave; j++)
                                         {
@@ -143,10 +143,7 @@
                                 }
                             </td>
                             <td>
-                                @if ((item.statusPagamento == "3") || (item.statusPagamento == "4"))
-                                {
-                                    @Html.Raw("Sim")
-                                }
+                                @Html.Raw(item.descricaoStatusPag)
                             </td>
 
                             <td>
@@ -206,6 +203,9 @@
                 contentType: "application/json; charset=utf-8",
                 success: function (response) {
                     if (typeof response == "object") {
+                        toastr.options = {
+                            "positionClass": "toast-top-center"
+                        }
                         if (response.retorno === 0) {
                             toastr.error(response.erro, "Erro");
                         } else {
@@ -239,6 +239,26 @@
             event.preventDefault();
             var arr = $(this).data("valor").split("|");
             window.location.href = "/Torneio/Detalhes?Id=" + arr[0] +"&Msg=&userId=" + arr[1];
+            });
+
+        $(".validarCabecaChave").change(function (event) {
+            //event.preventDefault();
+            try {
+                for (var i = 1; i <= 120; i++) {
+                    //alert("item:" + i)
+                    if (document.getElementById("cabecaChave" + i).value == $(this).get(0).value && $(this).get(0).getAttribute("name") != "cabecaChave" + i) {
+                        toastr.options = {
+                            "positionClass": "toast-top-center"
+                        }
+                        toastr.error("Já existe um cabeça de chave nº: " + $(this).get(0).value, "Erro")
+                        document.getElementById($(this).get(0).getAttribute("name")).selectedIndex = 0;
+                        return;
+                    }
+                }
+            } catch (err) {
+                // alert(err)
+            }
+            //isDupla2 = $(this).children(':selected').data("isdupla") == "True";
         });
 
     });
@@ -250,3 +270,4 @@
     }
         </script>
     }
+    

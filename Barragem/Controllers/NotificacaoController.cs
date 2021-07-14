@@ -81,32 +81,33 @@ namespace Barragem.Controllers
                 { // se for torneio
                     int idInscricao = Convert.ToInt32(refs[1]);
                     var inscricao = db.InscricaoTorneio.Find(idInscricao);
-                    if (status == 3)
-                    {
+                    if ((status == 3)||(status == 4)){
                         inscricao.isAtivo = true;
+                    } else {
+                        inscricao.isAtivo = false;
                     }
                     inscricao.statusPagamento = status + "";
                     inscricao.formaPagamento = paymentMethod.PaymentMethodType + "";
                     inscricao.valor = (float)transaction.GrossAmount;
                     db.Entry(inscricao).State = EntityState.Modified;
                     db.SaveChanges();
-                    var log2 = new Log();
-                    log2.descricao = ranking + " movimentacao ok " + status + ":" + DateTime.Now + ":" + notificationCode;
-                    db.Log.Add(log2);
-                    db.SaveChanges();
+                    //var log2 = new Log();
+                    //log2.descricao = ranking + " movimentacao ok " + status + ":" + DateTime.Now + ":" + notificationCode;
+                    //db.Log.Add(log2);
+                    //db.SaveChanges();
 
-                    // ativar segunda inscrição caso exista
+                    // ativar outras inscrições caso existam
                     var listInscricao = db.InscricaoTorneio.Where(t => t.torneioId == inscricao.torneioId && t.userId == inscricao.userId && t.Id != inscricao.Id).ToList();
-                    if (listInscricao.Count() > 0)
-                    {
-                        var inscricao2 = listInscricao[0];
-                        if (status == 3){
-                            inscricao2.isAtivo = true;
+                    foreach (var item in listInscricao){
+                        if ((status == 3) || (status == 4)){
+                            item.isAtivo = true;
+                        }else{
+                            item.isAtivo = false;
                         }
-                        inscricao2.statusPagamento = status + "";
-                        inscricao2.formaPagamento = paymentMethod.PaymentMethodType + "";
-                        inscricao2.valor = (float)transaction.GrossAmount;
-                        db.Entry(inscricao2).State = EntityState.Modified;
+                        item.statusPagamento = status + "";
+                        item.formaPagamento = paymentMethod.PaymentMethodType + "";
+                        item.valor = (float)transaction.GrossAmount;
+                        db.Entry(item).State = EntityState.Modified;
                         db.SaveChanges();
 
                     }

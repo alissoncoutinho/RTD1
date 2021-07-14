@@ -256,7 +256,7 @@ namespace Barragem.Controllers
             var ultsnapshot = db.Snapshot.Where(snap => snap.LigaId == ligaId).Max(s => s.Id);
             var snapshot = db.Snapshot.Find(ultsnapshot); 
             var categorias = db.SnapshotRanking.Where(sr => sr.SnapshotId == ultsnapshot)
-            .Include(sr => sr.Categoria).Select(sr => sr.Categoria).Distinct().ToList();
+            .Include(sr => sr.Categoria).Select(sr => sr.Categoria).OrderBy(sr=> sr.ordemExibicao).Distinct().ToList();
 
             var classeLiga = (from tl in db.TorneioLiga
                                join it in db.InscricaoTorneio on tl.TorneioId equals it.torneioId

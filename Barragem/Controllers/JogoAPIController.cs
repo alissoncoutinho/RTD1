@@ -380,6 +380,10 @@ namespace Barragem.Controllers
             jogo.qtddGames1setDesafiado = games1setDesafiado;
             jogo.qtddGames2setDesafiado = games2setDesafiado;
             jogo.qtddGames3setDesafiado = games3setDesafiado;
+            if (jogo.qtddSetsGanhosDesafiado == jogo.qtddSetsGanhosDesafiante)
+            {
+                return InternalServerError(new Exception("Placar Inválido. Os sets ganhos estão iguais."));
+            }
             var claimsIdentity = User.Identity as ClaimsIdentity;
             jogo.usuarioInformResultado = claimsIdentity.FindFirst("sub").Value; // TODO: PEGAR O NOME DO USUÁRIO
             jogo.dataCadastroResultado = DateTime.Now;

@@ -439,11 +439,11 @@
                             if (inscricao != null)
                             {
                                 <div class="btn-group-vertical col-xs-12 col-sm-6">
-                                    @if ((String.IsNullOrEmpty(inscricao.statusPagamento) && !inscricao.isAtivo) && Model.valor != 0 && (!ViewBag.isGratuito))
+                                    @if (((String.IsNullOrEmpty(inscricao.statusPagamento) || (inscricao.statusPagamento != "3" && inscricao.statusPagamento != "4")) && !inscricao.isAtivo) && Model.valor != 0 && (!ViewBag.isGratuito))
                                     {
                                         if (ViewBag.isAceitaCartao)
                                         {
-                                            <a href="@Url.Action("EfetuarPagamento", new { inscricaoId = inscricao.Id })" class="btn btn-success" title="Efetuar Pagamento">Cartão</a>
+                                            <a href="@Url.Action("EfetuarPagamento", new { inscricaoId = inscricao.Id })" class="btn btn-success" title="Efetuar Pagamento">Cartão ou PIX</a>
                                         }
                                         if ((Model.dadosBancarios != null) && (Model.dadosBancarios.Length > 100))
                                         {
@@ -452,7 +452,7 @@
                                     }
                                 </div>
                                 <div class="col-xs-12 col-sm-4 pull-right">
-                                    @if ((String.IsNullOrEmpty(inscricao.statusPagamento) && !inscricao.isAtivo))
+                                    @if (((String.IsNullOrEmpty(inscricao.statusPagamento) || (inscricao.statusPagamento != "3" && inscricao.statusPagamento != "4")) && !inscricao.isAtivo))
                                     {
                                         <button type="button" class="btn btn-danger col-xs-12 pull-right confirmCancel">Cancelar</button>
                                     }

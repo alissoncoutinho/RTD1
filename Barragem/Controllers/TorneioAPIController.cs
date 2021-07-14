@@ -22,6 +22,7 @@ namespace Barragem.Controllers
         public IList<TorneioApp> GetTorneio(int userId)
         {
             var dataHoje = DateTime.Now.AddDays(-5);
+            List<Patrocinador> patrocinadores = null;
             var Torneios = (from inscricao in db.InscricaoTorneio
                            join torneio in db.Torneio on inscricao.torneioId equals torneio.Id into colocacaoJogador
                            where inscricao.userId == userId && inscricao.torneio.isAtivo && inscricao.torneio.dataFim > dataHoje
@@ -35,12 +36,126 @@ namespace Barragem.Controllers
                     dataFimInscricoes = inscricao.torneio.dataFimInscricoes,
                     cidade = inscricao.torneio.cidade,
                     premiacao = inscricao.torneio.premiacao,
-                    //contato = inscricao.torneio.barragem.email
-                    contato = inscricao.torneio.barragem.contato
-                }).Distinct<TorneioApp>();
-            var listTorneio = new List<TorneioApp>(Torneios);
-            return listTorneio;
+                    contato = inscricao.torneio.barragem.contato,
+                    pontuacaoLiga = inscricao.torneio.TipoTorneio
+                }).Distinct<TorneioApp>().ToList();
+
+            foreach (var item in Torneios)
+            {
+                patrocinadores = new List<Patrocinador>();
+                var patrocinador = db.Patrocinador.Where(p => p.torneioId == item.Id).ToList();
+                foreach (var i in patrocinador)
+                {
+                    patrocinadores.Add(i);
+                }
+                item.patrocinadores = patrocinadores;
+                try
+                {
+                    var torneioLiga = db.TorneioLiga.Include(l => l.Liga).Where(t => t.TorneioId == item.Id).FirstOrDefault();
+                    item.nomeLiga = torneioLiga.Liga.Nome;
+                }
+                catch (Exception e) { }
+            }
+            return Torneios;
         }
+
+        [HttpGet]
+        [Route("api/TorneioAPI/PontuacaoLiga/{torneioId}")]
+        public IList<PontuacaoLiga> GetPontuacaoLiga(int torneioId)
+        {
+            List<PontuacaoLiga> listaPontuacaoLiga = new List<PontuacaoLiga>();
+            var torneio = db.Torneio.Find(torneioId);
+            for (int i = 0; i < 7; i++)
+            {
+                var inscricao = new InscricaoTorneio();
+                inscricao.colocacao = i;
+                int pontuacao = CalculadoraDePontos.AddTipoTorneio(torneio.TipoTorneio).CalculaPontos(inscricao);
+                var pontuacaoLiga = new PontuacaoLiga();
+                pontuacaoLiga.pontuacao = pontuacao+"";
+                pontuacaoLiga.descricao = getDescricaoColocacao(i);
+                listaPontuacaoLiga.Add(pontuacaoLiga);
+            }
+            var insc = new InscricaoTorneio();
+            insc.colocacao = 100;
+            int p = CalculadoraDePontos.AddTipoTorneio(torneio.TipoTorneio).CalculaPontos(insc); //fase grupo
+            var pLiga = new PontuacaoLiga();
+            pLiga.pontuacao = p + "";
+            pLiga.descricao = getDescricaoColocacao(100);
+            listaPontuacaoLiga.Add(pLiga);
+            // pontuação quando tiver apenas fase de grupo na classe:
+            for (int i = 0; i < 5; i++)
+            {
+                var inscricao = new InscricaoTorneio();
+                inscricao.colocacao = i;
+                int pontuacao = CalculadoraDePontos.AddTipoTorneio(torneio.TipoTorneio).CalculaPontos(inscricao);
+                var pontuacaoLiga = new PontuacaoLiga();
+                pontuacaoLiga.pontuacao = pontuacao + "";
+                pontuacaoLiga.descricao = (i + 1) + "º";
+                listaPontuacaoLiga.Add(pontuacaoLiga);
+            }
+
+            return listaPontuacaoLiga;
+        }
+
+        private string getDescricaoColocacao(int? colocId)
+        {
+            if (colocId == null)
+            {
+                return "Sem informação";
+            }
+            else if (colocId == 0)
+            {
+                return "Campeão";
+            }
+            else if (colocId == 1)
+            {
+                return "Vice-Campeão";
+            }
+            else if (colocId == 2)
+            {
+                return "Semi-finais";
+            }
+            else if (colocId == 3)
+            {
+                return "Quartas de final";
+            }
+            else if (colocId == 4)
+            {
+                return "Oitavas de final";
+            }
+            else if (colocId == 5)
+            {
+                return "R2";
+            }
+            else if (colocId == 100)
+            {
+                return "Fase de grupos";
+            }
+            else
+            {
+                return "Primeira fase";
+            }
+        }
+
+        [HttpGet]
+        [Route("api/TorneioAPI/CriterioDesempateFaseGrupo")]
+        public CriterioDesempateFaseGrupo GetCriterioDesempate()
+        {
+            var criterio = new CriterioDesempateFaseGrupo();
+            criterio.descricao = "<b>Critério de desempate</b><br><br> <p>çlaskdfjsl oeiurwpoe aspdfasdofiuas asdofkasodifu çlaskjdlsd ,zxcnzx,mcnz</p>";
+
+            return criterio;
+        }
+
+        [HttpGet]
+        [Route("api/TorneioAPI/Regulamento/{torneioId}")]
+        public Torneio GetRegulamento(int torneioId)
+        {
+            var torneio = db.Torneio.Find(torneioId);
+            
+            return torneio;
+        }
+
 
         [Route("api/TorneioAPI/Inscritos/{torneioId}")]
         public IList<Inscrito> GetListarInscritos(int torneioId)
@@ -67,7 +182,10 @@ namespace Barragem.Controllers
             foreach (var ins in inscricoesRemove){
                     inscricoesDupla.Remove(ins);
             }
-            inscricoes.AddRange(inscricoesDupla);
+            if (inscricoesDupla.Count() > 0){
+                inscricoes.AddRange(inscricoesDupla);
+                inscricoes = inscricoes.OrderBy(i => i.classe).ThenByDescending(i => i.parceiroDuplaId).ThenBy(i => i.participante.nome).ToList();
+            }
             List<Inscrito> inscritos = new List<Inscrito>();
             foreach (var i in inscricoes)
             {
@@ -123,6 +241,10 @@ namespace Barragem.Controllers
             jogo.qtddGames1setDesafiado = set1Desafiado;
             jogo.qtddGames2setDesafiado = set2Desafiado;
             jogo.qtddGames3setDesafiado = set3Desafiado;
+            if (jogo.qtddSetsGanhosDesafiado == jogo.qtddSetsGanhosDesafiante)
+            {
+                return InternalServerError(new Exception("Placar Inválido. Os sets ganhos estão iguais."));
+            }
             jogo.usuarioInformResultado = "app"; //User.Identity.Name; TODO: PEGAR O NOME DO USUÁRIO
             jogo.dataCadastroResultado = DateTime.Now;
             jogo.situacao_Id = 4;
@@ -196,6 +318,13 @@ namespace Barragem.Controllers
             return userId;
         }
 
+        [HttpGet]
+        [Route("api/TorneioAPI/ClassificacaoFaseGrupo/{classeId}")]
+        public List<ClassificadosEmCadaGrupo> GetClassificacaoFaseGrupo(int classeId)
+        {
+            var classe = db.ClasseTorneio.Find(classeId);
+            return tn.getClassificadosEmCadaGrupo(classe);
+        }
 
         [HttpGet]
         [Route("api/TorneioAPI/Tabela/{torneioId}")]
@@ -615,12 +744,14 @@ namespace Barragem.Controllers
 
             var dataHoje = DateTime.Now;
             var ranking = db.BarragemView.Find(rankingId);
+            List<Patrocinador> patrocinadores = null;
             var torneio = (from t in db.Torneio
                            where t.dataFimInscricoes >= dataHoje && t.isAtivo && t.isOpen
                            select new TorneioApp
                            {
                                Id = t.Id, logoId = t.barragemId, nome = t.nome, dataInicio = t.dataInicio, valor = t.valor, valorSocio = t.valorSocio,
-                               dataFim = t.dataFim, dataFimInscricoes = t.dataFimInscricoes, cidade = t.cidade, premiacao = t.premiacao, contato = t.barragem.contato
+                               dataFim = t.dataFim, dataFimInscricoes = t.dataFimInscricoes, cidade = t.cidade, premiacao = t.premiacao, contato = t.barragem.contato,
+                               pontuacaoLiga = t.TipoTorneio
                            }).Union(
                             from t in db.Torneio
                             where t.dataFimInscricoes >= dataHoje && t.isAtivo && t.divulgaCidade 
@@ -628,16 +759,34 @@ namespace Barragem.Controllers
                             select new TorneioApp
                             {
                                 Id = t.Id, logoId = t.barragemId, nome = t.nome, dataInicio = t.dataInicio, valor = t.valor, valorSocio = t.valorSocio,
-                                dataFim = t.dataFim, dataFimInscricoes = t.dataFimInscricoes, cidade = t.cidade, premiacao = t.premiacao, contato = t.barragem.contato
+                                dataFim = t.dataFim, dataFimInscricoes = t.dataFimInscricoes, cidade = t.cidade, premiacao = t.premiacao, contato = t.barragem.contato,
+                                pontuacaoLiga = t.TipoTorneio
                             }).Union(
                             from t in db.Torneio
                             where t.dataFimInscricoes >= dataHoje && t.isAtivo && t.barragemId == rankingId
                             select new TorneioApp
                             {
                                 Id = t.Id, logoId = t.barragemId, nome = t.nome, dataInicio = t.dataInicio, valor = t.valor, valorSocio = t.valorSocio,
-                                dataFim = t.dataFim, dataFimInscricoes = t.dataFimInscricoes, cidade = t.cidade, premiacao = t.premiacao, contato = t.barragem.contato
+                                dataFim = t.dataFim, dataFimInscricoes = t.dataFimInscricoes, cidade = t.cidade, premiacao = t.premiacao, contato = t.barragem.contato,
+                                pontuacaoLiga = t.TipoTorneio
                             }).Distinct<TorneioApp>().ToList();
-
+            
+            foreach (var item in torneio)
+            {
+                patrocinadores = new List<Patrocinador>();
+                var patrocinador = db.Patrocinador.Where(p => p.torneioId == item.Id).ToList();
+                foreach (var i in patrocinador)
+                {
+                    patrocinadores.Add(i);
+                }
+                item.patrocinadores = patrocinadores;
+                try
+                {
+                    var torneioLiga = db.TorneioLiga.Include(l => l.Liga).Where(t => t.TorneioId == item.Id).FirstOrDefault();
+                    item.nomeLiga = torneioLiga.Liga.Nome;
+                }catch(Exception e) { }
+            }
+            
             return torneio;
            
         }

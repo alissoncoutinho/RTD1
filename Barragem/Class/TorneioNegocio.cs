@@ -85,18 +85,6 @@ namespace Barragem.Class
                 }
                 else
                 {
-                    //cadastrar a pontuacao do vice 
-                    //var inscricaoPerdedor = db.InscricaoTorneio.Where(i => i.userId == jogo.idDoPerdedor
-                    //    && i.torneioId == jogo.torneioId && i.classe == jogo.classeTorneio).ToList();
-                    //if (inscricaoPerdedor.Count() > 0)
-                   //{
-                   //     inscricaoPerdedor[0].colocacao = 1; // vice
-                   //     jogo.faseTorneio = 1;
-                   //     int pontuacao = CalculadoraDePontos.AddTipoTorneio(torneio.TipoTorneio).CalculaPontos(inscricaoPerdedor[0]);
-                   //     inscricaoPerdedor[0].Pontuacao = pontuacao;
-                   //     db.SaveChanges();
-                   // }
-
                     cadastrarColocacaoPerdedorTorneio(jogo);
 
                     // indicar o vencedor do torneio
@@ -949,6 +937,41 @@ namespace Barragem.Class
             db.SaveChanges();
         }
 
-        
+        public void consolidarPontuacaoFaseGrupo(Jogo jogo)
+        {
+            if (jogo.rodadaFaseGrupo != 0)
+            {
+                var ehClasseSoGrupo = jogo.classe;
+                if (ehClasseSoGrupo.faseGrupo && !ehClasseSoGrupo.faseMataMata)
+                {
+                    var existeAlgumjogoAindaEmAberto = db.Jogo.Where(j => j.grupoFaseGrupo != 0 && j.classeTorneio == jogo.classeTorneio && (j.situacao_Id == 1 || j.situacao_Id == 2)).Count();
+                    // se não existir nenhum jogo da fase de grupo em aberto
+                    if (existeAlgumjogoAindaEmAberto == 0)
+                    {
+                        int grupo = (int)jogo.grupoFaseGrupo;
+                        var classificacaoFaseGrupo = ordenarClassificacaoFaseGrupo(ehClasseSoGrupo, grupo);
+                        var colocacao = 0;
+                        foreach (var item in classificacaoFaseGrupo){
+                            var inscricao = db.InscricaoTorneio.Where(i => i.userId == item.userId && i.torneioId == jogo.torneioId && i.classe == jogo.classeTorneio).ToList();
+                            if (inscricao.Count() > 0){
+                                inscricao[0].colocacao = colocacao;
+                                Torneio torneio = db.Torneio.Where(t => t.Id == jogo.torneioId).Single();
+                                int pontuacao = CalculadoraDePontos.AddTipoTorneio(torneio.TipoTorneio).CalculaPontos(inscricao[0]);
+                                inscricao[0].Pontuacao = pontuacao;
+                                db.SaveChanges();
+                                if ((inscricao[0].parceiroDuplaId != null) && (inscricao[0].parceiroDuplaId != null))
+                                {
+                                    cadastrarColocacaoDupla(inscricao[0].parceiroDupla.UserId, colocacao, (int)jogo.torneioId, (int)jogo.classeTorneio);
+                                }
+                            }
+                            colocacao++;
+                        }
+                    }
+                }
+            }
+        }
+
+
+
     }
 }

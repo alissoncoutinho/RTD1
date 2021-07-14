@@ -87,6 +87,9 @@
                                 if (response.retorno === 0) {
                                     toastr.error(response.erro, "Erro");
                                 } else {
+                                    toastr.options = {
+                                        "positionClass": "toast-top-center"
+                                    }
                                     toastr.success("Atualização realizada com sucesso.", "Aviso");
                                 }
                             }

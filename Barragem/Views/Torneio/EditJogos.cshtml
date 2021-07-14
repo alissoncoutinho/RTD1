@@ -21,7 +21,7 @@
     </div>
     }
     <div id="placar-modal" class="modal fade" role="dialog">
-        <div id="loader"></div>
+        <div id="loadingDiv"><div class="loader">Loading...</div></div>
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header" style="padding:5px">
@@ -254,7 +254,7 @@
                         @i
                     </td>
                     <td>
-                        @if ((ViewBag.primeirafase!=null) && (ViewBag.primeirafase==item.faseTorneio)) {
+                        @if ((ViewBag.primeirafase!=null) && (ViewBag.primeirafase==item.faseTorneio) && (!item.classe.faseGrupo)) {
                             <select name="@Html.Raw("jogador1_" + i)" id="@Html.Raw("jogador1_" + i)" class="form-control">
                                 <option value="0">aguardando adversário</option>
                                 <option value="10" @if (item.desafiante_id == 10) { @Html.Raw("selected")    }>bye</option>
@@ -287,7 +287,7 @@
                         }
                     </td>
                     <td>
-                        @if ((ViewBag.primeirafase != null) && (ViewBag.primeirafase == item.faseTorneio))
+                        @if ((ViewBag.primeirafase != null) && (ViewBag.primeirafase == item.faseTorneio) && (!item.classe.faseGrupo))
                         {
                             <select name="@Html.Raw("jogador2_" + i)" id="@Html.Raw("jogador2_" + i)" class="form-control">
                                 <option value="0">aguardando adversário</option>
@@ -408,7 +408,30 @@
         .exibir-escolhaDeClasses.show {
             max-height: 700px;
         }
-        #loader {
+
+        .loader,
+        .loader:after {
+            border-radius: 50%;
+            width: 10em;
+            height: 10em;
+        }
+        .loader {
+            margin: 60px auto;
+            font-size: 10px;
+            position: relative;
+            text-indent: -9999em;
+            border-top: 1.1em solid rgba(255, 255, 255, 0.2);
+            border-right: 1.1em solid rgba(255, 255, 255, 0.2);
+            border-bottom: 1.1em solid rgba(255, 255, 255, 0.2);
+            border-left: 1.1em solid #ffffff;
+            -webkit-transform: translateZ(0);
+            -ms-transform: translateZ(0);
+            transform: translateZ(0);
+            -webkit-animation: load8 1.1s infinite linear;
+            animation: load8 1.1s infinite linear;
+        }
+        
+        #loadingDiv {
             display: none;
             position: fixed;
             top: 0;
@@ -424,7 +447,7 @@
                 @Scripts.Render("~/bundles/jqueryval")
                 @Scripts.Render("~/bundles/jqueryform")
                 <script type="text/javascript">
-                    var spinner = $('#loader');
+                    var spinner = $('#loadingDiv');
                     $(document).on("click", ".btnLancarPlacar", function () {
                         var indice = $(this).attr('data-indice');
                         var id = $(this).attr('data-idJogo');
@@ -500,6 +523,9 @@
                                 contentType: "application/json; charset=utf-8",
                                 success: function (response) {
                                     if (typeof response == "object") {
+                                        toastr.options = {
+                                            "positionClass": "toast-top-center"
+                                        }
                                         if (response.retorno === 0) {
                                             toastr.error(response.erro, "Erro");
                                         } else {
@@ -607,6 +633,7 @@
                             data: $('form#placarForm').serialize(),
                             success: function (resp) {
                                 if (resp.retorno == 0) {
+                                    spinner.hide();
                                     toastr.error(resp.erro, "Erro");
                                 } else {
                                     var id = $(".modal-body #Id").val();
@@ -633,7 +660,15 @@
                                     }
                                     spinner.hide();
                                     $("#placar-modal").modal('hide');
-                                    toastr.success("Atualização realizada com sucesso.", "Aviso");
+                                    toastr.options = {
+                                        "positionClass": "toast-top-center",
+                                        "timeOut": 10000
+                                    }
+                                    if (resp.pontuacaoLiga == 1) {
+                                        toastr.success("<a href='https://www.rankingdetenis.com/Ranking/RankingDasLigas'>Torneio Finalizado: A pontuação da liga foi gerada. CLIQUE AQUI para acessar a pontuação.</a>", "Aviso");
+                                    } else {
+                                        toastr.success("Atualização realizada com sucesso.", "Aviso");
+                                    }
                                 }
 
                             }

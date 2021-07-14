@@ -290,6 +290,23 @@ namespace Barragem.Models
 
         }
 
+        public virtual int idDoVencedorDupla
+        {
+            get
+            {
+                if ((qtddSetsGanhosDesafiado > qtddSetsGanhosDesafiante) && (desafiado2_id != null))
+                {
+                    return (int)desafiado2_id;
+                }
+                if ((qtddSetsGanhosDesafiado < qtddSetsGanhosDesafiante) && (desafiante2_id != null))
+                {
+                    return (int)desafiante2_id;
+                }
+                return 0;
+            }
+
+        }
+
         public virtual int idDoPerdedor
         {
             get

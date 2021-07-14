@@ -282,7 +282,7 @@
                 </div>
                 @if ((ViewBag.tokenPagSeguro == "") || (ViewBag.tokenPagSeguro == null))
                 {
-                    <br><input type="checkbox" name="cartao" id="cartao" value="true" onclick="isCartaoCredito()"> <b>Deseja aceitar inscrição no cartão?</b><br>
+                    <br><input type="checkbox" name="cartao" id="cartao" value="true" onclick="isCartaoCredito()"> <b>Deseja aceitar inscrição no cartão e PIX?</b><br>
                     <div id="isCartao">
                         <div class="editor-label">
                             <small style="color:red">Para fazer a configuração do PagSeguro, contate o suporte via whatsapp (61-98408-6580).</small>
@@ -294,7 +294,7 @@
                 }
                 else
                 {
-                    <br><div class="editor-label"> <b>Torneio configurado para pagamento da inscrição no cartão de crédito.</b></div>
+                    <br><div class="editor-label"> <b>Torneio configurado para pagamento da inscrição no cartão de crédito e PIX.</b></div>
                 }
                 <br>
                 <input type="checkbox" name="transferencia" id="transferencia" value="true" checked onclick="isTransferenciaBancaria()"> <b>Usar transferência como forma de pagamento</b><br>
@@ -423,7 +423,8 @@
                $("#btnTab1").attr("href", "#tabInscricao");
                 document.getElementById('tab1').className = '';
                 document.getElementById('tab2').className = 'active';
-           }
+            }
+           $('html,body').scrollTop(0);
         });
 
         $('#btnTab2').on('click', function (event) {
@@ -448,6 +449,7 @@
                 document.getElementById('tab2').className = '';
                 document.getElementById('tab3').className = 'active';
             }
+            $('html,body').scrollTop(0);
         });
 
         $('#btnTab3').on('click', function (event) {
@@ -460,6 +462,7 @@
                 document.getElementById('tab3').className = '';
                 document.getElementById('tab4').className = 'active';
             }
+            $('html,body').scrollTop(0);
         });
 
             
