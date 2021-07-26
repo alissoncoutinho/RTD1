@@ -88,6 +88,22 @@ namespace Barragem.Controllers
 
             return View(liga);
         }
+        [Authorize(Roles = "admin, organizador")]
+        public ActionResult EditNome(int idLiga, string nomeLiga)
+        {
+            try { 
+            Liga liga = db.Liga.Find(idLiga);
+            liga.Nome = nomeLiga;
+            db.Entry(liga).State = EntityState.Modified;
+            db.SaveChanges();
+                return Json(new { erro = "", retorno = 1 }, "text/plain", JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { erro = ex.Message, retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
+            }
+            
+        }
 
         public ActionResult EditClasses(int idLiga = 0)
         {
@@ -173,8 +189,14 @@ namespace Barragem.Controllers
                 {
                     throw new Exception("Por favor selecione o ranking a ser adicionado e o tipo de torneio.");
                 }
+                var ligaId = Int32.Parse(idLiga);
+                var seJaExiste = db.BarragemLiga.Where(b => b.LigaId == ligaId && b.BarragemId == idBarra).Count();
+                if (seJaExiste > 0)
+                {
+                    throw new Exception("Este ranking já está adicionado a esta liga.");
+                }
                 BarragemLiga bl = new BarragemLiga();
-                bl.LigaId = Int32.Parse(idLiga);
+                bl.LigaId = ligaId;
                 bl.BarragemId = idBarra;
                 bl.TipoTorneio = TipoTorneio;
                 db.BarragemLiga.Add(bl);
@@ -203,5 +225,24 @@ namespace Barragem.Controllers
                 return Json(new { erro = ex.Message, retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
             }
         }
+
+        [HttpPost]
+        public ActionResult AlterarTipoTorneio(String id, String TipoTorneio)
+        {
+            try
+            {
+                BarragemLiga bl = db.BarragemLiga.Find(Int32.Parse(id));
+                bl.TipoTorneio = TipoTorneio;
+                db.Entry(bl).State = EntityState.Modified;
+                db.SaveChanges();
+                return Json(new { erro = "", retorno = 1 }, "text/plain", JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { erro = ex.Message, retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        
     }
 }

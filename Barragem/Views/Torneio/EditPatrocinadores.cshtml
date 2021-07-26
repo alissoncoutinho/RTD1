@@ -1,0 +1,163 @@
+﻿@{
+    int i = 0;
+    
+}
+@model IEnumerable<Barragem.Models.Patrocinador>
+    @Html.Partial("_PartialTabs")
+
+    <div class="tab-content">
+        <div class="tab-pane fade" id="tabCadastro"></div>
+        <div class="tab-pane fade" id="tabInscritos"></div>
+        <div class="tab-pane fade" id="tabJogos"></div>
+        <div class="tab-pane fade" id="tabDuplas"></div>
+        <div class="tab-pane fade in active" id="tabEditPatrocinadores">
+            <br>
+            <input type="hidden" name="torneioId" id="torneioId" value="@ViewBag.torneioId" />
+            <div class="box-body table-responsive no-padding">
+                <table class="table table-striped table-condensed table-bordered">
+                    <tr>
+                        <th>
+                            @Html.DisplayName("patrocínio")
+                        </th>
+                        <th>
+                            @Html.DisplayName("endereço web")
+                        </th>
+                        <th>
+                            @Html.DisplayName("imagem")
+                        </th>
+                        <th></th>
+                    </tr>
+                    @foreach (var item in Model)
+                    {
+                        i++;
+                        <form method="post" enctype="multipart/form-data" action="/Torneio/EditPatrocinadores" name="@Html.Raw("form" + i)" id="@Html.Raw("form" + i)" class="form">
+                            <tr id="@item.Id">
+                                <td>
+                                    @i
+                                </td>
+                                <td>
+                                    <input type="text" class="col-md-6 form-control" name="@Html.Raw("urllink")" id="@Html.Raw("urllink")" value="@item.urllink">
+                                </td>
+                                <td>
+                                    <img width="50" height="50" src="@item.urlImagem" id="@Html.Raw("imagem"+i)">
+                                    <div class="fileUpload btn btn-default btn-xs">
+                                        <span class="glyphicon glyphicon-search"></span>
+                                        <input type="file" id="filepatrocinador" name="filepatrocinador" class="@Html.Raw("upload fileLogoPatrocinador"+i)" />
+                                    </div>
+                                </td>
+                                <td align="center">
+                                    <input type="hidden" name="Id" id="Id" value="@item.Id" />
+                                    <input type="hidden" name="torneioId" id="torneioId" value="@ViewBag.torneioId" />
+                                    <button type="submit" title="upload" data-valor="@Html.Raw(i)" data-ident="@item.Id" name="@Html.Raw("button" + i)" id="@Html.Raw("button" + i)" class="btn btn-primary btn-xs">
+                                        Salvar
+                                    </button>
+                                    <button title="excluir" data-valor="@item.Id" name="@Html.Raw("buttonEx" + i)" id="@Html.Raw("buttonEx" + i)" class="btn btn-danger btn-xs excluirButton">
+                                        Excluir
+                                    </button>
+                                </td>
+                            </tr>
+                        </form>
+                    }
+                    @for (int j = i + 1; j < 3; j++)
+                    {
+                        <form method="post" enctype="multipart/form-data" action="#" name="@Html.Raw("form" + j)" id="@Html.Raw("form" + j)" class="form">
+                            <tr id="0">
+                                <td>
+                                    @j
+                                </td>
+                                <td>
+                                    <input type="text" class="col-md-6 form-control" name="@Html.Raw("urllink")" id="@Html.Raw("urllink")" value="" placeholder="www.paginadopatrocinador.com.br">
+                                    <input type="hidden" name="Id" id="Id" value="0" />
+                                    <input type="hidden" name="torneioId" id="torneioId" value="@ViewBag.torneioId" />
+                                </td>
+                                <td></td>
+                                <td align="center">
+
+                                    <button title="salvar" type="submit" name="@Html.Raw("button" + j)" id="@Html.Raw("button" + j)" class="btn btn-primary btn-xs">
+                                        Criar
+                                    </button>
+
+                                </td>
+
+                            </tr>
+                        </form>
+                    }
+                    
+                </table>
+            </div>
+            
+        </div>
+    </div>
+    @section Scripts {
+        <script type="text/javascript">
+            $(document).ready(function () {
+                $(".excluirButton").confirm({
+                    title: "Confirmação",
+                    content: "Tem certeza que deseja excluir este patrocinador?",
+                    buttons: {
+                        sim: {
+                            text: 'Sim',
+                            btnClass: 'btn-primary',
+                            action: function () {
+                                var Id = this.$target.data("valor");
+                                event.preventDefault();
+                                $.ajax({
+                                    url: "/Torneio/ExcluirPatrocinador?Id=" + Id,
+                                    dataType: "json",
+                                    contentType: "application/json; charset=utf-8",
+                                    success: function (response) {
+                                        if (typeof response == "object") {
+                                            if (response.retorno === 0) {
+                                                toastr.error(response.erro, "Erro");
+                                            } else {
+                                                //$("#" + Id).remove();
+                                                //toastr.success("Exlusão realizada com sucesso.", "Aviso");
+                                                location.reload(true);
+                                            }
+                                        }
+                                    },
+                                    error: function (jqXHR, textStatus, errorThrown) {
+                                        toastr.error(textStatus, "Erro");
+                                    }
+                                });
+                            }
+                        },
+                        cancelar: function () { },
+                    }
+                });
+            });
+
+            function readURL1(input) {
+                if (input.files && input.files[0]) {
+                    var reader = new FileReader();
+
+                    reader.onload = function (e) {
+                        $('#imagem1').attr('src', e.target.result);
+                    }
+
+                    reader.readAsDataURL(input.files[0]);
+                }
+            }
+
+            $(".fileLogoPatrocinador1").change(function () {
+                readURL1(this);
+            });
+
+            function readURL2(input) {
+                if (input.files && input.files[0]) {
+                    var reader = new FileReader();
+
+                    reader.onload = function (e) {
+                        $('#imagem2').attr('src', e.target.result);
+                    }
+
+                    reader.readAsDataURL(input.files[0]);
+                }
+            }
+
+            $(".fileLogoPatrocinador2").change(function () {
+                readURL2(this);
+            });
+
+        </script>
+    }

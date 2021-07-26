@@ -60,6 +60,10 @@ namespace Barragem.Models
         public bool suspensaoPorAtraso { get; set; }
         [Display(Name = "Suspensao por WO")]
         public bool suspensaoPorWO { get; set; }
+        [Display(Name = "Beach Tênis")]
+        public bool isBeachTenis { get; set; }
+        [Display(Name = "Modelo todos contra todos")]
+        public bool isModeloTodosContraTodos { get; set; }
 
     }
 
@@ -100,5 +104,9 @@ namespace Barragem.Models
         public bool suspensaoPorWO { get; set; }
         [UIHint("tinymce_full_compressed"), AllowHtml]
         public string contato { get; set; }
+        [Display(Name = "Beach Tênis")]
+        public bool isBeachTenis { get; set; }
+        [Display(Name = "Modelo todos contra todos")]
+        public bool isModeloTodosContraTodos { get; set; }
     }
 }

@@ -35,6 +35,15 @@ namespace Barragem.Class
                 jogo.desafiante_id = primeirosColocados[posicao2o - 1].userId2oColocado;
                 jogo.desafiante2_id = primeirosColocados[posicao2o - 1].userIdParceiro2oColocado;
             }
+            if (jogo.desafiado_id == 10)
+            {
+                var desafianteTemp_id = jogo.desafiante_id;
+                var desafianteTemp2_id = jogo.desafiante2_id;
+                jogo.desafiante_id = jogo.desafiado_id;
+                jogo.desafiante2_id = jogo.desafiado2_id;
+                jogo.desafiado_id = desafianteTemp_id;
+                jogo.desafiado2_id = desafianteTemp2_id;
+            }
             
         }
 

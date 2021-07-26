@@ -69,8 +69,14 @@
                     </div>
                     @Html.ValidationMessageFor(model => model.premiacao)
                 </div>
-                <a href="#tabInscricao" id="btnTab1" class="btn btn-info" data-toggle="tab"><b>Avançar</b></a>
-            </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.contato, new { @class = "col-sm-2 control-label" })
+                    <div class="col-sm-8 col-xs-12 input-group">
+                        @Html.TextAreaFor(model => model.contato)
+                    </div>
+                </div>
+                    <a href="#tabInscricao" id="btnTab1" class="btn btn-info" data-toggle="tab"><b>Avançar</b></a>
+                </div>
         </div>
 
 
@@ -342,6 +348,19 @@
             width: 700,
             height: 150,
             toolbar1: "bold italic | underline | alignleft aligncenter alignright alignjustify | forecolor backcolor"
+
+        });
+
+        tinyMCE.init({
+            selector: 'textarea#contato',
+            menubar: false,
+            language: 'pt_BR',
+            theme: "modern",
+            theme_advanced_font_sizes: "10px,12px,13px,14px,16px,18px,20px",
+            font_size_style_values: "12px,13px,14px,16px,18px,20px",
+            width: 500,
+            height: 150,
+            toolbar1: "bold italic | underline | alignleft aligncenter alignright alignjustify | forecolor backcolor | fontselect |  fontsizeselect"
 
         });
 

@@ -395,6 +395,7 @@ namespace Barragem.Controllers
 
                 db.SaveChanges();
                 tn.MontarProximoJogoTorneio(jogo);
+                tn.consolidarPontuacaoFaseGrupo(jogo);
                 rn.ProcessarJogoAtrasado(jogo);
             }catch (Exception){
                 return InternalServerError(new Exception("Erro ao lançar resultado."));
@@ -436,6 +437,7 @@ namespace Barragem.Controllers
             try{
                 db.SaveChanges();
                 tn.MontarProximoJogoTorneio(jogoAtual);
+                tn.consolidarPontuacaoFaseGrupo(jogoAtual);
                 rn.ProcessarJogoAtrasado(jogoAtual);
 
             }catch (DbUpdateConcurrencyException){

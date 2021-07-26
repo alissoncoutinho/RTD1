@@ -9,20 +9,20 @@
         <div class="tab-pane fade" id="tabJogos"></div>
             <div class="tab-pane fade in active" id="tabDuplas">
                 <br>
-                <div class="form-horizontal">
-                    <div class="form-group">
-                        <label class="col-sm-2 control-label">Classes</label>
-                        <div class="col-sm-4 input-group">
-                            <select name="filtroClasse" id="filtroClasse" class="form-control" onchange="Selecionar()">
-                                @foreach (var item2 in ViewBag.Classes)
-                                {
-                                    <option value="@item2.Id" @if (ViewBag.filtroClasse == item2.Id) { @Html.Raw("selected")      }>@item2.nome</option>
-                                }
-                            </select>
-                            <input type="hidden" value="@ViewBag.TorneioId" name="torneioId" id="torneioId">
-                        </div>
+                <div class="form-group">
+                    @Html.Label("Classes", new { @class = "col-md-1 control-label" })
+                    <div class="col-xs-8 col-md-3 input-group">
+                        <select name="filtroClasse" id="filtroClasse" class="form-control" onchange="Selecionar()">
+                            <option value="0">Todas</option>
+                            @foreach (var item2 in ViewBag.Classes)
+                            {
+                                <option value="@item2.Id" @if (ViewBag.filtroClasse == item2.Id) { @Html.Raw("selected")    }>@item2.nome</option>
+                            }
+                        </select>
                     </div>
+                    <input type="hidden" value="@ViewBag.TorneioId" name="torneioId" id="torneioId">
                 </div>
+                
                 @if (Model == null) {
                     <p>Esse torneio não possui classes de duplas.</p>
                 }
@@ -39,7 +39,10 @@
                         {
                             <tr>
                                 <td>
-                                    <a href="@Html.Raw(item.participante.linkwhatsappDupla + "https://www.rankingdetenis.com/Torneio/EscolherDupla/" + item.torneioId + "?userId=" + item.participante.UserId + "&classe=" + item.classe)">
+                                    <a href="@Html.Raw(item.participante.linkwhatsappSemMsg + 
+                                            "Você%20está%20sem%20dupla%20no%20" +
+                                            item.torneio.nome +
+                                            ".%20Escolha%20sua%20dupla%20agora%20para%20não%20ficar%20de%20fora%20clicando%20no%20link%20abaixo%20ou%20informe%20seu%20parceiro%20para%20se%20inscrever:%20https://www.rankingdetenis.com/Torneio/EscolherDupla/" + item.torneioId + "?userId=" + item.participante.UserId + "&classe=" + item.classe)">
                                         <img width="25" height="25" src="/Content/image/whatsapp.png">
                                     </a>
                                     <a href="@Url.Action("../Account/Detalhes", new { userId = @item.participante.UserId })" title="Detalhes do jogador">@item.participante.nome</a>
@@ -100,7 +103,6 @@
                             {
                                 <select name="@Html.Raw("jogador2_" + i)" id="@Html.Raw("jogador2_" + i)" class="form-control">
                                     <option value="null"></option>
-                                    <option value="null">Desfazer dupla</option>
                                     @foreach (var item2 in ViewBag.Inscritos)
                                     {
                                         <option value="@item2.userId" @if (item.parceiroDuplaId == item2.userId)

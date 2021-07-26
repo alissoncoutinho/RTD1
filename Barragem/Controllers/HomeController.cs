@@ -109,9 +109,9 @@ namespace Barragem.Controllers
                 var torneio = db.Torneio.Where(t => t.barragemId == barragemId && t.isAtivo).OrderByDescending(t => t.Id).ToList();
                 if (torneio.Count() > 0)
                 {
-                    var torneioLess = montarDadosTorneio(torneio[0]);
+                    //var torneioLess = montarDadosTorneio(torneio[0]);
 
-                    return RedirectToAction("IndexTorneio", "Home", torneioLess);
+                    return RedirectToAction("IndexTorneio", "Home", new { torneioId = torneio[0].Id });
                 }
                 else
                 {
@@ -124,10 +124,13 @@ namespace Barragem.Controllers
             }
         }
 
-        public ActionResult IndexTorneio(Torneio tr)
+        public ActionResult IndexTorneio(int torneioId)
         {
-            var barragemId = tr.barragemId;
-            ViewBag.contato = (from bg in db.Barragens where bg.Id == barragemId select bg.contato).Single();
+            //var barragemId = tr.barragemId;
+            //ViewBag.contato = (from bg in db.Barragens where bg.Id == barragemId select bg.contato).Single();
+            var tr = db.Torneio.Find(torneioId);
+            var patrocinadores = db.Patrocinador.Where(p => p.torneioId == torneioId).ToList();
+            ViewBag.patrocinadores = patrocinadores;
             return View(tr);
         }
 

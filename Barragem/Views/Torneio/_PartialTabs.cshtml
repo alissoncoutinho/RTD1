@@ -6,8 +6,14 @@
     <li @if (@ViewBag.flag =="duplas" ) { @Html.Raw("class='active' ")       }><a href="@Url.Action("EditDuplas", new { torneioId=@ViewBag.TorneioId })"><b>Duplas</b></a>
     <li @if (@ViewBag.flag =="fasegrupo" ) { @Html.Raw("class='active' ") }><a href="@Url.Action("EditFaseGrupo", new { torneioId=@ViewBag.TorneioId })"><b>Fase Grupo</b></a>
     <li @if (@ViewBag.flag == "obs") { @Html.Raw("class='active' ") }><a href="@Url.Action("EditObs", new { torneioId=@ViewBag.TorneioId })"><b>Observações</b></a>
+    <li @if (@ViewBag.flag == "patrocinio") { @Html.Raw("class='active' ") }><a href="@Url.Action("EditPatrocinadores", new { torneioId=@ViewBag.TorneioId })"><b>Patrocínio</b></a>
     @if (Roles.IsUserInRole("admin")){  
         <li @if (@ViewBag.flag == "teste") { @Html.Raw("class='active' ")}><a href="@Url.Action("EditTeste", new { torneioId=@ViewBag.TorneioId })"><b>Testes</b></a></li>
     }
 
 </ul>
+<style>
+    .nav-tabs {
+        flex-wrap: wrap;
+    }
+</style>

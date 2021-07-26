@@ -40,7 +40,11 @@
             }
             else if (Model.situacao_Id == 6)
             {
-                @Html.Raw("desistência")
+                @Html.Raw(Model.qtddGames1setDesafiado + "/" + Model.qtddGames1setDesafiante + " - " + Model.qtddGames2setDesafiado + "/" + Model.qtddGames2setDesafiante)
+                if ((Model.qtddGames3setDesafiado != 0) || (Model.qtddGames3setDesafiante != 0))
+                {
+                    @Html.Raw(" - " + Model.qtddGames3setDesafiado + "/" + Model.qtddGames3setDesafiante)
+                }@Html.Raw(" desist.")
             }
             else
             {

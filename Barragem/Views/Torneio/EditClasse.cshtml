@@ -17,110 +17,111 @@
             </p>
 @using (Html.BeginForm("EditOrdemExibicaoClasse", "Torneio", FormMethod.Post, new { @class = "form-horizontal" }))
 {
-            <table class="table table-striped table-condensed table-bordered">
-                <tr>
-                    <th>
-                        <b>Ordem Exibição</b>
-                    </th>
-                    @if (ViewBag.isLiga)
+    <div class="box-body table-responsive no-padding">
+        <table class="table table-striped table-condensed table-bordered">
+            <tr>
+                <th>
+                    <b>Ordem Exibição</b>
+                </th>
+                @if (ViewBag.isLiga)
                     {
-                        <th>
-                            @Html.DisplayName("Nome categoria na Liga")
-                        </th>
+                    <th>
+                        @Html.DisplayName("Nome categoria na Liga")
+                    </th>
                     }
-                    <th>
-                        @Html.DisplayName("Nome categoria no Torneio")
-                    </th>
-                    <th>
-                        @Html.DisplayName("Dupla")
-                    </th>
-                    <th>
-                        @Html.DisplayName("Fase Grupo")
-                    </th>
-                    <th>
-                        @Html.DisplayName("Mata-Mata")
-                    </th>
-                    <th></th>
-                </tr>
-                @foreach (var item in Model)
+                <th>
+                    @Html.DisplayName("Nome categoria no Torneio")
+                </th>
+                <th>
+                    @Html.DisplayName("Dupla")
+                </th>
+                <th>
+                    @Html.DisplayName("Fase Grupo")
+                </th>
+                <th>
+                    @Html.DisplayName("Mata-Mata")
+                </th>
+                <th></th>
+            </tr>
+            @foreach (var item in Model)
                 {
                     i++;
-                    <tr id="@item.Id">
-                        <td>
-                            <select name="ordemExibicao">
-                                @for (int j = 1; j <= Model.Count(); j++)
+                <tr id="@item.Id">
+                    <td>
+                        <select name="ordemExibicao">
+                            @for (int j = 1; j <= Model.Count(); j++)
                                 {
-                                    <option @if (item.nivel == j)
-                                    { @Html.Raw(" selected ")  }>@j</option>
+                                <option @if (item.nivel == j) { @Html.Raw(" selected ")   }>@j</option>
                                 }
-                            </select>
-                        </td>
-                        @if (ViewBag.isLiga)
+                        </select>
+                    </td>
+                    @if (ViewBag.isLiga)
                         {
-                            <th>
-                                @if (@item.Categoria != null)
+                        <th>
+                            @if (@item.Categoria != null)
                                 {
-                                    @Html.Raw(item.Categoria.Nome)
+                                @Html.Raw(item.Categoria.Nome)
                                 }
                                 else
                                 {
-                                    @Html.Raw("não pontua para liga")
+                                @Html.Raw("não pontua para liga")
                                 }
-                            </th>
+                        </th>
                         }
-                        <td>
-                            <input type="text" class="col-md-6 form-control" name="@Html.Raw("nome" + i)" id="@Html.Raw("nome" + i)" value="@item.nome">
-                        </td>
-                        <td>
-                            @if (item.isDupla)
+                    <td>
+                        <input type="text" class="col-md-6 form-control" name="@Html.Raw("nome" + i)" id="@Html.Raw("nome" + i)" value="@item.nome">
+                    </td>
+                    <td>
+                        @if (item.isDupla)
                             {
-                                <input type="checkbox" checked value="true" name="@Html.Raw("isDupla" + i)" id="@Html.Raw("isDupla" + i)" />
+                            <input type="checkbox" checked value="true" name="@Html.Raw("isDupla" + i)" id="@Html.Raw("isDupla" + i)" />
                             }
                             else
                             {
-                                <input type="checkbox" value="true" name="@Html.Raw("isDupla" + i)" id="@Html.Raw("isDupla" + i)" />
+                            <input type="checkbox" value="true" name="@Html.Raw("isDupla" + i)" id="@Html.Raw("isDupla" + i)" />
                             }
-                        </td>
-                        <td>
-                            @if (item.faseGrupo)
+                    </td>
+                    <td>
+                        @if (item.faseGrupo)
                             {
-                                <input type="checkbox" checked value="true" name="@Html.Raw("faseGrupo" + i)" id="@Html.Raw("faseGrupo" + i)" />
+                            <input type="checkbox" checked value="true" name="@Html.Raw("faseGrupo" + i)" id="@Html.Raw("faseGrupo" + i)" />
                             }
                             else
                             {
-                                <input type="checkbox" value="true" name="@Html.Raw("faseGrupo" + i)" id="@Html.Raw("faseGrupo" + i)" />
+                            <input type="checkbox" value="true" name="@Html.Raw("faseGrupo" + i)" id="@Html.Raw("faseGrupo" + i)" />
                             }
-                        </td>
-                        <td>
-                            @if (item.faseMataMata)
+                    </td>
+                    <td>
+                        @if (item.faseMataMata)
                             {
-                                <input type="checkbox" checked value="true" name="@Html.Raw("faseMataMata" + i)" id="@Html.Raw("faseMataMata" + i)" />
+                            <input type="checkbox" checked value="true" name="@Html.Raw("faseMataMata" + i)" id="@Html.Raw("faseMataMata" + i)" />
                             }
                             else
                             {
-                                <input type="checkbox" value="true" name="@Html.Raw("faseMataMata" + i)" id="@Html.Raw("faseMataMata" + i)" />
+                            <input type="checkbox" value="true" name="@Html.Raw("faseMataMata" + i)" id="@Html.Raw("faseMataMata" + i)" />
                             }
-                        </td>
-                        <td align="center">
-                            <form method="post" enctype="multipart/form-data" action="#" name="@Html.Raw("form" + i)" id="@Html.Raw("form" + i)" class="form">
-                                <button title="salvar" data-valor="@Html.Raw(i)" data-ident="@item.Id" name="@Html.Raw("button" + i)" id="@Html.Raw("button" + i)" class="btn btn-default btn-xs inscricaoButton">
-                                    Salvar
-                                </button>
-                                <button title="excluir" data-valor="@item.Id" name="@Html.Raw("buttonEx" + i)" id="@Html.Raw("buttonEx" + i)" class="btn btn-danger btn-xs excluirButton">
-                                    Excluir
-                                </button>
-                            </form>
-                        </td>
+                    </td>
+                    <td align="center">
+                        <form method="post" enctype="multipart/form-data" action="#" name="@Html.Raw("form" + i)" id="@Html.Raw("form" + i)" class="form">
+                            <button title="salvar" data-valor="@Html.Raw(i)" data-ident="@item.Id" name="@Html.Raw("button" + i)" id="@Html.Raw("button" + i)" class="btn btn-default btn-xs inscricaoButton">
+                                Salvar
+                            </button>
+                            <button title="excluir" data-valor="@item.Id" name="@Html.Raw("buttonEx" + i)" id="@Html.Raw("buttonEx" + i)" class="btn btn-danger btn-xs excluirButton">
+                                Excluir
+                            </button>
+                        </form>
+                    </td>
 
-                    </tr>
-                }
-            </table>
-            <p>
-                <input type="hidden" name="torneioId" value="@ViewBag.torneioId"/>
-                <button class="btn btn-cta-secondary btn-small" type="submit">Salvar ordem de exibição</button>
-            </p>
-}
-        </div>
+                </tr>
+            }
+        </table>
+    </div>
+        <p>
+            <input type="hidden" name="torneioId" value="@ViewBag.torneioId" />
+            <button class="btn btn-cta-secondary btn-small" type="submit">Salvar ordem de exibição</button>
+        </p>
+        }
+    </div>
     </div>
     @section Scripts {
         <script type="text/javascript">

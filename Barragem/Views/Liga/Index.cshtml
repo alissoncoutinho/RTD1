@@ -1,4 +1,5 @@
 ﻿@{
+    int i = 0;
     ViewBag.Title = "Index";
 }
 @model IEnumerable<Barragem.Models.Liga>
@@ -18,16 +19,49 @@
             </tr>
             @foreach (var item in Model)
             {
+                i++;
                 <tr>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Nome)
+                        <input type="text" class="col-md-6 form-control" name="@Html.Raw("nome" + i)" id="@Html.Raw("nome" + i)" value="@item.Nome">
                     </td>
                     <td>
-                        <a href="@Url.Action("EditClasses", new {idLiga = @item.Id })" title="Editar/Detalhar" class="btn btn-default btn-xs">
-                            <span class="glyphicon glyphicon-edit"></span>
-                        </a>
-                    </td>
+                        <button title="salvar" data-valor="@Html.Raw(i)" data-ident="@item.Id" name="@Html.Raw("button" + i)" id="@Html.Raw("button" + i)" class="btn btn-default btn-xs editarNome">
+                        Salvar
+                        </button>
+                            <a href="@Url.Action("EditClasses", new {idLiga = @item.Id })" title="Editar/Detalhar" class="btn btn-default btn-xs">
+                                <span class="glyphicon glyphicon-edit"></span>
+                            </a>
+</td>
                 </tr>
             }
         </table>
     </div>
+@section Scripts {
+    <script type="text/javascript">
+            $(document).ready(function () {
+                $(".editarNome").click(function (event) {
+                    var i = $(this).data("valor");
+                    var Id = $(this).data("ident");
+                    var nome = document.getElementById("nome"+i).value;
+                    event.preventDefault();
+                    $.ajax({
+                        url: "/Liga/EditNome?idLiga=" + Id + "&nomeLiga=" + nome,
+                        dataType: "json",
+                        contentType: "application/json; charset=utf-8",
+                        success: function (response) {
+                            if (typeof response == "object") {
+                                if (response.retorno === 0) {
+                                    toastr.error(response.erro, "Erro");
+                                } else {
+                                    toastr.success("Alteração realizada com sucesso.", "Aviso");
+                                }
+                            }
+                        },
+                        error: function (jqXHR, textStatus, errorThrown) {
+                            toastr.error(textStatus, "Erro");
+                        }
+                    });
+                });
+            });
+    </script>
+}

@@ -12,9 +12,24 @@
 </div>
 <section class="promo section section-on-bg">
     <div class="container text-center">
-        <br><br>
+        @if (ViewBag.patrocinadores.Count > 0)
+        {
+        <p>
+            Patrocinadores<br>
+            @foreach (var p in ViewBag.patrocinadores)
+            {
+                <a href="@p.urllink" target="_blank">
+                    <span style="padding:20px">
+                        <img width="120" src="@p.urlImagem">
+                    </span>
+                </a>
+            }
+        </p>
+        } else {
+            <br><br>
+        }
         <h2 class="title">@Html.Raw(Model.nome)</h2>
-        <p class="intro">De @Html.Raw(String.Format("{0:dd/MM/yyyy}", Model.dataInicio)) até @Html.Raw(String.Format("{0:dd/MM/yyyy}", Model.dataFim))
+<p class="intro">De @Html.Raw(String.Format("{0:dd/MM/yyyy}", Model.dataInicio)) até @Html.Raw(String.Format("{0:dd/MM/yyyy}", Model.dataFim))
         <br>Local: @Html.Raw(Model.local) - @Html.Raw(Model.cidade)</p>
         @if (Model.dataFimInscricoes.AddDays(1)>DateTime.Now){
             <p><a class="btn btn-cta btn-cta-primary" href="@Url.Action("Login", "Account", new { returnUrl = "torneio", torneioId = Model.Id })">Inscreva-se</a> <a class="btn btn-cta btn-cta-secondary" href="#informacao">Informações</a></p>
@@ -54,7 +69,7 @@
                 </div><!--//step-->
                 <div class="step text-center col-xs-12 col-sm-4">
                     <h3 class="title"><span class="number"><span class="glyphicon glyphicon-phone"></span></span><br><span class="text">Contato</span></h3>
-                    <p>@Html.Raw(ViewBag.contato)</p>
+                    <p>@Html.Raw(Model.contato)</p>
                 </div><!--//step-->
             </div><!--//row-->
         @if (Model.dataFimInscricoes>DateTime.Now){

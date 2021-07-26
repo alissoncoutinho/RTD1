@@ -56,11 +56,22 @@
                                 <tr id="@Html.Raw("tr"+@barragemLiga.Id)">
 
                                     <td>@barragemLiga.Barragem.nome</td>
-                                    <td>@barragemLiga.TipoTorneio</td>
-                                    <td>
-                                        <button title="excluir" id="@Html.Raw("buttonEx"+@barragemLiga.Id)" onclick="removeBarragem(this.id)" class="btn btn-danger btn-xs excluirButton">
+                                    <td><select name="@Html.Raw("TipoTorneio" + barragemLiga.Id)" id="@Html.Raw("TipoTorneio" + barragemLiga.Id)" class="form-control">
+                                            <option value="100" @if (barragemLiga.TipoTorneio == "100") { @Html.Raw(" Selected") }>100</option>
+                                            <option value="250" @if (barragemLiga.TipoTorneio == "250") { @Html.Raw(" Selected") }>250</option>
+                                            <option value="500" @if (barragemLiga.TipoTorneio == "500") { @Html.Raw(" Selected") }>500</option>
+                                            <option value="1000" @if (barragemLiga.TipoTorneio == "1000") { @Html.Raw(" Selected") }>1000</option>
+                                        </select>
+                                    </td>
+
+                        <td>
+
+                            <button title="excluir" id="@Html.Raw("buttonEx"+@barragemLiga.Id)" onclick="removeBarragem(this.id)" class="btn btn-danger btn-xs excluirButton">
                                             Excluir
                                         </button>
+                            <button title="salvar" id="@Html.Raw("buttonSalvar"+@barragemLiga.Id)" onclick="alterarTipoTorneio(this.id)" class="btn btn-xs excluirButton">
+                                Salvar
+                            </button>
                                     </td>
                                 </tr>
                             }
@@ -137,6 +148,32 @@
                     },
                     error: function (jqXHR, textStatus, errorThrown) {
                         location.reload(true);
+                    }
+                });
+            }
+
+            function alterarTipoTorneio(id) {
+                event.preventDefault();
+
+                var idBarragemLiga = id.replace("buttonSalvar", "");
+                var tipoTorneio = document.getElementById("TipoTorneio" + idBarragemLiga).value;
+                $.ajax({
+                    type: "POST",
+                    url: "/Liga/AlterarTipoTorneio",
+                    dataType: "json",
+                    data: "{'Id':'" + idBarragemLiga + "','TipoTorneio':'" + tipoTorneio + "'}",
+                    contentType: "application/json; charset=utf-8",
+                    success: function (response) {
+                        if (typeof response == "object") {
+                            if (response.retorno === 0) {
+                                toastr.error(response.erro, "Erro");
+                            } else {
+                                toastr.success("Atualização realizada com sucesso.", "Aviso");
+                            }
+                        }
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        toastr.error("Erro ao tentar alterar o tipo de torneio", "Erro");
                     }
                 });
             }

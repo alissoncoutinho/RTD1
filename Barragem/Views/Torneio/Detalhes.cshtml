@@ -95,8 +95,17 @@
                                     <div class="col-sm-7 info-box-text">
                                         @if ((Model.valor != 0) && (!ViewBag.isGratuito))
                                         {
-                                            @Html.Raw("R$ " + inscricao.valor + ",00")
-                                        }else{
+                                            if ((inscricao.valorPendente != null) && (inscricao.valorPendente != 0))
+                                            {
+                                                @Html.Raw("R$ " + (inscricao.valor + inscricao.valorPendente) + ",00")
+                                            }
+                                            else
+                                            {
+                                                @Html.Raw("R$ " + inscricao.valor + ",00")
+                                            }
+                                        }
+                                        else
+                                        {
                                             @Html.Raw("gratuito")
                                         }
                                     </div>
@@ -110,7 +119,7 @@
                                     @if ((Model.valor != 0) && (!ViewBag.isGratuito))
                                     {
                                         @Html.Raw(inscricao.descricaoStatusPag)
-                                        if (inscricao.isAtivo)
+                                        if ((inscricao.isAtivo)&&((inscricao.valorPendente==null)||(inscricao.valorPendente == 0)))
                                         {
                                             @Html.Raw(" Ativa")
                                         }
@@ -121,6 +130,22 @@
                                     }
                                 </div>
                             </div>
+                            if ((inscricao.valorPendente != null) && (inscricao.valorPendente != 0))
+                            {
+                                <div class="row">
+                                    @Html.Label("Valor Pendente", new { @class = "col-sm-5" })
+                                    <div class="col-sm-7 info-box-text">
+                                        @if ((Model.valor != 0) && (!ViewBag.isGratuito))
+                                        {
+                                            @Html.Raw("R$ " + inscricao.valorPendente + ",00")
+                                        }
+                                        else
+                                        {
+                                            @Html.Raw("gratuito")
+                                        }
+                                    </div>
+                                </div>
+                            }
                         }
                         @if (inscricao == null)
                         {
@@ -439,7 +464,7 @@
                             if (inscricao != null)
                             {
                                 <div class="btn-group-vertical col-xs-12 col-sm-6">
-                                    @if (((String.IsNullOrEmpty(inscricao.statusPagamento) || (inscricao.statusPagamento != "3" && inscricao.statusPagamento != "4")) && !inscricao.isAtivo) && Model.valor != 0 && (!ViewBag.isGratuito))
+                                    @if ((inscricao.valorPendente!=null && inscricao.valorPendente!=0)||(((String.IsNullOrEmpty(inscricao.statusPagamento) || (inscricao.statusPagamento != "3" && inscricao.statusPagamento != "4")) && !inscricao.isAtivo) && Model.valor != 0 && (!ViewBag.isGratuito)))
                                     {
                                         if (ViewBag.isAceitaCartao)
                                         {
@@ -494,7 +519,14 @@
             <div class="box-body">
                 @if (inscricao != null)
                 {
+                    if (inscricao.valorPendente == null || inscricao.valorPendente == 0)
+                    {
                     <p><b>Valor:</b> R$ @inscricao.valor ,00</p>
+                    }
+                    else
+                    {
+                        <p><b>Valor:</b> R$ @inscricao.valorPendente ,00</p>
+                    }
                 }
                 @Html.Raw(Model.dadosBancarios)
             </div>

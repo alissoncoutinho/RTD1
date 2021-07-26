@@ -73,8 +73,10 @@ namespace Barragem.Controllers
                                 return View(barragens);
                             }
                         }
-                        var meuRanking = db.Barragens.Find(8);
-                        barragens.regulamento = meuRanking.regulamento;
+                        if (!(bool)barragens.soTorneio){
+                            var meuRanking = db.Barragens.Find(8);
+                            barragens.regulamento = meuRanking.regulamento;
+                        }
                         db.Barragens.Add(barragens);
                         db.SaveChanges();
                         for (int i = 1; i <= 10; i++){

@@ -31,7 +31,7 @@
                     @if (Model.isAtivo)
                 {
                 <div class="form-group">
-                    @Html.Label("Copiar link do Torneio", new { @class = "col-sm-2 control-label" })
+                    @Html.Label("Copiar link do Torneio", new { @class = "col-xs-6 col-sm-2 control-label" })
                     <div class="col-sm-8 input-group">
                         <!--a href="/torneio-Model.barragem.dominio" title="Link do torneio" class="btn btn-default btn-xs">
                             <span class="glyphicon glyphicon-link"></span>
@@ -41,7 +41,7 @@
                 </div>
 
                 <div class="form-group">
-                    @Html.Label("Divulgar no APP", new { @class = "col-sm-2 control-label" })
+                    @Html.Label("Divulgar no APP", new { @class = "col-xs-6 col-sm-2 control-label" })
                     <div class="col-sm-8 input-group">
                         <button id="btnNotificarApp" data-torneioid="@Model.Id" class="btn btn-default">Enviar Notificação</button>
                     </div>
@@ -50,7 +50,7 @@
                     }
                     <div class="form-group">
                         @Html.LabelFor(model => model.nome, new { @class = "col-sm-2 control-label" })
-                        <div class="col-sm-8 input-group">
+                        <div class="col-xs-12 col-sm-8 input-group">
                             @Html.TextBoxFor(model => model.nome, new { @class = "form-control" })
                             @Html.HiddenFor(model => model.TipoTorneio)
                         </div>
@@ -99,6 +99,12 @@
                             @Html.TextBoxFor(model => model.premiacao, new { @class = "form-control", @placeholder = "" })
                         </div>
                         @Html.ValidationMessageFor(model => model.premiacao)
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.contato, new { @class = "col-sm-2 control-label" })
+                        <div class="col-sm-8 col-xs-12 input-group">
+                            @Html.TextAreaFor(model => model.contato)
+                        </div>
                     </div>
 
 
@@ -364,7 +370,6 @@
                                 </div>
                             </div>
                         </div>
-
                         <div class="box box-primary">
                             <div class="box-header with-border">
                                 <h4 class="box-title">Regulamento</h4>
@@ -459,6 +464,7 @@
         tinyMCE.baseURL = '@Url.Content("~/Scripts/tinymce/")'
         tinyMCE.init({
             selector: 'textarea#dadosBancarios',
+            menubar: false,
             language: 'pt_BR',
             theme: "modern",
             theme_advanced_font_sizes: "10px,12px,13px,14px,16px,18px,20px",
@@ -471,6 +477,7 @@
 
         tinyMCE.init({
             selector: 'textarea#regulamento',
+            menubar: false,
             language: 'pt_BR',
             theme: "modern",
             theme_advanced_font_sizes: "10px,12px,13px,14px,16px,18px,20px",
@@ -480,6 +487,19 @@
             plugins: [
                 "code"
             ],
+            toolbar1: "bold italic | underline | alignleft aligncenter alignright alignjustify | forecolor backcolor | fontselect |  fontsizeselect"
+
+        });
+
+        tinyMCE.init({
+            selector: 'textarea#contato',
+            menubar: false,
+            language: 'pt_BR',
+            theme: "modern",
+            theme_advanced_font_sizes: "10px,12px,13px,14px,16px,18px,20px",
+            font_size_style_values: "12px,13px,14px,16px,18px,20px",
+            width: 500,
+            height: 150,
             toolbar1: "bold italic | underline | alignleft aligncenter alignright alignjustify | forecolor backcolor | fontselect |  fontsizeselect"
 
         });

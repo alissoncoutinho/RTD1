@@ -126,6 +126,8 @@ namespace Barragem.Models
 
         public int? Pontuacao { get; set; }
 
+        public double? valorPendente { get; set; }
+
     }
 
     public class ColocacaoTorneio {

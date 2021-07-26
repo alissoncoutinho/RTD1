@@ -71,7 +71,10 @@ namespace Barragem.Models
                 }
                 //para cada liga, gerar um snapshot
                 Liga liga = tl.Liga;
-                Snapshot novoSnap = new Snapshot { Data = DateTime.Now, LigaId = liga.Id};
+                DateTime dateTime = DateTime.UtcNow;
+                TimeZoneInfo horaBrasilia = TimeZoneInfo.FindSystemTimeZoneById("E. South America Standard Time");
+                DateTime dateTimeBrasilia = TimeZoneInfo.ConvertTimeFromUtc(dateTime, horaBrasilia);
+                Snapshot novoSnap = new Snapshot { Data = dateTimeBrasilia, LigaId = liga.Id};
                 db.Snapshot.Add(novoSnap);
                 db.SaveChanges();
                 tl.snapshotId = novoSnap.Id;

@@ -72,25 +72,6 @@ namespace Barragem.Models
             }
         }
 
-        public virtual string linkwhatsappDupla
-        {
-            get
-            {
-                var i = telefoneCelular.IndexOf("/");
-                var dddcel = "";
-                if (i < 1)
-                {
-                    dddcel = telefoneCelular.Trim().Replace("(", "").Replace(")", "").Replace(" ", "").Replace("-", "");
-                }
-                else
-                {
-                    dddcel = telefoneCelular.Substring(0, i).Trim().Replace("(", "").Replace(")", "").Replace(" ", "").Replace("-", "");
-                }
-
-                return "https://api.whatsapp.com/send?phone=55" + dddcel + "&text=Olá,%20" + nome + "!%20Você%20está%20sem%20dupla%20no%20torneio.%20Escolha%20sua%20dupla%20agora%20para%20não%20ficar%20de%20fora%20do%20torneio%20clicando%20no%20link%20abaixo:%20";
-            }
-        }
-
         public virtual string numeroWhatsapp
         {
             get

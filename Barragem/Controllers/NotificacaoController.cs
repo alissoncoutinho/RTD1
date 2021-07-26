@@ -30,11 +30,6 @@ namespace Barragem.Controllers
         [HttpPost]
         public void Receber(string notificationCode, string notificationType, int ranking=0)
         {
-            var log = new Log();
-            log.descricao = "Chegou:" + DateTime.Now + ":" + notificationCode;
-            db.Log.Add(log);
-            db.SaveChanges();
-            
             var barragem = db.BarragemView.Find(ranking);
             AccountCredentials credentials = new AccountCredentials(barragem.emailPagSeguro, barragem.tokenPagSeguro);
 
@@ -75,7 +70,7 @@ namespace Barragem.Controllers
                 decimal extraAmount = transaction.ExtraAmount;
                 // Tipo de meio de pagamento
                 PaymentMethod paymentMethod = transaction.PaymentMethod;
-
+                
                 string[] refs = reference.Split('-');
                 if (refs[0].Equals("T"))
                 { // se for torneio
@@ -83,30 +78,37 @@ namespace Barragem.Controllers
                     var inscricao = db.InscricaoTorneio.Find(idInscricao);
                     if ((status == 3)||(status == 4)){
                         inscricao.isAtivo = true;
-                    } else {
-                        inscricao.isAtivo = false;
+                        if ((inscricao.valorPendente != null) && (inscricao.valorPendente != 0))
+                        {
+                            inscricao.valor = inscricao.valor + inscricao.valorPendente;
+                            inscricao.valorPendente = 0;
+                        }
                     }
                     inscricao.statusPagamento = status + "";
                     inscricao.formaPagamento = paymentMethod.PaymentMethodType + "";
-                    inscricao.valor = (float)transaction.GrossAmount;
+                    //inscricao.valor = (float)transaction.GrossAmount;
                     db.Entry(inscricao).State = EntityState.Modified;
                     db.SaveChanges();
-                    //var log2 = new Log();
-                    //log2.descricao = ranking + " movimentacao ok " + status + ":" + DateTime.Now + ":" + notificationCode;
-                    //db.Log.Add(log2);
-                    //db.SaveChanges();
+
+                    var log = new Log();
+                    log.descricao = "pagseguro:" + DateTime.Now + ":" + inscricao.Id + ":" + status + ":" + transaction.GrossAmount;
+                    db.Log.Add(log);
+                    db.SaveChanges();
 
                     // ativar outras inscrições caso existam
                     var listInscricao = db.InscricaoTorneio.Where(t => t.torneioId == inscricao.torneioId && t.userId == inscricao.userId && t.Id != inscricao.Id).ToList();
                     foreach (var item in listInscricao){
                         if ((status == 3) || (status == 4)){
                             item.isAtivo = true;
-                        }else{
-                            item.isAtivo = false;
+                            if ((item.valorPendente != null) && (item.valorPendente != 0))
+                            {
+                                item.valor = item.valor + item.valorPendente ?? 0;
+                                item.valorPendente = 0;
+                            }
                         }
                         item.statusPagamento = status + "";
                         item.formaPagamento = paymentMethod.PaymentMethodType + "";
-                        item.valor = (float)transaction.GrossAmount;
+                        //item.valor = (float)transaction.GrossAmount;
                         db.Entry(item).State = EntityState.Modified;
                         db.SaveChanges();
 

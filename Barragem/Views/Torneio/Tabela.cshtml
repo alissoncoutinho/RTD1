@@ -41,7 +41,7 @@
                         <!--input type="button" value="imprimir" class="btn btn-primary" onclick="Imprimir()"-->
                     </div>
                 }
-                else
+                else if (ViewBag.temMataMata == true)
                 {
                     <div class="col-sm-2 col-xs-4">
                         <input type="button" value="imprimir" class="btn btn-primary" onclick="Imprimir()"/>
@@ -50,7 +50,7 @@
             </div>
             @if (ViewBag.classeFaseGrupo == true)
             {
-                int grupo = ViewBag.qtddGrupos;
+                int grupo = ViewBag.qtddGrupos ?? 0;
                 <div class="form-group">
                     <label class="col-xs-12 col-sm-2 control-label">Grupo</label>
                     <div class="col-sm-4 col-xs-8">
@@ -73,7 +73,7 @@
             }
             
         </div>
-        if (ViewBag.classeFaseGrupo != true)
+        if (ViewBag.classeFaseGrupo != true && ViewBag.modeloTodosContraTodos == null)
         {
             <div class="" id="tabFase2">
                 <div id="conteudo_tabela_jogos">
@@ -152,6 +152,8 @@
             <div class="" id="tabFase2">
                     <div id="conteudo_tabela_jogos">
                         <div class="display_jogos">
+                            <div class="mover_esquerda"><img src="~/Images/seta.png"></div>
+                            <div class="mover_direita"><img src="~/Images/seta.png"></div>
                             @{
                                 int? rodada = 0;
                             }

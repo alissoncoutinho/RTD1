@@ -140,6 +140,10 @@ namespace Barragem.Models
         [Display(Name = "Torneio Foi Pago?")]
         public bool torneioFoiPago { get; set; }
 
+        [UIHint("tinymce_full_compressed"), AllowHtml]
+        [Display(Name = "Contato")]
+        public string contato { get; set; }
+
 
     }
 
