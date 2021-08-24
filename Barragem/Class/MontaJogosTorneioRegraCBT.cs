@@ -55,6 +55,8 @@ namespace Barragem.Class
         public static MontaJogosTorneioRegraCBT getInstancia(int grupo) {
             switch (grupo)
             {
+                case 1:
+                    return new MontaJogosTorneioRegraCBTCom1Grupos();
                 case 2:
                     return new MontaJogosTorneioRegraCBTCom2Grupos();
                 case 3:
@@ -80,6 +82,23 @@ namespace Barragem.Class
                 default:
                     return null;
 
+            }
+        }
+    }
+
+    public class MontaJogosTorneioRegraCBTCom1Grupos : MontaJogosTorneioRegraCBT
+    {
+
+        public override string GetPosicaoPorOrdemJogo(int ordemJogo)
+        {
+            // 2|3 onde 2 é a colocação dos primeiros colocados em cada grupo e 3 é o segundo colocado do grupo do 3o colocado entre os primeiros;
+            // 2-S|3 quando tem S ao lado do primeiro número, quer dizer que a regra nesse caso é igual ao do exemplo do número 3;
+            switch (ordemJogo)
+            {
+                case 1:
+                    return "1|1";
+                default:
+                    return "0|0";
             }
         }
     }

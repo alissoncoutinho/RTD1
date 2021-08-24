@@ -123,7 +123,7 @@
                         <h3 class="box-title">Selecione as classes para a geração de tabela</h3>
                     </div>
                     <div class="box-body">
-                        @using (Html.BeginForm("MontarChaveamento", "Torneio", FormMethod.Post, new { @class = "form-row", @name = "formClasses" }))
+                        @using (Html.BeginForm("MontarChaveamento", "Torneio", FormMethod.Post, new { @class = "form-row", @name = "FormClasses", @id="FormClasses" }))
                         {
                             <div class="col-sm-4">
                                 <input type="checkbox" value="1" name="todos" id="todos" onclick="marcarTodos()" /> <b>Todos</b>
@@ -255,7 +255,8 @@
                                 @i
                             </td>
                             <td>
-                                @if ((Roles.IsUserInRole("admin")) || ((ViewBag.primeirafase != null) && (ViewBag.primeirafase == item.faseTorneio) && (!item.classe.faseGrupo))) { 
+                                @if (ViewBag.fClasse != 1 && ((Roles.IsUserInRole("admin")) || ((ViewBag.primeirafase != null) && (ViewBag.primeirafase == item.faseTorneio)) || item.classe.faseGrupo))
+                                {
                         <select name="@Html.Raw("jogador1_" + i)" id="@Html.Raw("jogador1_" + i)" class="form-control">
                             <option value="0">aguardando adversário</option>
                             <option value="10" @if (item.desafiante_id == 10) { @Html.Raw("selected")     }>bye</option>
@@ -288,12 +289,12 @@
                         }
                             </td>
                             <td>
-                                @if ((Roles.IsUserInRole("admin")) ||((ViewBag.primeirafase != null) && (ViewBag.primeirafase == item.faseTorneio) && (!item.classe.faseGrupo)))
+                                @if (ViewBag.fClasse != 1 && ((Roles.IsUserInRole("admin")) || ((ViewBag.primeirafase != null) && (ViewBag.primeirafase == item.faseTorneio)) || item.classe.faseGrupo))
                                 {
                     <select name="@Html.Raw("jogador2_" + i)" id="@Html.Raw("jogador2_" + i)" class="form-control">
                         <option value="0">aguardando adversário</option>
                         @foreach (var item2 in ViewBag.Inscritos)
-                                {
+                                        {
                                 <option value="@item2.userId" @if (item.desafiado_id == item2.userId) { @Html.Raw("selected")        }>@item2.participante.nome</option>
                                 }
                     </select>
@@ -550,8 +551,8 @@
                         });
 
                         $(".confirm").confirm({
-                            title: "Confirmação",
-                            content: "Tem certeza que deseja gerar os jogos? Caso já existam jogos eles serão excluídos!",
+                            title: "<span style='color:red'>ATENÇÃO!!!</span>",
+                            content: "Caso tenha marcado uma categoria que já tem jogos gerados, os jogos serão excluídos. Está ciente disto?",
                             buttons: {
                                 sim: {
                                     text: 'Sim',
@@ -679,6 +680,8 @@
                             }
                         });
                     }
+
+                    
 
 
                </script>

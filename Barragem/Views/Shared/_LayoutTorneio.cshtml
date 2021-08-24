@@ -13,6 +13,11 @@
         barraNome = Server.UrlDecode(cookieNome.Value);
     }
     var scrLogo = "/Content/image/logo" + barraId + ".png";
+    var path = Server.MapPath(scrLogo);
+    if (!File.Exists(path))
+    {
+        scrLogo = "/Content/image/logo" + barraId + ".jpg";
+    }
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -28,7 +33,7 @@
     <link href='http://fonts.googleapis.com/css?family=Roboto:400,400italic,500,500italic,700,700italic,900,900italic,300italic,300' rel='stylesheet' type='text/css'>
     <link href='http://fonts.googleapis.com/css?family=Roboto+Slab:400,700,300,100' rel='stylesheet' type='text/css'>
     @Styles.Render("~/css")
-    @if (barraId == 1090)  // beach tennis
+    @if (barraId == 1136 || barraId == 1130 || barraId == 1126)  // beach tennis
     {
         @Styles.Render("~/css3")
     }

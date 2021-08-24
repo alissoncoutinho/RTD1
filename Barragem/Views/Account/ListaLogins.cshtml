@@ -18,6 +18,11 @@
                         @foreach (var item in Model)
                         {
                             var scrLogo = "/Content/image/logo" + item.logoId + ".png";
+                            var path = Server.MapPath(scrLogo);
+                            if (!File.Exists(path))
+                            {
+                                scrLogo = "/Content/image/logo" + item.logoId + ".jpg";
+                            }
                             <div class="col-md-6 col-xs-12 text-center" style="border-radius:10px; margin-bottom: 15px; padding-top: 10px; @if (item.idRanking != 0 && ViewBag.ReturnUrl == "torneio") { @Html.Raw("background-color: #E8E8E8") } ">
                                 <a href="@Url.Action("LoginPassword", new { userName = @item.userName, returnUrl=ViewBag.ReturnUrl, torneioId=ViewBag.torneioId })" >
                                     <img id="imgFoto" src=@scrLogo class="profile-image img-circle" style="width:40px;height:40px;"><br>

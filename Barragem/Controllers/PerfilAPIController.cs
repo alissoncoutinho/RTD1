@@ -199,7 +199,7 @@ namespace Barragem.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("api/PerfilAPI/Perfil")]
-        public IHttpActionResult PostPerfil(string login, string email, string password, string nome, DateTime dataNascimento, string naturalidade, string celular,  string altura, string lateralidade, int rankingId, int classeId)
+        public IHttpActionResult PostPerfil(string login, string email, string password, string nome, DateTime dataNascimento, string naturalidade, string celular,  string altura, string lateralidade, int rankingId)
         {
             RegisterModel model = new RegisterModel();
             model.UserName = login;
@@ -208,12 +208,12 @@ namespace Barragem.Controllers
             model.altura2 = altura;
             model.telefoneCelular = celular;
             model.email = email;
-            model.situacao = Tipos.Situacao.pendente.ToString();
+            model.situacao = Tipos.Situacao.torneio.ToString();
             model.dataInicioRancking = DateTime.Now;
             model.naturalidade = naturalidade;
             model.lateralidade = lateralidade;
             model.barragemId = rankingId;
-            model.classeId = classeId;
+            model.classeId = 0;
             if (ModelState.IsValid)
             {
                 // Attempt to register the user
@@ -223,7 +223,7 @@ namespace Barragem.Controllers
                     {
                         if (!Funcoes.IsValidEmail(email))
                         {
-                            return InternalServerError(new Exception(string.Format("E-mail inválido. '{0}'", email)));
+                            return BadRequest(string.Format("E-mail inválido. '{0}'", email));
                         }
 
                         WebSecurity.CreateUserAndAccount(login, password, new
@@ -233,25 +233,17 @@ namespace Barragem.Controllers
                             altura2 = altura,
                             telefoneCelular = celular,
                             email = email,
-                            situacao = Tipos.Situacao.pendente.ToString(),
+                            situacao = Tipos.Situacao.torneio.ToString(),
                             dataInicioRancking = DateTime.Now,
                             naturalidade = naturalidade,
                             lateralidade = lateralidade,
                             barragemId = rankingId,
-                            classeId = classeId
+                            classeId = 0
                         });
 
                         Roles.AddUserToRole(model.UserName, "usuario");
                         WebSecurity.Login(model.UserName, model.Password);
-                        try
-                        {
-                            var accountController = new AccountController();
-                            accountController.notificarJogador(model.nome, model.email, model.barragemId);
-                            accountController.notificarOrganizadorCadastro(model.nome, model.barragemId, model.telefoneCelular);
-                        }
-                        catch (Exception ex) { } // não tratar o erro pois caso não seja possível notificar o administrador não prejudicará o cadastro do usuário
-
-                        
+                                                
                     }
                     else
                     {
@@ -268,13 +260,13 @@ namespace Barragem.Controllers
                 var message = string.Join(" | ", ModelState.Values
                                             .SelectMany(v => v.Errors)
                                             .Select(e => e.ErrorMessage));
-
+                return BadRequest(message);
                 //Log This exception to ELMAH:
-                Exception exception = new Exception(message.ToString());
-                return InternalServerError(exception);
+                //Exception exception = new Exception(message.ToString());
+                //return InternalServerError(exception);
             }
                         
-            return StatusCode(HttpStatusCode.NoContent);
+            return Ok(model);
         }
 
         [Route("api/PerfilAPI/Ranking/{userId}")]

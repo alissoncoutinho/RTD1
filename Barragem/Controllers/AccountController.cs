@@ -128,6 +128,75 @@ namespace Barragem.Controllers
         }
 
         [AllowAnonymous]
+        public ActionResult RegisterOrganizador()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public ActionResult RegisterOrganizador(RegisterModel model)
+        {
+            model.dataNascimento = DateTime.Now.AddYears(-35);
+            
+            if (ModelState.IsValid)
+            {
+                // Attempt to register the user
+                try
+                {
+                    if (!WebSecurity.UserExists(model.UserName))
+                    {
+                        if (!Funcoes.IsValidEmail(model.email))
+                        {
+                            ViewBag.MsgErro = string.Format("E-mail inválido. '{0}'", model.email);
+                            return View(model);
+                        }
+
+                        WebSecurity.CreateUserAndAccount(model.UserName, model.Password, new
+                        {
+                            nome = model.nome,
+                            dataNascimento = model.dataNascimento,
+                            altura2 = "0",
+                            altura = 0,
+                            telefoneCelular = model.telefoneCelular,
+                            email = model.email,
+                            situacao = Tipos.Situacao.torneio.ToString(),
+                            bairro = model.bairro,
+                            dataInicioRancking = DateTime.Now,
+                            naturalidade = "não informada",
+                            lateralidade = "destro",
+                            barragemId = model.barragemId,
+                            classeId = model.classeId
+                        });
+
+                        Roles.AddUserToRole(model.UserName, "organizador");
+                        
+                        WebSecurity.Login(model.UserName, model.Password);
+                        try
+                        {
+                            notificarAdmin(model.nome, model.telefoneCelular);
+                        }
+                        catch (Exception ex) { } // não tratar o erro pois caso não seja possível notificar o administrador não prejudicará o cadastro do usuário
+
+                        return RedirectToAction("CreateRankingLiga", "Liga");
+                    }
+                    else
+                    {
+                        ViewBag.MsgErro = string.Format("Login já existente. Favor escolha outro nome. '{0}'", model.UserName);
+                    }
+                
+                }
+                catch (MembershipCreateUserException e)
+                {
+                    ModelState.AddModelError("", ErrorCodeToString(e.StatusCode));
+                }
+
+            }
+            return View(model);
+        }
+
+        [AllowAnonymous]
         public ActionResult Login(int torneioId=0, string returnUrl="", string Msg=""){
             if ((User.Identity.IsAuthenticated) && (torneioId>0)){
                 if (returnUrl == "torneio") {
@@ -199,7 +268,7 @@ namespace Barragem.Controllers
         [AllowAnonymous]
         public ActionResult ListaLogins(VerificacaoCadastro model)
         {
-            var registers = db.UserProfiles.Where(u => (u.email.Equals(model.email) || u.UserName.ToLower() == model.email.ToLower())).ToList();
+            var registers = db.UserProfiles.Where(u => u.situacao!="inativo" && (u.email.Equals(model.email) || u.UserName.ToLower() == model.email.ToLower())).ToList();
             var loginRegisters = new List<LoginRankingModel>();
             foreach (var item in registers){
                 var loginRankingModel = new LoginRankingModel();
@@ -388,11 +457,6 @@ namespace Barragem.Controllers
             }
         }
 
-        public ActionResult RegisterCoordenador()
-        {
-            ViewBag.barragemId = new SelectList(db.BarragemView.ToList(), "Id", "nome");
-            return View();
-        }
         //
         // POST: /Account/Register
 
@@ -566,69 +630,25 @@ namespace Barragem.Controllers
             mail.EnviarMail();
         }
 
-       
-        /*public ActionResult SolicitarAtivacao(string uName="")
+        private void notificarAdmin(string nome, string fone)
         {
-            //string userName = MD5Crypt.Descriptografar(token);
-            var userName = User.Identity.Name;
-            if (userName != uName) {
-                string perfil = Roles.GetRolesForUser(User.Identity.Name)[0];
-                if (perfil.Equals("admin") || perfil.Equals("organizador")) {
-                    userName = uName;
-                } else {
-                    userName = "usuarioInvalido";
-                }
-            }
-            ViewBag.linkPagSeguro = "";
-            UserProfile user = null;
-            HttpCookie cookie = Request.Cookies["_barragemId"];
-            if (cookie != null){
-                var barragemId = Convert.ToInt32(cookie.Value.ToString());
-                BarragemView barragem = db.BarragemView.Find(barragemId);
-                ViewBag.linkPagSeguro = barragem.linkPagSeguro;
-            }
             try
             {
-                user = db.UserProfiles.Find(WebSecurity.GetUserId(User.Identity.Name));
-
-                if (user != null) {
-                    var situacaoAnterior = user.situacao;
-                    if ((user.situacao == "pendente") && (!user.isRanckingGerado)) {
-                        user.situacao = "Ativamento solicitado";
-                        db.Entry(user).State = EntityState.Modified;
-                        db.SaveChanges();
-                        notificarOrganizadorSolicitacaoAtivar(user.nome, user.barragemId, user.telefoneCelular);
-                    } else if (user.isRanckingGerado){
-                        user.situacao = "ativo";
-                        user.dataAlteracao = DateTime.Now;
-                        user.logAlteracao = situacaoAnterior + " " + User.Identity.Name;
-                        db.Entry(user).State = EntityState.Modified;
-                        db.SaveChanges();
-                        notificarJogador(" Solicitacao ativacao erro ", "coutinho.alisson@gmail.com", user.barragemId);
-                    }
-                    return View("SolicitarAtivacao");
-                }
-                else{
-                    ViewBag.MsgErro = "Este usuário não existe.";
-                    return View();
-                }
+                Mail e = new Mail();
+                e.assunto = "Cadastro de novo organizador realizado";
+                e.conteudo = "Um novo cadastro de organizador de ranking foi realizado. <br>Nome do contato: " + nome + "<br>telefone de contato: " + fone;
+                e.formato = Class.Tipos.FormatoEmail.Html;
+                e.de = "postmaster@rankingdetenis.com";
+                e.para = "tecnologia.btd@gmail.com";
+                e.bcc = new List<String>() { "coutinho.alisson@gmail.com" };
+                e.EnviarMail();
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                var routeData = new RouteData();
-                routeData.Values["controller"] = "Erros";
-                routeData.Values["exception"] = ex;
-                routeData.Values["action"] = "General";
-                return RedirectToAction("General", "Erros", routeData);
+                
             }
-            finally
-            {
-                if (db != null)
-                    db.Dispose();
-            }
-            //return View();
-        }*/
-
+        }       
+        
         [Authorize(Roles = "admin,organizador,usuario")]
         public ActionResult Detalhes(int userId, bool mostrarClasse=true)
         {

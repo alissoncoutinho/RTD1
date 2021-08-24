@@ -1,0 +1,56 @@
+﻿@model Barragem.Models.Barragens
+
+@{
+    ViewBag.Title = "Editar PagSeguro";
+}
+
+<div class="tab-content">
+    <legend>Configuração PagSeguro</legend>
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(true)
+            
+
+            <div class="row">
+                <div class="col-xs-12 col-sm-8">
+                    @Html.LabelFor(model => model.linkPagSeguro)
+                    <div class="input-group col-xs-8">
+                        @Html.TextBoxFor(model => model.linkPagSeguro, new { @class = "form-control", @placeholder = "exemplo: https://linkDoPagSeguro.com.br" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.linkPagSeguro)
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 col-sm-8">
+                    @Html.LabelFor(model => model.emailPagSeguro)
+                    <div class="input-group col-xs-8">
+                        @Html.TextBoxFor(model => model.emailPagSeguro, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.emailPagSeguro)
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 col-sm-8">
+                    @Html.LabelFor(model => model.tokenPagSeguro)
+                    <div class="input-group col-xs-8 col-sm-8">
+                        @Html.TextBoxFor(model => model.tokenPagSeguro, new { @class = "form-control" })
+                    </div>
+                    @Html.ValidationMessageFor(model => model.tokenPagSeguro)
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-xs-8 col-sm-8">
+                    <input class="btn btn-primary" type="submit" value="Salvar" />
+                </div>
+            </div>
+        }
+
+        
+        @section Scripts {
+
+            @Scripts.Render("~/bundles/editor")
+        
+        }
+    </div>

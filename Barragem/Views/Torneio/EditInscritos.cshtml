@@ -143,7 +143,7 @@
                                     <input type="checkbox" value="true" name="@Html.Raw("isAtivo" + i)" id="@Html.Raw("isAtivo" + i)" />
                                 }
                             </td>
-                            <td>
+                            <td id="@Html.Raw("statusPagamento" + i)">
                                 @Html.Raw(item.descricaoStatusPag)
                             </td>
 
@@ -215,6 +215,8 @@
                         if (response.retorno === 0) {
                             toastr.error(response.erro, "Erro");
                         } else {
+                            document.getElementById('statusPagamento' + i).innerHTML = response.statusPagamento
+
                             toastr.success("Atualização realizada com sucesso.", "Aviso");
                         }
                     }

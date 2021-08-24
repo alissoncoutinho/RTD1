@@ -16,5 +16,7 @@ namespace Barragem.Models
         public string Nome { get; set; }
 
         public bool isAtivo { get; set; } = true;
+
+        public int? barragemId { get; set; }
     }
 }

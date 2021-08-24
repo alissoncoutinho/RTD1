@@ -105,6 +105,20 @@ namespace Barragem.Controllers
 
         // GET: /Rodada/Edit/5
         [Authorize(Roles = "admin,organizador")]
+        public ActionResult EditPagSeguro(int id = 0)
+        {
+            Barragens barragens = db.Barragens.Find(id);
+            ViewBag.BarragemId = barragens.Id;
+            if (barragens == null)
+            {
+                return HttpNotFound();
+            }
+            ViewBag.flag = "edit";
+            return View(barragens);
+        }
+
+        // GET: /Rodada/Edit/5
+        [Authorize(Roles = "admin,organizador")]
         public ActionResult Edit(int id = 0)
         {
             Barragens barragens = db.Barragens.Find(id);
@@ -151,6 +165,33 @@ namespace Barragem.Controllers
                 return RedirectToAction("Index");
             }
             return View(barragens);
+        }
+
+        [Authorize(Roles = "admin,organizador")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult EditPagSeguro(Barragens barragens)
+        {
+            if (Roles.IsUserInRole("organizador"))
+            {
+                UserProfile usu = db.UserProfiles.Find(WebSecurity.GetUserId(User.Identity.Name));
+                if (usu.barragemId != barragens.Id)
+                {
+                    ViewBag.MsgErro = "Você não pertence a esta barragem.";
+                    return View(barragens);
+                }
+            }
+            var barraAtual = db.Barragens.Find(barragens.Id);
+
+            barraAtual.tokenPagSeguro = barragens.tokenPagSeguro;
+            barraAtual.emailPagSeguro = barragens.emailPagSeguro;
+            barraAtual.linkPagSeguro = barragens.linkPagSeguro;
+            
+                
+            db.Entry(barraAtual).State = EntityState.Modified;
+            db.SaveChanges();
+            return RedirectToAction("PainelControle", "Torneio", new { msg = "ok" });
+                        
         }
 
         [Authorize(Roles = "admin,organizador")]

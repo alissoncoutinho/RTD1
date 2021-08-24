@@ -35,12 +35,15 @@
                 <th>
                     @Html.DisplayName("Dupla")
                 </th>
+                @if (!ViewBag.isModeloTodosContraTodos)
+                {
                 <th>
                     @Html.DisplayName("Fase Grupo")
                 </th>
                 <th>
                     @Html.DisplayName("Mata-Mata")
                 </th>
+                }
                 <th></th>
             </tr>
             @foreach (var item in Model)
@@ -81,26 +84,29 @@
                             <input type="checkbox" value="true" name="@Html.Raw("isDupla" + i)" id="@Html.Raw("isDupla" + i)" />
                             }
                     </td>
-                    <td>
-                        @if (item.faseGrupo)
+                    @if (!ViewBag.isModeloTodosContraTodos)
+                    {
+                        <td>
+                            @if (item.faseGrupo)
                             {
-                            <input type="checkbox" checked value="true" name="@Html.Raw("faseGrupo" + i)" id="@Html.Raw("faseGrupo" + i)" />
+                                <input type="checkbox" checked value="true" name="@Html.Raw("faseGrupo" + i)" id="@Html.Raw("faseGrupo" + i)" />
                             }
                             else
                             {
-                            <input type="checkbox" value="true" name="@Html.Raw("faseGrupo" + i)" id="@Html.Raw("faseGrupo" + i)" />
+                                <input type="checkbox" value="true" name="@Html.Raw("faseGrupo" + i)" id="@Html.Raw("faseGrupo" + i)" />
                             }
-                    </td>
-                    <td>
-                        @if (item.faseMataMata)
+                        </td>
+                        <td>
+                            @if (item.faseMataMata)
                             {
-                            <input type="checkbox" checked value="true" name="@Html.Raw("faseMataMata" + i)" id="@Html.Raw("faseMataMata" + i)" />
+                                <input type="checkbox" checked value="true" name="@Html.Raw("faseMataMata" + i)" id="@Html.Raw("faseMataMata" + i)" />
                             }
                             else
                             {
-                            <input type="checkbox" value="true" name="@Html.Raw("faseMataMata" + i)" id="@Html.Raw("faseMataMata" + i)" />
+                                <input type="checkbox" value="true" name="@Html.Raw("faseMataMata" + i)" id="@Html.Raw("faseMataMata" + i)" />
                             }
-                    </td>
+                        </td>
+                    }
                     <td align="center">
                         <form method="post" enctype="multipart/form-data" action="#" name="@Html.Raw("form" + i)" id="@Html.Raw("form" + i)" class="form">
                             <button title="salvar" data-valor="@Html.Raw(i)" data-ident="@item.Id" name="@Html.Raw("button" + i)" id="@Html.Raw("button" + i)" class="btn btn-default btn-xs inscricaoButton">
@@ -131,14 +137,21 @@
                     var Id = $(this).data("ident");
                     var nome = document.getElementById("nome"+i).value;
                     var isDupla = document.getElementById("isDupla" + i).checked;
-                    var faseGrupo = document.getElementById("faseGrupo" + i).checked;
-                    var faseMataMata = document.getElementById("faseMataMata" + i).checked;
+                    var faseGrupo = false;
+                    var faseMataMata = false;
+                    var isModeloTodosContraTodos = false;
+                    try {
+                        faseGrupo = document.getElementById("faseGrupo" + i).checked;
+                        faseMataMata = document.getElementById("faseMataMata" + i).checked;
+                    } catch (err) {
+                        isModeloTodosContraTodos = true;
+                    }
                     event.preventDefault();
                     $.ajax({
                         type: "POST",
                         url: "/Torneio/EditClasse",
                         dataType: "json",
-                        data: "{'Id':'" + Id + "', 'nome':'" + nome + "', 'isDupla':'" + isDupla + "', 'faseGrupo':'" + faseGrupo + "', 'faseMataMata':'" + faseMataMata + "'}",
+                        data: "{'Id':'" + Id + "', 'nome':'" + nome + "', 'isDupla':'" + isDupla + "', 'faseGrupo':'" + faseGrupo + "', 'faseMataMata':'" + faseMataMata + "', 'isModeloTodosContraTodos':'" + isModeloTodosContraTodos + "'}",
                         contentType: "application/json; charset=utf-8",
                         success: function (response) {
                             if (typeof response == "object") {

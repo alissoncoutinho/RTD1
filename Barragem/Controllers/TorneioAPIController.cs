@@ -11,6 +11,7 @@ using System.Security.Claims;
 using System.Web.Http;
 using System.Web.Http.Description;
 
+
 namespace Barragem.Controllers
 {
     public class TorneioAPIController : ApiController
@@ -42,6 +43,7 @@ namespace Barragem.Controllers
 
             foreach (var item in Torneios)
             {
+                item.contato = db.Torneio.Find(item.Id).contato;
                 patrocinadores = new List<Patrocinador>();
                 var patrocinador = db.Patrocinador.Where(p => p.torneioId == item.Id).ToList();
                 foreach (var i in patrocinador)
@@ -139,21 +141,25 @@ namespace Barragem.Controllers
 
         [HttpGet]
         [Route("api/TorneioAPI/CriterioDesempateFaseGrupo")]
-        public CriterioDesempateFaseGrupo GetCriterioDesempate()
+        public Regra GetCriterioDesempate()
         {
-            var criterio = new CriterioDesempateFaseGrupo();
-            criterio.descricao = "<b>Critério de desempate</b><br><br> <p>çlaskdfjsl oeiurwpoe aspdfasdofiuas asdofkasodifu çlaskjdlsd ,zxcnzx,mcnz</p>";
+            return db.Regra.Find(1);
+        }
 
-            return criterio;
+        [HttpGet]
+        [Route("api/TorneioAPI/CriterioDesempateConsolidacaoFaseGrupo")]
+        public Regra GetCriterioDesempateConsolidacaoFaseGrupo()
+        {
+            return db.Regra.Find(2);
         }
 
         [HttpGet]
         [Route("api/TorneioAPI/Regulamento/{torneioId}")]
-        public Torneio GetRegulamento(int torneioId)
+        public String GetRegulamento(int torneioId)
         {
-            var torneio = db.Torneio.Find(torneioId);
+            var regulamento = db.Torneio.Find(torneioId).regulamento;
             
-            return torneio;
+            return regulamento;
         }
 
 
@@ -197,7 +203,15 @@ namespace Barragem.Controllers
                 if(i.parceiroDupla!=null) inscrito.nomeDupla = i.parceiroDupla.nome;
                 inscritos.Add(inscrito);
             }
-                        
+
+            // verificar se é para exibir o botão de montar dupla ou não. Se existir classes de dupla no torneio e o usuário estiver inscrito em uma classe de dupla exibe o botão.
+            if (inscritos.Count > 0)
+            {
+                var usuarioLogado = getUsuarioLogado();
+                var exibeBotaoFormarDupla = db.InscricaoTorneio.Where(r => r.torneioId == torneioId && r.classeTorneio.isDupla == true && r.userId == usuarioLogado).Any();
+                inscritos[0].exibeBotaoFormarDupla = exibeBotaoFormarDupla;
+            }
+
             return inscritos;
         }
 
@@ -312,7 +326,7 @@ namespace Barragem.Controllers
         private int getUsuarioLogado()
         {
             var claimsIdentity = User.Identity as ClaimsIdentity;
-            var userId = 9058;
+            var userId = 0; //9058;
             if (claimsIdentity.FindFirst("sub") != null)
             {
                 userId = Convert.ToInt32(claimsIdentity.FindFirst("sub").Value);
@@ -354,13 +368,15 @@ namespace Barragem.Controllers
 
             foreach (var c in classes){
                 if (c.faseGrupo){
-                    var qtddGrupo = db.InscricaoTorneio.Where(i => i.classe == c.Id && i.isAtivo).Max(i => i.grupo);
+                    var classeTorneio = db.ClasseTorneio.Find(c.Id);
+                    var inscricaoTorneio = tn.getInscritosPorClasse(classeTorneio, true);
+                    var qtddGrupo = inscricaoTorneio.Max(i => i.grupo);
                     c.qtddGruposFaseGrupo = qtddGrupo!=null? (int)qtddGrupo : 0;
-                    var qtddInscritos = db.InscricaoTorneio.Where(i => i.classe == c.Id && i.isAtivo).Count();
-                    if (qtddInscritos == 5){
-                        c.qtddRodadaFaseGrupo = 5;
+                    var qtddInscritos = inscricaoTorneio.Count(); 
+                    if (qtddInscritos%2 == 0){
+                        c.qtddRodadaFaseGrupo = qtddInscritos-1;
                     } else {
-                        c.qtddRodadaFaseGrupo = 3;
+                        c.qtddRodadaFaseGrupo = qtddInscritos;
                     }
                 }
                 if ((c.faseMataMata)||(!c.faseGrupo)){
@@ -675,7 +691,7 @@ namespace Barragem.Controllers
             List<string> cidades = new List<string>();
             if (nome.Length > 2)
             {
-                var dataHoje = DateTime.Now;
+                var dataHoje = DateTime.Now.AddDays(-1);
                 cidades = db.Torneio.Where(j => j.dataFim> dataHoje && j.isAtivo == true).OrderBy(j => j.cidade).Select(j => j.cidade).ToList<string>();
             }
             return cidades;
@@ -686,7 +702,7 @@ namespace Barragem.Controllers
         // GET: api/TorneioAPI/cidade
         public IList<TorneioApp> GetTorneioByCidade(string nome)
         {
-            var dataHoje = DateTime.Now;
+            var dataHoje = DateTime.Now.AddDays(-1);
             var torneios = db.Torneio.Where(b => b.isAtivo == true && b.dataFim > dataHoje && b.cidade.ToLower() == nome.ToLower()).Select(rk => new TorneioApp()
             {
                 Id = rk.Id,
@@ -721,30 +737,13 @@ namespace Barragem.Controllers
             return mensagemRetorno;
         }
 
-        [ResponseType(typeof(void))]
-        [HttpPost]
-        [AllowAnonymous]
-        [Route("api/TorneioAPI/Inscricao")]
-        public IHttpActionResult PostInscricao(int torneioId, int classeInscricao, string operacao, bool isMaisDeUmaClasse = false, int classeInscricao2 = 0, string observacao = "", bool isSocio = false, bool isClasseDupla = false, int userId = 0)
-        {
-            var mensagemRetorno = new TorneioController().InscricaoNegocio(torneioId, classeInscricao, operacao, isMaisDeUmaClasse, classeInscricao2,0,0, observacao, isSocio, isClasseDupla, userId);
-            if (mensagemRetorno.nomePagina == "ConfirmacaoInscricao")
-            {
-                return StatusCode(HttpStatusCode.NoContent);
-            }
-            else {
-                return InternalServerError(new Exception(mensagemRetorno.mensagem));
-            }
-            
-        }
-
         [HttpGet]
         [AllowAnonymous]
         [Route("api/TorneioAPI/Disponivel/{rankingId}")]
         public IList<TorneioApp> GetTorneioDisponivel(int rankingId)
         {
 
-            var dataHoje = DateTime.Now;
+            var dataHoje = DateTime.Now.AddDays(-1);
             var ranking = db.BarragemView.Find(rankingId);
             List<Patrocinador> patrocinadores = null;
             var torneio = (from t in db.Torneio
@@ -775,6 +774,7 @@ namespace Barragem.Controllers
             
             foreach (var item in torneio)
             {
+                item.contato = db.Torneio.Find(item.Id).contato;
                 patrocinadores = new List<Patrocinador>();
                 var patrocinador = db.Patrocinador.Where(p => p.torneioId == item.Id).ToList();
                 foreach (var i in patrocinador)
@@ -793,5 +793,6 @@ namespace Barragem.Controllers
            
         }
 
+        
     }
 }

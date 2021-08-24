@@ -182,7 +182,9 @@ namespace Barragem.Models
         public string nome { get; set; }
         public int userId { get; set; }
         public string classe { get; set; }
+        public int classeId { get; set; }
         public string nomeDupla { get; set; }
+        public bool? exibeBotaoFormarDupla { get; set; }
     }
    
 

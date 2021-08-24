@@ -239,6 +239,8 @@
     <Compile Include="Context\BarragemDbContext.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AguasClarasController.cs" />
+    <Compile Include="Controllers\CidadeController.cs" />
+    <Compile Include="Controllers\InscricaoAPIController.cs" />
     <Compile Include="Controllers\JogoAPIController.cs" />
     <Compile Include="Controllers\LigaController.cs" />
     <Compile Include="Controllers\LuzianiaController.cs" />
@@ -262,6 +264,7 @@
     <Compile Include="Controllers\PerfilAPIController.cs" />
     <Compile Include="Controllers\RankingController.cs" />
     <Compile Include="Controllers\RankingAPIController.cs" />
+    <Compile Include="Controllers\RegraController.cs" />
     <Compile Include="Controllers\RodadaController.cs" />
     <Compile Include="Controllers\TemporadaController.cs" />
     <Compile Include="Controllers\TorneioAPIController.cs" />
@@ -280,6 +283,7 @@
     <Compile Include="Models\Barragens.cs" />
     <Compile Include="Models\CalculadoraDePontos.cs" />
     <Compile Include="Models\Categoria.cs" />
+    <Compile Include="Models\Cidade.cs" />
     <Compile Include="Models\Classe.cs" />
     <Compile Include="Models\ClasseLiga.cs" />
     <Compile Include="Models\ClasseTorneio.cs" />
@@ -295,6 +299,7 @@
     <Compile Include="Models\PagamentoBarragem.cs" />
     <Compile Include="Models\Rancking.cs" />
     <Compile Include="Models\RankingView.cs" />
+    <Compile Include="Models\Regra.cs" />
     <Compile Include="Models\Rodada.cs" />
     <Compile Include="Models\SituacaoJogo.cs" />
     <Compile Include="Models\Snapshot.cs" />
@@ -891,6 +896,13 @@
     <Content Include="Views\Torneio\EditTorneio.cshtml" />
     <Content Include="Views\Torneio\EditPatrocinadores.cshtml" />
     <Content Include="Views\Torneio\Teste.cshtml" />
+    <Content Include="Views\Regra\Index.cshtml" />
+    <Content Include="Views\Regra\Create.cshtml" />
+    <Content Include="Views\Regra\Edit.cshtml" />
+    <Content Include="Views\Account\RegisterOrganizador.cshtml" />
+    <Content Include="Views\Liga\CreateRankingLiga.cshtml" />
+    <Content Include="Views\Torneio\PainelControle.cshtml" />
+    <Content Include="Views\Barragens\EditPagSeguro.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -13,7 +13,7 @@ namespace Barragem.Models
     {
         [Key]
         public int Id { get; set; }
-
+        [Required(ErrorMessage = "O campo nome é obrigatório")]
         [Display(Name = "nome")]
         public string nome { get; set; }
 
@@ -49,6 +49,7 @@ namespace Barragem.Models
         public string emailPagSeguro { get; set; }
         [Display(Name = "Token PagSeguro")]
         public string tokenPagSeguro { get; set; }
+        [Required(ErrorMessage = "O campo cidade é obrigatório")]
         [Display(Name = "Cidade")]
         public string cidade { get; set; }
         public double? valorPorUsuario { get; set; }
@@ -108,5 +109,23 @@ namespace Barragem.Models
         public bool isBeachTenis { get; set; }
         [Display(Name = "Modelo todos contra todos")]
         public bool isModeloTodosContraTodos { get; set; }
+    }
+
+    public class CreateBarragemLiga {
+        [Required(ErrorMessage = "O campo nome da agremiação é obrigatório")]
+        [Display(Name = "Nome da agremiação")]
+        public string nomeBarragem { get; set; }
+
+        [Required(ErrorMessage = "O campo nome do circuito é obrigatório")]
+        [Display(Name = "Nome do Circuito")]
+        public string nomeLiga { get; set; }
+
+        [Required(ErrorMessage = "O campo cidade é obrigatório")]
+        [Display(Name = "Nome da Cidade")]
+        public string cidade { get; set; }
+
+        [Display(Name = "Modalidade dos torneios")]
+        public string modalidadeBarragem { get; set; }
+
     }
 }

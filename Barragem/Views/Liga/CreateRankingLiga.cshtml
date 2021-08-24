@@ -1,0 +1,82 @@
+﻿@model Barragem.Models.CreateBarragemLiga
+
+@{
+    ViewBag.Title = "Criar Ranking";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+    <div class="form-horizontal">
+        <legend>Crie agora seu Ranking</legend>
+
+        <div class="form-group">
+            @Html.LabelFor(m => m.nomeBarragem, new { @class = "control-label col-md-2" })*
+            <div class="col-md-6">
+                @Html.TextBoxFor(m => m.nomeBarragem, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.nomeBarragem, "", new { @class = "alert-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.nomeLiga, new { @class = "control-label col-md-2" })*
+            <div class="col-md-6">
+                @Html.TextBoxFor(m => m.nomeLiga, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.nomeLiga, "", new { @class = "alert-danger" })
+            </div>
+        </div>
+        <div class="form-group">
+            @Html.LabelFor(m => m.cidade, new { @class = "control-label col-md-2" })*
+            <div class="col-md-6">
+                @Html.TextBoxFor(m => m.cidade, new { @class = "form-control" })
+                @Html.ValidationMessageFor(m => m.cidade, "", new { @class = "alert-danger" })
+            </div>
+        </div>
+        
+        <div class="form-group">
+            @Html.Label("Modalidade dos Torneios", new { @class = "control-label col-md-2" })
+            <div class="col-md-4">
+                <select id="modalidadeBarragem" name="modalidadeBarragem" class="form-control">
+                    <option value="1">Regras da federação</option>
+                    <option value="2">Modelo Todos contra todos</option>
+                </select>
+            </div>
+        </div>
+        <input type="submit" value="Criar meu Ranking" class="btn btn-info" />
+    </div>
+}
+
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<style>
+    .ui-autocomplete-loading {
+        background: white url("/Content/image/ui-anim_basic_16x16.gif") right center no-repeat;
+    }
+</style>
+
+@section Scripts {
+
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script type="text/javascript">
+    $(function () {
+        
+        $("#cidade").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: "/Cidade/getCidade",
+                    dataType: "jsonp",
+                    data: {
+                        q: request.term
+                    },
+                    success: function (data) {
+                        response(data);
+                    }
+                });
+            },
+            minLength: 3
+        });
+    });
+        
+</script>
+}
+

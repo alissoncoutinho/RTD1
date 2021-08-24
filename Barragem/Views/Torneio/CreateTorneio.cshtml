@@ -108,7 +108,9 @@
                         </select>
                     </div>
                 </div>
-                @Html.Label("Valor da Inscrição para:")
+                <div class="form-group">
+                    @Html.Label("Qual valor o jogador irá pagar se inscrever em:", new { @class = "col-sm-4 control-label" })
+                </div>
                 <div id="valorDiv" class="form-group">
                     @Html.Label("1 categoria", new { @class = "col-sm-2 control-label" })
                     <div class="col-sm-4 col-xs-10 input-group">
@@ -117,21 +119,21 @@
                     @Html.ValidationMessageFor(model => model.valor)
                 </div>
                 <div id="valorDiv2" class="form-group">
-                    @Html.Label("2 categoria", new { @class = "col-sm-2 control-label" })
+                    @Html.Label("2 categorias", new { @class = "col-sm-2 control-label" })
                     <div class="col-sm-4 col-xs-10 input-group">
                         @Html.TextBoxFor(model => model.valor2, new { @class = "form-control", @placeholder = "informe o valor total da inscrição" })
                     </div>
                     @Html.ValidationMessageFor(model => model.valor2)
                 </div>
                 <div id="valorDiv3" class="form-group">
-                    @Html.Label("3 categoria", new { @class = "col-sm-2 control-label" })
+                    @Html.Label("3 categorias", new { @class = "col-sm-2 control-label" })
                     <div class="col-sm-4 col-xs-10 input-group">
                         @Html.TextBoxFor(model => model.valor3, new { @class = "form-control", @placeholder = "informe o valor total da inscrição" })
                     </div>
                     @Html.ValidationMessageFor(model => model.valor3)
                 </div>
                 <div id="valorDiv4" class="form-group">
-                    @Html.Label("4 categoria", new { @class = "col-sm-2 control-label" })
+                    @Html.Label("4 categorias", new { @class = "col-sm-2 control-label" })
                     <div class="col-sm-4 col-xs-10 input-group">
                         @Html.TextBoxFor(model => model.valor4, new { @class = "form-control", @placeholder = "informe o valor total da inscrição" })
                     </div>
@@ -201,7 +203,28 @@
                     <div class="panel-body">
                         @foreach (var lg in ViewBag.LigasDisponiveis)
                         {
-                            <input type="checkbox" name="liga" value="@lg.Liga.Id"> @Html.Raw(lg.Liga.Nome + " - Pt. " + lg.TipoTorneio)<br>
+                            <input type="checkbox" name="liga" value="@lg.Liga.Id">
+                            if (ViewBag.isModeloTodosContraTodos)
+                            {
+                                @Html.Raw(lg.Liga.Nome)
+                            }
+                            else
+                            {
+                                if (ViewBag.barragemId == lg.BarragemId) {
+                                //if (false){
+                                    @Html.Raw(lg.Liga.Nome + " - Pontos: ")
+                                    <select name="pontuacaoLiga">
+                                        <option value="100">100</option>
+                                        <option value="250">250</option>
+                                        <option value="500">500</option>
+                                        <option value="1000">1000</option>
+                                    </select>
+                                } else {
+                                    @Html.Raw(lg.Liga.Nome + " - Pt. " + lg.TipoTorneio)
+                                }
+                                
+                            }
+                            <br>
                         }
                     </div>
                 </div>
@@ -288,7 +311,7 @@
                 </div>
                 @if ((ViewBag.tokenPagSeguro == "") || (ViewBag.tokenPagSeguro == null))
                 {
-                    <br><input type="checkbox" name="cartao" id="cartao" value="true" onclick="isCartaoCredito()"> <b>Deseja aceitar inscrição no cartão e PIX?</b><br>
+                    <br><input type="checkbox" name="cartao" id="cartao" value="true" onclick="isCartaoCredito()"> <b>Deseja aceitar inscrição no cartão?</b><br>
                     <div id="isCartao">
                         <div class="editor-label">
                             <small style="color:red">Para fazer a configuração do PagSeguro, contate o suporte via whatsapp (61-98408-6580).</small>
@@ -300,7 +323,7 @@
                 }
                 else
                 {
-                    <br><div class="editor-label"> <b>Torneio configurado para pagamento da inscrição no cartão de crédito e PIX.</b></div>
+                    <br><div class="editor-label"> <b>Torneio configurado para pagamento da inscrição no cartão de crédito.</b></div>
                 }
                 <br>
                 <input type="checkbox" name="transferencia" id="transferencia" value="true" checked onclick="isTransferenciaBancaria()"> <b>Usar transferência como forma de pagamento</b><br>
@@ -319,7 +342,7 @@
                         </textarea>
                     </div>
                 </div>
-                
+                <br>
                 <input type="submit" id="criarTorneio" class="btn btn-primary" value="Criar Torneio" />
             </div>
         </div>

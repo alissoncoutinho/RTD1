@@ -30,6 +30,7 @@ namespace Barragem.Controllers
 
                 return RedirectToAction("Index3", "Home");
             }
+            LimparCookie();
             string url = HttpContext.Request.Url.AbsoluteUri;
             string path = HttpContext.Request.Url.AbsolutePath;
             url = url.Replace("/", "").Replace("http:", "").Replace("www.", "");
@@ -101,7 +102,14 @@ namespace Barragem.Controllers
 
         public ActionResult IndexTorneioRedirect(string id)
         {
-            var barragem = db.BarragemView.Where(b => b.dominio.ToLower().Equals(id.ToLower())).ToList<BarragemView>();
+            var barragem = new List<BarragemView>();
+            int i = 0;
+            if (int.TryParse(id, out i)) {
+                return RedirectToAction("IndexTorneio", "Home", new { torneioId = id });
+            } else {
+                barragem = db.BarragemView.Where(b => b.dominio.ToLower().Equals(id.ToLower())).ToList<BarragemView>();
+            }
+            
             if (barragem.Count() > 0)
             {
                 Funcoes.CriarCookieBarragem(Response, Server, barragem[0].Id, barragem[0].nome);
@@ -806,6 +814,14 @@ namespace Barragem.Controllers
                 Response.Cookies.Add(myCookie);
             }
             return RedirectToAction("Index", "Home");
+
+        }
+
+        private void LimparCookie()
+        {
+            HttpCookie myCookie = new HttpCookie("_barragemId");
+            myCookie.Expires = DateTime.Now.AddDays(-1d);
+            Response.Cookies.Add(myCookie);
 
         }
 

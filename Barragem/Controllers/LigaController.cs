@@ -13,6 +13,9 @@ using System.Web.Security;
 using System.Transactions;
 using Barragem.Class;
 using System.Dynamic;
+using System.Web.Script.Serialization;
+using Newtonsoft.Json;
+using System.IO;
 
 namespace Barragem.Controllers
 {
@@ -34,8 +37,9 @@ namespace Barragem.Controllers
             }
             else
             {
-                ligasDaBarragem = db.BarragemLiga.Where(r => r.BarragemId == barragemId).OrderByDescending(c => c.Id).ToList();
-                foreach(BarragemLiga ligaBarragem in ligasDaBarragem)
+                ligasDaBarragem = db.BarragemLiga.Include(r=>r.Liga).Where(r => r.BarragemId == barragemId).OrderByDescending(c => c.Id).ToList();
+                ligas = new List<Liga>();
+                foreach (BarragemLiga ligaBarragem in ligasDaBarragem)
                 {
                     ligas.Add(ligaBarragem.Liga);
                 }
@@ -243,6 +247,101 @@ namespace Barragem.Controllers
             }
         }
 
-        
+        [Authorize(Roles = "admin, organizador")]
+        public ActionResult CreateRankingLiga()
+        {
+            return View();
+        }
+
+        [Authorize(Roles = "admin, organizador")]
+        public ActionResult FazerCargaCidades()
+        {
+            var filePath = "/Content/cidades3.json";
+            var path = Server.MapPath(filePath);
+            var arquivoExterno = System.IO.File.ReadAllText(path);
+            JsonTextReader reader = new JsonTextReader(new StringReader(arquivoExterno));
+            reader.SupportMultipleContent = true;
+            while (true)
+            {
+                if (!reader.Read())
+                {
+                    break;
+                }
+
+                JsonSerializer serializer = new JsonSerializer();
+                CidadeTemp cidade = serializer.Deserialize<CidadeTemp>(reader);
+                Cidade cd = new Cidade
+                {
+                    nome = cidade.nome,
+                    uf = cidade.microrregiao.mesorregiao.uf.sigla
+                };
+                db.Cidade.Add(cd);
+                db.SaveChanges();
+            }
+
+
+
+            return View();
+        }
+
+        [Authorize(Roles = "admin, organizador")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult CreateRankingLiga(CreateBarragemLiga createBarragemLiga)
+        {
+            try
+            {
+                using (TransactionScope scope = new TransactionScope())
+                {
+                    if (ModelState.IsValid)
+                    {
+                        Barragens barragens = new Barragens();
+                        barragens.nome = createBarragemLiga.nomeBarragem;
+                        barragens.cidade = createBarragemLiga.cidade;
+                        if (createBarragemLiga.modalidadeBarragem == "1")
+                        {
+                            barragens.isModeloTodosContraTodos = false;
+                        } else {
+                            barragens.isModeloTodosContraTodos = true;
+                        }
+                        barragens.soTorneio = true;
+                        barragens.isBeachTenis = true;
+                        barragens.isTeste = true;
+                        barragens.isAtiva = true;
+
+                        UserProfile usuario = db.UserProfiles.Find(WebSecurity.GetUserId(User.Identity.Name));
+                        barragens.email = usuario.email;
+                        var meuRanking = db.Barragens.Find(8);
+                        barragens.regulamento = meuRanking.regulamento;
+                        db.Barragens.Add(barragens);
+                        db.SaveChanges();
+
+                        var liga = new Liga();
+                        liga.Nome = barragens.nome;
+                        liga.isAtivo = true;
+                        db.Liga.Add(liga);
+                        db.SaveChanges();
+                        var barragemLiga = new BarragemLiga();
+                        barragemLiga.LigaId = liga.Id;
+                        barragemLiga.BarragemId = barragens.Id;
+                        db.BarragemLiga.Add(barragemLiga);
+
+                        usuario.barragemId = barragens.Id;
+                        db.Entry(usuario).State = EntityState.Modified;
+                        db.SaveChanges();
+
+                        scope.Complete();
+                        Funcoes.CriarCookieBarragem(Response, Server, barragens.Id, barragens.nome);
+                        return RedirectToAction("PainelControle", "Torneio", new { msg="ok" });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ViewBag.MsgErro = ex.Message;
+            }
+
+            return View(createBarragemLiga);
+        }
     }
 }

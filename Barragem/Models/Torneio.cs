@@ -157,9 +157,7 @@ namespace Barragem.Models
         public DateTime dataFim { get; set; }
         public string cidade { get; set; }
         public string premiacao { get; set; }
-        [UIHint("tinymce_full_compressed"), AllowHtml]
         public string contato { get; set; }
-        [UIHint("tinymce_full_compressed"), AllowHtml]
         public string regulamento { get; set; }
         public double? valor { get; set; }
         public double? valorSocio { get; set; }
@@ -198,6 +196,12 @@ namespace Barragem.Models
         public int faseTorneio { get; set; }
         public bool isFaseGrupo { get; set; }
         public int userGrupo { get; set; }
+    }
+
+    public class TorneioClassesApp
+    {
+        public Torneio torneio { get; set; }
+        public List<ClasseTorneio> classesTorneio { get; set; }
     }
 
     public class MensagemRetorno

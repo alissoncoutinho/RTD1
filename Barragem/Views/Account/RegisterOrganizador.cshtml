@@ -1,0 +1,71 @@
+﻿@model Barragem.Models.RegisterModel
+@{
+    ViewBag.Title = "Register";
+    
+}
+@using (Html.BeginForm("RegisterOrganizador", "Account", FormMethod.Post, new { @enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary()
+    <div class="form-horizontal">
+    <legend>Crie sua conta</legend>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.nome, new { @class = "control-label col-md-2" })*
+        <div class="col-md-6">
+            @Html.TextBoxFor(m => m.nome, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.nome, "", new { @class = "alert-danger" })
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.UserName, new { @class = "control-label col-md-2" })*
+        <div class="col-md-4">
+            @Html.TextBoxFor(m => m.UserName, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.UserName, "", new { @class = "alert-danger" })
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.email, new { @class = "control-label col-md-2" })*
+        <div class="col-md-4">
+            @Html.TextBoxFor(m => m.email, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.email, "", new { @class = "alert-danger" })
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.Password, new { @class = "control-label col-md-2" })
+        <div class="col-md-5">
+            @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.Password)
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.ConfirmPassword, new { @class = "control-label col-md-2" })
+        <div class="col-md-5">
+            @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.ConfirmPassword)
+        </div>
+    </div>
+    <div class="form-group">
+        @Html.LabelFor(m => m.telefoneCelular, new { @class = "control-label col-md-2" })*
+        <div class="col-md-3">
+            @Html.TextBoxFor(m => m.telefoneCelular, new { @class = "form-control",placeholder="ex.:(61)99999-9999" })
+            @Html.ValidationMessageFor(m => m.telefoneCelular, "", new { @class = "alert-danger" })
+        </div>
+    </div>
+        <input type="hidden" name="bairro" value="não informado"/>
+        <input type="hidden" name="naturalidade" value="não informada" />
+        <input type="hidden" name="altura2" value="0" />
+        <input type="hidden" name="classeId" value="1" />
+        <input type="hidden" name="barragemId" value="8" />
+    <input type="submit" value="Criar minha conta" class="btn btn-info" />
+    
+</div>
+}
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#telefoneCelular").mask("(99) 99999-9999");
+        })
+    </script>
+}

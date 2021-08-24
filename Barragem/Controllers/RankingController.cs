@@ -160,5 +160,28 @@ namespace Barragem.Controllers
             ViewBag.showOneLiga = showOneLiga;
             return View(ranking);
         }
+
+        [HttpPost]
+        public ActionResult uploadLogoMarca(int Id) {
+            HttpPostedFileBase filePosted = Request.Files["fileLogo"];
+            if (filePosted != null && filePosted.ContentLength > 0)
+            {
+                var path = "/Content/image/";
+                string fileNameApplication = System.IO.Path.GetFileName(filePosted.FileName);
+                string fileExtensionApplication = System.IO.Path.GetExtension(fileNameApplication);
+
+                // generating a random guid for a new file at server for the uploaded file
+                string newFile = "logo" + Request.Form["Id"] + fileExtensionApplication;
+                // getting a valid server path to save
+                string filePath = System.IO.Path.Combine(Server.MapPath(path), newFile);
+
+                if (fileNameApplication != String.Empty)
+                {
+                    filePosted.SaveAs(filePath);
+                    //p.urlImagem = path + newFile;
+                }
+            }
+            return RedirectToAction("PainelControle", "Torneio");
+        }
     }
 }

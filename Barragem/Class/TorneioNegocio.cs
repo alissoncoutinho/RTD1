@@ -222,7 +222,7 @@ namespace Barragem.Class
             }
         }
 
-        private void cadastrarColocacaoDupla(int userId, int colocacao, int torneioId, int classeTorneio)
+        private void cadastrarColocacaoDupla(int userId, int colocacao, int torneioId, int classeTorneio, bool isModeloTodosContraTodos=false, int pontuacao=0)
         {
             var inscricao = db.InscricaoTorneio.Where(i => i.userId == userId
                 && i.torneioId == torneioId && i.classe == classeTorneio && i.isAtivo).ToList();
@@ -230,7 +230,10 @@ namespace Barragem.Class
             {
                 inscricao[0].colocacao = colocacao;
                 Torneio torneio = db.Torneio.Where(t => t.Id == torneioId).Single();
-                int pontuacao = CalculadoraDePontos.AddTipoTorneio(torneio.TipoTorneio).CalculaPontos(inscricao[0]);
+                if (!isModeloTodosContraTodos)
+                {
+                    pontuacao = CalculadoraDePontos.AddTipoTorneio(torneio.TipoTorneio).CalculaPontos(inscricao[0]);
+                }
                 inscricao[0].Pontuacao = pontuacao;
                 db.SaveChanges();
             }
@@ -423,6 +426,20 @@ namespace Barragem.Class
             {
                 return db.InscricaoTorneio.Where(it => it.classe == classe.Id && it.isAtivo && it.pontuacaoFaseGrupo >= pontuacaoFaseGrupo).ToList();
             }
+        }
+
+        public List<InscricaoTorneio> getInscricoesSemDuplas(int classeId)
+        {
+            List<InscricaoTorneio> inscritosAtualizada = new List<InscricaoTorneio>();
+            var inscritosTorneio = db.InscricaoTorneio.Where(it => it.classe == classeId && it.isAtivo && (it.parceiroDuplaId == null || it.parceiroDuplaId == 0)).ToList();
+            foreach (var item in inscritosTorneio)
+            {
+                var temDupla = db.InscricaoTorneio.Where(it => it.classe == classeId && it.isAtivo && it.parceiroDuplaId == item.userId).Any();
+                if (!temDupla){
+                    inscritosAtualizada.Add(item);
+                }
+            }
+            return inscritosAtualizada;
         }
 
         public void fecharJogosComBye(List<Jogo> jogosRodada1)
@@ -709,7 +726,7 @@ namespace Barragem.Class
                 listClassificadosEmCadaGrupo.Add(classificadosEmCadaGrupo);
             }
             int qtddInscritos = getInscritosPorClasse(classe).Count();
-            if (qtddInscritos % 3 == 0 || qtddInscritos % 4 == 0){
+            if (qtddInscritos % 3 == 0 || qtddInscritos % 4 == 0 || qtddGrupos==1){
                 listClassificadosEmCadaGrupo = listClassificadosEmCadaGrupo.OrderByDescending(l => l.pontuacao).ThenByDescending(l => l.saldoSets).ThenByDescending(l => l.saldoGames).ToList();
             } else {
                 listClassificadosEmCadaGrupo = listClassificadosEmCadaGrupo.OrderByDescending(l => l.averageSets).ThenByDescending(l => l.averageGames).ToList();
@@ -964,7 +981,7 @@ namespace Barragem.Class
                                 db.SaveChanges();
                                 if ((inscricao[0].parceiroDuplaId != null) && (inscricao[0].parceiroDuplaId != null))
                                 {
-                                    cadastrarColocacaoDupla(inscricao[0].parceiroDupla.UserId, colocacao, (int)jogo.torneioId, (int)jogo.classeTorneio);
+                                    cadastrarColocacaoDupla(inscricao[0].parceiroDupla.UserId, colocacao, (int)jogo.torneioId, (int)jogo.classeTorneio, torneio.barragem.isModeloTodosContraTodos, pontuacao);
                                 }
                             }
                             colocacao++;

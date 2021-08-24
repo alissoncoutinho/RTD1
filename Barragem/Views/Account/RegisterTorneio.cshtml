@@ -509,23 +509,7 @@
 
         })
 
-        function segundaOpcaoDeClasse() {
-            if (document.getElementById('isMaisDeUmaClasse').checked) {
-                document.getElementById('segundaOpcaoClasse').style.opacity = "1";
-                document.getElementById('segundaOpcaoClasse').style.display = "block";
-            } else {
-                document.getElementById('segundaOpcaoClasse').style.opacity = "0 !important";
-                document.getElementById('segundaOpcaoClasse').style.display = "none";
-                isDupla2 = false;
-                if ((isDupla) || (isDupla2)) {
-                   // $("#btnIncricao").text("Escolher Parceiro");
-                    document.forms[0].isClasseDupla.value = true;
-                } else {
-                    $("#btnIncricao").text("Inscrever-me");
-                    document.forms[0].isClasseDupla.value = false;
-                }
-            }
-        }
+        
         @if(ViewBag.isClasseDupla!=null && ViewBag.isClasseDupla)
         {
             @Html.Raw("$('#btnIncricao').text('Escolher Parceiro'); ");
