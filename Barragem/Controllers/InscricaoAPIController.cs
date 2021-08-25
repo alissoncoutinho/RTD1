@@ -153,18 +153,13 @@ namespace Barragem.Controllers
         [ResponseType(typeof(void))]
         [HttpPatch]
         [Route("api/InscricaoAPI/{Id}")]
-        public IHttpActionResult PatchInscricao(int Id, int parceiroDuplaId, int classeId=0)
+        public IHttpActionResult PatchInscricao(int Id, int parceiroDuplaId, int userId, int classeId=0)
         {
             var inscricaoTorneio = new InscricaoTorneio();
             if (Id != 0){
                 inscricaoTorneio = db.InscricaoTorneio.Find(Id);
             } else {
-                var perfil = Roles.GetRolesForUser(User.Identity.Name)[0];
-                var userId = 0;
-                if (perfil.Equals("usuario") || userId == 0)
-                {
-                    userId = WebSecurity.GetUserId(User.Identity.Name);
-                }
+                
                 inscricaoTorneio = db.InscricaoTorneio.Where(i=> i.classe==classeId && i.userId== userId).FirstOrDefault();
             }
             var jaEstouEmOutraDupla = db.InscricaoTorneio.Where(i => i.classe == inscricaoTorneio.classe && (i.parceiroDuplaId == inscricaoTorneio.userId)).Any();
