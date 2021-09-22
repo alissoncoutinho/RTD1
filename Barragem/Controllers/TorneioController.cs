@@ -368,7 +368,7 @@ namespace Barragem.Controllers
                     ViewBag.classesFaseGrupoNaoFinalizadas = db.Jogo.Where(i => i.torneioId == torneioId && i.grupoFaseGrupo != null && (i.situacao_Id == 1 || i.situacao_Id == 2)).
                         Select(i => (int)i.classeTorneio).Distinct().ToList();
                 }
-            return RedirectToAction("EditJogos", new { torneioId = torneioId, fClasse = 0, fData = "", fNomeJogador = "", fQuadra = "0", fase = 0, qtddInscritos = cobrancaTorneio.qtddInscritos, valorASerPago = cobrancaTorneio.valorASerPago, valorDescontoParaRanking = cobrancaTorneio.valorDescontoParaRanking });
+            return RedirectToAction("EditJogos", new { torneioId = torneioId, fClasse = 0, fData = "", fNomeJogador = "", fGrupo = "0", fase = 0, qtddInscritos = cobrancaTorneio.qtddInscritos, valorASerPago = cobrancaTorneio.valorASerPago, valorDescontoParaRanking = cobrancaTorneio.valorDescontoParaRanking });
             //return Json(new { erro = "", retorno = 1 }, "text/plain", JsonRequestBehavior.AllowGet);
             //}
             //catch (Exception ex)
@@ -2174,7 +2174,7 @@ namespace Barragem.Controllers
         }
 
         [Authorize(Roles = "admin,organizador")]
-        public ActionResult EditJogos(int torneioId, int fClasse = 0, string fData = "", string fNomeJogador = "", string fQuadra = "0", int fase = 0, int qtddInscritos = 0, int valorASerPago = 0, int valorDescontoParaRanking = 0)
+        public ActionResult EditJogos(int torneioId, int fClasse = 0, string fData = "", string fNomeJogador = "", string fGrupo = "0", int fase = 0, int qtddInscritos = 0, int valorASerPago = 0, int valorDescontoParaRanking = 0)
         {
             if (qtddInscritos > 0)
             {
@@ -2197,7 +2197,7 @@ namespace Barragem.Controllers
             ViewBag.fClasse = fClasse;
             ViewBag.fData = fData;
             ViewBag.fNomeJogador = fNomeJogador;
-            ViewBag.fQuadra = fQuadra;
+            ViewBag.fGrupo = fGrupo;
             ViewBag.fase = fase;
             if (fClasse == 0)
             {
@@ -2210,7 +2210,7 @@ namespace Barragem.Controllers
                 ViewBag.primeirafase = db.Jogo.Where(r => r.torneioId == torneioId && r.classeTorneio == fClasse).Max(r => r.faseTorneio);
             }
             var jogo = db.Jogo.Where(i => i.torneioId == torneioId);
-            listaJogos = filtrarJogos(jogo, fClasse, fData, fQuadra, fase, false, fNomeJogador);
+            listaJogos = filtrarJogos(jogo, fClasse, fData, fGrupo, fase, false, fNomeJogador);
             if (fClasse != 1)
             {
                 var cl = classes.Where(c=>c.Id==fClasse).First();
@@ -2229,21 +2229,21 @@ namespace Barragem.Controllers
         }
 
         [Authorize(Roles = "admin,organizador")]
-        public ActionResult ImprimirJogos(int torneioId, int fClasse = 0, string fData = "", string fNomeJogador = "", string fQuadra = "0", int fase = 0)
+        public ActionResult ImprimirJogos(int torneioId, int fClasse = 0, string fData = "", string fNomeJogador = "", string fGrupo = "0", int fase = 0)
         {
             List<Jogo> listaJogos = null;
             var torneio = db.Torneio.Find(torneioId);
             ViewBag.nomeTorneio = torneio.nome;
             var jogo = db.Jogo.Where(i => i.torneioId == torneioId);
-            listaJogos = filtrarJogos(jogo, fClasse, fData, fQuadra, fase, true, fNomeJogador);
+            listaJogos = filtrarJogos(jogo, fClasse, fData, fGrupo, fase, true, fNomeJogador);
             return View(listaJogos);
         }
 
-        private List<Jogo> filtrarJogos(IQueryable<Jogo> jogos, int classe, string data, string quadra, int fase, Boolean isImprimir = false, string nomeJogador = "")
+        private List<Jogo> filtrarJogos(IQueryable<Jogo> jogos, int classe, string data, string grupo, int fase, Boolean isImprimir = false, string nomeJogador = "")
         {
             ViewBag.fClasse = classe;
             ViewBag.fData = data;
-            ViewBag.fQuadra = quadra;
+            ViewBag.fGrupo = grupo;
             if (classe != 1)
             {
                 jogos = jogos.Where(j => j.classeTorneio == classe);
@@ -2253,9 +2253,10 @@ namespace Barragem.Controllers
                 var dataJogo = Convert.ToDateTime(data);
                 jogos = jogos.Where(j => j.dataJogo == dataJogo);
             }
-            if (quadra != "0")
+            if (grupo != "0")
             {
-                jogos = jogos.Where(j => j.quadra == quadra);
+                var numeroGrupo = Convert.ToInt32(grupo);
+                jogos = jogos.Where(j => j.grupoFaseGrupo ==  numeroGrupo);
             }
             if ((fase != 0) && (fase != 700)) // 700 = fase de grupo
             {
@@ -2306,7 +2307,7 @@ namespace Barragem.Controllers
                     }
                     var dupla2 = db.InscricaoTorneio.Where(i => i.userId == jogador2 && i.classe == jogo.classeTorneio && i.parceiroDuplaId != null).ToList();
                     if (dupla2.Count() > 0){
-                        porEsteDesafiado2 = (int)dupla[0].parceiroDuplaId;
+                        porEsteDesafiado2 = (int)dupla2[0].parceiroDuplaId;
                         jogo.desafiado2_id = dupla2[0].parceiroDuplaId;
                     }
                 }
@@ -2331,6 +2332,9 @@ namespace Barragem.Controllers
                     }
                     if ((porEsteDesafiante == 10) || (porEsteDesafiado == 10))
                     {
+                        if (verificarSeJaTemByeNoGrupo((int)jogo.classeTorneio, (int)jogo.grupoFaseGrupo)) {
+                            return Json(new { erro = "Não é possível incluir bye neste grupo pois já existe um bye neste grupo.", retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
+                        }
                         jogo.situacao_Id = 5;
                         jogo.qtddGames1setDesafiado = 6;
                         jogo.qtddGames2setDesafiado = 6;
@@ -2370,14 +2374,24 @@ namespace Barragem.Controllers
                 {
                     substituirJogadorFaseGrupo((int)jogo.grupoFaseGrupo, (int)jogo.classeTorneio, substituirEsteDesafiante, porEsteDesafiante, porEsteDesafiante2);
                     substituirJogadorFaseGrupo((int)jogo.grupoFaseGrupo, (int)jogo.classeTorneio, substituirEsteDesafiado, porEsteDesafiado, porEsteDesafiado2);
+                    return Json(new { erro = "", retorno = 2 }, "text/plain", JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    return Json(new { erro = "", retorno = 1 }, "text/plain", JsonRequestBehavior.AllowGet);
                 }
 
-                return Json(new { erro = "", retorno = 1 }, "text/plain", JsonRequestBehavior.AllowGet);
+                
             }
             catch (Exception ex)
             {
                 return Json(new { erro = ex.Message, retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
             }
+        }
+
+        private bool verificarSeJaTemByeNoGrupo(int classeId, int grupo) {
+            var jaTemByeNesteGrupo = db.Jogo.Where(j => j.desafiante_id == 10 && j.classeTorneio == classeId && j.grupoFaseGrupo == grupo).Any();
+            return jaTemByeNesteGrupo;
         }
 
         private void substituirJogadorFaseGrupo(int grupo, int classeId, int substituirEsteJogador, int porEsteJogador, int porEsteParceiroDupla)

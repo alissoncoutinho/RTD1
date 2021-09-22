@@ -180,25 +180,17 @@
                     <input type="text" name="fNomeJogador" id="fNomeJogador" value="@ViewBag.fNomeJogador" placeholder="Jogador" class="form-control">
                 </div>
                 <div class="form-group col-sm-2">
-                    <select name="fQuadra" id="fQuadra" class="form-control">
-                        <option value="0" @if (ViewBag.fQuadra == "0") { @Html.Raw("selected")        }>Quadras</option>
-                        <option value="1" @if (ViewBag.fQuadra == "1") { @Html.Raw("selected")         }>quadra 1</option>
-                        <option value="2" @if (ViewBag.fQuadra == "2") { @Html.Raw("selected")         }>quadra 2</option>
-                        <option value="3" @if (ViewBag.fQuadra == "3") { @Html.Raw("selected")         }>quadra 3</option>
-                        <option value="4" @if (ViewBag.fQuadra == "4") { @Html.Raw("selected")         }>quadra 4</option>
-                        <option value="5" @if (ViewBag.fQuadra == "5") { @Html.Raw("selected")         }>quadra 5</option>
-                        <option value="6" @if (ViewBag.fQuadra == "6") { @Html.Raw("selected")         }>quadra 6</option>
-                        <option value="7" @if (ViewBag.fQuadra == "7") { @Html.Raw("selected")         }>quadra 7</option>
-                        <option value="8" @if (ViewBag.fQuadra == "8") { @Html.Raw("selected")         }>quadra 8</option>
-                        <option value="9" @if (ViewBag.fQuadra == "9") { @Html.Raw("selected")         }>quadra 9</option>
-                        <option value="10" @if (ViewBag.fQuadra == "10") { @Html.Raw("selected")         }>quadra 10</option>
-                        <option value="11" @if (ViewBag.fQuadra == "11") { @Html.Raw("selected")         }>quadra 11</option>
-                        <option value="12" @if (ViewBag.fQuadra == "12") { @Html.Raw("selected")         }>quadra 12</option>
-                        <option value="13" @if (ViewBag.fQuadra == "13") { @Html.Raw("selected")         }>quadra 13</option>
-                        <option value="14" @if (ViewBag.fQuadra == "14") { @Html.Raw("selected")         }>quadra 14</option>
-                        <option value="15" @if (ViewBag.fQuadra == "15") { @Html.Raw("selected")         }>quadra 15</option>
-                        <option value="G1" @if (ViewBag.fQuadra == "G1") { @Html.Raw("selected")          }>quadra G1</option>
-                        <option value="G2" @if (ViewBag.fQuadra == "G2") { @Html.Raw("selected")          }>quadra G2</option>
+                    <select name="fGrupo" id="fGrupo" class="form-control">
+                        <option value="0" @if (ViewBag.fGrupo == "0") { @Html.Raw("selected") }>Grupos</option>
+                        <option value="1" @if (ViewBag.fGrupo == "1") { @Html.Raw("selected") }>grupo 1</option>
+                        <option value="2" @if (ViewBag.fGrupo == "2") { @Html.Raw("selected") }>grupo 2</option>
+                        <option value="3" @if (ViewBag.fGrupo == "3") { @Html.Raw("selected") }>grupo 3</option>
+                        <option value="4" @if (ViewBag.fGrupo == "4") { @Html.Raw("selected") }>grupo 4</option>
+                        <option value="5" @if (ViewBag.fGrupo == "5") { @Html.Raw("selected") }>grupo 5</option>
+                        <option value="6" @if (ViewBag.fGrupo == "6") { @Html.Raw("selected") }>grupo 6</option>
+                        <option value="7" @if (ViewBag.fGrupo == "7") { @Html.Raw("selected") }>grupo 7</option>
+                        <option value="8" @if (ViewBag.fGrupo == "8") { @Html.Raw("selected") }>grupo 8</option>
+                        
                     </select>
                 </div>
                 <div class="form-group col-sm-2">
@@ -261,8 +253,13 @@
                             <option value="0">aguardando adversário</option>
                             <option value="10" @if (item.desafiante_id == 10) { @Html.Raw("selected")     }>bye</option>
                             @foreach (var item2 in ViewBag.Inscritos)
+                            {
+                                var nomeJogadores = item2.participante.nome;
+                                if(item2.parceiroDupla != null)
                                 {
-                                <option value="@item2.userId" @if (item.desafiante_id == item2.userId) { @Html.Raw("selected")       }>@item2.participante.nome</option>
+                                    nomeJogadores = item2.participante.nome + " / " + item2.parceiroDupla.nome;
+                                }
+                                <option value="@item2.userId" @if (item.desafiante_id == item2.userId) { @Html.Raw("selected") }>@nomeJogadores </option>
                                 }
                         </select>
                         } else {
@@ -293,9 +290,14 @@
                                 {
                     <select name="@Html.Raw("jogador2_" + i)" id="@Html.Raw("jogador2_" + i)" class="form-control">
                         <option value="0">aguardando adversário</option>
-                        @foreach (var item2 in ViewBag.Inscritos)
-                                        {
-                                <option value="@item2.userId" @if (item.desafiado_id == item2.userId) { @Html.Raw("selected")        }>@item2.participante.nome</option>
+                        <option value="10">bye</option>
+                        @foreach (var item2 in ViewBag.Inscritos){
+                            var nomeJogadores = item2.participante.nome;
+                            if (item2.parceiroDupla != null)
+                            {
+                                nomeJogadores = item2.participante.nome + " / " + item2.parceiroDupla.nome;
+                            }
+                                <option value="@item2.userId" @if (item.desafiado_id == item2.userId) { @Html.Raw("selected")        }>@nomeJogadores</option>
                                 }
                     </select>
                         }else{
@@ -536,11 +538,14 @@
                                             toastr.error(response.erro, "Erro");
                                         } else {
                                             toastr.success("Atualização realizada com sucesso.", "Aviso");
+                                            if (response.retorno === 2) {
+                                                location.reload(true);
+                                            }
                                         }
                                     }
                                 },
                                 error: function (jqXHR, textStatus, errorThrown) {
-                                    location.reload(true);
+                                    toastr.error(errorThrown, "Erro");
                                 }
                             });
                         });
@@ -585,18 +590,18 @@
                         var classeId = document.getElementById('fClasse').value;
                         var data = document.getElementById('fData').value;
                         var nomeJogador = document.getElementById('fNomeJogador').value;
-                        var quadra = document.getElementById('fQuadra').value;
+                        var grupo = document.getElementById('fGrupo').value;
                         var fase = document.getElementById('fase').value;
-                        window.location = "EditJogos?torneioId=" + torneioId + "&fClasse=" + classeId + "&fData=" + data + "&fNomeJogador=" + nomeJogador + "&fQuadra=" + quadra + "&fase=" + fase + "&nomeJogador=" + nomeJogador;
+                        window.location = "EditJogos?torneioId=" + torneioId + "&fClasse=" + classeId + "&fData=" + data + "&fNomeJogador=" + nomeJogador + "&fGrupo=" + grupo + "&fase=" + fase + "&nomeJogador=" + nomeJogador;
                     }
                     function Imprimir() {
                         var torneioId = document.getElementById('torneioId').value;
                         var classeId = document.getElementById('fClasse').value;
                         var data = document.getElementById('fData').value;
                         var nomeJogador = document.getElementById('fNomeJogador').value;
-                        var quadra = document.getElementById('fQuadra').value;
+                        var grupo = document.getElementById('fGrupo').value;
                         var fase = document.getElementById('fase').value;
-                        window.location = "ImprimirJogos?torneioId=" + torneioId + "&fClasse=" + classeId + "&fData=" + data + "&fNomeJogador=" + nomeJogador + "&fQuadra=" + quadra + "&fase=" + fase;
+                        window.location = "ImprimirJogos?torneioId=" + torneioId + "&fClasse=" + classeId + "&fData=" + data + "&fNomeJogador=" + nomeJogador + "&fGrupo=" + grupo + "&fase=" + fase;
                             }
 
                     document.getElementById("IndicadorVencedor").classList.remove("show");

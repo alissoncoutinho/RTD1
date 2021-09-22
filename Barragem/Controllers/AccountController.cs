@@ -422,6 +422,12 @@ namespace Barragem.Controllers
            
         }
 
+        public ActionResult RegisterCoordenador()
+        {
+            ViewBag.barragemId = new SelectList(db.BarragemView.ToList(), "Id", "nome");
+            return View();
+        }
+
 
         [HttpPost]
         [AllowAnonymous]

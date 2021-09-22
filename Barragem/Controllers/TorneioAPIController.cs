@@ -164,7 +164,7 @@ namespace Barragem.Controllers
 
 
         [Route("api/TorneioAPI/Inscritos/{torneioId}")]
-        public IList<Inscrito> GetListarInscritos(int torneioId)
+        public IList<Inscrito> GetListarInscritos(int torneioId, int userId = 0)
         {
             var torneio = db.Torneio.Find(torneioId);
             var liberarTabelaInscricao = torneio.liberaTabelaInscricao;
@@ -207,9 +207,35 @@ namespace Barragem.Controllers
             // verificar se é para exibir o botão de montar dupla ou não. Se existir classes de dupla no torneio e o usuário estiver inscrito em uma classe de dupla exibe o botão.
             if (inscritos.Count > 0)
             {
-                var usuarioLogado = getUsuarioLogado();
-                var exibeBotaoFormarDupla = db.InscricaoTorneio.Where(r => r.torneioId == torneioId && r.classeTorneio.isDupla == true && r.userId == usuarioLogado).Any();
+                
+                var usuarioLogado = 0;
+                if (userId != 0)
+                {
+                    usuarioLogado = userId;
+                }
+                else
+                {
+                    usuarioLogado = getUsuarioLogado();
+                }
+                var inscricoesTorneio = db.InscricaoTorneio.Where(r => r.torneioId == torneioId && r.classeTorneio.isDupla == true && r.userId == usuarioLogado && r.parceiroDuplaId == null).ToList();
+                var exibeBotaoFormarDupla = false;
+                if (inscricoesTorneio.Count() > 0)
+                {
+                    foreach (var item in inscricoesTorneio)
+                    {
+                        var souParceidoDeAlguem = db.InscricaoTorneio.Where(r => r.classe == item.classe && r.parceiroDuplaId == usuarioLogado).Any();
+                        if (!souParceidoDeAlguem)
+                        {
+                            exibeBotaoFormarDupla = true;
+                        }
+                    }
+                }
+                else
+                {
+                    exibeBotaoFormarDupla = false;
+                }
                 inscritos[0].exibeBotaoFormarDupla = exibeBotaoFormarDupla;
+                
             }
 
             return inscritos;
@@ -326,7 +352,7 @@ namespace Barragem.Controllers
         private int getUsuarioLogado()
         {
             var claimsIdentity = User.Identity as ClaimsIdentity;
-            var userId = 0; //9058;
+            var userId = 9058;
             if (claimsIdentity.FindFirst("sub") != null)
             {
                 userId = Convert.ToInt32(claimsIdentity.FindFirst("sub").Value);
@@ -371,12 +397,12 @@ namespace Barragem.Controllers
                     var classeTorneio = db.ClasseTorneio.Find(c.Id);
                     var inscricaoTorneio = tn.getInscritosPorClasse(classeTorneio, true);
                     var qtddGrupo = inscricaoTorneio.Max(i => i.grupo);
-                    c.qtddGruposFaseGrupo = qtddGrupo!=null? (int)qtddGrupo : 0;
+                    c.qtddGruposFaseGrupo = qtddGrupo!=null? (int)qtddGrupo : 1;
                     var qtddInscritos = inscricaoTorneio.Count(); 
                     if (qtddInscritos%2 == 0){
-                        c.qtddRodadaFaseGrupo = qtddInscritos-1;
+                        c.qtddRodadaFaseGrupo = (int) qtddInscritos-1/ c.qtddGruposFaseGrupo;
                     } else {
-                        c.qtddRodadaFaseGrupo = qtddInscritos;
+                        c.qtddRodadaFaseGrupo = qtddInscritos / c.qtddGruposFaseGrupo;
                     }
                 }
                 if ((c.faseMataMata)||(!c.faseGrupo)){

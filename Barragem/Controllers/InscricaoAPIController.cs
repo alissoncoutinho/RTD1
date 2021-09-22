@@ -48,16 +48,25 @@ namespace Barragem.Controllers
 
         [HttpGet]
         [Route("api/InscricaoAPI")]
-        public IList<Inscrito> GetInscricao(int torneioId=0, int classeId=0, bool semParceiroDupla=false, int userId=0){
+        public IList<Inscrito> GetInscricao(int torneioId=0, int classeId=0, bool semParceiroDupla=false, int userId=0, bool proximaClasse=false){
             var inscricoesTorneio = db.InscricaoTorneio.Where(i => i.torneioId == torneioId);
             var listInscricaoTorneio = new List<InscricaoTorneio>();
-            if (classeId != 0){
+            if (classeId != 0 && !proximaClasse){
                 inscricoesTorneio = inscricoesTorneio.Where(i => i.classe == classeId);
             }
             if (semParceiroDupla){
                 if (userId != 0)
                 {
-                    var inscricoesUsuario = inscricoesTorneio.Where(i => i.userId == userId && i.classeTorneio.isDupla && i.parceiroDuplaId == null).ToList();
+                    var inscricoesUsuario = new List<InscricaoTorneio>();
+                    if(classeId!=0 && proximaClasse)
+                    {
+                        inscricoesUsuario = inscricoesTorneio.Where(i => i.userId == userId && i.classeTorneio.isDupla && i.parceiroDuplaId == null && i.classe>classeId).OrderBy(i => i.classe).ToList();
+                    }
+                    else
+                    {
+                        inscricoesUsuario = inscricoesTorneio.Where(i => i.userId == userId && i.classeTorneio.isDupla && i.parceiroDuplaId == null).OrderBy(i => i.classe).ToList();
+                    }
+                    
                     var inscricoesUsuAtualizada = new List<InscricaoTorneio>();
                     foreach (var item in inscricoesUsuario) {
                         var jaEstouEmAlgumaDupla = inscricoesTorneio.Where(i => i.classe == item.classe && i.parceiroDuplaId == item.userId).Any();
@@ -68,6 +77,8 @@ namespace Barragem.Controllers
                     if (inscricoesUsuAtualizada.Count() > 0)
                     {
                         classeId = inscricoesUsuAtualizada[0].classe;
+                    } else {
+                        classeId = 0;
                     }
                 }
                 listInscricaoTorneio = tn.getInscricoesSemDuplas(classeId);
@@ -95,7 +106,7 @@ namespace Barragem.Controllers
         }
 
         [Route("api/InscricaoAPI/Inscritos/{torneioId}")]
-        public IList<Inscrito> GetListarInscritos(int torneioId){
+        public IList<Inscrito> GetListarInscritos(int torneioId, int userId=0){
             var torneio = db.Torneio.Find(torneioId);
             var liberarTabelaInscricao = torneio.liberaTabelaInscricao;
             if (!liberarTabelaInscricao)
@@ -131,15 +142,84 @@ namespace Barragem.Controllers
 
             if (inscritos.Count > 0)
             {
-                var usuarioLogado = getUsuarioLogado();
-                var exibeBotaoFormarDupla = db.InscricaoTorneio.Where(r => r.torneioId == torneioId && r.classeTorneio.isDupla == true && r.userId == usuarioLogado).Any();
+                var usuarioLogado = 0;
+                if (userId != 0) {
+                    usuarioLogado = userId;
+                } else {
+                    usuarioLogado = getUsuarioLogado();
+                }
+                var inscricoesTorneio = db.InscricaoTorneio.Where(r => r.torneioId == torneioId && r.classeTorneio.isDupla == true && r.userId == usuarioLogado && r.parceiroDuplaId==null).ToList();
+                var exibeBotaoFormarDupla = false;
+                if (inscricoesTorneio.Count()>0)
+                {
+                    foreach (var item in inscricoesTorneio)
+                    {
+                        var souParceidoDeAlguem = db.InscricaoTorneio.Where(r => r.classe == item.classe && r.parceiroDuplaId == usuarioLogado).Any();
+                        if (!souParceidoDeAlguem)
+                        {
+                            exibeBotaoFormarDupla = true;
+                        }
+                    }
+                } else {
+                    exibeBotaoFormarDupla = false;
+                }
                 inscritos[0].exibeBotaoFormarDupla = exibeBotaoFormarDupla;
             }
             return inscritos;
             
         }
 
-        private int getUsuarioLogado()
+        [HttpGet]
+        [Route("api/InscricaoAPI/DuplasPendente/{usuarioLogado}")]
+        public IList<TorneioApp> duplasPendentes(int usuarioLogado)
+        {
+            var inscritos = new List<InscricaoTorneio>();
+            var inscricoes = db.InscricaoTorneio.Where(i => i.classeTorneio.isDupla && i.parceiroDuplaId == null && i.userId == usuarioLogado).ToList();
+            foreach (var item in inscricoes){
+                var jaSouParceidoDeDupla = db.InscricaoTorneio.Include(t=>t.torneio).Where(i => i.parceiroDuplaId == usuarioLogado && i.classe == item.classe).Any();
+                if (!jaSouParceidoDeDupla)
+                {
+                    inscritos.Add(item);
+                }
+            }
+            var torneios = new List<TorneioApp>();
+            foreach (var item in inscritos)
+            {
+                var torneio = new TorneioApp();
+                torneio.Id = item.torneioId;
+                torneio.nome = item.torneio.nome;
+                torneio.logoId = item.torneio.barragemId;
+                torneio.dataFim =
+                torneio.dataInicio = item.torneio.dataInicio;
+                torneio.valor = item.torneio.valor;
+                torneio.valorSocio = item.torneio.valorSocio;
+                torneio.dataFim = item.torneio.dataFim;
+                torneio.dataFimInscricoes = item.torneio.dataFimInscricoes;
+                torneio.cidade = item.torneio.cidade;
+                torneio.premiacao = item.torneio.premiacao;
+                torneio.contato = "";
+                torneio.pontuacaoLiga = item.torneio.TipoTorneio;
+                torneio.contato = db.Torneio.Find(item.torneioId).contato;
+                var patrocinadores = new List<Patrocinador>();
+                var patrocinador = db.Patrocinador.Where(p => p.torneioId == item.torneioId).ToList();
+                foreach (var i in patrocinador)
+                {
+                    patrocinadores.Add(i);
+                }
+                torneio.patrocinadores = patrocinadores;
+                try
+                {
+                    var torneioLiga = db.TorneioLiga.Include(l => l.Liga).Where(t => t.TorneioId == item.torneioId).FirstOrDefault();
+                    torneio.nomeLiga = torneioLiga.Liga.Nome;
+                }
+                catch (Exception e) { }
+               torneios.Add(torneio);
+            }
+            return torneios;
+        }
+        
+
+            private int getUsuarioLogado()
         {
             var claimsIdentity = User.Identity as ClaimsIdentity;
             var userId = 0; //9058;

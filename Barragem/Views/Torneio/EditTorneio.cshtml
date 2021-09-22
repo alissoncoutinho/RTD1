@@ -489,15 +489,16 @@
 
         tinyMCE.init({
             selector: 'textarea#regulamento',
-            menubar: false,
             language: 'pt_BR',
             theme: "modern",
             theme_advanced_font_sizes: "10px,12px,13px,14px,16px,18px,20px",
             font_size_style_values: "12px,13px,14px,16px,18px,20px",
+            relative_urls: false,
+            remove_script_host: false,
             width: 700,
             height: 150,
             plugins: [
-                "code"
+                "code image"
             ],
             toolbar1: "bold italic | underline | alignleft aligncenter alignright alignjustify | forecolor backcolor | fontselect |  fontsizeselect"
 
