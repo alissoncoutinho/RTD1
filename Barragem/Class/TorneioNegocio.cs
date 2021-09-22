@@ -431,7 +431,7 @@ namespace Barragem.Class
         public List<InscricaoTorneio> getInscricoesSemDuplas(int classeId)
         {
             List<InscricaoTorneio> inscritosAtualizada = new List<InscricaoTorneio>();
-            var inscritosTorneio = db.InscricaoTorneio.Where(it => it.classe == classeId && (it.parceiroDuplaId == null || it.parceiroDuplaId == 0)).ToList();
+            var inscritosTorneio = db.InscricaoTorneio.Where(it => it.classe == classeId && (it.parceiroDuplaId == null || it.parceiroDuplaId == 0)).OrderBy(it=>it.participante.nome).ToList();
             foreach (var item in inscritosTorneio)
             {
                 var temDupla = db.InscricaoTorneio.Where(it => it.classe == classeId && it.parceiroDuplaId == item.userId).Any();
