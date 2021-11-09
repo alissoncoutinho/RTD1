@@ -25,6 +25,9 @@ namespace Barragem.Controllers
                     if (perfil.Equals("admin") || perfil.Equals("organizador"))
                     {
                         return RedirectToAction("Dashboard", "Home");
+                    } else if (perfil.Equals("adminTorneio"))
+                    {
+                        return RedirectToAction("PainelControle", "Torneio");
                     }
                 }  catch (Exception) { }
 

@@ -5,25 +5,41 @@
 }
 
 <div class="tab-content">
-    <legend>Configuração PagSeguro</legend>
+    <legend>Integração PagSeguro</legend>
         @using (Html.BeginForm())
         {
             @Html.AntiForgeryToken()
             @Html.ValidationSummary(true)
-            
 
             <div class="row">
-                <div class="col-xs-12 col-sm-8">
-                    @Html.LabelFor(model => model.linkPagSeguro)
-                    <div class="input-group col-xs-8">
-                        @Html.TextBoxFor(model => model.linkPagSeguro, new { @class = "form-control", @placeholder = "exemplo: https://linkDoPagSeguro.com.br" })
-                    </div>
-                    @Html.ValidationMessageFor(model => model.linkPagSeguro)
+                <div class="col-xs-12 col-sm-8" style="font-size:12px; margin-bottom:10px">
+                    Ao fazer a integração com o PagSeguro você permite que as pessoas se inscrevam no seu torneio com cartão de crédito e nosso sistema automaticamente irá reconhecer o pagamento.
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 col-sm-8" style="font-size:14px; margin-bottom:10px">
+                    <b>Passo 1: Crie sua conta no Pagseguro</b>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 col-sm-8" style="font-size:12px; margin-bottom:10px">
+                    Cadastre-se em: <a href="https://cadastro.pagseguro.uol.com.br/" target="_blank">cadastro.pagseguro.uol.com.br</a><br>
+                    Siga todos os passos do PagSeguro e só após conseguir acesso siga para o passo adiante.
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 col-sm-8" style="font-size:14px; margin-bottom:10px">
+                    <b>Passo 2: Integração</b>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 col-sm-8" style="font-size:12px; margin-bottom:10px">
+                    <a href="https://youtube.com/">Clique aqui para assistir</a> o vídeo explicativo da integração e complete as informações abaixo.
                 </div>
             </div>
             <div class="row">
                 <div class="col-xs-12 col-sm-8">
-                    @Html.LabelFor(model => model.emailPagSeguro)
+                    @Html.Label("Email utilizado no Pagseguro")
                     <div class="input-group col-xs-8">
                         @Html.TextBoxFor(model => model.emailPagSeguro, new { @class = "form-control" })
                     </div>
@@ -39,10 +55,20 @@
                     @Html.ValidationMessageFor(model => model.tokenPagSeguro)
                 </div>
             </div>
+            <div class="row">
+                <div class="col-xs-12 col-sm-8" style="font-size:14px; margin-bottom:10px; margin-top:10px">
+                    <b>Passo 3: Teste sua integração</b>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 col-sm-8" style="font-size:12px; margin-bottom:10px">
+                    Depois de preencher as informações acima, clique no botão (Testar) para verificar se a configuração ficou correta.
+                </div>
+            </div>
             <br />
             <div class="row">
                 <div class="col-xs-8 col-sm-8">
-                    <input class="btn btn-primary" type="submit" value="Salvar" />
+                    <input class="btn btn-default" type="button" value="Testar" /> <input class="btn btn-primary" type="submit" value="Salvar" />
                 </div>
             </div>
         }

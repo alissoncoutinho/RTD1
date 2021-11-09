@@ -43,8 +43,7 @@
                         <!--input type="button" value="imprimir" class="btn btn-primary" onclick="Imprimir()"-->
                     </div>
                     }
-                    else if (ViewBag.temMataMata == true)
-                    {
+                    @if (ViewBag.classeFaseGrupo != true && ViewBag.modeloTodosContraTodos == null){
                     <div class="col-sm-2 col-xs-4">
                         <input type="button" value="imprimir" class="btn btn-primary" onclick="Imprimir()" />
                     </div>

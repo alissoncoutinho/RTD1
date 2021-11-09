@@ -139,7 +139,7 @@
                     </div>
                     @Html.ValidationMessageFor(model => model.valor4)
                 </div>
-                @Html.Label("Haverá desconto para: (opcional)", new { @class = "control-label" })
+                @Html.Label("Qual valor do desconto? (opcional)", new { @class = "control-label" })
                 <div class="form-group">
                     <div class="col-md-6 col-xs-12">
                         <div class="row">
@@ -210,7 +210,7 @@
                             }
                             else
                             {
-                                if (ViewBag.barragemId == lg.BarragemId) {
+                                if (ViewBag.barragemId == lg.Liga.barragemId) {
                                 //if (false){
                                     @Html.Raw(lg.Liga.Nome + " - Pontos: ")
                                     <select name="pontuacaoLiga">
@@ -286,6 +286,15 @@
                     @Html.Label("Seu torneio terá repescagem?", new { @class = "col-xs-12 col-md-12" })
                     <div class="col-xs-8 col-md-3 input-group">
                         <select name="temRepescagem" id="temRepescagem" class="form-control">
+                            <option value=false>Não</option>
+                            <option value=true>Sim</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.Label("Seu torneio terá limite de quantidade de inscritos?", new { @class = "col-xs-12 col-md-12" })
+                    <div class="col-xs-8 col-md-3 input-group">
+                        <select name="temLimiteDeInscricao" id="temLimiteDeInscricao" class="form-control">
                             <option value=false>Não</option>
                             <option value=true>Sim</option>
                         </select>

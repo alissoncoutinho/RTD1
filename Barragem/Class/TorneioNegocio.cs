@@ -326,13 +326,13 @@ namespace Barragem.Class
                         var jogador2 = getDadosClassificatoriosFaseGrupo(classificacaoGrupo[i + 1]);
                         var jogo = db.Jogo.Where(j => j.classeTorneio == classe.Id && ((j.desafiado_id == jogador1.userId && j.desafiante_id == jogador2.userId) ||
                             ((j.desafiado_id == jogador2.userId && j.desafiante_id == jogador1.userId)))).ToList();
-                        if (jogo[0].idDoVencedor == jogador1.userId)
+                        if ((jogo.Count()>0) && (jogo[0].idDoVencedor == jogador1.userId))
                         {
                             jogador1.confrontoDireto = 1;
                             ordemClassificacao.Add(jogador1);
                             ordemClassificacao.Add(jogador2);
                         }
-                        else if (jogo[0].idDoVencedor == jogador2.userId)
+                        else if ((jogo.Count() > 0) && (jogo[0].idDoVencedor == jogador2.userId))
                         {
                             jogador2.confrontoDireto = 1;
                             ordemClassificacao.Add(jogador2);
@@ -431,6 +431,10 @@ namespace Barragem.Class
         public List<InscricaoTorneio> getInscricoesSemDuplas(int classeId)
         {
             List<InscricaoTorneio> inscritosAtualizada = new List<InscricaoTorneio>();
+            if (classeId == 0)
+            {
+                return inscritosAtualizada;
+            }
             var inscritosTorneio = db.InscricaoTorneio.Where(it => it.classe == classeId && (it.parceiroDuplaId == null || it.parceiroDuplaId == 0)).OrderBy(it=>it.participante.nome).ToList();
             foreach (var item in inscritosTorneio)
             {
@@ -1042,6 +1046,28 @@ namespace Barragem.Class
                 }
             }
             
+        }
+
+        public List<ClasseTorneioQtddInscrito> qtddInscritosEmCadaClasse(List<ClasseTorneio> classes, int torneioId)
+        {
+            var listQtddInscritosClasseTorneio = new List<ClasseTorneioQtddInscrito>();
+            foreach (var item in classes)
+            {
+                if (item.maximoInscritos > 0)
+                {
+                    var qtddInscritos = db.InscricaoTorneio.Where(i => i.torneio.Id == torneioId).GroupBy(i => i.classe);
+                    foreach (var group in qtddInscritos)
+                    {
+                        var classeTorneioQtddInscrito = new ClasseTorneioQtddInscrito();
+                        classeTorneioQtddInscrito.Id = group.Key;
+                        classeTorneioQtddInscrito.qtddInscritos = group.Count();
+                        listQtddInscritosClasseTorneio.Add(classeTorneioQtddInscrito);
+                    }
+                    break;
+                }
+            }
+            return listQtddInscritosClasseTorneio;
+
         }
 
 }

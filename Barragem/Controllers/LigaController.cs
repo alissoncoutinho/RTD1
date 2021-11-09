@@ -23,7 +23,7 @@ namespace Barragem.Controllers
     {
         private BarragemDbContext db = new BarragemDbContext();
 
-        [Authorize(Roles = "admin,organizador")]
+        [Authorize(Roles = "admin,organizador, adminTorneio")]
         public ActionResult Index(string msg = "", string detalheErro = "")
         {
             List<BarragemLiga> ligasDaBarragem = null;
@@ -48,7 +48,7 @@ namespace Barragem.Controllers
             return View(ligas);
         }
 
-        [Authorize(Roles = "admin, organizador, usuario")]
+        [Authorize(Roles = "admin, organizador, usuario, adminTorneio")]
         public ActionResult Create()
         {
             
@@ -63,17 +63,31 @@ namespace Barragem.Controllers
             return View(liga);
         }
 
-        [Authorize(Roles = "admin, organizador")]
+        [Authorize(Roles = "admin, organizador, adminTorneio")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(Liga liga)
+        public ActionResult Create(Liga liga, string modalidadeBarragem)
         {
-            if (ModelState.IsValid)
-            {
-
+            var userId = WebSecurity.GetUserId(User.Identity.Name);
+            string perfil = Roles.GetRolesForUser(User.Identity.Name)[0];
+            var user = db.UserProfiles.Find(userId);
+            liga.barragemId = user.barragemId;
+            if (modalidadeBarragem == "1") {
+                liga.isModeloTodosContraTodos = false;
+            } else {
+                liga.isModeloTodosContraTodos = true;
+            }
+            if (ModelState.IsValid) {
                 db.Liga.Add(liga);
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                if (perfil.Equals("adminTorneio") || perfil.Equals("organizador")) {
+                    var bL = new BarragemLiga();
+                    bL.BarragemId = user.barragemId;
+                    bL.LigaId = liga.Id;
+                    db.BarragemLiga.Add(bL);
+                    db.SaveChanges();
+                }
+                return RedirectToAction("PainelControle", "Torneio");
             }
 
             return View(liga);
@@ -82,17 +96,14 @@ namespace Barragem.Controllers
         public ActionResult Edit(int idLiga = 0)
         {
             Liga liga = db.Liga.Find(idLiga);
-            var userId = WebSecurity.GetUserId(User.Identity.Name);
-            string perfil = Roles.GetRolesForUser(User.Identity.Name)[0];
-            
-            ViewBag.ClassesDaLiga = db.ClasseLiga.Where(c => c.LigaId == idLiga).ToList();
-            ViewBag.BarragensDaLiga = db.BarragemLiga.Where(bl => bl.LigaId == idLiga).ToList();
+            ViewBag.idLiga = idLiga;
+            ViewBag.nomeLiga = liga.Nome;
 
+            var classes = db.ClasseLiga.Where(c => c.LigaId == idLiga).ToList();
             ViewBag.flag = "classes";
-
-            return View(liga);
+            return View(classes);
         }
-        [Authorize(Roles = "admin, organizador")]
+        [Authorize(Roles = "admin, organizador, adminTorneio")]
         public ActionResult EditNome(int idLiga, string nomeLiga)
         {
             try { 
@@ -107,6 +118,24 @@ namespace Barragem.Controllers
                 return Json(new { erro = ex.Message, retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
             }
             
+        }
+
+        [Authorize(Roles = "admin, organizador, adminTorneio")]
+        public ActionResult EditNomeClasse(int id, string nomeClasse)
+        {
+            try
+            {
+                ClasseLiga classeLiga = db.ClasseLiga.Find(id);
+                classeLiga.Nome = nomeClasse;
+                db.Entry(classeLiga).State = EntityState.Modified;
+                db.SaveChanges();
+                return Json(new { erro = "", retorno = 1 }, "text/plain", JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { erro = ex.Message, retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
+            }
+
         }
 
         public ActionResult EditClasses(int idLiga = 0)
@@ -126,22 +155,35 @@ namespace Barragem.Controllers
         }
 
         [HttpPost]
-        public ActionResult AddClasse(String idLiga, String nome, String idCategoria)
+        public ActionResult AddClasse(int idLiga, String nome, String idCategoria, bool isDupla=false)
         {
             try {
                 int idCat = Int32.Parse(idCategoria);
-                if (nome == "" || idCategoria == "" || idCat == 0)
+                if (nome == "")
                 {
                     throw new Exception("Por favor preencha os campos obrigatórios(nome e categoria).");
                 }
+                Categoria cat = null;
+                if (idCat == 0)
+                {
+                    Liga liga = db.Liga.Find(idLiga);
+                    cat = new Categoria();
+                    cat.Nome = nome;
+                    cat.isDupla = isDupla;
+                    cat.rankingId = (int) liga.barragemId;
+                    db.Categoria.Add(cat);
+                    db.SaveChanges();
+                    idCat = cat.Id;
+                } else {
+                    cat = db.Categoria.Find(idCat);
+                }
                 ClasseLiga cl = new ClasseLiga();
-                cl.LigaId = Int32.Parse(idLiga);
+                cl.LigaId = idLiga;
                 cl.Nome = nome;
                 cl.CategoriaId = idCat;
                 db.ClasseLiga.Add(cl);
                 db.SaveChanges();
-
-                Categoria cat = db.Categoria.Find(idCat);
+                
                 return Json(new { erro = "", retorno = 1 , nome = cl.Nome, categoria = cat.Nome, IdClasseLiga = cl.Id}, "text/plain", JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
@@ -247,13 +289,13 @@ namespace Barragem.Controllers
             }
         }
 
-        [Authorize(Roles = "admin, organizador")]
+        [Authorize(Roles = "admin, organizador, adminTorneio")]
         public ActionResult CreateRankingLiga()
         {
             return View();
         }
 
-        [Authorize(Roles = "admin, organizador")]
+        [Authorize(Roles = "admin, organizador, adminTorneio")]
         public ActionResult FazerCargaCidades()
         {
             var filePath = "/Content/cidades3.json";
@@ -284,7 +326,7 @@ namespace Barragem.Controllers
             return View();
         }
 
-        [Authorize(Roles = "admin, organizador")]
+        [Authorize(Roles = "admin, organizador, adminTorneio")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult CreateRankingLiga(CreateBarragemLiga createBarragemLiga)
@@ -311,14 +353,14 @@ namespace Barragem.Controllers
 
                         UserProfile usuario = db.UserProfiles.Find(WebSecurity.GetUserId(User.Identity.Name));
                         barragens.email = usuario.email;
-                        var meuRanking = db.Barragens.Find(8);
-                        barragens.regulamento = meuRanking.regulamento;
+                        barragens.regulamento = db.Regra.Find(3).descricao;
                         db.Barragens.Add(barragens);
                         db.SaveChanges();
 
                         var liga = new Liga();
-                        liga.Nome = barragens.nome;
+                        liga.Nome = createBarragemLiga.nomeLiga;
                         liga.isAtivo = true;
+                        liga.barragemId = barragens.Id;
                         db.Liga.Add(liga);
                         db.SaveChanges();
                         var barragemLiga = new BarragemLiga();

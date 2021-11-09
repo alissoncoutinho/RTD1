@@ -2,7 +2,7 @@
 
 <div class="box box-danger">
     <div class="box-header with-border">
-        <h3 class="box-title">Liga</h3>
+        <h3 class="box-title">Circuito</h3>
     </div>
 
     @using (Html.BeginForm("Create", "Liga", FormMethod.Post, new { @class = "form-horizontal" }))
@@ -13,17 +13,61 @@
             
             <div class="box-body">
                 <div class="form-group">
-                    <label class="col-sm-2 control-label" for="nome">Escolha o nome da sua liga:</label>
+                    <label class="col-sm-2 control-label" for="nome">Escolha o nome do seu circuito:</label>
                     <div class="col-sm-8 input-group">
                         <input class="form-control" id="nome" name="nome" type="text" value="">
                     </div>
                     <span class="field-validation-valid" data-valmsg-for="nome" data-valmsg-replace="true"></span>
                 </div>
+                <div class="form-group">
+                    @Html.Label("Modalidade dos Torneios", new { @class = "control-label col-md-2" })
+                    <div class="col-md-4">
+                        <select id="modalidadeBarragem" name="modalidadeBarragem" onchange="mostrarTextoModalidade()" class="form-control">
+                            <option value="1">Regras da federação</option>
+                            <option value="2">Modelo Todos contra todos</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row" id="textoFederacao">
+                    <div class="col-md-4" style="border: 1px solid #ccc;padding: 10px;margin-left: 15px;margin-bottom: 15px;">
+                        <b>Regras da federação:</b> nesse formato, o sistema sorteia jogos entre todos participantes nas categorias e será o vencedor quem tiver mais vitórias.
+                    </div>
+                </div>
+                <div class="row" id="textoTodosContraTodos">
+                    <div class="col-md-4" style="border: 1px solid #ccc;padding: 10px;margin-left: 15px;margin-bottom: 15px;">
+                        <b>Todos contra todos:</b> Nesse formato, o sistema sorteia jogos entre todos participantes nas categorias e será o vencedor quem tiver mais vitórias.
+                    </div>
+                </div>
             </div>
 
             <div class="box-footer">
-                @Html.ActionLink("Voltar", "Index", new { @class = "btn btn-default" })
                 <button type="submit" class="btn btn-info pull-right">Gravar</button>
             </div>
         </div>
     }
+
+@section Scripts {
+
+    <script type="text/javascript">
+        function mostrarTextoModalidade() {
+            if (document.getElementById('modalidadeBarragem').value == 1) {
+                document.getElementById('textoFederacao').style.opacity = "1";
+                document.getElementById('textoFederacao').style.display = "block";
+                document.getElementById('textoTodosContraTodos').style.opacity = "0 !important";
+                document.getElementById('textoTodosContraTodos').style.display = "none";
+
+            } else {
+                document.getElementById('textoFederacao').style.opacity = "0 !important";
+                document.getElementById('textoFederacao').style.display = "none";
+                document.getElementById('textoTodosContraTodos').style.opacity = "1";
+                document.getElementById('textoTodosContraTodos').style.display = "block";
+            }
+        }
+        document.getElementById('textoFederacao').style.opacity = "1";
+        document.getElementById('textoFederacao').style.display = "block";
+        document.getElementById('textoTodosContraTodos').style.opacity = "0 !important";
+        document.getElementById('textoTodosContraTodos').style.display = "none";
+
+    
+    </script>
+}

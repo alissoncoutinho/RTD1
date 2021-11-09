@@ -464,7 +464,7 @@ namespace Barragem.Controllers
             Random r = new Random();
             int randomIndex = 1;
             if (ranckiados.Count() == 1){
-                UserProfile curinga = db.UserProfiles.Where(u => u.situacao.Equals("curinga")).Single();
+                UserProfile curinga = db.UserProfiles.Where(u => u.UserName.Equals("coringa")).Single();
                 ranckiados.RemoveAt(0);
                 return curinga;
                 // caso só reste duas opções não há mais como aplicar as regras
@@ -544,7 +544,7 @@ namespace Barragem.Controllers
                         pontosDesafiante = rn.calcularPontosDesafiante(item);
                         pontosDesafiado = rn.calcularPontosDesafiado(item);
                         msg = "pontosDesafio" + item.desafiado_id;    
-                        if (!item.desafiante.situacao.Equals("curinga")){
+                        if (!item.desafiante.UserName.Equals("coringa")){
                             rn.gravarPontuacaoNaRodada(id, item.desafiante, pontosDesafiante);
                             msg = "gravarPontuacaoNaRodadaDesafiante" + item.desafiante_id;
                         }

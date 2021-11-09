@@ -89,7 +89,7 @@ namespace Barragem.Controllers
         //
         // GET: /Jogo/Details/5
 
-        [Authorize(Roles = "admin, organizador, usuario")]
+        [Authorize(Roles = "admin, organizador, usuario,adminTorneio")]
         public ActionResult ListarJogosJogador(int idJogador = 0)
         {
             if (idJogador == 0)
@@ -104,7 +104,7 @@ namespace Barragem.Controllers
 
         //
         // GET: /Jogo/Create
-        [Authorize(Roles = "admin, organizador")]
+        [Authorize(Roles = "admin, organizador,adminTorneio")]
         public ActionResult Create()
         {
             ViewBag.desafiado_id = new SelectList(db.UserProfiles, "UserId", "UserName");
@@ -115,7 +115,7 @@ namespace Barragem.Controllers
 
         //
         // POST: /Jogo/Create
-        [Authorize(Roles = "admin, organizador")]
+        [Authorize(Roles = "admin, organizador,adminTorneio")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(Jogo jogo)
@@ -135,7 +135,7 @@ namespace Barragem.Controllers
 
         //
         // GET: /Jogo/Edit/5
-        [Authorize(Roles = "admin, organizador")]
+        [Authorize(Roles = "admin, organizador,adminTorneio")]
         public ActionResult Edit(int id = 0)
         {
             Jogo jogo = db.Jogo.Find(id);
@@ -154,7 +154,7 @@ namespace Barragem.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "admin, organizador")]
+        [Authorize(Roles = "admin, organizador,adminTorneio")]
         public ActionResult Edit(Jogo jogo)
         {
             if (ModelState.IsValid)
@@ -169,7 +169,7 @@ namespace Barragem.Controllers
             return View(jogo);
         }
 
-        [Authorize(Roles = "admin,usuario,organizador")]
+        [Authorize(Roles = "admin,usuario,organizador,adminTorneio")]
         public ActionResult ControlarJogo(int id = 0)
         {
             Jogo jogo = null;
@@ -227,7 +227,7 @@ namespace Barragem.Controllers
         
         //
         // GET: /Jogo/Delete/5
-        [Authorize(Roles = "admin, organizador")]
+        [Authorize(Roles = "admin, organizador,adminTorneio")]
         public ActionResult Delete(int id = 0)
         {
             Jogo jogo = db.Jogo.Find(id);
@@ -243,7 +243,7 @@ namespace Barragem.Controllers
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "admin, organizador")]
+        [Authorize(Roles = "admin, organizador,adminTorneio")]
         public ActionResult DeleteConfirmed(int id)
         {
             Jogo jogo = db.Jogo.Find(id);
@@ -260,7 +260,7 @@ namespace Barragem.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "admin,usuario,organizador")]
+        [Authorize(Roles = "admin,usuario,organizador,adminTorneio")]
         public ActionResult InserirResultado(Jogo jogo, bool isTorneio = false)
         {
             Jogo jogoAtual = db.Jogo.Find(jogo.Id);
@@ -309,7 +309,7 @@ namespace Barragem.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "admin,usuario,organizador")]
+        [Authorize(Roles = "admin,usuario,organizador,adminTorneio")]
         public ActionResult LancarWO(int Id, int vencedorWO, bool isTorneio = false)
         {
             Jogo jogoAtual = db.Jogo.Find(Id);
@@ -350,7 +350,7 @@ namespace Barragem.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "admin,usuario,organizador")]
+        [Authorize(Roles = "admin,usuario,organizador,adminTorneio")]
         public ActionResult MarcarJogo(int Id, DateTime dataJogo, string horaJogo, string localJogo="", bool isTorneio=false, bool desmarcar=false)
         {
             Jogo jogoAtual = db.Jogo.Find(Id);

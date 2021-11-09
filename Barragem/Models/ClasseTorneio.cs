@@ -42,4 +42,10 @@ namespace Barragem.Models
         public bool faseMataMata { get; set; }
         public int qtddGruposFaseGrupo { get; set; }
     }
+
+    public class ClasseTorneioQtddInscrito
+    {
+        public int Id { get; set; }
+        public int qtddInscritos { get; set; }
+    }
 }

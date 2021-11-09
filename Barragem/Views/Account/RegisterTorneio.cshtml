@@ -228,13 +228,30 @@
                         </div>
                         }
                         <div class="row">
-                            @Html.Label("Classe", new { @class = "col-sm-4" })
+                            @Html.Label("Categoria", new { @class = "col-sm-4" })
                             <div class="col-sm-8 info-box-text">
                                 <select name="inscricao.classe" id="inscricao.classe" data-classe2="@(torneio.qtddCategoriasPorJogador>1)" class="form-control escolherSegundaOpcaoClasse">
                                     <option value="0">Selecione uma classe...</option>
                                     @foreach (var item in ViewBag.Classes)
                                     {
-                                        <option value="@item.Id" data-isDupla="@item.isDupla" >@item.nome</option>
+                                        if (item.maximoInscritos > 0)
+                                        {
+                                            List<Barragem.Models.ClasseTorneioQtddInscrito> listQtddInscritos = ViewBag.qtddInscritos;
+                                            var qtddInscritosClasse = 0;
+                                            try { qtddInscritosClasse = listQtddInscritos.Where(i => i.Id == item.Id).First().qtddInscritos; } catch (Exception e) { };
+                                            if (qtddInscritosClasse >= item.maximoInscritos)
+                                            {
+                                                <option style="color:red" value="@item.Id" data-isDupla="@item.isDupla" >Esgotado - @item.nome</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@item.Id" data-isDupla="@item.isDupla" >@item.nome</option>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.Id" data-isDupla="@item.isDupla" >@item.nome</option>
+                                        }
                                     }
                                 </select>
                             </div>
@@ -260,7 +277,24 @@
                                             <option value="0">Selecione uma classe...</option>
                                             @foreach (var item in ViewBag.Classes2)
                                             {
-                                                <option value="@item.Id" data-isDupla="@item.isDupla">@item.nome</option>
+                                                if (item.maximoInscritos > 0)
+                                                {
+                                                    List<Barragem.Models.ClasseTorneioQtddInscrito> listQtddInscritos = ViewBag.qtddInscritos;
+                                                    var qtddInscritosClasse = 0;
+                                                    try { qtddInscritosClasse = listQtddInscritos.Where(i => i.Id == item.Id).First().qtddInscritos; } catch (Exception e) { }
+                                                    if (qtddInscritosClasse >= item.maximoInscritos)
+                                                    {
+                                                        <option style="color:red" value="@item.Id" data-isDupla="@item.isDupla">Esgotado - @item.nome</option>
+                                                    }
+                                                    else
+                                                    {
+                                                        <option value="@item.Id" data-isDupla="@item.isDupla">@item.nome</option>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <option value="@item.Id" data-isDupla="@item.isDupla">@item.nome</option>
+                                                }
                                             }
                                         </select>
                                     </div>
@@ -288,7 +322,24 @@
                                                     <option value="0">Selecione uma classe...</option>
                                                     @foreach (var item in ViewBag.Classes2)
                                                     {
-                                                        <option value="@item.Id" data-isDupla="@item.isDupla">@item.nome</option>
+                                                        if (item.maximoInscritos > 0)
+                                                        {
+                                                            List<Barragem.Models.ClasseTorneioQtddInscrito> listQtddInscritos = ViewBag.qtddInscritos;
+                                                            var qtddInscritosClasse = 0;
+                                                            try { qtddInscritosClasse = listQtddInscritos.Where(i => i.Id == item.Id).First().qtddInscritos; } catch (Exception e) { };
+                                                            if (qtddInscritosClasse >= item.maximoInscritos)
+                                                            {
+                                                                <option style="color:red" value="@item.Id" data-isDupla="@item.isDupla">Esgotado - @item.nome</option>
+                                                            }
+                                                            else
+                                                            {
+                                                                <option value="@item.Id" data-isDupla="@item.isDupla">@item.nome</option>
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            <option value="@item.Id" data-isDupla="@item.isDupla">@item.nome</option>
+                                                        }
                                                     }
                                                 </select>
                                             </div>
@@ -316,7 +367,24 @@
                                                     <option value="0">Selecione uma classe...</option>
                                                     @foreach (var item in ViewBag.Classes2)
                                                     {
-                                                        <option value="@item.Id" data-isDupla="@item.isDupla">@item.nome</option>
+                                                        if (item.maximoInscritos > 0)
+                                                        {
+                                                            List<Barragem.Models.ClasseTorneioQtddInscrito> listQtddInscritos = ViewBag.qtddInscritos;
+                                                            var qtddInscritosClasse = 0;
+                                                            try { qtddInscritosClasse = listQtddInscritos.Where(i => i.Id == item.Id).First().qtddInscritos; } catch (Exception e) { };
+                                                            if (qtddInscritosClasse >= item.maximoInscritos)
+                                                            {
+                                                                <option style="color:red" value="@item.Id" data-isDupla="@item.isDupla">Esgotado - @item.nome</option>
+                                                            }
+                                                            else
+                                                            {
+                                                                <option value="@item.Id" data-isDupla="@item.isDupla">@item.nome</option>
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            <option value="@item.Id" data-isDupla="@item.isDupla">@item.nome</option>
+                                                        }
                                                     }
                                                 </select>
                                             </div>

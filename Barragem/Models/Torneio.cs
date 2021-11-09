@@ -144,6 +144,10 @@ namespace Barragem.Models
         [Display(Name = "Contato")]
         public string contato { get; set; }
 
+        [Display(Name = "Tem limite de inscrição?")]
+        public bool? temLimiteDeInscricao { get; set; }
+        
+
 
     }
 

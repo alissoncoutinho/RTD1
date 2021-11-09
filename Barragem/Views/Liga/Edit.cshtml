@@ -1,5 +1,215 @@
-﻿@model Barragem.Models.Liga
+﻿@model IEnumerable<Barragem.Models.ClasseLiga>
 
-@Html.Raw("teste")
-@Html.Partial("_PartialTabs", "")
+    <legend>@Html.Raw(ViewBag.nomeLiga)</legend>
 
+    <ul class="nav nav-tabs" id="myTab">
+        <li class='active'><a href="#tabClasse" data-toggle="tab"><b>Classes</b></a></li>
+        <li><a href="#tabCircuito" data-toggle="tab"><b>Circuito</b></a></li>
+    </ul>
+
+    
+    
+        <div>
+            <div class="tab-content">
+                <div class="tab-pane fade in active" id="tabClasse">
+                    <br />
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">Nome:</label>
+                        <div class="col-sm-5 input-group">
+                            <input class="form-control" id="nome" name="nome" type="text" value="">
+                        </div>
+                        <br><input type="checkbox" name="isDupla" id="isDupla" value="true"> <b>Classe de dupla?</b><br>
+                    </div>
+                    <div>
+                        <input type="hidden" name="IdLiga" id="IdLiga" value="@ViewBag.idLiga">
+                        <button class="btn btn-info" id="add" onclick="addClasse()">Adicionar nova classe</button>
+                    </div>
+
+
+                    <table id="listaClasses" class="table table-striped table-condensed table-bordered">
+                        <caption>Classes adicionadas a liga</caption>
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{ int i = 1; }
+                            @foreach (var classeLiga in Model)
+                    {
+                    <tr id="@classeLiga.Id">
+
+                        <td><input type="text" class="col-md-6 form-control" name="@Html.Raw("nome" + i)" id="@Html.Raw("nome" + i)" value="@classeLiga.Nome"></td>
+                        <td>
+                            <button title="salvar" data-valor="@Html.Raw(i)" data-ident="@classeLiga.Id" name="@Html.Raw("button" + i)" id="@Html.Raw("button" + i)" class="btn btn-default btn-xs editarNome">
+                                Salvar
+                            </button>
+                            <button title="excluir" data-valor="@classeLiga.Id" id="@Html.Raw("buttonEx"+@classeLiga.Id)" class="btn btn-danger btn-xs excluirButton">
+                                Excluir
+                            </button>
+                        </td>
+                    </tr>
+                        i++;
+                    }
+
+                        </tbody>
+                    </table>
+                    <input type="hidden" value="@i" name="contador" id="contador">
+                </div>
+                <div class="tab-pane fade" id="tabCircuito">
+                    <div class="box-body">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="nome">Nome:</label>
+                            <div class="col-sm-8 input-group">
+                                <input class="form-control" id="nomeLiga" name="nomeLiga" type="text" value="@ViewBag.nomeLiga">
+                                <input id="idLiga" name="idLiga" type="hidden" value="@ViewBag.idLiga">
+                            </div>
+                            <span class="field-validation-valid" data-valmsg-for="nome" data-valmsg-replace="true"></span>
+                        </div>
+                    </div>
+                    <div class="box-footer">
+                                <button type="submit" class="btn btn-info pull-right editarNomeCircuito">Gravar</button>
+                            </div>
+                </div>
+            </div>
+         </div>
+                    
+
+@section Scripts {
+    <script type="text/javascript">
+        function addClasse() {
+            var nome = document.getElementById("nome").value;
+            var idCategoria = 0;
+            var IdLiga = document.getElementById("IdLiga").value;
+            var contador = document.getElementById("contador").value;
+            var isDupla = false;
+            if (document.getElementById("isDupla").checked) {
+                isDupla = true;
+            }
+
+            event.preventDefault();
+
+            $.ajax({
+                type: "POST",
+                url: "/Liga/AddClasse",
+                dataType: "json",
+                data: "{'IdLiga':'" + IdLiga + "', 'nome':'" + nome + "', 'idCategoria':'" + idCategoria + "', 'isDupla':'" + isDupla + "'}",
+                contentType: "application/json; charset=utf-8",
+                success: function (response) {
+                    if (typeof response == "object") {
+                        if (response.retorno === 0) {
+                            toastr.error(response.erro, "Erro");
+                        } else {
+                            var table = document.getElementById("listaClasses");
+                            var row = table.insertRow(table.rows.length);
+                            row.setAttribute("id", response.IdClasseLiga);
+                            var cell1 = row.insertCell(0);
+                            var cell2 = row.insertCell(1);
+                            cell1.innerHTML = "<input type=\"text\" class=\"col-md-6 form-control\" name='nome" + contador + "' id='nome" + contador + "' value='" + response.nome + "'>";
+                            cell2.innerHTML = "<button title=\"salvar\" data-valor='" + contador + "' data-ident='" + response.IdClasseLiga + "' name='" + contador + "' id='" + contador + "' class='btn btn-default btn-xs editarNome'>Salvar</button><button title=\"excluir\" data-valor='" + response.IdClasseLiga + "' id=\"buttonEx" + response.IdClasseLiga + "\" onclick=\"removeClasse(this.id)\" class=\"btn btn-danger btn-xs excluirButton\">Excluir</button>";
+
+                            toastr.success("Atualização realizada com sucesso.", "Aviso");
+                            document.getElementById("contador").value = parseInt(contador) + 1;
+                        }
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    location.reload(true);
+                }
+            });
+        }
+
+
+        $(".excluirButton").confirm({
+            title: "Confirmação",
+            content: "Tem certeza que deseja excluir esta classe do circuito?",
+            buttons: {
+                sim: {
+                    text: 'Sim',
+                    btnClass: 'btn-primary',
+                    action: function () {
+                        var idClasseLiga = this.$target.data("valor");
+
+                        event.preventDefault();
+                        $.ajax({
+                            url: "/Liga/RemoveClasse",
+                            type: "POST",
+                            data: "{'id':'" + idClasseLiga + "'}",
+                            dataType: "json",
+                            contentType: "application/json; charset=utf-8",
+                            success: function (response) {
+                                if (typeof response == "object") {
+                                    if (response.retorno === 0) {
+                                        toastr.error(response.erro, "Erro");
+                                    } else {
+                                        $("#" + idClasseLiga).remove();
+                                        toastr.success("Exlusão realizada com sucesso.", "Aviso");
+                                    }
+                                }
+                            },
+                            error: function (jqXHR, textStatus, errorThrown) {
+                                toastr.error(textStatus, "Erro");
+                            }
+                        });
+                    }
+                },
+                cancelar: function () { },
+            }
+        });
+
+        $(document).ready(function () {
+            $(".editarNome").click(function (event) {
+                var i = $(this).data("valor");
+                var Id = $(this).data("ident");
+                var nome = document.getElementById("nome" + i).value;
+                event.preventDefault();
+                $.ajax({
+                    url: "/Liga/EditNomeClasse?id=" + Id + "&nomeClasse=" + nome,
+                    dataType: "json",
+                    contentType: "application/json; charset=utf-8",
+                    success: function (response) {
+                        if (typeof response == "object") {
+                            if (response.retorno === 0) {
+                                toastr.error(response.erro, "Erro");
+                            } else {
+                                toastr.success("Alteração realizada com sucesso.", "Aviso");
+                            }
+                        }
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        toastr.error(textStatus, "Erro");
+                    }
+                });
+            });
+
+
+            $(".editarNomeCircuito").click(function (event) {
+                var nome = document.getElementById("nomeLiga").value;
+                var id = document.getElementById("idLiga").value;
+
+                event.preventDefault();
+                $.ajax({
+                    url: "/Liga/EditNome?idLiga=" + id + "&nomeLiga=" + nome,
+                    dataType: "json",
+                    contentType: "application/json; charset=utf-8",
+                    success: function (response) {
+                        if (typeof response == "object") {
+                            if (response.retorno === 0) {
+                                toastr.error(response.erro, "Erro");
+                            } else {
+                                toastr.success("Alteração realizada com sucesso.", "Aviso");
+                            }
+                        }
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        toastr.error(textStatus, "Erro");
+                    }
+                });
+            });
+
+        });
+
+
+    </script>
+}

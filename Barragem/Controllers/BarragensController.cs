@@ -104,7 +104,7 @@ namespace Barragem.Controllers
         }
 
         // GET: /Rodada/Edit/5
-        [Authorize(Roles = "admin,organizador")]
+        [Authorize(Roles = "admin,organizador, adminTorneio")]
         public ActionResult EditPagSeguro(int id = 0)
         {
             Barragens barragens = db.Barragens.Find(id);
@@ -167,6 +167,21 @@ namespace Barragem.Controllers
             return View(barragens);
         }
 
+        [Authorize(Roles = "admin,adminTorneio")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult EditNomeBarragem(string nome)
+        {
+            UserProfile usu = db.UserProfiles.Find(WebSecurity.GetUserId(User.Identity.Name));
+            var barraAtual = db.Barragens.Find(usu.barragemId);
+            barraAtual.nome = nome;
+            db.Entry(barraAtual).State = EntityState.Modified;
+            db.SaveChanges();
+            Funcoes.CriarCookieBarragem(Response, Server, barraAtual.Id, barraAtual.nome);
+            return RedirectToAction("PainelControle", "Torneio");
+        }
+        
+
         [Authorize(Roles = "admin,organizador")]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -185,7 +200,6 @@ namespace Barragem.Controllers
 
             barraAtual.tokenPagSeguro = barragens.tokenPagSeguro;
             barraAtual.emailPagSeguro = barragens.emailPagSeguro;
-            barraAtual.linkPagSeguro = barragens.linkPagSeguro;
             
                 
             db.Entry(barraAtual).State = EntityState.Modified;

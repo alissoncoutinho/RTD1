@@ -4,7 +4,7 @@
     ViewBag.Title = "Criar Ranking";
 }
 
-@using (Html.BeginForm())
+@using (Html.BeginForm("CreateRankingLiga", "Liga", FormMethod.Post, new { @autocomplete = "off" }))
 {
     @Html.AntiForgeryToken()
     @Html.ValidationSummary(true)
@@ -43,13 +43,13 @@
             </div>
         </div>
         <div class="row" id="textoFederacao">
-            <div class="col-md-4">
-                teste texto federação
+            <div class="col-md-4" style="border: 1px solid #ccc;padding: 10px;margin-left: 15px;margin-bottom: 15px;">
+                <b>Regras da federação:</b> nesse formato, o sistema sorteia jogos entre todos participantes nas categorias e será o vencedor quem tiver mais vitórias.
             </div>
         </div>
         <div class="row" id="textoTodosContraTodos">
-            <div class="col-md-4">
-                teste texto todos contra todos
+            <div class="col-md-4" style="border: 1px solid #ccc;padding: 10px;margin-left: 15px;margin-bottom: 15px;">
+                <b>Todos contra todos:</b> Nesse formato, o sistema sorteia jogos entre todos participantes nas categorias e será o vencedor quem tiver mais vitórias.
             </div>
         </div>
         <input type="submit" value="Criar meu Ranking" class="btn btn-info" />
@@ -58,6 +58,12 @@
 
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <style>
+    .form-control:not(select) {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+    }
+
     .ui-autocomplete-loading {
         background: white url("/Content/image/ui-anim_basic_16x16.gif") right center no-repeat;
     }
@@ -105,6 +111,9 @@
     document.getElementById('textoFederacao').style.display = "block";
     document.getElementById('textoTodosContraTodos').style.opacity = "0 !important";
     document.getElementById('textoTodosContraTodos').style.display = "none";
+
+    document.getElementById('cidade').setAttribute('autocomplete', 'off');
+    $('cidade').attr('autocomplete', 'off');
 
 </script>
 }

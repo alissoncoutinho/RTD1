@@ -37,6 +37,9 @@ namespace Barragem.Controllers
                 if (perfil.Equals("admin") || perfil.Equals("organizador"))
                 {
                     return RedirectToAction("Dashboard", "Home");
+                }else if (perfil.Equals("adminTorneio"))
+                {
+                    return RedirectToAction("PainelControle", "Torneio");
                 }
                 return RedirectToAction("Index3", "Home");
             }
@@ -71,9 +74,12 @@ namespace Barragem.Controllers
                 if ((!String.IsNullOrEmpty(returnUrl)) && (returnUrl.Equals("EscolherDupla")) && (torneioId != 0)){
                     return RedirectToAction("EscolherDupla", "Torneio", new {id = torneioId });
                 }
-                if ((!String.IsNullOrEmpty(returnUrl)) && (returnUrl.Equals("torneio")) && (torneioId!=0)) {
-                    return RedirectToAction("Detalhes", "Torneio", new {id=torneioId });    
-                }else if((!String.IsNullOrEmpty(returnUrl)) && (returnUrl.Contains("/Torneio/LancarResultado"))){
+                if ((!String.IsNullOrEmpty(returnUrl)) && (returnUrl.Equals("torneio")) && (torneioId != 0))
+                {
+                    return RedirectToAction("Detalhes", "Torneio", new { id = torneioId });
+                }
+                else if ((!String.IsNullOrEmpty(returnUrl)) && (returnUrl.Contains("/Torneio/LancarResultado")))
+                {
                     return RedirectToAction("LancarResultado", "Torneio");
                 }else{
                     return RedirectToAction("Index", "Home");
@@ -170,7 +176,7 @@ namespace Barragem.Controllers
                             classeId = model.classeId
                         });
 
-                        Roles.AddUserToRole(model.UserName, "organizador");
+                        Roles.AddUserToRole(model.UserName, "adminTorneio");
                         
                         WebSecurity.Login(model.UserName, model.Password);
                         try
@@ -292,14 +298,41 @@ namespace Barragem.Controllers
         [AllowAnonymous]
         public ActionResult RegisterTorneio(int torneioId, string email="")
         {
-            if (User.Identity.IsAuthenticated){
+            if (torneioId == 0)
+            {
+                HttpCookie cookie = Request.Cookies["_barragemId"];
+                if (cookie != null)
+                {
+                    var barragemId = Convert.ToInt32(cookie.Value.ToString());
+                    var tn = db.Torneio.Where(t => t.barragemId == barragemId && t.isAtivo).OrderByDescending(t => t.Id).ToList();
+                    if (tn.Count() > 0) { torneioId = tn[0].Id; }
+                }
+            }
+                if (User.Identity.IsAuthenticated){
                 return RedirectToAction("Detalhes", "Torneio", new {id=torneioId});
             }
             ViewBag.torneio = db.Torneio.Find(torneioId);
-            var classes = db.ClasseTorneio.Where(i => i.torneioId == torneioId && i.isPrimeiraOpcao).OrderBy(c => c.nivel).ToList();
+            var classes = db.ClasseTorneio.Where(i => i.torneioId == torneioId).OrderBy(c => c.nivel).ToList();
             ViewBag.Classes = classes;
-            var classes2Opcao = db.ClasseTorneio.Where(i => i.torneioId == torneioId && i.isSegundaOpcao).OrderBy(c => c.nivel).ToList();
-            ViewBag.Classes2 = classes2Opcao;
+            //var classes2Opcao = db.ClasseTorneio.Where(i => i.torneioId == torneioId && i.isSegundaOpcao).OrderBy(c => c.nivel).ToList();
+            ViewBag.Classes2 = classes;
+            foreach (var item in classes)
+            {
+                if (item.maximoInscritos > 0)
+                {
+                    var listQtddInscritosClasseTorneio = new List<ClasseTorneioQtddInscrito>();
+                    var qtddInscritos = db.InscricaoTorneio.Where(i => i.torneio.Id == torneioId).GroupBy(i => i.classe);
+                    foreach (var group in qtddInscritos)
+                    {
+                        var classeTorneioQtddInscrito = new ClasseTorneioQtddInscrito();
+                        classeTorneioQtddInscrito.Id = group.Key;
+                        classeTorneioQtddInscrito.qtddInscritos = group.Count();
+                        listQtddInscritosClasseTorneio.Add(classeTorneioQtddInscrito);
+                    }
+                    ViewBag.qtddInscritos = listQtddInscritosClasseTorneio;
+                    break;
+                }
+            }
             ViewBag.email = "";
             ViewBag.login = "";
             if (Funcoes.ValidateEmail(email)){
@@ -336,6 +369,14 @@ namespace Barragem.Controllers
                         return mensagemRetorno;
                     }
                     string msgValidacaoClasse = torneioController.validarEscolhasDeClasses(model.inscricao.classe, model.classeInscricao2, model.classeInscricao3, model.classeInscricao4);
+                    if (msgValidacaoClasse != "")
+                    {
+                        mensagemRetorno.nomePagina = "Detalhes";
+                        mensagemRetorno.tipo = "erro";
+                        mensagemRetorno.mensagem = msgValidacaoClasse;
+                        return mensagemRetorno;
+                    }
+                    msgValidacaoClasse = torneioController.validarLimiteDeInscricao(model.inscricao.classe, model.classeInscricao2, model.classeInscricao3, model.classeInscricao4, torneio.Id);
                     if (msgValidacaoClasse != "")
                     {
                         mensagemRetorno.nomePagina = "Detalhes";
@@ -441,11 +482,10 @@ namespace Barragem.Controllers
             ViewBag.isClasseDupla = isClasseDupla;
             ViewBag.ClasseInscricao = model.inscricao.classe;
             ViewBag.ClasseInscricao2 = model.classeInscricao2;
-            var classes = db.ClasseTorneio.Where(i => i.torneioId == torneioId && i.isPrimeiraOpcao).OrderBy(c => c.nivel).ToList();
+            var classes = db.ClasseTorneio.Where(i => i.torneioId == torneioId).OrderBy(c => c.nivel).ToList();
             ViewBag.Classes = classes;
-            var classes2Opcao = db.ClasseTorneio.Where(i => i.torneioId == torneioId && i.isSegundaOpcao).OrderBy(c => c.nivel).ToList();
-            ViewBag.Classes2 = classes2Opcao;
-            var classesBarragem = db.Classe.Where(c => c.barragemId == torneio.barragemId).ToList();
+            ViewBag.Classes2 = classes;
+            ViewBag.qtddInscritos = new TorneioNegocio().qtddInscritosEmCadaClasse(classes, torneioId);
             var mensagemRetorno = RegisterTorneioNegocio(model, torneioId, isSocio, isClasseDupla, isFederado);
             if (mensagemRetorno.tipo == "erro")
             {
@@ -655,7 +695,7 @@ namespace Barragem.Controllers
             }
         }       
         
-        [Authorize(Roles = "admin,organizador,usuario")]
+        [Authorize(Roles = "admin,organizador,usuario,adminTorneio")]
         public ActionResult Detalhes(int userId, bool mostrarClasse=true)
         {
             ViewBag.mostrarClasse = mostrarClasse;
@@ -703,7 +743,7 @@ namespace Barragem.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "admin,organizador")]
+        [Authorize(Roles = "admin,organizador,adminTorneio")]
         public ActionResult EditPontuacao(int Id)
         {
             Rancking r = db.Rancking.Find(Id);
@@ -711,7 +751,7 @@ namespace Barragem.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "admin,organizador")]
+        [Authorize(Roles = "admin,organizador,adminTorneio")]
         public ActionResult EditPontuacao(Rancking r)
         {
             double pontuacaoTotal = db.Rancking.Where(ran => ran.rodada.isAberta == false && ran.userProfile_id == r.userProfile_id
@@ -961,7 +1001,7 @@ namespace Barragem.Controllers
 
 
         [HttpGet]
-        [Authorize(Roles = "admin,usuario,organizador")]
+        [Authorize(Roles = "admin,usuario,organizador,adminTorneio")]
         public ActionResult Excluir(int Id)
         {
             string perfil = Roles.GetRolesForUser(User.Identity.Name)[0];
@@ -988,7 +1028,7 @@ namespace Barragem.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "admin,organizador,usuario")]
+        [Authorize(Roles = "admin,organizador,usuario,adminTorneio")]
         public ActionResult EditaUsuario(string UserName, bool isAlterarFoto=false)
         {
             ViewBag.isAlterarFoto = isAlterarFoto;
@@ -1040,7 +1080,7 @@ namespace Barragem.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "admin,organizador,usuario")]
+        [Authorize(Roles = "admin,organizador,usuario,adminTorneio")]
         public ActionResult EditaUsuario(UserProfile model, string avatarCropped)
         {
             string perfil = Roles.GetRolesForUser(User.Identity.Name)[0];
@@ -1240,7 +1280,7 @@ namespace Barragem.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "admin,organizador,usuario")]
+        [Authorize(Roles = "admin,organizador,usuario,adminTorneio")]
         public ActionResult AtualizaStatus(String situacao, int userId)
         {
             try{
@@ -1264,7 +1304,7 @@ namespace Barragem.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "admin,organizador")]
+        [Authorize(Roles = "admin,organizador,adminTorneio")]
         public ActionResult AtivaUsuario(int userId)
         {
             try{
@@ -1424,7 +1464,7 @@ namespace Barragem.Controllers
             }
             else if (filtroSituacao == "todos")
             {
-                consulta = db.UserProfiles.Where(u => !u.situacao.Equals("curinga"));
+                consulta = db.UserProfiles.Where(u => !u.UserName.Equals("coringa"));
             }
             else
             {

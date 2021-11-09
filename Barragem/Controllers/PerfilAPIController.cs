@@ -272,7 +272,7 @@ namespace Barragem.Controllers
         [Route("api/PerfilAPI/Ranking/{userId}")]
         public IList<JogoRodada> GetRanking(int userId)
         {
-            var jogos = db.Jogo.Where(j => (j.desafiado_id == userId || j.desafiante_id == userId) && j.situacao_Id!=1).OrderByDescending(j=>j.Id).Take(15).ToList<Jogo>();
+            var jogos = db.Jogo.Where(j => (j.desafiado_id == userId || j.desafiante_id == userId) && j.situacao_Id!=1 && j.desafiante_id != 10 && j.desafiado_id != 10).OrderByDescending(j=>j.Id).Take(15).ToList<Jogo>();
             IList<JogoRodada> jogoRodada = new List<JogoRodada>();
             foreach (var jogo in jogos){
                 var j = new JogoRodada();

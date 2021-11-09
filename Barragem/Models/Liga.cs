@@ -18,5 +18,9 @@ namespace Barragem.Models
         public bool isAtivo { get; set; } = true;
 
         public int? barragemId { get; set; }
+
+        public bool isModeloTodosContraTodos { get; set; }
     }
 }
+
+//ALTER TABLE Liga ADD isModeloTodosContraTodos bit NOT NULL DEFAULT(0);

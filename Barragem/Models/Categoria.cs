@@ -21,8 +21,10 @@ namespace Barragem.Models
         public bool isDupla { get; set; }
 
         public int ordemExibicao { get; set; }
-    }
 
+        public int rankingId { get; set; }
+    }
+    // ALTER TABLE Categoria ADD rankingId int NOT NULL DEFAULT(0);
     public class CategoriaDeLiga
     {
         public int Id { get; set; }

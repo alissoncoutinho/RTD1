@@ -16,9 +16,9 @@ namespace Barragem.Class
         {
             float pontuacao = 0;
             // se a quantidade de games jogados for igual a zero, quer dizer que não houve jogo e o jogador ficará com zero de pontuação nesta rodada
-            if (jogo.gamesJogados != 0 && !jogo.desafiante.situacao.Equals("curinga"))
+            if (jogo.gamesJogados != 0 && !jogo.desafiante.UserName.Equals("coringa"))
             {
-                if (jogo.desafiado.situacao.Equals("curinga"))
+                if (jogo.desafiado.UserName.Equals("coringa"))
                 {
                     pontuacao = 6;
                 }
@@ -57,9 +57,9 @@ namespace Barragem.Class
         {
             float pontuacao = 0;
             // se a quantidade de games jogados for igual a zero, quer dizer que não houve jogo e o jogador ficará com zero de pontuação nesta rodada
-            if (jogo.gamesJogados != 0 && !jogo.desafiado.situacao.Equals("curinga"))
+            if (jogo.gamesJogados != 0 && !jogo.desafiado.UserName.Equals("coringa"))
             {
-                if (jogo.desafiante.situacao.Equals("curinga"))
+                if (jogo.desafiante.UserName.Equals("coringa"))
                 {
                     pontuacao = 6;
                 }
@@ -96,7 +96,7 @@ namespace Barragem.Class
 
         private int getBonus(Jogo jogo, bool isDesafiado)
         {
-            if ((jogo.situacao_Id != 4) || (jogo.desafiante.situacao.Equals("curinga")) || (jogo.desafiado.situacao.Equals("curinga")))
+            if ((jogo.situacao_Id != 4) || (jogo.desafiante.UserName.Equals("coringa")) || (jogo.desafiado.UserName.Equals("coringa")))
             {
                 return 0;
             }
@@ -118,7 +118,7 @@ namespace Barragem.Class
         {
             try
             {
-                if (jogador.situacao.Equals("curinga") || jogador.situacao.Equals("pendente"))
+                if (jogador.UserName.Equals("coringa") || jogador.situacao.Equals("pendente"))
                 {
                     return;
                 }
@@ -587,28 +587,29 @@ namespace Barragem.Class
                 {
                     throw new ExceptionRodadaEmAberto("Não foi possível criar uma nova rodada, pois ainda existe rodada(s) em aberto.");
                 }
-                try
+                
+                Rodada rd = db.Rodada.Where(r => r.barragemId == rodada.barragemId).OrderByDescending(r => r.Id).Take(1).Single();
+                if (rd.sequencial == 10)
                 {
-                    Rodada rd = db.Rodada.Where(r => r.barragemId == rodada.barragemId).OrderByDescending(r => r.Id).Take(1).Single();
-                    if (rd.sequencial == 10)
-                    {
+                    try { 
                         string alfabeto = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
                         int pos = alfabeto.IndexOf(rd.codigo);
                         pos++;
                         rodada.sequencial = 1;
                         rodada.codigo = Convert.ToString(alfabeto[pos]);
                     }
-                    else
+                    catch (Exception)
                     {
-                        rodada.sequencial = rd.sequencial + 1;
-                        rodada.codigo = rd.codigo;
+                        rodada.sequencial = 1;
+                        rodada.codigo = "A";
                     }
                 }
-                catch (InvalidOperationException)
+                else
                 {
-                    rodada.sequencial = 1;
-                    rodada.codigo = "A";
+                    rodada.sequencial = rd.sequencial + 1;
+                    rodada.codigo = rd.codigo;
                 }
+                
                 rodada.isAberta = true;
                 rodada.dataFim = new DateTime(rodada.dataFim.Year, rodada.dataFim.Month, rodada.dataFim.Day, 23, 59, 59);
                 db.Rodada.Add(rodada);
@@ -640,7 +641,7 @@ namespace Barragem.Class
                         pontosDesafiante = calcularPontosDesafiante(item);
                         pontosDesafiado = calcularPontosDesafiado(item);
                         msg = "pontosDesafio" + item.desafiado_id;
-                        if (!item.desafiante.situacao.Equals("curinga"))
+                        if (!item.desafiante.UserName.Equals("coringa"))
                         {
                             gravarPontuacaoNaRodada(id, item.desafiante, pontosDesafiante);
                             msg = "gravarPontuacaoNaRodadaDesafiante" + item.desafiante_id;

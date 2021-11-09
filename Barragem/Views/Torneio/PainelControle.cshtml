@@ -2,6 +2,27 @@
 @{
     ViewBag.Title = "Painel de Controle";
     Barragem.Models.Torneio torneio = new Barragem.Models.Torneio();
+
+    HttpCookie cookie = Request.Cookies["_barragemId"];
+    var barraId = 0;
+    var scrLogo = "/Content/image/inserirLogo.png";
+
+    if (cookie != null){
+        barraId = Convert.ToInt32(cookie.Value.ToString());
+        scrLogo = "/Content/image/logo" + barraId + ".png";
+        var path = Server.MapPath(scrLogo);
+        if (!File.Exists(path)){
+            scrLogo = "/Content/image/logo" + barraId + ".jpg";
+            path = Server.MapPath(scrLogo);
+        }
+        if (!File.Exists(path))
+        {
+            scrLogo = "/Content/image/inserirLogo.png";
+        }
+    }
+
+
+
 }
     
     @if (ViewBag.torneioEmAndamento != null)
@@ -69,7 +90,7 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-sm-4 col-sm-offset-4">
+                            <div class="col-sm-4 col-sm-offset-4" style="margin-top:15px">
                                 <a href="@Url.Action("CreateTorneio", "Torneio")" class="btn btn-primary btn-block" id="botaoCriar">Criar Novo Torneio</a>
                             </div>
                         </div>
@@ -134,13 +155,13 @@
                             @Html.Raw(item.Nome)
                         </div>
                         <div class="col-md-2 col-xs-4" align="left">
-                            <button class="btn btn-warning btn-block" id="botaoEditarCircuito">Editar</button>
+                            <a href="@Url.Action("Edit", "Liga", new { idLiga = item.Id })" class="btn btn-warning btn-block" id="botaoEditarCircuito">Editar</a>
                         </div>
                     </div>
                 }
                 <div class="row">
                     <div class="col-sm-6">
-                        <button class="btn btn-primary btn-block" id="botaoCriar">Criar Novo Circuito</button>
+                        <a href="@Url.Action("Create", "Liga")" class="btn btn-primary btn-block" id="botaoCriar">Criar Novo Circuito</a>
                     </div>
                 </div>
             </div>
@@ -167,7 +188,7 @@
                 <div class="col-md-2 col-xs-5" align="left">
                     <form method="post" enctype="multipart/form-data" action="/Ranking/uploadLogoMarca" name="formLogo" id="formLogo" class="form">
                         <input type="hidden" name="Id" id="Id" value="@ViewBag.barragemId" />
-                        <img width="50" height="50" src="" id="imagem1">
+                        <img width="50" height="50" src="@scrLogo" id="imagem1">
                         <div class="fileUpload btn btn-default btn-xs">
                             <span class="glyphicon glyphicon-search"></span>
                             <input type="file" id="fileLogo" name="fileLogo" class="upload fileLogoMarca" />
@@ -183,6 +204,24 @@
                 <div class="col-md-2 col-xs-4" align="left">
                     <a href="@Url.Action("EditaUsuario", "Account", new { UserName = User.Identity.Name })" class="btn btn-warning btn-block" id="botaoEditarCircuito">Editar</a>
                 </div>
+            </div>
+            <div class="row form-group" align="left">
+                <form method="post" action="/Barragens/EditNomeBarragem" name="formBarragem" id="formBarragem" class="form">
+                    @Html.AntiForgeryToken()
+                    <div class="form-group">
+                        <div class="col-md-2 col-xs-7" align="left">
+                            Agremiação
+                        </div>
+                        <div class="col-md-4 col-xs-7 input-group">
+                            <input type="text" class="form-control" value="@ViewBag.nomeAgremiacao" name="nome">
+                        </div>
+                        <div class="col-md-2 col-xs-7">
+                            <button type="submit" class="btn btn-warning btn-block">Alterar</button>
+                        </div>
+                        
+                    </div>
+                    
+                </form>
             </div>
         </div>
     </div>

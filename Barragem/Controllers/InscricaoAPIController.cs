@@ -33,11 +33,49 @@ namespace Barragem.Controllers
         public TorneioClassesApp GetPrepararInscricao(int torneioId)
         {
             var torneioClassesApp = new TorneioClassesApp();
-            torneioClassesApp.torneio = db.Torneio.Find(torneioId);
-            torneioClassesApp.classesTorneio = db.ClasseTorneio.Where(c => c.torneioId == torneioId).ToList();
+            var torneio = db.Torneio.Find(torneioId);
+            torneioClassesApp.torneio = montaTorneio(torneio);
+            //torneioClassesApp.torneio.Id = torneio.Id;
+            var classesTorneio = db.ClasseTorneio.Where(c => c.torneioId == torneioId).ToList();
+            torneioClassesApp.classesTorneio = new List<ClasseTorneio>();
+            foreach (var item in classesTorneio)
+            {
+                var classeTorneio = new ClasseTorneio();
+                classeTorneio.Id = item.Id;
+                classeTorneio.isDupla = item.isDupla;
+                classeTorneio.nome = item.nome;
+                torneioClassesApp.classesTorneio.Add(classeTorneio);
+            }
             return torneioClassesApp;
         }
 
+        private Torneio montaTorneio(Torneio torneio) {
+            var torneioDadosReduzidos = new Torneio();
+            torneioDadosReduzidos.Id = torneio.Id;
+            torneioDadosReduzidos.cidade = torneio.cidade;
+            torneioDadosReduzidos.dadosBancarios = torneio.dadosBancarios;
+            torneioDadosReduzidos.dataFim = torneio.dataFim;
+            torneioDadosReduzidos.dataFimInscricoes = torneio.dataFimInscricoes;
+            torneioDadosReduzidos.dataInicio = torneio.dataInicio;
+            torneioDadosReduzidos.descontoPara = torneio.descontoPara;
+            torneioDadosReduzidos.divulgacao = torneio.divulgacao;
+            torneioDadosReduzidos.divulgaCidade = torneio.divulgaCidade;
+            torneioDadosReduzidos.isDesconto = torneio.isDesconto;
+            torneioDadosReduzidos.isGratuitoSocio = torneio.isGratuitoSocio;
+            torneioDadosReduzidos.local = torneio.local;
+            torneioDadosReduzidos.nome = torneio.nome;
+            torneioDadosReduzidos.observacao = torneio.observacao;
+            torneioDadosReduzidos.premiacao = torneio.premiacao;
+            torneioDadosReduzidos.qtddCategoriasPorJogador = torneio.qtddCategoriasPorJogador;
+            torneioDadosReduzidos.valor = torneio.valor;
+            torneioDadosReduzidos.valor2 = torneio.valor2;
+            torneioDadosReduzidos.valor3 = torneio.valor3;
+            torneioDadosReduzidos.valor4 = torneio.valor4;
+            torneioDadosReduzidos.valorDescontoFederado = torneio.valorDescontoFederado;
+            torneioDadosReduzidos.valorSocio = torneio.valorSocio;
+
+            return torneioDadosReduzidos;
+        }
 
         [HttpGet]
         [Route("api/InscricaoAPI/{Id}")]
@@ -174,7 +212,8 @@ namespace Barragem.Controllers
         public IList<TorneioApp> duplasPendentes(int usuarioLogado)
         {
             var inscritos = new List<InscricaoTorneio>();
-            var inscricoes = db.InscricaoTorneio.Where(i => i.classeTorneio.isDupla && i.parceiroDuplaId == null && i.userId == usuarioLogado).ToList();
+            DateTime hoje = DateTime.Now.Date;
+            var inscricoes = db.InscricaoTorneio.Where(i => i.classeTorneio.isDupla && i.parceiroDuplaId == null && i.userId == usuarioLogado && i.torneio.dataFim > hoje).ToList();
             foreach (var item in inscricoes){
                 var jaSouParceidoDeDupla = db.InscricaoTorneio.Include(t=>t.torneio).Where(i => i.parceiroDuplaId == usuarioLogado && i.classe == item.classe).Any();
                 if (!jaSouParceidoDeDupla)

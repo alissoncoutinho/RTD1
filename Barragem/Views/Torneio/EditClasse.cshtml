@@ -32,6 +32,12 @@
                 <th>
                     @Html.DisplayName("Nome categoria no Torneio")
                 </th>
+                @if (ViewBag.temLimiteDeInscricao != null && (bool)ViewBag.temLimiteDeInscricao)
+                {
+                    <th>
+                        @Html.DisplayName("Limite inscrição")
+                    </th>
+                }
                 <th>
                     @Html.DisplayName("Dupla")
                 </th>
@@ -74,6 +80,16 @@
                     <td>
                         <input type="text" class="col-md-6 form-control" name="@Html.Raw("nome" + i)" id="@Html.Raw("nome" + i)" value="@item.nome">
                     </td>
+                    @if (ViewBag.temLimiteDeInscricao != null && (bool)ViewBag.temLimiteDeInscricao)
+                    {
+                    <td>
+                        <input type="text" class="col-md-6 form-control" name="@Html.Raw("maximoInscritos" + i)" id="@Html.Raw("maximoInscritos" + i)" value="@item.maximoInscritos">
+                    </td>
+                    }
+                    else
+                    {
+                        <input type="hidden" name="@Html.Raw("maximoInscritos" + i)" id="@Html.Raw("maximoInscritos" + i)" value="@item.maximoInscritos" />
+                    }
                     <td>
                         @if (item.isDupla)
                             {
@@ -135,7 +151,8 @@
                 $(".inscricaoButton").click(function (event) {
                     var i = $(this).data("valor");
                     var Id = $(this).data("ident");
-                    var nome = document.getElementById("nome"+i).value;
+                    var nome = document.getElementById("nome" + i).value;
+                    var maximoInscritos = document.getElementById("maximoInscritos" + i).value;
                     var isDupla = document.getElementById("isDupla" + i).checked;
                     var faseGrupo = false;
                     var faseMataMata = false;
@@ -151,7 +168,7 @@
                         type: "POST",
                         url: "/Torneio/EditClasse",
                         dataType: "json",
-                        data: "{'Id':'" + Id + "', 'nome':'" + nome + "', 'isDupla':'" + isDupla + "', 'faseGrupo':'" + faseGrupo + "', 'faseMataMata':'" + faseMataMata + "', 'isModeloTodosContraTodos':'" + isModeloTodosContraTodos + "'}",
+                        data: "{'Id':'" + Id + "', 'nome':'" + nome + "', 'isDupla':'" + isDupla + "', 'faseGrupo':'" + faseGrupo + "', 'faseMataMata':'" + faseMataMata + "', 'isModeloTodosContraTodos':'" + isModeloTodosContraTodos + "', 'maximoInscritos':'" + maximoInscritos + "'}",
                         contentType: "application/json; charset=utf-8",
                         success: function (response) {
                             if (typeof response == "object") {
