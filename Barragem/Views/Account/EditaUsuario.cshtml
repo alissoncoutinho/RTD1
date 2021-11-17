@@ -25,6 +25,14 @@
                     </div>
                 </div>
                 <div class="form-group">
+                    <div class="col-md-3">
+                        @if ((Roles.IsUserInRole("admin")) || (Roles.IsUserInRole("organizador")) || (Roles.IsUserInRole("adminTorneio")))
+                        {
+                            <a class="btn btn-primary btn-info" href="/Account/ResetarSenhaPeloOrganizador?userName=@Model.UserName">Resetar Senha</a>
+                        }
+                    </div>
+                </div>
+                <div class="form-group">
                     @Html.HiddenFor(m => m.UserId)
                     @Html.HiddenFor(m => m.isRanckingGerado)
                     @Html.HiddenFor(m => m.UserName)
@@ -171,10 +179,7 @@
                         <a class="btn btn-primary btn-danger" href="/Account/Excluir?Id=@Model.UserId">Excluir</a>
                     }
                 }
-                @if ((Roles.IsUserInRole("admin")) || (Roles.IsUserInRole("organizador")) || (Roles.IsUserInRole("adminTorneio")))
-                {
-                    <a class="btn btn-primary btn-info" href="/Account/ResetarSenhaPeloOrganizador?userName=@Model.UserName">Resetar Senha</a>
-                }
+
             </div>
             <div class="tab-pane fade" id="tabFoto">
                 <br>
