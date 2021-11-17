@@ -1558,7 +1558,6 @@ namespace Barragem.Controllers
                     else
                     {
                         string confirmationToken = WebSecurity.GeneratePasswordResetToken(userName);
-                        //EnviarMailSenha(confirmationToken, user.nome, user.email);
                         return RedirectToAction("ConfirmaSenha", new { id = confirmationToken });
                     }
                 }
@@ -1578,7 +1577,6 @@ namespace Barragem.Controllers
                 if (db != null)
                     db.Dispose();
             }
-            //return View();
         }
 
         private void EnviarMailSenha(string token, string nomeUsuario, string emailUsuario)
