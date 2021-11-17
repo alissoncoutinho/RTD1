@@ -170,6 +170,9 @@
                     {
                         <a class="btn btn-primary btn-danger" href="/Account/Excluir?Id=@Model.UserId">Excluir</a>
                     }
+                }
+                @if ((Roles.IsUserInRole("admin")) || (Roles.IsUserInRole("organizador")) || (Roles.IsUserInRole("adminTorneio")))
+                {
                     <a class="btn btn-primary btn-info" href="/Account/ResetarSenhaPeloOrganizador?userName=@Model.UserName">Resetar Senha</a>
                 }
             </div>
