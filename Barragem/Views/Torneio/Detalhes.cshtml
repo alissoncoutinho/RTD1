@@ -629,16 +629,24 @@
                         }
                         else
                         {
-                            if (Model.liberarTabela)
+                            if (inscricao != null)
                             {
-                                <a class="btn btn-default" href="@Url.Action("Tabela", "Torneio", new { torneioId = Model.Id })">Tabela</a>
-                                <a class="btn btn-default pull-right" href="@Url.Action("LancarResultado", "Torneio")">Lançar Resultado</a>
+                                <div class="col-xs-12 col-sm-6">
+                                    @if ((inscricao.valorPendente != null && inscricao.valorPendente != 0) || (((String.IsNullOrEmpty(inscricao.statusPagamento) || (inscricao.statusPagamento != "3" && inscricao.statusPagamento != "4")) && !inscricao.isAtivo) && Model.valor != 0 && (!ViewBag.isGratuito)))
+                                    {
+                                        if (ViewBag.isAceitaCartao)
+                                        {
+                                            <a href="@Url.Action("EfetuarPagamento", new { inscricaoId = inscricao.Id })" class="btn btn-success" title="Efetuar Pagamento">Cartão</a>
+                                        }
+                                        if ((Model.dadosBancarios != null) && (Model.dadosBancarios.Length > 100))
+                                        {
+                                            <button class="btn btn-success transferenciaButton" title="Transferência bancária">Transferência</button>
+                                        }
+                                    }
+                                </div>
+                             
                             }
-                            else
-                            {
-                                @Html.Raw("Inscrições Encerradas.")
-                            }
-
+                            @Html.Raw("<span style='color:red'>Inscrições Encerradas.</span>")
                         }
                     </div>
                     <!-- /.box-footer -->

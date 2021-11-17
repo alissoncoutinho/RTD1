@@ -1539,6 +1539,48 @@ namespace Barragem.Controllers
             //return View();
         }
 
+
+        [Authorize(Roles = "admin,organizador,adminTorneio")]
+        public ActionResult ResetarSenhaPeloOrganizador(string userName)
+        {
+            UserProfile user = null;
+            try
+            {
+
+                user = db.UserProfiles.Where(u => u.UserName == userName).FirstOrDefault();
+                if (user != null)
+                {
+                    if (String.IsNullOrEmpty(user.email))
+                    {
+                        ViewBag.MsgErro = "Este usuário não possui e-mail cadastrado. Por favor, entre em contato com o administrador";
+                        return View();
+                    }
+                    else
+                    {
+                        string confirmationToken = WebSecurity.GeneratePasswordResetToken(userName);
+                        //EnviarMailSenha(confirmationToken, user.nome, user.email);
+                        return RedirectToAction("ConfirmaSenha", new { id = confirmationToken });
+                    }
+                }
+                else
+                {
+                    ViewBag.MsgErro = "Este usuário não existe.";
+                    return View();
+                }
+            }
+            catch (Exception ex)
+            {
+                ViewBag.MsgErro = ex.Message;
+                return View();
+            }
+            finally
+            {
+                if (db != null)
+                    db.Dispose();
+            }
+            //return View();
+        }
+
         private void EnviarMailSenha(string token, string nomeUsuario, string emailUsuario)
         {
             string hostHeader = this.Request.Headers["host"];

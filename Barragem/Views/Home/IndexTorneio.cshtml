@@ -35,6 +35,8 @@
             <p><a class="btn btn-cta btn-cta-primary" href="@Url.Action("Login", "Account", new { returnUrl = "torneio", torneioId = Model.Id })">Inscreva-se</a> <a class="btn btn-cta btn-cta-secondary" href="#informacao">Informações</a></p>
         }else{
             <h3 class="title">Inscrições Encerradas</h3>
+            <p><a class="btn btn-cta btn-cta-secondary" href="../Torneio/Tabela?url=torneio&barra=@Model.barragemId">Ver Tabela</a>
+            <a class="btn btn-cta btn-cta-primary" href="@Url.Action("Login", "Account", new { returnUrl = "torneio", torneioId = Model.Id })">Minha inscrição</a></p>
         }
     </div>
 </section>

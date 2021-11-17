@@ -823,6 +823,8 @@ namespace Barragem.Controllers
                 var formouDupla = inscricoesDupla.Where(i => i.parceiroDuplaId == ins.userId && i.classe == ins.classe).Count();
                 if (formouDupla > 0)
                 {
+                    var insdupla = inscricoesDupla.Where(i => i.parceiroDuplaId == ins.userId && i.classe == ins.classe).First();
+                    insdupla.isSocio = (bool)ins.isAtivo; // fazendo esta ganbiarra para a tela saber se o parceiro está ativo ou não.
                     inscricoesRemove.Add(ins);
                 }
             }
@@ -1116,6 +1118,10 @@ namespace Barragem.Controllers
                     {
                         item.Categoria = null;
                         item.categoriaId = null;
+                    } else {
+                        item.Categoria = classesLiga[0].Categoria;
+                        item.categoriaId = classesLiga[0].CategoriaId;
+                        break;
                     }
                 }
             }
@@ -1545,10 +1551,13 @@ namespace Barragem.Controllers
             try
             {
                 var gratuidade = false;
-                string perfil = Roles.GetRolesForUser(User.Identity.Name)[0];
-                if (perfil.Equals("usuario") || userId == 0)
+                if (userId == 0)
                 {
-                    userId = WebSecurity.GetUserId(User.Identity.Name);
+                    string perfil = Roles.GetRolesForUser(User.Identity.Name)[0];
+                    if (!perfil.Equals(""))
+                    {
+                        userId = WebSecurity.GetUserId(User.Identity.Name);
+                    }
                 }
                 mudarStatusSeDesativadoParaStatusTorneio(userId);
                 var torneio = db.Torneio.Find(torneioId);

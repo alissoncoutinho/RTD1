@@ -200,7 +200,10 @@ namespace Barragem.Controllers
                 inscrito.nome = i.participante.nome;
                 inscrito.classe = i.classeTorneio.nome;
                 inscrito.foto = i.participante.fotoURL;
-                if(i.parceiroDupla!=null) inscrito.nomeDupla = i.parceiroDupla.nome;
+                if (i.parceiroDupla != null) {
+                    inscrito.fotoDupla = i.parceiroDupla.fotoURL;
+                    inscrito.nomeDupla = i.parceiroDupla.nome;
+                } 
                 inscritos.Add(inscrito);
             }
 
