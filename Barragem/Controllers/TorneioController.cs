@@ -3370,5 +3370,62 @@ namespace Barragem.Controllers
 
             return View();
         }
+        [Authorize(Roles = "admin")]
+        public ActionResult GerarPosicaoUltimoRanking(int id, int categoriaId)
+        {
+            //coloca as posicoes do ranking
+            List<SnapshotRanking> rankingAtual = db.SnapshotRanking.Where(sr => sr.CategoriaId == categoriaId
+                && sr.SnapshotId == id).OrderByDescending(sr => sr.Pontuacao).ToList();
+            int i = 1;
+            int pontuacaoAnterior = 0;
+            int posicaoAnterior = 0;
+            bool isPrimeiraVez = true;
+            foreach (SnapshotRanking ranking in rankingAtual)
+            {
+                if ((ranking.Pontuacao == pontuacaoAnterior) && (!isPrimeiraVez))
+                {
+                    ranking.Posicao = posicaoAnterior;
+                }
+                else
+                {
+                    ranking.Posicao = i;
+                    posicaoAnterior = i;
+                }
+                db.SaveChanges();
+                pontuacaoAnterior = ranking.Pontuacao;
+                if (isPrimeiraVez)
+                {
+                    posicaoAnterior = i;
+                    isPrimeiraVez = false;
+                }
+                i++;
+            }
+            return View();
+        }
+        [Authorize(Roles = "admin")]
+        public ActionResult AjustarPontuacaoDuplicadaRanking(int id, int categoriaId, string nome)
+        {
+            //coloca as posicoes do ranking
+            List<SnapshotRanking> rankingAtual = db.SnapshotRanking.Where(sr => sr.CategoriaId == categoriaId
+                && sr.SnapshotId == id && sr.Jogador.nome.ToUpper().Equals(nome.ToUpper())).OrderByDescending(sr => sr.Pontuacao).ToList();
+            int pontuacao = 0;
+            foreach (SnapshotRanking ranking in rankingAtual)
+            {
+                pontuacao = pontuacao + ranking.Pontuacao;
+            }
+            for (int i = 0; i < rankingAtual.Count(); i++)
+            {
+                var r = rankingAtual[i];
+                r.Pontuacao = pontuacao;
+                if (i == 0){
+                    db.Entry(r).State = EntityState.Modified;
+                } else {
+                    db.SnapshotRanking.Remove(r);
+                }
+                db.SaveChanges();
+            }
+
+            return View();
+        }
     }
 }
