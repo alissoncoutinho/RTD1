@@ -25,6 +25,14 @@
                     </div>
                 </div>
                 <div class="form-group">
+                    <div class="col-md-3">
+                        @if ((Roles.IsUserInRole("admin")) || (Roles.IsUserInRole("organizador")) || (Roles.IsUserInRole("adminTorneio")))
+                        {
+                            <a class="btn btn-primary btn-info" href="/Account/ResetarSenhaPeloOrganizador?userName=@Model.UserName">Resetar Senha</a>
+                        }
+                    </div>
+                </div>
+                <div class="form-group">
                     @Html.HiddenFor(m => m.UserId)
                     @Html.HiddenFor(m => m.isRanckingGerado)
                     @Html.HiddenFor(m => m.UserName)
@@ -38,20 +46,20 @@
                     @Html.LabelFor(m => m.situacao, new { @class = "col-md-2" })
                     <div class="col-md-3">
                         @if (!Model.situacao.Equals("pendente") && !Model.situacao.Equals("torneio") && !Model.situacao.Equals("suspenso") && !Model.situacao.Equals("suspensoWO") &&
-        !Model.situacao.Equals("desativado") && !Model.situacao.Equals("Ativamento solicitado"))
+!Model.situacao.Equals("desativado") && !Model.situacao.Equals("Ativamento solicitado"))
                         {
                             <select id="situacao" name="situacao" class="form-control">
-                                <option value="ativo" @if (Model.situacao.Equals("ativo")) { @Html.Raw("selected")      }>ativo</option>
+                                <option value="ativo" @if (Model.situacao.Equals("ativo")) { @Html.Raw("selected") }>ativo</option>
                                 <!--option value="desativado" if (Model.situacao.Equals("desativado")) { Html.Raw("selected")     }>desativado</option-->
-                                <option value="licenciado" @if (Model.situacao.Equals("licenciado")) { @Html.Raw("selected")        }>licenciado</option>
+                                <option value="licenciado" @if (Model.situacao.Equals("licenciado")) { @Html.Raw("selected") }>licenciado</option>
                                 @if ((Roles.IsUserInRole("admin")) || (Roles.IsUserInRole("organizador")))
                                 {
-                                    <option value="pendente" @if (Model.situacao.Equals("pendente")) { @Html.Raw("selected")       }>pendente</option>
-                                    <option value="torneio" @if (Model.situacao.Equals("torneio")) { @Html.Raw("selected")        }>torneio</option>
-                                    <option value="suspenso" @if (Model.situacao.Equals("suspenso")) { @Html.Raw("selected")       }>suspenso</option>
-                                    <option value="suspensoWO" @if (Model.situacao.Equals("suspensoWO")) { @Html.Raw("selected")        }>suspenso por WO</option>
-                                    <option value="desativado" @if (Model.situacao.Equals("desativado")) { @Html.Raw("selected")       }>desativado</option>
-                                    <option value="inativo" @if (Model.situacao.Equals("inativo")) { @Html.Raw("selected")        }>inativo</option>
+                                    <option value="pendente" @if (Model.situacao.Equals("pendente")) { @Html.Raw("selected") }>pendente</option>
+                                    <option value="torneio" @if (Model.situacao.Equals("torneio")) { @Html.Raw("selected") }>torneio</option>
+                                    <option value="suspenso" @if (Model.situacao.Equals("suspenso")) { @Html.Raw("selected") }>suspenso</option>
+                                    <option value="suspensoWO" @if (Model.situacao.Equals("suspensoWO")) { @Html.Raw("selected") }>suspenso por WO</option>
+                                    <option value="desativado" @if (Model.situacao.Equals("desativado")) { @Html.Raw("selected") }>desativado</option>
+                                    <option value="inativo" @if (Model.situacao.Equals("inativo")) { @Html.Raw("selected") }>inativo</option>
                                 }
                             </select>
                         }
@@ -61,12 +69,12 @@
                             {
                                 <select id="situacao" name="situacao" class="form-control">
                                     <option value="ativo">ativo</option>
-                                    <option value="pendente" @if (Model.situacao.Equals("pendente")) { @Html.Raw("selected")        }>pendente</option>
-                                    <option value="torneio" @if (Model.situacao.Equals("torneio")) { @Html.Raw("selected")         }>torneio</option>
-                                    <option value="suspenso" @if (Model.situacao.Equals("suspenso")) { @Html.Raw("selected")        }>suspenso</option>
-                                    <option value="suspensoWO" @if (Model.situacao.Equals("suspensoWO")) { @Html.Raw("selected")         }>suspenso por WO</option>
-                                    <option value="desativado" @if (Model.situacao.Equals("desativado")) { @Html.Raw("selected")        }>desativado</option>
-                                    <option value="Ativamento solicitado" @if (Model.situacao.Equals("Ativamento solicitado")) { @Html.Raw("selected")         }>Ativamento solicitado</option>
+                                    <option value="pendente" @if (Model.situacao.Equals("pendente")) { @Html.Raw("selected") }>pendente</option>
+                                    <option value="torneio" @if (Model.situacao.Equals("torneio")) { @Html.Raw("selected") }>torneio</option>
+                                    <option value="suspenso" @if (Model.situacao.Equals("suspenso")) { @Html.Raw("selected") }>suspenso</option>
+                                    <option value="suspensoWO" @if (Model.situacao.Equals("suspensoWO")) { @Html.Raw("selected") }>suspenso por WO</option>
+                                    <option value="desativado" @if (Model.situacao.Equals("desativado")) { @Html.Raw("selected") }>desativado</option>
+                                    <option value="Ativamento solicitado" @if (Model.situacao.Equals("Ativamento solicitado")) { @Html.Raw("selected") }>Ativamento solicitado</option>
                                 </select>
                             }
                             else
@@ -115,8 +123,8 @@
                     @Html.LabelFor(m => m.lateralidade, new { @class = "col-md-2" })
                     <div class="col-md-2">
                         <select id="lateralidade" name="lateralidade" class="form-control">
-                            <option value="destro" @if (Model.lateralidade.Equals("destro")) { @Html.Raw("selected")     }>destro</option>
-                            <option value="canhoto" @if (Model.lateralidade.Equals("canhoto")) { @Html.Raw("selected")     }>canhoto</option>
+                            <option value="destro" @if (Model.lateralidade.Equals("destro")) { @Html.Raw("selected") }>destro</option>
+                            <option value="canhoto" @if (Model.lateralidade.Equals("canhoto")) { @Html.Raw("selected") }>canhoto</option>
                         </select>
                     </div>
                 </div>
@@ -171,6 +179,7 @@
                         <a class="btn btn-primary btn-danger" href="/Account/Excluir?Id=@Model.UserId">Excluir</a>
                     }
                 }
+
             </div>
             <div class="tab-pane fade" id="tabFoto">
                 <br>
