@@ -957,7 +957,7 @@ namespace Barragem.Controllers
         }
 
         [Authorize(Roles = "admin,organizador,adminTorneio")]
-        public ActionResult EditInscritos(int torneioId, int filtroClasse = 0, string Msg = "")
+        public ActionResult EditInscritos(int torneioId, int filtroClasse = 0, string filtroJogador = "", string Msg = "")
         {
 
             List<InscricaoTorneio> inscricao = db.InscricaoTorneio.Where(i => i.torneioId == torneioId).ToList();
@@ -966,6 +966,10 @@ namespace Barragem.Controllers
             {
                 inscricao = inscricao.Where(i => i.classe == filtroClasse).ToList();
                 ViewBag.CabecasDeChave = getOpcoesCabecaDeChave(filtroClasse);
+            }
+            if (filtroJogador != "")
+            {
+                inscricao = inscricao.Where(i => i.participante.nome.ToUpper().Contains(filtroJogador.ToUpper())).ToList();
             }
             ViewBag.descricaoTipoDesconto = torneio.descontoPara;
             if (torneio.valorDescontoFederado > torneio.valorSocio)
