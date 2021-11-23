@@ -36,7 +36,7 @@ namespace Barragem.Controllers
                     user = db.UserProfiles.Where(u => u.UserName == userName).FirstOrDefault();
                 }
                 else { 
-                    user = db.UserProfiles.Where(u => u.email == email && u.situacao != "desativado").FirstOrDefault();
+                    user = db.UserProfiles.Where(u => u.email == email && u.situacao != "desativado" && u.situacao != "inativado").FirstOrDefault();
                     if (user == null)
                     {
                         user = db.UserProfiles.Where(u => u.email == email).FirstOrDefault();

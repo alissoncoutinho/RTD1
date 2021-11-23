@@ -301,6 +301,22 @@ namespace Barragem.Controllers
         }
 
         [ResponseType(typeof(void))]
+        [HttpGet]
+        [Route("api/InscricaoAPI/{Id}/CobrancaPIX")]
+        public IHttpActionResult CobrancaPIXInscricao(int Id)
+        {
+            try
+            {
+                var inscricaoTorneio = db.InscricaoTorneio.Find(Id);
+
+                // var cobrancaPix = new PIXPagSeguro().GerarCobranca(new Cobranca());
+            }catch(Exception e){
+                return InternalServerError(e);
+            }
+            return Ok("00020126830014br.gov.bcb.pix2561api.pagseguro.com/pix/v2/210387E0-A6BF-45D1-80B5-CFEB9BBCEE2F5204899953039865802BR5921Pagseguro Internet SA6009SAO PAULO62070503***63047E6D");
+        }
+
+        [ResponseType(typeof(void))]
         [HttpPost]
         [AllowAnonymous]
         [Route("api/InscricaoAPI")]
@@ -313,7 +329,9 @@ namespace Barragem.Controllers
             }
             else
             {
-                return Ok();
+                var inscricao = new InscricaoTorneio();
+                inscricao.Id = mensagemRetorno.id;
+                return Ok(inscricao);
             }
         }
         

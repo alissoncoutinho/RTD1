@@ -210,6 +210,7 @@ namespace Barragem.Models
 
     public class MensagemRetorno
     {
+        public int id { get; set; }
         public string mensagem { get; set; }
         public string tipo { get; set; } // erro ou ok
         public string nomePagina { get; set; }

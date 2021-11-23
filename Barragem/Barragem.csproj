@@ -232,6 +232,7 @@
     <Compile Include="Class\Mail.cs" />
     <Compile Include="Class\MD5Cript.cs" />
     <Compile Include="Class\MontaJogosTorneioRegraCBT.cs" />
+    <Compile Include="Class\PIXPagSeguro.cs" />
     <Compile Include="Class\RodadaNegocio.cs" />
     <Compile Include="Class\TemporadaNegocio.cs" />
     <Compile Include="Class\Tipos.cs" />

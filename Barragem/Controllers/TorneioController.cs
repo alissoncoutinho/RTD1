@@ -1566,6 +1566,7 @@ namespace Barragem.Controllers
                 mudarStatusSeDesativadoParaStatusTorneio(userId);
                 var torneio = db.Torneio.Find(torneioId);
                 var isInscricao = db.InscricaoTorneio.Where(i => i.torneioId == torneioId && i.userId == userId).Count();
+                InscricaoTorneio inscricao = null;
                 if (isInscricao > 0)
                 {
                     var it = db.InscricaoTorneio.Where(i => i.torneioId == torneioId && i.userId == userId).ToList();
@@ -1685,7 +1686,7 @@ namespace Barragem.Controllers
                     }
                     double valorInscricao = calcularValorInscricao(classeInscricao2, classeInscricao3, classeInscricao4, isSocio, torneio, userId, isFederado);
 
-                    InscricaoTorneio inscricao = preencherInscricaoTorneio(torneioId, userId, classeInscricao, valorInscricao, observacao, isSocio, isFederado);
+                    inscricao = preencherInscricaoTorneio(torneioId, userId, classeInscricao, valorInscricao, observacao, isSocio, isFederado);
                     db.InscricaoTorneio.Add(inscricao);
                     if (classeInscricao2 > 0)
                     {
@@ -1704,6 +1705,7 @@ namespace Barragem.Controllers
                     }
                 }
                 db.SaveChanges();
+                mensagemRetorno.id = inscricao.Id;
                 mensagemRetorno.mensagem = "Inscrição recebida.";
                 gratuidade = VerificarGratuidade(torneio, userId);
                 if ((torneio.valor == 0) || (gratuidade))
