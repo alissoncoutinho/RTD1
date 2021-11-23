@@ -713,7 +713,7 @@ namespace Barragem.Controllers
             return View(jogos);
         }
 
-        private static void extrairPrimeiroNomeJogosDupla(List<Jogo> jogos)
+        private void extrairPrimeiroNomeJogosDupla(List<Jogo> jogos)
         {
             foreach (var jogo in jogos)
             {
