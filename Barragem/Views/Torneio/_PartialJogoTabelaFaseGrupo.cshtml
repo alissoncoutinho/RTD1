@@ -2,7 +2,16 @@
 
 <div class="alinhamento">
     <div class="bloco_jogo">
-        <p class="data">@Html.Raw(Model.dataHorarioQuadra)</p>
+        <p class="data">
+            @if (Model.desafiante_id == 10)
+            {
+                @Html.Raw("Descanso")
+            }
+            else
+            {
+                @Html.Raw(Model.dataHorarioQuadra)
+            }
+        </p>
         <p class="nome">
             @if (Model.desafiado != null)
             {
@@ -47,13 +56,13 @@
             }
             else
             {
-                @Html.Raw("X")
+                @Html.Raw("")
             }
         </p>
         <p class="nome">
             @if (Model.desafiante_id == 10)
             {
-                @Html.Raw("bye")
+                @Html.Raw("")
             }
             else
             {
