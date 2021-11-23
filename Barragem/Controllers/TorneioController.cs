@@ -651,8 +651,8 @@ namespace Barragem.Controllers
                 ViewBag.classificacaoGrupo = classificacaoGrupo;
                 var qtddJogosPorRodada = (classificacaoGrupo.Count() > 0) ? (int)classificacaoGrupo.Count() / 2 : 2;
                 qtddJogosPorRodada = (qtddJogosPorRodada % 2 != 0) ? qtddJogosPorRodada + 1 : qtddJogosPorRodada;
-                
-                ViewBag.height = (classificacaoGrupo.Count()>0) ? qtddJogosPorRodada * 110 : 0;
+
+                ViewBag.height = (classificacaoGrupo.Count() > 0) ? qtddJogosPorRodada * 110 : 0;
                 ViewBag.grupo = grupo;
                 jogos = db.Jogo.Where(r => r.torneioId == torneioId && r.classeTorneio == filtroClasse).OrderBy(r => r.rodadaFaseGrupo).ToList();
             }
@@ -707,8 +707,32 @@ namespace Barragem.Controllers
             ViewBag.nomeTorneio = torneio.nome;
             ViewBag.filtroClasse = filtroClasse;
 
+            extrairPrimeiroNomeJogosDupla(jogos);
+
             mensagem(Msg);
             return View(jogos);
+        }
+
+        private static void extrairPrimeiroNomeJogosDupla(List<Jogo> jogos)
+        {
+            foreach (var jogo in jogos)
+            {
+                if (jogo.desafiado != null && jogo.desafiado2 != null && jogo.desafiante != null && jogo.desafiante2 != null)
+                {
+                    var nomesDesafiado = jogo.desafiado.nome.Split(' ');
+                    jogo.desafiado.nome = nomesDesafiado[0];
+
+                    var nomesDesafiado2 = jogo.desafiado2.nome.Split(' ');
+                    jogo.desafiado2.nome = nomesDesafiado2[0];
+
+                    var nomesDesafiante = jogo.desafiante.nome.Split(' ');
+                    jogo.desafiante.nome = nomesDesafiante[0];
+
+                    var nomesDesafiante2 = jogo.desafiante2.nome.Split(' ');
+                    jogo.desafiante2.nome = nomesDesafiante2[0];
+
+                }
+            }
         }
 
         //public ActionResult TabelaFaseGrupo(int torneioId = 0, int filtroClasse = 0, int grupo=1, string Msg = "", string Url = "", int barra = 0)
