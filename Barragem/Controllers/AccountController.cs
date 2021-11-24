@@ -1029,13 +1029,22 @@ namespace Barragem.Controllers
 
         [HttpGet]
         [Authorize(Roles = "admin,organizador,usuario,adminTorneio")]
-        public ActionResult EditaUsuario(string UserName, bool isAlterarFoto=false)
+        public ActionResult EditaUsuario(string UserName, bool isAlterarFoto=false, string ConfirmaSenha = "")
         {
             ViewBag.isAlterarFoto = isAlterarFoto;
             var usuario = db.UserProfiles.Find(WebSecurity.GetUserId(UserName));
             ViewBag.solicitarAtivacao = "";
             ViewBag.classeId = new SelectList(db.Classe.Where(c => c.barragemId == usuario.barragemId && c.ativa == true).ToList(), "Id", "nome", usuario.classeId);
-            
+            if(ConfirmaSenha != "" && ConfirmaSenha == "OK")
+            {
+                ViewBag.ConfirmaSenha = "OK";
+                ViewBag.ConfirmaSenhaOKMsg = "Senha alterada com sucesso.";
+            }
+            if (ConfirmaSenha != "" && ConfirmaSenha == "NOTOK")
+            {
+                ViewBag.ConfirmaSenha = "NOTOK";
+                ViewBag.ConfirmaSenhaNOTOKMsg = "Não foi possível trocar a senha!";
+            }
             return View(usuario);
         }
 
@@ -1558,7 +1567,7 @@ namespace Barragem.Controllers
                     else
                     {
                         string confirmationToken = WebSecurity.GeneratePasswordResetToken(userName);
-                        return RedirectToAction("ConfirmaSenha", new { id = confirmationToken });
+                        return RedirectToAction("ConfirmaSenha", new { id = confirmationToken, userName = userName });
                     }
                 }
                 else
@@ -1598,9 +1607,13 @@ namespace Barragem.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-        public ActionResult ConfirmaSenha(string id)
+        public ActionResult ConfirmaSenha(string id, string userName = "")
         {
             ViewBag.MsgErro = "";
+            if(userName != "")
+            {
+                ViewBag.username = userName;
+            }
             ConfirmaSenhaModel model = new ConfirmaSenhaModel();
             model.TokenId = id;
             return View(model);
@@ -1609,7 +1622,7 @@ namespace Barragem.Controllers
         [AllowAnonymous]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult ConfirmaSenha(ConfirmaSenhaModel model)
+        public ActionResult ConfirmaSenha(ConfirmaSenhaModel model, string userName = "")
         {
             ViewBag.MsgErro = "";
             try
@@ -1617,10 +1630,18 @@ namespace Barragem.Controllers
                 if (WebSecurity.ResetPassword(model.TokenId, model.Senha))
                 {
                     ViewBag.MsgSucesso = "Senha alterada com sucesso.";
+                    if(userName != "")
+                    {
+                        return Redirect(String.Format("/Account/EditaUsuario?UserName={0}&ConfirmaSenha=OK", userName));
+                    }
                     return RedirectToAction("Login");
                 }
                 else
                 {
+                    if (userName != "")
+                    {
+                        return Redirect(String.Format("/Account/EditaUsuario?UserName={0}&ConfirmaSenha=NOTOK", userName));
+                    }
                     ViewBag.MsgErro = "Não foi possível trocar a senha!";
                 }
             }

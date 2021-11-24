@@ -82,12 +82,13 @@
 
             <h3 class="form-signin-heading">Confirmar troca de senha</h3>
             <input type="hidden" id="TokenId" name="TokenId" value="@Model.TokenId">
+            <input type="hidden" id="userName" name="userName" value="@ViewBag.userName">
             <input type="password" class="form-control" placeholder="Nova senha" id="Senha" name="Senha" required autofocus>
             <input type="password" class="form-control" placeholder="Confirmar senha" id="SenhaConfirmacao" name="SenhaConfirmacao" required>
             <button class="btn btn-small btn-success" type="submit">Enviar</button>
         }
         <p style="max-width: 300px;margin: 0 auto 10px;text-align:center">
-            
+
         </p>
     </div>
 
