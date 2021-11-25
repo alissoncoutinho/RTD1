@@ -56,7 +56,14 @@
             }
             else
             {
-                @Html.Raw("")
+                if (Model.desafiante_id == 10)
+                {
+                    @Html.Raw("")
+                }
+                else
+                {
+                    @Html.Raw("X")
+                }
             }
         </p>
         <p class="nome">
