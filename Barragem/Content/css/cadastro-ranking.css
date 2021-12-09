@@ -1,0 +1,195 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&display=swap');
+body {
+    height: 100%;
+}
+.todos{
+    display: none;
+}
+.line{
+    width: 100%;
+    height: 2px;
+    background-color:white;
+    margin: 20px 0 0 0;
+}
+.line2{
+    width: 100%;
+    height: 2px;
+    background-color:white;
+    margin: 20px 0;
+    display: none;
+}
+
+.duvidas{
+    width: 70%;
+}
+
+footer {
+    height: 100%;
+    padding: 30px 0;
+}
+form {
+    width: 350px;
+}
+.btn-success{
+    background-color: #014626;
+    border-color: #014626;
+}
+.bg-success{
+    background-color: #014626!important;
+}
+.chamada label {
+    font-family: DM Sans, sans-serif;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 16px;
+    color: #E18335;
+}
+
+.chamada h1 {
+    font-family: DM Sans, sans-serif;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 32px;
+    line-height: 42px;
+    color: #014626;
+}
+
+.bg-img {
+    background-image: url(../img/bg-cad-2.jpg);
+    background-size: cover;
+    background-position: center;
+}
+
+.form-control {
+    padding: 0.7rem;
+}
+.form-select{
+    padding: 0.7rem;
+}
+.form-select:focus{
+    border: 1px solid #014626;
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+}
+.form-input {
+    font-family: DM Sans;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 18px;
+    color: #333333;
+}
+
+.form-input label {
+    margin-bottom: 4px;
+}
+
+.form-input input:focus {
+    border: 1px solid #014626;
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+}
+
+.copyright {
+    font-family: DM Sans, sans-serif;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 16px;
+    text-align: right;
+    color: #FFFFFF;
+}
+
+.eye img:nth-child(2) {
+    display: none;
+}
+
+.eyeActive {
+    display: block !important;
+}
+
+.reyeActive {
+    display: block !important;
+}
+
+.eye img {
+    max-width: 30px;
+    position: absolute;
+    right: 0;
+    bottom: 8px;
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+.passord-wrapper {
+    position: relative;
+    max-width: 500px;
+    width: 100%;
+}
+
+#eyes {
+    opacity: 0.7;
+}
+
+#eyes:hover {
+    opacity: 1;
+}
+
+#eyesClosed {
+    opacity: 1;
+}
+#eyesClosed:hover {
+    opacity: 0.7;
+}
+.alert-default{
+    background-color: #E18335;
+    color: #713B0F;
+    font-family: DM Sans;
+font-style: normal;
+font-weight: bold;
+font-size: 14px;
+line-height: 18px;
+}
+
+
+hr {
+    background-color: white;
+}
+@media screen and (max-width: 768px) {
+    .img-right {
+        display: none;
+    }
+    footer img{
+        max-width:100px !important;
+    }
+    
+    footer h5{
+    font-size:18px !important;
+    }
+
+    .copyright{
+        font-size: 12px !important;
+    }
+    .chamada h1{
+        font-size: 24px;
+    }
+    .logo{
+        max-width:200px;
+    }
+    .form-control,.form-select,.alert-default,.form-input{
+        max-width:340px !important;
+    }
+    main{
+        overflow-x: hidden;
+    }
+
+    .logo-footer img{
+        max-width:130px !important;
+    }
+    .duvidas h5{
+        font-size:16px !important;
+    }
+    .line{
+        display:none;
+    }
+    .line2{
+        display:block;
+    }
+}
