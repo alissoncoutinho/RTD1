@@ -5,7 +5,7 @@ let input = document.getElementById('options');
 
 input.addEventListener('change', ()=>{
     console.log(input.value);
-    if(input.value !=  'regras'){
+    if(input.value !=  '1'){
         todos.style.display = 'block';
         regras.style.display = 'none';
         
