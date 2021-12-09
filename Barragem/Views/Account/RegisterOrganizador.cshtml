@@ -105,22 +105,22 @@
         function changeToText() {
             eye.addEventListener('click', () => {
                 if (password.Attribute = ('type', 'text')) {
-                    document.getElementsByName("login_text_password")[0].setAttribute('type', 'password');
+                    document.getElementsByName("Password")[0].setAttribute('type', 'password');
                     eyeClosed.classList.toggle('eyeActive');
                 }
                 else {
-                    document.getElementsByName("login_text_password")[0].setAttribute('type', 'password');
+                    document.getElementsByName("Password")[0].setAttribute('type', 'password');
                 }
             });
         }
         function changeToTextR() {
             reye.addEventListener('click', () => {
                 if (repassword.Attribute = ('type', 'text')) {
-                    document.getElementsByName("re_login_text_password")[0].setAttribute('type', 'password');
+                    document.getElementsByName("ConfirmPassword")[0].setAttribute('type', 'password');
                     reyeClosed.classList.toggle('reyeActive');
                 }
                 else {
-                    document.getElementsByName("re_login_text_password")[0].setAttribute('type', 'password');
+                    document.getElementsByName("ConfirmPassword")[0].setAttribute('type', 'password');
                 }
             });
         }
@@ -128,11 +128,11 @@
         function changeToPassword() {
             eyeClosed.addEventListener('click', () => {
                 if (password.Attribute = ('type', 'password')) {
-                    document.getElementsByName("login_text_password")[0].setAttribute('type', 'text');
+                    document.getElementsByName("Password")[0].setAttribute('type', 'text');
                     eyeClosed.classList.toggle('eyeActive');
                 }
                 else {
-                    document.getElementsByName("login_text_password")[0].setAttribute('type', 'password');
+                    document.getElementsByName("Password")[0].setAttribute('type', 'password');
                 }
             });
         }
@@ -140,11 +140,11 @@
         function changeToPasswordR() {
             reyeClosed.addEventListener('click', () => {
                 if (repassword.Attribute = ('type', 'password')) {
-                    document.getElementsByName("re_login_text_password")[0].setAttribute('type', 'text');
+                    document.getElementsByName("ConfirmPassword")[0].setAttribute('type', 'text');
                     reyeClosed.classList.toggle('reyeActive');
                 }
                 else {
-                    document.getElementsByName("re_login_text_password")[0].setAttribute('type', 'password');
+                    document.getElementsByName("ConfirmPassword")[0].setAttribute('type', 'password');
                 }
             });
         }
