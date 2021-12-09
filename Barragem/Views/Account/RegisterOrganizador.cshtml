@@ -1,99 +1,74 @@
-﻿
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="stylesheet" href="/Content/css/cadastro-organizador.css">
-    <title>Cadastro Organizador</title>
-</head>
+﻿@{
+    Layout = "~/Views/Shared/_LayoutCadastroBT.cshtml";
 
-<body class="container-fluid m-0 p-0">
-    <main class="row h-100 w-100 m-0">
-        <section class="col-md-5 bg-light">
-            <form action="/Account/RegisterOrganizador" method="post" class=" m-auto mt-4">
-                @Html.AntiForgeryToken()
-                @Html.ValidationSummary()
-                <img src="/Content/img/logo-cad.png" alt="" srcset="">,
-                <div class="mt-5 chamada">
-                    <label>se você é organizador de torneios</label>
-                    <h1>Crie sua conta</h1>
-                </div>
-                <div class="mt-3 form-input">
-                    <label for="">Nome *</label>
-                    <input type="text" name="nome" class="form-control" placeholder="Insira seu nome" required>
-                </div>
-                <div class="mt-3 form-input">
-                    <label for="">Login *</label>
-                    <input type="text" name="UserName" class="form-control" placeholder="Insira seu login" required>
-                </div>
-                <div class="mt-3 form-input">
-                    <label for="">E-mail *</label>
-                    <input type="email" name="email" class="form-control" placeholder="Insira seu e-mail" required>
-                </div>
-                <div class="mt-3 form-input">
-                    <div class="passord-wrapper d-flex flex-column justify-content-end">
-                        <label for="name">Senha *</label>
-                        <input name="Password" class="form-control" type="text" id="password" placeholder="Insira sua senha"
-                               required />
-                        <div class="eye">
-                            <img class="img-fluid" id="eye" src="/Content/img/eye.png">
-                            <img class="img-fluid" id="eyeClosed" src="/Content/img/hidden.png">
-                        </div>
-                    </div>
-                </div>
-                <div class="mt-3 form-input">
-                    <div class="passord-wrapper d-flex flex-column justify-content-end">
-                        <label for="name">Confirmar Senha *</label>
-                        <input name="ConfirmPassword" class="form-control" type="text" id="repassword" placeholder="Insira sua senha"
-                               required />
-                        <div class="eye">
-                            <img class="img-fluid" id="reye" src="/Content/img/eye.png">
-                            <img class="img-fluid" id="reyeClosed" src="/Content/img/hidden.png">
-                        </div>
-                    </div>
-                </div>
-                <div class="mt-3 form-input">
-                    <label for="">Celular / Whatsapp *</label>
-                    <input type="text" name="telefoneCelular" id="telefone" class="form-control" placeholder="(xx) xxxxx-xxxx">
-                </div>
-                <input type="hidden" name="bairro" value="não informado" />
-                <input type="hidden" name="naturalidade" value="não informada" />
-                <input type="hidden" name="altura2" value="0" />
-                <input type="hidden" name="classeId" value="1" />
-                <input type="hidden" name="barragemId" value="0" />
-                <div class="mt-3 form-input mb-5">
-                    <button type="submit" class="btn btn-success w-100">Criar minha conta</button>
-                </div>
-            </form>
-        </section>
-        <section class="col-md-7 bg-img img-right">
-        </section>
-    </main>
-    <footer class="bg-success">
-        <div class="container">
+}
 
-            <div class="wrapper d-flex justify-content-between">
-                <div class="logo-footer">
-                    <img src="/Content/img/logo-white-cad.png" alt="logo" srcset="">
-                </div>
+@section Css_Cadastro{
+    <link href="@Url.Content("/Content/css/cadastro-organizador.css")" rel="stylesheet" type="text/css" />
+}
 
-                <div class="duvidas text-end">
-                    <h5 class="text-light">DÚVIDAS?</h5>
-                    <h5 class="text-light"><img class="img-fluid" src="/Content/img/whatsapp-icon.svg" alt="zap"> <a class="text-decoration-none text-white" target="_blank" href="https://wa.me/5511999002345/?text=Eu%20Gostaria%20de%20tirar%20uma%20dúvida%20">11 99900-2345</a></h5>
-                    <div class="line"></div>
-                </div><!--duvidas-->
-            </div><!--wrapper-->
-            <div class="line2"></div>
-            <div>
-                <h5 class="copyright">© 2021 Ranking Beach Tennis. Todos os direitos reservados. </h5>
+<main class="row h-100 w-100 m-0">
+    <section class="col-md-5 bg-light">
+        <form action="/Account/RegisterOrganizador" method="post" class=" m-auto mt-4">
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary()
+            <img src="/Content/img/logo-cad.png" alt="" srcset="">,
+            <div class="mt-5 chamada">
+                <label>se você é organizador de torneios</label>
+                <h1>Crie sua conta</h1>
             </div>
-
-        </div>
-    </footer>
+            <div class="mt-3 form-input">
+                <label for="">Nome *</label>
+                <input type="text" name="nome" class="form-control" placeholder="Insira seu nome" required>
+            </div>
+            <div class="mt-3 form-input">
+                <label for="">Login *</label>
+                <input type="text" name="UserName" class="form-control" placeholder="Insira seu login" required>
+            </div>
+            <div class="mt-3 form-input">
+                <label for="">E-mail *</label>
+                <input type="email" name="email" class="form-control" placeholder="Insira seu e-mail" required>
+            </div>
+            <div class="mt-3 form-input">
+                <div class="passord-wrapper d-flex flex-column justify-content-end">
+                    <label for="name">Senha *</label>
+                    <input name="Password" class="form-control" type="text" id="password" placeholder="Insira sua senha"
+                           required />
+                    <div class="eye">
+                        <img class="img-fluid" id="eye" src="/Content/img/eye.png">
+                        <img class="img-fluid" id="eyeClosed" src="/Content/img/hidden.png">
+                    </div>
+                </div>
+            </div>
+            <div class="mt-3 form-input">
+                <div class="passord-wrapper d-flex flex-column justify-content-end">
+                    <label for="name">Confirmar Senha *</label>
+                    <input name="ConfirmPassword" class="form-control" type="text" id="repassword" placeholder="Insira sua senha"
+                           required />
+                    <div class="eye">
+                        <img class="img-fluid" id="reye" src="/Content/img/eye.png">
+                        <img class="img-fluid" id="reyeClosed" src="/Content/img/hidden.png">
+                    </div>
+                </div>
+            </div>
+            <div class="mt-3 form-input">
+                <label for="">Celular / Whatsapp *</label>
+                <input type="text" name="telefoneCelular" id="telefone" class="form-control" placeholder="(xx) xxxxx-xxxx">
+            </div>
+            <input type="hidden" name="bairro" value="não informado" />
+            <input type="hidden" name="naturalidade" value="não informada" />
+            <input type="hidden" name="altura2" value="0" />
+            <input type="hidden" name="classeId" value="1" />
+            <input type="hidden" name="barragemId" value="0" />
+            <div class="mt-3 form-input mb-5">
+                <button type="submit" class="btn btn-success w-100">Criar minha conta</button>
+            </div>
+        </form>
+    </section>
+    <section class="col-md-7 bg-img img-right">
+    </section>
+</main>
+@section Scripts {
     <script>
         const password = document.getElementById('password');
         const repassword = document.getElementById('repassword');
@@ -163,9 +138,4 @@
         changeToPasswordR();
 
     </script>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/js/bootstrap.min.js"></script>
-</body>
-
-</html>
+}
