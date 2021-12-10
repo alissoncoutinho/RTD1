@@ -1,73 +1,71 @@
-﻿@model Barragem.Models.Liga
+﻿@{
+    Layout = "~/Views/Shared/_LayoutPainelBT.cshtml";
 
-<div class="box box-danger">
-    <div class="box-header with-border">
-        <h3 class="box-title">Circuito</h3>
-    </div>
+}
 
-    @using (Html.BeginForm("Create", "Liga", FormMethod.Post, new { @class = "form-horizontal" }))
-    {
-        @Html.AntiForgeryToken()
-        @Html.ValidationSummary(true)
-        <div class="box-body">
-            
-            <div class="box-body">
-                <div class="form-group">
-                    <label class="col-sm-2 control-label" for="nome">Escolha o nome do seu circuito:</label>
-                    <div class="col-sm-8 input-group">
-                        <input class="form-control" id="nome" name="nome" type="text" value="">
-                    </div>
-                    <span class="field-validation-valid" data-valmsg-for="nome" data-valmsg-replace="true"></span>
+@section Css_Painel{
+    <link href="@Url.Content("/Content/css/novo-circuito.css")" rel="stylesheet" type="text/css" />
+}
+
+<section class="row">
+    <div class="col-md-12 bg-light border position-relative p-4 mb-5 shadow-lg rounded">
+        <div class="row dashboard">
+            <div class="col-md-12 mb-3 d-flex">
+                <h3>
+                    <a href="/Torneio/PainelControle" class="voltar"> <img src="/Content/img/back.svg" alt="" srcset=""> Voltar</a> | Criar
+                    Novo Circuito
+                </h3>
+            </div>
+            <div class="col-md-12 mb-4">
+                <div class="progress">
+                    <div class="progress-bar" role="progressbar" style="width: 80%;" aria-valuenow="25"
+                         aria-valuemin="0" aria-valuemax="100"></div>
                 </div>
-                <div class="form-group">
-                    @Html.Label("Modalidade dos Torneios", new { @class = "control-label col-md-2" })
-                    <div class="col-md-4">
-                        <select id="modalidadeBarragem" name="modalidadeBarragem" onchange="mostrarTextoModalidade()" class="form-control">
-                            <option value="1">Regras da federação</option>
-                            <option value="2">Modelo Todos contra todos</option>
+            </div>
+            <div class="col-md-6">
+                <form action="/Liga/Create" method="post" class=" m-auto mt-4">
+                    @Html.AntiForgeryToken()
+                    @Html.ValidationSummary(true)
+                    <div class="mt-3 form-input">
+                        <label for="">Nome do Circuito</label>
+                        <input type="text" name="nome" class="form-control"
+                               placeholder="Ex:  Circuito BT 2022, Ranking Clube Beach">
+                    </div>
+                    <div class="mt-3 form-input">
+                        <label for="">Escolha a modalidade dos torneios *</label>
+                        <select name="modalidadeBarragem" class="form-select" aria-label="Default select example" id="options">
+                            <option value="1">Regras da Federação</option>
+                            <option value="2">Todos contra todos</option>
                         </select>
                     </div>
-                </div>
-                <div class="row" id="textoFederacao">
-                    <div class="col-md-4" style="border: 1px solid #ccc;padding: 10px;margin-left: 15px;margin-bottom: 15px;">
-                        <b>Regras da federação:</b> nesse formato, o sistema sorteia jogos entre todos participantes nas categorias e será o vencedor quem tiver mais vitórias.
+                    <div class="mt-3">
+                        <div class="alert alert-default federacao" role="alert">
+                            <span class="text-white">
+                                <img src="/Content/img/alert.svg" alt="" srcset=""> Regras da
+                                federação:
+                            </span>
+                            nesse formato, o sistema sorteia jogos entre todos participantes nas categorias e
+                            será o vencedor quem tiver mais vitórias.
+                        </div>
+                        <div class="alert alert-default todos" role="alert">
+                            <span class="text-white">
+                                <img src="/Content/img/alert.svg" alt="" srcset=""> Regras da
+                                todos contra todos:
+                            </span>
+                            nesse formato, o sistema sorteia jogos entre todos participantes nas categorias e
+                            será o vencedor quem tiver mais vitórias.
+                        </div>
                     </div>
-                </div>
-                <div class="row" id="textoTodosContraTodos">
-                    <div class="col-md-4" style="border: 1px solid #ccc;padding: 10px;margin-left: 15px;margin-bottom: 15px;">
-                        <b>Todos contra todos:</b> Nesse formato, o sistema sorteia jogos entre todos participantes nas categorias e será o vencedor quem tiver mais vitórias.
+                    <div class="mt-3 form-input mb-5">
+                        <button type="submit" class="btn btn-success w-100">Gravar</button>
                     </div>
-                </div>
-            </div>
-
-            <div class="box-footer">
-                <button type="submit" class="btn btn-info pull-right">Gravar</button>
+                </form>
             </div>
         </div>
-    }
+    </div>
+</section>
 
 @section Scripts {
-
-    <script type="text/javascript">
-        function mostrarTextoModalidade() {
-            if (document.getElementById('modalidadeBarragem').value == 1) {
-                document.getElementById('textoFederacao').style.opacity = "1";
-                document.getElementById('textoFederacao').style.display = "block";
-                document.getElementById('textoTodosContraTodos').style.opacity = "0 !important";
-                document.getElementById('textoTodosContraTodos').style.display = "none";
-
-            } else {
-                document.getElementById('textoFederacao').style.opacity = "0 !important";
-                document.getElementById('textoFederacao').style.display = "none";
-                document.getElementById('textoTodosContraTodos').style.opacity = "1";
-                document.getElementById('textoTodosContraTodos').style.display = "block";
-            }
-        }
-        document.getElementById('textoFederacao').style.opacity = "1";
-        document.getElementById('textoFederacao').style.display = "block";
-        document.getElementById('textoTodosContraTodos').style.opacity = "0 !important";
-        document.getElementById('textoTodosContraTodos').style.display = "none";
-
-    
-    </script>
+    <script src="~/Content/js/render.js"></script>
+    <script src="~/Content/js/menu.js"></script>
 }

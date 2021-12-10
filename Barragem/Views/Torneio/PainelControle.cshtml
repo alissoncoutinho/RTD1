@@ -1,265 +1,412 @@
-﻿@model IEnumerable<Barragem.Models.Torneio>
-@{
-    ViewBag.Title = "Painel de Controle";
-    Barragem.Models.Torneio torneio = new Barragem.Models.Torneio();
-
-    HttpCookie cookie = Request.Cookies["_barragemId"];
-    var barraId = 0;
-    var scrLogo = "/Content/image/inserirLogo.png";
-
-    if (cookie != null){
-        barraId = Convert.ToInt32(cookie.Value.ToString());
-        scrLogo = "/Content/image/logo" + barraId + ".png";
-        var path = Server.MapPath(scrLogo);
-        if (!File.Exists(path)){
-            scrLogo = "/Content/image/logo" + barraId + ".jpg";
-            path = Server.MapPath(scrLogo);
-        }
-        if (!File.Exists(path))
-        {
-            scrLogo = "/Content/image/inserirLogo.png";
-        }
-    }
-
-
+﻿@{
+    Layout = "~/Views/Shared/_LayoutPainelBT.cshtml";
 
 }
-    
-    @if (ViewBag.torneioEmAndamento != null)
-    {
-        torneio = ViewBag.torneioEmAndamento;
-        var valorArrecadado = "0,00";
-        if (ViewBag.valorArrecadado!=null)
-        {
-            valorArrecadado = string.Format("{0:N}", ViewBag.valorArrecadado);
-        }
 
+@section Css_Painel{
+    <link href="@Url.Content("/Content/css/painel-organizador.css")" rel="stylesheet" type="text/css" />
+}
 
-        <div class="box box-success">
-                <div class="box-header with-border">
-                    <h3 class="box-title">Torneio em Andamento</h3>
-                </div>
-            <div class="box-body">
-                <div class="row form-group" align="left">
-                    <div class="col-md-12 col-xs-12" align="left">
-                        @torneio.nome
-                    </div>
-                    <div class="col-md-12 col-xs-12" align="left">
-                        @Html.Raw(torneio.dataInicio.ToShortDateString() + " até " + torneio.dataFim.ToShortDateString())
-                    </div>
-                    <div class="col-md-12 col-xs-12" style="font-size:12px" align="left">
-                        @Html.Raw("Link do torneio: <a href='https://www.rankingdetenis.com/torneio-" + torneio.Id + "'>https://www.rankingdetenis.com/torneio-" + torneio.Id + "</a>")
-                        @Html.Raw("<button id='btnCopiarLink' data-link='https://www.rankingdetenis.com/torneio-" + torneio.Id + "'> <span class='glyphicon glyphicon-share' /></button>")
-                        @Html.Raw("<a href='https://api.whatsapp.com/send?text=https://www.rankingdetenis.com/torneio-" + torneio.Id + "' target='_blank'>")
-                            <img width="25" height="25" src="/Content/image/whatsapp.png">
-                        @Html.Raw("</a>")
-                    </div>
-                </div>
-
-                <div class="row form-group">
-                    <div class="col-sm-3 form-group">
-                        <a href="@Url.Action("EditInscritos", new { torneioId = torneio.Id })" class="btn btn-success btn-block" id="botaoInscritos"> @ViewBag.qtddInscricoes Inscritos</a>
-                    </div>
-                    <div class="col-sm-3 form-group">
-                        <a href="@Url.Action("EditInscritos", new { torneioId = torneio.Id })" class="btn btn-success btn-block" id="botaoArrecadacao">R$ @valorArrecadado Arrecadado</a>
-                    </div>
-                    <div class="col-sm-3 form-group">
-                        <a href="@Url.Action("EditTorneio", new { id = torneio.Id })" class="btn btn-success btn-block" id="botaoEditar">Editar</a>
-                    </div>
-                </div>
-                <div class="row form-group">
-                    <div class="col-sm-6">
-                        <a href="@Url.Action("CreateTorneio", "Torneio")" class="btn btn-primary btn-block" id="botaoCriar">Criar Novo Torneio</a>
-                    </div>
+<section class="row">
+    <div class="col-md-12 bg-light border position-relative p-4 mb-5 shadow-lg rounded">
+        <div class="row dashboard">
+            <div class="col-6 mb-3">
+                <h3>Torneios em andamento</h3>
+            </div>
+            <div class="col-6 mb-3 text-end">
+                <a href="/Torneio/CreateTorneio" class="btn btn-orange float-right ps-4 pe-4">Criar novo</a>
+            </div>
+            <div class="col-md-12 mb-4">
+                <div class="progress">
+                    <div class="progress-bar" role="progressbar" style="width: 80%;" aria-valuenow="25"
+                         aria-valuemin="0" aria-valuemax="100"></div>
                 </div>
             </div>
-        </div>
-        
-    }
-    else
-    {
-            <div class="box box-success">
-                <div class="box-header with-border">
-                    <h3 class="box-title">Torneio em Andamento</h3>
-                </div>
-                <div class="box-body">
-                    <div class="container-fluid">
-                        <div class="row">
-                            <div class="col-sm-4">
-                                Sem torneios em andamento neste momento.
+            <div class="col-md-6">
+                <div class="card border-0">
+                    <div class="card-body trofeu">
+
+                        <div class="row mb-3">
+                            <div class="col-8">
+                                <div class="row">
+                                    <div class="col-3">
+                                        <img class="img-fluid trofeu-img" src="/Content/img/trofeu.png" alt="Trofeu" srcset="">
+                                    </div>
+                                    <div class="col-9">
+                                        <h5 class="card-title">Torneio Bicentenário</h5>
+                                        <p class="card-text text-muted">
+                                            De 26/11 até 04/12/2021
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <button class="btn btn-sm btn-success copy d-flex align-items-center" id="copy-link">
+                                    Copiar link
+                                    <img src="/Content/img/link.png" alt="Share">
+                                </button>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-sm-4 col-sm-offset-4" style="margin-top:15px">
-                                <a href="@Url.Action("CreateTorneio", "Torneio")" class="btn btn-primary btn-block" id="botaoCriar">Criar Novo Torneio</a>
+                        <div class="d-flex flex-wrap buttons justify-content-center custom">
+
+                            <a class="text-decoration-none" href="#">
+                                <button class="btn btn-white d-flex align-items-center button-custom">0 inscritos</button>
+                            </a>
+                            <a class="text-decoration-none" href="#">
+                                <button class="btn btn-white d-flex align-items-center button-custom">R$ 0,00</button>
+                            </a>
+
+
+                            <a class="text-decoration-none" href="editar-circuito.html">
+                                <button class="btn btn-white d-flex align-items-center custom">
+                                    <img class="eye" src="/Content/img/edit.svg" alt="Editar">
+                                    Editar
+                                </button><!--buttons__wrapper-->
+                            </a>
+
+
+                            <a class="text-decoration-none" href="editar-circuito.html">
+                                <button class="btn btn-eye btn-white d-flex align-items-center custom">
+                                    <img class="eye" src="/Content/img/view.png" alt="Editar">
+                                    Ver
+                                </button><!--buttons__wrapper-->
+                            </a>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 torneio-box">
+                <div class="card border-0">
+                    <div class="card-body trofeu">
+
+                        <div class="row mb-3">
+                            <div class="col-8">
+                                <div class="row">
+                                    <div class="col-3">
+                                        <img class="img-fluid trofeu-img" src="/Content/img/trofeu.png" alt="Trofeu" srcset="">
+                                    </div>
+                                    <div class="col-9">
+                                        <h5 class="card-title">Torneio de Verão</h5>
+                                        <p class="card-text text-muted">
+                                            De 26/11 até 04/12/2021
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <button class="btn btn-sm btn-success copy d-flex align-items-center" id="copy-link2">
+                                    Copiar link
+                                    <img src="/Content/img/link.png" alt="Share" srcset="">
+                                </button>
                             </div>
                         </div>
+                        <div class="d-flex flex-wrap buttons justify-content-center">
+
+                            <a class="text-decoration-none" href="#">
+                                <button class="btn btn-white d-flex align-items-center button-custom">150 inscritos</button>
+                            </a>
+                            <a class="text-decoration-none" href="#">
+                                <button class="btn btn-white d-flex align-items-center button-custom">R$ 20.250,00</button>
+                            </a>
+
+
+                            <a class="text-decoration-none" href="editar-circuito.html">
+                                <button class="btn btn-white d-flex align-items-center custom">
+                                    <img class="eye" src="/Content/img/edit.svg" alt="Editar">
+                                    Editar
+                                </button><!--buttons__wrapper-->
+                            </a>
+
+
+                            <a class="text-decoration-none" href="editar-circuito.html">
+                                <button class="btn btn-eye btn-white d-flex align-items-center custom">
+                                    <img class="eye" src="/Content/img/view.png" alt="Editar">
+                                    Ver
+                                </button><!--buttons__wrapper-->
+                            </a>
+
+                        </div>
                     </div>
                 </div>
             </div>
-    }
 
 
-    @if (Model.Count() > 0)
-    {
-        <div class="box box-success">
-            <div class="box-header with-border">
-                <h3 class="box-title">Torneios Recentes</h3>
-            </div>
-            <div class="box-body">
-            @foreach (var item in Model)
-            {
-                <div class="row form-group" align="left">
-                    <div class="col-md-4 col-xs-7" align="left">
-                        @item.nome
-                    </div>
-                    <div class="col-md-2 col-xs-4" align="left">
-                        <a href="@Url.Action("EditTorneio", "Torneio", new { id = item.Id })" class="btn btn-warning btn-block" id="botaoEditarTorneio">Editar</a>
-                    </div>
-                </div>
-            }
-            </div>
         </div>
+    </div>
+    <div class="col-md-12 bg-light border p-4 mb-5 shadow-lg rounded">
+        <div class="row dashboard">
+            <div class="col-md-12 mb-3">
+                <h3>Torneios finalizados</h3>
+            </div>
+            <div class="col-md-12 mb-4">
+                <div class="progress">
+                    <div class="progress-bar" role="progressbar" style="width: 80%;" aria-valuenow="25"
+                         aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+            </div>
+            <div class="col-md-6 p-3">
+                <div class="row shadow-sm p-1 card-torneio">
+                    <div class="col-6 d-flex align-items-center">
+                        <h5>Circuito Interno BT 2021</h5>
+                    </div>
+                    <div class="col-6 text-end d-flex justify-content-around py-2">
+                        <a class="text-decoration-none" href="editar-circuito.html">
+                            <button class="btn btn-white d-flex align-items-center button-mobile">
+                                <img class="edit" src="/Content/img/edit.svg" alt="Editar">
+                                Editar
+                            </button><!--buttons__wrapper-->
+                        </a>
+                        <a class="text-decoration-none" href="circuito-exemplo.html">
+                            <button class="btn btn-eye btn-white d-flex align-items-center button-mobile">
+                                <img class="eye" src="/Content/img/view.png" alt="Editar">
+                                Ver
+                            </button><!--buttons__wrapper-->
+                        </a>
+                    </div><!--d-flex-->
+                </div>
+            </div>
+            <div class="col-md-6 p-3">
+                <div class="row shadow-sm p-1 card-torneio">
+                    <div class="col-6 d-flex align-items-center">
+                        <h5>Circuito Interno BT 2021</h5>
+                    </div>
+                    <div class="col-6 text-end d-flex justify-content-around py-2">
+                        <a class="text-decoration-none" href="editar-circuito.html">
+                            <button class="btn btn-white d-flex align-items-center button-mobile">
+                                <img class="edit" src="/Content/img/edit.svg" alt="Editar">
+                                Editar
+                            </button><!--buttons__wrapper-->
+                        </a>
+                        <a class="text-decoration-none" href="circuito-exemplo.html">
+                            <button class="btn btn-eye btn-white d-flex align-items-center button-mobile">
+                                <img class="eye" src="/Content/img/view.png" alt="Editar">
+                                Ver
+                            </button><!--buttons__wrapper-->
+                        </a>
+                    </div><!--d-flex-->
+                </div>
+            </div>
+            <div class="col-md-6 p-3">
+                <div class="row shadow-sm p-1 card-torneio">
+                    <div class="col-6 d-flex align-items-center">
+                        <h5>Circuito Interno BT 2021</h5>
+                    </div>
+                    <div class="col-6 text-end d-flex justify-content-around py-2">
+                        <a class="text-decoration-none" href="editar-circuito.html">
+                            <button class="btn btn-white d-flex align-items-center button-mobile">
+                                <img class="edit" src="/Content/img/edit.svg" alt="Editar">
+                                Editar
+                            </button><!--buttons__wrapper-->
+                        </a>
+                        <a class="text-decoration-none" href="circuito-exemplo.html">
+                            <button class="btn btn-eye btn-white d-flex align-items-center button-mobile">
+                                <img class="eye" src="/Content/img/view.png" alt="Editar">
+                                Ver
+                            </button><!--buttons__wrapper-->
+                        </a>
+                    </div><!--d-flex-->
+                </div>
+            </div>
+            <div class="col-md-6 p-3">
+                <div class="row shadow-sm p-1 card-torneio">
+                    <div class="col-6 d-flex align-items-center">
+                        <h5>Circuito Interno BT 2021</h5>
+                    </div>
+                    <div class="col-6 text-end d-flex justify-content-around py-2">
+                        <a class="text-decoration-none" href="editar-circuito.html">
+                            <button class="btn btn-white d-flex align-items-center button-mobile">
+                                <img class="edit" src="/Content/img/edit.svg" alt="Editar">
+                                Editar
+                            </button><!--buttons__wrapper-->
+                        </a>
+                        <a class="text-decoration-none" href="circuito-exemplo.html">
+                            <button class="btn btn-eye btn-white d-flex align-items-center button-mobile">
+                                <img class="eye" src="/Content/img/view.png" alt="Editar">
+                                Ver
+                            </button><!--buttons__wrapper-->
+                        </a>
+                    </div><!--d-flex-->
+                </div>
+            </div>
 
-    }
-    else
-    {
-        <div class="box box-success">
-            <div class="box-header with-border">
-                <h3 class="box-title">Torneios Recentes</h3>
-            </div>
-            <div class="box-body">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-sm-4">
-                            Você não possui torneios finalizados.
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    }
 
 
-    @if (ViewBag.circuitos != null)
-    {
-        <div class="box box-success">
-            <div class="box-header with-border">
-                <h3 class="box-title">Meus Circuitos</h3>
-            </div>
-            <div class="box-body">
-                @foreach (var item in ViewBag.circuitos)
-                {
-                    <div class="row form-group" align="left">
-                        <div class="col-md-4 col-xs-7" align="left">
-                            @Html.Raw(item.Nome)
-                        </div>
-                        <div class="col-md-2 col-xs-4" align="left">
-                            <a href="@Url.Action("Edit", "Liga", new { idLiga = item.Id })" class="btn btn-warning btn-block" id="botaoEditarCircuito">Editar</a>
-                        </div>
-                    </div>
-                }
-                <div class="row">
-                    <div class="col-sm-6">
-                        <a href="@Url.Action("Create", "Liga")" class="btn btn-primary btn-block" id="botaoCriar">Criar Novo Circuito</a>
-                    </div>
-                </div>
-            </div>
         </div>
-    }
-    
-    <div class="box box-success">
-        <div class="box-header with-border">
-            <h3 class="box-title">Configurações</h3>
-        </div>
-        <div class="box-body">
-            <div class="row form-group" align="left">
-                <div class="col-md-4 col-xs-7" align="left">
-                    Integração PagSeguro
-                </div>
-                <div class="col-md-2 col-xs-4" align="left">
-                    <a href="@Url.Action("EditPagSeguro", "Barragens", new { id = ViewBag.barragemId })" class="btn btn-warning btn-block" id="botaoEditarCircuito">Editar</a>
+    </div>
+    <div class="col-md-12 bg-light border p-4 mb-5 shadow-lg rounded">
+        <div class="row dashboard">
+            <div class="col-6 mb-3">
+                <h3>Meus Circuitos</h3>
+            </div>
+            <div class="col-6 mb-3 text-end">
+                <a href="/Liga/Create" class="btn btn-orange float-right ps-4 pe-4">Criar novo</a>
+            </div>
+            <div class="col-md-12 mb-4">
+                <div class="progress">
+                    <div class="progress-bar" role="progressbar" style="width: 80%;" aria-valuenow="25"
+                         aria-valuemin="0" aria-valuemax="100"></div>
                 </div>
             </div>
-            <div class="row form-group" align="left">
-                <div class="col-md-4 col-xs-7" align="left">
-                    Incluir/Alterar Logomarca
-                </div>
-                <div class="col-md-2 col-xs-5" align="left">
-                    <form method="post" enctype="multipart/form-data" action="/Ranking/uploadLogoMarca" name="formLogo" id="formLogo" class="form">
-                        <input type="hidden" name="Id" id="Id" value="@ViewBag.barragemId" />
-                        <img width="50" height="50" src="@scrLogo" id="imagem1">
-                        <div class="fileUpload btn btn-default btn-xs">
-                            <span class="glyphicon glyphicon-search"></span>
-                            <input type="file" id="fileLogo" name="fileLogo" class="upload fileLogoMarca" />
-                        </div>
-                        <button type="submit" class="btn btn-warning btn-block" id="botaoUploadLogoMarca">Upload</button>
-                    </form>
-                </div>
-            </div>
-            <div class="row form-group" align="left">
-                <div class="col-md-4 col-xs-7" align="left">
-                    Alterar meus dados
-                </div>
-                <div class="col-md-2 col-xs-4" align="left">
-                    <a href="@Url.Action("EditaUsuario", "Account", new { UserName = User.Identity.Name })" class="btn btn-warning btn-block" id="botaoEditarCircuito">Editar</a>
-                </div>
-            </div>
-            <div class="row form-group" align="left">
-                <form method="post" action="/Barragens/EditNomeBarragem" name="formBarragem" id="formBarragem" class="form">
-                    @Html.AntiForgeryToken()
-                    <div class="form-group">
-                        <div class="col-md-2 col-xs-7" align="left">
-                            Agremiação
-                        </div>
-                        <div class="col-md-4 col-xs-7 input-group">
-                            <input type="text" class="form-control" value="@ViewBag.nomeAgremiacao" name="nome">
-                        </div>
-                        <div class="col-md-2 col-xs-7">
-                            <button type="submit" class="btn btn-warning btn-block">Alterar</button>
-                        </div>
-                        
+            <div class="col-md-6 p-3">
+                <div class="row shadow-sm p-1 card-torneio">
+                    <div class="col-6 d-flex align-items-center">
+                        <h5>Circuito Interno BT 2021</h5>
                     </div>
-                    
-                </form>
+                    <div class="col-6 text-end d-flex justify-content-around py-2">
+                        <a class="text-decoration-none" href="editar-circuito.html">
+                            <a class="text-decoration-none" href="editar-circuito.html">
+                                <button class="btn btn-white d-flex align-items-center button-mobile">
+                                    <img class="edit" src="/Content/img/edit.svg" alt="Editar">
+                                    Editar
+                                </button><!--buttons__wrapper-->
+                            </a>
+                        </a>
+                        <a class="text-decoration-none" href="circuito-exemplo.html">
+                            <button class="btn btn-eye btn-white d-flex align-items-center button-mobile">
+                                <img class="eye" src="/Content/img/view.png" alt="Editar">
+                                Ver
+                            </button><!--buttons__wrapper-->
+                        </a>
+                    </div><!--d-flex-->
+                </div>
+            </div>
+
+
+
+        </div>
+    </div>
+    <div class="col-md-12 bg-light border p-4 mb-5 shadow-lg rounded">
+        <div class="row dashboard">
+            <div class="col-md-12 mb-3">
+                <h3>Configurações</h3>
+            </div>
+            <div class="col-md-12 mb-4">
+                <div class="progress">
+                    <div class="progress-bar" role="progressbar" style="width: 80%;" aria-valuenow="25"
+                         aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+            </div>
+            <div>
+                <div class="col-md-6 p-3">
+                    <div class="row p-1 card-torneio">
+                        <div class="col-8 d-flex align-items-center">
+                            <h5>
+                                Integração PagSeguro
+                                <span class="pendente">(pendente)</span>
+
+                            </h5>
+                        </div>
+                        <div class="col-4 text-end">
+                            <a class="text-decoration-none" href="integracao-pagseguro.html">
+                                <button class="btn btn-white d-flex align-items-center button-mobile">
+                                    <img class="edit" src="/Content/img/edit.svg" alt="Editar">
+                                    Editar
+                                </button><!--buttons__wrapper-->
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 p-3">
+                    <div class="row p-1 card-torneio">
+                        <div class="col-8 d-flex align-items-center">
+                            <h5>
+                                Incluir logomarca
+                                <span class="feito">
+                                    (feito) <img src="/Content/img/checked.svg" alt="checked"
+                                                 srcset="">
+                                </span>
+
+                            </h5>
+                        </div>
+                        <div class="col-4 text-end">
+                            <a class="text-decoration-none" href="editar-circuito.html">
+                                <button class="btn btn-white d-flex align-items-center button-mobile">
+                                    <img class="edit" src="/Content/img/edit.svg" alt="Editar">
+                                    Editar
+                                </button><!--buttons__wrapper-->
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 p-3">
+                    <div class="row p-1 card-torneio">
+                        <div class="col-8 d-flex align-items-center">
+                            <h5>
+                                Alterar meus dados de usuário
+                            </h5>
+                        </div>
+                        <div class="col-4 text-end">
+                            <a class="text-decoration-none" href="editar-circuito.html">
+                                <button class="btn btn-white d-flex align-items-center button-mobile">
+                                    <img class="edit" src="/Content/img/edit.svg" alt="Editar">
+                                    Editar
+                                </button><!--buttons__wrapper-->
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 p-3">
+                    <div class="row p-1 card-torneio">
+                        <div class="col-8 d-flex align-items-center">
+                            <h5 id="name">
+                                Alterar nome da agremiação
+                            </h5>
+                            <input class="hidden-input custom-input" type="text" name="agremiacao" id="agremiacao" value="Bora Bora BT">
+                        </div>
+                        <div class="col-4 text-end">
+                            <a id="btn-input" class="text-decoration-none">
+                                <button class="btn btn-white d-flex align-items-center button-mobile">
+                                    <img class="edit" src="/Content/img/edit.svg" alt="Editar">
+                                    Editar
+                                </button><!--buttons__wrapper-->
+                            </a>
+                            <a id="btn-salvar" class="text-decoration-none hidden-input">
+                                <button style="background: #014626;color:white;" class="btn btn-white d-flex align-items-center button-mobile">
+                                    <img class="edit" src="/Content/img/white-pen.png" alt="Editar">
+                                    Salvar
+                                </button><!--buttons__wrapper-->
+                            </a>
+
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+</section>
 
-    
-    @section Scripts {
-        @Scripts.Render("~/bundles/jqueryval")
-        @Scripts.Render("~/bundles/jqueryform")
-        
-        <script type="text/javascript">
-            $('#btnCopiarLink').on('click', function (event) {
-                event.preventDefault();
-                navigator.clipboard.writeText($(this).attr('data-link'));
-                toastr.success("Link copiado com sucesso.", "Aviso");
-            });
+@section Scripts {
+    <script>
+        let input = document.getElementById('agremiacao')
+        let btnInput = document.getElementById('btn-input')
+        let btnSalvar = document.getElementById('btn-salvar')
+        let textInput = document.getElementById('name')
 
-            function readURL(input) {
-                if (input.files && input.files[0]) {
-                    var reader = new FileReader();
-
-                    reader.onload = function (e) {
-                        $('#imagem1').attr('src', e.target.result);
-                        document.getElementById('botaoUploadLogoMarca').style.display = "block";
-                    }
-
-                    reader.readAsDataURL(input.files[0]);
-                }
+        btnInput.addEventListener('click', () => {
+            input.classList.toggle('input-active')
+            btnInput.classList.add('hidden-input')
+            btnSalvar.classList.add('input-active')
+            if (input.classList.contains('input-active')) {
+                textInput.style.display = 'none';
+            } else {
+                textInput.style.display = 'block';
             }
+        })
 
-            $(".fileLogoMarca").change(function () {
-                readURL(this);
-            });
-            document.getElementById('botaoUploadLogoMarca').style.display = "none";
-
-            @if (ViewBag.sucesso != null)
-            {
-                @Html.Raw("toastr.success('Operação realizada com sucesso.', 'Aviso')");
+        btnSalvar.addEventListener('click', () => {
+            input.classList.toggle('input-active')
+            btnInput.classList.remove('hidden-input')
+            btnSalvar.classList.remove('input-active')
+            if (input.classList.contains('input-active')) {
+                textInput.style.display = 'none';
+            } else {
+                textInput.style.display = 'block';
             }
-        </script>
-               
-    }
+        })
+
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="~/Content/js/menu.js"></script>
+    <script src="~/Content/js/copylink.js"></script>
+}

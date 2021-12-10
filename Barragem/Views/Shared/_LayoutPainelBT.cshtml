@@ -1,0 +1,119 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="~/Content/css/hamburgers.min.css"  type="text/css">
+    @if (IsSectionDefined("Css_Painel"))
+    {
+        @RenderSection("Css_Painel", required: false)
+    }
+    <title>Painel</title>
+</head>
+
+<body>
+    <!--menu mobile-->
+
+    <div class="menu">
+        <div class="menu__wrapper">
+            <div class="logo p-4"><img class="img-fluid" src="~/Content/img/logo.png" alt="logo do site" /></div>
+
+        </div><!--menu__wrapper-->
+        <div class="dropdown-custom d-flex justify-content-between">
+            <div class="d-flex">
+                <div class="mt-1"><img src="~/Content/img/user.png" alt="icone"></div>
+                <div class="drowdown__info mx-1 d-flex flex-column justify-content-center">
+                    <span>Anddy’s Makeover</span>
+                    <p>Organizador</p>
+                </div><!--dropdown__info-->
+            </div>
+            <div class="arrow">
+                <img src="~/Content/img/arrow.svg" alt="icone">
+            </div>
+        </div><!--dropdown-->
+
+        <div class="dropdown-links">
+            <ul>
+                <li class="pt-1"><a href="#">Alterar Perfil</a></li>
+                <li><a href="#">Alterar Senha</a></li>
+                <li><a href="#">Torneios</a></li>
+                <li class="pb-1"><a href="#">Circuitos</a></li>
+            </ul>
+        </div><!--dropdown-links-->
+
+        <ul class="mobile">
+            <li><a href="#">Painel</a></li>
+            <li><a href="manuais.html">Manuais</a></li>
+            <li><a href="#">Suporte</a></li>
+        </ul>
+
+    </div><!--menu-->
+    <!--fim do menu mobile-->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <div class="nav__wrapper d-flex">
+                <a href="#"><img src="~/Content/img/logo-painel.png" alt="logo"></a>
+                <div class="user-info d-flex align-items-center">
+                    <a class="mx-1" href="#"><img src="~/Content/img/user-icon.png" alt="logo"></a>
+                    <h6>Bora Bora BT</h6>
+                </div><!--user-info-->
+            </div><!--nav__wrapper-->
+            <div class="hamburger hamburger--spring">
+                <div class="hamburger-box">
+                    <div class="hamburger-inner"></div>
+                </div>
+            </div>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item me-4">
+                        <a class="nav-link active" aria-current="page" href="#">Painel</a>
+                    </li>
+                    <li class="nav-item me-4">
+                        <a class="nav-link" href="manuais.html">Manuais</a>
+                    </li>
+                    <li class="nav-item me-4">
+                        <a class="nav-link" href="#">Suporte</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle p-0" href="#" id="navbarDropdown" role="button"
+                           data-bs-toggle="dropdown" aria-expanded="false">
+                            <div class="d-inline-flex">
+                                <div>
+                                    <img src="~/Content/img/user.png" alt="icone">
+                                </div>
+                                <div class='ms-1 me-1'>
+                                    <h5 class="mb-0">Anddy’s Makeover</h5>
+                                    <h2 class="mb-0">Organizador</h2>
+                                </div>
+                            </div>
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="#">Alterar Perfil</a></li>
+                            <li><a class="dropdown-item" href="#">Alterar Senha</a></li>
+                            <li><a class="dropdown-item" href="#">Torneios</a></li>
+                            <li><a class="dropdown-item" href="#">Circuitos</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="banner position-absolute"></div>
+    <main class="container mt-5">
+        @RenderBody()
+    </main>
+    @Html.Partial("_FooterBT2")
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/js/bootstrap.min.js"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+
+</html>
