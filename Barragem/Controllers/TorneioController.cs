@@ -3389,7 +3389,13 @@ namespace Barragem.Controllers
             return View(torneios);
         }
 
-            public ActionResult Teste()
+        [Authorize(Roles = "admin,organizador, adminTorneio")]
+        public ActionResult Manuais()
+        {
+            return View();
+        }
+
+        public ActionResult Teste()
         {
             DateTime dateTime = DateTime.UtcNow;
             DateTime dateTimeLocal = DateTime.Now;
