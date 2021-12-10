@@ -189,7 +189,7 @@ footer {
 }
 
 .input-edit{
-    display: none;
+    display: block!important;
     padding: 5px;
     border:1px solid #c4c4c4;
     margin-top: 10px;

@@ -234,6 +234,7 @@
 
         </div>
     </div>
+
     <div class="col-md-12 bg-light border p-4 mb-5 shadow-lg rounded">
         <div class="row dashboard">
             <div class="col-6 mb-3">
@@ -248,34 +249,38 @@
                          aria-valuemin="0" aria-valuemax="100"></div>
                 </div>
             </div>
-            <div class="col-md-6 p-3">
-                <div class="row shadow-sm p-1 card-torneio">
-                    <div class="col-6 d-flex align-items-center">
-                        <h5>Circuito Interno BT 2021</h5>
+            @if (ViewBag.circuitos != null)
+            {
+                foreach (var item in ViewBag.circuitos)
+                {
+                    <div class="col-md-6 p-3">
+                        <div class="row shadow-sm p-1 card-torneio">
+                            <div class="col-6 d-flex align-items-center">
+                                <h5>@Html.Raw(item.Nome)</h5>
+                            </div>
+                            <div class="col-6 text-end d-flex justify-content-around py-2">
+                                <a class="text-decoration-none" href="editar-circuito.html">
+                                    <a class="text-decoration-none" href="@Url.Action("Edit", "Liga", new { idLiga = item.Id })">
+                                        <button class="btn btn-white d-flex align-items-center button-mobile">
+                                            <img class="edit" src="/Content/img/edit.svg" alt="Editar">
+                                            Editar
+                                        </button><!--buttons__wrapper-->
+                                    </a>
+                                </a>
+                                <a class="text-decoration-none" href="#">
+                                    <button class="btn btn-eye btn-white d-flex align-items-center button-mobile">
+                                        <img class="eye" src="/Content/img/view.png" alt="Editar">
+                                        Ver
+                                    </button><!--buttons__wrapper-->
+                                </a>
+                            </div><!--d-flex-->
+                        </div>
                     </div>
-                    <div class="col-6 text-end d-flex justify-content-around py-2">
-                        <a class="text-decoration-none" href="editar-circuito.html">
-                            <a class="text-decoration-none" href="editar-circuito.html">
-                                <button class="btn btn-white d-flex align-items-center button-mobile">
-                                    <img class="edit" src="/Content/img/edit.svg" alt="Editar">
-                                    Editar
-                                </button><!--buttons__wrapper-->
-                            </a>
-                        </a>
-                        <a class="text-decoration-none" href="circuito-exemplo.html">
-                            <button class="btn btn-eye btn-white d-flex align-items-center button-mobile">
-                                <img class="eye" src="/Content/img/view.png" alt="Editar">
-                                Ver
-                            </button><!--buttons__wrapper-->
-                        </a>
-                    </div><!--d-flex-->
-                </div>
-            </div>
-
-
-
+                }
+            }
         </div>
     </div>
+
     <div class="col-md-12 bg-light border p-4 mb-5 shadow-lg rounded">
         <div class="row dashboard">
             <div class="col-md-12 mb-3">
