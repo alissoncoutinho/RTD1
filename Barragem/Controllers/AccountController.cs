@@ -1800,7 +1800,7 @@ namespace Barragem.Controllers
             }
 
             // If we got this far, something failed, redisplay form
-            ModelState.AddModelError("", "O login ou a senha estão incorretos.");
+            ViewBag.Msg = "O login ou a senha estão incorretos.";
             ViewBag.ReturnUrl = returnUrl;
             ViewBag.userName = model.UserName;
             ViewBag.torneioId = torneioId;
