@@ -1653,6 +1653,160 @@ namespace Barragem.Controllers
             return View(model);
         }
 
+        [AllowAnonymous]
+        public ActionResult LoginBT(int torneioId = 0, string returnUrl = "", string Msg = "")
+        {
+            if ((User.Identity.IsAuthenticated) && (torneioId > 0))
+            {
+                if (returnUrl == "torneio")
+                {
+                    return RedirectToAction("Detalhes", "Torneio", new { id = torneioId });
+                }
+                return RedirectToAction(returnUrl, "Torneio", new { torneioId = torneioId });
+            }
+            var model = new VerificacaoCadastro();
+            model.torneioId = torneioId;
+            model.returnUrl = returnUrl;
+            ViewBag.Msg = Msg;
+            return View(model);
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        public ActionResult LoginBT(VerificacaoCadastro model)
+        {
+            if (ModelState.IsValid)
+            {
+                var registers = db.UserProfiles.Where(u => (u.email.Equals(model.email) || u.UserName.ToLower() == model.email.ToLower())).ToList();
+                if (registers.Count() > 1)
+                {
+                    return RedirectToAction("ListaLoginsBT", "Account", model);
+                }
+                else if (registers.Count() > 0)
+                {
+                    var usuario = registers[0];
+                    return RedirectToAction("LoginPasswordBT", new
+                    {
+                        returnUrl = model.returnUrl,
+                        userName = usuario.UserName,
+                        Msg = "Olá, " + usuario.nome + " seu login foi localizado no ranking: " + usuario.barragem.nome + " entre com a sua senha.",
+                        torneioId = model.torneioId
+                    });
+                }
+                else if (!String.IsNullOrEmpty(model.returnUrl) && model.returnUrl.Equals("torneio"))
+                {
+                    return RedirectToAction("RegisterTorneio", new { email = model.email, torneioId = model.torneioId });
+                }
+                else
+                {
+                    return RedirectToAction("LoginBT", new { returnUrl = model.returnUrl, Msg = "Olá, Não encontramos nenhum cadastro com esse email ou usuário.", torneioId = model.torneioId });
+                }
+
+            }
+            return View(model);
+        }
+
+        [AllowAnonymous]
+        public ActionResult ListaLoginsBT(VerificacaoCadastro model)
+        {
+            var registers = db.UserProfiles.Where(u => u.situacao != "inativo" && (u.email.Equals(model.email) || u.UserName.ToLower() == model.email.ToLower())).ToList();
+            var loginRegisters = new List<LoginRankingModel>();
+            foreach (var item in registers)
+            {
+                var loginRankingModel = new LoginRankingModel();
+                loginRankingModel.logoId = item.barragemId;
+                loginRankingModel.userName = item.UserName;
+                loginRankingModel.nomeRanking = item.barragem.nome;
+                loginRankingModel.idRanking = 0;
+                var snapshotRanking = db.SnapshotRanking.Where(s => s.UserId == item.UserId).Include(s => s.Liga).OrderByDescending(s => s.Id).Take(1).ToList();
+                if (snapshotRanking.Count() > 0)
+                {
+                    loginRankingModel.nomeLiga = snapshotRanking[0].Liga.Nome;
+                    loginRankingModel.idRanking = 1;
+                }
+                loginRegisters.Add(loginRankingModel);
+            }
+            loginRegisters = loginRegisters.OrderByDescending(l => l.idRanking).ToList();
+            ViewBag.ReturnUrl = model.returnUrl;
+            ViewBag.torneioId = model.torneioId;
+            return View(loginRegisters);
+        }
+
+        [AllowAnonymous]
+        public ActionResult LoginPasswordBT(string returnUrl = "", string userName = "", string Msg = "", int torneioId = 0)
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                string perfil = Roles.GetRolesForUser(User.Identity.Name)[0];
+                if (perfil.Equals("admin") || perfil.Equals("organizador"))
+                {
+                    return RedirectToAction("Dashboard", "Home");
+                }
+                else if (perfil.Equals("adminTorneio"))
+                {
+                    return RedirectToAction("PainelControle", "Torneio");
+                }
+                return RedirectToAction("Index3", "Home");
+            }
+            ViewBag.ReturnUrl = returnUrl;
+            ViewBag.userName = userName;
+            ViewBag.torneioId = torneioId;
+            ViewBag.Msg = Msg;
+            return View();
+        }
+
+        //
+        // POST: /Account/Login
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public ActionResult LoginPasswordBT(LoginModel model, string returnUrl, int torneioId = 0)
+        {
+            if (ModelState.IsValid && WebSecurity.Login(model.UserName, model.Password, persistCookie: model.RememberMe))
+            {
+                if ((!returnUrl.Equals("torneio")) && (!returnUrl.Contains("/Torneio/LancarResultado")))
+                {
+                    var usuario = db.UserProfiles.Find(WebSecurity.GetUserId(model.UserName));
+                    Funcoes.CriarCookieBarragem(Response, Server, usuario.barragemId, usuario.barragem.nome);
+                }
+                else if (torneioId == 0)
+                {
+                    HttpCookie cookie = Request.Cookies["_barragemId"];
+                    if (cookie != null)
+                    {
+                        var barragemId = Convert.ToInt32(cookie.Value.ToString());
+                        var tn = db.Torneio.Where(t => t.barragemId == barragemId && t.isAtivo).OrderByDescending(t => t.Id).ToList();
+                        if (tn.Count() > 0) { torneioId = tn[0].Id; }
+                    }
+                }
+                if ((!String.IsNullOrEmpty(returnUrl)) && (returnUrl.Equals("EscolherDupla")) && (torneioId != 0))
+                {
+                    return RedirectToAction("EscolherDupla", "Torneio", new { id = torneioId });
+                }
+                if ((!String.IsNullOrEmpty(returnUrl)) && (returnUrl.Equals("torneio")) && (torneioId != 0))
+                {
+                    return RedirectToAction("Detalhes", "Torneio", new { id = torneioId });
+                }
+                else if ((!String.IsNullOrEmpty(returnUrl)) && (returnUrl.Contains("/Torneio/LancarResultado")))
+                {
+                    return RedirectToAction("LancarResultado", "Torneio");
+                }
+                else
+                {
+                    return RedirectToAction("Index", "Home");
+                }
+                //return RedirectToLocal(returnUrl);
+            }
+
+            // If we got this far, something failed, redisplay form
+            ModelState.AddModelError("", "O login ou a senha estão incorretos.");
+            ViewBag.ReturnUrl = returnUrl;
+            ViewBag.userName = model.UserName;
+            ViewBag.torneioId = torneioId;
+            return View(model);
+        }
+
         private static string ErrorCodeToString(MembershipCreateStatus createStatus)
         {
             // See http://go.microsoft.com/fwlink/?LinkID=177550 for

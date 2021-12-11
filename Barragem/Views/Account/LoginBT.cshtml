@@ -1,0 +1,46 @@
+﻿@model Barragem.Models.VerificacaoCadastro
+@{
+    Layout = "~/Views/Shared/_LayoutLoginBT.cshtml";
+
+}
+
+@section Css_Login{
+    <link href="@Url.Content("/Content/css/login.css")" rel="stylesheet" type="text/css" />
+}
+
+<main class="row w-100 m-0">
+    <section class="col-md-5  form-mobile">
+        <form action="/Account/LoginBT" method="post" class=" m-auto mt-4">
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(false)
+            <img src="/Content/img/logo-cad.png" alt="" srcset="">
+            @if ((ViewBag.Msg != "") && (ViewBag.Msg != null))
+            {
+                <div class="mt-5 chamada mt-5">
+                    <div class="alert alert-success alert-dismissable">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                        <strong>@ViewBag.Msg</strong>
+                    </div>
+                </div>
+            }
+            <div class="mt-5 chamada mt-5">
+                <h1>Acesse a sua conta</h1>
+                <label for="">Digite seu e-mail</label>
+            </div>
+            <div class="mt-3 form-input">
+                <input type="email" name="email" class="form-control" placeholder="Digite seu E-mail" required>
+            </div>
+            <input type="hidden" name="returnUrl" value="@Model.returnUrl">
+            <input type="hidden" name="torneioId" value="@Model.torneioId">
+            <div class="mt-3 form-input mb-5">
+                <button type="submit" class="btn btn-success w-100">Continuar</button>
+            </div>
+        </form>
+    </section>
+    <section class="col-md-7 bg-img img-right">
+    </section>
+</main>
+
+@section Scripts {
+
+}
