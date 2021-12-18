@@ -5,6 +5,7 @@
 
 @section Css_Cadastro{
     <link href="@Url.Content("/Content/css/cadastro-ranking.css")" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.4/themes/smoothness/jquery-ui.css" />
 }
 
 <main class="row h-100 w-100 m-0">
@@ -26,7 +27,7 @@
             </div>
             <div class="mt-3 form-input">
                 <label for="">Cidade *</label>
-                <input type="text" name="cidade" class="form-control" placeholder="Digite o nome">
+                <input type="text" id="cidade" name="cidade" class="form-control" placeholder="Digite o nome">
             </div>
 
             <div class="mt-3 form-input">
@@ -64,5 +65,31 @@
 </main>
 
 @section Scripts {
+    @Scripts.Render("/Scripts/jquery-2.1.1.min.js")
+    @Scripts.Render("/Scripts/jquery-ui-1.10.4.min.js")
+
     <script src="/Content/js/render.js"></script>
+    <script type="text/javascript">
+        $(function () {
+
+            $("#cidade").autocomplete({
+                source: function (request, response) {
+                    $.ajax({
+                        url: "/Cidade/getCidade",
+                        dataType: "jsonp",
+                        data: {
+                            q: request.term
+                        },
+                        success: function (data) {
+                            response(data);
+                        }
+                    });
+                },
+                minLength: 3
+            });
+        });
+
+        $('#cidade').attr('autocomplete', 'off');
+
+    </script>
 }
