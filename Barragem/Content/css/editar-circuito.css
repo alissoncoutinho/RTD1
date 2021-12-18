@@ -390,6 +390,11 @@ nav {
     border-color: #E18335;
 }
 
+.dropdown-unset-pipe {
+    border-left: unset;
+    padding-left: unset;
+}
+
 .dropdown h2 {
     font-size: 12px;
     color: #BDBDBD;

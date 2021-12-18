@@ -336,6 +336,11 @@ box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
     border-color:#E18335;
 }
 
+.dropdown-unset-pipe {
+    border-left: unset;
+    padding-left: unset;
+}
+
 .dropdown h2 {
     font-size: 12px;
     color: #BDBDBD;
