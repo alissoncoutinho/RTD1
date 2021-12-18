@@ -145,33 +145,43 @@
                             </ul>
                         </li>
                     }
-
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle p-0" href="#" id="navbarDropdown" role="button"
-                           data-bs-toggle="dropdown" aria-expanded="false">
-                            <div class="d-inline-flex">
-                                <div>
-                                    <img src="~/Content/img/user.png" alt="icone">
-                                </div>
-                                <div class='ms-1 me-1'>
-                                    <h5 class="mb-0">Anddy’s Makeover</h5>
-                                    <h2 class="mb-0">Organizador</h2>
-                                </div>
-                            </div>
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href="#">Alterar Perfil</a></li>
-                            <li><a class="dropdown-item" href="#">Alterar Senha</a></li>
-                            <li><a class="dropdown-item" href="#">Torneios</a></li>
-                            <li><a class="dropdown-item" href="#">Circuitos</a></li>
-                        </ul>
-                    </li>
+                    @Html.Partial("_LoginPartialBT","")
                 </ul>
             </div>
         </div>
     </nav>
     <div class="banner position-absolute"></div>
     <main class="container mt-5">
+        @if ((ViewBag.MsgErro != "") && (ViewBag.MsgErro != null))
+        {
+            <div class="alert alert-danger alert-dismissible" role="alert">
+                <strong>Erro!</strong> @ViewBag.MsgErro
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+        @if ((ViewBag.DetalheErro != "") && (ViewBag.DetalheErro != null))
+        {
+            <div class="alert alert-danger alert-dismissible" role="alert">
+                <strong>Erro!</strong> @ViewBag.DetalheErro
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+        @if ((ViewBag.Ok != "") && (ViewBag.Ok != null))
+        {
+            <div class="alert alert-success alert-dismissible" role="alert">
+                <strong>Operação realizada com sucesso!</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+        @if ((ViewBag.MsgAlert != "") && (ViewBag.MsgAlert != null))
+        {
+            <div class="alert alert-info alert-dismissible" role="alert">
+                <strong>@ViewBag.MsgAlert</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+
+        }
+
         @RenderBody()
     </main>
     @Html.Partial("_FooterBT2")
