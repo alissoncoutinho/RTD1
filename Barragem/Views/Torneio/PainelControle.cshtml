@@ -91,9 +91,9 @@
                                     </button><!--buttons__wrapper-->
                                 </a>
 
-                                <a class="text-decoration-none" href="#">
+                                <a class="text-decoration-none" href="@Url.Action("Tabela", new { torneioId = torneio.Id })">
                                     <button class="btn btn-eye btn-white d-flex align-items-center custom">
-                                        <img class="eye" src="/Content/img/view.png" alt="Editar">
+                                        <img class="eye" src="/Content/img/view.png" alt="Ver">
                                         Ver
                                     </button><!--buttons__wrapper-->
                                 </a>
@@ -131,13 +131,13 @@
                                 <h5>@item.nome</h5>
                             </div>
                             <div class="col-6 text-end d-flex justify-content-around py-2">
-                                <a class="text-decoration-none" href="@Url.Action("EditTorneio", "Torneio", new { id = item.Id })">
+                                <a class="text-decoration-none" href="@Url.Action("EditTorneio", new { id = item.Id })">
                                     <button class="btn btn-white d-flex align-items-center button-mobile">
                                         <img class="edit" src="/Content/img/edit.svg" alt="Editar">
                                         Editar
                                     </button><!--buttons__wrapper-->
                                 </a>
-                                <a class="text-decoration-none" href="#">
+                                <a class="text-decoration-none" href="@Url.Action("Tabela", new { torneioId = item.Id })">
                                     <button class="btn btn-eye btn-white d-flex align-items-center button-mobile">
                                         <img class="eye" src="/Content/img/view.png" alt="Editar">
                                         Ver
