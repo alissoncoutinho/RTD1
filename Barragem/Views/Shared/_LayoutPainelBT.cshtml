@@ -107,26 +107,38 @@
                     <li class="nav-item me-4">
                         <a class="nav-link" href="https://api.whatsapp.com/send?phone=5561998095668&text=Ol%C3%A1%2C%20gostaria%20de%20ajuda%20com%20o%20sistema%20Ranking%20Beach%20Tennis" target="_blank">Suporte</a>
                     </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle p-0" href="#" id="navbarDropdown" role="button"
-                           data-bs-toggle="dropdown" aria-expanded="false">
-                            <div class="d-inline-flex">
-                                <div>
-                                    <img src="~/Content/img/user.png" alt="icone">
+                    @if (Request.IsAuthenticated)
+                    {
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle p-0" href="#" id="navbarDropdown" role="button"
+                               data-bs-toggle="dropdown" aria-expanded="false">
+                                <div class="d-inline-flex">
+                                    <div>
+                                        <img src="@Url.Action("BuscaFoto", "Account", new { id = 0, userName = User.Identity.Name })" alt="icone">
+                                    </div>
+                                    <div class='ms-1 me-1'>
+                                        <h5 class="mb-0">@User.Identity.Name</h5>
+                                    </div>
                                 </div>
-                                <div class='ms-1 me-1'>
-                                    <h5 class="mb-0">Anddy’s Makeover</h5>
-                                    <h2 class="mb-0">Organizador</h2>
-                                </div>
-                            </div>
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li><a class="dropdown-item" href="#">Alterar Perfil</a></li>
-                            <li><a class="dropdown-item" href="#">Alterar Senha</a></li>
-                            <li><a class="dropdown-item" href="#">Torneios</a></li>
-                            <li><a class="dropdown-item" href="#">Circuitos</a></li>
-                        </ul>
-                    </li>
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <li><a class="dropdown-item" href="@Url.Action("EditaUsuario", "Account", new { UserName = User.Identity.Name })">Alterar Perfil</a></li>
+                                <li><a class="dropdown-item" href="/Account/Manage">Alterar Senha</a></li>
+                                <li><a class="dropdown-item" href="/Torneio">Torneios</a></li>
+                                <li><a class="dropdown-item" href="javascript:document.getElementById('logoutForm').submit()">Sair</a></li>
+                            </ul>
+                        </li>
+                        using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm" }))
+                        {
+                            @Html.AntiForgeryToken()
+                        }
+                    }
+                    else
+                    {
+                        <li class="nav-item me-4">
+                            <a class="nav-link active" href="@Url.Action("Login", "Account")">Log in</a>
+                        </li>
+                    }
                 </ul>
             </div>
         </div>
