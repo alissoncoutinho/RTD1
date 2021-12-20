@@ -236,23 +236,22 @@
                 <div class="col-md-6 p-3">
                     <div class="row p-1 card-torneio">
                         <div class="col-8 d-flex align-items-center">
-                            <h5>Incluir logomarca</h5>
+                            <h5>
+                                Incluir logomarca
+                                <span class="feito">
+                                    (feito) <img src="/Content/img/checked.svg" alt="checked"
+                                                 srcset="">
+                                </span>
+
+                            </h5>
                         </div>
                         <div class="col-4 text-end">
-                            <form method="post" enctype="multipart/form-data" action="/Ranking/uploadLogoMarca" name="formLogo" id="formLogo" class="form">
-                                <input type="hidden" name="Id" id="Id" value="@ViewBag.barragemId" />
-                                <img width="50" height="50" src="@scrLogo" id="imagem1">
-                                <div class="fileUpload btn btn-default btn-xs">
-                                    <span class="bi bi-search"></span>
-                                    <input type="file" id="fileLogo" name="fileLogo" class="upload fileLogoMarca" />
-                                </div>
-                                <a id="botaoUploadLogoMarca" class="text-decoration-none">
-                                    <button type="submit" class="btn btn-white d-flex align-items-center button-mobile btn-block">
-                                        <img class="edit" src="/Content/img/edit.svg" alt="Upload">
-                                        Upload
-                                    </button><!--buttons__wrapper-->
-                                </a>
-                            </form>
+                            <a class="text-decoration-none" href="#">
+                                <button class="btn btn-white d-flex align-items-center button-mobile">
+                                    <img class="edit" src="/Content/img/edit.svg" alt="Editar">
+                                    Editar
+                                </button><!--buttons__wrapper-->
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -275,26 +274,33 @@
                 </div>
                 <div class="col-md-6 p-3">
                     <div class="row p-1 card-torneio">
-                        <div class="col-12 d-flex align-items-center">
+
+                        <div class="col-8 d-flex align-items-center">
                             <h5 id="name">
                                 Alterar nome da agremiação
                             </h5>
+                            <input class="hidden-input custom-input" type="text" name="agremiacao" id="agremiacao" value="@ViewBag.nomeAgremiacao">
                         </div>
-                    </div>
-                    <div class="row p-1 card-torneio">
-                        <form method="post" action="/Barragens/EditNomeBarragem" name="formBarragem" id="formBarragem" style="display: inline-flex;">
+
+                        <div class="col-4 text-end">
+
+                            <a id="btn-input" class="text-decoration-none">
+                                <button class="btn btn-white d-flex align-items-center button-mobile">
+                                    <img class="edit" src="/Content/img/edit.svg" alt="Editar">
+                                    Editar
+                                </button>
+                            </a>
+                            <a id="btn-salvar" class="text-decoration-none hidden-input">
+                                <button style="background: #014626;color:white;" class="btn btn-white d-flex align-items-center button-mobile">
+                                    <img class="edit" src="/Content/img/white-pen.png" alt="Salvar">
+                                    Salvar
+                                </button>
+                            </a>
+
+                        </div>
+                        <form method="post" action="/Barragens/EditNomeBarragem" id="idFormEditNomeBarragem">
                             @Html.AntiForgeryToken()
-                            <div class="col-8 d-flex align-items-center">
-                                <input class="input-edit" type="text" name="nome" placeholder="Agremiação" value="@ViewBag.nomeAgremiacao" style="width: 90%;">
-                            </div>
-                            <div class="col-4 text-end">
-                                <a id="btn-input" class="text-decoration-none">
-                                    <button class="btn btn-white d-flex align-items-center button-mobile">
-                                        <img class="edit" src="/Content/img/edit.svg" alt="Editar">
-                                        Editar
-                                    </button><!--buttons__wrapper-->
-                                </a>
-                            </div>
+                            <input type="hidden" name="nome" id="idEditNomeAgremiacao" value="">
                         </form>
                     </div>
                 </div>
@@ -304,30 +310,37 @@
 </section>
 
 @section Scripts {
-    @Scripts.Render("/Scripts/jquery-2.1.1.min.js")
-    @Scripts.Render("/Scripts/jquery.form.js")
-    
     <script>
-        
+        let input = document.getElementById('agremiacao')
+        let btnInput = document.getElementById('btn-input')
+        let btnSalvar = document.getElementById('btn-salvar')
+        let textInput = document.getElementById('name')
+        let inputEditNomeAgremiacao = document.getElementById('idEditNomeAgremiacao')
+        let formEditNomeBarragem = document.getElementById('idFormEditNomeBarragem')
 
-        function readURL(input) {
-            if (input.files && input.files[0]) {
-                var reader = new FileReader();
-
-                reader.onload = function (e) {
-                    $('#imagem1').attr('src', e.target.result);
-                    document.getElementById('botaoUploadLogoMarca').style.display = "block";
-                }
-
-                reader.readAsDataURL(input.files[0]);
+        btnInput.addEventListener('click', () => {
+            input.classList.toggle('input-active')
+            btnInput.classList.add('hidden-input')
+            btnSalvar.classList.add('input-active')
+            if (input.classList.contains('input-active')) {
+                textInput.style.display = 'none';
+            } else {
+                textInput.style.display = 'block';
             }
-        }
+        })
 
-        $(".fileLogoMarca").change(function () {
-            readURL(this);
-        });
-
-        document.getElementById('botaoUploadLogoMarca').style.display = "none";
+        btnSalvar.addEventListener('click', () => {
+            input.classList.toggle('input-active')
+            btnInput.classList.remove('hidden-input')
+            btnSalvar.classList.remove('input-active')
+            if (input.classList.contains('input-active')) {
+                textInput.style.display = 'none';
+            } else {
+                textInput.style.display = 'block';
+            }
+            inputEditNomeAgremiacao.value = input.value
+            formEditNomeBarragem.submit()
+        })
 
     </script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
