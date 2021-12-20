@@ -52,7 +52,7 @@
                 {
                     valorArrecadado = string.Format("{0:N}", ViewBag.valorArrecadado);
                 }
-                <div class="col-md-8">
+                <div class="col-md-6">
                     <div class="card border-0">
                         <div class="card-body trofeu">
 
@@ -71,16 +71,7 @@
                                     </div>
                                 </div>
                                 <div class="col-4">
-                                    <div class="row">
-                                        <div class="col-8">
-                                            @Html.Raw("<button class='btn btn-sm btn-success copy d-flex align-items-center' id='copy-link' data-link='https://www.rankingdetenis.com/torneio-" + torneio.Id + "'> Copiar link <img src='/Content/img/link.png' alt='Share'> </button>")
-                                        </div>
-                                        <div class="col-4">
-                                            @Html.Raw("<a href='https://api.whatsapp.com/send?text=https://www.rankingdetenis.com/torneio-" + torneio.Id + "' target='_blank'>")
-                                            <img width="25" height="25" src="/Content/image/whatsapp.png">
-                                            @Html.Raw("</a>")
-                                        </div>
-                                    </div>
+                                    @Html.Raw("<button class='btn btn-sm btn-success copy d-flex align-items-center' id='copy-link' data-link='https://www.rankingdetenis.com/torneio-" + torneio.Id + "'> Copiar link <img src='/Content/img/link.png' alt='Share'> </button>")
                                 </div>
                             </div>
                             <div class="d-flex flex-wrap buttons justify-content-center custom">
