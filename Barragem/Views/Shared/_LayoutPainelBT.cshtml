@@ -84,7 +84,7 @@
                 <div class="user-info d-flex align-items-center">
                     <a class="mx-1" href="/Home/IndexBarragens">
                         @if ((barraId != 0) && (barraId < 9999))
-                        { 
+                        {
                             <img width="50" height="50" src="@scrLogo" alt="logo">
                         }
                     </a>
@@ -99,53 +99,34 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                     <li class="nav-item me-4">
-                        @Html.ActionLink("Home", "IndexBarragens", "Home", new { }, new { @class = "nav-link active" })
+                        <a class="nav-link active" aria-current="page" href="/Torneio/PainelControle">Painel</a>
                     </li>
-                    <li class="nav-item me-4 dropdown dropdown-unset-pipe">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Torneio</a>
+                    <li class="nav-item me-4">
+                        <a class="nav-link" href="/Torneio/Manuais">Manuais</a>
+                    </li>
+                    <li class="nav-item me-4">
+                        <a class="nav-link" href="#">Suporte</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle p-0" href="#" id="navbarDropdown" role="button"
+                           data-bs-toggle="dropdown" aria-expanded="false">
+                            <div class="d-inline-flex">
+                                <div>
+                                    <img src="~/Content/img/user.png" alt="icone">
+                                </div>
+                                <div class='ms-1 me-1'>
+                                    <h5 class="mb-0">Anddy’s Makeover</h5>
+                                    <h2 class="mb-0">Organizador</h2>
+                                </div>
+                            </div>
+                        </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <li>@Html.ActionLink("Inscritos", "InscricoesTorneio2", "Torneio", new { }, new { @class = "dropdown-item" })</li>
-                            <li>@Html.ActionLink("Tabela de Jogos", "Tabela", "Torneio", new { }, new { @class = "dropdown-item" })</li>
-                            <li>@Html.ActionLink("Torneios Abertos", "TorneiosDisponiveis", "Torneio", new { }, new { @class = "dropdown-item" })</li>
-                            <li>@Html.ActionLink("Lançar Resultado", "../Torneio/LancarResultado", new { }, new { @class = "dropdown-item" })</li>
+                            <li><a class="dropdown-item" href="#">Alterar Perfil</a></li>
+                            <li><a class="dropdown-item" href="#">Alterar Senha</a></li>
+                            <li><a class="dropdown-item" href="#">Torneios</a></li>
+                            <li><a class="dropdown-item" href="#">Circuitos</a></li>
                         </ul>
                     </li>
-                    @if (Roles.IsUserInRole("adminTorneio"))
-                    {
-                        <li class="nav-item me-4">
-                            @Html.ActionLink("Circuito", "RankingDasLigas", "Ranking", new { }, new { @class = "nav-link active" })
-                        </li>
-                    }
-                    else
-                    {
-                        <li class="nav-item me-4 dropdown dropdown-unset-pipe">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Ranking</a>
-                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown" style="width: unset;">
-                                <li>@Html.ActionLink("Regra da Pontuação", "RegraPontuacao", "Ranking", new { }, new { @class = "dropdown-item" })</li>
-                                <li>@Html.ActionLink("Minha Pontuação", "MinhaPontuacao", "Account", new { }, new { @class = "dropdown-item" })</li>
-                                <li>@Html.ActionLink("Ranking", "index", "Ranking", new { }, new { @class = "dropdown-item" })</li>
-                                <li>@Html.ActionLink("Liga", "RankingDasLigas", "Ranking", new { }, new { @class = "dropdown-item" })</li>
-                                <li>@Html.ActionLink("Alterar Status", "../Account/EditaUsuario", new { UserName = User.Identity.Name }, new { @class = "dropdown-item" })</li>
-                                <li>@Html.ActionLink("Rodada Atual", "Index", "Jogo", new { }, new { @class = "dropdown-item" })</li>
-                                <li>@Html.ActionLink("Rodadas Anteriores", "index", "Rodada", new { }, new { @class = "dropdown-item" })</li>
-                                <li>@Html.ActionLink("Jogadores", "ListarUsuarios", "Account", new { }, new { @class = "dropdown-item" })</li>
-                            </ul>
-                        </li>
-                    }
-                    @if (!Roles.IsUserInRole("adminTorneio"))
-                    {
-                        <li class="nav-item me-4 dropdown dropdown-unset-pipe">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Informações</a>
-                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <li>@Html.ActionLink("Regulamento", "Regulamento2", "Home", new { }, new { @class = "dropdown-item" })</li>
-                                <li>@Html.ActionLink("Quem somos", "QuemSomos2", "Home", new { }, new { @class = "dropdown-item" })</li>
-                                <li>@Html.ActionLink("Fale Conosco", "FaleConosco2", "Home", new { }, new { @class = "dropdown-item" })</li>
-                                <li>@Html.ActionLink("Manuais", "Manuais", "Torneio", new { }, new { @class = "dropdown-item" })</li>
-                                <li><a class="dropdown-item" href="#">Suporte</a></li>
-                            </ul>
-                        </li>
-                    }
-                    @Html.Partial("_LoginPartialBT","")
                 </ul>
             </div>
         </div>
