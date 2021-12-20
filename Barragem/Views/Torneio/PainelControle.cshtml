@@ -246,12 +246,16 @@
                             </h5>
                         </div>
                         <div class="col-4 text-end">
-                            <a class="text-decoration-none" href="#">
+                            <a class="text-decoration-none" href="#idBtnUploadLogoMarca" id="idBtnUploadLogoMarca">
                                 <button class="btn btn-white d-flex align-items-center button-mobile">
                                     <img class="edit" src="/Content/img/edit.svg" alt="Editar">
                                     Editar
-                                </button><!--buttons__wrapper-->
+                                </button>
                             </a>
+                            <form method="post" enctype="multipart/form-data" action="/Ranking/uploadLogoMarca" name="formLogoMarca" id="formLogoMarca" class="form">
+                                <input type="hidden" name="Id" id="Id" value="@ViewBag.barragemId" />
+                                <input hidden type="file" id="fileLogo" name="fileLogo" onchange="this.form.submit();"/>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -317,6 +321,8 @@
         let textInput = document.getElementById('name')
         let inputEditNomeAgremiacao = document.getElementById('idEditNomeAgremiacao')
         let formEditNomeBarragem = document.getElementById('idFormEditNomeBarragem')
+        let aBtnUploadLogoMarca = document.getElementById('idBtnUploadLogoMarca')
+        let inputFileLogo = document.getElementById('fileLogo')
 
         btnInput.addEventListener('click', () => {
             input.classList.toggle('input-active')
@@ -341,6 +347,11 @@
             inputEditNomeAgremiacao.value = input.value
             formEditNomeBarragem.submit()
         })
+
+        aBtnUploadLogoMarca.addEventListener('click', () => {
+            inputFileLogo.click()
+        })
+        
 
     </script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
