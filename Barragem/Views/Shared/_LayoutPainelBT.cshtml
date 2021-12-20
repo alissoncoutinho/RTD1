@@ -47,34 +47,46 @@
             <div class="logo p-4"><img class="img-fluid" src="~/Content/img/logo.png" alt="logo do site" /></div>
 
         </div><!--menu__wrapper-->
-        <div class="dropdown-custom d-flex justify-content-between">
-            <div class="d-flex">
-                <div class="mt-1"><img src="~/Content/img/user.png" alt="icone"></div>
-                <div class="drowdown__info mx-1 d-flex flex-column justify-content-center">
-                    <span>Anddy’s Makeover</span>
-                    <p>Organizador</p>
-                </div><!--dropdown__info-->
-            </div>
-            <div class="arrow">
-                <img src="~/Content/img/arrow.svg" alt="icone">
-            </div>
-        </div><!--dropdown-->
+        @if (Request.IsAuthenticated)
+        {
+            <div class="dropdown-custom d-flex justify-content-between">
+                <div class="d-flex">
+                    <div class="mt-1"><img src="@Url.Action("BuscaFoto", "Account", new { id = 0, userName = User.Identity.Name })" alt="icone"></div>
+                    <div class="drowdown__info mx-1 d-flex flex-column justify-content-center">
+                        <span>@User.Identity.Name</span>
+                    </div><!--dropdown__info-->
+                </div>
+                <div class="arrow">
+                    <img src="~/Content/img/arrow.svg" alt="icone">
+                </div>
+            </div><!--dropdown-->
 
-        <div class="dropdown-links">
-            <ul>
-                <li class="pt-1"><a href="#">Alterar Perfil</a></li>
-                <li><a href="#">Alterar Senha</a></li>
-                <li><a href="#">Torneios</a></li>
-                <li class="pb-1"><a href="#">Circuitos</a></li>
+            <div class="dropdown-links">
+                <ul>
+                    <li class="pt-1"><a href="@Url.Action("EditaUsuario", "Account", new { UserName = User.Identity.Name })">Alterar Perfil</a></li>
+                    <li><a href="/Account/Manage">Alterar Senha</a></li>
+                    <li><a href="/Torneio">Torneios</a></li>
+                    <li class="pb-1"><a href="javascript:document.getElementById('logoutForm').submit()">Sair</a></li>
+                </ul>
+            </div><!--dropdown-links-->
+            using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm" }))
+            {
+                @Html.AntiForgeryToken()
+            }
+            <ul class="mobile">
+                <li><a href="/Torneio/PainelControle">Painel</a></li>
+                <li><a href="/Torneio/Manuais">Manuais</a></li>
+                <li><a href="https://api.whatsapp.com/send?phone=5561998095668&text=Ol%C3%A1%2C%20gostaria%20de%20ajuda%20com%20o%20sistema%20Ranking%20Beach%20Tennis" target="_blank">Suporte</a></li>
             </ul>
-        </div><!--dropdown-links-->
-
-        <ul class="mobile">
-            <li><a href="/Torneio/PainelControle">Painel</a></li>
-            <li><a href="/Torneio/Manuais">Manuais</a></li>
-            <li><a href="https://api.whatsapp.com/send?phone=5561998095668&text=Ol%C3%A1%2C%20gostaria%20de%20ajuda%20com%20o%20sistema%20Ranking%20Beach%20Tennis" target="_blank">Suporte</a></li>
-        </ul>
-
+        }
+        else
+        {
+            <ul class="mobile">
+                <li class="nav-item me-4">
+                    <a class="nav-link active" href="@Url.Action("Login", "Account")">Log in</a>
+                </li>
+            </ul>
+        }
     </div><!--menu-->
     <!--fim do menu mobile-->
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
