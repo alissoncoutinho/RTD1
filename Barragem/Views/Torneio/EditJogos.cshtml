@@ -17,7 +17,22 @@
             @Html.Raw("Desconto para usuários que jogam o ranking: R$ " + cobrancaTorneio.valorDescontoParaRanking +",00<br><br>")
         }
         Valor final a pagar: R$ @cobrancaTorneio.valorASerPago,00 <br><br>
-        Realize o pagamento via PIX CNPJ 24.770.955/000196 (Bola de Tênis Delivery) e envie o comprovante para Ricardo (61) 98408-6580 solicitando a liberação.
+        
+        @if (ViewBag.torneioId == 1227)
+        {
+            if (cobrancaTorneio.qrCode.erroGerarQrCode == null)
+            {
+                <center><img id="imgFoto" src="@cobrancaTorneio.qrCode.link" style="width:148px;height:148px;"  /></center><br>
+                <span>Leia o QR Code anterior ou copie o código abaixo no app do seu banco na opção Pix Copia e Cola.</span><br><br>
+                @cobrancaTorneio.qrCode.text
+            }
+            else
+            {
+                @Html.Raw(cobrancaTorneio.qrCode.erroGerarQrCode + "<br>")
+            }
+        }else{
+            <span>Realize o pagamento via PIX CNPJ 24.770.955/000196 (Bola de Tênis Delivery) e envie o comprovante para Ricardo (61) 98408-6580 solicitando a liberação.</span>
+        }
     </div>
     }
     <div id="placar-modal" class="modal fade" role="dialog">

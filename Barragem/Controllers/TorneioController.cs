@@ -2298,6 +2298,18 @@ namespace Barragem.Controllers
                 cobrancaTorneio.qtddInscritos = qtddInscritos;
                 cobrancaTorneio.valorASerPago = valorASerPago;
                 cobrancaTorneio.valorDescontoParaRanking = valorDescontoParaRanking;
+                if (torneioId == 1227)
+                {
+                    try
+                    {
+                        cobrancaTorneio.qrCode = GetQrCodeCobrancaPIX(torneioId);
+                    }
+                    catch (Exception e)
+                    {
+                        cobrancaTorneio.qrCode = new QrCodeCobrancaTorneio();
+                        cobrancaTorneio.qrCode.erroGerarQrCode = "Erro ao gerar o QrCode de pagamento. Favor tente novamente mais tarde:" + e.Message;
+                    }
+                }
                 ViewBag.CobrancaTorneio = cobrancaTorneio;
             }
             List<Jogo> listaJogos = null;
@@ -3456,6 +3468,58 @@ namespace Barragem.Controllers
             }
 
             return View();
+        }
+
+        private QrCodeCobrancaTorneio GetQrCodeCobrancaPIX(int torneioId)
+        {
+            try
+            {
+                var torneio = db.Torneio.Find(torneioId);
+
+                var order = montarPedidoPIX(torneio);
+
+                var cobrancaPix = new PIXPagSeguro().CriarPedido(order);
+                var qrcode = new QrCodeCobrancaTorneio();
+                qrcode.text = cobrancaPix.qr_codes[0].text;
+                if (cobrancaPix.qr_codes[0].links[0].media == "image/png"){
+                    qrcode.link = cobrancaPix.qr_codes[0].links[0].href;
+                } else {
+                    qrcode.link = cobrancaPix.qr_codes[0].links[0].href;
+                }
+                return qrcode;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        private Order montarPedidoPIX(Torneio torneio)
+        {
+            var cobrancaTorneio = getDadosDeCobrancaTorneio(torneio.Id);
+            var order = new Order();
+            order.reference_id = "COB-" + torneio.Id;
+            order.customer = new Customer();
+            order.customer.name = torneio.barragem.nomeResponsavel;
+            order.customer.email = torneio.barragem.email;
+            order.customer.tax_id = torneio.barragem.cpfResponsavel;
+            var item = new ItemPedido();
+            item.reference_id = torneio.Id + "";
+            item.name = torneio.nome;
+            item.quantity = 1;
+            item.unit_amount = cobrancaTorneio.valorASerPago * 100;
+            order.items = new List<ItemPedido>();
+            order.items.Add(item);
+            var qr_code = new QrCode();
+            var amount = new Amount();
+            amount.value = cobrancaTorneio.valorASerPago * 100;
+            qr_code.amount = amount;
+            order.qr_codes = new List<QrCode>();
+            order.qr_codes.Add(qr_code);
+            order.notification_urls = new string[1];
+            order.notification_urls[0] = "https://www.rankingdetenis.com/api/TorneioAPI/NotificacaoPagamentoOrganizador";
+
+            return order;
         }
     }
 }

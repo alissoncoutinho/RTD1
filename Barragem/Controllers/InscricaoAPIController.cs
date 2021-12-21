@@ -30,8 +30,16 @@ namespace Barragem.Controllers
         // GET: api/InscricaoAPI
         [HttpGet]
         [Route("api/InscricaoAPI/PrepararInscricao/{torneioId}")]
-        public TorneioClassesApp GetPrepararInscricao(int torneioId)
+        public IHttpActionResult GetPrepararInscricao(int torneioId, int userId=0)
         {
+            if (userId > 0)
+            {
+                var temInscricao = db.InscricaoTorneio.Where(i => i.userId == userId && i.torneioId == torneioId).Count();
+                if (temInscricao > 0)
+                {
+                    return BadRequest("001-Você já possui uma inscrição neste torneio.");
+                }
+            }
             var torneioClassesApp = new TorneioClassesApp();
             var torneio = db.Torneio.Find(torneioId);
             torneioClassesApp.torneio = montaTorneio(torneio);
@@ -46,7 +54,7 @@ namespace Barragem.Controllers
                 classeTorneio.nome = item.nome;
                 torneioClassesApp.classesTorneio.Add(classeTorneio);
             }
-            return torneioClassesApp;
+            return Ok(torneioClassesApp);
         }
 
         private Torneio montaTorneio(Torneio torneio) {
@@ -68,9 +76,9 @@ namespace Barragem.Controllers
             torneioDadosReduzidos.premiacao = torneio.premiacao;
             torneioDadosReduzidos.qtddCategoriasPorJogador = torneio.qtddCategoriasPorJogador;
             torneioDadosReduzidos.valor = torneio.valor;
-            torneioDadosReduzidos.valor2 = torneio.valor2;
-            torneioDadosReduzidos.valor3 = torneio.valor3;
-            torneioDadosReduzidos.valor4 = torneio.valor4;
+            if(torneio.qtddCategoriasPorJogador>1) torneioDadosReduzidos.valor2 = torneio.valor2;
+            if (torneio.qtddCategoriasPorJogador > 2) torneioDadosReduzidos.valor3 = torneio.valor3;
+            if (torneio.qtddCategoriasPorJogador > 3) torneioDadosReduzidos.valor4 = torneio.valor4;
             torneioDadosReduzidos.valorDescontoFederado = torneio.valorDescontoFederado;
             torneioDadosReduzidos.valorSocio = torneio.valorSocio;
 
@@ -300,6 +308,33 @@ namespace Barragem.Controllers
             return StatusCode(HttpStatusCode.Created);
         }
 
+        private Order montarPedidoPIX(InscricaoTorneio inscricaoTorneio)
+        {
+            var order = new Order();
+            order.reference_id = "T-" + inscricaoTorneio.Id;
+            order.customer = new Customer();
+            order.customer.name = inscricaoTorneio.participante.nome;
+            order.customer.email = inscricaoTorneio.participante.email;
+            order.customer.tax_id = "13170650009";
+            var item = new ItemPedido();
+            item.reference_id = inscricaoTorneio.torneioId + "";
+            item.name = inscricaoTorneio.torneio.nome;
+            item.quantity = 1;
+            item.unit_amount = Convert.ToInt32(inscricaoTorneio.valor) * 100;
+            order.items = new List<ItemPedido>();
+            order.items.Add(item);
+            var qr_code = new QrCode();
+            var amount = new Amount();
+            amount.value = Convert.ToInt32(inscricaoTorneio.valor)*100;
+            qr_code.amount = amount;
+            order.qr_codes = new List<QrCode>();
+            order.qr_codes.Add(qr_code);
+            order.notification_urls = new string[1];
+            order.notification_urls[0] = "https://www.rankingdetenis.com/api/InscricaoAPI/ReceberNotificacao";
+
+            return order;
+        }
+
         [ResponseType(typeof(void))]
         [HttpGet]
         [Route("api/InscricaoAPI/{Id}/CobrancaPIX")]
@@ -309,11 +344,15 @@ namespace Barragem.Controllers
             {
                 var inscricaoTorneio = db.InscricaoTorneio.Find(Id);
 
-                // var cobrancaPix = new PIXPagSeguro().GerarCobranca(new Cobranca());
-            }catch(Exception e){
+                var order = montarPedidoPIX(inscricaoTorneio);
+
+                var cobrancaPix = new PIXPagSeguro().CriarPedido(order); 
+                return Ok(cobrancaPix.qr_codes[0].text);
+            }
+            catch(Exception e){
                 return InternalServerError(e);
             }
-            return Ok("00020126830014br.gov.bcb.pix2561api.pagseguro.com/pix/v2/210387E0-A6BF-45D1-80B5-CFEB9BBCEE2F5204899953039865802BR5921Pagseguro Internet SA6009SAO PAULO62070503***63047E6D");
+            //return Ok("00020126830014br.gov.bcb.pix2561api.pagseguro.com/pix/v2/210387E0-A6BF-45D1-80B5-CFEB9BBCEE2F5204899953039865802BR5921Pagseguro Internet SA6009SAO PAULO62070503***63047E6D");
         }
 
         [ResponseType(typeof(void))]
@@ -322,10 +361,15 @@ namespace Barragem.Controllers
         [Route("api/InscricaoAPI")]
         public IHttpActionResult PostInscricao(int userId, int torneioId, int classe1, int classe2, int classe3, int classe4, string observacao = "", bool isSocio = false, bool isFederado=false)
         {
+            // validar se já houve inscrição:
+            var temInscricao = db.InscricaoTorneio.Where(i => i.userId == userId && i.torneioId == torneioId).Count();
+            if (temInscricao>0) {
+                return BadRequest("001-Você já possui uma inscrição neste torneio.");
+            }
             var mensagemRetorno = new TorneioController().InscricaoNegocio(torneioId, classe1, "", classe2, classe3, classe4, observacao, isSocio, false, userId, isFederado);
             if (mensagemRetorno.tipo == "erro")
             {
-                return InternalServerError(new Exception(mensagemRetorno.mensagem));
+                return BadRequest(mensagemRetorno.mensagem);
             }
             else
             {
@@ -334,6 +378,64 @@ namespace Barragem.Controllers
                 return Ok(inscricao);
             }
         }
-        
+
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("api/InscricaoAPI/ReceberNotificacao")]
+        public IHttpActionResult PostReceberNotificacao(Cobranca cobranca) {
+            var req = Request.Headers.Authorization;
+            //if(req.Parameter != "<<token>>")
+            //{
+            //    return null;
+            //}
+            string[] refs = cobranca.reference_id.Split('-');
+            if (refs[0].Equals("T"))
+            { // se for torneio
+                int idInscricao = Convert.ToInt32(refs[1]);
+                var inscricao = db.InscricaoTorneio.Find(idInscricao);
+                if (cobranca.charges[0].status == "PAID")
+                {
+                    inscricao.isAtivo = true;
+                    if ((inscricao.valorPendente != null) && (inscricao.valorPendente != 0))
+                    {
+                        inscricao.valor = inscricao.valor + inscricao.valorPendente;
+                        inscricao.valorPendente = 0;
+                    }
+                }
+                inscricao.statusPagamento = cobranca.charges[0].status + "";
+                inscricao.formaPagamento = "PIX";
+                db.Entry(inscricao).State = EntityState.Modified;
+                db.SaveChanges();
+
+                var log = new Log();
+                log.descricao = "PIX:" + DateTime.Now + ":" + inscricao.Id + ":" + cobranca.charges[0].status;
+                db.Log.Add(log);
+                db.SaveChanges();
+
+                // ativar outras inscrições caso existam
+                var listInscricao = db.InscricaoTorneio.Where(t => t.torneioId == inscricao.torneioId && t.userId == inscricao.userId && t.Id != inscricao.Id).ToList();
+                foreach (var item in listInscricao)
+                {
+                    if (cobranca.charges[0].status == "PAID")
+                    {
+                        item.isAtivo = true;
+                        if ((item.valorPendente != null) && (item.valorPendente != 0))
+                        {
+                            item.valor = item.valor + item.valorPendente ?? 0;
+                            item.valorPendente = 0;
+                        }
+                    }
+                    item.statusPagamento = cobranca.charges[0].status + "";
+                    item.formaPagamento = "PIX";
+                    //item.valor = (float)transaction.GrossAmount;
+                    db.Entry(item).State = EntityState.Modified;
+                    db.SaveChanges();
+
+                }
+            }
+
+            return Ok();
+        }
+
     }
 }

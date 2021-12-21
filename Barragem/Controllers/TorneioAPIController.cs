@@ -38,7 +38,8 @@ namespace Barragem.Controllers
                     cidade = inscricao.torneio.cidade,
                     premiacao = inscricao.torneio.premiacao,
                     contato = "",
-                    pontuacaoLiga = inscricao.torneio.TipoTorneio
+                    pontuacaoLiga = inscricao.torneio.TipoTorneio,
+                    inscricaoSoPeloSite = inscricao.torneio.inscricaoSoPeloSite
                 }).Distinct<TorneioApp>().ToList();
 
             foreach (var item in Torneios)
@@ -166,12 +167,12 @@ namespace Barragem.Controllers
         [Route("api/TorneioAPI/Inscritos/{torneioId}")]
         public IList<Inscrito> GetListarInscritos(int torneioId, int userId = 0)
         {
-            var torneio = db.Torneio.Find(torneioId);
-            var liberarTabelaInscricao = torneio.liberaTabelaInscricao;
-            if (!liberarTabelaInscricao)
-            {
-                throw new Exception(message: "Tabela de inscritos ainda não liberada.");
-            }
+            //var torneio = db.Torneio.Find(torneioId);
+            //var liberarTabelaInscricao = torneio.liberaTabelaInscricao;
+            //if (!liberarTabelaInscricao)
+            //{
+            //    throw new Exception(message: "Tabela de inscritos ainda não liberada.");
+            //}
 
             var inscricoes = db.InscricaoTorneio.Where(r => r.torneioId == torneioId && r.classeTorneio.isDupla == false).
                 OrderBy(r => r.classe).ThenBy(r => r.participante.nome).ToList();
@@ -781,7 +782,7 @@ namespace Barragem.Controllers
                            {
                                Id = t.Id, logoId = t.barragemId, nome = t.nome, dataInicio = t.dataInicio, valor = t.valor, valorSocio = t.valorSocio,
                                dataFim = t.dataFim, dataFimInscricoes = t.dataFimInscricoes, cidade = t.cidade, premiacao = t.premiacao, contato = "",
-                               pontuacaoLiga = t.TipoTorneio
+                               pontuacaoLiga = t.TipoTorneio, inscricaoSoPeloSite = t.inscricaoSoPeloSite
                            }).Union(
                             from t in db.Torneio
                             where t.dataFimInscricoes >= dataHoje && t.isAtivo && t.divulgaCidade 
@@ -790,7 +791,7 @@ namespace Barragem.Controllers
                             {
                                 Id = t.Id, logoId = t.barragemId, nome = t.nome, dataInicio = t.dataInicio, valor = t.valor, valorSocio = t.valorSocio,
                                 dataFim = t.dataFim, dataFimInscricoes = t.dataFimInscricoes, cidade = t.cidade, premiacao = t.premiacao, contato = "",
-                                pontuacaoLiga = t.TipoTorneio
+                                pontuacaoLiga = t.TipoTorneio, inscricaoSoPeloSite = t.inscricaoSoPeloSite
                             }).Union(
                             from t in db.Torneio
                             where t.dataFimInscricoes >= dataHoje && t.isAtivo && t.barragemId == rankingId
@@ -798,7 +799,7 @@ namespace Barragem.Controllers
                             {
                                 Id = t.Id, logoId = t.barragemId, nome = t.nome, dataInicio = t.dataInicio, valor = t.valor, valorSocio = t.valorSocio,
                                 dataFim = t.dataFim, dataFimInscricoes = t.dataFimInscricoes, cidade = t.cidade, premiacao = t.premiacao, contato = "",
-                                pontuacaoLiga = t.TipoTorneio
+                                pontuacaoLiga = t.TipoTorneio, inscricaoSoPeloSite = t.inscricaoSoPeloSite
                             }).Distinct<TorneioApp>().ToList();
             
             foreach (var item in torneio)
@@ -822,6 +823,35 @@ namespace Barragem.Controllers
            
         }
 
-        
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("api/TorneioAPI/NotificacaoPagamentoOrganizador")]
+        public IHttpActionResult NotificacaoPagamentoOrganizador(Cobranca cobranca)
+        {
+            var req = Request.Headers.Authorization;
+            //if(req.Parameter != "<<token>>")
+            //{
+            //    return null;
+            //}
+            string[] refs = cobranca.reference_id.Split('-');
+            if (refs[0].Equals("COB"))
+            { // se for torneio
+                int torneioId = Convert.ToInt32(refs[1]);
+                var torneio = db.Torneio.Find(torneioId);
+                if (cobranca.charges[0].status == "PAID")
+                {
+                    torneio.torneioFoiPago = true;
+                    db.Entry(torneio).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+                var log = new Log();
+                log.descricao = "PIX:" + DateTime.Now + ": COB: " + torneioId + ":" + cobranca.charges[0].status;
+                db.Log.Add(log);
+                db.SaveChanges();
+
+            }
+
+            return Ok();
+        }
     }
 }

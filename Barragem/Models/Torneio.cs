@@ -146,7 +146,9 @@ namespace Barragem.Models
 
         [Display(Name = "Tem limite de inscrição?")]
         public bool? temLimiteDeInscricao { get; set; }
-        
+
+        public bool? inscricaoSoPeloSite { get; set; }
+
 
 
     }
@@ -169,6 +171,7 @@ namespace Barragem.Models
         public List<Patrocinador> patrocinadores { get; set; }
         public string pontuacaoLiga { get; set; }
         public string nomeLiga { get; set; }
+        public bool? inscricaoSoPeloSite { get; set; }
     }
 
     public class Patrocinador
@@ -221,5 +224,13 @@ namespace Barragem.Models
         public int qtddInscritos { get; set; }
         public int valorASerPago { get; set; }
         public int valorDescontoParaRanking { get; set; }
+        public QrCodeCobrancaTorneio qrCode { get; set; }
+    }
+
+    public class QrCodeCobrancaTorneio
+    {
+        public string text { get; set; }
+        public string link { get; set; }
+        public string erroGerarQrCode { get; set; }
     }
 }
