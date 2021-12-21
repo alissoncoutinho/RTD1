@@ -3371,17 +3371,16 @@ namespace Barragem.Controllers
             var userId = WebSecurity.GetUserId(User.Identity.Name);
             var barragem = (from up in db.UserProfiles where up.UserId == userId select up.barragem).Single();
             var agora = DateTime.Now.AddDays(-1);
-            var torneio = db.Torneio.Where(t => t.dataFim > agora && t.barragemId == barragem.Id).OrderByDescending(c => c.Id).ToList();
-            if (torneio.Count() > 0)
+            var torneiosAndamento = db.Torneio.Where(t => t.dataFim > agora && t.barragemId == barragem.Id).OrderByDescending(c => c.Id).ToList();
+            foreach (var item in torneiosAndamento)
             {
-                ViewBag.torneioEmAndamento = torneio[0];
-                var torneioId = torneio[0].Id;
-                ViewBag.qtddInscricoes = db.InscricaoTorneio.Where(t => t.torneioId == torneioId).Count();
-                ViewBag.valorArrecadado = db.InscricaoTorneio.Where(i => i.torneioId == torneioId && i.isAtivo == true).Select(i => new { user = (int)i.userId, valor = i.valor }).Distinct().Sum(i => i.valor);
-                torneios = db.Torneio.Where(r => r.barragemId == barragem.Id && r.Id!= torneioId).OrderByDescending(c => c.Id).Take(4).ToList();
-            } else {
-                torneios = db.Torneio.Where(r => r.barragemId == barragem.Id).OrderByDescending(c => c.Id).Take(4).ToList();
+                // estou colocando estes dados em outros campos do objeto. Gambiarra!!!
+                item.qtddClasses = db.InscricaoTorneio.Where(t => t.torneioId == item.Id).Count();
+                item.valor = db.InscricaoTorneio.Where(i => i.torneioId == item.Id && i.isAtivo == true).Select(i => new { user = (int)i.userId, valor = i.valor }).Distinct().Sum(i => i.valor);
+                
             }
+            ViewBag.torneioEmAndamento = torneiosAndamento;
+            torneios = db.Torneio.Where(r => r.barragemId == barragem.Id && r.dataFim > agora).OrderByDescending(c => c.Id).Take(4).ToList();
             ViewBag.circuitos = db.Liga.Where(b => b.barragemId == barragem.Id).OrderByDescending(b=> b.Id).ToList();
             ViewBag.barragemId = barragem.Id;
             ViewBag.nomeAgremiacao = barragem.nome;
