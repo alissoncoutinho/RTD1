@@ -167,7 +167,7 @@ namespace Barragem.Controllers
             return View(barragens);
         }
 
-        [Authorize(Roles = "admin,adminTorneio")]
+        [Authorize(Roles = "admin,adminTorneio,organizador")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult EditNomeBarragem(string nome)
