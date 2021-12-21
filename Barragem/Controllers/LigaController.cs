@@ -115,7 +115,7 @@ namespace Barragem.Controllers
                 {
                     if ((liga.isModeloTodosContraTodos) && (modalidadeBarragem=="1")) || ((!liga.isModeloTodosContraTodos) && (modalidadeBarragem == "2")){
                         ViewBag.MsgErro = "Já existe torneios em andamento para essa liga. Não é permitido alterar a modalidade do circuito."
-                        return View();
+                        return View("Edit");
                     }
                 }
                 if (modalidadeBarragem == "1")
