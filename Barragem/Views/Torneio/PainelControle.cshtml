@@ -2,7 +2,6 @@
 @{
     Layout = "~/Views/Shared/_LayoutPainelBT.cshtml";
     ViewBag.Title = "Painel de Controle";
-    Barragem.Models.Torneio torneio = new Barragem.Models.Torneio();
 
     HttpCookie cookie = Request.Cookies["_barragemId"];
     var barraId = 0;
@@ -44,64 +43,67 @@
                 </div>
             </div>
 
-            @if (ViewBag.torneioEmAndamento != null)
+            @if (ViewBag.torneiosEmAndamento.Count > 0)
             {
-                torneio = ViewBag.torneioEmAndamento;
-                var valorArrecadado = "0,00";
-                if (ViewBag.valorArrecadado != null)
+                foreach (var item in ViewBag.torneiosEmAndamento)
                 {
-                    valorArrecadado = string.Format("{0:N}", ViewBag.valorArrecadado);
-                }
-                <div class="col-md-6">
-                    <div class="card border-0">
-                        <div class="card-body trofeu">
 
-                            <div class="row mb-3">
-                                <div class="col-8">
-                                    <div class="row">
-                                        <div class="col-3">
-                                            <img class="img-fluid trofeu-img" src="/Content/img/trofeu.png" alt="Trofeu" srcset="">
-                                        </div>
-                                        <div class="col-9">
-                                            <h5 class="card-title">@torneio.nome</h5>
-                                            <p class="card-text text-muted">
-                                                @Html.Raw("De " + torneio.dataInicio.ToShortDateString() + " até " + torneio.dataFim.ToShortDateString())
-                                            </p>
+                    var valorArrecadado = "0,00";
+                    if (item.valor != null)
+                    {
+                        valorArrecadado = string.Format("{0:N}", item.valor);
+                    }
+                    <div class="col-md-6">
+                        <div class="card border-0">
+                            <div class="card-body trofeu">
+
+                                <div class="row mb-3">
+                                    <div class="col-8">
+                                        <div class="row">
+                                            <div class="col-3">
+                                                <img class="img-fluid trofeu-img" src="/Content/img/trofeu.png" alt="Trofeu" srcset="">
+                                            </div>
+                                            <div class="col-9">
+                                                <h5 class="card-title">@item.nome</h5>
+                                                <p class="card-text text-muted">
+                                                    @Html.Raw("De " + item.dataInicio.ToShortDateString() + " até " + item.dataFim.ToShortDateString())
+                                                </p>
+                                            </div>
                                         </div>
                                     </div>
+                                    <div class="col-4">
+                                        @Html.Raw("<button class='btn btn-sm btn-success copy d-flex align-items-center' data-link='https://www.rankingdetenis.com/torneio-" + item.Id + "' onclick='copyLinkAllInOne(this)'> Copiar link <img src='/Content/img/link.png' alt='Share'> </button>")
+                                    </div>
                                 </div>
-                                <div class="col-4">
-                                    @Html.Raw("<button class='btn btn-sm btn-success copy d-flex align-items-center' id='copy-link' data-link='https://www.rankingdetenis.com/torneio-" + torneio.Id + "'> Copiar link <img src='/Content/img/link.png' alt='Share'> </button>")
+                                <div class="d-flex flex-wrap buttons justify-content-center custom">
+
+                                    <a class="text-decoration-none" href="@Url.Action("EditInscritos", new { torneioId = item.Id })">
+                                        <button class="btn btn-white d-flex align-items-center button-custom">@item.qtddClasses inscritos</button>
+                                    </a>
+
+                                    <a class="text-decoration-none" href="@Url.Action("EditInscritos", new { torneioId = item.Id })">
+                                        <button class="btn btn-white d-flex align-items-center button-custom">R$ @valorArrecadado</button>
+                                    </a>
+
+                                    <a class="text-decoration-none" href="@Url.Action("EditTorneio", new { id = item.Id })">
+                                        <button class="btn btn-white d-flex align-items-center custom">
+                                            <img class="eye" src="/Content/img/edit.svg" alt="Editar">
+                                            Editar
+                                        </button><!--buttons__wrapper-->
+                                    </a>
+
+                                    <a class="text-decoration-none" href="@Url.Action("Tabela", new { torneioId = item.Id })">
+                                        <button class="btn btn-eye btn-white d-flex align-items-center custom">
+                                            <img class="eye" src="/Content/img/view.png" alt="Ver">
+                                            Ver
+                                        </button><!--buttons__wrapper-->
+                                    </a>
+
                                 </div>
-                            </div>
-                            <div class="d-flex flex-wrap buttons justify-content-center custom">
-
-                                <a class="text-decoration-none" href="@Url.Action("EditInscritos", new { torneioId = torneio.Id })">
-                                    <button class="btn btn-white d-flex align-items-center button-custom">@ViewBag.qtddInscricoes inscritos</button>
-                                </a>
-
-                                <a class="text-decoration-none" href="@Url.Action("EditInscritos", new { torneioId = torneio.Id })">
-                                    <button class="btn btn-white d-flex align-items-center button-custom">R$ @valorArrecadado</button>
-                                </a>
-
-                                <a class="text-decoration-none" href="@Url.Action("EditTorneio", new { id = torneio.Id })">
-                                    <button class="btn btn-white d-flex align-items-center custom">
-                                        <img class="eye" src="/Content/img/edit.svg" alt="Editar">
-                                        Editar
-                                    </button><!--buttons__wrapper-->
-                                </a>
-
-                                <a class="text-decoration-none" href="@Url.Action("Tabela", new { torneioId = torneio.Id })">
-                                    <button class="btn btn-eye btn-white d-flex align-items-center custom">
-                                        <img class="eye" src="/Content/img/view.png" alt="Ver">
-                                        Ver
-                                    </button><!--buttons__wrapper-->
-                                </a>
-
                             </div>
                         </div>
                     </div>
-                </div>
+                }
             }
             else
             {

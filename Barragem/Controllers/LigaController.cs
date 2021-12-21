@@ -103,7 +103,9 @@ namespace Barragem.Controllers
             ViewBag.flag = "classes";
             return View(classes);
         }
+
         [Authorize(Roles = "admin, organizador, adminTorneio")]
+        [HttpPost]
         public ActionResult EditNome(int idLiga, string nomeLiga, string modalidadeBarragem)
         {
             try { 
@@ -113,8 +115,9 @@ namespace Barragem.Controllers
                 var jaExisteTorneio = db.TorneioLiga.Where(l => l.LigaId == idLiga).Any();
                 if (jaExisteTorneio)
                 {
-                    if ((liga.isModeloTodosContraTodos) && (modalidadeBarragem=="1")) || ((!liga.isModeloTodosContraTodos) && (modalidadeBarragem == "2")){
-                        ViewBag.MsgErro = "Não é permitido alterar a modalidade do circuito, pois já existem torneios em andamento vinculados a ele. "
+                    if (((liga.isModeloTodosContraTodos) && (modalidadeBarragem=="1")) || ((!liga.isModeloTodosContraTodos) && (modalidadeBarragem == "2")))
+                    {
+                        ViewBag.MsgErro = "Não é permitido alterar a modalidade do circuito, pois já existem torneios em andamento vinculados a ele. ";
                         return View("Edit");
                     }
                 }

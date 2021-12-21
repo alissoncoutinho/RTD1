@@ -3379,7 +3379,7 @@ namespace Barragem.Controllers
                 item.valor = db.InscricaoTorneio.Where(i => i.torneioId == item.Id && i.isAtivo == true).Select(i => new { user = (int)i.userId, valor = i.valor }).Distinct().Sum(i => i.valor);
                 
             }
-            ViewBag.torneioEmAndamento = torneiosAndamento;
+            ViewBag.torneiosEmAndamento = torneiosAndamento;
             torneios = db.Torneio.Where(r => r.barragemId == barragem.Id && r.dataFim > agora).OrderByDescending(c => c.Id).Take(4).ToList();
             ViewBag.circuitos = db.Liga.Where(b => b.barragemId == barragem.Id).OrderByDescending(b=> b.Id).ToList();
             ViewBag.barragemId = barragem.Id;
