@@ -93,7 +93,7 @@ namespace Barragem.Controllers
             return View(liga);
         }
 
-        public ActionResult Edit(int idLiga = 0)
+        public ActionResult Edit(int idLiga = 0, string MsgErro = "")
         {
             Liga liga = db.Liga.Find(idLiga);
             ViewBag.idLiga = idLiga;
@@ -101,6 +101,10 @@ namespace Barragem.Controllers
 
             var classes = db.ClasseLiga.Where(c => c.LigaId == idLiga).ToList();
             ViewBag.flag = "classes";
+            if(MsgErro != "")
+            {
+                ViewBag.MsgErro = MsgErro;
+            }
             return View(classes);
         }
 
@@ -117,8 +121,8 @@ namespace Barragem.Controllers
                 {
                     if (((liga.isModeloTodosContraTodos) && (modalidadeBarragem=="1")) || ((!liga.isModeloTodosContraTodos) && (modalidadeBarragem == "2")))
                     {
-                        ViewBag.MsgErro = "Não é permitido alterar a modalidade do circuito, pois já existem torneios em andamento vinculados a ele. ";
-                        return View("Edit");
+                        var MsgErro = "Não é permitido alterar a modalidade do circuito, pois já existem torneios em andamento vinculados a ele. ";
+                        return RedirectToAction("Edit", new { idLiga = idLiga, MsgErro = MsgErro });
                     }
                 }
                 if (modalidadeBarragem == "1")

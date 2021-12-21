@@ -3380,7 +3380,7 @@ namespace Barragem.Controllers
                 
             }
             ViewBag.torneiosEmAndamento = torneiosAndamento;
-            torneios = db.Torneio.Where(r => r.barragemId == barragem.Id && r.dataFim > agora).OrderByDescending(c => c.Id).Take(4).ToList();
+            torneios = db.Torneio.Where(r => r.barragemId == barragem.Id && r.dataFim < agora).OrderByDescending(c => c.Id).Take(4).ToList();
             ViewBag.circuitos = db.Liga.Where(b => b.barragemId == barragem.Id).OrderByDescending(b=> b.Id).ToList();
             ViewBag.barragemId = barragem.Id;
             ViewBag.nomeAgremiacao = barragem.nome;
