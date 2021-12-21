@@ -114,7 +114,7 @@ namespace Barragem.Controllers
                 if (jaExisteTorneio)
                 {
                     if ((liga.isModeloTodosContraTodos) && (modalidadeBarragem=="1")) || ((!liga.isModeloTodosContraTodos) && (modalidadeBarragem == "2")){
-                        ViewBag.MsgErro = "Já existe torneios em andamento para essa liga. Não é permitido alterar a modalidade do circuito."
+                        ViewBag.MsgErro = "Não é permitido alterar a modalidade do circuito, pois já existem torneios em andamento vinculados a ele. "
                         return View("Edit");
                     }
                 }
