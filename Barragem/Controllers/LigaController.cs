@@ -104,11 +104,28 @@ namespace Barragem.Controllers
             return View(classes);
         }
         [Authorize(Roles = "admin, organizador, adminTorneio")]
-        public ActionResult EditNome(int idLiga, string nomeLiga)
+        public ActionResult EditNome(int idLiga, string nomeLiga, string modalidadeBarragem)
         {
             try { 
                 Liga liga = db.Liga.Find(idLiga);
                 liga.Nome = nomeLiga;
+                
+                var jaExisteTorneio = db.TorneioLiga.Where(l => l.LigaId == idLiga).Any();
+                if (jaExisteTorneio)
+                {
+                    if ((liga.isModeloTodosContraTodos) && (modalidadeBarragem=="1")) || ((!liga.isModeloTodosContraTodos) && (modalidadeBarragem == "2")){
+                        ViewBag.MsgErro = "Já existe torneios em andamento para essa liga. Não é permitido alterar a modalidade do circuito."
+                        return View();
+                    }
+                }
+                if (modalidadeBarragem == "1")
+                {
+                    liga.isModeloTodosContraTodos = false;
+                }
+                else
+                {
+                    liga.isModeloTodosContraTodos = true;
+                }
                 db.Entry(liga).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Edit", new { idLiga = idLiga });
