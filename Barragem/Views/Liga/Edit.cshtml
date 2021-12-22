@@ -1,215 +1,152 @@
 ﻿@model IEnumerable<Barragem.Models.ClasseLiga>
 
-    <legend>@Html.Raw(ViewBag.nomeLiga)</legend>
+@{
+    Layout = "~/Views/Shared/_LayoutPainelBT.cshtml";
 
-    <ul class="nav nav-tabs" id="myTab">
-        <li class='active'><a href="#tabClasse" data-toggle="tab"><b>Classes</b></a></li>
-        <li><a href="#tabCircuito" data-toggle="tab"><b>Circuito</b></a></li>
-    </ul>
+}
 
-    
-    
-        <div>
-            <div class="tab-content">
-                <div class="tab-pane fade in active" id="tabClasse">
-                    <br />
-                    <div class="form-group">
-                        <label class="col-sm-2 control-label">Nome:</label>
-                        <div class="col-sm-5 input-group">
-                            <input class="form-control" id="nome" name="nome" type="text" value="">
-                        </div>
-                        <br><input type="checkbox" name="isDupla" id="isDupla" value="true"> <b>Classe de dupla?</b><br>
-                    </div>
-                    <div>
-                        <input type="hidden" name="IdLiga" id="IdLiga" value="@ViewBag.idLiga">
-                        <button class="btn btn-info" id="add" onclick="addClasse()">Adicionar nova classe</button>
-                    </div>
+@section Css_Painel{
+    <link href="@Url.Content("/Content/css/editar-circuito.css")" rel="stylesheet" type="text/css" />
+}
 
-
-                    <table id="listaClasses" class="table table-striped table-condensed table-bordered">
-                        <caption>Classes adicionadas a liga</caption>
-                        <thead>
-                            <tr>
-                                <th>Nome</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @{ int i = 1; }
-                            @foreach (var classeLiga in Model)
-                    {
-                    <tr id="@classeLiga.Id">
-
-                        <td><input type="text" class="col-md-6 form-control" name="@Html.Raw("nome" + i)" id="@Html.Raw("nome" + i)" value="@classeLiga.Nome"></td>
-                        <td>
-                            <button title="salvar" data-valor="@Html.Raw(i)" data-ident="@classeLiga.Id" name="@Html.Raw("button" + i)" id="@Html.Raw("button" + i)" class="btn btn-default btn-xs editarNome">
-                                Salvar
-                            </button>
-                            <button title="excluir" data-valor="@classeLiga.Id" id="@Html.Raw("buttonEx"+@classeLiga.Id)" class="btn btn-danger btn-xs excluirButton">
-                                Excluir
-                            </button>
-                        </td>
-                    </tr>
-                        i++;
-                    }
-
-                        </tbody>
-                    </table>
-                    <input type="hidden" value="@i" name="contador" id="contador">
-                </div>
-                <div class="tab-pane fade" id="tabCircuito">
-                    <div class="box-body">
-                        <div class="form-group">
-                            <label class="col-sm-2 control-label" for="nome">Nome:</label>
-                            <div class="col-sm-8 input-group">
-                                <input class="form-control" id="nomeLiga" name="nomeLiga" type="text" value="@ViewBag.nomeLiga">
-                                <input id="idLiga" name="idLiga" type="hidden" value="@ViewBag.idLiga">
-                            </div>
-                            <span class="field-validation-valid" data-valmsg-for="nome" data-valmsg-replace="true"></span>
-                        </div>
-                    </div>
-                    <div class="box-footer">
-                                <button type="submit" class="btn btn-info pull-right editarNomeCircuito">Gravar</button>
-                            </div>
+<section class="row">
+    <div class="col-md-12 bg-light border position-relative p-4 mb-5 shadow-lg rounded">
+        <div class="row dashboard">
+            <div class="col-md-12 mb-3 d-flex">
+                <h3>
+                    <a href="/Torneio/PainelControle" class="voltar">
+                        <img src="/Content/img/back.svg" alt="icone">
+                        Voltar
+                    </a> | @Html.Raw(ViewBag.nomeLiga)
+                </h3>
+            </div>
+            <div class="col-md-12 mb-4">
+                <div class="progress">
+                    <div class="progress-bar" role="progressbar" style="width: 80%;" aria-valuenow="25"
+                            aria-valuemin="0" aria-valuemax="100"></div>
                 </div>
             </div>
-         </div>
-                    
+            <div class="col-md-12">
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">
+                            Classes
+                        </button>
+                    </li>
+                    <li class="nav-item ms-2" role="presentation">
+                        <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">
+                            Informações
+                        </button>
+                    </li>
+                </ul>
+                <div class="tab-content" id="myTabContent">
+                    <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <form action="/Liga/AddClasse" method="post" class=" m-auto mt-4">
+                                    @Html.AntiForgeryToken()
+                                    @Html.ValidationSummary(true)
+                                    <div class="mt-3 form-input">
+                                        <label for="">Nome da Categoria</label>
+                                        <input type="text" name="nome" class="form-control" placeholder="Ex:  Circuito BT 2022, Ranking Clube Beach">
+                                    </div>
+                                    <div class="mt-3 form-input">
+                                        <div class="form-check">
+                                            <input name="isDupla" class="form-check-input" type="checkbox" value="" id="isDupla">
+                                            <label class="form-check-label" for="flexCheckDefault">Classe de dupla?</label>
+                                        </div>
+                                    </div>
+                                    <input type="hidden" name="IdLiga" id="IdLiga" value="@ViewBag.idLiga">
+                                    <input type="hidden" name="idCategoria" id="IdLiga" value="0">
+                                    <div class="mt-3 form-input mb-5">
+                                        <button type="submit" class="btn btn-success w-100" onclick="addClasse()">Adicionar nova classe</button>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="col-md-12">
+                                <h4>Classe adicionadas ao Circuito</h4>
+                                <div class="line"></div>
+                                @foreach (var classeLiga in Model)
+                                {
+                                    <form>
+                                        @Html.AntiForgeryToken()
+                                        @Html.ValidationSummary(true)
+                                        <div class="wrapper d-flex justify-content-between align-items-center mt-4">
+                                            <h5>
+                                                <input class="input-edit" type="text" name="nomeClasse" id="input-masc-1" placeholder="Masc 1º Classe" value="@classeLiga.Nome">
+                                            </h5>
+                                            <input type="hidden" name="Id" id="IdClasseLiga" value="@classeLiga.Id">
+                                            <div class="wrapper__buttons d-flex">
+                                                <button class="btn-white" type="submit" formaction="/Liga/EditNomeClasse" formmethod="post">Salvar</button>
+                                                <button class="btn-danger" type="submit" formaction="/Liga/RemoveClasse" formmethod="post">Excluir</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                }
+                                <!--wrapper-->
+                            </div>
+                            <!--col-12-->
+                        </div>
+                    </div><!--classes tab-->
+                    <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                        <div class="col-md-6">
+                            <form action="/Liga/EditNome" method="post" class=" m-auto mt-4">
+                                <div class="mt-3 form-input">
+                                    <label for="">Nome do Circuito</label>
+                                    <input type="text" name="nomeLiga" class="form-control" value="@ViewBag.nomeLiga" placeholder="Circuito Interno de Beach Tennis AABB">
+                                </div>
+                                <input id="idLiga" name="idLiga" type="hidden" value="@ViewBag.idLiga">
+                                <div class="mt-3 form-input">
+                                    <label for="">Escolha a modalidade dos torneios *</label>
+                                    <select class="form-select" aria-label="Default select example" name="modalidadeBarragem">
+                                        <option value="1">Regras da Federação</option>
+                                        <option value="2">Todos contra todos</option>
+                                    </select>
+                                </div>
+                                <div class="mt-3">
+                                    <div class="alert alert-default federacao" role="alert">
+                                        <span class="text-white">
+                                            <img src="/Content/img/alert.svg" alt="" srcset="">
+                                            Regras da
+                                            federação:
+                                        </span>
+                                        nesse formato, o sistema sorteia jogos entre todos participantes nas
+                                        categorias e
+                                        será o vencedor quem tiver mais vitórias.
+                                    </div>
+                                    <div class="alert alert-default todos" role="alert">
+                                        <span class="text-white">
+                                            <img src="/Content/img/alert.svg" alt="" srcset="">
+                                            Regras da
+                                            todos contra todos:
+                                        </span>
+                                        nesse formato, o sistema sorteia jogos entre todos participantes nas
+                                        categorias e
+                                        será o vencedor quem tiver mais vitórias.
+                                    </div>
+                                </div>
+                                <div class="mt-3 form-input mb-5">
+                                    <button type="submit" class="btn btn-success w-100">Gravar</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div><!--informalções tab-->
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
 @section Scripts {
-    <script type="text/javascript">
+    <script>
         function addClasse() {
-            var nome = document.getElementById("nome").value;
-            var idCategoria = 0;
-            var IdLiga = document.getElementById("IdLiga").value;
-            var contador = document.getElementById("contador").value;
-            var isDupla = false;
             if (document.getElementById("isDupla").checked) {
-                isDupla = true;
+                document.getElementById("isDupla").value = true;
+            } else {
+                document.getElementById("isDupla").value = false;
             }
-
-            event.preventDefault();
-
-            $.ajax({
-                type: "POST",
-                url: "/Liga/AddClasse",
-                dataType: "json",
-                data: "{'IdLiga':'" + IdLiga + "', 'nome':'" + nome + "', 'idCategoria':'" + idCategoria + "', 'isDupla':'" + isDupla + "'}",
-                contentType: "application/json; charset=utf-8",
-                success: function (response) {
-                    if (typeof response == "object") {
-                        if (response.retorno === 0) {
-                            toastr.error(response.erro, "Erro");
-                        } else {
-                            var table = document.getElementById("listaClasses");
-                            var row = table.insertRow(table.rows.length);
-                            row.setAttribute("id", response.IdClasseLiga);
-                            var cell1 = row.insertCell(0);
-                            var cell2 = row.insertCell(1);
-                            cell1.innerHTML = "<input type=\"text\" class=\"col-md-6 form-control\" name='nome" + contador + "' id='nome" + contador + "' value='" + response.nome + "'>";
-                            cell2.innerHTML = "<button title=\"salvar\" data-valor='" + contador + "' data-ident='" + response.IdClasseLiga + "' name='" + contador + "' id='" + contador + "' class='btn btn-default btn-xs editarNome'>Salvar</button><button title=\"excluir\" data-valor='" + response.IdClasseLiga + "' id=\"buttonEx" + response.IdClasseLiga + "\" onclick=\"removeClasse(this.id)\" class=\"btn btn-danger btn-xs excluirButton\">Excluir</button>";
-
-                            toastr.success("Atualização realizada com sucesso.", "Aviso");
-                            document.getElementById("contador").value = parseInt(contador) + 1;
-                        }
-                    }
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    location.reload(true);
-                }
-            });
         }
-
-
-        $(".excluirButton").confirm({
-            title: "Confirmação",
-            content: "Tem certeza que deseja excluir esta classe do circuito?",
-            buttons: {
-                sim: {
-                    text: 'Sim',
-                    btnClass: 'btn-primary',
-                    action: function () {
-                        var idClasseLiga = this.$target.data("valor");
-
-                        event.preventDefault();
-                        $.ajax({
-                            url: "/Liga/RemoveClasse",
-                            type: "POST",
-                            data: "{'id':'" + idClasseLiga + "'}",
-                            dataType: "json",
-                            contentType: "application/json; charset=utf-8",
-                            success: function (response) {
-                                if (typeof response == "object") {
-                                    if (response.retorno === 0) {
-                                        toastr.error(response.erro, "Erro");
-                                    } else {
-                                        $("#" + idClasseLiga).remove();
-                                        toastr.success("Exlusão realizada com sucesso.", "Aviso");
-                                    }
-                                }
-                            },
-                            error: function (jqXHR, textStatus, errorThrown) {
-                                toastr.error(textStatus, "Erro");
-                            }
-                        });
-                    }
-                },
-                cancelar: function () { },
-            }
-        });
-
-        $(document).ready(function () {
-            $(".editarNome").click(function (event) {
-                var i = $(this).data("valor");
-                var Id = $(this).data("ident");
-                var nome = document.getElementById("nome" + i).value;
-                event.preventDefault();
-                $.ajax({
-                    url: "/Liga/EditNomeClasse?id=" + Id + "&nomeClasse=" + nome,
-                    dataType: "json",
-                    contentType: "application/json; charset=utf-8",
-                    success: function (response) {
-                        if (typeof response == "object") {
-                            if (response.retorno === 0) {
-                                toastr.error(response.erro, "Erro");
-                            } else {
-                                toastr.success("Alteração realizada com sucesso.", "Aviso");
-                            }
-                        }
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        toastr.error(textStatus, "Erro");
-                    }
-                });
-            });
-
-
-            $(".editarNomeCircuito").click(function (event) {
-                var nome = document.getElementById("nomeLiga").value;
-                var id = document.getElementById("idLiga").value;
-
-                event.preventDefault();
-                $.ajax({
-                    url: "/Liga/EditNome?idLiga=" + id + "&nomeLiga=" + nome,
-                    dataType: "json",
-                    contentType: "application/json; charset=utf-8",
-                    success: function (response) {
-                        if (typeof response == "object") {
-                            if (response.retorno === 0) {
-                                toastr.error(response.erro, "Erro");
-                            } else {
-                                toastr.success("Alteração realizada com sucesso.", "Aviso");
-                            }
-                        }
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        toastr.error(textStatus, "Erro");
-                    }
-                });
-            });
-
-        });
-
-
     </script>
+    <script src="~/Content/js/render.js"></script>
+    <script src="~/Content/js/menu.js"></script>
 }

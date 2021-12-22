@@ -1,0 +1,448 @@
+*{
+    font-family: 'DM Sans', sans-serif;
+}
+
+html ,body{
+    height:100%;
+    background: #F2F2F2;
+}
+
+/*estilos para o menu mobile*/
+.menu{
+    position:absolute;
+    top:0;
+    left:0;
+    width: 100%;
+    height:100vh;
+    background-color: #e18335;
+    z-index: 9999;
+    transform: translateX(-200%);
+    transition: 0.1s ease-in-out;
+}
+
+.contact-menu{
+    padding-left: 2rem;
+    background: #025F3A;
+    padding-top: 31px;
+    height:100%;
+}
+
+.contact-menu h6{
+    color:white;
+    font-weight: 700;
+    font-size:16px;
+}
+
+.menu-active{
+    transform: translateX(0);
+}
+.menu .logo > img{
+    max-width:100px;
+}
+
+.menu ul.mobile li{
+    list-style:none;
+}
+.menu ul.mobile li a{
+    text-decoration:none;
+    color:white;
+    margin:20px 0;
+    display: block;
+}
+.menu ul.mobile li a.button{
+    background:#025F3A;
+    border-radius: 4px;
+    padding: 7px 15px;
+    max-width:100px;
+}
+
+.bg{
+    position:absolute;
+    z-index: 99;
+    top:0;
+    left:0;
+    height:100vh;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.774);
+    display:none;
+}
+.bg-active{
+    display:block !important;
+}
+/*fim dos estilos para o menu mobile*/
+
+/*Estilos auxiliares*/
+.button-xl{
+    background: #E18335;
+    border-radius: 4px;
+    padding: 13.5px 15px;
+    max-width: 275px;
+    text-decoration: none;
+    color:white;
+    display: block;
+    text-align: center;
+    width: 100%;
+}
+.button-xl:hover{
+    color:white;
+}
+
+
+.custom{
+    color:#FF8C2D;
+    font-weight: 700;
+}
+/*Fim dos estilos auxiliares*/
+
+/*estilo para a nav*/
+.hamburger{
+    display: none;
+}
+
+header{
+    background-image: url('../img/banner.jpg');
+    background-size: cover;
+    background-position:center center;  
+    color:white;
+    position:relative;
+}
+
+nav{
+    padding: 27px;
+}
+
+nav ul li{
+    padding: 0 8px;
+    list-style-type: none;
+}
+
+nav ul li a{
+    text-decoration: none;
+    color:white;
+    font-weight: 700;
+    transition: 0.1 ease-in-out;
+}
+nav ul li a:hover{
+    color:rgba(255, 255, 255, 0.884);
+}
+nav ul li a.button{
+    background: #E18335;
+    border-radius: 4px;
+    padding: 7px 15px;
+}
+
+section.hero-content article h1{
+    font-weight: 700;
+}
+
+section.hero-content article h1 > b{
+    color:#E18335;
+}
+
+header article .swiper{
+    max-width: 410px;
+    margin-left: 0;
+}
+
+header article img{
+    border-radius: 10px;
+}
+
+.wrapper-custom{
+    background: #014626;
+    border-radius: 0px 0px 10px 10px;
+    padding: 0 5px;
+}
+
+.swiper-slide .wrapper-custom img{
+    margin: 0 10px;
+    max-width: 12px;
+}
+
+header article h4{
+    background: #014626;
+    border-radius: 0px 0px 10px 10px;
+    color:white;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 12px 0;
+    margin-top: 10px;
+}
+
+header article .swiper-button-prev, .swiper-rtl .swiper-button-next{
+    top:120px;
+    color:white;
+    background: #E18335;
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+}
+header article .swiper-button-next, .swiper-rtl .swiper-button-prev{
+    top:120px;
+    color:white;
+    background: #E18335;
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+}
+.swiper-button-prev:after, .swiper-rtl .swiper-button-next:after {
+    font-size: 12px !important;
+}
+.swiper-button-next:after, .swiper-rtl .swiper-button-prev:after {
+    font-size: 12px !important;
+}
+
+header .img-wrapper img{
+    margin: 0 10px;
+}
+
+/*fim dos estilos da nav*/
+
+/*estilos para sessão diferenciais*/
+section.diferenciais h2{
+    text-align: center;
+    font-family: 700;
+    font-size: 36px;
+    margin-top: 65px;
+}
+
+.line{
+    background: #E18335;
+    max-width: 122px;
+    height: 4px;
+    width: 100%;
+}
+section.diferenciais h2 > b{
+    color: #E18335;
+}
+
+section.diferenciais h5{
+    color:#014626;
+    font-weight: 700;
+    text-align: center;
+}
+section.diferenciais p{
+    text-align: center;
+}
+section.diferenciais img{
+    max-width:58px;
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
+.card{
+    padding:23px 30px;
+    border: 2px solid #EBEAED;
+    border-radius:10px;
+    background: #F9F9F9;
+    max-width:350px;
+    margin:10px 30px;
+}
+
+/*fim dos estilos para sessão diferenciais*/
+
+/*estilos para a sessão de diferenciais*/
+section.depoimentos{
+    background-image: url('../img/bg-depoimentos.jpg');
+    background-size: cover;
+    background-position: center;
+    color: white;
+}
+
+section.depoimentos .swiper-wrapper{
+    margin: 0 auto;
+    max-width:900px;
+}
+
+section.depoimentos .swiper-wrapper{
+    height:300px;
+}
+
+.swiper2{
+    overflow:hidden;
+    margin-top:48px;
+    position: relative;
+}
+.swiper3{
+    overflow:hidden;
+}
+
+section.depoimentos h2{
+    font-size:32px;
+    font-weight: 700;
+    text-align: center;
+    padding-top: 54px;
+}
+
+section.depoimentos img{
+    max-width:70px;
+}
+
+section.depoimentos .wrapper{
+   position: relative;
+}
+section.depoimentos .wrapper img:last-child{
+    position: absolute;
+    top:50px;
+ }
+
+ section.depoimentos .text{
+    margin: 0 8px;
+}
+section.depoimentos .text p{
+    font-weight: 500;
+}
+section.depoimentos .text h5{
+    font-weight: 700;
+    color:#432206;
+    font-size: 19px;
+}
+section.depoimentos .text h6{
+    font-weight: 700;
+    font-size: 12px;
+}
+
+.swiper-horizontal>.swiper-pagination-bullets, .swiper-pagination-bullets.swiper-pagination-horizontal, .swiper-pagination-custom, .swiper-pagination-fraction {
+    bottom: 53px !important;
+}
+
+.swiper-horizontal>.swiper-pagination-bullets .swiper-pagination-bullet, .swiper-pagination-horizontal.swiper-pagination-bullets .swiper-pagination-bullet{
+    background: #432206 !important;
+}
+/*fim dos estilos para a sessão de diferenciais*/
+
+
+/*Estilos para a sessão de app*/
+section.app{
+    padding: 39px 0;
+}
+
+section.app h2{
+    color:#014626;
+    font-weight: 700;
+    font-size:48px;
+}
+
+section.app p{
+    color:#212121;
+    font-weight: 500;
+}
+
+section.app .wrapper img{
+    margin:0 8px;  
+}
+
+/*Fim dos estilos para a sessão de app*/
+
+/*Estilos para a sessão sobre*/
+section.sobre{
+    background-image: url('../img/sobre-bg.jpg');
+    background-position: center center;
+    background-size: cover;
+    position: relative;
+    height:500px;
+    top:-217px;
+    color:white;
+    z-index: 999;
+}
+
+/*Fim dos estilos para a sessão sobre*/
+
+/*estilos do footer*/
+.line-footer{
+    width: 100%;
+    height:2px;
+    background-color: white;
+    margin: 10px 0;
+}
+
+footer{
+    background: #025F3A;
+    padding: 32px 0;
+    color:white;
+    position: relative;
+    top:-217px;
+}
+footer .wrapper img{
+    margin: 0 8px;
+}
+
+footer h6{
+    font-weight: 700;
+}
+
+/*fim dos estilos do footer*/
+
+/*media queries*/
+
+@media screen and (max-width: 1000px){
+    header .desktop{
+        display:none !important;
+    }
+    header{
+        background-image: url('../img/banner-mobile.webp');
+    }
+    nav{
+        padding: 20px 12px;
+    }
+    header .logo img{
+        max-width:100px;
+    }
+    .hamburger{
+        display: block;
+    }
+    section.depoimentos h2{
+        font-size:24px;
+    }
+    section.depoimentos  p{
+        font-size: 12px;
+    }
+    section.depoimentos  h5{
+        font-size: 14px;
+    }
+    section.depoimentos  h6{
+        font-weight: 700;
+        font-size: 12px;
+    }
+    section.depoimentos .swiper-wrapper{
+        height:200px !important;
+    }
+    .swiper-horizontal>.swiper-pagination-bullets, .swiper-pagination-bullets.swiper-pagination-horizontal, .swiper-pagination-custom, .swiper-pagination-fraction {
+        bottom: 33px !important;
+    }
+    .phone{
+        display: none;
+    }
+    section.sobre{
+        height:auto;
+        padding: 30px 0;
+        top:-137px;
+    }
+    section.app h2{
+        text-align: center;
+        font-size:28px;
+    }
+    section.app p{
+        font-size: 14px;
+        text-align: center;
+    }
+    section.sobre img{
+        max-width:100px;
+    }
+    section.sobre p{
+        font-size: 14px;
+    }
+    footer .logo{
+        display: none;
+    }
+    footer p{
+        font-size: 12px;
+    }
+    footer{
+        top:-137px;
+    }
+    .infos{
+        margin-top:41px;
+    }
+}

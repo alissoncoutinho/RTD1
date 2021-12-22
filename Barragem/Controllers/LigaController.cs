@@ -104,18 +104,37 @@ namespace Barragem.Controllers
             return View(classes);
         }
         [Authorize(Roles = "admin, organizador, adminTorneio")]
-        public ActionResult EditNome(int idLiga, string nomeLiga)
+        public ActionResult EditNome(int idLiga, string nomeLiga, string modalidadeBarragem)
         {
             try { 
-            Liga liga = db.Liga.Find(idLiga);
-            liga.Nome = nomeLiga;
-            db.Entry(liga).State = EntityState.Modified;
-            db.SaveChanges();
-                return Json(new { erro = "", retorno = 1 }, "text/plain", JsonRequestBehavior.AllowGet);
+                Liga liga = db.Liga.Find(idLiga);
+                liga.Nome = nomeLiga;
+                
+                var jaExisteTorneio = db.TorneioLiga.Where(l => l.LigaId == idLiga).Any();
+                if (jaExisteTorneio)
+                {
+                    if ((liga.isModeloTodosContraTodos) && (modalidadeBarragem=="1")) || ((!liga.isModeloTodosContraTodos) && (modalidadeBarragem == "2")){
+                        ViewBag.MsgErro = "Não é permitido alterar a modalidade do circuito, pois já existem torneios em andamento vinculados a ele. "
+                        return View("Edit");
+                    }
+                }
+                if (modalidadeBarragem == "1")
+                {
+                    liga.isModeloTodosContraTodos = false;
+                }
+                else
+                {
+                    liga.isModeloTodosContraTodos = true;
+                }
+                db.Entry(liga).State = EntityState.Modified;
+                db.SaveChanges();
+                return RedirectToAction("Edit", new { idLiga = idLiga });
+                //return Json(new { erro = "", retorno = 1 }, "text/plain", JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {
-                return Json(new { erro = ex.Message, retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
+                return RedirectToAction("Edit", new { idLiga = idLiga });
+                //return Json(new { erro = ex.Message, retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
             }
             
         }
@@ -123,17 +142,20 @@ namespace Barragem.Controllers
         [Authorize(Roles = "admin, organizador, adminTorneio")]
         public ActionResult EditNomeClasse(int id, string nomeClasse)
         {
+            ClasseLiga classeLiga = null;
             try
             {
-                ClasseLiga classeLiga = db.ClasseLiga.Find(id);
+                classeLiga = db.ClasseLiga.Find(id);
                 classeLiga.Nome = nomeClasse;
                 db.Entry(classeLiga).State = EntityState.Modified;
                 db.SaveChanges();
-                return Json(new { erro = "", retorno = 1 }, "text/plain", JsonRequestBehavior.AllowGet);
+                return RedirectToAction("Edit", new { idLiga = classeLiga.LigaId });
+                //return Json(new { erro = "", retorno = 1 }, "text/plain", JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {
-                return Json(new { erro = ex.Message, retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
+                return RedirectToAction("Edit", new { idLiga = classeLiga.LigaId });
+                //return Json(new { erro = ex.Message, retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
             }
 
         }
@@ -183,28 +205,32 @@ namespace Barragem.Controllers
                 cl.CategoriaId = idCat;
                 db.ClasseLiga.Add(cl);
                 db.SaveChanges();
-                
-                return Json(new { erro = "", retorno = 1 , nome = cl.Nome, categoria = cat.Nome, IdClasseLiga = cl.Id}, "text/plain", JsonRequestBehavior.AllowGet);
+                return RedirectToAction("Edit", new { idLiga = idLiga });
+                //return Json(new { erro = "", retorno = 1 , nome = cl.Nome, categoria = cat.Nome, IdClasseLiga = cl.Id}, "text/plain", JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {
-                return Json(new { erro = ex.Message, retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
+                return RedirectToAction("Edit", new { idLiga = idLiga });
+                //return Json(new { erro = ex.Message, retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
             }
         }
 
         [HttpPost]
         public ActionResult RemoveClasse(String id)
         {
+            ClasseLiga cl = null;
             try
             {
-                ClasseLiga cl = db.ClasseLiga.Find(Int32.Parse(id));
+                cl = db.ClasseLiga.Find(Int32.Parse(id));
                 db.ClasseLiga.Remove(cl);
                 db.SaveChanges();
-                return Json(new { erro = "", retorno = 1 }, "text/plain", JsonRequestBehavior.AllowGet);
+                return RedirectToAction("Edit", new { idLiga = cl.LigaId });
+                //return Json(new { erro = "", retorno = 1 }, "text/plain", JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {
-                return Json(new { erro = ex.Message, retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
+                return RedirectToAction("Edit", new { idLiga = cl.LigaId });
+                //return Json(new { erro = ex.Message, retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
             }
         }
 

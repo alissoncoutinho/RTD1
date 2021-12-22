@@ -841,5 +841,10 @@ namespace Barragem.Controllers
 
             return View();
         }
+
+        public ActionResult IndexBT()
+        {
+            return View();
+        }
     }
 }

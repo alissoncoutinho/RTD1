@@ -161,6 +161,43 @@ namespace Barragem.Controllers
             return View(ranking);
         }
 
+        [AllowAnonymous]
+        public ActionResult RankingDasLigasBT(int idLiga = 0, int idSnapshot = 0)
+        {
+            Liga liga = db.Liga.Find(idLiga);
+            List<Snapshot> snapshotsDaLiga = db.Snapshot.Where(snap => snap.LigaId == idLiga).OrderByDescending(s => s.Id).ToList();
+            List<SnapshotRanking> ranking = new List<SnapshotRanking>();
+            List<Categoria> categorias = new List<Categoria>();
+            if (snapshotsDaLiga.Count() > 0)
+            {
+                if ((idSnapshot == 0) || (snapshotsDaLiga.Where(s => s.Id == idSnapshot).Count() == 0))
+                {
+                    idSnapshot = snapshotsDaLiga.First().Id;
+                }
+                ranking = db.SnapshotRanking.Where(snapR => snapR.SnapshotId == idSnapshot)
+                .Include(s => s.Categoria).Include(s => s.Jogador)
+                .OrderBy(snap => snap.Categoria.Nome).ThenBy(snap => snap.Posicao).ThenBy(snap => snap.Jogador.nome)
+                .ToList();
+                categorias = db.SnapshotRanking.Where(sr => sr.SnapshotId == idSnapshot)
+                    .Include(sr => sr.Categoria).Select(sr => sr.Categoria).OrderBy(sr => sr.ordemExibicao).Distinct().ToList();
+            }
+            var classesLg = db.ClasseLiga.Where(c => c.LigaId == idLiga).ToList();
+            foreach (var cat in categorias)
+            {
+                try
+                {
+                    cat.Nome = classesLg.Where(c => c.CategoriaId == cat.Id).SingleOrDefault().Nome; //cat.Nome;
+                }
+                catch (Exception e) { }
+            }
+            ViewBag.idLiga = idLiga;
+            ViewBag.nomeLiga = liga.Nome;
+            ViewBag.SnapshotsDaLiga = snapshotsDaLiga;
+            ViewBag.Categorias = categorias;
+            ViewBag.idSnapshot = idSnapshot;
+            return View(ranking);
+        }
+
         [HttpPost]
         public ActionResult uploadLogoMarca(int Id) {
             HttpPostedFileBase filePosted = Request.Files["fileLogo"];

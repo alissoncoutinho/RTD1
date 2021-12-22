@@ -1,0 +1,76 @@
+﻿@model string
+@{
+    string ehTorneio = Model; 
+}
+@if (Request.IsAuthenticated)
+{
+<li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle p-0" href="#" id="navbarDropdown" role="button"
+       data-bs-toggle="dropdown" aria-expanded="false">
+        <div class="d-inline-flex">
+            <div>
+                <img src="@Url.Action("BuscaFoto", "Account", new { id = 0, userName = User.Identity.Name })" alt="icone">
+            </div>
+            <div class='ms-1 me-1'>
+                <h5 class="mb-0">@User.Identity.Name</h5>
+            </div>
+        </div>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+        @if (Roles.IsUserInRole("adminTorneio"))
+        {
+            <li>@Html.ActionLink("Painel", "PainelControle", "Torneio", new { }, new { @class = "dropdown-item" })</li>
+        }
+        @if ((Roles.IsUserInRole("admin")) || (Roles.IsUserInRole("organizador")))
+        {
+            <li>@Html.ActionLink("Painel", "Dashboard", "Home", new { }, new { @class = "dropdown-item" })</li>
+            <li>@Html.ActionLink("Meu Jogo", "Index3", "Home", new { }, new { @class = "dropdown-item" })</li>
+        }
+        @if (!Roles.IsUserInRole("adminTorneio"))
+        {
+            <li>@Html.ActionLink("Inserir Foto", "../Account/EditaUsuario", new { UserName = User.Identity.Name, isAlterarFoto = true }, new { @class = "dropdown-item" })</li>
+            <li>@Html.ActionLink("Alterar Dados", "../Account/EditaUsuario", new { UserName = User.Identity.Name }, new { @class = "dropdown-item" })</li>
+            <li>@Html.ActionLink("Perfil", "../Account/Detalhes", new { userId = WebSecurity.GetUserId(User.Identity.Name) }, new { @class = "dropdown-item" })</li>
+            <li>@Html.ActionLink("Meus Jogos", "ListarJogosJogador", "Jogo", new { }, new { @class = "dropdown-item" })</li>
+        }
+        <li>@Html.ActionLink("Trocar senha", "Manage", "Account", new { }, new { @class = "dropdown-item" })</li>
+
+        @if ((Roles.IsUserInRole("admin")) || (Roles.IsUserInRole("organizador")))
+        {
+            <li>@Html.ActionLink("Ranking", "Index", "Barragens", new { }, new { @class = "dropdown-item" })</li>
+            <li>@Html.ActionLink("Temporada", "Index", "Temporada", new { }, new { @class = "dropdown-item" })</li>
+        }
+        @if ((Roles.IsUserInRole("admin")) || (Roles.IsUserInRole("organizador")) || (Roles.IsUserInRole("adminTorneio")))
+        {
+            <li>@Html.ActionLink("Torneio", "Index", "Torneio", new { }, new { @class = "dropdown-item" })</li>
+        }
+        @if (Roles.IsUserInRole("admin"))
+        {
+            <li>@Html.ActionLink("Pagamentos", "Index", "Pagamento", new { }, new { @class = "dropdown-item" })</li>
+            <li>@Html.ActionLink("Liga", "Index", "Liga", new { }, new { @class = "dropdown-item" })</li>
+            <li>@Html.ActionLink("Regra", "Index", "Regra", new { }, new { @class = "dropdown-item" })</li>
+        }
+
+
+        <!--li class="divider"></!--li-->
+        <li>
+            <a class="dropdown-item" href="javascript:document.getElementById('logoutForm').submit()">Sair</a>
+        </li>
+    </ul>
+</li>
+    
+    
+    using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm" })) {
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="isTorneio" value="@ehTorneio"/>
+    }
+
+}else{
+    <li class="nav-item me-4">
+        @if (ehTorneio == "torneio") { 
+            <a class="nav-link active" href="@Url.Action("Login", "Account", new { returnUrl = "torneio" })">Log in</a>
+        } else  {
+            <a class="nav-link active" href="@Url.Action("Login", "Account")">Log in</a>
+        }
+    </li>
+}
