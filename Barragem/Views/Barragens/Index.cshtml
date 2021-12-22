@@ -42,7 +42,8 @@
                     {@Html.Raw("Desativada")}
                 </td>
                 <td>
-                    @if ((Roles.IsUserInRole("admin"))||(Roles.IsUserInRole("organizador"))){
+                    @if ((Roles.IsUserInRole("admin"))||(Roles.IsUserInRole("organizador")) || (Roles.IsUserInRole("parceiroBT")))
+                    {
                         <a href="@Url.Action("Edit", new {id = @item.Id })" title="Editar/Detalhar" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-edit"></span></a>
                     }
                 </td>

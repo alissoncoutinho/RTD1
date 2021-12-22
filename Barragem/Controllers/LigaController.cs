@@ -113,8 +113,8 @@ namespace Barragem.Controllers
                 var jaExisteTorneio = db.TorneioLiga.Where(l => l.LigaId == idLiga).Any();
                 if (jaExisteTorneio)
                 {
-                    if ((liga.isModeloTodosContraTodos) && (modalidadeBarragem=="1")) || ((!liga.isModeloTodosContraTodos) && (modalidadeBarragem == "2")){
-                        ViewBag.MsgErro = "Não é permitido alterar a modalidade do circuito, pois já existem torneios em andamento vinculados a ele. "
+                    if (((liga.isModeloTodosContraTodos) && (modalidadeBarragem=="1")) || ((!liga.isModeloTodosContraTodos) && (modalidadeBarragem == "2"))){
+                        ViewBag.MsgErro = "Não é permitido alterar a modalidade do circuito, pois já existem torneios em andamento vinculados a ele. ";
                         return View("Edit");
                     }
                 }
@@ -376,6 +376,7 @@ namespace Barragem.Controllers
                         barragens.isBeachTenis = true;
                         barragens.isTeste = true;
                         barragens.isAtiva = true;
+                        barragens.valorPorUsuario = 6;
 
                         UserProfile usuario = db.UserProfiles.Find(WebSecurity.GetUserId(User.Identity.Name));
                         barragens.email = usuario.email;

@@ -17,11 +17,18 @@
                 <li>@Html.ActionLink("Painel", "Dashboard", "Home")</li>
                 <li>@Html.ActionLink("Meu Jogo", "Index3", "Home")</li>
             }
+            @if (Roles.IsUserInRole("parceiroBT"))
+            {
+                <li>@Html.ActionLink("Ranking", "Index", "Barragens")</li>
+                <li>@Html.ActionLink("Torneio", "Index", "Torneio")</li>
+            }
             @if (!Roles.IsUserInRole("adminTorneio")) {
                 <li>@Html.ActionLink("Inserir Foto", "../Account/EditaUsuario", new { UserName = User.Identity.Name, isAlterarFoto = true })</li>
                 <li>@Html.ActionLink("Alterar Dados", "../Account/EditaUsuario", new { UserName = User.Identity.Name })</li>
                 <li>@Html.ActionLink("Perfil", "../Account/Detalhes", new { userId = WebSecurity.GetUserId(User.Identity.Name) })</li>
-                <li>@Html.ActionLink("Meus Jogos", "ListarJogosJogador", "Jogo")</li>
+                if (!Roles.IsUserInRole("parceiroBT")){
+                    <li>@Html.ActionLink("Meus Jogos", "ListarJogosJogador", "Jogo")</li>
+                }
             }
             <li>@Html.ActionLink("Trocar senha", "Manage", "Account")</li>
                 
@@ -40,6 +47,7 @@
                 <li>@Html.ActionLink("Liga", "Index", "Liga")</li>
                 <li>@Html.ActionLink("Regra", "Index", "Regra")</li>
             }
+            
             
             
                 <!--li class="divider"></!--li-->

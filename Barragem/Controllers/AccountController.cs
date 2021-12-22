@@ -41,7 +41,11 @@ namespace Barragem.Controllers
                 {
                     return RedirectToAction("PainelControle", "Torneio");
                 }
-                return RedirectToAction("Index3", "Home");
+                else if (perfil.Equals("parceiroBT"))
+                {
+                    return RedirectToAction("Index", "Torneio");
+                }
+                    return RedirectToAction("Index3", "Home");
             }
             ViewBag.ReturnUrl = returnUrl;
             ViewBag.userName = userName;

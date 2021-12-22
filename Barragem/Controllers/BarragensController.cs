@@ -22,7 +22,7 @@ namespace Barragem.Controllers
         //
         // GET: /Rodada/
 
-        [Authorize(Roles = "admin,organizador")]
+        [Authorize(Roles = "admin,organizador,parceiroBT")]
         public ActionResult Index(string msg = "", string detalheErro = "")
         {
             if (msg.Equals("ok"))
@@ -35,12 +35,19 @@ namespace Barragem.Controllers
                 ViewBag.DetalheErro = detalheErro;
             }
             List<Barragens> barragens = null;
-            
-            if (Roles.IsUserInRole("organizador")){
+
+            if (Roles.IsUserInRole("organizador"))
+            {
                 UserProfile usu = db.UserProfiles.Find(WebSecurity.GetUserId(User.Identity.Name));
                 barragens = new List<Barragens>();
                 barragens.Add(db.Barragens.Find(usu.barragemId));
-            }else{
+            }
+            else if (Roles.IsUserInRole("parceiroBT"))
+            {
+                barragens = db.Barragens.Where(b => b.isBeachTenis == true).ToList();
+            }
+            else
+            {
                 barragens = db.Barragens.ToList();
             }
             return View(barragens);
@@ -104,7 +111,7 @@ namespace Barragem.Controllers
         }
 
         // GET: /Rodada/Edit/5
-        [Authorize(Roles = "admin,organizador, adminTorneio")]
+        [Authorize(Roles = "admin,organizador, adminTorneio,parceiroBT")]
         public ActionResult EditPagSeguro(int id = 0)
         {
             Barragens barragens = db.Barragens.Find(id);
@@ -118,7 +125,7 @@ namespace Barragem.Controllers
         }
 
         // GET: /Rodada/Edit/5
-        [Authorize(Roles = "admin,organizador")]
+        [Authorize(Roles = "admin,organizador,parceiroBT")]
         public ActionResult Edit(int id = 0)
         {
             Barragens barragens = db.Barragens.Find(id);
@@ -133,7 +140,7 @@ namespace Barragem.Controllers
 
         //
         // POST: /Rodada/Edit/5
-        [Authorize(Roles = "admin,organizador")]
+        [Authorize(Roles = "admin,organizador,parceiroBT")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(Barragens barragens)
