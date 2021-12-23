@@ -120,16 +120,27 @@ namespace Barragem.Class
             return match.Groups[1].Value + domainName;
         }
 
-        public static void CriarCookieBarragem(HttpResponseBase Response,HttpServerUtilityBase Server, int id, string nome) {
+        public static void CriarCookieBarragem(HttpResponseBase Response,HttpServerUtilityBase Server, int id, string nome, bool beachTennis=false) {
             //Cria a estancia do obj HttpCookie passando o nome do mesmo
             HttpCookie cookie = new HttpCookie("_barragemId");
             cookie.Value = id + "";
             cookie.Expires = DateTime.Now.AddDays(20);
             Response.Cookies.Add(cookie);
+
             HttpCookie cookieNome = new HttpCookie("_barragemNome");
             cookieNome.Value = Server.UrlEncode(nome);
             cookieNome.Expires = DateTime.Now.AddDays(20);
             Response.Cookies.Add(cookieNome);
+
+            HttpCookie cookieBeachTennis = new HttpCookie("_barragemBeach");
+            if (beachTennis) {
+                cookieBeachTennis.Value = Server.UrlEncode("1");
+            } else {
+                cookieBeachTennis.Value = Server.UrlEncode("0");
+            }
+            
+            cookieBeachTennis.Expires = DateTime.Now.AddDays(20);
+            Response.Cookies.Add(cookieBeachTennis);
         }
 
         public static string RemoveAcentosEspacosMaiusculas(string text)

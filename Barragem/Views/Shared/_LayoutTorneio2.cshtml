@@ -2,8 +2,10 @@
     Layout = null;
     HttpCookie cookie = Request.Cookies["_barragemId"];
     HttpCookie cookieNome = Request.Cookies["_barragemNome"];
+    HttpCookie cookieBeach = Request.Cookies["_barragemBeach"];
     var barraId = 0;
     var barraNome = "Ranking de Tênis";
+    var barraBeach = "0";
     if (cookie != null)
     {
         barraId = Convert.ToInt32(cookie.Value.ToString());
@@ -11,6 +13,10 @@
     if (cookieNome != null)
     {
         barraNome = Server.UrlDecode(cookieNome.Value);
+    }
+    if (cookieBeach != null)
+    {
+        barraBeach = Server.UrlDecode(cookieBeach.Value);
     }
     var scrLogo = "/Content/image/logo" + barraId + ".png";
     var path = Server.MapPath(scrLogo);
@@ -35,7 +41,7 @@
 
     @Styles.Render("~/css")
     @Styles.Render("~/tabela")
-    @if (barraId == 1090)
+    @if (barraBeach == "1" || barraId == 1090)
     {
         @Styles.Render("~/css3")
     }
@@ -148,9 +154,14 @@
         </div>
     </section>
 
-
-    @Html.Partial("_Rodape2")
-
+    @if (barraBeach == "1")
+    {
+        @Html.Partial("_FooterBT2")
+    }
+    else
+    {
+        @Html.Partial("_Rodape2")
+    }
     <!-- Javascript -->
     @Scripts.Render("~/js")
     @Scripts.Render("~/bundles/load-image")

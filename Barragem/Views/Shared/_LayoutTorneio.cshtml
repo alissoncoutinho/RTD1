@@ -2,8 +2,10 @@
     Layout = null;
     HttpCookie cookie = Request.Cookies["_barragemId"];
     HttpCookie cookieNome = Request.Cookies["_barragemNome"];
+    HttpCookie cookieBeach = Request.Cookies["_barragemBeach"];
     var barraId = 0;
     var barraNome = "Ranking de Tênis";
+    var barraBeach = "0";
     if (cookie != null)
     {
         barraId = Convert.ToInt32(cookie.Value.ToString());
@@ -11,6 +13,10 @@
     if (cookieNome != null)
     {
         barraNome = Server.UrlDecode(cookieNome.Value);
+    }
+    if (cookieBeach != null)
+    {
+        barraBeach = Server.UrlDecode(cookieBeach.Value);
     }
     var scrLogo = "/Content/image/logo" + barraId + ".png";
     var path = Server.MapPath(scrLogo);
@@ -32,8 +38,15 @@
     <link rel="shortcut icon" href=@scrLogo>
     <link href='http://fonts.googleapis.com/css?family=Roboto:400,400italic,500,500italic,700,700italic,900,900italic,300italic,300' rel='stylesheet' type='text/css'>
     <link href='http://fonts.googleapis.com/css?family=Roboto+Slab:400,700,300,100' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="~/Content/css/hamburgers.min.css" type="text/css">
+    @if (IsSectionDefined("Css_Painel"))
+    {
+        @RenderSection("Css_Painel", required: false)
+    }
     @Styles.Render("~/css")
-    @if (barraId == 1090 || barraId == 1136 || barraId == 1130 || barraId == 1126 || barraId == 991062 || barraId == 1151 || barraId == 1152 || barraId == 1144)  // beach tennis
+    @if (barraBeach == "1" || barraId == 1136 || barraId == 1130 || barraId == 1126 || barraId == 991062 || barraId == 1151 || barraId == 1152 || barraId == 1144)  // beach tennis
     {
         @Styles.Render("~/css3")
     }
@@ -95,7 +108,14 @@
         </div>
     </header>
     @RenderBody()
-    @Html.Partial("_Rodape2")
+    @if (barraBeach == "1")
+    {
+        @Html.Partial("_FooterBT2")
+    }
+    else
+    {
+        @Html.Partial("_Rodape2")
+    }
     <!-- Javascript -->
     @Scripts.Render("~/js")
     @Scripts.Render("~/bundles/load-image")

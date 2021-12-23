@@ -383,6 +383,7 @@ namespace Barragem.Controllers
                         barragens.isBeachTenis = true;
                         barragens.isTeste = true;
                         barragens.isAtiva = true;
+                        barragens.valorPorUsuario = 6;
 
                         UserProfile usuario = db.UserProfiles.Find(WebSecurity.GetUserId(User.Identity.Name));
                         barragens.email = usuario.email;

@@ -4,7 +4,19 @@
     ViewBag.Title = "Error";
 }
 
-<hgroup class="title">
-    <h1 class="error">Error.</h1>
-    <h2 class="error">An error occurred while processing your request.</h2>
-</hgroup>
+
+<p>
+    @if (Model.Exception.GetType().FullName == "System.Web.Mvc.HttpAntiForgeryException")
+    {
+        <h3>Houve uma falha na sua sessão, clique no link abaixo e faça login novamente no sistema.</h3>
+        <div><a href="javascript:document.getElementById('logoutForm').submit()">Fazer login</a></div>
+    }
+    else
+    {
+        <hgroup class="title">
+            <h1 class="error">Desculpe-nos.</h1>
+            <h2 class="error">Ocorreu alguma falha inesperada. Tente novamente mais tarde, se o problema persistir contate o administrador do sistema.</h2>
+        </hgroup>
+        <b>Tipo da Exceção:</b> @Model.Exception.GetType().FullName
+    }
+</p>

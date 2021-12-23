@@ -67,6 +67,10 @@ namespace Barragem.Controllers
                 if ((!returnUrl.Equals("torneio"))&&(!returnUrl.Contains("/Torneio/LancarResultado"))){
                     var usuario = db.UserProfiles.Find(WebSecurity.GetUserId(model.UserName));
                     Funcoes.CriarCookieBarragem(Response, Server, usuario.barragemId, usuario.barragem.nome);
+                    if ((Roles.GetRolesForUser(model.UserName)[0]).Equals("parceiroBT"))
+                    {
+                        return RedirectToAction("Index", "Torneio");
+                    }
                 } else if(torneioId==0) {
                     HttpCookie cookie = Request.Cookies["_barragemId"];
                     if (cookie != null){
@@ -1773,6 +1777,10 @@ namespace Barragem.Controllers
                 {
                     var usuario = db.UserProfiles.Find(WebSecurity.GetUserId(model.UserName));
                     Funcoes.CriarCookieBarragem(Response, Server, usuario.barragemId, usuario.barragem.nome);
+                    if ((Roles.GetRolesForUser(model.UserName)[0]).Equals("parceiroBT"))
+                    {
+                        return RedirectToAction("Index", "Torneio");
+                    }
                 }
                 else if (torneioId == 0)
                 {

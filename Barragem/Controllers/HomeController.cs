@@ -115,7 +115,7 @@ namespace Barragem.Controllers
             
             if (barragem.Count() > 0)
             {
-                Funcoes.CriarCookieBarragem(Response, Server, barragem[0].Id, barragem[0].nome);
+                Funcoes.CriarCookieBarragem(Response, Server, barragem[0].Id, barragem[0].nome, barragem[0].isBeachTenis);
                 var barragemId = barragem[0].Id;
                 var torneio = db.Torneio.Where(t => t.barragemId == barragemId && t.isAtivo).OrderByDescending(t => t.Id).ToList();
                 if (torneio.Count() > 0)
