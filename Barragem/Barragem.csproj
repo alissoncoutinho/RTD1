@@ -347,6 +347,7 @@
     <Content Include="Content\css\novo-circuito.css" />
     <Content Include="Content\css\painel-organizador.css" />
     <Content Include="Content\css\recuperar-senha.css" />
+    <Content Include="Content\css\rodape-BT.css" />
     <Content Include="Content\css\style.css" />
     <Content Include="Content\dataTables.bootstrap.min.css" />
     <Content Include="Content\dataTables.bootstrap4.min.css" />

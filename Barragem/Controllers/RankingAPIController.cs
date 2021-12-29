@@ -40,7 +40,8 @@ namespace Barragem.Controllers
                 } else {
                     ranking.nomeRanking = item.barragem.nome;
                 }
-                ranking.cidade = Funcoes.RemoveAcentosEspacosMaiusculas(item.barragem.cidade);
+                var cidade = obterCidade(item);
+                ranking.cidade = Funcoes.RemoveAcentosEspacosMaiusculas(cidade);
                 ranking.userName = item.UserName;
                 ranking.userId = item.UserId;
                 ranking.situacao = item.situacao;
@@ -49,6 +50,17 @@ namespace Barragem.Controllers
             return loginRankings;
         }
         
+        private string obterCidade(UserProfile user)
+        {
+            if (user.barragemId == 1157)
+            {
+                return user.naturalidade.Split('-')[0];
+            } else {
+                return user.barragem.cidade.Split('-')[0];
+            }
+            
+        }
+
         // GET: api/RankingAPI/
         [Route("api/RankingAPI/{classeId}")]
         public IList<Classificacao> GetRanking(int classeId){

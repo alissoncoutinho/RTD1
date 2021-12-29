@@ -184,22 +184,38 @@ namespace Barragem.Controllers
             user.altura2 = altura;
             user.lateralidade = lateralidade;
             user.matriculaClube = informacoesAdicionais;
+            user.bairro = "não informado";
 
             db.Entry(user).State = EntityState.Modified;
             try{
                 db.SaveChanges();
-            }catch (Exception e){
-                return InternalServerError(e);
+            }
+            catch (System.Data.Entity.Validation.DbEntityValidationException e)
+            {
+                var erro = "";
+                foreach (var eve in e.EntityValidationErrors)
+                {
+                    erro = "Entidade:" + eve.Entry.Entity.GetType().Name +" - "+ eve.Entry.State;
+                    foreach (var ve in eve.ValidationErrors)
+                    {
+                        erro =  erro + ": " + "- Campo: " + ve.PropertyName + ", Valor: " + ve.ErrorMessage;
+                    }
+                }
+                return BadRequest(erro);
+            }catch(Exception e)
+            {
+                return BadRequest("erro inesperado: " + e.Message);
             }
 
             return StatusCode(HttpStatusCode.NoContent);
         }
 
+
         [ResponseType(typeof(void))]
         [HttpPost]
         [AllowAnonymous]
-        [Route("api/PerfilAPI/Perfil")]
-        public IHttpActionResult PostPerfil(string login, string email, string password, string nome, DateTime dataNascimento, string naturalidade, string celular,  string altura, string lateralidade, int rankingId)
+        [Route("api/PerfilAPI")]
+        public IHttpActionResult PostPerfil(string login, string email, string password, string nome, DateTime dataNascimento, string naturalidade, string celular, string altura, string lateralidade, int rankingId)
         {
             RegisterModel model = new RegisterModel();
             model.UserName = login;
@@ -214,12 +230,14 @@ namespace Barragem.Controllers
             model.lateralidade = lateralidade;
             model.barragemId = rankingId;
             model.classeId = 0;
+            model.Password = password;
+            model.bairro = "não informado";
             if (ModelState.IsValid)
             {
                 // Attempt to register the user
                 try
                 {
-                    if (!WebSecurity.UserExists(login))
+                    if (!db.UserProfiles.Where(u=>u.UserName==login).Any())
                     {
                         if (!Funcoes.IsValidEmail(email))
                         {
@@ -238,6 +256,7 @@ namespace Barragem.Controllers
                             naturalidade = naturalidade,
                             lateralidade = lateralidade,
                             barragemId = rankingId,
+                            bairro = "Não informado",
                             classeId = 0
                         });
 
@@ -247,13 +266,13 @@ namespace Barragem.Controllers
                     }
                     else
                     {
-                        return InternalServerError(new Exception(string.Format("Login já existe. '{0}'", login)));
+                        return BadRequest(string.Format("Login já existe. '{0}'", login));
                     }
 
                 }
                 catch (MembershipCreateUserException e)
                 {
-                    return InternalServerError(e);
+                    return BadRequest(e.Message);
                 }
 
             } else {
@@ -265,8 +284,14 @@ namespace Barragem.Controllers
                 //Exception exception = new Exception(message.ToString());
                 //return InternalServerError(exception);
             }
-                        
-            return Ok(model);
+            LoginRankingModel loginRankingModel = new LoginRankingModel();
+            loginRankingModel.idRanking = model.barragemId;
+            loginRankingModel.nomeRanking = "Meu Ranking";
+            loginRankingModel.userName = model.UserName;
+            loginRankingModel.userId = WebSecurity.GetUserId(model.UserName);
+            loginRankingModel.cidade = Funcoes.RemoveAcentosEspacosMaiusculas(model.naturalidade.Split('-')[0]);
+            loginRankingModel.situacao = Tipos.Situacao.torneio.ToString();
+            return Ok(loginRankingModel);
         }
 
         [Route("api/PerfilAPI/Ranking/{userId}")]

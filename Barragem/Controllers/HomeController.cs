@@ -68,7 +68,7 @@ namespace Barragem.Controllers
 
         }
 
-        public ActionResult IndexTorneio2()
+        public ActionResult IndexTorneio2(int torneioId=0)
         {
             HttpCookie cookie = Request.Cookies["_barragemId"];
             var barragemId = 1;
@@ -76,8 +76,13 @@ namespace Barragem.Controllers
             {
                 barragemId = Convert.ToInt32(cookie.Value.ToString());
             }
-            Barragens barragem = db.Barragens.Find(barragemId);
-            return RedirectToAction("IndexTorneioRedirect", "Home", new { id = barragem.dominio });
+            if (torneioId == 0)
+            {
+                Barragens barragem = db.Barragens.Find(barragemId);
+                return RedirectToAction("IndexTorneioRedirect", "Home", new { id = barragem.dominio });
+            } else {
+                return RedirectToAction("IndexTorneioRedirect", "Home", new { id = torneioId });
+            }
         }
 
         private Torneio montarDadosTorneio(Torneio torneio) {
@@ -108,6 +113,8 @@ namespace Barragem.Controllers
             var barragem = new List<BarragemView>();
             int i = 0;
             if (int.TryParse(id, out i)) {
+                var ranking = db.Torneio.Find(Int32.Parse(id)).barragem;
+                Funcoes.CriarCookieBarragem(Response, Server, ranking.Id, ranking.nome, ranking.isBeachTenis);
                 return RedirectToAction("IndexTorneio", "Home", new { torneioId = id });
             } else {
                 barragem = db.BarragemView.Where(b => b.dominio.ToLower().Equals(id.ToLower())).ToList<BarragemView>();
@@ -120,8 +127,6 @@ namespace Barragem.Controllers
                 var torneio = db.Torneio.Where(t => t.barragemId == barragemId && t.isAtivo).OrderByDescending(t => t.Id).ToList();
                 if (torneio.Count() > 0)
                 {
-                    //var torneioLess = montarDadosTorneio(torneio[0]);
-
                     return RedirectToAction("IndexTorneio", "Home", new { torneioId = torneio[0].Id });
                 }
                 else
@@ -142,6 +147,7 @@ namespace Barragem.Controllers
             var tr = db.Torneio.Find(torneioId);
             var patrocinadores = db.Patrocinador.Where(p => p.torneioId == torneioId).ToList();
             ViewBag.patrocinadores = patrocinadores;
+            ViewBag.TorneioId = tr.Id;
             return View(tr);
         }
 
@@ -205,10 +211,10 @@ namespace Barragem.Controllers
                         return RedirectToAction("IndexBarragem", "Home", new { id = id });
                     }
                 }
-                //string perfil = Roles.GetRolesForUser(User.Identity.Name)[0];
-                //if (perfil.Equals("admin") || perfil.Equals("organizador")){
-                //    return RedirectToAction("Dashboard", "Home");
-                //}
+                string perfil = Roles.GetRolesForUser(User.Identity.Name)[0];
+                if (perfil.Equals("adminTorneio")){
+                    return RedirectToAction("PainelControle", "Torneio");
+                }
                 return RedirectToAction("Index3", "Home");
             }
 

@@ -6,6 +6,7 @@
     var barraId = 0;
     var barraNome = "Ranking de Tênis";
     var barraBeach = "0";
+    var torneioId = 0;
     if (cookie != null)
     {
         barraId = Convert.ToInt32(cookie.Value.ToString());
@@ -24,6 +25,9 @@
     {
         scrLogo = "/Content/image/logo" + barraId + ".jpg";
     }
+    if (ViewBag.TorneioId != null) {
+        torneioId = ViewBag.TorneioId;
+    }
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -38,7 +42,8 @@
     <link rel="shortcut icon" href=@scrLogo>
     <link href='http://fonts.googleapis.com/css?family=Roboto:400,400italic,500,500italic,700,700italic,900,900italic,300italic,300' rel='stylesheet' type='text/css'>
     <link href='http://fonts.googleapis.com/css?family=Roboto+Slab:400,700,300,100' rel='stylesheet' type='text/css'>
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/css/bootstrap.min.css">
+    <link href="@Url.Content("/Content/css/rodape-BT.css")" rel="stylesheet" type="text/css" />
     @Styles.Render("~/css")
     @Styles.Render("~/tabela")
     @if (barraBeach == "1" || barraId == 1090)
@@ -89,9 +94,9 @@
                 </div><!--//navbar-header-->
                 <div id="navbar-collapse" class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
-                        <li class="active nav-item"><a href="/Home/IndexTorneio2">Home</a></li>
-                        <li class="nav-item">@Html.ActionLink("Inscritos", "../Torneio/InscricoesTorneio2", new { url = "torneio", barra = barraId })</li>
-                        <li class="nav-item">@Html.ActionLink("Tabela", "../Torneio/Tabela", new { url = "torneio", barra = barraId })</li>
+                        <li class="active nav-item">@Html.ActionLink("Home", "../Home/IndexTorneio2", new { torneioId = torneioId })
+                        <li class="nav-item">@Html.ActionLink("Inscritos", "../Torneio/InscricoesTorneio2", new { torneioId = torneioId, url = "torneio", barra = barraId })</li>
+                        <li class="nav-item">@Html.ActionLink("Tabela", "../Torneio/Tabela", new { torneioId = torneioId, url = "torneio", barra = barraId })</li>
                         <li class="nav-item">@Html.ActionLink("Lançar Placar", "../Torneio/LancarResultado", new { barragem = barraId })</li>
                         <li class="nav-item">@Html.ActionLink("Regras", "../Torneio/Regulamento", new { barragem = barraId })</li>
                     </ul>

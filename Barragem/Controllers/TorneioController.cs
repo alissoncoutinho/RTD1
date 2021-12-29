@@ -840,6 +840,7 @@ namespace Barragem.Controllers
             else
             {
                 var torneio = db.Torneio.Find(torneioId);
+                ViewBag.TorneioId = torneioId;
                 liberarTabelaInscricao = torneio.liberaTabelaInscricao;
             }
             inscricoes = db.InscricaoTorneio.Where(r => r.torneioId == torneioId && r.classeTorneio.isDupla == false).OrderBy(r => r.classe).ThenBy(r => r.participante.nome).ToList();
@@ -3346,7 +3347,7 @@ namespace Barragem.Controllers
             try
             {
                 var torneio = db.Torneio.Find(torneioId);
-                var segmentacao = "torneio_" + Funcoes.RemoveAcentosEspacosMaiusculas(torneio.barragem.cidade);
+                var segmentacao = "torneio_" + Funcoes.RemoveAcentosEspacosMaiusculas(torneio.cidade.Split('-')[0]);
                 //var segmentacao = "ranking_" + torneio.barragem.cidade + "_geral";
                 var titulo = "Inscrições do " + torneio.nome + " abertas.";
                 var dataHoje = DateTime.Now;

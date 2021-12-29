@@ -774,7 +774,14 @@ namespace Barragem.Controllers
         {
 
             var dataHoje = DateTime.Now.AddDays(-1);
-            var ranking = db.BarragemView.Find(rankingId);
+            var cidade = "";
+            if (rankingId==1157) {
+                var userid = getUsuarioLogado();
+                cidade = db.UserProfiles.Find(userid).naturalidade;
+            } else {
+                cidade = db.BarragemView.Find(rankingId).cidade;
+            }
+                        
             List<Patrocinador> patrocinadores = null;
             var torneio = (from t in db.Torneio
                            where t.dataFimInscricoes >= dataHoje && t.isAtivo && t.isOpen
@@ -786,7 +793,7 @@ namespace Barragem.Controllers
                            }).Union(
                             from t in db.Torneio
                             where t.dataFimInscricoes >= dataHoje && t.isAtivo && t.divulgaCidade 
-                            && t.cidade.ToUpper() == ranking.cidade.ToUpper()
+                            && t.cidade.ToUpper() == cidade.ToUpper()
                             select new TorneioApp
                             {
                                 Id = t.Id, logoId = t.barragemId, nome = t.nome, dataInicio = t.dataInicio, valor = t.valor, valorSocio = t.valorSocio,
@@ -853,5 +860,7 @@ namespace Barragem.Controllers
 
             return Ok();
         }
+
+        
     }
 }

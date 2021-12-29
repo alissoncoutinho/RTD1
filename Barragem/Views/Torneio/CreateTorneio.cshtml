@@ -196,9 +196,9 @@
                 {
                     <div class="panel panel-default">
                     @if (ViewBag.LigasDisponiveis.Count == 1){
-                        <div class="panel-heading"><b>Este torneio pontuará para o ranking?</b></div>
+                        <div class="panel-heading"><b>Este torneio pontuará para o circuito?</b></div>
                     } else {
-                        <div class="panel-heading"><b>Este torneio pontuará para quais rankings?</b></div>
+                        <div class="panel-heading"><b>Este torneio pontuará para quais circuitos?</b></div>
                     }
                     <div class="panel-body">
                         @foreach (var lg in ViewBag.LigasDisponiveis)
@@ -233,7 +233,7 @@
                 <div class="panel panel-default">
                     <div class="panel-heading"><b>Marque as categorias que deseja incluir no torneio:</b><br>
                         <small style="color:red">Você poderá adicionar e editar nome de categorias depois</small><br>
-                        <small><span class="glyphicon glyphicon-flag"></span> Categorias que pontuam para liga</small>
+                        <small><span class="glyphicon glyphicon-flag"></span> Categorias que pontuam para o ranking</small>
                     </div>
                     <div class="panel-body">
                         @foreach (var categoria in ViewBag.Categorias)
@@ -358,6 +358,7 @@
     
 </div>
 }
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <style>
     .nav-tabs {
         flex-wrap: wrap;
@@ -365,9 +366,23 @@
     select {
         appearance: auto;
     }
+
+    .form-control:not(select) {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+    }
+
+    .ui-autocomplete-loading {
+        background: white url("/Content/image/ui-anim_basic_16x16.gif") right center no-repeat;
+    }
 </style>
 
 @section Scripts {
+
+    
+
+
     @Scripts.Render("~/bundles/editor")
     <script type="text/javascript">
         tinyMCE.baseURL = '@Url.Content("~/Scripts/tinymce/")'
@@ -416,6 +431,22 @@
         $('#valorSocio').mask('#.##0,00', { reverse: true });
         $('#valorDescontoFederado').mask('#.##0,00', { reverse: true });
 
+        $("#cidade").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: "/Cidade/getCidade",
+                    dataType: "jsonp",
+                    data: {
+                        q: request.term
+                    },
+                    success: function (data) {
+                        response(data);
+                    }
+                });
+            },
+            minLength: 3
+        });
+        $('#cidade').attr('autocomplete', 'off');
 
      });
 

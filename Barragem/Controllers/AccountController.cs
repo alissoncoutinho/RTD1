@@ -118,7 +118,19 @@ namespace Barragem.Controllers
                     dominioTorneio = db.BarragemView.Find(barragemId).dominio;
                 }
             }
+            var isBeachTennis = false;
+            if (User.Identity.IsAuthenticated)
+            {
+                string perfil = Roles.GetRolesForUser(User.Identity.Name)[0];
+                if (perfil.Equals("adminTorneio")){
+                    isBeachTennis = true;
+                }
+            }
             WebSecurity.Logout();
+            if (isBeachTennis)
+            {
+                return RedirectToAction("IndexBT", "Home");
+            }
             if (isTorneio == "torneio"){
                 return RedirectToAction("IndexTorneioRedirect", "Home", new { id = dominioTorneio });
             }
@@ -1776,7 +1788,7 @@ namespace Barragem.Controllers
                 if ((!returnUrl.Equals("torneio")) && (!returnUrl.Contains("/Torneio/LancarResultado")))
                 {
                     var usuario = db.UserProfiles.Find(WebSecurity.GetUserId(model.UserName));
-                    Funcoes.CriarCookieBarragem(Response, Server, usuario.barragemId, usuario.barragem.nome);
+                    Funcoes.CriarCookieBarragem(Response, Server, usuario.barragemId, usuario.barragem.nome, usuario.barragem.isBeachTenis);
                     if ((Roles.GetRolesForUser(model.UserName)[0]).Equals("parceiroBT"))
                     {
                         return RedirectToAction("Index", "Torneio");

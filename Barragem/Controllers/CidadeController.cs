@@ -19,7 +19,7 @@ namespace Barragem.Controllers
 
         public ActionResult getCidade(string q)
         {
-           var cidades = db.Cidade.Where(c=> c.nome.StartsWith(q)).ToList();
+           var cidades = db.Cidade.Where(c=> c.nome.ToUpper().StartsWith(q.ToUpper())).ToList();
             List<CidadeAutocomplete> listCidade = new List<CidadeAutocomplete>();
             foreach (var cidade in cidades)
             {

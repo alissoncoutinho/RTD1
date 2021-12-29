@@ -2,14 +2,20 @@
     Layout = null;
     HttpCookie cookie = Request.Cookies["_barragemId"];
     HttpCookie cookieNome = Request.Cookies["_barragemNome"];
+    HttpCookie cookieBeach = Request.Cookies["_barragemBeach"];
     var barraId = 0;
     var barraNome = "Ranking de Tênis";
+    var barraBeach = "0";
     if (ViewBag.IdBarragem!=null){
         barraId = ViewBag.IdBarragem;
         barraNome = ViewBag.NomeBarragem;
     }else if (cookie != null){
         barraId = Convert.ToInt32(cookie.Value.ToString());
         barraNome = Server.UrlDecode(cookieNome.Value);
+    }
+    if (cookieBeach != null)
+    {
+        barraBeach = Server.UrlDecode(cookieBeach.Value);
     }
     var scrLogo = "/Content/image/logo" + barraId + ".png";
     var path = Server.MapPath(scrLogo);
@@ -32,9 +38,10 @@
     <link rel="shortcut icon" href=@scrLogo>
     <link href='http://fonts.googleapis.com/css?family=Roboto:400,400italic,500,500italic,700,700italic,900,900italic,300italic,300' rel='stylesheet' type='text/css'>
     <link href='http://fonts.googleapis.com/css?family=Roboto+Slab:400,700,300,100' rel='stylesheet' type='text/css'>
+    <link href="@Url.Content("/Content/css/rodape-BT.css")" rel="stylesheet" type="text/css" />
 
     @Styles.Render("~/css")
-    @if ((barraId == 1090) || (barraId == 991062) || (barraId == 1151) || (barraId == 1152) || (barraId == 1144)) // beach tenis
+    @if ((barraBeach == "1") ||(barraId == 1090) || (barraId == 991062) || (barraId == 1151) || (barraId == 1152) || (barraId == 1144)) // beach tenis
     {
         @Styles.Render("~/css3")
     }else if ((barraId==1010)||(barraId==1012)){
@@ -85,6 +92,9 @@
                     </div><!--//navbar-header-->
                     <div id="navbar-collapse" class="navbar-collapse collapse">
                         <ul class="nav navbar-nav">
+                            
+                        @if (!Roles.IsUserInRole("adminTorneio"))
+                        {
                             <li class="active nav-item">@Html.ActionLink("Home", "IndexBarragens", "Home")</li>
                             <li class="nav-item dropdown">
                                 <a class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-delay="0" data-close-others="false" href="#">Torneio <i class="fa fa-angle-down"></i></a>
@@ -95,39 +105,40 @@
                                     <li>@Html.ActionLink("Lançar Resultado", "../Torneio/LancarResultado")</li>
                                 </ul>
                             </li>
-                            @if (Roles.IsUserInRole("adminTorneio"))
-                            {
-                                <li class="active nav-item">@Html.ActionLink("Circuito", "RankingDasLigas", "Ranking")</li>
-                            }
-                            else
-                            {
-                                <li class="nav-item dropdown">
+                            <li class="nav-item dropdown">
                                 <a class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-delay="0" data-close-others="false" href="#">Ranking<i class="fa fa-angle-down"></i></a>
                                 <ul class="dropdown-menu">
                                     <li class="nav-item">@Html.ActionLink("Regra da Pontuação", "RegraPontuacao", "Ranking")</li>
                                     <li class="nav-item">@Html.ActionLink("Minha Pontuação", "MinhaPontuacao", "Account")</li>
                                     <li class="nav-item">@Html.ActionLink("Ranking", "index", "Ranking")</li>
                                     <li class="nav-item">@Html.ActionLink("Liga", "RankingDasLigas", "Ranking")</li>
-                                    <li class="nav-item">@Html.ActionLink("Alterar Status", "../Account/EditaUsuario", new { UserName = User.Identity.Name
-                            })</li>
+                                    <li class="nav-item">
+                                        @Html.ActionLink("Alterar Status", "../Account/EditaUsuario", new
+                                                    {
+                                                        UserName = User.Identity.Name
+                                                    })
+                                    </li>
                                     <li class="nav-item">@Html.ActionLink("Rodada Atual", "Index", "Jogo")</li>
                                     <li class="nav-item">@Html.ActionLink("Rodadas Anteriores", "index", "Rodada")</li>
                                     <li class="nav-item">@Html.ActionLink("Jogadores", "ListarUsuarios", "Account")</li>
                                 </ul>
                             </li>
-                            }
-                            @if (!Roles.IsUserInRole("adminTorneio"))
-                            {
-                                <li class="nav-item dropdown">
-                                    <a class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-delay="0" data-close-others="false" href="#">Informações <i class="fa fa-angle-down"></i></a>
-                                    <ul class="dropdown-menu">
-                                        <li>@Html.ActionLink("Regulamento", "Regulamento2", "Home")</li>
-                                        <!--li>Html.ActionLink("Torneios", "FuncTorneio2", "Home")</li-->
-                                        <li>@Html.ActionLink("Quem somos", "QuemSomos2", "Home")</li>
-                                        <li>@Html.ActionLink("Fale Conosco", "FaleConosco2", "Home")</li>
-                                    </ul>
-                                </li>
-                            }
+                            <li class="nav-item dropdown">
+                                <a class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-delay="0" data-close-others="false" href="#">Informações <i class="fa fa-angle-down"></i></a>
+                                <ul class="dropdown-menu">
+                                    <li>@Html.ActionLink("Regulamento", "Regulamento2", "Home")</li>
+                                    <!--li>Html.ActionLink("Torneios", "FuncTorneio2", "Home")</li-->
+                                    <li>@Html.ActionLink("Quem somos", "QuemSomos2", "Home")</li>
+                                    <li>@Html.ActionLink("Fale Conosco", "FaleConosco2", "Home")</li>
+                                </ul>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="active nav-item">@Html.ActionLink("Painel", "PainelControle", "Torneio")</li>
+                            <li class="active nav-item">@Html.ActionLink("Manuais", "Manuais", "Torneio")</li>
+                            <li class="active nav-item"><a href="https://api.whatsapp.com/send?phone=5561998095668&text=Ol%C3%A1%2C%20gostaria%20de%20ajuda%20com%20o%20sistema%20Ranking%20Beach%20Tennis" target="_blank">Suporte</a></li>
+                        }
                         </ul><!--//nav-->
                         <ul class="nav navbar-nav navbar-right">
                             <li class="login">
@@ -187,7 +198,14 @@
                 </div>
             </div>
         </section>
-        @Html.Partial("_Rodape2")
+        @if (Roles.IsUserInRole("adminTorneio"))
+        {
+            @Html.Partial("_FooterBT2")
+        }
+        else
+        {
+            @Html.Partial("_Rodape2")
+        }
         <!-- Javascript -->
         @Scripts.Render("~/js")
         @RenderSection("scripts", required: false)
