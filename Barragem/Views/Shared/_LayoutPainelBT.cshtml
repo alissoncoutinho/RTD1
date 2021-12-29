@@ -19,6 +19,11 @@
     if (!File.Exists(path))
     {
         scrLogo = "/Content/image/logo" + barraId + ".jpg";
+        path = Server.MapPath(scrLogo);
+    }
+    if (!File.Exists(path))
+    {
+        scrLogo = "/Content/image/inserirLogo.png";
     }
 }
 
@@ -123,9 +128,9 @@
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle p-0" href="#" id="navbarDropdown" role="button"
                                data-bs-toggle="dropdown" aria-expanded="false">
-                                <div class="d-inline-flex">
+                                <div class="d-inline-flex align-items-center">
                                     <div>
-                                        <img width="50" height="50" src="@Url.Action("BuscaFoto", "Account", new { id = 0, userName = User.Identity.Name })" alt="icone">
+                                        <img width="35" height="35" src="@Url.Action("BuscaFoto", "Account", new { id = 0, userName = User.Identity.Name })" alt="icone">
                                     </div>
                                     <div class='ms-1 me-1'>
                                         <h5 class="mb-0">@User.Identity.Name</h5>

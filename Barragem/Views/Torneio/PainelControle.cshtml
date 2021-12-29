@@ -3,24 +3,6 @@
     Layout = "~/Views/Shared/_LayoutPainelBT.cshtml";
     ViewBag.Title = "Painel de Controle";
 
-    HttpCookie cookie = Request.Cookies["_barragemId"];
-    var barraId = 0;
-    var scrLogo = "/Content/image/inserirLogo.png";
-
-    if (cookie != null){
-        barraId = Convert.ToInt32(cookie.Value.ToString());
-        scrLogo = "/Content/image/logo" + barraId + ".png";
-        var path = Server.MapPath(scrLogo);
-        if (!File.Exists(path)){
-            scrLogo = "/Content/image/logo" + barraId + ".jpg";
-            path = Server.MapPath(scrLogo);
-        }
-        if (!File.Exists(path))
-        {
-            scrLogo = "/Content/image/inserirLogo.png";
-        }
-    }
-
 }
 
 @section Css_Painel{
