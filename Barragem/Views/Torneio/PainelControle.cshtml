@@ -7,11 +7,13 @@
     var barraId = 0;
     var scrLogo = "/Content/image/inserirLogo.png";
 
-    if (cookie != null){
+    if (cookie != null)
+    {
         barraId = Convert.ToInt32(cookie.Value.ToString());
         scrLogo = "/Content/image/logo" + barraId + ".png";
         var path = Server.MapPath(scrLogo);
-        if (!File.Exists(path)){
+        if (!File.Exists(path))
+        {
             scrLogo = "/Content/image/logo" + barraId + ".jpg";
             path = Server.MapPath(scrLogo);
         }
@@ -244,10 +246,18 @@
                         <div class="col-8 d-flex align-items-center">
                             <h5>
                                 Incluir logomarca
-                                <span class="feito">
-                                    (feito) <img src="/Content/img/checked.svg" alt="checked"
-                                                 srcset="">
-                                </span>
+                                @if (scrLogo == "/Content/image/inserirLogo.png")
+                                {
+                                    <span class="pendente">(pendente)</span>
+                                }
+                                else
+                                {
+                                    <span class="feito">
+                                        (feito) <img src="/Content/img/checked.svg" alt="checked"
+                                                     srcset="">
+                                    </span>
+
+                                }
 
                             </h5>
                         </div>

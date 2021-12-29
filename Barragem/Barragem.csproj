@@ -340,6 +340,7 @@
     <Content Include="Content\css\editar-circuito.css" />
     <Content Include="Content\css\hamburgers.min.css" />
     <Content Include="Content\css\integracao-pagseguro.css" />
+    <Content Include="Content\css\jquery-ui-1.10.4.min.css" />
     <Content Include="Content\css\login.css" />
     <Content Include="Content\css\login2.css" />
     <Content Include="Content\css\login3.css" />
@@ -397,6 +398,7 @@
     <Content Include="Content\img\edit.svg" />
     <Content Include="Content\img\eye.png" />
     <Content Include="Content\img\facilidade.jpg" />
+    <Content Include="Content\img\favicon.ico" />
     <Content Include="Content\img\fidelize.jpg" />
     <Content Include="Content\img\fiel.png" />
     <Content Include="Content\img\foward.svg" />
@@ -410,6 +412,10 @@
     <Content Include="Content\img\logo-user.png" />
     <Content Include="Content\img\logo-white-cad.png" />
     <Content Include="Content\img\logo.png" />
+    <Content Include="Content\img\logo1.png" />
+    <Content Include="Content\img\logo2.png" />
+    <Content Include="Content\img\logo3.png" />
+    <Content Include="Content\img\logo4.png" />
     <Content Include="Content\img\modalidade.jpg" />
     <Content Include="Content\img\perfil1-mobile.png" />
     <Content Include="Content\img\perfil1.png" />
@@ -430,6 +436,8 @@
     <Content Include="Content\img\user.png" />
     <Content Include="Content\img\user1.png" />
     <Content Include="Content\img\user2.png" />
+    <Content Include="Content\img\user3.png" />
+    <Content Include="Content\img\user4.png" />
     <Content Include="Content\img\video.png" />
     <Content Include="Content\img\view.png" />
     <Content Include="Content\img\whatsapp-icon.svg" />
@@ -1001,6 +1009,12 @@
     <Content Include="Views\Shared\_LayoutLoginBT.cshtml" />
     <Content Include="Views\Shared\_LayoutPainelBT.cshtml" />
     <Content Include="Views\Shared\_LoginPartialBT.cshtml" />
+    <Content Include="Views\Torneio\Manuais.cshtml" />
+    <Content Include="Views\Ranking\RankingDasLigasBT.cshtml" />
+    <Content Include="Views\Account\ListaLoginsBT.cshtml" />
+    <Content Include="Views\Account\LoginBT.cshtml" />
+    <Content Include="Views\Account\LoginPasswordBT.cshtml" />
+    <Content Include="Views\Account\RegisterEmail.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

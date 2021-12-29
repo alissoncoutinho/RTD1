@@ -31,12 +31,20 @@
                 <label>Atualizações deste circuito</label>
                 <form action="/Ranking/RankingDasLigasBT" method="post" class=" m-auto mt-4">
                     <input type="hidden" name="idLiga" value="@ViewBag.idLiga" />
-                    <select id="idSnapshot" name="idSnapshot" class="form-select" onchange="this.form.submit()">
+                    @if (ViewBag.SnapshotsDaLiga.Count > 0)
+                    {
+                        <select id="idSnapshot" name="idSnapshot" class="form-select" onchange="this.form.submit()">
                         @foreach (var snap in ViewBag.SnapshotsDaLiga)
                         {
-                            <option value="@snap.Id" @if (snap.Id == ViewBag.idSnapshot) { @Html.Raw("selected") }>@snap.Data</option>
+                            <option value="@snap.Id" @if (snap.Id == ViewBag.idSnapshot)
+                            { @Html.Raw("selected") }>@snap.Data</option>
                         }
-                    </select>
+                        </select>
+                    }
+                    else 
+                    { 
+                        @Html.Raw("Este circuito ainda não possui ranking para exibir.")
+                    }
                 </form>
             </section>
 
