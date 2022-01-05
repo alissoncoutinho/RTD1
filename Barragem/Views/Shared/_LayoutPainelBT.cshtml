@@ -2,6 +2,8 @@
     Layout = null;
     HttpCookie cookie = Request.Cookies["_barragemId"];
     HttpCookie cookieNome = Request.Cookies["_barragemNome"];
+    var barraBeach = "0";
+    var banner = "bannerTenis";
     var barraId = 0;
     var barraNome = "Painel";
     if (ViewBag.IdBarragem != null)
@@ -13,6 +15,11 @@
     {
         barraId = Convert.ToInt32(cookie.Value.ToString());
         barraNome = Server.UrlDecode(cookieNome.Value);
+    }
+    if (Roles.IsUserInRole("adminTorneio"))
+    {
+        barraBeach = "1";
+        banner = "banner";
     }
     var scrLogo = "/Content/image/logo" + barraId + ".png";
     var path = Server.MapPath(scrLogo);
@@ -50,7 +57,6 @@
     <div class="menu">
         <div class="menu__wrapper">
             <div class="logo p-4"><img class="img-fluid" src="~/Content/img/logo.png" alt="logo do site" /></div>
-
         </div><!--menu__wrapper-->
         @if (Request.IsAuthenticated)
         {
@@ -97,7 +103,9 @@
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container">
             <div class="nav__wrapper d-flex">
-                <a href="/Torneio/PainelControle"><img src="~/Content/img/logo-painel.png" alt="logo"></a>
+                @if (barraBeach == "1") { 
+                    <a href="/Torneio/PainelControle"><img src="~/Content/img/logo-painel.png" alt="logo"></a>
+                }
                 <div class="user-info d-flex align-items-center">
                     <a class="mx-1" href="/Home/IndexBarragens">
                         @if ((barraId != 0) && (barraId < 9999))
@@ -160,7 +168,7 @@
             </div>
         </div>
     </nav>
-    <div class="banner position-absolute"></div>
+    <div class="@banner position-absolute"></div>
     <main class="container mt-5">
         @if ((ViewBag.MsgErro != "") && (ViewBag.MsgErro != null))
         {
@@ -194,7 +202,11 @@
 
         @RenderBody()
     </main>
-    @Html.Partial("_FooterBT1")
+    @if (Roles.IsUserInRole("adminTorneio"))
+    {
+        @Html.Partial("_FooterBT1")
+    }
+    
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/js/bootstrap.min.js"></script>

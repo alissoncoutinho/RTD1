@@ -26,7 +26,7 @@ namespace Barragem.Controllers
         //
 
         [HttpPost]
-        [Authorize(Roles = "admin,usuario,organizador,adminTorneio,parceiroBT")]
+        [Authorize(Roles = "admin,usuario,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
         public ActionResult AlterarClassesTorneio(IEnumerable<InscricaoTorneio> inscricaoTorneio)
         {
             try
@@ -47,7 +47,7 @@ namespace Barragem.Controllers
             }
         }
 
-        [Authorize(Roles = "admin,organizador,adminTorneio,parceiroBT")]
+        [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
         public ActionResult ExcluirInscricao(int Id)
         {
             var torneioId = 0;
@@ -80,7 +80,7 @@ namespace Barragem.Controllers
             }
         }
 
-        [Authorize(Roles = "admin,organizador,adminTorneio,parceiroBT")]
+        [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
         public ActionResult ExcluirClasse(int Id)
         {
             try
@@ -101,7 +101,7 @@ namespace Barragem.Controllers
             }
         }
 
-        [Authorize(Roles = "admin,organizador,adminTorneio,parceiroBT")]
+        [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
         public ActionResult ExcluirPatrocinador(int Id)
         {
             try
@@ -118,7 +118,7 @@ namespace Barragem.Controllers
         }
 
 
-        [Authorize(Roles = "admin,usuario,organizador,adminTorneio,parceiroBT")]
+        [Authorize(Roles = "admin,usuario,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
         public ActionResult AlterarClasse(int torneioId)
         {
             var userId = WebSecurity.GetUserId(User.Identity.Name);
@@ -135,7 +135,7 @@ namespace Barragem.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "admin,usuario,organizador,adminTorneio,parceiroBT")]
+        [Authorize(Roles = "admin,usuario,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
         public ActionResult AlterarClasse(int inscricaoId, int classe, int classe2Opcao = 0)
         {
             var inscricao = db.InscricaoTorneio.Find(inscricaoId);
@@ -158,7 +158,7 @@ namespace Barragem.Controllers
         }
 
 
-        [Authorize(Roles = "admin,organizador,adminTorneio,parceiroBT")]
+        [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
         public ActionResult Index()
         {
             string perfil = Roles.GetRolesForUser(User.Identity.Name)[0];
@@ -182,7 +182,7 @@ namespace Barragem.Controllers
             return View(torneio);
         }
 
-        [Authorize(Roles = "admin,usuario,organizador,adminTorneio,parceiroBT")]
+        [Authorize(Roles = "admin,usuario,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
         public ActionResult TorneiosDisponiveis()
         {
             List<Torneio> torneio = null;
@@ -302,7 +302,7 @@ namespace Barragem.Controllers
             }
         }
 
-        [Authorize(Roles = "admin,organizador,adminTorneio,parceiroBT")]
+        [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
         [HttpPost]
         public ActionResult MontarChaveamento(int torneioId, IEnumerable<int> classeIds)
         {
@@ -454,7 +454,7 @@ namespace Barragem.Controllers
             }
         }
 
-        [Authorize(Roles = "admin,organizador,adminTorneio")]
+        [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis")]
         public ActionResult TesteProcessarJogosComBye()
         {
             ProcessarJogosComBye(1, 1);
@@ -585,7 +585,7 @@ namespace Barragem.Controllers
             }
         }
 
-        [Authorize(Roles = "admin,organizador,adminTorneio,parceiroBT")]
+        [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
         public ActionResult InscricoesTorneio(int torneioId, string Msg = "")
         {
             var inscricoes = db.InscricaoTorneio.Where(r => r.torneioId == torneioId).OrderBy(r => r.classe).ThenBy(r => r.participante.nome).ToList();
@@ -872,7 +872,7 @@ namespace Barragem.Controllers
             return View(inscricoes);
         }
 
-        [Authorize(Roles = "admin,organizador,usuario,adminTorneio")]
+        [Authorize(Roles = "admin,organizador,usuario,adminTorneio,adminTorneioTenis")]
         public ActionResult EfetuarPagamento(int inscricaoId)
         {
             string MsgErro = "";
@@ -985,7 +985,7 @@ namespace Barragem.Controllers
             }
         }
 
-        [Authorize(Roles = "admin,organizador,adminTorneio,parceiroBT")]
+        [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
         public ActionResult EditInscritos(int torneioId, int filtroClasse = 0, string filtroJogador = "", string Msg = "")
         {
 
@@ -1131,7 +1131,7 @@ namespace Barragem.Controllers
         }
 
 
-        [Authorize(Roles = "admin,organizador,adminTorneio,parceiroBT")]
+        [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
         public ActionResult EditClasse(int torneioId)
         {
             var classes = db.ClasseTorneio.Where(c => c.torneioId == torneioId).OrderBy(c => c.nivel).ToList();
@@ -1161,7 +1161,7 @@ namespace Barragem.Controllers
             return View(classes);
         }
 
-        [Authorize(Roles = "admin,organizador,adminTorneio,parceiroBT")]
+        [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
         public ActionResult EditPatrocinadores(int torneioId, string msg = "")
         {
             mensagem(msg);
@@ -1284,7 +1284,7 @@ namespace Barragem.Controllers
         //    }
         //}
 
-        [Authorize(Roles = "admin,organizador,adminTorneio,parceiroBT")]
+        [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
         public ActionResult CreateClasse(int torneioId, int qtddClasses)
         {
             ViewBag.torneioId = torneioId;
@@ -1370,7 +1370,7 @@ namespace Barragem.Controllers
             }
         }
 
-        [Authorize(Roles = "admin,organizador,adminTorneio,parceiroBT")]
+        [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
         public ActionResult EditTorneio(int id = 0)
         {
             ViewBag.flag = "edit";
@@ -1442,7 +1442,7 @@ namespace Barragem.Controllers
             }
         }
 
-        [Authorize(Roles = "admin,usuario,organizador,adminTorneio,parceiroBT")]
+        [Authorize(Roles = "admin,usuario,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
         public ActionResult Detalhes(int id = 0, String Msg = "", int userId = 0)
         {
             Torneio torneio = db.Torneio.Find(id);
@@ -1509,7 +1509,7 @@ namespace Barragem.Controllers
             }
         }
 
-        [Authorize(Roles = "admin,usuario,organizador,adminTorneio,parceiroBT")]
+        [Authorize(Roles = "admin,usuario,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
         public ActionResult ConfirmacaoInscricao(int torneioId, string msg = "", string msgErro = "", int userId = 0)
         {
             //torneioId = 1;
@@ -1548,7 +1548,7 @@ namespace Barragem.Controllers
             if (inscricoes.Count() > 3) ViewBag.QuartaOpcaoClasse = inscricoes[3].classeTorneio.nome;
             return View(inscricoes[0]);
         }
-        [Authorize(Roles = "admin,usuario,organizador,adminTorneio,parceiroBT")]
+        [Authorize(Roles = "admin,usuario,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
         [HttpPost]
         public ActionResult Inscricao(int torneioId, int classeInscricao = 0, string operacao = "", int classeInscricao2 = 0, int classeInscricao3 = 0, int classeInscricao4 = 0, string observacao = "", bool isSocio = false, bool isFederado = false, bool isClasseDupla = false, int userId = 0)
         {
@@ -1939,7 +1939,7 @@ namespace Barragem.Controllers
 
         }
 
-        [Authorize(Roles = "admin, organizador,adminTorneio,parceiroBT")]
+        [Authorize(Roles = "admin, organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
         public ActionResult Ativar(int inscricaoId)
         {
             var inscricao = db.InscricaoTorneio.Find(inscricaoId);
@@ -1963,7 +1963,7 @@ namespace Barragem.Controllers
         }
 
 
-        [Authorize(Roles = "admin, organizador,adminTorneio,parceiroBT")]
+        [Authorize(Roles = "admin, organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(Torneio torneio)
@@ -1992,7 +1992,7 @@ namespace Barragem.Controllers
         }
 
 
-        [Authorize(Roles = "admin, organizador,adminTorneio,parceiroBT")]
+        [Authorize(Roles = "admin, organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult EditTorneio(Torneio torneio, bool transferencia = false)
@@ -2088,7 +2088,7 @@ namespace Barragem.Controllers
             return View(torneio);
         }
 
-        [Authorize(Roles = "admin, organizador,adminTorneio,parceiroBT")]
+        [Authorize(Roles = "admin, organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
         public ActionResult Create()
         {
             var userId = WebSecurity.GetUserId(User.Identity.Name);
@@ -2112,7 +2112,7 @@ namespace Barragem.Controllers
         //
         // POST: /Rodada/Create
 
-        [Authorize(Roles = "admin, organizador,adminTorneio,parceiroBT")]
+        [Authorize(Roles = "admin, organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(Torneio torneio)
@@ -2294,7 +2294,7 @@ namespace Barragem.Controllers
             return "";
         }
 
-        [Authorize(Roles = "admin,organizador,adminTorneio,parceiroBT")]
+        [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
         public ActionResult EditJogos(int torneioId, int fClasse = 0, string fData = "", string fNomeJogador = "", string fGrupo = "0", int fase = 0, int qtddInscritos = 0, int valorASerPago = 0, int valorDescontoParaRanking = 0)
         {
             if (qtddInscritos > 0)
@@ -2303,18 +2303,17 @@ namespace Barragem.Controllers
                 cobrancaTorneio.qtddInscritos = qtddInscritos;
                 cobrancaTorneio.valorASerPago = valorASerPago;
                 cobrancaTorneio.valorDescontoParaRanking = valorDescontoParaRanking;
-                if (torneioId == 1227)
+                
+                try
                 {
-                    try
-                    {
-                        cobrancaTorneio.qrCode = GetQrCodeCobrancaPIX(torneioId);
-                    }
-                    catch (Exception e)
-                    {
-                        cobrancaTorneio.qrCode = new QrCodeCobrancaTorneio();
-                        cobrancaTorneio.qrCode.erroGerarQrCode = "Erro ao gerar o QrCode de pagamento. Favor tente novamente mais tarde:" + e.Message;
-                    }
+                    cobrancaTorneio.qrCode = GetQrCodeCobrancaPIX(torneioId);
                 }
+                catch (Exception e)
+                {
+                    cobrancaTorneio.qrCode = new QrCodeCobrancaTorneio();
+                    cobrancaTorneio.qrCode.erroGerarQrCode = "Erro ao gerar o QrCode de pagamento. Favor tente novamente mais tarde:" + e.Message;
+                }
+                
                 ViewBag.CobrancaTorneio = cobrancaTorneio;
             }
             List<Jogo> listaJogos = null;
@@ -2361,7 +2360,7 @@ namespace Barragem.Controllers
             return View(listaJogos);
         }
 
-        [Authorize(Roles = "admin,organizador,adminTorneio,parceiroBT")]
+        [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
         public ActionResult ImprimirJogos(int torneioId, int fClasse = 0, string fData = "", string fNomeJogador = "", string fGrupo = "0", int fase = 0)
         {
             List<Jogo> listaJogos = null;
@@ -2417,7 +2416,7 @@ namespace Barragem.Controllers
             }
 
         }
-        [Authorize(Roles = "admin,organizador,adminTorneio,parceiroBT")]
+        [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
         [HttpPost]
         public ActionResult EditJogos(int Id, int jogador1, int jogador2, string dataJogo = "", string horaJogo = "", string quadra = "0")
         {
@@ -2621,7 +2620,7 @@ namespace Barragem.Controllers
             }
         }
 
-        [Authorize(Roles = "admin,organizador,adminTorneio,parceiroBT")]
+        [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
         public ActionResult EditDuplas(int torneioId, int filtroClasse = 0, bool naoFazNada = false)
         {
             List<InscricaoTorneio> duplas = null;
@@ -2666,7 +2665,7 @@ namespace Barragem.Controllers
             return View(duplas);
         }
 
-        [Authorize(Roles = "admin,organizador,adminTorneio,parceiroBT")]
+        [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
         public ActionResult EditFaseGrupo(int torneioId, int filtroClasse = 0)
         {
             List<InscricaoTorneio> inscritos = null;
@@ -2695,7 +2694,7 @@ namespace Barragem.Controllers
             return View(inscritos);
         }
 
-        [Authorize(Roles = "admin,organizador,adminTorneio,parceiroBT")]
+        [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
         [HttpPost]
         public ActionResult IncluirJogadorGrupo(int inscricaoJogador, int? grupo)
         {
@@ -2713,7 +2712,7 @@ namespace Barragem.Controllers
             }
         }
 
-        [Authorize(Roles = "admin,organizador,adminTorneio,parceiroBT")]
+        [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
         [HttpPost]
         public ActionResult EditDuplas(int inscricaoJogador1, int? jogador2)
         {
@@ -2785,7 +2784,7 @@ namespace Barragem.Controllers
         }
 
 
-        [Authorize(Roles = "admin,usuario,organizador,adminTorneio,parceiroBT")]
+        [Authorize(Roles = "admin,usuario,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
         public ActionResult LancarResultado(int id = 0, int barragem = 0, string msg = "")
         {
             Jogo jogo = null;
@@ -2862,7 +2861,7 @@ namespace Barragem.Controllers
 
 
         [HttpPost]
-        [Authorize(Roles = "admin,organizador,adminTorneio,parceiroBT")]
+        [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
         public ActionResult LancarResultado(Jogo j)
         {
             try
@@ -2995,7 +2994,7 @@ namespace Barragem.Controllers
         //}
 
         [HttpPost]
-        [Authorize(Roles = "admin,usuario,organizador,adminTorneio,parceiroBT")]
+        [Authorize(Roles = "admin,usuario,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
         public ActionResult LancarWO(int Id, int vencedorWO = 0, int situacao_id = 5)
         {
             try
@@ -3167,7 +3166,7 @@ namespace Barragem.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "admin,organizador,adminTorneio,parceiroBT")]
+        [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
         public ActionResult CreateTorneio(Torneio torneio, bool transferencia = false, int pontuacaoLiga = 100)
         {
             var userId = WebSecurity.GetUserId(User.Identity.Name);
@@ -3303,7 +3302,7 @@ namespace Barragem.Controllers
             }
             return View();
         }
-        [Authorize(Roles = "admin,organizador,adminTorneio,parceiroBT")]
+        [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
         public ActionResult CreateTorneio()
         {
             var userId = WebSecurity.GetUserId(User.Identity.Name);
@@ -3321,8 +3320,15 @@ namespace Barragem.Controllers
                 ligasId.Add(bl.LigaId);
             }
             ViewBag.LigasDisponiveis = ligasDoRanking; // ligasDisponiveis;
-
-            var categorias = db.Categoria.Where(c=>c.rankingId==0 || c.rankingId==barragemId).OrderBy(c => c.ordemExibicao).ToList();
+            string perfil = Roles.GetRolesForUser(User.Identity.Name)[0];
+            List<Categoria> categorias = null;
+            if (perfil.Equals("adminTorneio"))
+            {
+                categorias = db.Categoria.Where(c => (c.rankingId == 0 || c.rankingId == barragemId) && c.isDupla==true).OrderBy(c => c.ordemExibicao).ToList();
+            }
+            else {
+                categorias = db.Categoria.Where(c => c.rankingId == 0 || c.rankingId == barragemId).OrderBy(c => c.ordemExibicao).ToList();
+            }
             List<CategoriaDeLiga> categoriasDeLiga = new List<CategoriaDeLiga>();
             var classesLiga = db.ClasseLiga.Include(l => l.Liga).Where(cl => ligasId.Contains(cl.Liga.Id)).ToList();
             foreach (var categoria in categorias)
@@ -3341,7 +3347,7 @@ namespace Barragem.Controllers
             return View();
         }
 
-        [Authorize(Roles = "admin,organizador,adminTorneio,parceiroBT")]
+        [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
         public ActionResult NotificarViaApp(int torneioId)
         {
             try
@@ -3378,7 +3384,7 @@ namespace Barragem.Controllers
 
         }
 
-        [Authorize(Roles = "admin,organizador, adminTorneio")]
+        [Authorize(Roles = "admin,organizador, adminTorneio, adminTorneioTenis")]
         public ActionResult PainelControle(string msg="")
         {
             if (msg!="") {
@@ -3405,7 +3411,7 @@ namespace Barragem.Controllers
             return View(torneios);
         }
 
-        [Authorize(Roles = "admin,organizador, adminTorneio")]
+        [Authorize(Roles = "admin,organizador, adminTorneio, adminTorneioTenis")]
         public ActionResult Manuais()
         {
             return View();

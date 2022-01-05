@@ -150,9 +150,15 @@
                 </nav><!--//main-nav--><!--//main-nav-->
             </div><!--//container-->
         </header><!--//header-->
-        <div class="headline-bg">
-        </div>
-        <section class="features-video section section-on-bg">
+        @if (Roles.IsUserInRole("adminTorneio"))
+        {
+            <div class="headline-bg-beach"></div>
+        }
+        else
+        {
+            <div class="headline-bg"></div>
+        }
+            <section class="features-video section section-on-bg">
             <div class="container text-center">
             </div>
         </section>

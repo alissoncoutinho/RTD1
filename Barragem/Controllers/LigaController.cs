@@ -23,7 +23,7 @@ namespace Barragem.Controllers
     {
         private BarragemDbContext db = new BarragemDbContext();
 
-        [Authorize(Roles = "admin,organizador, adminTorneio")]
+        [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis")]
         public ActionResult Index(string msg = "", string detalheErro = "")
         {
             List<BarragemLiga> ligasDaBarragem = null;
@@ -48,7 +48,7 @@ namespace Barragem.Controllers
             return View(ligas);
         }
 
-        [Authorize(Roles = "admin, organizador, usuario, adminTorneio")]
+        [Authorize(Roles = "admin, organizador, usuario,adminTorneio,adminTorneioTenis")]
         public ActionResult Create()
         {
             
@@ -63,7 +63,7 @@ namespace Barragem.Controllers
             return View(liga);
         }
 
-        [Authorize(Roles = "admin, organizador, adminTorneio")]
+        [Authorize(Roles = "admin, organizador,adminTorneio,adminTorneioTenis")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(Liga liga, string modalidadeBarragem)
@@ -80,7 +80,7 @@ namespace Barragem.Controllers
             if (ModelState.IsValid) {
                 db.Liga.Add(liga);
                 db.SaveChanges();
-                if (perfil.Equals("adminTorneio") || perfil.Equals("organizador")) {
+                if (perfil.Equals("adminTorneio") || perfil.Equals("organizador") || perfil.Equals("adminTorneioTenis")) {
                     var bL = new BarragemLiga();
                     bL.BarragemId = user.barragemId;
                     bL.LigaId = liga.Id;
@@ -108,7 +108,7 @@ namespace Barragem.Controllers
             return View(classes);
         }
 
-        [Authorize(Roles = "admin, organizador, adminTorneio")]
+        [Authorize(Roles = "admin, organizador,adminTorneio,adminTorneioTenis")]
         [HttpPost]
         public ActionResult EditNome(int idLiga, string nomeLiga, string modalidadeBarragem)
         {
@@ -146,7 +146,7 @@ namespace Barragem.Controllers
             
         }
 
-        [Authorize(Roles = "admin, organizador, adminTorneio")]
+        [Authorize(Roles = "admin, organizador,adminTorneio,adminTorneioTenis")]
         public ActionResult EditNomeClasse(int id, string nomeClasse)
         {
             ClasseLiga classeLiga = null;
@@ -322,13 +322,13 @@ namespace Barragem.Controllers
             }
         }
 
-        [Authorize(Roles = "admin, organizador, adminTorneio")]
+        [Authorize(Roles = "admin, organizador,adminTorneio,adminTorneioTenis")]
         public ActionResult CreateRankingLiga()
         {
             return View();
         }
 
-        [Authorize(Roles = "admin, organizador, adminTorneio")]
+        [Authorize(Roles = "admin, organizador,adminTorneio,adminTorneioTenis")]
         public ActionResult FazerCargaCidades()
         {
             var filePath = "/Content/cidades3.json";
@@ -359,7 +359,7 @@ namespace Barragem.Controllers
             return View();
         }
 
-        [Authorize(Roles = "admin, organizador, adminTorneio")]
+        [Authorize(Roles = "admin, organizador,adminTorneio,adminTorneioTenis")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult CreateRankingLiga(CreateBarragemLiga createBarragemLiga)

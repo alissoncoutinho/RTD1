@@ -111,7 +111,7 @@ namespace Barragem.Controllers
         }
 
         // GET: /Rodada/Edit/5
-        [Authorize(Roles = "admin,organizador, adminTorneio,parceiroBT")]
+        [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
         public ActionResult EditPagSeguro(int id = 0)
         {
             Barragens barragens = db.Barragens.Find(id);
@@ -174,7 +174,7 @@ namespace Barragem.Controllers
             return View(barragens);
         }
 
-        [Authorize(Roles = "admin,adminTorneio,organizador")]
+        [Authorize(Roles = "admin,adminTorneio,adminTorneioTenis,organizador")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult EditNomeBarragem(string nome)

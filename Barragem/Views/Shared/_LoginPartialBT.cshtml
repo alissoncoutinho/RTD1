@@ -17,7 +17,7 @@
         </div>
     </a>
     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-        @if (Roles.IsUserInRole("adminTorneio"))
+        @if (Roles.IsUserInRole("adminTorneio") || Roles.IsUserInRole("adminTorneioTenis") || Roles.IsUserInRole("organizador"))
         {
             <li>@Html.ActionLink("Painel", "PainelControle", "Torneio", new { }, new { @class = "dropdown-item" })</li>
         }

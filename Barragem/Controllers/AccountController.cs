@@ -37,7 +37,7 @@ namespace Barragem.Controllers
                 if (perfil.Equals("admin") || perfil.Equals("organizador"))
                 {
                     return RedirectToAction("Dashboard", "Home");
-                }else if (perfil.Equals("adminTorneio"))
+                }else if (perfil.Equals("adminTorneio") || perfil.Equals("adminTorneioTenis"))
                 {
                     return RedirectToAction("PainelControle", "Torneio");
                 }
@@ -715,7 +715,7 @@ namespace Barragem.Controllers
             }
         }       
         
-        [Authorize(Roles = "admin,organizador,usuario,adminTorneio")]
+        [Authorize(Roles = "admin,organizador,usuario,adminTorneio,adminTorneioTenis")]
         public ActionResult Detalhes(int userId, bool mostrarClasse=true)
         {
             ViewBag.mostrarClasse = mostrarClasse;
@@ -763,7 +763,7 @@ namespace Barragem.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "admin,organizador,adminTorneio")]
+        [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis")]
         public ActionResult EditPontuacao(int Id)
         {
             Rancking r = db.Rancking.Find(Id);
@@ -771,7 +771,7 @@ namespace Barragem.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "admin,organizador,adminTorneio")]
+        [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis")]
         public ActionResult EditPontuacao(Rancking r)
         {
             double pontuacaoTotal = db.Rancking.Where(ran => ran.rodada.isAberta == false && ran.userProfile_id == r.userProfile_id
@@ -1021,7 +1021,7 @@ namespace Barragem.Controllers
 
 
         [HttpGet]
-        [Authorize(Roles = "admin,usuario,organizador,adminTorneio")]
+        [Authorize(Roles = "admin,usuario,organizador,adminTorneio,adminTorneioTenis")]
         public ActionResult Excluir(int Id)
         {
             string perfil = Roles.GetRolesForUser(User.Identity.Name)[0];
@@ -1048,7 +1048,7 @@ namespace Barragem.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "admin,organizador,usuario,adminTorneio")]
+        [Authorize(Roles = "admin,organizador,usuario,adminTorneio,adminTorneioTenis")]
         public ActionResult EditaUsuario(string UserName, bool isAlterarFoto=false, string ConfirmaSenha = "")
         {
             ViewBag.isAlterarFoto = isAlterarFoto;
@@ -1109,7 +1109,7 @@ namespace Barragem.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "admin,organizador,usuario,adminTorneio")]
+        [Authorize(Roles = "admin,organizador,usuario,adminTorneio,adminTorneioTenis")]
         public ActionResult EditaUsuario(UserProfile model, string avatarCropped)
         {
             string perfil = Roles.GetRolesForUser(User.Identity.Name)[0];
@@ -1309,7 +1309,7 @@ namespace Barragem.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "admin,organizador,usuario,adminTorneio")]
+        [Authorize(Roles = "admin,organizador,usuario,adminTorneio,adminTorneioTenis")]
         public ActionResult AtualizaStatus(String situacao, int userId)
         {
             try{
@@ -1333,7 +1333,7 @@ namespace Barragem.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "admin,organizador,adminTorneio")]
+        [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis")]
         public ActionResult AtivaUsuario(int userId)
         {
             try{
@@ -1569,7 +1569,7 @@ namespace Barragem.Controllers
         }
 
 
-        [Authorize(Roles = "admin,organizador,adminTorneio")]
+        [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis")]
         public ActionResult ResetarSenhaPeloOrganizador(string userName)
         {
             UserProfile user = null;
@@ -1762,7 +1762,7 @@ namespace Barragem.Controllers
                 {
                     return RedirectToAction("Dashboard", "Home");
                 }
-                else if (perfil.Equals("adminTorneio"))
+                else if (perfil.Equals("adminTorneio") || perfil.Equals("adminTorneioTenis"))
                 {
                     return RedirectToAction("PainelControle", "Torneio");
                 }

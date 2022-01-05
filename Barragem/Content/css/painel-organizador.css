@@ -213,6 +213,15 @@ footer {
     width: 100%;
 }
 
+.bannerTenis {
+    background-image: url('../img/banner-dashboard-tenis.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 130px;
+    width: 100%;
+}
+
 nav {
     font-family: DM Sans;
     font-style: normal;

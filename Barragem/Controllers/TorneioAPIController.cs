@@ -770,14 +770,13 @@ namespace Barragem.Controllers
         [HttpGet]
         [AllowAnonymous]
         [Route("api/TorneioAPI/Disponivel/{rankingId}")]
-        public IList<TorneioApp> GetTorneioDisponivel(int rankingId)
+        public IList<TorneioApp> GetTorneioDisponivel(int rankingId, int userId=0)
         {
 
             var dataHoje = DateTime.Now.AddDays(-1);
             var cidade = "";
             if (rankingId==1157) {
-                var userid = getUsuarioLogado();
-                cidade = db.UserProfiles.Find(userid).naturalidade;
+                cidade = db.UserProfiles.Find(userId).naturalidade;
             } else {
                 cidade = db.BarragemView.Find(rankingId).cidade;
             }

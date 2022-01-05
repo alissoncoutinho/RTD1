@@ -170,16 +170,13 @@ public class PIXPagSeguro
         try
         {
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Ssl3;
-            //string server_api_key = ConfigurationManager.AppSettings["SERVER_API_KEY"];
-            //string token = ConfigurationManager.AppSettings["TOKEN_API_PAGSEGURO"];
+            string token = ConfigurationManager.AppSettings["TOKEN_PAGSEGURO"];
+            string urlOrder = ConfigurationManager.AppSettings["URL_PAGSEGURO_ORDER"];
             var jsonBody = JsonConvert.SerializeObject(order);
-            //var jsonBody = jsonPedidoTeste();
-            var httpWebRequest = (HttpWebRequest)WebRequest.Create("https://sandbox.api.pagseguro.com/orders");
-            //var httpWebRequest = (HttpWebRequest)WebRequest.Create("https://api.pagseguro.com/orders");
+            var httpWebRequest = (HttpWebRequest)WebRequest.Create(urlOrder);
             httpWebRequest.Method = "post";
             httpWebRequest.ContentType = "application/json";
-            httpWebRequest.Headers.Add("Authorization", "Bearer 342D41A387F54A19A445F6497F0B1535");
-            //httpWebRequest.Headers.Add("Authorization", "Bearer 0d4f393d-8749-4b31-b874-7641079f14a42d450cb54d20bee8024128ffca2b11003445-2b5e-40ef-b110-1a8c31363e01");  // RDT: c8aa8cd1-fb8a-4eb3-b98a-fb1c59ddccc0d9cbe298406a95b82d1f5454a65844157bcc-877e-4af2-b1c9-eb73a8cce41a");
+            httpWebRequest.Headers.Add("Authorization", "Bearer " + token); // produção
             using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
             {
                 streamWriter.Write(jsonBody);

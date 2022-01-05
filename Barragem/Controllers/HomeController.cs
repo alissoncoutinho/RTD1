@@ -25,7 +25,7 @@ namespace Barragem.Controllers
                     if (perfil.Equals("admin") || perfil.Equals("organizador"))
                     {
                         return RedirectToAction("Dashboard", "Home");
-                    } else if (perfil.Equals("adminTorneio"))
+                    } else if (perfil.Equals("adminTorneio") || perfil.Equals("adminTorneioTenis"))
                     {
                         return RedirectToAction("PainelControle", "Torneio");
                     }
@@ -212,7 +212,8 @@ namespace Barragem.Controllers
                     }
                 }
                 string perfil = Roles.GetRolesForUser(User.Identity.Name)[0];
-                if (perfil.Equals("adminTorneio")){
+                if (perfil.Equals("adminTorneio") || perfil.Equals("adminTorneioTenis"))
+                {
                     return RedirectToAction("PainelControle", "Torneio");
                 }
                 return RedirectToAction("Index3", "Home");
