@@ -1,16 +1,9 @@
-﻿@model Barragem.Models.Barragens
-
-@{
+﻿@{
     ViewBag.Title = "Editar PagSeguro";
 }
 
 <div class="tab-content">
     <legend>Integração PagSeguro</legend>
-        @using (Html.BeginForm())
-        {
-            @Html.AntiForgeryToken()
-            @Html.ValidationSummary(true)
-
             <div class="row">
                 <div class="col-xs-12 col-sm-8" style="font-size:12px; margin-bottom:10px">
                     Ao fazer a integração com o PagSeguro você permite que as pessoas se inscrevam no seu torneio com cartão de crédito e nosso sistema automaticamente irá reconhecer o pagamento.
@@ -32,51 +25,112 @@
                     <b>Passo 2: Integração</b>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-xs-12 col-sm-8" style="font-size:12px; margin-bottom:10px">
-                    <a href="https://youtube.com/">Clique aqui para assistir</a> o vídeo explicativo da integração e complete as informações abaixo.
-                </div>
-            </div>
+            
             <div class="row">
                 <div class="col-xs-12 col-sm-8">
-                    @Html.Label("Email utilizado no Pagseguro")
+                    @Html.Label("Informe seu email utilizado no Pagseguro")
                     <div class="input-group col-xs-8">
-                        @Html.TextBoxFor(model => model.emailPagSeguro, new { @class = "form-control" })
+                        <input type="text" id="emailPagSeguro" name="emailPagSeguro" class="form-control">
                     </div>
-                    @Html.ValidationMessageFor(model => model.emailPagSeguro)
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-12 col-sm-8">
-                    @Html.LabelFor(model => model.tokenPagSeguro)
-                    <div class="input-group col-xs-8 col-sm-8">
-                        @Html.TextBoxFor(model => model.tokenPagSeguro, new { @class = "form-control" })
-                    </div>
-                    @Html.ValidationMessageFor(model => model.tokenPagSeguro)
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-12 col-sm-8" style="font-size:14px; margin-bottom:10px; margin-top:10px">
-                    <b>Passo 3: Teste sua integração</b>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-12 col-sm-8" style="font-size:12px; margin-bottom:10px">
-                    Depois de preencher as informações acima, clique no botão (Testar) para verificar se a configuração ficou correta.
                 </div>
             </div>
             <br />
             <div class="row">
                 <div class="col-xs-8 col-sm-8">
-                    <input class="btn btn-default" type="button" value="Testar" /> <input class="btn btn-primary" type="submit" value="Salvar" />
+                    <input class="btn btn-default" type="button" id="solicitarAutorizacao" name="solicitarAutorizacao" value="Solicitar autorização" />
                 </div>
             </div>
-        }
-
-        
-        @section Scripts {
-
-            @Scripts.Render("~/bundles/editor")
-        
-        }
+            <br/>
+            <div id="respostaDiv" class=""></div>
+            <div class="row">
+                <div class="col-xs-12 col-sm-8" style="font-size:14px; margin-bottom:10px; margin-top:10px">
+                    <b>Passo 3: Informe abaixo o código que foi enviado via sms</b>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 col-sm-8">
+                    @Html.Label("Código enviado por SMS")
+                    <div class="input-group col-xs-8 col-sm-8">
+                        <input type="text" name="codigoSMS" id="codigoSMS" value="" class="form-control">
+                    </div>
+                </div>
+            </div>
+            <br />
+            <div class="row">
+                <div class="col-xs-8 col-sm-8">
+                    <input class="btn btn-default" type="button" value="Enviar Código" id="enviarCodigo" />
+                </div>
+            </div>
+            <br />
+            <div id="respostaTokenDiv" class=""></div>
     </div>
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#solicitarAutorizacao").click(function (event) {
+                var email = document.getElementById("emailPagSeguro").value;
+                $.ajax({
+                    type: "POST",
+                    url: "/Barragens/SolicitarAutorizacaoPagSeguro",
+                    dataType: "json",
+                    data: "{'emailPagSeguro':'" + email + "'}",
+                    contentType: "application/json; charset=utf-8",
+                    success: function (response) {
+                        if (typeof response == "object") {
+                            if (response.retorno === 0) {
+                                toastr.error(response.erro, "Erro");
+                                document.getElementById("respostaDiv").classList.remove("alert-success");
+                                document.getElementById("respostaDiv").classList.add("alert");
+                                document.getElementById("respostaDiv").classList.add("alert-danger");
+                                document.getElementById("respostaDiv").innerText = response.erro;
+                            } else {
+                                document.getElementById("respostaDiv").classList.remove("alert-danger");
+                                document.getElementById("respostaDiv").classList.add("alert");
+                                document.getElementById("respostaDiv").classList.add("alert-success");
+                                document.getElementById("respostaDiv").innerText = response.mensagem;
+                                toastr.success("Código enviado com sucesso.", "Aviso");
+                            }
+                        }
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        toastr.error(textStatus, "Erro");
+                    }
+                });
+            });
+
+            $("#enviarCodigo").click(function (event) {
+                var codigo = document.getElementById("codigoSMS").value;
+                $.ajax({
+                    type: "POST",
+                    url: "/Barragens/SolicitarToken",
+                    dataType: "json",
+                    data: "{'code':'" + codigo + "'}",
+                    contentType: "application/json; charset=utf-8",
+                    success: function (response) {
+                        if (typeof response == "object") {
+                            if (response.retorno === 0) {
+                                toastr.error(response.erro, "Erro");
+                                document.getElementById("respostaTokenDiv").classList.remove("alert-success");
+                                document.getElementById("respostaTokenDiv").classList.add("alert");
+                                document.getElementById("respostaTokenDiv").classList.add("alert-danger");
+                                document.getElementById("respostaTokenDiv").innerText = response.erro;
+                            } else {
+                                document.getElementById("respostaTokenDiv").classList.remove("alert-danger");
+                                document.getElementById("respostaTokenDiv").classList.add("alert");
+                                document.getElementById("respostaTokenDiv").classList.add("alert-success");
+                                document.getElementById("respostaTokenDiv").innerText = response.mensagem;
+                                toastr.success("Operação realizada com sucesso.", "Aviso");
+                            }
+                        }
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        toastr.error(textStatus, "Erro");
+                    }
+                });
+            });
+        });
+
+
+    </script>
+}

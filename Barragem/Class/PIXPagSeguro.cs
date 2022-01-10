@@ -4,9 +4,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Net;
-using System.Net.Http;
 using System.Text;
-using System.Web.Script.Serialization;
 
 public class PIXPagSeguro
 {
@@ -165,13 +163,16 @@ public class PIXPagSeguro
         return body;
     }
 
-    public Cobranca CriarPedido(Order order)
+    public Cobranca CriarPedido(Order order, string token="")
     {
         try
         {
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Ssl3;
-            string token = ConfigurationManager.AppSettings["TOKEN_PAGSEGURO"];
-            string urlOrder = ConfigurationManager.AppSettings["URL_PAGSEGURO_ORDER"];
+            if (String.IsNullOrEmpty(token))
+            {
+                token = ConfigurationManager.AppSettings["TOKEN_PAGSEGURO"];
+            }
+            string urlOrder = ConfigurationManager.AppSettings["URL_PAGSEGURO"] + "/orders";
             var jsonBody = JsonConvert.SerializeObject(order);
             var httpWebRequest = (HttpWebRequest)WebRequest.Create(urlOrder);
             httpWebRequest.Method = "post";
@@ -188,6 +189,12 @@ public class PIXPagSeguro
                 var cobranca = JsonConvert.DeserializeObject<Cobranca>(result);
                 return cobranca;
             }
+        }
+        catch (WebException e)
+        {
+            var result = new StreamReader(e.Response.GetResponseStream()).ReadToEnd();
+            var erroMsg = JsonConvert.DeserializeObject<ErrorMessage>(result);
+            throw new Exception(erroMsg.codeDescription[0].description);
         }
         catch (Exception e)
         {
@@ -279,6 +286,18 @@ public class Order{
     [JsonProperty(PropertyName = "notification_urls")]
     public string[] notification_urls { get; set; }
     
+}
+
+public class ErrorMessage
+{
+    [JsonProperty(PropertyName = "error_messages")]
+    public List<CodeDescription> codeDescription { get; set; }
+}
+
+public class CodeDescription
+{
+    public string code { get; set; }
+    public string description { get; set; }
 }
 
 

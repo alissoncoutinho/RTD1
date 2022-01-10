@@ -3324,10 +3324,10 @@ namespace Barragem.Controllers
             List<Categoria> categorias = null;
             if (perfil.Equals("adminTorneio"))
             {
-                categorias = db.Categoria.Where(c => (c.rankingId == 0 || c.rankingId == barragemId) && c.isDupla==true).OrderBy(c => c.ordemExibicao).ToList();
+                categorias = db.Categoria.Where(c => (c.rankingId == 0 || c.rankingId == barragemId) && c.isDupla==true).OrderBy(c => c.ordemExibicao).ThenBy(c => c.Nome).ToList();
             }
             else {
-                categorias = db.Categoria.Where(c => c.rankingId == 0 || c.rankingId == barragemId).OrderBy(c => c.ordemExibicao).ToList();
+                categorias = db.Categoria.Where(c => c.rankingId == 0 || c.rankingId == barragemId).OrderBy(c => c.ordemExibicao).ThenBy(c=> c.isDupla).ThenBy(c => c.Nome).ToList();
             }
             List<CategoriaDeLiga> categoriasDeLiga = new List<CategoriaDeLiga>();
             var classesLiga = db.ClasseLiga.Include(l => l.Liga).Where(cl => ligasId.Contains(cl.Liga.Id)).ToList();

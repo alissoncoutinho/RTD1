@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
@@ -10,6 +11,9 @@ using System.Transactions;
 using Barragem.Class;
 using WebMatrix.WebData;
 using System.Web.Security;
+using System.Configuration;
+using Newtonsoft.Json;
+using System.IO;
 
 namespace Barragem.Controllers
 {
@@ -59,7 +63,7 @@ namespace Barragem.Controllers
             return View();
         }
 
-       
+
         [Authorize(Roles = "admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -67,28 +71,33 @@ namespace Barragem.Controllers
         {
             try
             {
-                var codigo=91;
-                var sql="";
+                var codigo = 91;
+                var sql = "";
                 if (barragens.valorPorUsuario == null) barragens.valorPorUsuario = 5;
                 if (barragens.soTorneio == null) barragens.soTorneio = false;
                 using (TransactionScope scope = new TransactionScope())
                 {
-                    if (ModelState.IsValid){
-                        if (!barragens.email.Equals("")) { 
-                            if (!Funcoes.IsValidEmail(barragens.email)){
+                    if (ModelState.IsValid)
+                    {
+                        if (!barragens.email.Equals(""))
+                        {
+                            if (!Funcoes.IsValidEmail(barragens.email))
+                            {
                                 ViewBag.MsgErro = string.Format("E-mail inválido. '{0}'", barragens.email);
                                 return View(barragens);
                             }
                         }
-                        if (!(bool)barragens.soTorneio){
+                        if (!(bool)barragens.soTorneio)
+                        {
                             var meuRanking = db.Barragens.Find(8);
                             barragens.regulamento = meuRanking.regulamento;
                         }
                         db.Barragens.Add(barragens);
                         db.SaveChanges();
-                        for (int i = 1; i <= 10; i++){
+                        for (int i = 1; i <= 10; i++)
+                        {
                             sql = "INSERT INTO Rodada(codigo, dataInicio, dataFim, isAberta, sequencial, isRodadaCarga, barragemId) " +
-                            "VALUES (" + codigo + ",'2000-01-01','2000-01-01', 0, "+ i +", 1, " + barragens.Id + ")";
+                            "VALUES (" + codigo + ",'2000-01-01','2000-01-01', 0, " + i + ", 1, " + barragens.Id + ")";
                             db.Database.ExecuteSqlCommand(sql);
                             codigo = codigo + 1;
                         }
@@ -106,22 +115,15 @@ namespace Barragem.Controllers
             {
                 ViewBag.MsgErro = ex.Message;
             }
-            
+
             return View(barragens);
         }
 
         // GET: /Rodada/Edit/5
         [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
-        public ActionResult EditPagSeguro(int id = 0)
+        public ActionResult EditPagSeguro()
         {
-            Barragens barragens = db.Barragens.Find(id);
-            ViewBag.BarragemId = barragens.Id;
-            if (barragens == null)
-            {
-                return HttpNotFound();
-            }
-            ViewBag.flag = "edit";
-            return View(barragens);
+            return View();
         }
 
         // GET: /Rodada/Edit/5
@@ -145,13 +147,15 @@ namespace Barragem.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(Barragens barragens)
         {
-            if (Roles.IsUserInRole("organizador")){
+            if (Roles.IsUserInRole("organizador"))
+            {
                 UserProfile usu = db.UserProfiles.Find(WebSecurity.GetUserId(User.Identity.Name));
-                if (usu.barragemId != barragens.Id){
+                if (usu.barragemId != barragens.Id)
+                {
                     ViewBag.MsgErro = "Você não pertence a esta barragem.";
                     return View(barragens);
                 }
-                
+
                 var barraAtual = db.BarragemView.Find(barragens.Id);
                 // o organizador não deve alterar os campos abaixo
                 barragens.valorPorUsuario = barraAtual.valorPorUsuario;
@@ -160,9 +164,12 @@ namespace Barragem.Controllers
                 barragens.soTorneio = barraAtual.soTorneio;
             }
             if (barragens.soTorneio == null) barragens.soTorneio = false;
-            if (ModelState.IsValid){
-                if (barragens.email!=null){
-                    if (!Funcoes.IsValidEmail(barragens.email)){
+            if (ModelState.IsValid)
+            {
+                if (barragens.email != null)
+                {
+                    if (!Funcoes.IsValidEmail(barragens.email))
+                    {
                         ViewBag.MsgErro = string.Format("E-mail inválido. '{0}'", barragens.email);
                         return View(barragens);
                     }
@@ -187,7 +194,7 @@ namespace Barragem.Controllers
             Funcoes.CriarCookieBarragem(Response, Server, barraAtual.Id, barraAtual.nome);
             return RedirectToAction("PainelControle", "Torneio");
         }
-        
+
 
         [Authorize(Roles = "admin,organizador")]
         [HttpPost]
@@ -207,12 +214,12 @@ namespace Barragem.Controllers
 
             barraAtual.tokenPagSeguro = barragens.tokenPagSeguro;
             barraAtual.emailPagSeguro = barragens.emailPagSeguro;
-            
-                
+
+
             db.Entry(barraAtual).State = EntityState.Modified;
             db.SaveChanges();
             return RedirectToAction("PainelControle", "Torneio", new { msg = "ok" });
-                        
+
         }
 
         [Authorize(Roles = "admin,organizador")]
@@ -247,7 +254,7 @@ namespace Barragem.Controllers
                     //só desativa classe se já tiver fechado a rodada
                     //classe.barragemId
                     var qtdeRodadasAbertas = db.Rodada.Where(r => r.barragemId == classe.barragemId && r.isAberta == true).Count();
-                    if (qtdeRodadasAbertas>0)
+                    if (qtdeRodadasAbertas > 0)
                     {
                         return Json(new { erro = "É necessário fechar as rodadas para desabilitar uma classe.", retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
                     }
@@ -280,7 +287,7 @@ namespace Barragem.Controllers
         public ActionResult Painel()
         {
             ViewBag.TenistasCadastrados = db.UserProfiles.Count();
-            ViewBag.TenistasContribuintes = db.UserProfiles.Where(u=>u.barragem.isAtiva==true && (u.situacao == "ativo" || u.situacao == "licenciado" || u.situacao == "suspenso" || u.situacao == "suspensoWO")).Count();
+            ViewBag.TenistasContribuintes = db.UserProfiles.Where(u => u.barragem.isAtiva == true && (u.situacao == "ativo" || u.situacao == "licenciado" || u.situacao == "suspenso" || u.situacao == "suspensoWO")).Count();
             ViewBag.TenistasAtivos = db.UserProfiles.Where(u => u.barragem.isAtiva == true && u.situacao == "ativo").Count();
             ViewBag.TenistasLicenciados = db.UserProfiles.Where(u => u.barragem.isAtiva == true && u.situacao == "licenciado").Count();
             ViewBag.TenistasSuspensos = db.UserProfiles.Where(u => u.barragem.isAtiva == true && (u.situacao == "suspenso" || u.situacao == "suspensoWO")).Count();
@@ -291,10 +298,170 @@ namespace Barragem.Controllers
             return View();
         }
 
+        [HttpPost]
+        [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis")]
+        public ActionResult SolicitarAutorizacaoPagSeguro(string emailPagSeguro)
+        {
+            if (!Funcoes.IsValidEmail(emailPagSeguro))
+            {
+                return Json(new { erro = "Email Inválido", retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
+            }
+            var userProfile = db.UserProfiles.Find(WebSecurity.GetUserId(User.Identity.Name));
+            var ranking = db.Barragens.Find(userProfile.barragemId);
+            try
+            {
+                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Ssl3;
+                string token = ConfigurationManager.AppSettings["TOKEN_PAGSEGURO"];
+                string urlAutoSMS = ConfigurationManager.AppSettings["URL_PAGSEGURO"] + "/oauth2/authorize/sms";
+                var jsonBody = "{\"email\":\"" + emailPagSeguro + "\"}";
+                var httpWebRequest = (HttpWebRequest)WebRequest.Create(urlAutoSMS);
+                httpWebRequest.Method = "post";
+                httpWebRequest.ContentType = "application/json";
+                httpWebRequest.Accept = "application/json";
+                httpWebRequest.Headers.Add("X_CLIENT_ID", ConfigurationManager.AppSettings["X_CLIENT_ID"]);
+                httpWebRequest.Headers.Add("X_CLIENT_SECRET", ConfigurationManager.AppSettings["X_CLIENT_SECRET"]);
+                httpWebRequest.Headers.Add("Authorization", "Bearer " + token); // produção
+                using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
+                {
+                    streamWriter.Write(jsonBody);
+                }
+                var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
+                using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
+                {
+                    var result = streamReader.ReadToEnd();
+                    var telefoneSms = JsonConvert.DeserializeObject<TelefoneSMS>(result);
+                    ranking.emailPagSeguro = emailPagSeguro;
+                    db.Entry(ranking).State = EntityState.Modified;
+                    db.SaveChanges();
+                    return Json(new { mensagem = "Enviamos um sms para o número: " + telefoneSms.phone_number + ". Informe o código recebido no campo abaixo.", retorno = 1 }, "text/plain", JsonRequestBehavior.AllowGet);
+                }
+            }
+            catch (WebException e)
+            {
+                var result = new StreamReader(e.Response.GetResponseStream()).ReadToEnd();
+                var erroMsg = JsonConvert.DeserializeObject<ErrorMessage>(result);
+                return Json(new { erro = "Erro ao solicitar autorização: " + erroMsg.codeDescription[0].description, retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis")]
+        public ActionResult SolicitarToken(string code)
+        {
+            if (String.IsNullOrEmpty(code))
+            {
+                return Json(new { erro = "Código Inválido", retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
+            }
+            try
+            {
+                var userProfile = db.UserProfiles.Find(WebSecurity.GetUserId(User.Identity.Name));
+                var ranking = db.Barragens.Find(userProfile.barragemId);
+
+                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Ssl3;
+                //string token = ConfigurationManager.AppSettings["TOKEN_PAGSEGURO_SANDBOX"];
+                //string urlToken = ConfigurationManager.AppSettings["URL_PAGSEGURO_SANDBOX"] + "/oauth2/token";
+                string token = ConfigurationManager.AppSettings["TOKEN_PAGSEGURO"];
+                string urlToken = ConfigurationManager.AppSettings["URL_PAGSEGURO"] + "/oauth2/token";
+                var jsonBody = "{\"grant_type\":\"sms\",\"email\":\"" + ranking.emailPagSeguro + "\",\"sms_code\":\"" + code + "\"}";
+                var httpWebRequest = (HttpWebRequest)WebRequest.Create(urlToken);
+                httpWebRequest.Method = "post";
+                httpWebRequest.ContentType = "application/json";
+                httpWebRequest.Accept = "application/json";
+                httpWebRequest.Headers.Add("X_CLIENT_ID", ConfigurationManager.AppSettings["X_CLIENT_ID"]);
+                httpWebRequest.Headers.Add("X_CLIENT_SECRET", ConfigurationManager.AppSettings["X_CLIENT_SECRET"]);
+                httpWebRequest.Headers.Add("Authorization", "Bearer " + token); // produção
+                using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
+                {
+                    streamWriter.Write(jsonBody);
+                }
+                var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
+                using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
+                {
+                    var result = streamReader.ReadToEnd();
+                    var tokenParceiro = JsonConvert.DeserializeObject<TokenParceiro>(result);
+                    ranking.tokenPagSeguro = tokenParceiro.token;
+                    db.Entry(ranking).State = EntityState.Modified;
+                    db.SaveChanges();
+                    var log2 = new Log();
+                    log2.descricao = "token: " + tokenParceiro.token + ", expires_in: " + tokenParceiro.expires_in + ", refresh_token:" + tokenParceiro.refresh_token + ", scope:" + tokenParceiro.scope;
+                    db.Log.Add(log2);
+                    db.SaveChanges();
+                    return Json(new { mensagem = "Cadastro finalizado com sucesso. Seu ranking já está apto a fazer cobranças em noso site.", retorno = 1 }, "text/plain", JsonRequestBehavior.AllowGet);
+                }
+            }
+            catch (WebException e)
+            {
+                var result = new StreamReader(e.Response.GetResponseStream()).ReadToEnd();
+                var erroMsg = JsonConvert.DeserializeObject<ErrorMessage>(result);
+                return Json(new { erro = "Erro ao solicitar autorização: " + erroMsg.codeDescription[0].description, retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [Authorize(Roles = "admin")]
+        public ActionResult CriarApp()
+        {
+            try
+            {
+                ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12 | SecurityProtocolType.Ssl3;
+                string token = ConfigurationManager.AppSettings["TOKEN_PAGSEGURO"];
+                //string urlOrder = ConfigurationManager.AppSettings["URL_PAGSEGURO_ORDER"];
+                string urlapp = ConfigurationManager.AppSettings["URL_PAGSEGURO"] + "/oauth2/application";
+                var jsonBody = "{\"name\":\"Ranking de Tênis/Beach Tennis gostaria de sua permissão para acessar a criação de ordem de pagamento via PIX no seu pagseguro\"}";
+                var httpWebRequest = (HttpWebRequest)WebRequest.Create(urlapp);
+                httpWebRequest.Method = "post";
+                httpWebRequest.ContentType = "application/json";
+                httpWebRequest.Accept = "application/json";
+                httpWebRequest.Headers.Add("Authorization", "Bearer " + token); // produção
+                using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
+                {
+                    streamWriter.Write(jsonBody);
+                }
+                var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
+                using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
+                {
+                    var result = streamReader.ReadToEnd();
+                }
+                return Json(new { erro = "", retorno = 1 }, "text/plain", JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception e)
+            {
+                return Json(new { erro = "Erro ao solicitar autorização: " + e.Message, retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
+            }
+        }
+
         protected override void Dispose(bool disposing)
         {
             db.Dispose();
             base.Dispose(disposing);
         }
+    }
+
+    public class TelefoneSMS
+    {
+        public string phone_number { get; set; }
+    }
+    public class ErrorMessage
+    {
+        [JsonProperty(PropertyName = "error_messages")]
+        public List<CodeDescription> codeDescription { get; set; }
+    }
+    public class CodeDescription
+    {
+        public string code { get; set; }
+        public string description { get; set; }
+    }
+
+    public class TokenParceiro
+    {
+        [JsonProperty(PropertyName = "access_token")]
+        public string token { get; set; }
+        [JsonProperty(PropertyName = "expires_in")]
+        public string expires_in { get; set; }
+        [JsonProperty(PropertyName = "refresh_token")]
+        public string refresh_token { get; set; }
+        [JsonProperty(PropertyName = "scope")]
+        public string scope { get; set; }
+        [JsonProperty(PropertyName = "account_id")]
+        public string account_id { get; set; }
     }
 }

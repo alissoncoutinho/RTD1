@@ -8,7 +8,7 @@
         <a href="#" class="dropdown-toggle" data-toggle="dropdown">
             <img id="imgFoto" src="@Url.Action("BuscaFoto", "Account", new { id = 0, userName = User.Identity.Name })" class="profile-image img-circle" style="width:40px;height:40px;">&nbsp;@User.Identity.Name<strong class="caret"></strong></a>
         <ul class="dropdown-menu">
-            @if (Roles.IsUserInRole("adminTorneio") || Roles.IsUserInRole("adminTorneioTenis") || Roles.IsUserInRole("organizador"))
+            @if (Roles.IsUserInRole("adminTorneio") || Roles.IsUserInRole("adminTorneioTenis") || Roles.IsUserInRole("organizador") || Roles.IsUserInRole("admin"))
             {
                 <li>@Html.ActionLink("Painel Torneio", "PainelControle", "Torneio")</li>
             }
