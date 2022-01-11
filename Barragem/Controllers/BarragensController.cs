@@ -123,6 +123,12 @@ namespace Barragem.Controllers
         [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
         public ActionResult EditPagSeguro()
         {
+            UserProfile usu = db.UserProfiles.Find(WebSecurity.GetUserId(User.Identity.Name));
+            var barraAtual = db.Barragens.Find(usu.barragemId);
+            if(barraAtual != null && barraAtual.tokenPagSeguro != null)
+            {
+                ViewBag.tokenPagSeguroConfigurado = "OK";
+            }
             return View();
         }
 

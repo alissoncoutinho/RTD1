@@ -22,7 +22,6 @@
             scrLogo = "/Content/image/inserirLogo.png";
         }
     }
-
 }
 
 @section Css_Painel{
@@ -227,7 +226,18 @@
                         <div class="col-8 d-flex align-items-center">
                             <h5>
                                 Integração PagSeguro
-                                <span class="pendente">(pendente)</span>
+                                @if (ViewBag.tokenPagSeguro == null)
+                                {
+                                    <span class="pendente">(pendente)</span>
+                                }
+                                else
+                                {
+                                    <span class="feito">
+                                        (feito) <img src="/Content/img/checked.svg" alt="checked"
+                                                     srcset="">
+                                    </span>
+
+                                }
 
                             </h5>
                         </div>

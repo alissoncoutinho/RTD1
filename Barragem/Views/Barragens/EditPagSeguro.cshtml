@@ -1,71 +1,80 @@
 ﻿@{
-    ViewBag.Title = "Editar PagSeguro";
+    Layout = "~/Views/Shared/_LayoutPainelBT.cshtml";
 }
 
-<div class="tab-content">
-    <legend>Integração PagSeguro</legend>
-            <div class="row">
-                <div class="col-xs-12 col-sm-8" style="font-size:12px; margin-bottom:10px">
-                    Ao fazer a integração com o PagSeguro você permite que as pessoas se inscrevam no seu torneio com cartão de crédito e nosso sistema automaticamente irá reconhecer o pagamento.
+@section Css_Painel{
+    <link href="@Url.Content("/Content/css/integracao-pagseguro.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("/Content/toastr.min.css")" rel="stylesheet" type="text/css" />
+}
+
+<section class="row">
+    <div class="col-md-12 bg-light border position-relative p-4 mb-5 shadow-lg rounded">
+        <div class="row dashboard">
+            <div class="col-md-12 mb-3 d-flex">
+                <h3><a href="/Torneio/PainelControle" class="voltar"> <img src="~/Content/img/back.svg" alt="" srcset=""> Voltar</a>  |  Configuração Pagseguro</h3>
+            </div>
+            <div class="col-md-12 mb-4">
+                <div class="progress">
+                    <div class="progress-bar" role="progressbar" style="width: 80%;" aria-valuenow="25"
+                         aria-valuemin="0" aria-valuemax="100"></div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-xs-12 col-sm-8" style="font-size:14px; margin-bottom:10px">
-                    <b>Passo 1: Crie sua conta no Pagseguro</b>
+            <div class="col-md-6">
+                @if ((ViewBag.tokenPagSeguroConfigurado != null) && (ViewBag.tokenPagSeguroConfigurado == "OK"))
+                {
+                    <div class="alert alert-danger alert-dismissible" role="alert">
+                        Você já tem o <strong>Pagseguro Integrado</strong>. Caso queira mudar sua conta do Pagseguro, repita o processo abaixo.
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+                <div class="avisos mb-1">
+                    <p>Ao fazer a integração com o PagSeguro você permite que as pessoas se inscrevam no seu torneio e nosso sistema automaticamente irá reconhecer o pagamento.<br><br>Dessa forma, você não precisa ficar conferindo recibo de pagamento pois a inscrição será ativada de forma automática.</p>
+                    <h3>Passo 1: Crie sua conta no PagSeguro</h3>
+                    <p>
+                        Se você ainda não tem conta no Pagseguro, cadastre-se em: <a href="https://cadastro.pagseguro.uol.com.br/" class="text-dark" target="_blank">https://cadastro.pagseguro.uol.com.br/</a><br><br>
+                        Siga todos os passos do PagSeguro e só após conseguir acesso siga para o próximo passo. Se tiver dúvida assista <a href="https://www.youtube.com" class="text-dark" target="_videopagseguro">este vídeo</a>.
+                    </p>
+                    <h3>Passo 2: Integração</h3>
+                    <p> Agora que você já tem uma conta lá, insira seu e-mail cadastrado.</p>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-12 col-sm-8" style="font-size:12px; margin-bottom:10px">
-                    Cadastre-se em: <a href="https://cadastro.pagseguro.uol.com.br/" target="_blank">cadastro.pagseguro.uol.com.br</a><br>
-                    Siga todos os passos do PagSeguro e só após conseguir acesso siga para o passo adiante.
+
+                <div class="mt-3 form-input">
+                    <label for="">E-mail utilizado no PagSeguro</label>
+                    <input type="text" id="emailPagSeguro" name="emailPagSeguro" class="form-control" placeholder="Email">
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-12 col-sm-8" style="font-size:14px; margin-bottom:10px">
-                    <b>Passo 2: Integração</b>
-                </div>
-            </div>
-            
-            <div class="row">
-                <div class="col-xs-12 col-sm-8">
-                    @Html.Label("Informe seu email utilizado no Pagseguro")
-                    <div class="input-group col-xs-8">
-                        <input type="text" id="emailPagSeguro" name="emailPagSeguro" class="form-control">
+
+                <div class="mt-3 form-input ps-2 d-flex row">
+                    <div class="col-md-6 p-1">
+                        <input class="btn btn-success w-100" type="button" id="solicitarAutorizacao" name="solicitarAutorizacao" value="Solicitar autorização" />
                     </div>
                 </div>
-            </div>
-            <br />
-            <div class="row">
-                <div class="col-xs-8 col-sm-8">
-                    <input class="btn btn-default" type="button" id="solicitarAutorizacao" name="solicitarAutorizacao" value="Solicitar autorização" />
+                <div id="respostaDiv" class=""></div>
+
+                <div class="avisos mt-3">
+                    <h3>Passo 3: Validando a integração</h3>
+                    <p>Informe abaixo o código que foi enviado via sms para seu celular cadastrado no Pagseguro.</p>
                 </div>
-            </div>
-            <br/>
-            <div id="respostaDiv" class=""></div>
-            <div class="row">
-                <div class="col-xs-12 col-sm-8" style="font-size:14px; margin-bottom:10px; margin-top:10px">
-                    <b>Passo 3: Informe abaixo o código que foi enviado via sms</b>
+
+                <div class="mt-3 form-input">
+                    <label for="">Código enviado por SMS</label>
+                    <input type="text" name="codigoSMS" id="codigoSMS" value="" class="form-control" placeholder="Código de 6 números">
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-12 col-sm-8">
-                    @Html.Label("Código enviado por SMS")
-                    <div class="input-group col-xs-8 col-sm-8">
-                        <input type="text" name="codigoSMS" id="codigoSMS" value="" class="form-control">
+
+                <div class="mt-3 form-input ps-2 d-flex row">
+                    <div class="col-md-6 p-1">
+                        <input class="btn btn-success w-100" type="button" value="Enviar Código" id="enviarCodigo" />
                     </div>
                 </div>
+                <div id="respostaTokenDiv" class=""></div>
             </div>
-            <br />
-            <div class="row">
-                <div class="col-xs-8 col-sm-8">
-                    <input class="btn btn-default" type="button" value="Enviar Código" id="enviarCodigo" />
-                </div>
-            </div>
-            <br />
-            <div id="respostaTokenDiv" class=""></div>
+        </div>
     </div>
+</section>
 
 @section Scripts {
+    @Scripts.Render("/Scripts/jquery-2.1.1.min.js")
+    @Scripts.Render("/Scripts/toastr.min.js")
+
     <script type="text/javascript">
         $(document).ready(function () {
             $("#solicitarAutorizacao").click(function (event) {
@@ -131,6 +140,6 @@
             });
         });
 
-
     </script>
+    <script src="~/Content/js/menu.js"></script>
 }
