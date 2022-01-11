@@ -375,7 +375,7 @@ select {
             border: none;
             text-transform: none;
             min-width: 180px;
-            background: #253340;
+            background: #014626;
         }
 
             .header .main-nav .nav .dropdown-menu:before {
@@ -385,7 +385,7 @@ select {
                 height: 0;
                 border-left: 10px solid transparent;
                 border-right: 10px solid transparent;
-                border-bottom: 10px solid #253340;
+                border-bottom: 10px solid #014626;
                 position: absolute;
                 right: 30px;
                 top: -10px;
@@ -443,7 +443,7 @@ select {
         }
 
             .bg-slider-wrapper .flexslider .slide.slide-1 {
-                background: #253340 url('../images/background/bg-header-1.jpg') no-repeat 50% top;
+                background: #014626 url('../images/background/bg-header-1.jpg') no-repeat 50% top;
                 -webkit-background-size: cover;
                 -moz-background-size: cover;
                 -o-background-size: cover;
@@ -451,7 +451,7 @@ select {
             }
 
             .bg-slider-wrapper .flexslider .slide.slide-2 {
-                background: #253340 url('../images/background/bg-header-2.jpg') no-repeat 50% top;
+                background: #014626 url('../images/background/bg-header-2.jpg') no-repeat 50% top;
                 -webkit-background-size: cover;
                 -moz-background-size: cover;
                 -o-background-size: cover;
@@ -459,7 +459,7 @@ select {
             }
 
             .bg-slider-wrapper .flexslider .slide.slide-3 {
-                background: #253340 url('../images/background/bg-header-3.jpg') no-repeat 50% top;
+                background: #014626 url('../images/background/bg-header-3.jpg') no-repeat 50% top;
                 -webkit-background-size: cover;
                 -moz-background-size: cover;
                 -o-background-size: cover;
@@ -486,7 +486,7 @@ select {
     top: 0;
     left: 0;
     height: 500px;
-    background: #253340 url('../images/background/bg-header-small-1.jpg') no-repeat 50% top;
+    background: #014626 url('../images/background/bg-header-small-1.jpg') no-repeat 50% top;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
@@ -910,7 +910,7 @@ select {
     }
 /* ======= cta-section ======= */
 .cta-section {
-    background: #253340 url('../images/background/bg-footer-1.jpg') no-repeat left top;
+    background: #014626 url('../images/background/bg-footer-1.jpg') no-repeat left top;
     background-size: cover;
     min-height: 420px;
     color: #fff;
@@ -1450,7 +1450,7 @@ select {
 /* ======= Download Apps ======= */
 .download-page .headline-bg {
     height: 1200px;
-    background: #253340 url('../images/background/bg-mobile-headline.jpg') no-repeat 50% top;
+    background: #014626 url('../images/background/bg-mobile-headline.jpg') no-repeat 50% top;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
@@ -1793,7 +1793,7 @@ select {
     .blog-slider .slide {
         display: block;
         height: 400px;
-        background-color: #253340;
+        background-color: #014626;
     }
 
         .blog-slider .slide:after {
@@ -1809,7 +1809,7 @@ select {
         }
 
         .blog-slider .slide.slide-1 {
-            background: #253340 url('../../images/blog/post-1.jpg') no-repeat 50% top;
+            background: #014626 url('../../images/blog/post-1.jpg') no-repeat 50% top;
             -webkit-background-size: cover;
             -moz-background-size: cover;
             -o-background-size: cover;
@@ -1817,7 +1817,7 @@ select {
         }
 
         .blog-slider .slide.slide-2 {
-            background: #253340 url('../../images/blog/post-2.jpg') no-repeat 50% top;
+            background: #014626 url('../../images/blog/post-2.jpg') no-repeat 50% top;
             -webkit-background-size: cover;
             -moz-background-size: cover;
             -o-background-size: cover;
@@ -1825,7 +1825,7 @@ select {
         }
 
         .blog-slider .slide.slide-3 {
-            background: #253340 url('../../images/blog/post-3.jpg') no-repeat 50% top;
+            background: #014626 url('../../images/blog/post-3.jpg') no-repeat 50% top;
             -webkit-background-size: cover;
             -moz-background-size: cover;
             -o-background-size: cover;
@@ -1833,7 +1833,7 @@ select {
         }
 
         .blog-slider .slide.slide-4 {
-            background: #253340 url('../../images/blog/post-4.jpg') no-repeat 50% top;
+            background: #014626 url('../../images/blog/post-4.jpg') no-repeat 50% top;
             -webkit-background-size: cover;
             -moz-background-size: cover;
             -o-background-size: cover;
@@ -1962,7 +1962,7 @@ select {
     }
 
     .blog-list .post .post-thumb {
-        background: #253340;
+        background: #014626;
         overflow: hidden;
         -webkit-border-top-right-radius: 4px;
         -webkit-border-bottom-right-radius: 0;
@@ -2034,7 +2034,7 @@ select {
         }
 
             .blog-list .post .content .post-title a {
-                color: #253340;
+                color: #014626;
             }
 
         .blog-list .post .content .post-entry {
@@ -2077,7 +2077,7 @@ select {
         margin-bottom: 60px;
         position: relative;
         height: 500px;
-        background: #253340 url('../images/blog/post-2.jpg') no-repeat 50% top;
+        background: #014626 url('../images/blog/post-2.jpg') no-repeat 50% top;
         -webkit-background-size: cover;
         -moz-background-size: cover;
         -o-background-size: cover;
@@ -2320,7 +2320,7 @@ select {
 
         .blog-page .header-blog h1.logo a .sub {
             font-family: "Roboto", arial, sans-serif;
-            color: #253340;
+            color: #014626;
             font-weight: 300;
         }
 
@@ -2388,7 +2388,7 @@ select {
     }
 
         .blog-archive .post .date-label .month {
-            background: #253340;
+            background: #014626;
             display: block;
             font-size: 13px;
             text-transform: uppercase;
@@ -2402,7 +2402,7 @@ select {
             font-size: 18px;
             font-family: 'open sans', arial, sans-serif;
             font-weight: 500;
-            color: #253340;
+            color: #014626;
         }
 /* ======= About Page ======= */
 .story-section {
@@ -2481,7 +2481,7 @@ select {
         }
 
             .story-section .team .member .member-inner {
-                background: #253340;
+                background: #014626;
                 -webkit-border-radius: 4px;
                 -moz-border-radius: 4px;
                 -ms-border-radius: 4px;
@@ -2513,7 +2513,7 @@ select {
                 }
 
             .story-section .team .member .profile {
-                background: #253340;
+                background: #014626;
                 color: #fff;
                 text-align: center;
             }
@@ -2548,7 +2548,7 @@ select {
 
                 .story-section .team .member .social-list a {
                     color: #fff;
-                    background: #253340;
+                    background: #014626;
                     display: inline-block;
                     width: 40px;
                     height: 40px;
@@ -2624,7 +2624,7 @@ select {
 }
 /* ======= Login Page ======= */
 .has-full-screen-bg .upper-wrapper {
-    background: #253340 url('../images/background/bg-screen-1.jpg') no-repeat 50% top;
+    background: #014626 url('../images/background/bg-screen-1.jpg') no-repeat 50% top;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
@@ -2632,7 +2632,7 @@ select {
 }
 
 .has-full-screen-bg.signup-page .upper-wrapper {
-    background: #253340 url('../images/background/bg-header-1.jpg') no-repeat 50% top;
+    background: #014626 url('../images/background/bg-header-1.jpg') no-repeat 50% top;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
@@ -2888,7 +2888,7 @@ select {
 }
 /* ======= Footer ======= */
 .footer {
-    background: #253340;
+    background: #014626;
     color: #fff;
     padding-top: 40px;
     font-size: 14px;
@@ -3273,7 +3273,7 @@ select {
     }
 
         .config-trigger:hover .fa {
-            color: #253340;
+            color: #014626;
         }
 
     .config-trigger .fa {
@@ -3352,7 +3352,7 @@ select {
             }
 
             .config-panel #color-options li.theme-5 a {
-                background-color: #34495e;
+                background-color: #014626;
             }
 
             .config-panel #color-options li.theme-6 a {
@@ -3383,7 +3383,7 @@ select {
     }
 
         .config-panel .close .fa {
-            color: #253340;
+            color: #014626;
         }
 /* Extra small devices (phones, less than 768px) */
 @media (max-width: 767px) {
@@ -3425,7 +3425,7 @@ select {
         left: 0;
         top: 90px;
         position: absolute;
-        background: #253340;
+        background: #014626;
         z-index: 45;
     }
 
@@ -3607,7 +3607,7 @@ select {
         }
 
         .blog-page .header .main-nav .navbar-toggle:hover .icon-bar {
-            background-color: #253340;
+            background-color: #014626;
         }
 
     .blog-page .flexslider {
@@ -4028,7 +4028,7 @@ select {
                     background: #fff;
                     padding: 0 15px;
                     padding-bottom: 15px;
-                    color: #253340;
+                    color: #014626;
                     font-family: arial, sans-serif;
                 }
 

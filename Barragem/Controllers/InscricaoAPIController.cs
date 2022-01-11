@@ -347,6 +347,7 @@ namespace Barragem.Controllers
                 var order = montarPedidoPIX(inscricaoTorneio);
 
                 var cobrancaPix = new PIXPagSeguro().CriarPedido(order, inscricaoTorneio.torneio.barragem.tokenPagSeguro); 
+                //var cobrancaPix = new PIXPagSeguro().CriarPedido(order);
                 return Ok(cobrancaPix.qr_codes[0].text);
             }
             catch(Exception e){
@@ -437,5 +438,21 @@ namespace Barragem.Controllers
             return Ok();
         }
 
+        [ResponseType(typeof(void))]
+        [HttpGet]
+        [Route("api/InscricaoAPI/ConsultaLog")]
+        public IHttpActionResult ConsultaLog()
+        {
+            try
+            {
+                var log = db.Log.Where(d=>d.descricao.Contains("token")).ToList();
+                return Ok(log);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+            //return Ok("00020126830014br.gov.bcb.pix2561api.pagseguro.com/pix/v2/210387E0-A6BF-45D1-80B5-CFEB9BBCEE2F5204899953039865802BR5921Pagseguro Internet SA6009SAO PAULO62070503***63047E6D");
+        }
     }
 }

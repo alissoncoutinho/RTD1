@@ -59,8 +59,8 @@ a {
 
     a.btn-cta-primary,
     .btn-cta-primary {
-        background: #34495e;
-        border: 2px solid #34495e;
+        background: #014626;
+        border: 2px solid #014626;
         color: #fff;
     }
 
@@ -74,14 +74,14 @@ a {
     a.btn-cta-secondary,
     .btn-cta-secondary {
         background: none;
-        border: 2px solid #34495e;
-        color: #34495e;
+        border: 2px solid #014626;
+        color: #014626;
     }
 
         a.btn-cta-secondary:hover,
         .btn-cta-secondary:hover {
-            background: #34495e;
-            border: 2px solid #34495e;
+            background: #014626;
+            border: 2px solid #014626;
             color: #fff;
         }
 
@@ -114,7 +114,7 @@ a {
         }
 
 .highlight {
-    color: #34495e;
+    color: #014626;
 }
 
 .form-control {
@@ -195,8 +195,8 @@ select {
         }
 
         .header.scrolled .main-nav .nav .nav-item.nav-item-cta a.btn-cta-secondary {
-            background: #34495e;
-            border-color: #34495e;
+            background: #014626;
+            border-color: #014626;
         }
 
         .header.scrolled .main-nav .nav .dropdown-menu a {
@@ -219,7 +219,7 @@ select {
             text-align: center;
             line-height: 1.4;
             max-width: 350px;
-            background: #34495e;
+            background: #014626;
             -webkit-border-top-right-radius: 0;
             -webkit-border-bottom-right-radius: 4px;
             -webkit-border-bottom-left-radius: 4px;
@@ -286,7 +286,7 @@ select {
         }
 
             .header .main-nav .nav .nav-item.active a {
-                color: #34495e;
+                color: #014626;
                 background: none;
                 font-weight: bold;
             }
@@ -300,8 +300,8 @@ select {
             }
 
                 .header .main-nav .nav .nav-item.nav-item-cta a.btn-cta-secondary:hover {
-                    border: 1px solid #34495e;
-                    background: #34495e;
+                    border: 1px solid #014626;
+                    background: #014626;
                 }
 
             .header .main-nav .nav .nav-item a {
@@ -309,7 +309,7 @@ select {
             }
 
                 .header .main-nav .nav .nav-item a:hover {
-                    color: #34495e;
+                    color: #014626;
                     background: none;
                 }
 
@@ -324,7 +324,7 @@ select {
                 }
 
             .header .main-nav .nav .nav-item.active {
-                color: #34495e;
+                color: #014626;
             }
 
             .header .main-nav .nav .nav-item.last {
@@ -374,7 +374,7 @@ select {
             border: none;
             text-transform: none;
             min-width: 180px;
-            background: #253340;
+            background: #014626;
         }
 
             .header .main-nav .nav .dropdown-menu:before {
@@ -384,7 +384,7 @@ select {
                 height: 0;
                 border-left: 10px solid transparent;
                 border-right: 10px solid transparent;
-                border-bottom: 10px solid #253340;
+                border-bottom: 10px solid #014626;
                 position: absolute;
                 right: 30px;
                 top: -10px;
@@ -442,7 +442,7 @@ select {
         }
 
             .bg-slider-wrapper .flexslider .slide.slide-1 {
-                background: #253340 url('../images/background/bg-header-3.jpg') no-repeat 50% top;
+                background: #014626 url('../images/background/bg-header-3.jpg') no-repeat 50% top;
                 -webkit-background-size: cover;
                 -moz-background-size: cover;
                 -o-background-size: cover;
@@ -450,7 +450,7 @@ select {
             }
 
             .bg-slider-wrapper .flexslider .slide.slide-2 {
-                background: #253340 url('../images/background/bg-header-3.jpg') no-repeat 50% top;
+                background: #014626 url('../images/background/bg-header-3.jpg') no-repeat 50% top;
                 -webkit-background-size: cover;
                 -moz-background-size: cover;
                 -o-background-size: cover;
@@ -458,7 +458,7 @@ select {
             }
 
             .bg-slider-wrapper .flexslider .slide.slide-3 {
-                background: #253340 url('../images/background/bg-header-3.jpg') no-repeat 50% top;
+                background: #014626 url('../images/background/bg-header-3.jpg') no-repeat 50% top;
                 -webkit-background-size: cover;
                 -moz-background-size: cover;
                 -o-background-size: cover;
@@ -485,7 +485,7 @@ select {
     top: 0;
     left: 0;
     height: 500px;
-    background: #253340 url('../images/background/bg-header-small-3.jpg') no-repeat 50% top;
+    background: #014626 url('../images/background/bg-header-small-3.jpg') no-repeat 50% top;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
@@ -498,7 +498,7 @@ select {
     top: 0;
     left: 0;
     height: 500px;
-    background: #253340 url('../images/background/bg-header-tenis.jpg') no-repeat 50% top;
+    background: #014626 url('../images/background/bg-header-tenis.jpg') no-repeat 50% top;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
@@ -719,7 +719,7 @@ select {
             }
 
                 .why .figure .figure-caption a:hover {
-                    color: #34495e;
+                    color: #014626;
                 }
 
         .why .figure img {
@@ -850,7 +850,7 @@ select {
         }
 
     .testimonials .item .source {
-        color: #34495e;
+        color: #014626;
     }
 
         .testimonials .item .source .title {
@@ -902,7 +902,7 @@ select {
     }
 /* ======= cta-section ======= */
 .cta-section {
-    background: #253340 url('../images/background/bg-footer-5.jpg') no-repeat left top;
+    background: #014626 url('../images/background/bg-footer-5.jpg') no-repeat left top;
     background-size: cover;
     min-height: 420px;
     color: #fff;
@@ -935,7 +935,7 @@ select {
     }
 
     .cta-section .counting {
-        color: #34495e;
+        color: #014626;
         font-weight: bold;
         -webkit-opacity: 1;
         -moz-opacity: 1;
@@ -1017,7 +1017,7 @@ select {
                 }
 
                 .features-tabbed .tab-content .desc ul .fa {
-                    color: #34495e;
+                    color: #014626;
                     margin-right: 5px;
                 }
 
@@ -1060,7 +1060,7 @@ select {
                 }
 
                     .features-tabbed .tab-content .figure .figure-caption a:hover {
-                        color: #34495e;
+                        color: #014626;
                     }
 
 .nav-tabs {
@@ -1134,16 +1134,16 @@ select {
             }
 
         .nav-tabs > li.active {
-            border-top-color: #34495e;
+            border-top-color: #014626;
             border-bottom-color: #fff;
         }
 
             .nav-tabs > li.active > a {
-                color: #34495e;
+                color: #014626;
                 background: #fff;
-                -webkit-box-shadow: inset 0 3px 0 #34495e;
-                -moz-box-shadow: inset 0 3px 0 #34495e;
-                box-shadow: inset 0 3px 0 #34495e;
+                -webkit-box-shadow: inset 0 3px 0 #014626;
+                -moz-box-shadow: inset 0 3px 0 #014626;
+                box-shadow: inset 0 3px 0 #014626;
                 border: none;
             }
 
@@ -1155,7 +1155,7 @@ select {
             .nav-tabs > li.active:hover > a {
                 border-top: 0;
                 border: none;
-                color: #34495e;
+                color: #014626;
             }
 
         .nav-tabs > li.last {
@@ -1199,7 +1199,7 @@ select {
                 -webkit-background-clip: padding-box;
                 background-clip: padding-box;
                 text-align: center;
-                background: #34495e;
+                background: #014626;
                 border: 5px solid #f19180;
                 color: #fff;
                 margin: 0 auto;
@@ -1439,7 +1439,7 @@ select {
 /* ======= Download Apps ======= */
 .download-page .headline-bg {
     height: 1200px;
-    background: #253340 url('../images/background/bg-mobile-headline.jpg') no-repeat 50% top;
+    background: #014626 url('../images/background/bg-mobile-headline.jpg') no-repeat 50% top;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
@@ -1556,7 +1556,7 @@ select {
             }
 
             .faq .panel .panel-title .active {
-                color: #34495e;
+                color: #014626;
             }
 
             .faq .panel .panel-title .panel-toggle .fa {
@@ -1565,7 +1565,7 @@ select {
             }
 
             .faq .panel .panel-title:hover .fa {
-                color: #34495e;
+                color: #014626;
             }
 
     .faq .contact-lead {
@@ -1620,7 +1620,7 @@ select {
         }
 
         .contact-section .contact-form .error {
-            color: #34495e;
+            color: #014626;
             font-family: arial, sans-serif;
             display: block;
             font-size: 14px;
@@ -1663,14 +1663,14 @@ select {
     }
 
         .contact-other-section .other-info li a:hover {
-            color: #34495e;
+            color: #014626;
         }
 
     .contact-other-section .other-info li .fa {
         position: absolute;
         left: 0;
         top: 0;
-        background: #34495e;
+        background: #014626;
         color: #fff;
         width: 60px;
         height: 100%;
@@ -1782,7 +1782,7 @@ select {
     .blog-slider .slide {
         display: block;
         height: 400px;
-        background-color: #253340;
+        background-color: #014626;
     }
 
         .blog-slider .slide:after {
@@ -1798,7 +1798,7 @@ select {
         }
 
         .blog-slider .slide.slide-1 {
-            background: #253340 url('../../images/blog/post-1.jpg') no-repeat 50% top;
+            background: #014626 url('../../images/blog/post-1.jpg') no-repeat 50% top;
             -webkit-background-size: cover;
             -moz-background-size: cover;
             -o-background-size: cover;
@@ -1806,7 +1806,7 @@ select {
         }
 
         .blog-slider .slide.slide-2 {
-            background: #253340 url('../../images/blog/post-2.jpg') no-repeat 50% top;
+            background: #014626 url('../../images/blog/post-2.jpg') no-repeat 50% top;
             -webkit-background-size: cover;
             -moz-background-size: cover;
             -o-background-size: cover;
@@ -1814,7 +1814,7 @@ select {
         }
 
         .blog-slider .slide.slide-3 {
-            background: #253340 url('../../images/blog/post-3.jpg') no-repeat 50% top;
+            background: #014626 url('../../images/blog/post-3.jpg') no-repeat 50% top;
             -webkit-background-size: cover;
             -moz-background-size: cover;
             -o-background-size: cover;
@@ -1822,7 +1822,7 @@ select {
         }
 
         .blog-slider .slide.slide-4 {
-            background: #253340 url('../../images/blog/post-4.jpg') no-repeat 50% top;
+            background: #014626 url('../../images/blog/post-4.jpg') no-repeat 50% top;
             -webkit-background-size: cover;
             -moz-background-size: cover;
             -o-background-size: cover;
@@ -1925,7 +1925,7 @@ select {
         }
 
             .blog-slider .flex-caption a.more-link:hover {
-                color: #34495e;
+                color: #014626;
             }
 /* Blog homepage */
 .blog-list .post {
@@ -1951,7 +1951,7 @@ select {
     }
 
     .blog-list .post .post-thumb {
-        background: #253340;
+        background: #014626;
         overflow: hidden;
         -webkit-border-top-right-radius: 4px;
         -webkit-border-bottom-right-radius: 0;
@@ -2023,7 +2023,7 @@ select {
         }
 
             .blog-list .post .content .post-title a {
-                color: #253340;
+                color: #014626;
             }
 
         .blog-list .post .content .post-entry {
@@ -2055,7 +2055,7 @@ select {
             }
 
                 .blog-list .post .content .meta li a:hover {
-                    color: #34495e;
+                    color: #014626;
                 }
 /* Single blog post */
 .blog-entry-wrapper {
@@ -2066,7 +2066,7 @@ select {
         margin-bottom: 60px;
         position: relative;
         height: 500px;
-        background: #253340 url('../images/blog/post-2.jpg') no-repeat 50% top;
+        background: #014626 url('../images/blog/post-2.jpg') no-repeat 50% top;
         -webkit-background-size: cover;
         -moz-background-size: cover;
         -o-background-size: cover;
@@ -2197,7 +2197,7 @@ select {
                 }
 
                     .blog-entry-wrapper .blog-entry .blog-entry-content .figure .figure-caption a:hover {
-                        color: #34495e;
+                        color: #014626;
                     }
 
         .blog-entry-wrapper .blog-entry .blog-entry-content .custom-list-style {
@@ -2211,7 +2211,7 @@ select {
 
                 .blog-entry-wrapper .blog-entry .blog-entry-content .custom-list-style li .fa {
                     margin-right: 10px;
-                    color: #34495e;
+                    color: #014626;
                 }
 
     .blog-entry-wrapper .blog-entry .post-nav {
@@ -2246,7 +2246,7 @@ select {
         }
 
         .blog-entry-wrapper .custom-quote .fa {
-            color: #34495e;
+            color: #014626;
             margin-right: 10px;
         }
 
@@ -2292,7 +2292,7 @@ select {
     }
 
         .blog-page .header-blog .main-nav .nav .nav-item a:hover {
-            color: #34495e;
+            color: #014626;
         }
 
     .blog-page .header-blog .main-nav .nav .dropdown-menu a {
@@ -2302,14 +2302,14 @@ select {
     .blog-page .header-blog h1.logo a {
         max-width: inherit;
         background: none;
-        color: #34495e;
+        color: #014626;
         padding-left: 0;
         padding-top: 25px;
     }
 
         .blog-page .header-blog h1.logo a .sub {
             font-family: "Roboto", arial, sans-serif;
-            color: #253340;
+            color: #014626;
             font-weight: 300;
         }
 
@@ -2377,7 +2377,7 @@ select {
     }
 
         .blog-archive .post .date-label .month {
-            background: #253340;
+            background: #014626;
             display: block;
             font-size: 13px;
             text-transform: uppercase;
@@ -2391,7 +2391,7 @@ select {
             font-size: 18px;
             font-family: 'open sans', arial, sans-serif;
             font-weight: 500;
-            color: #253340;
+            color: #014626;
         }
 /* ======= About Page ======= */
 .story-section {
@@ -2470,7 +2470,7 @@ select {
         }
 
             .story-section .team .member .member-inner {
-                background: #253340;
+                background: #014626;
                 -webkit-border-radius: 4px;
                 -moz-border-radius: 4px;
                 -ms-border-radius: 4px;
@@ -2502,7 +2502,7 @@ select {
                 }
 
             .story-section .team .member .profile {
-                background: #253340;
+                background: #014626;
                 color: #fff;
                 text-align: center;
             }
@@ -2537,7 +2537,7 @@ select {
 
                 .story-section .team .member .social-list a {
                     color: #fff;
-                    background: #253340;
+                    background: #014626;
                     display: inline-block;
                     width: 40px;
                     height: 40px;
@@ -2557,7 +2557,7 @@ select {
                     }
 
                     .story-section .team .member .social-list a:hover {
-                        background: #34495e;
+                        background: #014626;
                     }
 /* ======= Modal ======= */
 .modal.modal-video .modal-dialog {
@@ -2600,7 +2600,7 @@ select {
 }
 
     .modal.modal-video button.close:hover {
-        color: #34495e;
+        color: #014626;
         -webkit-opacity: 1;
         -moz-opacity: 1;
         opacity: 1;
@@ -2613,7 +2613,7 @@ select {
 }
 /* ======= Login Page ======= */
 .has-full-screen-bg .upper-wrapper {
-    background: #253340 url('../images/background/bg-screen-1.jpg') no-repeat 50% top;
+    background: #014626 url('../images/background/bg-screen-1.jpg') no-repeat 50% top;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
@@ -2621,7 +2621,7 @@ select {
 }
 
 .has-full-screen-bg.signup-page .upper-wrapper {
-    background: #253340 url('../images/background/bg-header-3.jpg') no-repeat 50% top;
+    background: #014626 url('../images/background/bg-header-3.jpg') no-repeat 50% top;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
@@ -2802,7 +2802,7 @@ select {
 
             .access-section .forgot-password a:hover {
                 text-decoration: underline;
-                color: #34495e;
+                color: #014626;
             }
 
     .access-section .divider {
@@ -2877,7 +2877,7 @@ select {
 }
 /* ======= Footer ======= */
 .footer {
-    background: #253340;
+    background: #014626;
     color: #fff;
     padding-top: 40px;
     font-size: 14px;
@@ -2919,7 +2919,7 @@ select {
             }
 
             .footer .footer-col.connect .social li a:hover .fa {
-                color: #34495e;
+                color: #014626;
             }
 
     .footer .footer-col.connect .btn-cta-primary {
@@ -3047,7 +3047,7 @@ select {
         background-clip: padding-box;
         border: none;
         margin-right: 5px;
-        color: #34495e;
+        color: #014626;
     }
 
         .pagination li a:hover {
@@ -3060,7 +3060,7 @@ select {
     .pagination > .active > span:hover,
     .pagination > .active > a:focus,
     .pagination > .active > span:focus {
-        background-color: #34495e;
+        background-color: #014626;
         border: none;
     }
 
@@ -3144,7 +3144,7 @@ select {
 
             .searchbox-container .searchbox.searchbox-open .searchbox-icon,
             .searchbox-container .searchbox.searchbox-open .searchbox-submit {
-                background: #34495e;
+                background: #014626;
                 color: #fff;
                 -webkit-border-top-right-radius: 4px;
                 -webkit-border-bottom-right-radius: 4px;
@@ -3262,7 +3262,7 @@ select {
     }
 
         .config-trigger:hover .fa {
-            color: #253340;
+            color: #014626;
         }
 
     .config-trigger .fa {
@@ -3325,7 +3325,7 @@ select {
             }
 
             .config-panel #color-options li.theme-1 a {
-                background: #34495e;
+                background: #014626;
             }
 
             .config-panel #color-options li.theme-2 a {
@@ -3341,7 +3341,7 @@ select {
             }
 
             .config-panel #color-options li.theme-5 a {
-                background-color: #34495e;
+                background-color: #014626;
             }
 
             .config-panel #color-options li.theme-6 a {
@@ -3372,7 +3372,7 @@ select {
     }
 
         .config-panel .close .fa {
-            color: #253340;
+            color: #014626;
         }
 /* Extra small devices (phones, less than 768px) */
 @media (max-width: 767px) {
@@ -3410,7 +3410,7 @@ select {
         left: 0;
         top: 90px;
         position: absolute;
-        background: #253340;
+        background: #014626;
         z-index: 45;
     }
 
@@ -3541,7 +3541,7 @@ select {
 
     .searchbox-icon,
     .searchbox-submit {
-        background: #34495e;
+        background: #014626;
         color: #fff;
         -webkit-border-top-right-radius: 4px;
         -webkit-border-bottom-right-radius: 4px;
@@ -3593,7 +3593,7 @@ select {
         }
 
         .blog-page .header .main-nav .navbar-toggle:hover .icon-bar {
-            background-color: #253340;
+            background-color: #014626;
         }
 
     .blog-page .flexslider {
@@ -3854,7 +3854,7 @@ select {
                 -moz-background-clip: padding;
                 -webkit-background-clip: padding-box;
                 background-clip: padding-box;
-                color: #34495e;
+                color: #014626;
                 background: #fff;
             }
 
@@ -3866,8 +3866,8 @@ select {
             }
 
             .header.scrolled .main-nav .nav .nav-item.nav-item-cta a.btn-cta-secondary {
-                background: #34495e;
-                border-color: #34495e;
+                background: #014626;
+                border-color: #014626;
             }
 
             .header.scrolled .main-nav .nav .dropdown-menu a {
@@ -4015,7 +4015,7 @@ select {
                     background: #fff;
                     padding: 0 15px;
                     padding-bottom: 15px;
-                    color: #253340;
+                    color: #014626;
                     font-family: arial, sans-serif;
                 }
 

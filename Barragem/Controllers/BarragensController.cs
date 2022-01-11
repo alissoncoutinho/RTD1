@@ -392,6 +392,10 @@ namespace Barragem.Controllers
             catch (WebException e)
             {
                 var result = new StreamReader(e.Response.GetResponseStream()).ReadToEnd();
+                if (result == null)
+                {
+                    return Json(new { erro = "Erro ao solicitar autorização: " + e.Message, retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
+                }
                 var erroMsg = JsonConvert.DeserializeObject<ErrorMessage>(result);
                 return Json(new { erro = "Erro ao solicitar autorização: " + erroMsg.codeDescription[0].description, retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
             }
