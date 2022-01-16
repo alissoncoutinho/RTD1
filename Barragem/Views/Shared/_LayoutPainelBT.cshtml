@@ -84,11 +84,22 @@
             {
                 @Html.AntiForgeryToken()
             }
-            <ul class="mobile">
-                <li><a href="/Torneio/PainelControle">Painel</a></li>
-                <li><a href="/Torneio/Manuais">Manuais</a></li>
-                <li><a href="https://api.whatsapp.com/send?phone=5561998095668&text=Ol%C3%A1%2C%20gostaria%20de%20ajuda%20com%20o%20sistema%20Ranking%20Beach%20Tennis" target="_blank">Suporte</a></li>
-            </ul>
+    <ul class="mobile">
+        <li><a href="/Torneio/PainelControle">Painel</a></li>
+        <li><a href="/Torneio/Manuais">Manuais</a></li>
+        @if (Roles.IsUserInRole("adminTorneio"))
+        {
+            <li>
+                <a href="https://api.whatsapp.com/send?phone=5561998095668&text=Olá,%20estou%20com%20dúvidas%20no%20sistema%20de%20organização%20de%20torneios." target="_blank">Suporte</a>
+            </li>
+        }
+        else
+        {
+            <li>
+                <a href="https://api.whatsapp.com/send?phone=5561998095668&text=Olá,%20estou%20com%20dúvidas%20no%20sistema%20de%20organização%20de%20torneios." target="_blank">Suporte</a>
+            </li>
+        }
+    </ul>
         }
         else
         {
@@ -129,9 +140,18 @@
                     <li class="nav-item me-4">
                         <a class="nav-link" href="/Torneio/Manuais">Manuais</a>
                     </li>
-                    <li class="nav-item me-4">
-                        <a class="nav-link" href="https://api.whatsapp.com/send?phone=5561998095668&text=Ol%C3%A1%2C%20gostaria%20de%20ajuda%20com%20o%20sistema%20Ranking%20Beach%20Tennis" target="_blank">Suporte</a>
-                    </li>
+                    @if (Roles.IsUserInRole("adminTorneio"))
+                    {
+                        <li class="nav-item me-4">
+                            <a class="nav-link" href="https://api.whatsapp.com/send?phone=5561998095668&text=Olá,%20estou%20com%20dúvidas%20no%20sistema%20de%20organização%20de%20torneios." target="_blank">Suporte</a>
+                        </li>
+                    }
+                    else { 
+                        <li class="nav-item me-4">
+                            <a class="nav-link" href="https://api.whatsapp.com/send?phone=5561998095668&text=Olá,%20estou%20com%20dúvidas%20no%20sistema%20de%20organização%20de%20torneios." target="_blank">Suporte</a>
+                        </li>
+                    }
+
                     @if (Request.IsAuthenticated)
                     {
                         <li class="nav-item dropdown">
