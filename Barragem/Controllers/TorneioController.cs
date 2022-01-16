@@ -3312,6 +3312,16 @@ namespace Barragem.Controllers
             ViewBag.isModeloTodosContraTodos = barragem.isModeloTodosContraTodos;
             ViewBag.tokenPagSeguro = barragem.tokenPagSeguro;
             List<BarragemLiga> ligasDoRanking = db.BarragemLiga.Include(l => l.Liga).Where(bl => bl.BarragemId == barragemId && bl.Liga.isAtivo).ToList();
+
+            var torneios = db.Torneio.Where(r => r.barragemId == barragemId).ToList();
+            if (torneios.Count() > 0)
+            {
+                var barragens = db.Barragens.Find(barragemId);
+                barragens.isTeste = false;
+                barragem.isTeste = false;
+                db.SaveChanges();
+            }
+
             // List<Liga> ligasDisponiveis = new List<Liga>();
             List<int> ligasId = new List<int>();
             foreach (BarragemLiga bl in ligasDoRanking)
