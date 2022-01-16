@@ -3407,6 +3407,15 @@ namespace Barragem.Controllers
             ViewBag.circuitos = db.Liga.Where(b => b.barragemId == barragem.Id).OrderByDescending(b=> b.Id).ToList();
             ViewBag.barragemId = barragem.Id;
             ViewBag.nomeAgremiacao = barragem.nome;
+            if (String.IsNullOrEmpty(barragem.tokenPagSeguro))
+            {
+                ViewBag.tokenPagSeguro = false;
+            }
+            else
+            {
+                ViewBag.tokenPagSeguro = true;
+            }
+            
 
             return View(torneios);
         }
