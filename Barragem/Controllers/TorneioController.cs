@@ -3505,7 +3505,13 @@ namespace Barragem.Controllers
             return View();
         }
 
-        private QrCodeCobrancaTorneio GetQrCodeCobrancaPIX(int torneioId)
+        
+        public ActionResult BaixeApp()
+        {
+            return View();
+        }
+
+            private QrCodeCobrancaTorneio GetQrCodeCobrancaPIX(int torneioId)
         {
             try
             {
