@@ -705,7 +705,7 @@ namespace Barragem.Controllers
                 e.conteudo = "Um novo cadastro de organizador de ranking foi realizado. <br>Nome do contato: " + nome + "<br>telefone de contato: " + fone;
                 e.formato = Class.Tipos.FormatoEmail.Html;
                 e.de = "postmaster@rankingdetenis.com";
-                e.para = "tecnologia.btd@gmail.com,contato@rankingbeachtennis.com";
+                e.para = "tecnologia.btd@gmail.com,contato@rankingbeachtennis.com,boladetenisdelivery@gmail.com";
                 e.bcc = new List<String>() { "coutinho.alisson@gmail.com" };
                 e.EnviarMail();
             }
