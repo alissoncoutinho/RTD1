@@ -48,7 +48,7 @@ namespace Barragem.Controllers
             }
             else if (Roles.IsUserInRole("parceiroBT"))
             {
-                barragens = db.Barragens.Where(b => b.isBeachTenis == true).ToList();
+                barragens = db.Barragens.Where(b => b.isBeachTenis == true && !b.nome.ToUpper().Contains("TESTE")).ToList();
             }
             else
             {
@@ -153,6 +153,7 @@ namespace Barragem.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(Barragens barragens)
         {
+            var barraAtual = db.BarragemView.Find(barragens.Id);
             if (Roles.IsUserInRole("organizador"))
             {
                 UserProfile usu = db.UserProfiles.Find(WebSecurity.GetUserId(User.Identity.Name));
@@ -162,13 +163,13 @@ namespace Barragem.Controllers
                     return View(barragens);
                 }
 
-                var barraAtual = db.BarragemView.Find(barragens.Id);
                 // o organizador não deve alterar os campos abaixo
                 barragens.valorPorUsuario = barraAtual.valorPorUsuario;
                 barragens.isAtiva = barraAtual.isAtiva;
                 barragens.isTeste = barraAtual.isTeste;
                 barragens.soTorneio = barraAtual.soTorneio;
             }
+            barragens.isBeachTenis = barraAtual.isBeachTenis;
             if (barragens.soTorneio == null) barragens.soTorneio = false;
             if (ModelState.IsValid)
             {

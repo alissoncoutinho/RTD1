@@ -1,0 +1,37 @@
+.swiper3 {
+    overflow: hidden;
+}
+
+/*Estilos para a sessão de app*/
+section.app {
+    height: 100%;
+    background: #F2F2F2;
+    padding: 70px 0;
+}
+
+    section.app h2 {
+        color: #014626;
+        font-weight: 700;
+        font-size: 48px;
+    }
+
+    section.app p {
+        color: #212121;
+        font-weight: 500;
+    }
+
+    section.app .wrapper img {
+        margin: 0 8px;
+    }
+
+/*Fim dos estilos para a sessão de app*/
+
+
+@media screen and (max-width: 1000px) {
+    
+    .phone {
+        display: none;
+    }
+
+    
+}

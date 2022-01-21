@@ -1,0 +1,94 @@
+﻿@{
+    ViewBag.Title = "Torneio de Tênis";
+    Layout = "~/Views/Shared/_LayoutTorneio.cshtml";
+}
+
+@section Css_Painel{
+    <link rel="stylesheet" href="https://unpkg.com/swiper@7/swiper-bundle.min.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="@Url.Content("/Content/css/baixe-app.css")" rel="stylesheet" type="text/css" />
+}
+
+<section class="app" id="app">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="phone">
+                    <img src="/Content/img/phone.png" alt="imagem de telefone com o app da empresa">
+                </div><!--phone-->
+            </div><!--col-md-2-->
+
+            <div class="col-md-8">
+                <div class="app__content">
+                    <h2>MeuRanking: o app para jogadores!</h2>
+                    <p>Os jogadores fazem a inscrição pelo aplicativo MeuRanking e acompanham<br> todo torneio por lá. <b>Simples, rápido e prático!</b></p>
+                    <div class="wrapper d-flex">
+                        <a href="https://play.google.com/store/apps/details?id=com.rankingtennis&hl=pt_BR" target="_blank"><img class="img-fluid" src="/Content/img/google.png" alt="icone do google play"></a>
+                        <a href="https://apps.apple.com/br/app/meu-ranking/id1483076354" target="_blank"><img class="img-fluid" src="/Content/img/appstore.png" alt="icone do app store"></a>
+                    </div><!--wrapper-->
+
+                    <div class="app__users mt-5">
+
+                        <div class="swiper3">
+                            <!-- Additional required wrapper -->
+                            <div class="swiper-wrapper">
+                                <!-- Slides -->
+                                <div class="swiper-slide">
+
+                                    <picture>
+                                        <source media="(min-width:650px)" srcset="/Content/img/perfil1.png">
+                                        <source media="(min-width:300px)" srcset="/Content/img/perfil1-mobile.png">
+                                        <img src="/Content/img/perfil1.png" alt="imagem do app" style="width:230px;height:400px">
+                                    </picture>
+                                </div><!--swiper-slide-->
+
+                                <div class="swiper-slide">
+                                    <picture>
+                                        <source media="(min-width:650px)" srcset="/Content/img/perfil2.png">
+                                        <source media="(min-width:300px)" srcset="/Content/img/perfil2-mobile.png">
+                                        <img src="/Content/img/perfil2.png" alt="imagem do app" style="width:230px;height:400px">
+                                    </picture>
+                                </div><!--swiper-slide-->
+
+                                <div class="swiper-slide">
+                                    <picture>
+                                        <source media="(min-width:650px)" srcset="/Content/img/perfil3.png">
+                                        <source media="(min-width:300px)" srcset="/Content/img/perfil3-mobile.png">
+                                        <img src="/Content/img/perfil3.png" alt="imagem do app" style="width:230px;height:400px">
+                                    </picture>
+                                </div><!--swiper-slide-->
+
+                            </div>
+
+
+                        </div><!--swipper-->
+                    </div><!--users-->
+                </div><!--app__content-->
+            </div><!--col-md-10-->
+        </div><!--row-->
+    </div><!--container-->
+</section><!--app-->
+
+@section scripts {
+    <script src="https://unpkg.com/swiper@7/swiper-bundle.min.js"></script>
+    <script>
+        const swiper3 = new Swiper('.swiper3', {
+            // Optional parameters
+            direction: 'horizontal',
+            loop: false,
+            slidesPerView: 2,
+            grabCursor: true,
+            spaceBetween: 30,
+            freeMode: true,
+            breakpoints: {
+                768: {
+                    slidesPerView: 3,
+                    spaceBetween: 30,
+                },
+            },
+
+        });
+    </script>
+}

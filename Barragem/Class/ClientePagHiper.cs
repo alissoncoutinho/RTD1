@@ -8,6 +8,7 @@ using System.Linq;
 using System.Data;
 using Barragem.Models;
 using System.Data.Entity;
+using System.Configuration;
 
 namespace Barragem.Class
 {
@@ -20,7 +21,7 @@ namespace Barragem.Class
     }
     public class Boleto
     {
-        public string apiKey { get { return "apk_40465669-WocOWDbeFEYtUuSGyMSrTTwYrWjjsKYP"; } }
+        public string apiKey { get { return ConfigurationManager.AppSettings["API_KEY_PAGHIPER"]; } }
         public string order_id { get; set; }
         public string payer_email { get; set; }
         public string payer_name { get; set; }
@@ -73,8 +74,8 @@ namespace Barragem.Class
 
     public class Notificacao
     {
-        public string token { get { return "YOY6V157GUGEH2M8NXZS07DRLC86HWXGLVMHWSPCM5R3"; } }
-        public string apiKey { get { return "apk_40465669-WocOWDbeFEYtUuSGyMSrTTwYrWjjsKYP"; } }
+        public string token { get { return ConfigurationManager.AppSettings["TOKEN_PAGHIPER"]; } }
+        public string apiKey { get { return ConfigurationManager.AppSettings["API_KEY_PAGHIPER"]; } }
         public string transaction_id { get; set; }
         public string notification_id { get; set; }
     }

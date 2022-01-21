@@ -421,7 +421,7 @@ namespace Barragem.Controllers
                         lateralidade = model.register.lateralidade,
                         nivelDeJogo = model.register.nivelDeJogo,
                         barragemId = model.register.barragemId,
-                        classeId = classesBarragem[0].Id,
+                        classeId = (classesBarragem.Count()>0) ? classesBarragem[0].Id : 2722,
 
                     });
                     Roles.AddUserToRole(model.register.UserName, "usuario");
@@ -706,7 +706,7 @@ namespace Barragem.Controllers
                 e.formato = Class.Tipos.FormatoEmail.Html;
                 e.de = "postmaster@rankingdetenis.com";
                 e.para = "tecnologia.btd@gmail.com";
-                e.bcc = new List<String>() { "coutinho.alisson@gmail.com" };
+                e.bcc = new List<String>() { "coutinho.alisson@gmail.com", "contato@rankingbeachtennis.com" };
                 e.EnviarMail();
             }
             catch (Exception e)

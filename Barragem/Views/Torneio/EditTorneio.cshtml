@@ -1,8 +1,8 @@
 ﻿@model Barragem.Models.Torneio
 @{
     Barragem.Models.CobrancaTorneio cobrancaTorneio = ViewBag.CobrancaTorneio;
-    
- }
+    var link = ViewBag.LinkParaCopia;
+}
 
 @Html.Partial("_PartialTabs", "")
 
@@ -32,12 +32,12 @@
                     @if (Model.isAtivo)
                 {
                 <div class="form-group">
-                    @Html.Label("Copiar link do Torneio", new { @class = "col-xs-6 col-sm-2 control-label" })
+                    @Html.Label("Copiar link do Torneio" , new { @class = "col-xs-6 col-sm-2 control-label" })
                     <div class="col-sm-8 input-group">
                         <!--a href="/torneio-Model.barragem.dominio" title="Link do torneio" class="btn btn-default btn-xs">
                             <span class="glyphicon glyphicon-link"></span>
                         </a-->
-                        <button id="btnCopiarLink" data-link="https://www.rankingdetenis.com/torneio-@Model.barragem.dominio"> <span class="glyphicon glyphicon-share"/></button>
+                        <button id="btnCopiarLink" data-link='www.teste.com'> <span class="glyphicon glyphicon-share"/></button>
                     </div>
                 </div>
 
@@ -621,7 +621,8 @@
 
         $('#btnCopiarLink').on('click', function (event) {
             event.preventDefault();
-            navigator.clipboard.writeText($(this).attr('data-link'));
+            navigator.clipboard.writeText('@link');
+            //$(this).attr('data-link')
             toastr.success("Link copiado com sucesso.", "Aviso");
         });
 

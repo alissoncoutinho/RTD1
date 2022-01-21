@@ -171,7 +171,7 @@ namespace Barragem.Controllers
             }
             else if (perfil.Equals("parceiroBT"))
             {
-                torneio = db.Torneio.Where(r => r.barragem.isBeachTenis == true).OrderByDescending(c => c.Id).ToList();
+                torneio = db.Torneio.Where(r => r.barragem.isBeachTenis == true && !r.nome.ToUpper().Contains("TESTE")).OrderByDescending(c => c.Id).ToList();
             }
             else
             {
@@ -1395,11 +1395,6 @@ namespace Barragem.Controllers
             ViewBag.JogadoresClasses = db.InscricaoTorneio.Where(i => i.torneioId == id && i.isAtivo == true).OrderBy(i => i.classe).ThenBy(i => i.participante.nome).ToList();
             ViewBag.CobrancaTorneio = getDadosDeCobrancaTorneio(id);
             List<BarragemLiga> ligasDoRanking = db.BarragemLiga.Include(l => l.Liga).Where(bl => bl.BarragemId == barragemId && bl.Liga.isAtivo).ToList();
-            //List<Liga> ligasDisponiveis = new List<Liga>();
-            //foreach (BarragemLiga bl in ligasDoRanking)
-            //{
-            //    ligasDisponiveis.Add(db.Liga.Find(bl.LigaId));
-            //}
             ViewBag.LigasDisponiveis = ligasDoRanking;
             List<TorneioLiga> lts = db.TorneioLiga.Include(l => l.Liga).Where(tl => tl.TorneioId == torneio.Id).ToList();
             List<Liga> ligasDoTorneio = new List<Liga>();
@@ -1413,6 +1408,7 @@ namespace Barragem.Controllers
             {
                 return HttpNotFound();
             }
+            ViewBag.LinkParaCopia = "https://" + HttpContext.Request.Url.Host + "/torneio-" + torneio.Id;
             return View(torneio);
         }
 
@@ -1997,6 +1993,7 @@ namespace Barragem.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult EditTorneio(Torneio torneio, bool transferencia = false)
         {
+            torneio.inscricaoSoPeloSite = true;
             var userId = WebSecurity.GetUserId(User.Identity.Name);
             string perfil = Roles.GetRolesForUser(User.Identity.Name)[0];
             torneio.liberarEscolhaDuplas = true;
@@ -2085,6 +2082,7 @@ namespace Barragem.Controllers
             ViewBag.TorneioId = torneio.Id;
             ViewBag.CobrancaTorneio = getDadosDeCobrancaTorneio(torneio.Id);
             ViewBag.flag = "edit";
+            ViewBag.LinkParaCopia = "https://" + HttpContext.Request.Url.Host + "/torneio-" + torneio.Id;
             return View(torneio);
         }
 
@@ -3169,6 +3167,7 @@ namespace Barragem.Controllers
         [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
         public ActionResult CreateTorneio(Torneio torneio, bool transferencia = false, int pontuacaoLiga = 100)
         {
+            torneio.inscricaoSoPeloSite = true;
             var userId = WebSecurity.GetUserId(User.Identity.Name);
             var barragemId = (from up in db.UserProfiles where up.UserId == userId select up.barragemId).Single();
             torneio.barragemId = barragemId;
@@ -3312,6 +3311,16 @@ namespace Barragem.Controllers
             ViewBag.isModeloTodosContraTodos = barragem.isModeloTodosContraTodos;
             ViewBag.tokenPagSeguro = barragem.tokenPagSeguro;
             List<BarragemLiga> ligasDoRanking = db.BarragemLiga.Include(l => l.Liga).Where(bl => bl.BarragemId == barragemId && bl.Liga.isAtivo).ToList();
+
+            var qtddTorneios = db.Torneio.Where(r => r.barragemId == barragemId).Count();
+            // se for o segundo torneio, termina o período de testes
+            if (qtddTorneios == 1)
+            {
+                var barragens = db.Barragens.Find(barragemId);
+                barragens.isTeste = false;
+                db.SaveChanges();
+            }
+
             // List<Liga> ligasDisponiveis = new List<Liga>();
             List<int> ligasId = new List<int>();
             foreach (BarragemLiga bl in ligasDoRanking)
@@ -3495,7 +3504,13 @@ namespace Barragem.Controllers
             return View();
         }
 
-        private QrCodeCobrancaTorneio GetQrCodeCobrancaPIX(int torneioId)
+        
+        public ActionResult BaixeApp()
+        {
+            return View();
+        }
+
+            private QrCodeCobrancaTorneio GetQrCodeCobrancaPIX(int torneioId)
         {
             try
             {

@@ -46,6 +46,8 @@
                                         <img width="25" height="25" src="/Content/image/whatsapp.png">
                                     </a>
                                     <a href="@Url.Action("../Account/Detalhes", new { userId = @item.participante.UserId })" title="Detalhes do jogador">@item.participante.nome</a>
+                                    @if (item.isAtivo)
+                                    { @Html.Raw("<b> (Pago)</b>") }
 </td>
                             </tr>
                                     }
@@ -76,19 +78,23 @@
                             <td>
                                 @{ var isDupla = false;
                                    var idParticipante = 0;
-                                   var nomeParticipante = "";}
+                                   var nomeParticipante = "";
+                                    var isAtivo = false;}
                                 @foreach (var item2 in ViewBag.Inscritos){
                                     if (item.userId == item2.userId && item.parceiroDuplaId != null) {
                                         isDupla = true;
                                         idParticipante = item2.Id;
                                         nomeParticipante = item2.participante.nome;
+                                        isAtivo = item2.isAtivo;
                                         break;
                                     }
                                 }
                                 @if (isDupla) {
                                     <input type="hidden" value="@idParticipante" name="@Html.Raw("jogador1_" + i)" id="@Html.Raw("jogador1_" + i)">
-                                    @Html.Raw(nomeParticipante)
-                                } else { 
+                                    @Html.Raw(nomeParticipante) if (isAtivo) { @Html.Raw("<b> (Pago)</b>") }
+                                }
+                                else
+                                {
                                     <select name="@Html.Raw("jogador1_" + i)" id="@Html.Raw("jogador1_" + i)" class="form-control">
                                         <option value="0"></option>
                                         @foreach (var item2 in ViewBag.InscricaoSemDupla)
@@ -106,7 +112,7 @@
                                     @foreach (var item2 in ViewBag.Inscritos)
                                     {
                                         <option value="@item2.userId" @if (item.parceiroDuplaId == item2.userId)
-                                        { @Html.Raw("selected") }>@item2.participante.nome</option>
+                                        { @Html.Raw("selected") }>@item2.participante.nome @if (item2.isAtivo) { @Html.Raw("<b> (Pago)</b>") }</option>
                                     }
                                 </select>
                             }
@@ -116,7 +122,7 @@
                                     <option value="null"></option>
                                     @foreach (var item2 in ViewBag.InscricaoSemDupla)
                                     {
-                                        <option value="@item2.userId" @if (item.parceiroDuplaId == item2.userId) { @Html.Raw("selected")  }>@item2.participante.nome</option>
+                                        <option value="@item2.userId" @if (item.parceiroDuplaId == item2.userId) { @Html.Raw("selected")  }>@item2.participante.nome @if (item2.isAtivo) { @Html.Raw(" (Pago)") }</option>
                                     }
                                 </select>
                             }

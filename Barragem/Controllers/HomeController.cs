@@ -36,8 +36,11 @@ namespace Barragem.Controllers
             LimparCookie();
             string url = HttpContext.Request.Url.AbsoluteUri;
             string path = HttpContext.Request.Url.AbsolutePath;
-            url = url.Replace("/", "").Replace("http:", "").Replace("www.", "");
-            if ((url.Equals("barragemdocerrado.com.br")) && (path.Equals("/")))
+            if ((url.Contains("rankingbeachtennis.com")) && (path.Equals("/")))
+            {
+                return RedirectToAction("IndexBT");
+            }
+            if ((url.Contains("barragemdocerrado.com.br")) && (path.Equals("/")))
             {
                 return RedirectToAction("Index", "Masculina");
             }
