@@ -121,8 +121,19 @@ namespace Barragem.Controllers
         public MinhaPontuacao GetMinhaPontuacao(int userId)
         {
             MinhaPontuacao minhaPontuacao = new MinhaPontuacao();
-            List<Classificacao> classificacao = db.Rancking.Where(r => r.userProfile_id == userId).
-                OrderByDescending(r => r.rodada_id).Take(10).Select(rk => new Classificacao() {
+            Temporada temporada = new Temporada();
+            List<Classificacao> classificacao = new List<Classificacao>();
+            try
+            {
+                temporada = db.Rancking.Where(r => r.userProfile_id == userId).
+                    OrderByDescending(r => r.rodada_id).Take(1).Single().rodada.temporada;
+            }catch(Exception e) { }
+
+            if(temporada.Id>0 && temporada.iniciarZerada)
+            {
+                classificacao = db.Rancking.Where(r => r.userProfile_id == userId && r.rodada.temporada.Id == temporada.Id).
+                OrderByDescending(r => r.rodada_id).Take(10).Select(rk => new Classificacao()
+                {
                     pontuacao = rk.pontuacao,
                     posicaoUser = rk.posicaoClasse,
                     nomeUser = rk.userProfile.nome,
@@ -131,6 +142,20 @@ namespace Barragem.Controllers
                     dataRodada = rk.rodada.dataFim,
                     rodadaId = rk.rodada_id
                 }).ToList();
+            } else {
+                classificacao = db.Rancking.Where(r => r.userProfile_id == userId).
+                OrderByDescending(r => r.rodada_id).Take(10).Select(rk => new Classificacao()
+                {
+                    pontuacao = rk.pontuacao,
+                    posicaoUser = rk.posicaoClasse,
+                    nomeUser = rk.userProfile.nome,
+                    rodada = rk.rodada.codigo + rk.rodada.sequencial,
+                    totalAcumulado = rk.totalAcumulado,
+                    dataRodada = rk.rodada.dataFim,
+                    rodadaId = rk.rodada_id
+                }).ToList();
+            }
+
             minhaPontuacao.classificacao = classificacao;
             if (classificacao.Count() > 0){
                 minhaPontuacao.nomeUser = classificacao[0].nomeUser;

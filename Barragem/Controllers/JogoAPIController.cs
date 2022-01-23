@@ -324,19 +324,43 @@ namespace Barragem.Controllers
         // GET: api/JogoAPI/ListarJogosPendentes
         public IList<JogoRodada> ListarJogosPendentes(int userId)
         {
+            Temporada temporada = new Temporada();
+            try
+            {
+                temporada = db.Rancking.Where(r => r.userProfile_id == userId).
+                    OrderByDescending(r => r.rodada_id).Take(1).Single().rodada.temporada;
+            }
+            catch (Exception e) { }
             var dataLimite = DateTime.Now.AddMonths(-10);
-            var jogosPendentes = db.Jogo.Where(u => (u.desafiado_id == userId || u.desafiante_id == userId) 
-                && u.situacao_Id != 4 && u.situacao_Id != 5 && u.rodada.dataInicio > dataLimite && u.torneioId == null).OrderByDescending(u => u.Id).Take(3).
-                Select(jogo => new JogoRodada {
+            if (temporada.Id>0 && temporada.iniciarZerada) { 
+                var jogosPendentes = db.Jogo.Where(u => (u.desafiado_id == userId || u.desafiante_id == userId)
+                && u.situacao_Id != 4 && u.situacao_Id != 5 && u.rodada.dataInicio > dataLimite && u.torneioId == null && u.rodada.temporadaId==temporada.Id).OrderByDescending(u => u.Id).Take(3).
+                Select(jogo => new JogoRodada
+                {
                     Id = jogo.Id,
                     nomeRodada = "Rodada " + jogo.rodada.codigo + jogo.rodada.sequencial,
                     nomeDesafiante = jogo.desafiante.nome,
                     nomeDesafiado = jogo.desafiado.nome,
                     fotoDesafiado = jogo.desafiado.fotoURL,
                     fotoDesafiante = jogo.desafiante.fotoURL
-        }).ToList<JogoRodada>(); 
-
-            return jogosPendentes;
+                }).ToList<JogoRodada>();
+                return jogosPendentes;
+            }
+            else {
+                var jogosPendentes = db.Jogo.Where(u => (u.desafiado_id == userId || u.desafiante_id == userId)
+                && u.situacao_Id != 4 && u.situacao_Id != 5 && u.rodada.dataInicio > dataLimite && u.torneioId == null).OrderByDescending(u => u.Id).Take(3).
+                Select(jogo => new JogoRodada
+                {
+                    Id = jogo.Id,
+                    nomeRodada = "Rodada " + jogo.rodada.codigo + jogo.rodada.sequencial,
+                    nomeDesafiante = jogo.desafiante.nome,
+                    nomeDesafiado = jogo.desafiado.nome,
+                    fotoDesafiado = jogo.desafiado.fotoURL,
+                    fotoDesafiante = jogo.desafiante.fotoURL
+                }).ToList<JogoRodada>();
+                return jogosPendentes;
+            }
+                        
         }
 
         

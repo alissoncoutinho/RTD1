@@ -110,12 +110,13 @@ namespace Barragem.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult LogOff(string isTorneio="")
         {
-            var dominioTorneio = "";
+            int torneioId = 0;
             if (isTorneio == "torneio"){
                 HttpCookie cookie = Request.Cookies["_barragemId"];
                 if (cookie != null){
                     var barragemId = Convert.ToInt32(cookie.Value.ToString());
-                    dominioTorneio = db.BarragemView.Find(barragemId).dominio;
+
+                    torneioId = db.Torneio.Where(t=> t.barragemId == barragemId).OrderByDescending(t=>t.Id).Take(1).Single().Id;
                 }
             }
             var isBeachTennis = false;
@@ -132,7 +133,7 @@ namespace Barragem.Controllers
                 return RedirectToAction("IndexBT", "Home");
             }
             if (isTorneio == "torneio"){
-                return RedirectToAction("IndexTorneioRedirect", "Home", new { id = dominioTorneio });
+                return RedirectToAction("IndexTorneioRedirect", "Home", new { id = torneioId });
             }
             return RedirectToAction("IndexBarragens", "Home");
         }

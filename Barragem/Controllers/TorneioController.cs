@@ -1056,7 +1056,7 @@ namespace Barragem.Controllers
             return qtddCabecaChave;
         }
 
-        [Authorize(Roles = "admin,organizador")]
+        [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
         public ActionResult EditObs(int torneioId)
         {
             List<InscricaoTorneio> inscricao = db.InscricaoTorneio.Where(i => i.torneioId == torneioId && i.observacao != null && i.observacao != "").ToList();
@@ -3206,6 +3206,10 @@ namespace Barragem.Controllers
                     db.SaveChanges();
                     IList<int> ligas = torneio.liga;
                     int ligaDoRanking = 0;
+                    int i = 1;
+                    ClasseTorneio classe = null;
+                    ClasseLiga classeLiga = null;
+
                     if (ligas != null)
                     {
                         foreach (int idLiga in ligas)
@@ -3217,24 +3221,14 @@ namespace Barragem.Controllers
                             };
                             db.TorneioLiga.Add(tl);
                             db.SaveChanges();
-                            //pesquisa o tipo de torneio
-                            //BarragemLiga barraliga = db.BarragemLiga.Where(bl => bl.LigaId == idLiga && bl.BarragemId == torneio.barragemId).First();
-                            //torneio.TipoTorneio = barraliga.TipoTorneio;
-                            //db.SaveChanges();
+                            // verificar se é o primeiro torneio do circuito. Se for, cadastrar as categorias na liga
+                            var torneiosCriados = db.TorneioLiga.Where(t =>t.LigaId==idLiga && t.Liga.barragemId == torneio.barragemId).Count();
+                            if (torneiosCriados == 1){
+                                ligaDoRanking = idLiga;
+                            }
                         }
                     }
-                    // verificar se é o primeiro torneio. Se for, cadastrar as categorias na liga
-                    var torneiosCriados = db.Torneio.Where(t => t.barragemId == torneio.barragemId).Count();
-                    int i = 1;
-                    ClasseTorneio classe = null;
-                    ClasseLiga classeLiga = null;
-                    if ((torneiosCriados <= 1) && (ligas != null))
-                    {
-                        try
-                        {
-                            ligaDoRanking = db.Liga.Where(l => l.barragemId == torneio.barragemId && l.isAtivo).Select(l => l.Id).First();
-                        }catch(Exception e) { }
-                    }
+                    
                     if (torneio.classes != null)
                     {
                         foreach (int idCategoria in torneio.classes)
@@ -3252,7 +3246,7 @@ namespace Barragem.Controllers
                                 faseGrupo = false,
                                 isDupla = categoria.isDupla
                             };
-                            if ((torneiosCriados <= 1) && (ligas != null) && ligaDoRanking!=0)
+                            if (ligaDoRanking!=0)
                             {
                                 classeLiga = new ClasseLiga {
                                     Nome = categoria.Nome,
