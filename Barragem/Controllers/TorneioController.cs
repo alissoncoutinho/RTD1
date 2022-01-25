@@ -3243,7 +3243,7 @@ namespace Barragem.Controllers
                                 isPrimeiraOpcao = true,
                                 isSegundaOpcao = true,
                                 faseMataMata = true,
-                                faseGrupo = false,
+                                faseGrupo = barragem.isBeachTenis ? true : false,
                                 isDupla = categoria.isDupla
                             };
                             if (ligaDoRanking!=0)
