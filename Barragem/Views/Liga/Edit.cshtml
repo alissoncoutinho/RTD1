@@ -99,8 +99,16 @@
                                 <div class="mt-3 form-input">
                                     <label for="">Escolha a modalidade dos torneios *</label>
                                     <select class="form-select" aria-label="Default select example" name="modalidadeBarragem" id="options">
-                                        <option value="1">Regras da Federação</option>
-                                        <option value="2">Todos contra todos</option>
+                                        @if(ViewBag.isModeloTodosContraTodos)
+                                        {
+                                            <option value="1">Regras da Federação</option>
+                                            <option value="2" selected>Todos contra todos</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="1" selected>Regras da Federação</option>
+                                            <option value="2">Todos contra todos</option>
+                                        }
                                     </select>
                                 </div>
                                 <div class="mt-3">
