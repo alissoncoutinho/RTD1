@@ -135,7 +135,7 @@
                         <h3 class="box-title">Selecione as classes para a geração de tabela</h3>
                     </div>
                     <div class="box-body">
-                        @using (Html.BeginForm("MontarChaveamento", "Torneio", FormMethod.Post, new { @class = "form-row", @name = "FormClasses", @id = "FormClasses" }))
+                        @using (Html.BeginForm("MontarChaveamento", "Torneio", FormMethod.Post, new { @class = "form-row", @name = "FormClasses", @id="FormClasses" }))
                         {
                             <div class="col-sm-4">
                                 <input type="checkbox" value="1" name="todos" id="todos" onclick="marcarTodos()" /> <b>Todos</b>
@@ -143,26 +143,22 @@
                             foreach (var item2 in ViewBag.Classes)
                             {
                                 var nome = item2.nome;
-                                if (item2.faseGrupo)
-                                {
+                                if (item2.faseGrupo){
                                     nome = item2.nome + " <b style='color:green'>(Fase de Grupo)</b>";
                                 }
                                 var jogosGerados = false;
-                                if (ViewBag.ClassesGeradas.Contains(item2.Id))
-                                {
+                                if (ViewBag.ClassesGeradas.Contains(item2.Id)){
                                     jogosGerados = true;
-                                    if ((item2.faseGrupo) && (item2.faseMataMata) && (!ViewBag.classesFaseGrupoNaoFinalizadas.Contains(item2.Id)))
-                                    {
+                                    if ((item2.faseGrupo) && (item2.faseMataMata) && (!ViewBag.classesFaseGrupoNaoFinalizadas.Contains(item2.Id))){
                                         nome = item2.nome + " <b style='color:red'>(Mata-Mata)</b>";
-                                        if (!ViewBag.ClassesGeradasMataMata.Contains(item2.Id))
-                                        {
+                                        if (!ViewBag.ClassesGeradasMataMata.Contains(item2.Id)) { 
                                             jogosGerados = false;
                                         }
                                     }
                                 }
 
                                 <div class="col-sm-4">
-                                    <input type="checkbox" value="@item2.Id" name="classeIds" id="classeIds" @if (!jogosGerados) { @Html.Raw("checked") } />
+                                    <input type="checkbox" value="@item2.Id" name="classeIds" id="classeIds" @if (!jogosGerados) { @Html.Raw("checked")  } /> 
                                     @Html.Raw(nome)
                                 </div>
                             }
@@ -178,10 +174,10 @@
                         <option value="1">Todas classes</option>
                         @foreach (var item2 in ViewBag.Classes)
                         {
-                            <option value="@item2.Id" @if (ViewBag.fClasse == item2.Id) { @Html.Raw("selected") }>@item2.nome</option>
+                            <option value="@item2.Id" @if (ViewBag.fClasse == item2.Id) { @Html.Raw("selected")       }>@item2.nome</option>
                         }
                     </select>
-
+                    
                 </div>
                 <div class="form-group col-sm-2">
                     <div class="input-group date" data-date-format="dd/mm/yyyy">
@@ -206,30 +202,25 @@
                         <option value="6" @if (ViewBag.fGrupo == "6") { @Html.Raw("selected") }>grupo 6</option>
                         <option value="7" @if (ViewBag.fGrupo == "7") { @Html.Raw("selected") }>grupo 7</option>
                         <option value="8" @if (ViewBag.fGrupo == "8") { @Html.Raw("selected") }>grupo 8</option>
-
+                        
                     </select>
                 </div>
                 <div class="form-group col-sm-2">
                     <select name="fase" id="fase" class="form-control">
-                        <option value="0" @if (ViewBag.fase == 0) { @Html.Raw("selected") }>Fases</option>
-                        <option value="700" @if (ViewBag.fase == 700) { @Html.Raw("selected") }>Grupo</option>
-                        <option value="6" @if (ViewBag.fase == 6) { @Html.Raw("selected") }>R1</option>
-                        <option value="5" @if (ViewBag.fase == 5) { @Html.Raw("selected") }>R2</option>
-                        <option value="4" @if (ViewBag.fase == 4) { @Html.Raw("selected") }>Oitavas</option>
-                        <option value="3" @if (ViewBag.fase == 3) { @Html.Raw("selected") }>Quartas</option>
-                        <option value="2" @if (ViewBag.fase == 2) { @Html.Raw("selected") }>Semi</option>
-                        <option value="1" @if (ViewBag.fase == 1) { @Html.Raw("selected") }>Final</option>
+                        <option value="0" @if (ViewBag.fase == 0) { @Html.Raw("selected")  }>Fases</option>
+                        <option value="700" @if (ViewBag.fase == 700) { @Html.Raw("selected")  }>Grupo</option>
+                        <option value="6" @if (ViewBag.fase == 6) { @Html.Raw("selected")  }>R1</option>
+                        <option value="5" @if (ViewBag.fase == 5) { @Html.Raw("selected")  }>R2</option>
+                        <option value="4" @if (ViewBag.fase == 4) { @Html.Raw("selected")  }>Oitavas</option>
+                        <option value="3" @if (ViewBag.fase == 3) { @Html.Raw("selected")  }>Quartas</option>
+                        <option value="2" @if (ViewBag.fase == 2) { @Html.Raw("selected")  }>Semi</option>
+                        <option value="1" @if (ViewBag.fase == 1) { @Html.Raw("selected")  }>Final</option>
                     </select>
                 </div>
                 <div class="form-group col-sm-2">
                     <input type="button" value="filtrar" class="btn btn-primary" onclick="Pesquisar()">
                     <input type="button" value="imprimir" class="btn btn-primary" onclick="Imprimir()">
                 </div>
-            </div>
-            <div class="row" style="float: left; margin: 0px 0px 10px 0px;">
-                <span><span class='badge bg-red'>P</span>: Pendente</span>
-                <span><span class='badge bg-yellow'>M</span>: Marcado</span>
-                <span><span class='badge bg-green'>F</span>: Finalizado</span>
             </div>
             <div class="box-body table-responsive no-padding">
                 <table class="table table-striped table-condensed table-bordered">
@@ -270,103 +261,95 @@
                             <td>
                                 @if (ViewBag.fClasse != 1 && ((Roles.IsUserInRole("admin")) || ((ViewBag.primeirafase != null) && (ViewBag.primeirafase == item.faseTorneio)) || item.classe.faseGrupo))
                                 {
-                                    <select name="@Html.Raw("jogador1_" + i)" id="@Html.Raw("jogador1_" + i)" class="form-control">
-                                        <option value="0">aguardando adversário</option>
-                                        <option value="10" @if (item.desafiante_id == 10) { @Html.Raw("selected") }>bye</option>
-                                        @foreach (var item2 in ViewBag.Inscritos)
-                                        {
-                                            var nomeJogadores = item2.participante.nome;
-                                            if (item2.parceiroDupla != null)
-                                            {
-                                                nomeJogadores = item2.participante.nome + " / " + item2.parceiroDupla.nome;
-                                            }
-                                            <option value="@item2.userId" @if (item.desafiante_id == item2.userId) { @Html.Raw("selected") }>@nomeJogadores </option>
-                                        }
-                                    </select>
-                                }
-                                else
+                        <select name="@Html.Raw("jogador1_" + i)" id="@Html.Raw("jogador1_" + i)" class="form-control">
+                            <option value="0">aguardando adversário</option>
+                            <option value="10" @if (item.desafiante_id == 10) { @Html.Raw("selected")     }>bye</option>
+                            @foreach (var item2 in ViewBag.Inscritos)
+                            {
+                                var nomeJogadores = item2.participante.nome;
+                                if(item2.parceiroDupla != null)
                                 {
-                                    <input type="hidden" name="@Html.Raw("jogador1_" + i)" id="@Html.Raw("jogador1_" + i)" value="@item.desafiante_id">
-                                    if (item.desafiante_id == 10)
-                                    {
-                                        @Html.Raw("Bye");
-                                        <input type="hidden" name="@Html.Raw("jogador1Nome_" + i)" id="@Html.Raw("jogador1Nome_" + i)" value="Bye">
-                                    }
-                                    else if (item.desafiante_id == 0)
-                                    {
-                                        @Html.Raw("Aguardando Adversário");
-                                        <input type="hidden" name="@Html.Raw("jogador1Nome_" + i)" id="@Html.Raw("jogador1Nome_" + i)" value="Aguardando Adversário">
-                                    }
-                                    else
-                                    {
-                                        <input type="hidden" name="@Html.Raw("jogador1Nome_" + i)" id="@Html.Raw("jogador1Nome_" + i)" value="@item.desafiante.nome">
-                                        <a href="@Url.Action("../Account/Detalhes", new { userId = item.desafiante_id, mostrarClasse = false })" title="Detalhes do jogador">
-                                            @item.desafiante.nome
-                                        </a>
-                                        <a href="@item.desafiante.linkwhatsapp">
-                                            <img width="25" height="25" src="/Content/image/whatsapp.png">
-                                        </a>
-                                    }
+                                    nomeJogadores = item2.participante.nome + " / " + item2.parceiroDupla.nome;
                                 }
+                                <option value="@item2.userId" @if (item.desafiante_id == item2.userId) { @Html.Raw("selected") }>@nomeJogadores </option>
+                                }
+                        </select>
+                        } else {
+                        <input type="hidden" name="@Html.Raw("jogador1_" + i)" id="@Html.Raw("jogador1_" + i)" value="@item.desafiante_id">
+                            if (item.desafiante_id == 10){
+                        @Html.Raw("Bye");
+                        <input type="hidden" name="@Html.Raw("jogador1Nome_" + i)" id="@Html.Raw("jogador1Nome_" + i)" value="Bye">
+                            }
+                            else if (item.desafiante_id == 0)
+                            {
+                        @Html.Raw("Aguardando Adversário");
+                        <input type="hidden" name="@Html.Raw("jogador1Nome_" + i)" id="@Html.Raw("jogador1Nome_" + i)" value="Aguardando Adversário">
+                            }
+                            else
+                            {
+                        <input type="hidden" name="@Html.Raw("jogador1Nome_" + i)" id="@Html.Raw("jogador1Nome_" + i)" value="@item.desafiante.nome">
+                        <a href="@Url.Action("../Account/Detalhes", new { userId = item.desafiante_id, mostrarClasse = false })" title="Detalhes do jogador">
+                            @item.desafiante.nome
+                        </a>
+                        <a href="@item.desafiante.linkwhatsapp">
+                            <img width="25" height="25" src="/Content/image/whatsapp.png">
+                        </a>
+                            }
+                        }
                             </td>
                             <td>
                                 @if (ViewBag.fClasse != 1 && ((Roles.IsUserInRole("admin")) || ((ViewBag.primeirafase != null) && (ViewBag.primeirafase == item.faseTorneio)) || item.classe.faseGrupo))
                                 {
-                                    <select name="@Html.Raw("jogador2_" + i)" id="@Html.Raw("jogador2_" + i)" class="form-control">
-                                        <option value="0">aguardando adversário</option>
-                                        <option value="10">bye</option>
-                                        @foreach (var item2 in ViewBag.Inscritos)
-                                        {
-                                            var nomeJogadores = item2.participante.nome;
-                                            if (item2.parceiroDupla != null)
-                                            {
-                                                nomeJogadores = item2.participante.nome + " / " + item2.parceiroDupla.nome;
-                                            }
-                                            <option value="@item2.userId" @if (item.desafiado_id == item2.userId) { @Html.Raw("selected") }>@nomeJogadores</option>
-                                        }
-                                    </select>
+                    <select name="@Html.Raw("jogador2_" + i)" id="@Html.Raw("jogador2_" + i)" class="form-control">
+                        <option value="0">aguardando adversário</option>
+                        <option value="10">bye</option>
+                        @foreach (var item2 in ViewBag.Inscritos){
+                            var nomeJogadores = item2.participante.nome;
+                            if (item2.parceiroDupla != null)
+                            {
+                                nomeJogadores = item2.participante.nome + " / " + item2.parceiroDupla.nome;
+                            }
+                                <option value="@item2.userId" @if (item.desafiado_id == item2.userId) { @Html.Raw("selected")        }>@nomeJogadores</option>
                                 }
-                                else
-                                {
-                                    <input type="hidden" name="@Html.Raw("jogador2_" + i)" id="@Html.Raw("jogador2_" + i)" value="@item.desafiado_id">
-                                    if (item.desafiado_id == 10)
-                                    {
-                                        @Html.Raw("Bye");
-                                        <input type="hidden" name="@Html.Raw("jogador2Nome_" + i)" id="@Html.Raw("jogador2Nome_" + i)" value="Bye">
-                                    }
-                                    else if (item.desafiado_id == 0)
-                                    {
-                                        @Html.Raw("Aguardando Adversário");
-                                        <input type="hidden" name="@Html.Raw("jogador2Nome_" + i)" id="@Html.Raw("jogador2Nome_" + i)" value="Aguardando Adversário">
-                                    }
-                                    else
-                                    {
-                                        <input type="hidden" name="@Html.Raw("jogador2Nome_" + i)" id="@Html.Raw("jogador2Nome_" + i)" value="@item.desafiado.nome">
-                                        <a href="@Url.Action("../Account/Detalhes", new { userId = item.desafiado_id, mostrarClasse = false })" title="Detalhes do jogador">
-                                            @item.desafiado.nome
-                                        </a>
-                                        <a href="@item.desafiado.linkwhatsapp">
-                                            <img width="25" height="25" src="/Content/image/whatsapp.png">
-                                        </a>
-                                    }
-                                }
+                    </select>
+                        }else{
+                    <input type="hidden" name="@Html.Raw("jogador2_" + i)" id="@Html.Raw("jogador2_" + i)" value="@item.desafiado_id">
+                            if (item.desafiado_id == 10){
+                    @Html.Raw("Bye");
+                    <input type="hidden" name="@Html.Raw("jogador2Nome_" + i)" id="@Html.Raw("jogador2Nome_" + i)" value="Bye">
+                            }
+                            else if (item.desafiado_id == 0)
+                            {
+                    @Html.Raw("Aguardando Adversário");
+                    <input type="hidden" name="@Html.Raw("jogador2Nome_" + i)" id="@Html.Raw("jogador2Nome_" + i)" value="Aguardando Adversário">
+                            }
+                            else
+                            {
+                    <input type="hidden" name="@Html.Raw("jogador2Nome_" + i)" id="@Html.Raw("jogador2Nome_" + i)" value="@item.desafiado.nome">
+                    <a href="@Url.Action("../Account/Detalhes", new { userId = item.desafiado_id, mostrarClasse = false })" title="Detalhes do jogador">
+                        @item.desafiado.nome
+                    </a>
+                    <a href="@item.desafiado.linkwhatsapp">
+                        <img width="25" height="25" src="/Content/image/whatsapp.png">
+                    </a>
+                            }
+                        }
                             </td>
                             <td>
                                 @Html.Raw(item.descricaoFaseTorneio)
                             </td>
                             <td>
-                                @if (item.situacao_Id == 1)
-                                {
-                                    @Html.Raw("<p id='badge" + item.Id + "' class='badge bg-red'>P</p>")
-                                }
-                                else if (item.situacao_Id == 2)
-                                {
-                                    @Html.Raw("<p id='badge" + item.Id + "' class='badge bg-yellow'>M</p>")
-                                }
-                                else if ((item.situacao_Id == 4) || (item.situacao_Id == 5) || (item.situacao_Id == 6))
-                                {
-                                    @Html.Raw("<p id='badge" + item.Id + "' class='badge bg-green'>F</p>")
-                                }
+                                @if (item.situacao_Id == 1){
+                        @Html.Raw("<p id='badge"+ item.Id +"' class='badge bg-red'>P</p>")
+                        }
+                        else if (item.situacao_Id == 2)
+                        {
+                        @Html.Raw("<p id='badge" + item.Id + "' class='badge bg-yellow'>M</p>")
+                        }
+                        else if ((item.situacao_Id == 4) || (item.situacao_Id == 5) || (item.situacao_Id == 6))
+                        {
+                        @Html.Raw("<p id='badge" + item.Id + "' class='badge bg-green'>F</p>")
+                        }
                             </td>
 
 
@@ -390,24 +373,24 @@
                             </td>
                             <td>
                                 <select name="@Html.Raw("quadra" + i)" id="@Html.Raw("quadra" + i)" class="form-control">
-                                    <option value="100" @if (item.quadra == "100") { @Html.Raw("selected") }></option>
-                                    <option value="1" @if (item.quadra == "1") { @Html.Raw("selected") }>quadra 1</option>
-                                    <option value="2" @if (item.quadra == "2") { @Html.Raw("selected") }>quadra 2</option>
-                                    <option value="3" @if (item.quadra == "3") { @Html.Raw("selected") }>quadra 3</option>
-                                    <option value="4" @if (item.quadra == "4") { @Html.Raw("selected") }>quadra 4</option>
-                                    <option value="5" @if (item.quadra == "5") { @Html.Raw("selected") }>quadra 5</option>
-                                    <option value="6" @if (item.quadra == "6") { @Html.Raw("selected") }>quadra 6</option>
-                                    <option value="7" @if (item.quadra == "7") { @Html.Raw("selected") }>quadra 7</option>
-                                    <option value="8" @if (item.quadra == "8") { @Html.Raw("selected") }>quadra 8</option>
-                                    <option value="9" @if (item.quadra == "9") { @Html.Raw("selected") }>quadra 9</option>
-                                    <option value="10" @if (item.quadra == "10") { @Html.Raw("selected") }>quadra 10</option>
-                                    <option value="11" @if (item.quadra == "11") { @Html.Raw("selected") }>quadra 11</option>
-                                    <option value="12" @if (item.quadra == "12") { @Html.Raw("selected") }>quadra 12</option>
-                                    <option value="13" @if (item.quadra == "13") { @Html.Raw("selected") }>quadra 13</option>
-                                    <option value="14" @if (item.quadra == "14") { @Html.Raw("selected") }>quadra 14</option>
-                                    <option value="15" @if (item.quadra == "15") { @Html.Raw("selected") }>quadra 15</option>
-                                    <option value="G1" @if (item.quadra == "G1") { @Html.Raw("selected") }>quadra G1</option>
-                                    <option value="G2" @if (item.quadra == "G2") { @Html.Raw("selected") }>quadra G2</option>
+                                    <option value="100" @if (item.quadra == "100") { @Html.Raw("selected")       }></option>
+                                    <option value="1" @if (item.quadra == "1") { @Html.Raw("selected")        }>quadra 1</option>
+                                    <option value="2" @if (item.quadra == "2") { @Html.Raw("selected")        }>quadra 2</option>
+                                    <option value="3" @if (item.quadra == "3") { @Html.Raw("selected")        }>quadra 3</option>
+                                    <option value="4" @if (item.quadra == "4") { @Html.Raw("selected")        }>quadra 4</option>
+                                    <option value="5" @if (item.quadra == "5") { @Html.Raw("selected")        }>quadra 5</option>
+                                    <option value="6" @if (item.quadra == "6") { @Html.Raw("selected")        }>quadra 6</option>
+                                    <option value="7" @if (item.quadra == "7") { @Html.Raw("selected")        }>quadra 7</option>
+                                    <option value="8" @if (item.quadra == "8") { @Html.Raw("selected")        }>quadra 8</option>
+                                    <option value="9" @if (item.quadra == "9") { @Html.Raw("selected")        }>quadra 9</option>
+                                    <option value="10" @if (item.quadra == "10") { @Html.Raw("selected")        }>quadra 10</option>
+                                    <option value="11" @if (item.quadra == "11") { @Html.Raw("selected")        }>quadra 11</option>
+                                    <option value="12" @if (item.quadra == "12") { @Html.Raw("selected")        }>quadra 12</option>
+                                    <option value="13" @if (item.quadra == "13") { @Html.Raw("selected")        }>quadra 13</option>
+                                    <option value="14" @if (item.quadra == "14") { @Html.Raw("selected")        }>quadra 14</option>
+                                    <option value="15" @if (item.quadra == "15") { @Html.Raw("selected")        }>quadra 15</option>
+                                    <option value="G1" @if (item.quadra == "G1") { @Html.Raw("selected")         }>quadra G1</option>
+                                    <option value="G2" @if (item.quadra == "G2") { @Html.Raw("selected")         }>quadra G2</option>
                                 </select>
                             </td>
                             <td align="center">
