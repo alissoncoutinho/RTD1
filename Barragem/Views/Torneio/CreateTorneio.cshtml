@@ -239,7 +239,7 @@
                         @foreach (var categoria in ViewBag.Categorias)
                         {
                             <div class="row">
-                                <div class="col-sm-3 col-xs-8"><input type="checkbox" name="classes" value="@categoria.Id"> @categoria.Nome</div>
+                                <div class="col-sm-3 col-xs-8"><input type="checkbox" class="categorias" name="classes" id="classes" data-qtddtorneios="@ViewBag.qtddTorneios" data-valor="@categoria.Id" data-isLiga="@if (categoria.Ligas.Count > 0) { @Html.Raw("sim") }else{ @Html.Raw("nao") }" value="@categoria.Id"> @categoria.Nome</div>
                             @if (categoria.Ligas.Count > 0)
                             {
                                 var title = "";
@@ -250,16 +250,13 @@
                                 <div class="col-sm-2 col-xs-2"><span class="glyphicon glyphicon-flag" title="@title">
                                 </span></div>
                             }
+                            else
+                            {
+                                <div class="col-sm-2 col-xs-2" id=@("flag-" + categoria.Id)></div>
+                            }
                             </div>
                         }
-                    </div>
-                </div>
-                <a href="#tabConfigFinais" id="btnTab3" class="btn btn-info" data-toggle="tab"><b>Avançar</b></a>
-            </div>
-        </div>
-
-        <!-- QUARTA ABA: CONFIGURAÇÕES -->
-        <div id="tabConfigFinais" class="tab-pane fade">
+                    </div></div><a href="#tabConfigFinais" id="btnTab3" class="btn btn-info" data-toggle="tab"><b>Avançar</b></a></div></div><!-- QUARTA ABA: CONFIGURAÇÕES --><div id="tabConfigFinais" class="tab-pane fade">
             <div class="box-header with-border">
                 <h4 class="box-title">Configurações finais</h4>
             </div>
@@ -448,6 +445,48 @@
         });
         $('#cidade').attr('autocomplete', 'off');
 
+        $(".categorias").click(function (event) {
+            var isLiga = $(this).data("isliga");
+            var categoriaId = $(this).data("valor");
+            var qtddTorneios = $(this).data("qtddtorneios");
+            var check = $(this).prop("checked");
+            if ((isLiga == "nao") && (check) && (qtddTorneios>0)){
+                $.confirm({
+                    title: "",
+                    content: "Deseja que esta classe pontue no seu circuito?",
+                    buttons: {
+                        sim: {
+                            text: 'Sim',
+                            btnClass: 'btn-primary',
+                            action: function () {
+                                $.ajax({
+                                    url: "/Torneio/IncluirCategoriaNoCircuito?categoriaId=" + categoriaId,
+                                    dataType: "json",
+                                    contentType: "application/json; charset=utf-8",
+                                    success: function (response) {
+                                        if (typeof response == "object") {
+                                            if (response.retorno === 0) {
+                                                toastr.error(response.erro, "Erro");
+                                            } else {
+                                                document.getElementById('flag-' + categoriaId).innerHTML = "<span class='glyphicon glyphicon-flag' title=''></span>";
+                                                toastr.success("Inclusão realizada com sucesso.", "Aviso");
+                                            }
+                                        }
+                                    },
+                                    error: function (jqXHR, textStatus, errorThrown) {
+                                        toastr.error(textStatus, "Erro");
+                                    }
+                                });
+                                
+                            }
+                        },
+                        cancelar: { text: 'Não' }
+                    }
+                });
+            }
+
+        });
+
      });
 
     function CadastrarValorDescontoSocio() {
@@ -516,10 +555,10 @@
                 $("#btnTab2").attr("href", "#tabInscricao");
             } else if ((document.getElementById('qtddCategoriasPorJogador').value == 1) && (document.getElementById('valor').value == "")) {
                 toastr.error("Informe o valor da inscrição.", "Erro");
-                $("#btnTab2").attr("href", "#tabInscricao");    
+                $("#btnTab2").attr("href", "#tabInscricao");
             } else if ((document.getElementById('qtddCategoriasPorJogador').value == 2) && ((document.getElementById('valor').value == "") || (document.getElementById('valor2').value == ""))) {
                 toastr.error("Informe todos os valores das inscrições.", "Erro");
-                $("#btnTab2").attr("href", "#tabInscricao");  
+                $("#btnTab2").attr("href", "#tabInscricao");
             } else if ((document.getElementById('qtddCategoriasPorJogador').value == 3) && ((document.getElementById('valor').value == "") || (document.getElementById('valor2').value == "") || (document.getElementById('valor3').value == ""))) {
                 toastr.error("Informe todos os valores das inscrições.", "Erro");
                 $("#btnTab2").attr("href", "#tabInscricao");
@@ -547,7 +586,7 @@
             $('html,body').scrollTop(0);
         });
 
-            
+
 
     function habilibarValoresInscricao() {
         if (document.getElementById('qtddCategoriasPorJogador').value == 1) {

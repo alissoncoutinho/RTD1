@@ -3295,6 +3295,34 @@ namespace Barragem.Controllers
             }
             return View();
         }
+
+
+        [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis")]
+        public ActionResult IncluirCategoriaNoCircuito(int categoriaId)
+        {
+            try { 
+                var userId = WebSecurity.GetUserId(User.Identity.Name);
+                var barragemId = (from up in db.UserProfiles where up.UserId == userId select up.barragemId).Single();
+                var circuito = db.Liga.Where(l => l.barragemId == barragemId).OrderByDescending(l => l.Id).Take(1).Single();
+                var categoria = db.Categoria.Find(categoriaId);
+                var classeLiga = new ClasseLiga
+                {
+                    Nome = categoria.Nome,
+                    CategoriaId = categoriaId,
+                    LigaId = circuito.Id
+                };
+                db.ClasseLiga.Add(classeLiga);
+                db.SaveChanges();
+                return Json(new { erro = "", retorno = 1 }, "application/json", JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { erro = "Falha ao incluir classe no circuito:" + ex.Message, retorno = 0 }, "application/json", JsonRequestBehavior.AllowGet);
+            }
+
+            
+        }
+
         [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
         public ActionResult CreateTorneio()
         {
@@ -3314,6 +3342,7 @@ namespace Barragem.Controllers
                 barragens.isTeste = false;
                 db.SaveChanges();
             }
+            ViewBag.qtddTorneios = qtddTorneios;
 
             // List<Liga> ligasDisponiveis = new List<Liga>();
             List<int> ligasId = new List<int>();

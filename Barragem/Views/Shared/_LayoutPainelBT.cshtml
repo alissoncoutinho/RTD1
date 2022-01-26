@@ -171,6 +171,10 @@
                                 </div>
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                @if (Roles.IsUserInRole("organizador"))
+                                {
+                                    <li class="pt-1">@Html.ActionLink("Painel Ranking", "Dashboard", "Home", new { }, new { @class = "dropdown-item" })</li>
+                                }
                                 <li><a class="dropdown-item" href="@Url.Action("EditaUsuario", "Account", new { UserName = User.Identity.Name })">Alterar Perfil</a></li>
                                 <li><a class="dropdown-item" href="/Account/Manage">Alterar Senha</a></li>
                                 <li><a class="dropdown-item" href="/Torneio">Torneios</a></li>
