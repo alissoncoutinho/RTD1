@@ -203,7 +203,7 @@
                     <div class="panel-body">
                         @foreach (var lg in ViewBag.LigasDisponiveis)
                         {
-                            <input type="checkbox" name="liga" value="@lg.Liga.Id">
+                            <input type="checkbox" name="liga" class="ligas" value="@lg.Liga.Id">
                             if (ViewBag.isModeloTodosContraTodos)
                             {
                                 @Html.Raw(lg.Liga.Nome)
@@ -213,7 +213,7 @@
                                 if (ViewBag.barragemId == lg.Liga.barragemId) {
                                 //if (false){
                                     @Html.Raw(lg.Liga.Nome + " - Pontos: ")
-                                    <select name="pontuacaoLiga">
+                                    <select name="pontuacaoLiga" id="pontuacaoLiga">
                                         <option value="100">100</option>
                                         <option value="250">250</option>
                                         <option value="500">500</option>
@@ -446,11 +446,20 @@
         $('#cidade').attr('autocomplete', 'off');
 
         $(".categorias").click(function (event) {
+            var ligaSelecionada = false;
+            var ligas = document.querySelectorAll(".ligas");
+            ligas.forEach(function (lg) {
+                if (lg.checked) {
+                    ligaSelecionada = true;
+                }
+            });
+
+            var existeLigaPropria = !!document.getElementById("pontuacaoLiga");
             var isLiga = $(this).data("isliga");
             var categoriaId = $(this).data("valor");
             var qtddTorneios = $(this).data("qtddtorneios");
             var check = $(this).prop("checked");
-            if ((isLiga == "nao") && (check) && (qtddTorneios>0)){
+            if ((isLiga == "nao") && (check) && (qtddTorneios > 0) && (existeLigaPropria) && (ligaSelecionada)){
                 $.confirm({
                     title: "",
                     content: "Deseja que esta classe pontue no seu circuito?",

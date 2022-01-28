@@ -3243,7 +3243,7 @@ namespace Barragem.Controllers
                                 isPrimeiraOpcao = true,
                                 isSegundaOpcao = true,
                                 faseMataMata = true,
-                                faseGrupo = false,
+                                faseGrupo = barragem.isBeachTenis ? true : false,
                                 isDupla = categoria.isDupla
                             };
                             if (ligaDoRanking!=0)
@@ -3303,16 +3303,26 @@ namespace Barragem.Controllers
             try { 
                 var userId = WebSecurity.GetUserId(User.Identity.Name);
                 var barragemId = (from up in db.UserProfiles where up.UserId == userId select up.barragemId).Single();
-                var circuito = db.Liga.Where(l => l.barragemId == barragemId).OrderByDescending(l => l.Id).Take(1).Single();
-                var categoria = db.Categoria.Find(categoriaId);
-                var classeLiga = new ClasseLiga
+                Liga circuito = null;
+                try
                 {
-                    Nome = categoria.Nome,
-                    CategoriaId = categoriaId,
-                    LigaId = circuito.Id
-                };
-                db.ClasseLiga.Add(classeLiga);
-                db.SaveChanges();
+                    circuito = db.Liga.Where(l => l.barragemId == barragemId).OrderByDescending(l => l.Id).Take(1).Single();
+                }catch(Exception ex)
+                {
+                    return Json(new { erro = "Você ainda não possui um circuito próprio.", retorno = 1 }, "application/json", JsonRequestBehavior.AllowGet);
+                }
+                var categoria = db.Categoria.Find(categoriaId);
+                if (!db.ClasseLiga.Where(c => c.CategoriaId == categoriaId && c.LigaId == circuito.Id).Any())
+                {
+                    var classeLiga = new ClasseLiga
+                    {
+                        Nome = categoria.Nome,
+                        CategoriaId = categoriaId,
+                        LigaId = circuito.Id
+                    };
+                    db.ClasseLiga.Add(classeLiga);
+                    db.SaveChanges();
+                }
                 return Json(new { erro = "", retorno = 1 }, "application/json", JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)

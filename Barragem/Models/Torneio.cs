@@ -172,6 +172,7 @@ namespace Barragem.Models
         public string pontuacaoLiga { get; set; }
         public string nomeLiga { get; set; }
         public bool? inscricaoSoPeloSite { get; set; }
+        public bool? isBeachTennis { get; set; }
     }
 
     public class Patrocinador
