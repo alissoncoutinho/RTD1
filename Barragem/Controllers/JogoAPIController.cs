@@ -27,7 +27,8 @@ namespace Barragem.Controllers
         public IList<JogoRodada> GetListarJogos(int classeId, int rankingId)
         {
             var rodadaId = db.Rodada.Where(r => r.isRodadaCarga == false && r.barragemId == rankingId).Max(r => r.Id);
-            var jogos = db.Jogo.Where(j => j.rodada_id == rodadaId && j.desafiado.classeId == classeId).ToList<Jogo>(); 
+            var jogos = db.Jogo.Where(j => j.rodada_id == rodadaId && j.desafiado.classeId == classeId).ToList<Jogo>();
+            jogos = jogos.OrderBy(j => j.dataJogo == null).ThenBy(j => j.dataJogo).ThenBy(j => j.horaJogo).ToList();
             IList<JogoRodada> jogoRodada = new List<JogoRodada>();
             foreach (var jogo in jogos)
             {
