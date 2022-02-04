@@ -520,7 +520,7 @@ namespace Barragem.Class
                         rkDesafiado = ranking.Where(r => r.userId == jogo.desafiado.UserId).FirstOrDefault();
                         rkDesafiante = ranking.Where(r => r.userId == jogo.desafiante.UserId).FirstOrDefault();
                         // se a posicao for igual a zero o cara acabou de entrar ainda não tem posicao então verificar pelo totalAcumulado
-                        if ((rkDesafiado != null && rkDesafiante != null) && (rkDesafiante.totalAcumulado == rkDesafiado.totalAcumulado) && (rkDesafiante.posicaoUser < rkDesafiado.posicaoUser))
+                        if ((rkDesafiado != null && rkDesafiante != null) && (rkDesafiante.pontuacao == rkDesafiado.pontuacao) && (rkDesafiante.posicaoUser < rkDesafiado.posicaoUser))
                         {
                             var desafiado = jogo.desafiante;
                             var desafiante = jogo.desafiado;
@@ -529,7 +529,7 @@ namespace Barragem.Class
                             jogo.desafiante = desafiante;
                             jogo.desafiante_id = desafiante.UserId;
                         }
-                        if ((rkDesafiado != null && rkDesafiante != null) && (rkDesafiante.totalAcumulado > rkDesafiado.totalAcumulado))
+                        if ((rkDesafiado != null && rkDesafiante != null) && (rkDesafiante.pontuacao > rkDesafiado.pontuacao))
                         {
                             var desafiado = jogo.desafiante;
                             var desafiante = jogo.desafiado;

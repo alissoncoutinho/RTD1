@@ -5,9 +5,12 @@ using System.Configuration;
 using System.IO;
 using System.Net;
 using System.Text;
+using Barragem.Models;
+using Barragem.Context;
 
 public class PIXPagSeguro
 {
+    private BarragemDbContext db = new BarragemDbContext();
     public void CriarTokenPIX(FirebaseNotificationModel data)
     {
         try

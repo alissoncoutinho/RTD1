@@ -11,7 +11,6 @@
         valor = (double)Model.valorPendente;
     }
 }
-
 <section class="content">
     @if ((ViewBag.Msg != "") && (ViewBag.Msg != null))
     {
@@ -27,7 +26,8 @@
                 @if (Model.valor != 0)
                 {
                     if (ViewBag.isAceitaCartao) {
-                        <a href="@Url.Action("EfetuarPagamento", "Torneio", new { inscricaoId = inscId })" style="text-decoration: none" class="btn btn-success" data-id="@Model.Id" title="Efetuar Pagamento">Cartão</a>
+                        <!--a href="Url.Action("EfetuarPagamento", "Torneio", new { inscricaoId = inscId })" style="text-decoration: none" class="btn btn-success" data-id="Model.Id" title="Efetuar Pagamento">PIX</a-->
+                        <button class="btn btn-success" onclick="buscarQR_code(@inscId)" title="PIX">PIX</button>
                     }
                     if ((Model.torneio.dadosBancarios != null) && (Model.torneio.dadosBancarios.Length > 100))
                     {
@@ -48,6 +48,44 @@
                 @Html.Raw(Model.torneio.dadosBancarios)
             </div>
 
+        </div>
+    </div>
+    <div class="row exibir-inserirResultados" id="qrcode"> 
+        <div class="box box-warning">
+            <div class="box-header with-border">
+                <h3 class="box-title">PIX</h3> 
+            </div>
+            <div class="box-body" id="qrcode_conteudo">
+                Para Confirmar sua inscrição faça um pix seguindo as instruções abaixo:</br></br>
+
+                1. Acesse seu internet Banking ou app de pagamento;</br>
+                2. Escolha pagar via PIX;</br>
+                3. Em alguns apps existe a opção PIX copia e cola;</br>
+                4. Cole o código abaixo no app e efetue o pagamento;</br>
+                <div class="row">
+                    <div class="form-group col-sm-8  col-xs-8">
+                        <input type="text" id="textqrcode" class="form-control" readonly value="" />
+                    </div>
+                    <div class="form-group col-sm-2  col-xs-2">
+                        <button id="btnCopiar" class="btn btn-primary">Copiar</button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <b>IMPORTANTE:</b> não é necessário enviar comprovante para o organizador.
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="row exibir-inserirResultados" id="qrcodeerro">
+        <div class="box box-warning">
+            <div class="box-header with-border">
+                <h3 class="box-title">Erro: PIX</h3>
+            </div>
+            <div class="box-body" id="qrcodeerro_conteudo">
+            </div>
         </div>
     </div>
                 <div class="row">
@@ -139,12 +177,42 @@
 
                 </div>
 </section>
+
 @section Scripts {
     <script type="text/javascript">
         function mostrarDadosBancarios() {
             var element = document.getElementById("dadosBancarios");
             element.classList.add("show");
         }
+
+        function buscarQR_code(inscricaoId) {
+            var retorno = null
+            $.ajax({
+                url: "/api/InscricaoAPI/" + inscricaoId + "/CobrancaPIX",
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function (response) {
+                    var element = document.getElementById("qrcode");
+                    element.classList.add("show");
+                    document.getElementById("textqrcode").value = response
+                    document.getElementById("qrcodeerro").classList.remove('show');
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    retorno = jqXHR.responseJSON.Message
+                    var element = document.getElementById("qrcodeerro");
+                    element.classList.add("show");
+                    document.getElementById("qrcodeerro_conteudo").innerHTML = "<p style='color: red;'><b>Erro: </b>" + retorno + "</p>"
+                    document.getElementById("qrcode").classList.remove('show');
+                }
+            });
+
+        }
+
+        $('#btnCopiar').on('click', function (event) {
+            event.preventDefault();
+            navigator.clipboard.writeText(document.getElementById("textqrcode").value);
+            toastr.success("Link copiado com sucesso.", "Aviso");
+        });
     </script>
 }
 

@@ -26,7 +26,7 @@
             @Html.DisplayFor(modelItem => item.dataFim)
         </td>
         <td>
-            <a href="@Url.Action("Index", new { id = item.Id })" title="Ranking" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-list"></span></a>
+            <a href="@Url.Action("Index", new { id = item.Id, nome = item.barragemId })" title="Ranking" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-list"></span></a>
         </td>
     </tr>
 }

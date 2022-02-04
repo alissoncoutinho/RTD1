@@ -33,8 +33,14 @@ namespace Barragem.Controllers
                     ViewBag.IdBarragem = bV.Id;
                     ViewBag.NomeBarragem = bV.nome;
                 }else if (nome != ""){
-                    bV = db.BarragemView.Where(b => b.dominio == nome).FirstOrDefault();
-                    id = db.Rancking.Where(r => r.rodada.isAberta == false && r.rodada.isRodadaCarga == false && r.rodada.barragemId == bV.Id).Max(r => r.rodada_id);
+                    if (nome.All(char.IsDigit)){
+                        var barragemId = Int32.Parse(nome);
+                        bV = db.BarragemView.Find(barragemId);
+                    }
+                    else{
+                        bV = db.BarragemView.Where(b => b.dominio == nome).FirstOrDefault();
+                    }
+                    //id = db.Rancking.Where(r => r.rodada.isAberta == false && r.rodada.isRodadaCarga == false && r.rodada.barragemId == bV.Id).Max(r => r.rodada_id);
                     ViewBag.IdBarragem = bV.Id;
                     ViewBag.NomeBarragem = bV.nome;
                 }else if (id == 0){
