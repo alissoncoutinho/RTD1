@@ -23,7 +23,7 @@ namespace Barragem.Controllers
     {
         private BarragemDbContext db = new BarragemDbContext();
 
-        [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis")]
+        [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
         public ActionResult Index(string msg = "", string detalheErro = "")
         {
             List<BarragemLiga> ligasDaBarragem = null;
@@ -34,6 +34,18 @@ namespace Barragem.Controllers
             if (perfil.Equals("admin"))
             {
                 ligas = db.Liga.OrderByDescending(l => l.Id).ToList();
+            }
+            else if (perfil.Equals("parceiroBT"))
+            {
+                ligasDaBarragem = db.BarragemLiga.Include(r => r.Liga).Where(r => r.BarragemId == barragemId).OrderByDescending(c => c.Id).ToList();
+                ligas = new List<Liga>();
+                foreach (BarragemLiga ligaBarragem in ligasDaBarragem)
+                {
+                    if (ligaBarragem.Barragem.isBeachTenis == true && !ligaBarragem.Liga.Nome.ToUpper().Contains("TESTE"))
+                    {
+                        ligas.Add(ligaBarragem.Liga);
+                    }
+                }
             }
             else
             {

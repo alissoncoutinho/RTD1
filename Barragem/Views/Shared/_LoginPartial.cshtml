@@ -21,17 +21,20 @@
             {
                 <li>@Html.ActionLink("Ranking", "Index", "Barragens")</li>
                 <li>@Html.ActionLink("Torneio", "Index", "Torneio")</li>
+                <li>@Html.ActionLink("Circuito", "Index", "Liga")</li>
             }
-            @if (!Roles.IsUserInRole("adminTorneio")) {
+            @if (!Roles.IsUserInRole("adminTorneio"))
+            {
                 <li>@Html.ActionLink("Inserir Foto", "../Account/EditaUsuario", new { UserName = User.Identity.Name, isAlterarFoto = true })</li>
                 <li>@Html.ActionLink("Alterar Dados", "../Account/EditaUsuario", new { UserName = User.Identity.Name })</li>
                 <li>@Html.ActionLink("Perfil", "../Account/Detalhes", new { userId = WebSecurity.GetUserId(User.Identity.Name) })</li>
-                if (!Roles.IsUserInRole("parceiroBT")){
+                if (!Roles.IsUserInRole("parceiroBT"))
+                {
                     <li>@Html.ActionLink("Meus Jogos", "ListarJogosJogador", "Jogo")</li>
                 }
             }
             <li>@Html.ActionLink("Trocar senha", "Manage", "Account")</li>
-                
+
             @if ((Roles.IsUserInRole("admin")) || (Roles.IsUserInRole("organizador")))
             {
                 <li>@Html.ActionLink("Ranking", "Index", "Barragens")</li>
@@ -47,10 +50,10 @@
                 <li>@Html.ActionLink("Circuito", "Index", "Liga")</li>
                 <li>@Html.ActionLink("Regra", "Index", "Regra")</li>
             }
-            
-            
-            
-                <!--li class="divider"></!--li-->
+
+
+
+            <!--li class="divider"></!--li-->
             <li>
                 <a href="javascript:document.getElementById('logoutForm').submit()">Sair-</a>
             </li>
