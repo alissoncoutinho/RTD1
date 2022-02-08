@@ -317,10 +317,10 @@
                 </div>
                 @if ((ViewBag.tokenPagSeguro == "") || (ViewBag.tokenPagSeguro == null))
                 {
-                    <br><input type="checkbox" name="cartao" id="cartao" value="true" onclick="isCartaoCredito()"> <b>Deseja aceitar inscrição no cartão?</b><br>
+                    <br><input type="checkbox" name="cartao" id="cartao" value="true" onclick="isCartaoCredito()"> <b>Deseja aceitar inscrição via PIX com detecção automática de pagamento?</b><br>
                     <div id="isCartao">
                         <div class="editor-label">
-                            <small style="color:red">Para fazer a configuração do PagSeguro, contate o suporte via whatsapp (61-98408-6580).</small>
+                            <small style="color:red">Você ainda não integrou o Pagseguro - <a class="" href="/Barragens/EditPagSeguro">Clique aqui</a> para realizar sua inscrição.</small>
                         </div>
                     </div>
                     <script>
@@ -329,7 +329,7 @@
                 }
                 else
                 {
-                    <br><div class="editor-label"> <b>Torneio configurado para pagamento da inscrição no cartão de crédito.</b></div>
+                    <br><div class="editor-label"> <b>Torneio configurado para receber pagamento Via PIX com detecção automática de pagamento.</b></div>
                 }
                 <br>
                 <input type="checkbox" name="transferencia" id="transferencia" value="true" checked onclick="isTransferenciaBancaria()"> <b>Usar transferência como forma de pagamento</b><br>
@@ -530,6 +530,15 @@
         }
     }
 
+    function checkCity(input) {
+        const re = /[a-zA-Z]-[A-Z][A-Z]$/;
+        if (re.test(input.value.trim())) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
         $('[type="datatorneio"]').on("keydown", function () {
             event.preventDefault();
             return false;
@@ -550,9 +559,16 @@
                toastr.error("Informe o nome da cidade onde ocorrerá o torneio.", "Erro");
                $("#btnTab1").attr("href", "#tabPrimario");
            } else {
-               $("#btnTab1").attr("href", "#tabInscricao");
-                document.getElementById('tab1').className = '';
-                document.getElementById('tab2').className = 'active';
+               if (checkCity(document.forms[1].cidade)) {
+                   $("#btnTab1").attr("href", "#tabInscricao");
+                    document.getElementById('tab1').className = '';
+                    document.getElementById('tab2').className = 'active';
+               } else {
+                   toastr.error("Digite as primeiras letras da sua cidade e selecione-a da lista oferecida.", "Erro");
+                   document.forms[1].cidade.value = "";
+                   document.forms[1].cidade.focus();
+                   $("#btnTab1").attr("href", "#tabPrimario");
+               }
             }
            $('html,body').scrollTop(0);
         });

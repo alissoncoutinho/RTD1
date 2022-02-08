@@ -606,7 +606,7 @@
                                     {
                                         if (ViewBag.isAceitaCartao)
                                         {
-                                            <a href="@Url.Action("EfetuarPagamento", new { inscricaoId = inscricao.Id })" class="btn btn-success" title="Efetuar Pagamento">Cartão</a>
+                                            <a href="@Url.Action("ConfirmacaoInscricao", new { torneioId = inscricao.torneioId, msg="Inscrição realizada." })" class="btn btn-success" title="Efetuar Pagamento">PIX</a>
                                         }
                                         if ((Model.dadosBancarios != null) && (Model.dadosBancarios.Length > 100))
                                         {
@@ -636,7 +636,7 @@
                                     {
                                         if (ViewBag.isAceitaCartao)
                                         {
-                                            <a href="@Url.Action("EfetuarPagamento", new { inscricaoId = inscricao.Id })" class="btn btn-success" title="Efetuar Pagamento">Cartão</a>
+                                            <a href="@Url.Action("ConfirmacaoInscricao", new { torneioId = inscricao.torneioId, msg="Inscrição realizada." })" class="btn btn-success" title="Efetuar Pagamento">PIX</a>
                                         }
                                         if ((Model.dadosBancarios != null) && (Model.dadosBancarios.Length > 100))
                                         {

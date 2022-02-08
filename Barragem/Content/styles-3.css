@@ -4340,7 +4340,7 @@ p#set {
 }
 
     .exibir-inserirResultados.show {
-        max-height: 400px;
+        max-height: 550px;
         pointer-events: auto;
         padding-left: 10px;
         padding-top: 10px;
@@ -4350,6 +4350,19 @@ p#set {
         margin-bottom: 10px;
         margin-top: 10px;
         position: relative;
+    }
+
+.exibir-pix {
+    overflow: hidden;
+    max-height: 0px;
+    pointer-events: none;
+    transition: max-height 1s ease-in-out;
+}
+
+    .exibir-pix.show {
+        max-height: 500px;
+        pointer-events: auto;
+        margin-bottom: 7px;
     }
 
 .exibir-headtohead {

@@ -164,13 +164,30 @@ namespace Barragem.Controllers
                 var dataUltimaRodada = classificacao[0].dataRodada;
                 foreach(var classific in classificacao)
                 {
-                    var dataRealizacaoJogo = db.Jogo.Where(r => (r.desafiado_id == userId || r.desafiante_id == userId) && r.rodada_id == classific.rodadaId && (r.situacao_Id==4 || r.situacao_Id==5)).Select(r => r.dataCadastroResultado).FirstOrDefault();
-                    if (dataRealizacaoJogo!=null && dataRealizacaoJogo > dataUltimaRodada)
+                    try
                     {
-                        classific.jogoAtrasado = "S";
-                    }else{
-                        classific.jogoAtrasado = "N";
-                    }
+                        var jogo = db.Jogo.Where(r => (r.desafiado_id == userId || r.desafiante_id == userId) && r.rodada_id == classific.rodadaId).FirstOrDefault();
+                        classific.nomeDesafiante = jogo.desafiante.nome;
+                        classific.nomeDesafiado = jogo.desafiado.nome;
+                        classific.idDesafiante = jogo.desafiante_id;
+                        classific.idDesafiado = jogo.desafiado_id;
+                        classific.qtddGames1setDesafiante = jogo.qtddGames1setDesafiante;
+                        classific.qtddGames2setDesafiante = jogo.qtddGames2setDesafiante;
+                        classific.qtddGames3setDesafiante = jogo.qtddGames3setDesafiante;
+                        classific.qtddGames1setDesafiado = jogo.qtddGames1setDesafiado;
+                        classific.qtddGames2setDesafiado = jogo.qtddGames2setDesafiado;
+                        classific.qtddGames3setDesafiado = jogo.qtddGames3setDesafiado;
+                        classific.idDoVencedor = jogo.idDoVencedor;
+                        classific.situacao = jogo.situacao.descricao;
+                        if (jogo.dataCadastroResultado != null && jogo.dataCadastroResultado > dataUltimaRodada)
+                        {
+                            classific.jogoAtrasado = "S";
+                        }
+                        else
+                        {
+                            classific.jogoAtrasado = "N";
+                        }
+                    }catch(Exception e) { }
                 }
             }
             

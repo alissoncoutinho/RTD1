@@ -40,7 +40,8 @@ namespace Barragem.Controllers
                     contato = "",
                     pontuacaoLiga = inscricao.torneio.TipoTorneio,
                     inscricaoSoPeloSite = inscricao.torneio.inscricaoSoPeloSite,
-                    isBeachTennis = inscricao.torneio.barragem.isBeachTenis
+                    isBeachTennis = inscricao.torneio.barragem.isBeachTenis,
+                    temPIX = !String.IsNullOrEmpty(inscricao.torneio.barragem.tokenPagSeguro)? true : false
                 }).Distinct<TorneioApp>().ToList();
 
             foreach (var item in Torneios)
@@ -781,7 +782,7 @@ namespace Barragem.Controllers
             } else {
                 cidade = db.BarragemView.Find(rankingId).cidade;
             }
-                        
+
             List<Patrocinador> patrocinadores = null;
             var torneio = (from t in db.Torneio
                            where t.dataFimInscricoes >= dataHoje && t.isAtivo && t.isOpen
@@ -790,7 +791,8 @@ namespace Barragem.Controllers
                                Id = t.Id, logoId = t.barragemId, nome = t.nome, dataInicio = t.dataInicio, valor = t.valor, valorSocio = t.valorSocio,
                                dataFim = t.dataFim, dataFimInscricoes = t.dataFimInscricoes, cidade = t.cidade, premiacao = t.premiacao, contato = "",
                                pontuacaoLiga = t.TipoTorneio, inscricaoSoPeloSite = t.inscricaoSoPeloSite,
-                               isBeachTennis = t.barragem.isBeachTenis
+                               isBeachTennis = t.barragem.isBeachTenis,
+                               temPIX = !String.IsNullOrEmpty(t.barragem.tokenPagSeguro) ? true : false
                            }).Union(
                             from t in db.Torneio
                             where t.dataFimInscricoes >= dataHoje && t.isAtivo && t.divulgaCidade 
@@ -799,7 +801,8 @@ namespace Barragem.Controllers
                             {
                                 Id = t.Id, logoId = t.barragemId, nome = t.nome, dataInicio = t.dataInicio, valor = t.valor, valorSocio = t.valorSocio,
                                 dataFim = t.dataFim, dataFimInscricoes = t.dataFimInscricoes, cidade = t.cidade, premiacao = t.premiacao, contato = "",
-                                pontuacaoLiga = t.TipoTorneio, inscricaoSoPeloSite = t.inscricaoSoPeloSite, isBeachTennis = t.barragem.isBeachTenis
+                                pontuacaoLiga = t.TipoTorneio, inscricaoSoPeloSite = t.inscricaoSoPeloSite, isBeachTennis = t.barragem.isBeachTenis,
+                                temPIX = !String.IsNullOrEmpty(t.barragem.tokenPagSeguro) ? true : false
                             }).Union(
                             from t in db.Torneio
                             where t.dataFimInscricoes >= dataHoje && t.isAtivo && t.barragemId == rankingId
@@ -808,7 +811,8 @@ namespace Barragem.Controllers
                                 Id = t.Id, logoId = t.barragemId, nome = t.nome, dataInicio = t.dataInicio, valor = t.valor, valorSocio = t.valorSocio,
                                 dataFim = t.dataFim, dataFimInscricoes = t.dataFimInscricoes, cidade = t.cidade, premiacao = t.premiacao, contato = "",
                                 pontuacaoLiga = t.TipoTorneio, inscricaoSoPeloSite = t.inscricaoSoPeloSite,
-                                isBeachTennis = t.barragem.isBeachTenis
+                                isBeachTennis = t.barragem.isBeachTenis,
+                                temPIX = !String.IsNullOrEmpty(t.barragem.tokenPagSeguro) ? true : false
                             }).Distinct<TorneioApp>().ToList();
             
             foreach (var item in torneio)

@@ -3556,8 +3556,6 @@ namespace Barragem.Controllers
                 qrcode.text = cobrancaPix.qr_codes[0].text;
                 if (cobrancaPix.qr_codes[0].links[0].media == "image/png"){
                     qrcode.link = cobrancaPix.qr_codes[0].links[0].href;
-                } else {
-                    qrcode.link = cobrancaPix.qr_codes[0].links[0].href;
                 }
                 return qrcode;
             }

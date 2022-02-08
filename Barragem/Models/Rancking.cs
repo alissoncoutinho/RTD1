@@ -67,6 +67,20 @@ namespace Barragem.Models
         public string jogoAtrasado { get; set; }
         public string foto { get; set; }
 
+        public string nomeDesafiante { get; set; }
+        public string nomeDesafiado { get; set; }
+        public int idDesafiante { get; set; }
+        public int idDesafiado { get; set; }
+        public int qtddGames1setDesafiante { get; set; }
+        public int qtddGames2setDesafiante { get; set; }
+        public int qtddGames3setDesafiante { get; set; }
+
+        public int qtddGames1setDesafiado { get; set; }
+        public int qtddGames2setDesafiado { get; set; }
+        public int qtddGames3setDesafiado { get; set; }
+        public int idDoVencedor { get; set; }
+        public string situacao { get; set; }
+
     }
 
     public class Cabecalho

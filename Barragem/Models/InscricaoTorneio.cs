@@ -78,7 +78,7 @@ namespace Barragem.Models
                 {
                     return "Em análise";
                 }
-                if (statusPagamento.Equals("3"))
+                if (statusPagamento.Equals("3") || statusPagamento.Equals("PAID"))
                 {
                     return "Paga";
                 }

@@ -298,10 +298,10 @@
                             </div>
                         @if ((ViewBag.tokenPagSeguro == "") || (ViewBag.tokenPagSeguro == null))
                         {
-                            <br><input type="checkbox" name="cartao" id="cartao" value="true" onclick="isCartaoCredito()"> <b>Deseja aceitar inscrição no cartão?</b><br>
+                            <br><input type="checkbox" name="cartao" id="cartao" value="true" onclick="isCartaoCredito()"> <b>Deseja aceitar inscrição via PIX com detecção automática de pagamento?</b><br>
                             <div id="isCartao">
                                 <div class="editor-label">
-                                    <small style="color:red">Para fazer a configuração do PagSeguro, contate o suporte via whatsapp.</small>
+                                    <small style="color:red">Você ainda não integrou o Pagseguro - <a class="" href="/Barragens/EditPagSeguro">Clique aqui</a> para realizar sua inscrição.</small>
                                 </div>
                             </div>
                             <script>
@@ -311,7 +311,7 @@
                         }
                         else
                         {
-                            <div class="editor-label"> <b>Torneio configurado para pagamento da inscrição no cartão de crédito.</b></div>
+                            <div class="editor-label"> <b>Torneio configurado para receber pagamento Via PIX com detecção automática de pagamento.</b></div>
                         }
                         <br>
                         @if (Model.dadosBancarios == "")

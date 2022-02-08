@@ -38,6 +38,45 @@
         </div>
     </div>
     }
+    
+    <div class="row exibir-pix" id="qrcode"> 
+        <div class="box box-warning">
+            <div class="box-header with-border">
+                <h3 class="box-title">PIX</h3> 
+            </div>
+            <div class="box-body" id="qrcode_conteudo">
+                Para confirmar sua inscrição faça um pix seguindo as instruções abaixo ou leia o QR code se estiver no computador:</br></br>
+                <div class="box-body" id="qrcode_img"></div>
+                    1. Acesse seu internet Banking ou app de pagamento;</br>
+                    2. Escolha pagar via PIX;</br>
+                    3. Em alguns apps existe a opção PIX copia e cola;</br>
+                    4. Cole o código abaixo no app e efetue o pagamento;</br>
+                    <div class="row">
+                        <div class="form-group col-sm-8  col-xs-8">
+                            <input type="text" id="textqrcode" class="form-control" readonly value="" />
+                        </div>
+                        <div class="form-group col-sm-2  col-xs-2">
+                            <button id="btnCopiar" class="btn btn-primary">Copiar</button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <b>IMPORTANTE:</b> não é necessário enviar comprovante para o organizador.
+                        </div>
+                    </div>
+                </div>
+
+        </div>
+    </div>
+    <div class="row exibir-pix" id="qrcodeerro">
+        <div class="box box-warning">
+            <div class="box-header with-border">
+                <h3 class="box-title">Erro: PIX</h3>
+            </div>
+            <div class="box-body" id="qrcodeerro_conteudo">
+            </div>
+        </div>
+    </div>
     <div class="row exibir-dadosbancarios" id="dadosBancarios">
         <div class="box box-warning">
             <div class="box-header with-border">
@@ -48,44 +87,6 @@
                 @Html.Raw(Model.torneio.dadosBancarios)
             </div>
 
-        </div>
-    </div>
-    <div class="row exibir-inserirResultados" id="qrcode"> 
-        <div class="box box-warning">
-            <div class="box-header with-border">
-                <h3 class="box-title">PIX</h3> 
-            </div>
-            <div class="box-body" id="qrcode_conteudo">
-                Para Confirmar sua inscrição faça um pix seguindo as instruções abaixo:</br></br>
-
-                1. Acesse seu internet Banking ou app de pagamento;</br>
-                2. Escolha pagar via PIX;</br>
-                3. Em alguns apps existe a opção PIX copia e cola;</br>
-                4. Cole o código abaixo no app e efetue o pagamento;</br>
-                <div class="row">
-                    <div class="form-group col-sm-8  col-xs-8">
-                        <input type="text" id="textqrcode" class="form-control" readonly value="" />
-                    </div>
-                    <div class="form-group col-sm-2  col-xs-2">
-                        <button id="btnCopiar" class="btn btn-primary">Copiar</button>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-sm-12">
-                        <b>IMPORTANTE:</b> não é necessário enviar comprovante para o organizador.
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </div>
-    <div class="row exibir-inserirResultados" id="qrcodeerro">
-        <div class="box box-warning">
-            <div class="box-header with-border">
-                <h3 class="box-title">Erro: PIX</h3>
-            </div>
-            <div class="box-body" id="qrcodeerro_conteudo">
-            </div>
         </div>
     </div>
                 <div class="row">
@@ -188,13 +189,16 @@
         function buscarQR_code(inscricaoId) {
             var retorno = null
             $.ajax({
-                url: "/api/InscricaoAPI/" + inscricaoId + "/CobrancaPIX",
+                url: "/api/InscricaoAPI/" + inscricaoId + "/CobrancaPIXQRCode",
                 dataType: "json",
                 contentType: "application/json; charset=utf-8",
                 success: function (response) {
                     var element = document.getElementById("qrcode");
                     element.classList.add("show");
-                    document.getElementById("textqrcode").value = response
+                    if (isCelular() == false) {
+                        document.getElementById("qrcode_img").innerHTML = "<center><img id='imgFoto' src='" + response.link + "' style='width:148px;height:148px;'  /></center><br>"
+                    }
+                    document.getElementById("textqrcode").value = response.text
                     document.getElementById("qrcodeerro").classList.remove('show');
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
@@ -206,6 +210,22 @@
                 }
             });
 
+        }
+
+        function isCelular() {
+            if (navigator.userAgent.match(/Android/i)
+                || navigator.userAgent.match(/webOS/i)
+                || navigator.userAgent.match(/iPhone/i)
+                || navigator.userAgent.match(/iPad/i)
+                || navigator.userAgent.match(/iPod/i)
+                || navigator.userAgent.match(/BlackBerry/i)
+                || navigator.userAgent.match(/Windows Phone/i)
+            ) {
+                return true; // está utilizando celular
+            }
+            else {
+                return false; // não é celular
+            }
         }
 
         $('#btnCopiar').on('click', function (event) {

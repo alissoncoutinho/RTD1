@@ -11,7 +11,7 @@
 
 <main class="row h-100 w-100 m-0">
     <section class="col-md-5 bg-light">
-        <form action="/Liga/CreateRankingLiga" method="post" class=" m-auto mt-4">
+        <form action="/Liga/CreateRankingLiga" method="post" class=" m-auto mt-4" id="form">
             @Html.AntiForgeryToken()
             @Html.ValidationSummary()
             <img class="img-fluid logo" src="/Content/img/logo-cad.png" alt="logo">,
@@ -19,16 +19,17 @@
                 <h1>Crie agora seu ranking</h1>
             </div>
             <div class="mt-3 form-input">
-                <label for="">Nome da Agremiação</label>
-                <input type="text" name="nomeBarragem" class="form-control" placeholder="Ex: Clube Pinheiros, Ranking dos Amigos">
+                <label for="">Nome da Agremiação *</label>
+                <input type="text" name="nomeBarragem" class="form-control" placeholder="Ex: Clube Pinheiros, Ranking dos Amigos" required>
             </div>
             <div class="mt-3 form-input">
-                <label for="">Nome do Circuito</label>
-                <input type="text" name="nomeLiga" class="form-control" placeholder="Ex:  Circuito BT 2022, Ranking Clube Beach">
+                <label for="">Nome do Circuito *</label>
+                <input type="text" name="nomeLiga" class="form-control" placeholder="Ex:  Circuito BT 2022, Ranking Clube Beach" required>
             </div>
             <div class="mt-3 form-input">
                 <label for="">Cidade *</label>
-                <input type="text" id="cidade" name="cidade" class="form-control" placeholder="Digite o nome">
+                <input type="text" id="cidade" name="cidade" class="form-control" placeholder="Digite o nome" required>
+                <small></small>
             </div>
 
             <div class="mt-3 form-input">
@@ -100,6 +101,43 @@
         });
 
         $('#cidade').attr('autocomplete', 'off');
+
+        const form = document.getElementById('form');
+        const cidade = document.getElementById('cidade');
+
+        function showError(input, message) {
+            const small = input.nextElementSibling
+            small.style = 'color: red; font-size: 1rem;'
+            small.innerText = message;
+            return false;
+        }
+
+        function showSuccess(input) {
+            const small = input.nextElementSibling
+            small.style = ''
+            small.innerText = '';
+            return true
+        }
+
+        function checkCity(input) {
+            const re = /[a-zA-Z]-[A-Z][A-Z]$/;
+            if (re.test(input.value.trim())) {
+                return showSuccess(input);
+            } else {
+                input.value = "";
+                input.value.focus();
+                return showError(input, 'Digite as primeiras letras da sua cidade e selecione-a da lista oferecida.');
+            }
+        }
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const isCityOk = checkCity(cidade);
+
+            if (isCityOk) {
+                this.submit();
+            }
+        });
 
     </script>
 }

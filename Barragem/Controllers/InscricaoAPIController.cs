@@ -344,15 +344,45 @@ namespace Barragem.Controllers
             {
                 //return BadRequest("token inválido");
                 //return Ok("00020126830014br.gov.bcb.pix2561api.pagseguro.com/pix/v2/210387E0-A6BF-45D1-80B5-CFEB9BBCEE2F5204899953039865802BR5921Pagseguro Internet SA6009SAO PAULO62070503***63047E6D");
+
                 var inscricaoTorneio = db.InscricaoTorneio.Find(Id);
-
                 var order = montarPedidoPIX(inscricaoTorneio);
-
                 var cobrancaPix = new PIXPagSeguro().CriarPedido(order, inscricaoTorneio.torneio.barragem.tokenPagSeguro); 
-                //var cobrancaPix = new PIXPagSeguro().CriarPedido(order);
                 return Ok(cobrancaPix.qr_codes[0].text);
             }
             catch(Exception e){
+                return BadRequest(e.Message);
+            }
+            //return Ok("00020126830014br.gov.bcb.pix2561api.pagseguro.com/pix/v2/210387E0-A6BF-45D1-80B5-CFEB9BBCEE2F5204899953039865802BR5921Pagseguro Internet SA6009SAO PAULO62070503***63047E6D");
+        }
+
+        [ResponseType(typeof(void))]
+        [HttpGet]
+        [Route("api/InscricaoAPI/{Id}/CobrancaPIXQRCode")]
+        public IHttpActionResult CobrancaPIXInscricaoQRCode(int Id)
+        {
+            try
+            {
+                //return BadRequest("token inválido");
+                
+                var qrcode = new QrCodeCobrancaTorneio();
+                //qrcode.text = "00020126830014br.gov.bcb.pix2561api.pagseguro.com/pix/v2/210387E0-A6BF-45D1-80B5-CFEB9BBCEE2F5204899953039865802BR5921Pagseguro Internet SA6009SAO PAULO62070503***63047E6D";
+                //qrcode.link = "/Content/image/QRCode.png";
+                //return Ok(qrcode);
+
+                var inscricaoTorneio = db.InscricaoTorneio.Find(Id);
+                var order = montarPedidoPIX(inscricaoTorneio);
+                var cobrancaPix = new PIXPagSeguro().CriarPedido(order, inscricaoTorneio.torneio.barragem.tokenPagSeguro);
+                qrcode.text = cobrancaPix.qr_codes[0].text;
+                if (cobrancaPix.qr_codes[0].links[0].media == "image/png")
+                {
+                    qrcode.link = cobrancaPix.qr_codes[0].links[0].href;
+                }
+
+                return Ok(qrcode);
+            }
+            catch (Exception e)
+            {
                 return BadRequest(e.Message);
             }
             //return Ok("00020126830014br.gov.bcb.pix2561api.pagseguro.com/pix/v2/210387E0-A6BF-45D1-80B5-CFEB9BBCEE2F5204899953039865802BR5921Pagseguro Internet SA6009SAO PAULO62070503***63047E6D");
