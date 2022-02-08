@@ -1,13 +1,16 @@
 ﻿@model IEnumerable<Barragem.Models.Jogo>
-@{
-    if (ViewBag.classeFaseGrupo != true){
-        Layout = "~/Views/Shared/_LayoutTorneio2.cshtml";
-    }else{
-        Layout = "~/Views/Shared/_LayoutTorneioFaseGrupo.cshtml";
-    }
-    ViewBag.Title = "Tabela Torneio";
-    int? faseTorneio = 0;
-    string faseId = "";
+    @{
+        if (ViewBag.classeFaseGrupo != true)
+        {
+            Layout = "~/Views/Shared/_LayoutTorneio2.cshtml";
+        }
+        else
+        {
+            Layout = "~/Views/Shared/_LayoutTorneioFaseGrupo.cshtml";
+        }
+        ViewBag.Title = "Tabela Torneio";
+        int? faseTorneio = 0;
+        string faseId = "";
     }
 
     <h4 class="info-box-text">@ViewBag.nomeTorneio</h4>
@@ -20,46 +23,47 @@
     }
     else
     {
-        
-            <div class="form-horizontal">
-                <div class="form-group">
-                    <label class="col-xs-4 col-sm-2 control-label">Classes</label>
-                    <div class="col-sm-4 col-xs-8">
-                        <select name="filtroClasse" id="filtroClasse" class="form-control" onchange="Selecionar(false)">
-                            @if (ViewBag.Classes != null)
+
+        <div class="form-horizontal">
+            <div class="form-group">
+                <label class="col-xs-4 col-sm-2 control-label">Classes</label>
+                <div class="col-sm-4 col-xs-8">
+                    <select name="filtroClasse" id="filtroClasse" class="form-control" onchange="Selecionar(false)">
+                        @if (ViewBag.Classes != null)
+                        {
+                            foreach (var item2 in ViewBag.Classes)
                             {
-                                foreach (var item2 in ViewBag.Classes)
-                                {
-                            <option value="@item2.Id" @if (ViewBag.filtroClasse == item2.Id) { @Html.Raw("selected")    }>@item2.nome</option>
-                                }
+                                <option value="@item2.Id" @if (ViewBag.filtroClasse == item2.Id) { @Html.Raw("selected") }>@item2.nome</option>
                             }
-                        </select>
-                        <input type="hidden" value="@ViewBag.TorneioId" name="torneioId" id="torneioId">
-                    </div>
-                    @if (ViewBag.viewFaseGrupo == true)
-                    {
+                        }
+                    </select>
+                    <input type="hidden" value="@ViewBag.TorneioId" name="torneioId" id="torneioId">
+                </div>
+                @if (ViewBag.viewFaseGrupo == true)
+                {
                     <div class="col-sm-2 col-xs-4">
                         <input type="button" value="Fase Grupo" name="verFaseGrupo" id="verFaseGrupo" class="form-control btn btn-primary" onclick="Selecionar(false)">
                         <!--input type="button" value="imprimir" class="btn btn-primary" onclick="Imprimir()"-->
                     </div>
-                    }
-                    @if (ViewBag.classeFaseGrupo != true && ViewBag.modeloTodosContraTodos == null){
+                }
+                @if (ViewBag.classeFaseGrupo != true && ViewBag.modeloTodosContraTodos == null)
+                {
                     <div class="col-sm-2 col-xs-4">
                         <input type="button" value="imprimir" class="btn btn-primary" onclick="Imprimir()" />
                     </div>
-                    }
-                </div>
-                @if (ViewBag.classeFaseGrupo == true)
-                {
-                    int grupo = ViewBag.qtddGrupos ?? 0;
+                }
+            </div>
+            @if (ViewBag.classeFaseGrupo == true)
+            {
+                int grupo = ViewBag.qtddGrupos ?? 0;
                 <div class="form-group">
                     <label class="col-xs-12 col-sm-2 control-label">Grupo</label>
                     <div class="col-sm-4 col-xs-8">
                         <select name="grupo" id="grupo" class="form-control" onchange="Selecionar(false)">
                             @for (int i = 1; i <= ViewBag.qtddGrupos; i++)
-                                {
-                                <option value="@i" @if (ViewBag.grupo == i) { @Html.Raw("selected")     }>@i</option>
-                                }
+                            {
+                                <option value="@i" @if (ViewBag.grupo == i) { @Html.Raw("selected") }>@i</option>
+                            }
                         </select>
                     </div>
                     @if (ViewBag.temMataMata == true)
@@ -67,52 +71,53 @@
                         <div class="col-sm-2 col-xs-4">
                             <input type="button" value="Fase Mata-Mata" name="verMataMata" id="verMataMata" class="form-control btn btn-primary" onclick="Selecionar(true)">
                         </div>
-                        }
+                    }
                 </div>
 
-                }
+            }
 
-            </div>
-            if (ViewBag.classeFaseGrupo != true && ViewBag.modeloTodosContraTodos == null)
-            {
-                <div class="box-body table-responsive no-padding no-border table-hover">
-                    <div class="" id="tabFase2">
-                        <div id="conteudo_tabela_jogos">
-                            <div class="display_jogos">
-                                <div class="mover_esquerda"><img src="~/Images/seta.png"></div>
-                                <div class="mover_direita"><img src="~/Images/seta.png"></div>
-                                @{
-                                    faseTorneio = 0;
-                                }
-                                @if (Model != null)
-                        {
-                            foreach (var item in Model)
-                            {
-                                if (faseTorneio != item.faseTorneio)
-                                {
-                                    faseId = "times" + item.faseTorneio;
-                                    if (faseTorneio != 0)
-                                    {
-                        @Html.Raw("</div>");
-                                    }
-                                    faseTorneio = item.faseTorneio;
-                                    if (faseTorneio == 1)
-                                    {
-                                        faseId = "time" + item.faseTorneio;
-                                    }
-                        @Html.Raw("<div id='" + faseId + "' class='col-xs-2 box_rodada'>");
-                        <div class="titulo">@item.descricaoFaseTorneio</div>
-                                }
-                        @Html.Partial("_PartialJogoTabela", (Barragem.Models.Jogo)item)
+        </div>
+        if (ViewBag.classeFaseGrupo != true && ViewBag.modeloTodosContraTodos == null)
+        {
+            <div class="box-body table-responsive no-padding no-border table-hover">
+                <div class="" id="tabFase2">
+                    <div id="conteudo_tabela_jogos">
+                        <div class="display_jogos">
+                            <div class="mover_esquerda"><img src="~/Images/seta.png"></div>
+                            <div class="mover_direita"><img src="~/Images/seta.png"></div>
+                            @{
+                                faseTorneio = 0;
                             }
-                        }
-                            </div>
+                            @if (Model != null)
+                            {
+                                foreach (var item in Model)
+                                {
+                                    if (faseTorneio != item.faseTorneio)
+                                    {
+                                        faseId = "times" + item.faseTorneio;
+                                        if (faseTorneio != 0)
+                                        {
+                                            @Html.Raw("</div>");
+                                        }
+                                        faseTorneio = item.faseTorneio;
+                                        if (faseTorneio == 1)
+                                        {
+                                            faseId = "time" + item.faseTorneio;
+                                        }
+                                        @Html.Raw("<div id='" + faseId + "' class='col-xs-2 box_rodada'>");
+                                        <div class="titulo">@item.descricaoFaseTorneio</div>
+                                    }
+                                    @Html.Partial("_PartialJogoTabela", (Barragem.Models.Jogo)item)
+                                }
+                            }
                         </div>
                     </div>
                 </div>
-            }
-            else
-            {
+            </div>
+        }
+        else
+        {
+            <div class="row" style="margin-left: 0px;">
                 <div class="box-body table-responsive no-padding no-border table-hover">
                     <br>
                     <div class="col-sm-10 col-xs-10 box-body table-responsive no-padding">
@@ -132,61 +137,97 @@
                                 foreach (var item in ViewBag.classificacaoGrupo)
                                 {
                                     posicao++;
-                            <tr>
-                                <td> @posicao º</td>
-                                <td>
-                                    @item.nome
-                                    @if (item.inscricao.parceiroDupla != null)
+                                    <tr>
+                                        <td> @posicao º</td>
+                                        <td>
+                                            @item.nome
+                                            @if (item.inscricao.parceiroDupla != null)
                                             {
-                                            @Html.Raw("/ " + item.inscricao.parceiroDupla.nome)
+                                                @Html.Raw("/ " + item.inscricao.parceiroDupla.nome)
                                             }
-                                </td>
-                                <td>@item.inscricao.pontuacaoFaseGrupo</td>
-                                <td>
-                                    @if (item.confrontoDireto > 0)
-                                            { @Html.Raw("V") }
-                                </td>
-                                <td>@Html.Raw(item.saldoSets + "/" + item.saldoGames)</td>
-                                <td>@Html.Raw(item.averageSets + "/" + item.averageGames)</td>
+                                        </td>
+                                        <td>@item.inscricao.pontuacaoFaseGrupo</td>
+                                        <td>
+                                            @if (item.confrontoDireto > 0)
+                                            {@Html.Raw("V")}
+                                        </td>
+                                        <td>@Html.Raw(item.saldoSets + "/" + item.saldoGames)</td>
+                                        <td>@Html.Raw(item.averageSets + "/" + item.averageGames)</td>
 
-                            </tr>
+                                    </tr>
                                 }
                             }
                         </table>
                     </div>
                 </div>
-                <br><br>
-    <div class="box-body table-responsive no-padding no-border table-hover">
-    <div class="" id="tabFase2">
-        <div id="">
-            <div class="">
-                @{
-                    int? rodada = 0;
-                }
-                @if (Model != null)
-                {
-                    foreach (var item in Model)
-                    {
-                        if (rodada != item.rodadaFaseGrupo)
-                        {
-                            if (rodada != 0)
-                            {
-                                @Html.Raw("</div>");
-                            }
-                            rodada = item.rodadaFaseGrupo;
-                            @Html.Raw("<div class='col-xs-2 box_rodada' style='height:" + ViewBag.height + "px!important;'>");
-                            <div class="titulo">Rodada @item.rodadaFaseGrupo</div>
-                        }
-                        @Html.Partial("_PartialJogoTabelaFaseGrupo", (Barragem.Models.Jogo)item)
-                    }
-                }
             </div>
-        </div>
-    </div>
-</div>
-                        }
+            <div class="row" style="background-color: #f5f5f5; margin: 10px 0 10px 0; padding: 5px; display: inline-block; ">
+                <span style="white-space: nowrap;"><strong>V:</strong> Vitória</span> |
+                <span style="white-space: nowrap;"><strong>CF:</strong> Confronto Direto</span> |
+                <span style="white-space: nowrap;"><strong>S.S:</strong> Saldo de Sets</span> |
+                <span style="white-space: nowrap;"><strong>SG:</strong> Saldo de Games</span> |
+                <span style="white-space: nowrap;"><strong>A.S:</strong> Média de Sets</span> |
+                <span style="white-space: nowrap;"><strong>AG:</strong> Média de Games</span>
+            </div>
+            <div class="row" style="margin: 0 0 0 0; padding: 5px;">
+                <button id="btnEntendaDesempate" type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalEntendaDesempate">
+                    Entenda o critério de desempate
+                </button>
+            </div>
+            <br><br>
+            <div class="row" style="margin-left: 0px;" id="tabelaFaseGrupo">
+                <div class="box-body table-responsive no-padding no-border table-hover">
+                    <div class="" id="tabFase2">
+                        <div id="">
+                            <div class="">
+                                @{
+                                    int? rodada = 0;
+                                }
+                                @if (Model != null)
+                                {
+                                    foreach (var item in Model)
+                                    {
+                                        if (rodada != item.rodadaFaseGrupo)
+                                        {
+                                            if (rodada != 0)
+                                            {
+                                                @Html.Raw("</div>");
+                                            }
+                                            rodada = item.rodadaFaseGrupo;
+                                            @Html.Raw("<div class='col-xs-2 box_rodada' style='height:" + ViewBag.height + "px!important;'>");
+                                            <div class="titulo">Rodada @item.rodadaFaseGrupo</div>
+                                        }
+                                        @Html.Partial("_PartialJogoTabelaFaseGrupo", (Barragem.Models.Jogo)item)
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Modal -->
+            <div class="modal fade" id="modalEntendaDesempate" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="z-index: 999999999999;">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Fechar</span></button>
+                            <h4 class="modal-title" id="myModalLabel">Critério Desempate</h4>
+                        </div>
+                        <div class="modal-body">
+                            <p style="font-size: 36px; font-family: 'open sans'; text-align: center;" data-mce-style="font-size: 36px; font-family: 'open sans'; text-align: center;"><span style="color: #008000;" data-mce-style="color: #008000;"><strong>Critério de Desempate</strong></span></p>
+                            <p style="font-size: 36px; font-family: open sans;" data-mce-style="font-size: 36px; font-family: open sans;">Em caso de empate em vitórias, a posição será determinada pelos seguintes critérios de desempate:</p>
+                            <p style="font-size: 36px; font-family: open sans;" data-mce-style="font-size: 36px; font-family: open sans;"><span style="text-decoration: underline;" data-mce-style="text-decoration: underline;">Empate com 2 duplas/atletas`</span><br>a) Confronto direto (CD).</p>
+                            <p style="font-size: 36px; font-family: open sans;" data-mce-style="font-size: 36px; font-family: open sans;"><span style="text-decoration: underline;" data-mce-style="text-decoration: underline;">Empate com 3 duplas / atletas</span><br>a) Saldo de sets; (SS)<br>b) Saldo dos games; (SG)<br>c) Game average*;<br><br>* Soma dos games ganhos divididos pelos games jogados. Ex: Em um grupo uma dupla jogou duas&nbsp;vezes e ganhou&nbsp;as duas&nbsp;de 6x4, portanto a dupla jogou 20 games e ganhou 12 deles. O game averege da dupla será 12 dividido por 20, ou seja, 0,6. Esse valor é multiplicado por mil para evitar problemas de arredondamento. No exemplo acima, o game average seria 600.</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
 
-                    }
+    }
 
     @section Scripts {
         <script type="text/javascript">
@@ -208,7 +249,7 @@
                 var classeId = document.getElementById('filtroClasse').value;
                 window.open("TabelaImprimir?torneioId=" + torneioId + "&fClasse=" + classeId, '_blank');
                 //window.location = "TabelaImprimir?torneioId=" + torneioId + "&fClasse=" + classeId;
-            }
+            }            
 
         </script>
     }
