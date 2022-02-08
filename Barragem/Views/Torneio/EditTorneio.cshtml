@@ -254,48 +254,63 @@
                     </div>
                     <div class="box-body">
                         <div class="form-group">
-                                @Html.Label("O próprio jogador poderá lançar o resultado do jogo?", new { @class = "col-sm-3 control-label" })
+                            @Html.Label("O próprio jogador poderá lançar o resultado do jogo?", new { @class = "col-sm-3 control-label" })
+                            <div class="col-sm-2 input-group">
+                                <select name="jogadorNaoLancaResult" id="jogadorNaoLancaResult" class="form-control">
+                                    <option value=true @if (Model.jogadorNaoLancaResult) { @Html.Raw(" selected ") }>Não</option>
+                                    <option value=false @if (!Model.jogadorNaoLancaResult) { @Html.Raw(" selected ") }>Sim</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.Label("Seu torneio será gratuito para associado?", new { @class = "col-sm-3 control-label" })
+                            <div class="col-sm-2 input-group">
+                                <select name="isGratuitoSocio" id="isGratuitoSocio" class="form-control">
+                                    <option value=false @if (!Model.isGratuitoSocio) { @Html.Raw(" selected ") }>Não</option>
+                                    <option value=true @if (Model.isGratuitoSocio) { @Html.Raw(" selected ") }>Sim</option>
+                                </select>
+                            </div>
+                        </div>
+                        @if (Roles.IsUserInRole("adminTorneio"))
+                        {
+                            <div class="form-group" hidden>
+                                @Html.Label("Seu torneio terá repescagem?", new { @class = "col-sm-3 control-label" })
                                 <div class="col-sm-2 input-group">
-                                    <select name="jogadorNaoLancaResult" id="jogadorNaoLancaResult" class="form-control">
-                                        <option value=true @if (Model.jogadorNaoLancaResult) { @Html.Raw(" selected ")  }>Não</option>
-                                        <option value=false @if (!Model.jogadorNaoLancaResult) { @Html.Raw(" selected ")  }>Sim</option>
+                                    <select name="temRepescagem" id="temRepescagem" class="form-control">
+                                        <option value=false @if (!Model.temRepescagem) { @Html.Raw(" selected ") }>Não</option>
+                                        <option value=true @if (Model.temRepescagem) { @Html.Raw(" selected ") }>Sim</option>
                                     </select>
                                 </div>
                             </div>
-                            <div class="form-group">
-                                @Html.Label("Seu torneio será gratuito para associado?", new { @class = "col-sm-3 control-label" })
-                                <div class="col-sm-2 input-group">
-                                    <select name="isGratuitoSocio" id="isGratuitoSocio" class="form-control">
-                                        <option value=false @if (!Model.isGratuitoSocio) { @Html.Raw(" selected ")  }>Não</option>
-                                        <option value=true @if (Model.isGratuitoSocio) { @Html.Raw(" selected ")  }>Sim</option>
-                                    </select>
-                                </div>
-                            </div>
+                        }
+                        else
+                        {
                             <div class="form-group">
                                 @Html.Label("Seu torneio terá repescagem?", new { @class = "col-sm-3 control-label" })
                                 <div class="col-sm-2 input-group">
                                     <select name="temRepescagem" id="temRepescagem" class="form-control">
-                                        <option value=false @if (!Model.temRepescagem) { @Html.Raw(" selected ")  }>Não</option>
-                                        <option value=true @if (Model.temRepescagem) { @Html.Raw(" selected ")  }>Sim</option>
+                                        <option value=false @if (!Model.temRepescagem) { @Html.Raw(" selected ") }>Não</option>
+                                        <option value=true @if (Model.temRepescagem) { @Html.Raw(" selected ") }>Sim</option>
                                     </select>
                                 </div>
                             </div>
-                            <div class="form-group">
-                                @Html.Label("Seu torneio terá limite de quantidade de inscritos?", new { @class = "col-sm-3 control-label" })
-                                <div class="col-sm-2 input-group">
-                                    <select name="temLimiteDeInscricao" id="temLimiteDeInscricao" class="form-control">
-                                        <option value=false @if (Model.temLimiteDeInscricao==null || (bool)!Model.temLimiteDeInscricao) { @Html.Raw(" selected ")   }>Não</option>
-                                        <option value=true @if (Model.temLimiteDeInscricao!=null && (bool)Model.temLimiteDeInscricao) { @Html.Raw(" selected ")   }>Sim</option>
-                                    </select>
-                                </div>
+                        }
+                        <div class="form-group">
+                            @Html.Label("Seu torneio terá limite de quantidade de inscritos?", new { @class = "col-sm-3 control-label" })
+                            <div class="col-sm-2 input-group">
+                                <select name="temLimiteDeInscricao" id="temLimiteDeInscricao" class="form-control">
+                                    <option value=false @if (Model.temLimiteDeInscricao == null || (bool)!Model.temLimiteDeInscricao) { @Html.Raw(" selected ") }>Não</option>
+                                    <option value=true @if (Model.temLimiteDeInscricao != null && (bool)Model.temLimiteDeInscricao) { @Html.Raw(" selected ") }>Sim</option>
+                                </select>
                             </div>
-                            <div class="form-group">
-                                @Html.Label("Observação que aparecerá na ficha de inscrição", new { @class = "col-sm-3 control-label" })
-                                <div class="col-sm-8 col-xs-12 input-group">
-                                    @Html.TextBoxFor(model => model.observacao, new { @class = "form-control" })
-                                </div>
-                                @Html.ValidationMessageFor(model => model.observacao)
+                        </div>
+                        <div class="form-group">
+                            @Html.Label("Observação que aparecerá na ficha de inscrição", new { @class = "col-sm-3 control-label" })
+                            <div class="col-sm-8 col-xs-12 input-group">
+                                @Html.TextBoxFor(model => model.observacao, new { @class = "form-control" })
                             </div>
+                            @Html.ValidationMessageFor(model => model.observacao)
+                        </div>
                         @if ((ViewBag.tokenPagSeguro == "") || (ViewBag.tokenPagSeguro == null))
                         {
                             <br><input type="checkbox" name="cartao" id="cartao" value="true" onclick="isCartaoCredito()"> <b>Deseja aceitar inscrição via PIX com detecção automática de pagamento?</b><br>
@@ -328,7 +343,7 @@
                                 @Html.ValidationMessageFor(model => model.dadosBancarios)
                             </div>
                         </div>
-                        
+
                     </div>
                </div>
                         <div class="box box-primary">
