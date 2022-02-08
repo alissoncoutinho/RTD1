@@ -2295,7 +2295,7 @@ namespace Barragem.Controllers
         [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
         public ActionResult EditJogos(int torneioId, int fClasse = 0, string fData = "", string fNomeJogador = "", string fGrupo = "0", int fase = 0, int qtddInscritos = 0, int valorASerPago = 0, int valorDescontoParaRanking = 0)
         {
-            if (qtddInscritos > 0)
+            if (qtddInscritos > 0 && valorASerPago > 0)
             {
                 var cobrancaTorneio = new CobrancaTorneio();
                 cobrancaTorneio.qtddInscritos = qtddInscritos;
