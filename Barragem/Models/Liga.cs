@@ -20,6 +20,9 @@ namespace Barragem.Models
         public int? barragemId { get; set; }
 
         public bool isModeloTodosContraTodos { get; set; }
+
+        [ForeignKey("barragemId")]
+        public virtual BarragemView barragem { get; set; }
     }
 }
 

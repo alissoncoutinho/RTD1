@@ -187,7 +187,15 @@ namespace Barragem.Controllers
                         {
                             classific.jogoAtrasado = "N";
                         }
-                    }catch(Exception e) { }
+                    }catch(Exception e) {
+                        if(classific.pontuacao == 0)
+                        {
+                            classific.situacao = "suspenso";
+                        }else if(classific.pontuacao == 3)
+                        {
+                            classific.situacao = "licenciado";
+                        }
+                    }
                 }
             }
             

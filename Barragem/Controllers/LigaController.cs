@@ -37,15 +37,7 @@ namespace Barragem.Controllers
             }
             else if (perfil.Equals("parceiroBT"))
             {
-                ligasDaBarragem = db.BarragemLiga.Include(r => r.Liga).Where(r => r.BarragemId == barragemId).OrderByDescending(c => c.Id).ToList();
-                ligas = new List<Liga>();
-                foreach (BarragemLiga ligaBarragem in ligasDaBarragem)
-                {
-                    if (ligaBarragem.Barragem.isBeachTenis == true && !ligaBarragem.Liga.Nome.ToUpper().Contains("TESTE"))
-                    {
-                        ligas.Add(ligaBarragem.Liga);
-                    }
-                }
+                ligas = db.Liga.Where(l => l.barragemId != null && !l.Nome.ToUpper().Contains("TESTE") && l.barragem.isBeachTenis == true).Include(l => l.barragem).OrderByDescending(l => l.Id).ToList();
             }
             else
             {
