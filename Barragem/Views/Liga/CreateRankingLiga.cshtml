@@ -120,8 +120,9 @@
         }
 
         function checkCity(input) {
-            const re = /[a-zA-Z]-[A-Z][A-Z]$/;
-            if (re.test(input.value.trim())) {
+            //const re = /[a-zA-Z]-[A-Z][A-Z]$/;
+            //if (re.test(input.value.trim())) {
+            if (input.value.indexOf("-") != -1){
                 return showSuccess(input);
             } else {
                 input.value = "";

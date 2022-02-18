@@ -1993,7 +1993,7 @@ namespace Barragem.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult EditTorneio(Torneio torneio, bool transferencia = false)
         {
-            torneio.inscricaoSoPeloSite = true;
+            torneio.inscricaoSoPeloSite = false;
             var userId = WebSecurity.GetUserId(User.Identity.Name);
             string perfil = Roles.GetRolesForUser(User.Identity.Name)[0];
             torneio.liberarEscolhaDuplas = true;
@@ -2047,6 +2047,7 @@ namespace Barragem.Controllers
                         
                     }
                 }
+                ViewBag.tokenPagSeguro = db.BarragemView.Find(torneio.barragemId).tokenPagSeguro;
                 db.Entry(torneio).State = EntityState.Modified;
                 db.SaveChanges();
                 mensagem("OK");
@@ -3167,7 +3168,7 @@ namespace Barragem.Controllers
         [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
         public ActionResult CreateTorneio(Torneio torneio, bool transferencia = false, int pontuacaoLiga = 100)
         {
-            torneio.inscricaoSoPeloSite = true;
+            torneio.inscricaoSoPeloSite = false;
             var userId = WebSecurity.GetUserId(User.Identity.Name);
             var barragemId = (from up in db.UserProfiles where up.UserId == userId select up.barragemId).Single();
             torneio.barragemId = barragemId;

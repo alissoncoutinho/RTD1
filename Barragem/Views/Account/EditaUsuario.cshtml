@@ -48,6 +48,21 @@
                             </div>
                         }
                     }
+                    @if (Roles.IsUserInRole("admin") && @ViewBag.MigrarConta != null)
+                    {
+                        <div class="col-md-2">
+                            <a class="btn btn-primary btn-info" href="/Account/UnificarConta?userIdOrigem=@ViewBag.MigrarConta&userIdDestino=@Model.UserId&UserName=@Model.UserName">Unificar Conta</a>
+                        </div>
+                    }
+                    @if (@ViewBag.ConfirmaUnificacaoConta != null)
+                    {
+                    <div class="col-md-5">
+                        <div class="alert alert-primary" role="alert" style="color: #004085; background-color: #cce5ff; border-color: #b8daff; margin-bottom: 0px">
+                            @ViewBag.ConfirmaUnificacaoConta
+                        </div>
+                    </div>
+                    }
+                    
                 </div>
                 <div class="form-group">
                     @Html.HiddenFor(m => m.UserId)

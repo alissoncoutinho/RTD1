@@ -575,15 +575,21 @@
         $(function () {
             $("#dataInicio").datepicker({
                 language: 'pt-BR',
-                pickTime: false
+                pickTime: false,
+                locale: 'pt-br',
+                dateFormat: 'dd/mm/yy'
             });
             $("#dataFim").datepicker({
                 language: 'pt-BR',
-                pickTime: false
+                pickTime: false,
+                locale: 'pt-br',
+                dateFormat: 'dd/mm/yy'
             });
             $("#dataFimInscricoes").datepicker({
                 language: 'pt-BR',
-                pickTime: false
+                pickTime: false,
+                locale: 'pt-br',
+                dateFormat: 'dd/mm/yy',
             });
 
             $("#sortable1, #sortable2, #sortable3, #sortable4").sortable({

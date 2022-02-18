@@ -426,15 +426,21 @@
     $(function () {
         $("#dataInicio").datepicker({
             language: 'pt-BR',
-            pickTime: false
+            pickTime: false,
+            locale: 'pt-br',
+            dateFormat: 'dd/mm/yy'
         });
         $("#dataFim").datepicker({
             language: 'pt-BR',
-            pickTime: false
+            pickTime: false,
+            locale: 'pt-br',
+            dateFormat: 'dd/mm/yy'
         });
         $("#dataFimInscricoes").datepicker({
             language: 'pt-BR',
-            pickTime: false
+            pickTime: false,
+            locale: 'pt-br',
+            dateFormat: 'dd/mm/yy'
         });
         $('#valor').mask('#.##0,00', { reverse: true });
         $('#valor2').mask('#.##0,00', { reverse: true });
@@ -546,8 +552,9 @@
     }
 
     function checkCity(input) {
-        const re = /[a-zA-Z]-[A-Z][A-Z]$/;
-        if (re.test(input.value.trim())) {
+        //const re = /[a-zA-Z]-[A-Z][A-Z]$/;
+        //if (re.test(input.value.trim())) {
+        if (input.value.indexOf("-") != -1) {
             return true;
         } else {
             return false;

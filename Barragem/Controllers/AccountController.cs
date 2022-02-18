@@ -707,7 +707,7 @@ namespace Barragem.Controllers
                 e.formato = Class.Tipos.FormatoEmail.Html;
                 e.de = "postmaster@rankingdetenis.com";
                 e.para = "tecnologia.btd@gmail.com";
-                e.bcc = new List<String>() { "coutinho.alisson@gmail.com", "contato@rankingbeachtennis.com" };
+                e.bcc = new List<String>() { "coutinho.alisson@gmail.com" };
                 e.EnviarMail();
             }
             catch (Exception e)
@@ -1050,7 +1050,7 @@ namespace Barragem.Controllers
 
         [HttpGet]
         [Authorize(Roles = "admin,organizador,usuario,adminTorneio,adminTorneioTenis")]
-        public ActionResult EditaUsuario(string UserName, bool isAlterarFoto=false, string ConfirmaSenha = "")
+        public ActionResult EditaUsuario(string UserName, bool isAlterarFoto=false, string ConfirmaSenha = "", string ConfirmaUnificacaoConta="")
         {
             ViewBag.isAlterarFoto = isAlterarFoto;
             var usuario = db.UserProfiles.Find(WebSecurity.GetUserId(UserName));
@@ -1066,7 +1066,32 @@ namespace Barragem.Controllers
                 ViewBag.ConfirmaSenha = "NOTOK";
                 ViewBag.ConfirmaSenhaNOTOKMsg = "Não foi possível trocar a senha!";
             }
+            if (ConfirmaUnificacaoConta == "ok")
+            {
+                ViewBag.ConfirmaUnificacaoConta = "Conta unificada com sucesso.";
+            }
+            string perfil = Roles.GetRolesForUser(User.Identity.Name)[0];
+            if (perfil.Equals("admin")){
+                var contaDuplicada = db.UserProfiles.Where(u => u.email == usuario.email && u.UserId != usuario.UserId && u.situacao=="torneio").ToList();
+                if (contaDuplicada.Count() > 0)
+                {
+                    ViewBag.MigrarConta = contaDuplicada[0].UserId;
+                }
+            }
             return View(usuario);
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "admin")]
+        public ActionResult UnificarConta(int userIdOrigem, int userIdDestino, string UserName)
+        {
+            db.Database.ExecuteSqlCommand("update userprofile set situacao = 'inativo' where userId =" + userIdOrigem);
+            db.Database.ExecuteSqlCommand("update jogo set desafiante_id =" + userIdDestino + " where desafiante_id =" + userIdOrigem);
+            db.Database.ExecuteSqlCommand("update jogo set desafiado_id =" + userIdDestino + " where desafiado_id =" + userIdOrigem);
+            db.Database.ExecuteSqlCommand("update inscricaotorneio set userId =" + userIdDestino + " where userId =" + userIdOrigem);
+            db.Database.ExecuteSqlCommand("update snapshotranking set userid =" + userIdDestino + " where userid =" + userIdOrigem);
+
+            return RedirectToAction("EditaUsuario", "Account", new { UserName= UserName, isAlterarFoto = false, ConfirmaSenha = "", ConfirmaUnificacaoConta = "ok" });
         }
 
         [Authorize(Roles = "admin")]
