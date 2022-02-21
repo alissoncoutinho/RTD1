@@ -576,8 +576,8 @@ namespace Barragem.Controllers
                     db.SaveChanges();
                     scope.Complete();
                     msg = "ok";
-                }
-               }catch (Exception ex){
+               }
+            }catch (Exception ex){
                     msg = msg +": " +ex.Message;
                     if (ex.InnerException == null) { ViewBag.DetalheErro = ex.StackTrace; } else { ViewBag.DetalheErro = ex.InnerException.StackTrace; }
                     ViewBag.MsgErro = msg;

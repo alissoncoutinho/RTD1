@@ -3441,7 +3441,7 @@ namespace Barragem.Controllers
             foreach (var item in torneiosAndamento)
             {
                 // estou colocando estes dados em outros campos do objeto. Gambiarra!!!
-                item.qtddClasses = db.InscricaoTorneio.Where(t => t.torneioId == item.Id).Count();
+                item.qtddClasses = db.InscricaoTorneio.Where(i => i.torneioId == item.Id).Select(i => (int)i.userId).Distinct().Count();
                 item.valor = db.InscricaoTorneio.Where(i => i.torneioId == item.Id && i.isAtivo == true).Select(i => new { user = (int)i.userId, valor = i.valor }).Distinct().Sum(i => i.valor);
                 
             }

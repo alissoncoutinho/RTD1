@@ -29,7 +29,7 @@ namespace Barragem.Controllers
                 if ((id == 0) && (nome == "") && (User.Identity.Name != "")){
                     UserProfile usuario = db.UserProfiles.Find(WebSecurity.GetUserId(User.Identity.Name));
                     bV = usuario.barragem;
-                    id = db.Rancking.Where(r => r.rodada.isAberta == false && r.rodada.isRodadaCarga == false && r.rodada.barragemId == bV.Id).Max(r => r.rodada_id);
+                    id = db.Rodada.Where(r => r.isAberta == false && r.isRodadaCarga == false && r.barragemId == bV.Id).Max(r => r.Id);
                     ViewBag.IdBarragem = bV.Id;
                     ViewBag.NomeBarragem = bV.nome;
                 }else if (nome != ""){

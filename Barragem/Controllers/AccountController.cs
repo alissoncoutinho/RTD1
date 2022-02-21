@@ -1731,11 +1731,16 @@ namespace Barragem.Controllers
                 else if (registers.Count() > 0)
                 {
                     var usuario = registers[0];
+                    var msg = "";
+                    if (usuario.barragem != null)
+                    {
+                        msg = "Olá, " + usuario.nome + " seu login foi localizado no ranking: " + usuario.barragem.nome + " entre com a sua senha.";
+                    }
                     return RedirectToAction("LoginPasswordBT", new
                     {
                         returnUrl = model.returnUrl,
                         userName = usuario.UserName,
-                        Msg = "Olá, " + usuario.nome + " seu login foi localizado no ranking: " + usuario.barragem.nome + " entre com a sua senha.",
+                        Msg = msg,
                         torneioId = model.torneioId
                     });
                 }

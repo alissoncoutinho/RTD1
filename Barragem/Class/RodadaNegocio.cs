@@ -128,7 +128,7 @@ namespace Barragem.Class
                 {
                     int quantidadeDeRodadasParaPontuacao = 9;
                     Rodada rodadaAtual = db.Rodada.Where(r => r.Id == idRodada).Single();
-                    if (rodadaAtual.temporada.iniciarZerada)
+                    if (rodadaAtual.temporada !=null && rodadaAtual.temporada.iniciarZerada)
                     {
                         int quantidadeDeRodadasRealizadas = db.Rodada.Where(r => r.temporadaId == rodadaAtual.temporadaId && r.Id!=idRodada).Count();
                         if (quantidadeDeRodadasRealizadas < quantidadeDeRodadasParaPontuacao)

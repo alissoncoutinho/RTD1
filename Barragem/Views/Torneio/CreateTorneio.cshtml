@@ -203,28 +203,36 @@
                     <div class="panel-body">
                         @foreach (var lg in ViewBag.LigasDisponiveis)
                         {
-                            <input type="checkbox" name="liga" class="ligas" value="@lg.Liga.Id">
-                            if (ViewBag.isModeloTodosContraTodos)
-                            {
-                                @Html.Raw(lg.Liga.Nome)
-                            }
-                            else
-                            {
-                                if (ViewBag.barragemId == lg.Liga.barragemId) {
-                                //if (false){
-                                    @Html.Raw(lg.Liga.Nome + " - Pontos: ")
-                                    <select name="pontuacaoLiga" id="pontuacaoLiga">
-                                        <option value="100">100</option>
-                                        <option value="250">250</option>
-                                        <option value="500">500</option>
-                                        <option value="1000">1000</option>
-                                    </select>
-                                } else {
-                                    @Html.Raw(lg.Liga.Nome + " - Pt. " + lg.TipoTorneio)
+                            <div class="row" style="padding-left: 15px;">
+                                <input type="checkbox" name="liga" class="ligas" value="@lg.Liga.Id" onchange="inputCheckboxSelectPontos(this);">
+                                @if (ViewBag.isModeloTodosContraTodos)
+                                {
+                                    <span>@Html.Raw(lg.Liga.Nome)</span>
                                 }
-                                
-                            }
-                            <br>
+                                else
+                                {
+                                    if (ViewBag.barragemId == lg.Liga.barragemId) 
+                                    {
+                                        <span>@Html.Raw(lg.Liga.Nome)</span>
+
+                                        <span class="pontuacao-circuito" style="display:none;">
+                                            <span>- Selecione a pontuação: </span>
+                                            <select name="pontuacaoLiga" id="pontuacaoLiga">
+                                                <option value="-">-</option>
+                                                <option value="100">100</option>
+                                                <option value="250">250</option>
+                                                <option value="500">500</option>
+                                                <option value="1000">1000</option>
+                                            </select>
+                                        </span>
+                                    } 
+                                    else 
+                                    {
+                                        <span>@Html.Raw(lg.Liga.Nome + " - Pt. " + lg.TipoTorneio)</span>
+                                    }
+
+                                }
+                            </div>
                         }
                     </div>
                 </div>
@@ -630,6 +638,16 @@
                 document.getElementById('tab3').className = '';
                 document.getElementById('tab4').className = 'active';
             }
+            var listLigas = document.getElementsByClassName('ligas');
+            for (let item of listLigas) {
+                if (item.checked == true) {
+                    var select = item.nextElementSibling.nextElementSibling.firstElementChild.nextElementSibling;
+                    if (select.value == '-') {
+                        toastr.error("Selecione a pontuação do circuito escolhido.", "Erro");
+                        $("#btnTab3").attr("href", "#tabClasse");
+                    }
+                }
+            }
             $('html,body').scrollTop(0);
         });
 
@@ -684,7 +702,17 @@
 
         habilibarValoresInscricao()
 
-
+        function inputCheckboxSelectPontos(input) {
+            if (input.checked == true) {
+                span = input.nextElementSibling.nextElementSibling;
+                if (span.classList.contains('pontuacao-circuito')) {
+                    span.style.display = 'inline-block';
+                }
+            } else {
+                span = input.nextElementSibling.nextElementSibling;
+                span.style.display = 'none';
+            }
+        }
 
     </script>
 
