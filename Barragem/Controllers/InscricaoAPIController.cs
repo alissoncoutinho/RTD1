@@ -20,8 +20,6 @@ using System.Security.Claims;
 
 namespace Barragem.Controllers
 {
-
-
     public class InscricaoAPIController : ApiController
     {
         private BarragemDbContext db = new BarragemDbContext();

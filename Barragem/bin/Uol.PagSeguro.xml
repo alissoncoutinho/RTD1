@@ -4,6 +4,344 @@
         <name>Uol.PagSeguro</name>
     </assembly>
     <members>
+        <member name="T:Uol.PagSeguro.Configuration.AuthorizationElement">
+            <inheritdoc cref="T:System.Configuration.ConfigurationElement" />
+        </member>
+        <member name="P:Uol.PagSeguro.Configuration.AuthorizationElement.AuthorizationRequest">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Uol.PagSeguro.Configuration.AuthorizationElement.AuthorizationUrl">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Uol.PagSeguro.Configuration.AuthorizationElement.AuthorizationSearch">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Uol.PagSeguro.Configuration.AuthorizationElement.AuthorizationNotification">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Uol.PagSeguro.Configuration.AuthorizationElement.GetValue``1(System.String,System.Boolean)">
+            <inheritdoc />
+            <summary>
+            </summary>
+            <param name="elementKey"></param>
+            <param name="sandbox"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Uol.PagSeguro.Configuration.TypedConfigurationElement`1">
+            <inheritdoc />
+        </member>
+        <member name="P:Uol.PagSeguro.Configuration.TypedConfigurationElement`1.Value">
+            <summary>
+            </summary>
+        </member>
+        <member name="P:Uol.PagSeguro.Configuration.TypedConfigurationElement`1.IsValid">
+            <summary>
+            </summary>
+        </member>
+        <member name="M:Uol.PagSeguro.Configuration.TypedConfigurationElement`1.DeserializeElement(System.Xml.XmlReader,System.Boolean)">
+            <inheritdoc />
+        </member>
+        <member name="T:Uol.PagSeguro.Configuration.CredentialElement">
+            <inheritdoc />
+        </member>
+        <member name="P:Uol.PagSeguro.Configuration.CredentialElement.Email">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Uol.PagSeguro.Configuration.CredentialElement.Token">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Uol.PagSeguro.Configuration.CredentialElement.SandboxEmail">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Uol.PagSeguro.Configuration.CredentialElement.SandboxToken">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Uol.PagSeguro.Configuration.CredentialElement.AppId">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Uol.PagSeguro.Configuration.CredentialElement.AppKey">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Uol.PagSeguro.Configuration.CredentialElement.SandboxAppId">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Uol.PagSeguro.Configuration.CredentialElement.SandboxAppKey">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:Uol.PagSeguro.Configuration.DirectPaymentElement">
+            <inheritdoc cref="T:System.Configuration.ConfigurationElement" />
+        </member>
+        <member name="P:Uol.PagSeguro.Configuration.DirectPaymentElement.Session">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Uol.PagSeguro.Configuration.DirectPaymentElement.Installment">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Uol.PagSeguro.Configuration.DirectPaymentElement.Transactions">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Uol.PagSeguro.Configuration.DirectPaymentElement.GetValue``1(System.String,System.Boolean)">
+            <inheritdoc />
+            <summary>
+            </summary>
+            <param name="elementKey"></param>
+            <param name="sandbox"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Uol.PagSeguro.Configuration.ITypedConfigValueProvider">
+            <summary>
+            </summary>
+        </member>
+        <member name="M:Uol.PagSeguro.Configuration.ITypedConfigValueProvider.GetValue``1(System.String,System.Boolean)">
+            <summary>
+            </summary>
+            <param name="elementKey"></param>
+            <param name="sandbox"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Uol.PagSeguro.Configuration.PagSeguroConfigurationElement">
+            <inheritdoc />
+        </member>
+        <member name="P:Uol.PagSeguro.Configuration.PagSeguroConfigurationElement.LibVersion">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Uol.PagSeguro.Configuration.PagSeguroConfigurationElement.FormUrlEncoded">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Uol.PagSeguro.Configuration.PagSeguroConfigurationElement.Encoding">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Uol.PagSeguro.Configuration.PagSeguroConfigurationElement.RequestTimeout">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Uol.PagSeguro.Configuration.PagSeguroConfigurationElement.Sandbox">
+            <summary>
+            Configure Sandbox TextElement
+            </summary>
+        </member>
+        <member name="M:Uol.PagSeguro.Configuration.PagSeguroConfigurationElement.Get(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="dataKey"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Uol.PagSeguro.Configuration.PagSeguroConfigurationSection">
+            <inheritdoc />
+        </member>
+        <member name="P:Uol.PagSeguro.Configuration.PagSeguroConfigurationSection.Urls">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Uol.PagSeguro.Configuration.PagSeguroConfigurationSection.Credential">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Uol.PagSeguro.Configuration.PagSeguroConfigurationSection.Configuration">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Uol.PagSeguro.Configuration.PagSeguroConfigurationSection.GetCredentialEmail(System.Boolean)">
+            <summary>
+            
+            </summary>
+            <param name="isSandbox"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Uol.PagSeguro.Configuration.PagSeguroConfigurationSection.GetCredentialToken(System.Boolean)">
+            <summary>
+            
+            </summary>
+            <param name="isSandbox"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Uol.PagSeguro.Configuration.PagSeguroConfigurationSection.GetCredentialAppId(System.Boolean)">
+            <summary>
+            
+            </summary>
+            <param name="isSandbox"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Uol.PagSeguro.Configuration.PagSeguroConfigurationSection.GetCredentialAppKey(System.Boolean)">
+            <summary>
+            
+            </summary>
+            <param name="isSandbox"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Uol.PagSeguro.Configuration.PagSeguroConfigurationSection.GetCurrent(System.Boolean,System.String,System.String,System.String,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="isSandbox"></param>
+            <param name="email"></param>
+            <param name="token"></param>
+            <param name="appId"></param>
+            <param name="appKey"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Uol.PagSeguro.Configuration.PreApprovalElement">
+            <inheritdoc cref="T:System.Configuration.ConfigurationElement" />
+        </member>
+        <member name="P:Uol.PagSeguro.Configuration.PreApprovalElement.PreApprovalRequest">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Uol.PagSeguro.Configuration.PreApprovalElement.PreApprovalRedirect">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Uol.PagSeguro.Configuration.PreApprovalElement.PreApprovalNotification">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Uol.PagSeguro.Configuration.PreApprovalElement.PreApprovalSearch">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Uol.PagSeguro.Configuration.PreApprovalElement.PreApprovalCancel">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Uol.PagSeguro.Configuration.PreApprovalElement.PreApprovalPayment">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Uol.PagSeguro.Configuration.PreApprovalElement.GetValue``1(System.String,System.Boolean)">
+            <inheritdoc />
+            <summary>
+            </summary>
+            <param name="elementKey"></param>
+            <param name="sandbox"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Uol.PagSeguro.Configuration.TextElement">
+            <inheritdoc />
+        </member>
+        <member name="T:Uol.PagSeguro.Configuration.UrlElement">
+            <inheritdoc cref="T:System.Configuration.ConfigurationElement" />
+        </member>
+        <member name="P:Uol.PagSeguro.Configuration.UrlElement.Link">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Uol.PagSeguro.Configuration.UrlElement.GetValue``1(System.String,System.Boolean)">
+            <inheritdoc />
+            <summary>
+            </summary>
+            <param name="elementKey"></param>
+            <param name="sandbox"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Uol.PagSeguro.Configuration.UrlsElement">
+            <inheritdoc cref="T:System.Configuration.ConfigurationElement" />
+        </member>
+        <member name="P:Uol.PagSeguro.Configuration.UrlsElement.Payment">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Uol.PagSeguro.Configuration.UrlsElement.PaymentRedirect">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Uol.PagSeguro.Configuration.UrlsElement.Notification">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Uol.PagSeguro.Configuration.UrlsElement.Search">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Uol.PagSeguro.Configuration.UrlsElement.SearchAbandoned">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Uol.PagSeguro.Configuration.UrlsElement.Cancel">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Uol.PagSeguro.Configuration.UrlsElement.Refund">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Uol.PagSeguro.Configuration.UrlsElement.PreApproval">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Uol.PagSeguro.Configuration.UrlsElement.DirectPayment">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Uol.PagSeguro.Configuration.UrlsElement.Authorization">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Uol.PagSeguro.Configuration.UrlsElement.GetValue``1(System.String,System.Boolean)">
+            <inheritdoc />
+            <summary>
+            </summary>
+            <param name="elementKey"></param>
+            <param name="sandbox"></param>
+            <returns></returns>
+        </member>
         <member name="T:Uol.PagSeguro.Domain.ListPaymentMethodGroups">
             <summary>
             Defines a list of known accepted payment groups.
@@ -184,27 +522,44 @@
              List of available parameter item for send in checkout
             </summary>
         </member>
-        <member name="T:Uol.PagSeguro.Domain.AcceptedPayments">
+        <member name="T:Uol.PagSeguro.Domain.IAcceptedPayments">
             <summary>
-            
+            </summary>
+        </member>
+        <member name="P:Uol.PagSeguro.Domain.IAcceptedPayments.Name">
+            <summary>
+            </summary>
+        </member>
+        <member name="P:Uol.PagSeguro.Domain.IAcceptedPayments.Group">
+            <summary>
             </summary>
         </member>
         <member name="T:Uol.PagSeguro.Domain.AcceptPaymentMethod">
-            <summary>
-            
-            </summary>
+            <inheritdoc />
+        </member>
+        <member name="P:Uol.PagSeguro.Domain.AcceptPaymentMethod.Name">
+            <inheritdoc />
+        </member>
+        <member name="P:Uol.PagSeguro.Domain.AcceptPaymentMethod.Group">
+            <inheritdoc />
+        </member>
+        <member name="M:Uol.PagSeguro.Domain.AcceptPaymentMethod.#ctor(System.String,System.Collections.Generic.List{System.String})">
+            <inheritdoc />
         </member>
         <member name="T:Uol.PagSeguro.Domain.ApplicationCredentials">
+            <inheritdoc />
             <summary>
             Identifies a PagSeguro application
             </summary>
         </member>
-        <member name="M:Uol.PagSeguro.Domain.ApplicationCredentials.#ctor(System.String,System.String,System.String)">
+        <member name="M:Uol.PagSeguro.Domain.ApplicationCredentials.#ctor(System.Boolean,System.String,System.String,System.String)">
             <summary>
             Initializes a new instance of the ApplicationCredentials class
             </summary>
+            <param name="isSandbox"></param>
             <param name="appId"></param>
             <param name="appKey"></param>
+            <param name="authorizationCode"></param>
             <remarks>
             A PagSeguro application is identified by an app identifier and a app key
             </remarks>
@@ -417,6 +772,9 @@
             Billing address
             </summary>
         </member>
+        <member name="T:Uol.PagSeguro.Domain.Direct.OnlineDebitCheckout">
+            <inheritdoc />
+        </member>
         <member name="P:Uol.PagSeguro.Domain.Direct.OnlineDebitCheckout.PaymentMethod">
             <summary>
             Payment Method
@@ -428,6 +786,7 @@
             </summary>
         </member>
         <member name="M:Uol.PagSeguro.Domain.Direct.OnlineDebitCheckout.#ctor">
+            <inheritdoc />
             <summary>
             Constructor
             </summary>
@@ -435,6 +794,11 @@
         <member name="T:Uol.PagSeguro.Domain.Direct.Checkout">
             <summary>
             Represents a payment request
+            </summary>
+        </member>
+        <member name="P:Uol.PagSeguro.Domain.Direct.Checkout.PaymentMode">
+            <summary>
+            
             </summary>
         </member>
         <member name="P:Uol.PagSeguro.Domain.Direct.Checkout.ReceiverEmail">
@@ -502,7 +866,7 @@
             
              </remarks>
         </member>
-        <member name="P:Uol.PagSeguro.Domain.Direct.Checkout.NotificationURL">
+        <member name="P:Uol.PagSeguro.Domain.Direct.Checkout.NotificationUrl">
             <summary>
             Determines for which url PagSeguro will send the order related notifications codes.
             <remarks>
@@ -562,15 +926,22 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="T:Uol.PagSeguro.Domain.Direct.BoletoCheckout">
+            <inheritdoc />
+        </member>
         <member name="P:Uol.PagSeguro.Domain.Direct.BoletoCheckout.PaymentMethod">
             <summary>
             Payment Method
             </summary>
         </member>
         <member name="M:Uol.PagSeguro.Domain.Direct.BoletoCheckout.#ctor">
+            <inheritdoc />
             <summary>
             Constructor
             </summary>
+        </member>
+        <member name="T:Uol.PagSeguro.Domain.Direct.CreditCardCheckout">
+            <inheritdoc />
         </member>
         <member name="P:Uol.PagSeguro.Domain.Direct.CreditCardCheckout.Token">
             <summary>
@@ -598,6 +969,7 @@
             </summary>
         </member>
         <member name="M:Uol.PagSeguro.Domain.Direct.CreditCardCheckout.#ctor">
+            <inheritdoc />
             <summary>
             Constructor
             </summary>
@@ -663,11 +1035,13 @@
             </summary>
         </member>
         <member name="M:Uol.PagSeguro.Domain.Direct.Installment.#ctor">
+            <inheritdoc />
             <summary>
             Initializes a new instance of the Installment Class
             </summary>
         </member>
         <member name="M:Uol.PagSeguro.Domain.Direct.Installment.#ctor(System.Int32,System.Decimal)">
+            <inheritdoc />
             <summary>
             Initializes a new instance of the Installment Class
             </summary>
@@ -743,31 +1117,43 @@
             <returns>string</returns>
         </member>
         <member name="T:Uol.PagSeguro.Domain.ExcludePaymentMethod">
+            <inheritdoc />
+        </member>
+        <member name="P:Uol.PagSeguro.Domain.ExcludePaymentMethod.Name">
+            <inheritdoc />
+        </member>
+        <member name="P:Uol.PagSeguro.Domain.ExcludePaymentMethod.Group">
+            <inheritdoc />
+        </member>
+        <member name="M:Uol.PagSeguro.Domain.ExcludePaymentMethod.#ctor(System.String,System.Collections.Generic.List{System.String})">
+            <inheritdoc />
+        </member>
+        <member name="T:Uol.PagSeguro.Domain.Installment.Installment">
+            <inheritdoc />
             <summary>
-            
             </summary>
         </member>
-        <member name="P:Uol.PagSeguro.Domain.Installment.Installment.cardBrand">
+        <member name="P:Uol.PagSeguro.Domain.Installment.Installment.CardBrand">
             <summary>
             Credit card brand
             </summary>
         </member>
-        <member name="P:Uol.PagSeguro.Domain.Installment.Installment.quantity">
+        <member name="P:Uol.PagSeguro.Domain.Installment.Installment.Quantity">
             <summary>
             Quantity of installments
             </summary>
         </member>
-        <member name="P:Uol.PagSeguro.Domain.Installment.Installment.amount">
+        <member name="P:Uol.PagSeguro.Domain.Installment.Installment.Amount">
             <summary>
             Value of each installment
             </summary>
         </member>
-        <member name="P:Uol.PagSeguro.Domain.Installment.Installment.totalAmount">
+        <member name="P:Uol.PagSeguro.Domain.Installment.Installment.TotalAmount">
             <summary>
             Total value of installments 
             </summary>
         </member>
-        <member name="P:Uol.PagSeguro.Domain.Installment.Installment.interestFree">
+        <member name="P:Uol.PagSeguro.Domain.Installment.Installment.InterestFree">
             <summary>
             Indicates if is an interest free transaction
             </summary>
@@ -776,34 +1162,42 @@
             <summary>
             Initializes a new instance of the Installment class
             </summary>
-            <param name="cardBrand"></param>
-            <param name="quantity"></param>
-            <param name="amount"></param>
-            <param name="totalAmount"></param>
-            <param name="interestFree"></param>
+        </member>
+        <member name="M:Uol.PagSeguro.Domain.Installment.Installment.ToString">
+            <inheritdoc />
+        </member>
+        <member name="T:Uol.PagSeguro.Domain.Installment.Installments">
+            <summary>
+            </summary>
+        </member>
+        <member name="M:Uol.PagSeguro.Domain.Installment.Installments.Get">
+            <summary>
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Uol.PagSeguro.Domain.Installment.Installments.Add(Uol.PagSeguro.Domain.Installment.Installment)">
+            <summary>
+            </summary>
+            <param name="installment"></param>
         </member>
         <member name="T:Uol.PagSeguro.Domain.CreditorFees">
             <summary>
             Represents a product/creditorFees in a transaction
             </summary>
         </member>
-        <member name="M:Uol.PagSeguro.Domain.CreditorFees.#ctor(System.Decimal,System.Decimal)">
-            <summary>
-            Initializes a new instance of the CreditorFees class
-            </summary>
-            <param name="id"></param>
-            <param name="description"></param>
-            <param name="quantity"></param>
-            <param name="amount"></param>
-        </member>
-        <member name="P:Uol.PagSeguro.Domain.CreditorFees.intermediationRateAmount">
+        <member name="P:Uol.PagSeguro.Domain.CreditorFees.IntermediationRateAmount">
             <summary>
             Rate amount
             </summary>
         </member>
-        <member name="P:Uol.PagSeguro.Domain.CreditorFees.intermediationFeeAmount">
+        <member name="P:Uol.PagSeguro.Domain.CreditorFees.IntermediationFeeAmount">
             <summary>
             Fee amount
+            </summary>
+        </member>
+        <member name="M:Uol.PagSeguro.Domain.CreditorFees.#ctor(System.Decimal,System.Decimal)">
+            <summary>
+            Initializes a new instance of the CreditorFees class
             </summary>
         </member>
         <member name="T:Uol.PagSeguro.Domain.PaymentMethodConfigItem">
@@ -1530,6 +1924,14 @@
             Party that will be sending the money
             </summary>
         </member>
+        <member name="P:Uol.PagSeguro.Domain.PaymentRequest.PreApproval">
+            <summary>
+            </summary>
+        </member>
+        <member name="P:Uol.PagSeguro.Domain.PaymentRequest.PreApprovalCode">
+            <summary>
+            </summary>
+        </member>
         <member name="P:Uol.PagSeguro.Domain.PaymentRequest.Currency">
             <summary>
             Payment currency.
@@ -1601,7 +2003,7 @@
             
              </remarks>
         </member>
-        <member name="P:Uol.PagSeguro.Domain.PaymentRequest.NotificationURL">
+        <member name="P:Uol.PagSeguro.Domain.PaymentRequest.NotificationUrl">
             <summary>
             Determines for which url PagSeguro will send the order related notifications codes.
             <remarks>
@@ -1674,19 +2076,15 @@
         </member>
         <member name="M:Uol.PagSeguro.Domain.PaymentRequest.AcceptPaymentMethodConfig(System.String,System.Collections.Generic.List{System.String})">
             <summary>
-            
             </summary>
-            <param name="key"></param>
-            <param name="value"></param>
             <param name="group"></param>
+            <param name="name"></param>
         </member>
         <member name="M:Uol.PagSeguro.Domain.PaymentRequest.ExcludePaymentMethodConfig(System.String,System.Collections.Generic.List{System.String})">
             <summary>
-            
             </summary>
-            <param name="key"></param>
-            <param name="value"></param>
             <param name="group"></param>
+            <param name="name"></param>
         </member>
         <member name="M:Uol.PagSeguro.Domain.PaymentRequest.AddIndexedParameter(System.String,System.String,System.Nullable{System.Int32})">
             <summary>
@@ -1918,6 +2316,10 @@
             Abstract class that represents a PagSeguro credential
             </summary>
         </member>
+        <member name="P:Uol.PagSeguro.Domain.Credentials.IsSandbox">
+            <summary>
+            </summary>
+        </member>
         <member name="P:Uol.PagSeguro.Domain.Credentials.AttributeDictionary">
             <summary>
             Derived classes should add all of the credential "parts" as name value pairs
@@ -2043,6 +2445,7 @@
             <returns></returns>
         </member>
         <member name="T:Uol.PagSeguro.Domain.AccountCredentials">
+            <inheritdoc />
             <summary>
             Identifies a PagSeguro account
             </summary>
@@ -2051,6 +2454,17 @@
             <summary>
             Initializes a new instance of the AccountCredentials class
             </summary>
+            <param name="email"></param>
+            <param name="token"></param>
+            <remarks>
+            A PagSeguro account is identified by an email and a security token
+            </remarks>
+        </member>
+        <member name="M:Uol.PagSeguro.Domain.AccountCredentials.#ctor(System.Boolean,System.String,System.String)">
+            <summary>
+            Initializes a new instance of the AccountCredentials class
+            </summary>
+            <param name="isSandbox"></param>
             <param name="email"></param>
             <param name="token"></param>
             <remarks>
@@ -2127,6 +2541,7 @@
             </summary>
         </member>
         <member name="M:Uol.PagSeguro.Domain.Item.#ctor(System.String,System.String,System.Int32,System.Decimal)">
+            <inheritdoc />
             <summary>
             Initializes a new instance of the Item class
             </summary>
@@ -2136,6 +2551,7 @@
             <param name="amount"></param>
         </member>
         <member name="M:Uol.PagSeguro.Domain.Item.#ctor(System.String,System.String,System.Int32,System.Decimal,System.Int64)">
+            <inheritdoc />
             <summary>
             Initializes a new instance of the Item class
             </summary>
@@ -2146,6 +2562,7 @@
             <param name="weight"></param>
         </member>
         <member name="M:Uol.PagSeguro.Domain.Item.#ctor(System.String,System.String,System.Int32,System.Decimal,System.Decimal)">
+            <inheritdoc />
             <summary>
             Initializes a new instance of the Item class
             </summary>
@@ -2407,6 +2824,11 @@
             Sender phone number
             </summary>
         </member>
+        <member name="P:Uol.PagSeguro.Domain.Sender.Address">
+            <summary>
+            Sender Address
+            </summary>
+        </member>
         <member name="P:Uol.PagSeguro.Domain.Sender.Hash">
             <summary>
             Sender hash code
@@ -2447,11 +2869,6 @@
             Shipping information
             </summary>
         </member>
-        <member name="M:Uol.PagSeguro.Domain.Shipping.#ctor">
-            <summary>
-            Initializes a new instance of the Shipping class
-            </summary>
-        </member>
         <member name="P:Uol.PagSeguro.Domain.Shipping.Address">
             <summary>
             Shipping address
@@ -2467,6 +2884,11 @@
             <summary>
             Total shipping cost. This is a read-only property and it is calculated by PagSeguro 
             based on the shipping information provided with the payment request.
+            </summary>
+        </member>
+        <member name="M:Uol.PagSeguro.Domain.Shipping.#ctor">
+            <summary>
+            Initializes a new instance of the Shipping class
             </summary>
         </member>
         <member name="T:Uol.PagSeguro.Constants.PaymentMethodConfigKeys">
@@ -2978,6 +3400,221 @@
             </summary>
             <param name="message"></param>
         </member>
+        <member name="T:Uol.PagSeguro.Resources.PagSeguroUris">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Uol.PagSeguro.Resources.PagSeguroUris.XmlConfig">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Uol.PagSeguro.Resources.PagSeguroUris.GetNotificationUri(Uol.PagSeguro.Domain.Credentials)">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Uol.PagSeguro.Resources.PagSeguroUris.GetPaymentUri(Uol.PagSeguro.Domain.Credentials)">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Uol.PagSeguro.Resources.PagSeguroUris.GetPaymentRedirectUri(Uol.PagSeguro.Domain.Credentials)">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Uol.PagSeguro.Resources.PagSeguroUris.GetSearchUri(Uol.PagSeguro.Domain.Credentials)">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Uol.PagSeguro.Resources.PagSeguroUris.GetSearchAbandonedUri(Uol.PagSeguro.Domain.Credentials)">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Uol.PagSeguro.Resources.PagSeguroUris.GetCancelUri(Uol.PagSeguro.Domain.Credentials)">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Uol.PagSeguro.Resources.PagSeguroUris.GetRefundUri(Uol.PagSeguro.Domain.Credentials)">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Uol.PagSeguro.Resources.PagSeguroUris.GetPreApprovalRequestUri(Uol.PagSeguro.Domain.Credentials)">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Uol.PagSeguro.Resources.PagSeguroUris.GetPreApprovalRedirectUri(Uol.PagSeguro.Domain.Credentials)">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Uol.PagSeguro.Resources.PagSeguroUris.GetPreApprovalNotificationUri(Uol.PagSeguro.Domain.Credentials)">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Uol.PagSeguro.Resources.PagSeguroUris.GetPreApprovalCancelUri(Uol.PagSeguro.Domain.Credentials)">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Uol.PagSeguro.Resources.PagSeguroUris.GetPreApprovalSearchUri(Uol.PagSeguro.Domain.Credentials)">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Uol.PagSeguro.Resources.PagSeguroUris.GetPreApprovalPaymentUri(Uol.PagSeguro.Domain.Credentials)">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Uol.PagSeguro.Resources.PagSeguroUris.GetSessionUri(Uol.PagSeguro.Domain.Credentials)">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Uol.PagSeguro.Resources.PagSeguroUris.GetTransactionsUri(Uol.PagSeguro.Domain.Credentials)">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Uol.PagSeguro.Resources.PagSeguroUris.GetInstallmentUri(Uol.PagSeguro.Domain.Credentials)">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Uol.PagSeguro.Resources.PagSeguroUris.GetAuthorizarionUri(Uol.PagSeguro.Domain.Credentials)">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Uol.PagSeguro.Resources.PagSeguroUris.GetAuthorizarionRequestUri(Uol.PagSeguro.Domain.Credentials)">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Uol.PagSeguro.Resources.PagSeguroUris.GetAuthorizarionSearchUri(Uol.PagSeguro.Domain.Credentials)">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Uol.PagSeguro.Resources.PagSeguroUris.GetAuthorizationNotificationUri(Uol.PagSeguro.Domain.Credentials)">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Uol.PagSeguro.Resources.PagSeguroUris.GetUrlValue(System.String,System.Boolean)">
+            <summary>
+            
+            </summary>
+            <param name="urlKey"></param>
+            <param name="sandbox"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Uol.PagSeguro.Resources.EnvironmentConfiguration">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:Uol.PagSeguro.Resources.EnvironmentConfiguration.PagseguroUrl">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="F:Uol.PagSeguro.Resources.EnvironmentConfiguration.SandboxUrl">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Uol.PagSeguro.Resources.EnvironmentConfiguration.IsSandbox">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Uol.PagSeguro.Resources.EnvironmentConfiguration.ChangeEnvironment(System.Boolean)">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:Uol.PagSeguro.Resources.PagSeguroConfiguration">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Uol.PagSeguro.Resources.PagSeguroConfiguration.XmlConfigFile">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Uol.PagSeguro.Resources.PagSeguroConfiguration.XmlConfiguration">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Uol.PagSeguro.Resources.PagSeguroConfiguration.ModuleVersion">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Uol.PagSeguro.Resources.PagSeguroConfiguration.CmsVersion">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Uol.PagSeguro.Resources.PagSeguroConfiguration.LanguageEngineDescription">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Uol.PagSeguro.Resources.PagSeguroConfiguration.GetAccountCredentials(System.Boolean,System.String,System.String)">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Uol.PagSeguro.Resources.PagSeguroConfiguration.GetApplicationCredentials(System.Boolean,System.String,System.String)">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Uol.PagSeguro.Resources.PagSeguroConfiguration.RequestTimeout">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Uol.PagSeguro.Resources.PagSeguroConfiguration.FormUrlEncoded">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Uol.PagSeguro.Resources.PagSeguroConfiguration.Encoding">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Uol.PagSeguro.Resources.PagSeguroConfiguration.LibVersion">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Uol.PagSeguro.Resources.PagSeguroConfiguration.GetDataValue(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="dataKey"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Uol.PagSeguro.Service.AuthorizationSearchService">
+            <summary>
+            
+            </summary>
+        </member>
         <member name="M:Uol.PagSeguro.Service.AuthorizationSearchService.SearchByCode(Uol.PagSeguro.Domain.Credentials,System.String)">
             <summary>
             Finds a authorization with a matching authorization code
@@ -3025,26 +3662,19 @@
             <param name="onlyAuthorizationCode"></param>
             <returns></returns>
         </member>
-        <member name="M:Uol.PagSeguro.Service.AuthorizationService.BuildAuthorizationURL(System.String)">
+        <member name="T:Uol.PagSeguro.Service.InstallmentService">
             <summary>
             
             </summary>
-            <param name="code"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Uol.PagSeguro.Service.AuthorizationService.buildAuthorizationRequestUrl(Uol.PagSeguro.Domain.Credentials,Uol.PagSeguro.Domain.Authorization.AuthorizationRequest)">
-            <summary>
-            
-            </summary>
-            <param name="connection"></param>
-            <param name="code"></param>
-            <returns></returns>
         </member>
         <member name="M:Uol.PagSeguro.Service.InstallmentService.GetInstallments(Uol.PagSeguro.Domain.Credentials,System.Decimal,System.String,System.Int32)">
             <summary>
             Request a direct payment session
             </summary>
             <param name="credentials">PagSeguro credentials</param>
+            <param name="amount"></param>
+            <param name="cardBrand"></param>
+            <param name="maxInstallmentNoInterest"></param>
             <returns><c cref="T:Uol.PagSeguro.CancelRequestResponse">Result</c></returns>
         </member>
         <member name="T:Uol.PagSeguro.Service.PreApprovalSearchService">
@@ -3157,9 +3787,10 @@
             </summary>
             <param name="credentials">PagSeguro credentials</param>
             <param name="transactionCode">Transaction Code</param>
+            <param name="refundValue"></param>
             <returns><c cref="T:Uol.PagSeguro.CancelRequestResponse">Result</c></returns>
         </member>
-        <member name="M:Uol.PagSeguro.Service.RefundService.BuildRefundURL(Uol.PagSeguro.Domain.Credentials,System.String,System.Nullable{System.Decimal})">
+        <member name="M:Uol.PagSeguro.Service.RefundService.BuildRefundUrl(Uol.PagSeguro.Domain.Credentials,System.String,System.Nullable{System.Decimal})">
             <summary>
             
             </summary>
@@ -3236,13 +3867,18 @@
             <param name="transactionCode">Transaction Code</param>
             <returns><c cref="T:Uol.PagSeguro.CancelRequestResponse">Result</c></returns>
         </member>
-        <member name="M:Uol.PagSeguro.Service.CancelService.BuildCancelURL(Uol.PagSeguro.Domain.Credentials,System.String)">
+        <member name="M:Uol.PagSeguro.Service.CancelService.BuildCancelUrl(Uol.PagSeguro.Domain.Credentials,System.String)">
             <summary>
             
             </summary>
             <param name="credentials">PagSeguro credentials</param>
             <param name="transactionCode">Transaction Code</param>
             <returns></returns>
+        </member>
+        <member name="T:Uol.PagSeguro.Service.SessionService">
+            <summary>
+            
+            </summary>
         </member>
         <member name="M:Uol.PagSeguro.Service.SessionService.CreateSession(Uol.PagSeguro.Domain.Credentials)">
             <summary>
@@ -3263,14 +3899,6 @@
             <param name="credentials">PagSeguro credentials</param>
             <param name="checkout"></param>
             <returns cref="T:Uol.PagSeguro.Transaction"><c>Transaction</c></returns>
-        </member>
-        <member name="M:Uol.PagSeguro.Service.TransactionService.BuildTransactionUrl(Uol.PagSeguro.Domain.Credentials,Uol.PagSeguro.Domain.Direct.Checkout)">
-            <summary>
-            
-            </summary>
-            <param name="credentials"></param>
-            <param name="payment"></param>
-            <returns></returns>
         </member>
         <member name="T:Uol.PagSeguro.Service.TransactionSearchService">
             <summary>
@@ -3411,191 +4039,6 @@
             </summary>
             <param name="credentials"></param>
             <param name="notificationCode"></param>
-            <returns></returns>
-        </member>
-        <member name="T:Uol.PagSeguro.Resources.EnvironmentConfiguration">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="M:Uol.PagSeguro.Resources.EnvironmentConfiguration.ChangeEnvironment(System.Boolean)">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="T:Uol.PagSeguro.Resources.PagSeguroConfiguration">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="M:Uol.PagSeguro.Resources.PagSeguroConfiguration.Credentials(System.Boolean)">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="M:Uol.PagSeguro.Resources.PagSeguroConfiguration.ApplicationCredentials(System.Boolean)">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:Uol.PagSeguro.Resources.PagSeguroConfiguration.UrlXmlConfiguration">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:Uol.PagSeguro.Resources.PagSeguroConfiguration.ModuleVersion">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:Uol.PagSeguro.Resources.PagSeguroConfiguration.CmsVersion">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:Uol.PagSeguro.Resources.PagSeguroConfiguration.LanguageEngineDescription">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:Uol.PagSeguro.Resources.PagSeguroConfiguration.NotificationUri">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:Uol.PagSeguro.Resources.PagSeguroConfiguration.PaymentUri">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:Uol.PagSeguro.Resources.PagSeguroConfiguration.PaymentRedirectUri">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:Uol.PagSeguro.Resources.PagSeguroConfiguration.SearchUri">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:Uol.PagSeguro.Resources.PagSeguroConfiguration.SearchAbandonedUri">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:Uol.PagSeguro.Resources.PagSeguroConfiguration.CancelUri">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:Uol.PagSeguro.Resources.PagSeguroConfiguration.RefundUri">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:Uol.PagSeguro.Resources.PagSeguroConfiguration.PreApprovalUri">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:Uol.PagSeguro.Resources.PagSeguroConfiguration.PreApprovalRedirectUri">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:Uol.PagSeguro.Resources.PagSeguroConfiguration.PreApprovalNotificationUri">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:Uol.PagSeguro.Resources.PagSeguroConfiguration.PreApprovalSearchUri">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:Uol.PagSeguro.Resources.PagSeguroConfiguration.PreApprovalCancelUri">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:Uol.PagSeguro.Resources.PagSeguroConfiguration.PreApprovalPaymentUri">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:Uol.PagSeguro.Resources.PagSeguroConfiguration.SessionUri">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:Uol.PagSeguro.Resources.PagSeguroConfiguration.TransactionsUri">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:Uol.PagSeguro.Resources.PagSeguroConfiguration.InstallmentUri">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:Uol.PagSeguro.Resources.PagSeguroConfiguration.AuthorizarionRequestUri">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:Uol.PagSeguro.Resources.PagSeguroConfiguration.AuthorizarionUri">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:Uol.PagSeguro.Resources.PagSeguroConfiguration.AuthorizarionSearchUri">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:Uol.PagSeguro.Resources.PagSeguroConfiguration.AuthorizationNotificationUri">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:Uol.PagSeguro.Resources.PagSeguroConfiguration.RequestTimeout">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:Uol.PagSeguro.Resources.PagSeguroConfiguration.FormUrlEncoded">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:Uol.PagSeguro.Resources.PagSeguroConfiguration.Encoding">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="P:Uol.PagSeguro.Resources.PagSeguroConfiguration.LibVersion">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="M:Uol.PagSeguro.Resources.PagSeguroConfiguration.GetUrlValue(System.String)">
-            <summary>
-            
-            </summary>
-            <param name="url"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Uol.PagSeguro.Resources.PagSeguroConfiguration.GetDataConfiguration(System.String)">
-            <summary>
-            
-            </summary>
-            <param name="data"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Uol.PagSeguro.Resources.PagSeguroConfiguration.LoadXmlConfig">
-            <summary>
-            
-            </summary>
             <returns></returns>
         </member>
         <member name="T:Uol.PagSeguro.Util.PagSeguroUtil">
@@ -3757,19 +4200,7 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="T:Uol.PagSeguro.Util.HttpURLConnectionUtil">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="M:Uol.PagSeguro.Util.HttpURLConnectionUtil.CreatePagSeguroServiceException(System.Net.HttpWebResponse)">
-            <summary>
-            
-            </summary>
-            <param name="response"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Uol.PagSeguro.Util.HttpURLConnectionUtil.GetHttpPostConnection(System.String,System.String)">
+        <member name="M:Uol.PagSeguro.Util.HttpUrlConnectionUtil.GetHttpPostConnection(System.String,System.String)">
             <summary>
             
             </summary>
@@ -3777,14 +4208,14 @@
             <param name="query"></param>
             <returns></returns>
         </member>
-        <member name="M:Uol.PagSeguro.Util.HttpURLConnectionUtil.GetHttpGetConnection(System.String)">
+        <member name="M:Uol.PagSeguro.Util.HttpUrlConnectionUtil.GetHttpGetConnection(System.String)">
             <summary>
             
             </summary>
             <param name="urlPath"></param>
             <returns></returns>
         </member>
-        <member name="M:Uol.PagSeguro.Util.HttpURLConnectionUtil.GetHttpURLConnection(System.String,System.String,System.String,System.String)">
+        <member name="M:Uol.PagSeguro.Util.HttpUrlConnectionUtil.GetHttpUrlConnection(System.String,System.String,System.String,System.String)">
             <summary>
             
             </summary>
@@ -3795,22 +4226,26 @@
             <returns></returns>
         </member>
         <member name="T:Uol.PagSeguro.Exception.PagSeguroServiceException">
+            <inheritdoc />
             <summary>
             Encapsulates a problem that occurred calling a PagSeguro web service
             </summary>
         </member>
         <member name="M:Uol.PagSeguro.Exception.PagSeguroServiceException.#ctor">
+            <inheritdoc />
             <summary>
             Initializes a new instance of the PagSeguroServiceException class
             </summary>
         </member>
         <member name="M:Uol.PagSeguro.Exception.PagSeguroServiceException.#ctor(System.Net.HttpStatusCode)">
+            <inheritdoc />
             <summary>
             Initializes a new instance of the PagSeguroServiceException class
             </summary>
             <param name="statusCode"></param>
         </member>
         <member name="M:Uol.PagSeguro.Exception.PagSeguroServiceException.#ctor(System.Net.HttpStatusCode,System.Collections.Generic.IEnumerable{Uol.PagSeguro.Domain.ServiceError})">
+            <inheritdoc />
             <summary>
             Initializes a new instance of the PagSeguroServiceException class
             </summary>
@@ -3818,12 +4253,14 @@
             <param name="errors"></param>
         </member>
         <member name="M:Uol.PagSeguro.Exception.PagSeguroServiceException.#ctor(System.String)">
+            <inheritdoc />
             <summary>
             Initializes a new instance of the PagSeguroServiceException class
             </summary>
             <param name="message"></param>
         </member>
         <member name="M:Uol.PagSeguro.Exception.PagSeguroServiceException.#ctor(System.String,System.Exception)">
+            <inheritdoc />
             <summary>
             Initializes a new instance of the PagSeguroServiceException class
             </summary>
@@ -3831,6 +4268,7 @@
             <param name="innerException"></param>
         </member>
         <member name="M:Uol.PagSeguro.Exception.PagSeguroServiceException.#ctor(System.Net.HttpStatusCode,System.Exception)">
+            <inheritdoc />
             <summary>
             Initializes a new instance of the PagSeguroServiceException class
             </summary>
@@ -3838,6 +4276,7 @@
             <param name="innerException"></param>
         </member>
         <member name="M:Uol.PagSeguro.Exception.PagSeguroServiceException.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <inheritdoc />
             <summary>
             Populates a SerializationInfo with the data needed to serialize the target object
             </summary>
@@ -3855,6 +4294,7 @@
             </summary>
         </member>
         <member name="M:Uol.PagSeguro.Exception.PagSeguroServiceException.ToString">
+            <inheritdoc />
             <summary>
             Returns a textual representation of this object
             </summary>
@@ -3908,30 +4348,6 @@
             <param name="reader"></param>
             <param name="result">PagSeguro AuthorizationSummary</param>
         </member>
-        <member name="T:Uol.PagSeguro.XmlParse.InstallmentSerializer">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="M:Uol.PagSeguro.XmlParse.InstallmentSerializer.Read(System.Xml.XmlReader,Uol.PagSeguro.Domain.Installment.Installment)">
-            <summary>
-            Read a direct payment session request result
-            </summary>
-            <param name="streamReader"></param>
-            <param name="installments"></param>
-        </member>
-        <member name="T:Uol.PagSeguro.XmlParse.InstallmentsSerializer">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="M:Uol.PagSeguro.XmlParse.InstallmentsSerializer.Read(System.Xml.XmlReader,Uol.PagSeguro.Domain.Installment.Installments)">
-            <summary>
-            Read a direct payment session request result
-            </summary>
-            <param name="streamReader"></param>
-            <param name="installments"></param>
-        </member>
         <member name="T:Uol.PagSeguro.XmlParse.AuthorizationSearchResultSerializer">
             <summary>
             
@@ -3967,18 +4383,6 @@
             </summary>
             <param name="reader"></param>
             <param name="permission">PagSeguro AuthorizationPermissions</param>
-        </member>
-        <member name="T:Uol.PagSeguro.XmlParse.CreditorFeesSerializer">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="M:Uol.PagSeguro.XmlParse.CreditorFeesSerializer.Read(System.Xml.XmlReader,Uol.PagSeguro.Domain.CreditorFees)">
-            <summary>
-            
-            </summary>
-            <param name="reader"></param>
-            <param name="item"></param>
         </member>
         <member name="T:Uol.PagSeguro.XmlParse.RefundSerializer">
             <summary>
@@ -4056,34 +4460,10 @@
             
             </summary>
         </member>
-        <member name="M:Uol.PagSeguro.XmlParse.PagSeguroConfigSerializer.GetWebserviceUrl(System.Xml.XmlDocument,System.String)">
+        <member name="M:Uol.PagSeguro.XmlParse.PagSeguroConfigSerializer.LoadXmlConfig(System.String)">
             <summary>
             
             </summary>
-            <param name="reader"></param>
-            <param name="urlToSearch"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Uol.PagSeguro.XmlParse.PagSeguroConfigSerializer.GetDataConfiguration(System.Xml.XmlDocument,System.String)">
-            <summary>
-            
-            </summary>
-            <param name="reader"></param>
-            <param name="data"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Uol.PagSeguro.XmlParse.PagSeguroConfigSerializer.GetAccountCredentials(System.Xml.XmlDocument,System.Boolean)">
-            <summary>
-            
-            </summary>
-            <param name="reader"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Uol.PagSeguro.XmlParse.PagSeguroConfigSerializer.GetApplicationCredentials(System.Xml.XmlDocument,System.Boolean)">
-            <summary>
-            
-            </summary>
-            <param name="reader"></param>
             <returns></returns>
         </member>
         <member name="T:Uol.PagSeguro.XmlParse.PaymentMethodSerializer">
@@ -4156,7 +4536,7 @@
             Read a direct payment session request result
             </summary>
             <param name="reader"></param>
-            <param name="result"></param>
+            <param name="session"></param>
         </member>
         <member name="T:Uol.PagSeguro.XmlParse.ShippingSerializer">
             <summary>
@@ -4205,18 +4585,6 @@
             </summary>
             <param name="reader"></param>
             <param name="result"></param>
-        </member>
-        <member name="T:Uol.PagSeguro.XmlParse.PreApprovalTransactionSerializer">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="M:Uol.PagSeguro.XmlParse.PreApprovalTransactionSerializer.Read(System.Xml.XmlReader,Uol.PagSeguro.Domain.PreApprovalTransaction)">
-            <summary>
-            
-            </summary>
-            <param name="reader"></param>
-            <param name="transaction"></param>
         </member>
         <member name="T:Uol.PagSeguro.XmlParse.AuthorizationSerializer">
             <summary>
