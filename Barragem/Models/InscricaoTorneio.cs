@@ -186,6 +186,7 @@ namespace Barragem.Models
         public string nomeDupla { get; set; }
         public string fotoDupla { get; set; }
         public bool? exibeBotaoFormarDupla { get; set; }
+        public bool? exibeInscritos { get; set; }
     }
    
 

@@ -15,7 +15,7 @@
 
     <h4 class="info-box-text">@ViewBag.nomeTorneio</h4>
 
-    @if ((!ViewBag.tabelaLiberada) && !((Roles.IsUserInRole("admin")) || (Roles.IsUserInRole("organizador"))))
+    @if ((!ViewBag.tabelaLiberada) && !((Roles.IsUserInRole("admin")) || (Roles.IsUserInRole("organizador")) || (Roles.IsUserInRole("adminTorneio")) || (Roles.IsUserInRole("adminTorneioTenis"))))
     {
         <div class="box-body">
             <p>Aguarde. Tabela ainda não liberada.</p>

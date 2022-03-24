@@ -3141,8 +3141,14 @@ namespace Barragem.Controllers
             ViewBag.nomeRanking = torneio.barragem.nome;
             ViewBag.idBarragem = torneio.barragemId;
             var jogos = db.Jogo.Where(r => r.torneioId == torneioId && r.classeTorneio == fClasse && r.faseTorneio != 100 && r.faseTorneio != 101 && r.rodadaFaseGrupo == 0).OrderByDescending(r => r.faseTorneio).ThenBy(r => r.ordemJogo).ToList();
-            ViewBag.nomeClasse = jogos[0].classe.nome;
-            return View(jogos);
+            if(jogos.Count > 0)
+            {
+                ViewBag.nomeClasse = jogos[0].classe.nome;
+                return View(jogos);
+            } else
+            {
+                return RedirectToAction("Tabela", "Torneio", new { torneioId = torneioId, filtroClasse = fClasse, Msg = "Não existe tabela para esta categoria portanto não é possível imprimir." });
+            }
         }
         [Authorize(Roles = "admin")]
         public ActionResult ajustarPontuacaoLiga(int torneioId)
@@ -3166,7 +3172,7 @@ namespace Barragem.Controllers
 
         [HttpPost]
         [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
-        public ActionResult CreateTorneio(Torneio torneio, bool transferencia = false, int pontuacaoLiga = 100)
+        public ActionResult CreateTorneio(Torneio torneio, bool transferencia = false, string pontuacaoLiga = "100")
         {
             torneio.inscricaoSoPeloSite = false;
             var userId = WebSecurity.GetUserId(User.Identity.Name);
@@ -3182,7 +3188,10 @@ namespace Barragem.Controllers
             torneio.liberarEscolhaDuplas = true;
             torneio.divulgaCidade = false;
             torneio.isOpen = false;
-            torneio.TipoTorneio = pontuacaoLiga+"";
+            if (pontuacaoLiga != "-")
+            {
+                torneio.TipoTorneio = pontuacaoLiga;
+            }
             if (torneio.divulgacao == "nao divulgar")
             {
                 torneio.isAtivo = false;
@@ -3222,6 +3231,14 @@ namespace Barragem.Controllers
                             };
                             db.TorneioLiga.Add(tl);
                             db.SaveChanges();
+                            // se o torneio pontua para uma liga de federação a pontuação do torneio será a cadastrada previamente nesta liga
+                            var lg = db.Liga.Find(idLiga);
+                            if(lg.barragemId==null || lg.barragemId == 1)
+                            {
+                                torneio.TipoTorneio = db.BarragemLiga.Where(b => b.LigaId == lg.Id && b.BarragemId == barragem.Id).FirstOrDefault().TipoTorneio;
+                                db.Entry(torneio).State = EntityState.Modified;
+                                db.SaveChanges();
+                            }
                             // verificar se é o primeiro torneio do circuito. Se for, cadastrar as categorias na liga
                             var torneiosCriados = db.TorneioLiga.Where(t =>t.LigaId==idLiga && t.Liga.barragemId == torneio.barragemId).Count();
                             if (torneiosCriados == 1){
@@ -3293,6 +3310,7 @@ namespace Barragem.Controllers
                     categoriasDeLiga.Add(categoriaDeLiga);
                 }
                 ViewBag.Categorias = categoriasDeLiga;
+                ViewBag.barragemId = barragemId;
             }
             return View();
         }
@@ -3573,7 +3591,7 @@ namespace Barragem.Controllers
             order.reference_id = "COB-" + torneio.Id;
             order.customer = new Customer();
             order.customer.name = torneio.barragem.nomeResponsavel;
-            order.customer.email = torneio.barragem.email;
+            order.customer.email = torneio.barragem.emailPagSeguro;
             order.customer.tax_id = torneio.barragem.cpfResponsavel;
             var item = new ItemPedido();
             item.reference_id = torneio.Id + "";

@@ -26,7 +26,7 @@ namespace Barragem.Controllers
             List<Patrocinador> patrocinadores = null;
             var Torneios = (from inscricao in db.InscricaoTorneio
                            join torneio in db.Torneio on inscricao.torneioId equals torneio.Id into colocacaoJogador
-                           where inscricao.userId == userId && inscricao.torneio.isAtivo && inscricao.torneio.dataFim > dataHoje
+                           where inscricao.userId == userId && inscricao.torneio.dataFim > dataHoje
                 select new TorneioApp
                 {
                     Id = inscricao.torneio.Id,
@@ -169,8 +169,8 @@ namespace Barragem.Controllers
         [Route("api/TorneioAPI/Inscritos/{torneioId}")]
         public IList<Inscrito> GetListarInscritos(int torneioId, int userId = 0)
         {
-            //var torneio = db.Torneio.Find(torneioId);
-            //var liberarTabelaInscricao = torneio.liberaTabelaInscricao;
+            var torneio = db.Torneio.Find(torneioId);
+            var liberarTabelaInscricao = torneio.liberaTabelaInscricao;
             //if (!liberarTabelaInscricao)
             //{
             //    throw new Exception(message: "Tabela de inscritos ainda não liberada.");
@@ -241,7 +241,9 @@ namespace Barragem.Controllers
                     exibeBotaoFormarDupla = false;
                 }
                 inscritos[0].exibeBotaoFormarDupla = exibeBotaoFormarDupla;
-                
+                inscritos[0].exibeInscritos = liberarTabelaInscricao;
+
+
             }
 
             return inscritos;

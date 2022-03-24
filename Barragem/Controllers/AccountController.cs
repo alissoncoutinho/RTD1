@@ -1795,6 +1795,11 @@ namespace Barragem.Controllers
                 }
                 else if (perfil.Equals("adminTorneio") || perfil.Equals("adminTorneioTenis"))
                 {
+                    // se a mensagem estiver em branco, quer dizer que o organizador ainda não tem um ranking
+                    if (Msg == "")
+                    {
+                        return RedirectToAction("CreateRankingLiga", "Liga");
+                    }
                     return RedirectToAction("PainelControle", "Torneio");
                 }
                 return RedirectToAction("Index3", "Home");
@@ -1819,7 +1824,11 @@ namespace Barragem.Controllers
                 if ((!returnUrl.Equals("torneio")) && (!returnUrl.Contains("/Torneio/LancarResultado")))
                 {
                     var usuario = db.UserProfiles.Find(WebSecurity.GetUserId(model.UserName));
-                    Funcoes.CriarCookieBarragem(Response, Server, usuario.barragemId, usuario.barragem.nome, usuario.barragem.isBeachTenis);
+                    if ((Roles.GetRolesForUser(model.UserName)[0]).Equals("adminTorneio") && usuario.barragemId==0)
+                    {
+                        return RedirectToAction("CreateRankingLiga", "Liga");
+                    }
+                        Funcoes.CriarCookieBarragem(Response, Server, usuario.barragemId, usuario.barragem.nome, usuario.barragem.isBeachTenis);
                     if ((Roles.GetRolesForUser(model.UserName)[0]).Equals("parceiroBT"))
                     {
                         return RedirectToAction("Index", "Torneio");

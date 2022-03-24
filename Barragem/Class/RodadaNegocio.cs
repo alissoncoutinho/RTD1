@@ -118,7 +118,7 @@ namespace Barragem.Class
         {
             try
             {
-                if (jogador.UserName.Equals("coringa") || jogador.situacao.Equals("pendente"))
+                if (jogador.UserName.Equals("coringa"))
                 {
                     return;
                 }

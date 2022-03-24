@@ -313,8 +313,8 @@ namespace Barragem.Controllers
             var order = new Order();
             order.reference_id = "T-" + inscricaoTorneio.Id;
             order.customer = new Customer();
-            order.customer.name = inscricaoTorneio.participante.nome;
-            order.customer.email = inscricaoTorneio.participante.email;
+            order.customer.name = "Ranking de Tênis Ponto Com"; //inscricaoTorneio.participante.nome;
+            order.customer.email = "rankingbeachtennis@gmail.com"; // inscricaoTorneio.participante.email;
             order.customer.tax_id = "13170650009";
             var item = new ItemPedido();
             item.reference_id = inscricaoTorneio.torneioId + "";

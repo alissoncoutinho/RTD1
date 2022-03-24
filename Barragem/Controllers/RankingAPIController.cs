@@ -129,7 +129,7 @@ namespace Barragem.Controllers
                     OrderByDescending(r => r.rodada_id).Take(1).Single().rodada.temporada;
             }catch(Exception e) { }
 
-            if(temporada.Id>0 && temporada.iniciarZerada)
+            if(temporada != null && temporada.iniciarZerada)
             {
                 classificacao = db.Rancking.Where(r => r.userProfile_id == userId && r.rodada.temporada.Id == temporada.Id).
                 OrderByDescending(r => r.rodada_id).Take(10).Select(rk => new Classificacao()
@@ -309,7 +309,7 @@ namespace Barragem.Controllers
                 }
             }
 
-            return ligas;
+            return ligas.OrderByDescending(l=>l.idRanking).ToList();
         }
 
         [Route("api/RankingAPI/Liga/cabecalho/{ligaId}")]

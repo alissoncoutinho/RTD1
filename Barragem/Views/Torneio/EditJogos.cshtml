@@ -8,29 +8,31 @@
     @if (ViewBag.CobrancaTorneio != null)
     {
         <br>
-    <div class="alert alert-info alert-dismissable">
-        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-        Para gerar a tabela é necessário realizar o pagamento via PIX referente aos inscritos no torneio. <br><br> 
-        Inscritos no torneio: @cobrancaTorneio.qtddInscritos <br>
-        Valor por inscrito: R$ 5,00 <br><br>
-        @if (cobrancaTorneio.valorDescontoParaRanking > 0) {
-            @Html.Raw("Desconto para usuários que jogam o ranking: R$ " + cobrancaTorneio.valorDescontoParaRanking +",00<br><br>")
-        }
-        Valor final a pagar: R$ @cobrancaTorneio.valorASerPago,00 <br><br>
-        
-        
-        @if (cobrancaTorneio.qrCode.erroGerarQrCode == null)
-        {
-            <center><img id="imgFoto" src="@cobrancaTorneio.qrCode.link" style="width:148px;height:148px;"  /></center><br>
-            <span>Leia o QR Code acima ou copie o código abaixo no app do seu banco na opção Pix Copia e Cola.</span><br><br>
-            @cobrancaTorneio.qrCode.text
-        }
-        else
-        {
-            @Html.Raw(cobrancaTorneio.qrCode.erroGerarQrCode + "<br>")
-        }
-        
-    </div>
+        <div class="alert alert-info alert-dismissable">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            Para gerar a tabela é necessário realizar o pagamento via PIX referente aos inscritos no torneio. <br><br>
+            Inscritos no torneio: @cobrancaTorneio.qtddInscritos <br>
+            Valor por inscrito: R$ 5,00 <br><br>
+            @if (cobrancaTorneio.valorDescontoParaRanking > 0)
+            {
+                @Html.Raw("Desconto para usuários que jogam o ranking: R$ " + cobrancaTorneio.valorDescontoParaRanking + ",00<br><br>")
+            }
+            Valor final a pagar: R$ @cobrancaTorneio.valorASerPago,00 <br><br>
+
+
+            @if (cobrancaTorneio.qrCode.erroGerarQrCode == null)
+            {
+                <center><img id="imgFoto" src="@cobrancaTorneio.qrCode.link" style="width:148px;height:148px;" /></center><br>
+                <span>Leia o QR Code acima ou copie o código abaixo no app do seu banco na opção Pix Copia e Cola.</span><br><br>
+                @cobrancaTorneio.qrCode.text
+                <br><br><span style="color: red;">Após realizar o pagamento, clique no botão Criar Tabela novamente para continuar.</span>
+            }
+            else
+            {
+                @Html.Raw(cobrancaTorneio.qrCode.erroGerarQrCode + "<br>")
+            }
+
+        </div>
     }
     <div id="placar-modal" class="modal fade" role="dialog">
         <div id="loadingDiv"><div class="loader">Loading...</div></div>

@@ -192,6 +192,7 @@
                 <h4 class="box-title">Categorias</h4>
             </div>
             <div class="box-body">
+                <input type="hidden" id="pontuacaoLiga" value="-" name="pontuacaoLiga">
                 @if (ViewBag.LigasDisponiveis.Count > 0)
                 {
                     <div class="panel panel-default">
@@ -217,7 +218,7 @@
 
                                         <span class="pontuacao-circuito" style="display:none;">
                                             <span>- Selecione a pontuação: </span>
-                                            <select name="pontuacaoLiga" id="pontuacaoLiga">
+                                            <select name="pontuaLiga" id="pontuaLiga" onchange="document.getElementById('pontuacaoLiga').value = this.value">
                                                 <option value="-">-</option>
                                                 <option value="100">100</option>
                                                 <option value="250">250</option>
@@ -343,7 +344,7 @@
                     <br><input type="checkbox" name="cartao" id="cartao" value="true" onclick="isCartaoCredito()"> <b>Deseja aceitar inscrição via PIX com detecção automática de pagamento?</b><br>
                     <div id="isCartao">
                         <div class="editor-label">
-                            <small style="color:red">Você ainda não integrou o Pagseguro - <a class="" href="/Barragens/EditPagSeguro">Clique aqui</a> para realizar sua inscrição.</small>
+                            <small style="color:red">Você ainda não integrou o Pagseguro - <a class="" href="/Barragens/EditPagSeguro" target="_blank">Clique aqui</a> para realizar sua inscrição.</small>
                         </div>
                     </div>
                     <script>
@@ -483,7 +484,7 @@
                 }
             });
 
-            var existeLigaPropria = !!document.getElementById("pontuacaoLiga");
+            var existeLigaPropria = !!document.getElementById("pontuaLiga");
             var isLiga = $(this).data("isliga");
             var categoriaId = $(this).data("valor");
             var qtddTorneios = $(this).data("qtddtorneios");
@@ -525,7 +526,33 @@
 
         });
 
-     });
+        });
+
+        $('#valor2').on('blur', function (event) {
+            if (document.getElementById('valor2').value != "" && (parseInt(document.getElementById('valor2').value) < parseInt(document.getElementById('valor').value))) {
+                alert("O valor da 2ª categoria não pode ser menor que o valor da 1º categoria.");
+                document.getElementById('valor2').value = "";
+                
+            }
+        });
+
+        $('#valor3').on('blur', function (event) {
+            if (document.getElementById('valor3').value != "" && (parseInt(document.getElementById('valor3').value) < parseInt(document.getElementById('valor').value))) {
+                alert("O valor da 3ª categoria não pode ser menor que o valor da 1º categoria.");
+                document.getElementById('valor3').value = "";
+                
+            }
+        });
+
+        $('#valor4').on('blur', function (event) {
+            if (document.getElementById('valor4').value != "" && (parseInt(document.getElementById('valor4').value) < parseInt(document.getElementById('valor').value))) {
+                alert("O valor da 4ª categoria não pode ser menor que o valor da 1º categoria.");
+                document.getElementById('valor4').value = "";
+                
+            }
+        });
+
+        
 
     function CadastrarValorDescontoSocio() {
         if (document.getElementById('isDesconto').checked) {
