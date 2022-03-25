@@ -25,6 +25,7 @@ namespace Barragem.Models
         public string UrlImagem { get; set; }
         public string UrlImagemAnterior { get; set; }
 
+        [Url]
         [Display(Name = "Url")]
         public string UrlPatrocinador { get; set; }
 

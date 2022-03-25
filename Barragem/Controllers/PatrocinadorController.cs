@@ -18,16 +18,14 @@ namespace Barragem.Controllers
         private BarragemDbContext db = new BarragemDbContext();
         public ActionResult Index()
         {
-            return View(db.Patrocinio.ToList());
+            return View(db.Patrocinio.Select(s => new PatrocinioModel { Id = s.Id, UrlImagem = s.UrlImagem, UrlPatrocinador = s.UrlPatrocinador }).ToList());
         }
 
-        [Authorize(Roles = "admin")]
         public ActionResult Create()
         {
             return View(new PatrocinioModel());
         }
 
-        [Authorize(Roles = "admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(PatrocinioModel patrocinio)
@@ -50,7 +48,6 @@ namespace Barragem.Controllers
             return View(patrocinio);
         }
 
-        [Authorize(Roles = "admin")]
         public ActionResult Edit(int? id)
         {
             if (id == null)
@@ -75,7 +72,6 @@ namespace Barragem.Controllers
             return View(patrocinioModel);
         }
 
-        [Authorize(Roles = "admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(PatrocinioModel patrocinio)
@@ -102,7 +98,6 @@ namespace Barragem.Controllers
             return View(patrocinio);
         }
 
-        [Authorize(Roles = "admin")]
         public ActionResult Delete(int id)
         {
             Patrocinio patrocinio = db.Patrocinio.Find(id);

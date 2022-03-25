@@ -37,15 +37,12 @@
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Salvar" class="btn btn-primary" />
+                <input type="submit" value="Salvar" class="btn btn-success" />
+                @Html.ActionLink("Voltar", "Index", null, new { @class = "btn btn-primary btn-small" })
             </div>
         </div>
     </div>
 }
-
-<div>
-    @Html.ActionLink("Voltar", "Index")
-</div>
 
 @section Scripts {
     <script type="text/javascript">
