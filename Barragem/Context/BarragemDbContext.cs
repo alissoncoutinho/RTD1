@@ -68,6 +68,8 @@ namespace Barragem.Context
 
         public DbSet<Patrocinador> Patrocinador { get; set; }
 
+        public DbSet<Patrocinio> Patrocinio { get; set; }
+        
         public DbSet<Regra> Regra { get; set; }
 
         public DbSet<Cidade> Cidade { get; set; }

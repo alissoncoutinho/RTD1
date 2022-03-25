@@ -230,6 +230,7 @@
     <Compile Include="Controllers\JogoController.cs" />
     <Compile Include="Controllers\NotificacaoController.cs" />
     <Compile Include="Controllers\PagamentoController.cs" />
+    <Compile Include="Controllers\PatrocinadorController.cs" />
     <Compile Include="Controllers\PerfilAPIController.cs" />
     <Compile Include="Controllers\RankingController.cs" />
     <Compile Include="Controllers\RankingAPIController.cs" />
@@ -266,6 +267,7 @@
     <Compile Include="Models\Log.cs" />
     <Compile Include="Models\Pagamento.cs" />
     <Compile Include="Models\PagamentoBarragem.cs" />
+    <Compile Include="Models\Patrocinio.cs" />
     <Compile Include="Models\Rancking.cs" />
     <Compile Include="Models\RankingView.cs" />
     <Compile Include="Models\Regra.cs" />
@@ -983,6 +985,8 @@
     <Content Include="Views\Account\LoginBT.cshtml" />
     <Content Include="Views\Account\LoginPasswordBT.cshtml" />
     <Content Include="Views\Account\RegisterEmail.cshtml" />
+    <Content Include="Views\Patrocinador\Create.cshtml" />
+    <Content Include="Views\Patrocinador\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
