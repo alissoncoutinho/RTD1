@@ -13,6 +13,8 @@ namespace Barragem.Controllers
     [Authorize(Roles = "admin")]
     public class PatrocinadorController : Controller
     {
+        const string DIR_IMAGES_PATROCINADOR = "/Content/image/patrocinios";
+
         private BarragemDbContext db = new BarragemDbContext();
         public ActionResult Index()
         {
@@ -22,17 +24,25 @@ namespace Barragem.Controllers
         [Authorize(Roles = "admin")]
         public ActionResult Create()
         {
-            return View();
+            return View(new PatrocinioModel());
         }
 
         [Authorize(Roles = "admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,UrlImagem,UrlPatrocinador")] Patrocinio patrocinio)
+        public ActionResult Create(PatrocinioModel patrocinio)
         {
+            if (!ValidarDados(patrocinio))
+                return View(patrocinio);
+
+            SalvarImagemPatrocinador(patrocinio);
+            var entidadePatrocinio = MapearEntidade(patrocinio);
+
+            TryValidateModel(entidadePatrocinio);
+
             if (ModelState.IsValid)
             {
-                db.Patrocinio.Add(patrocinio);
+                db.Patrocinio.Add(entidadePatrocinio);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
@@ -58,6 +68,7 @@ namespace Barragem.Controllers
             {
                 Id = patrocinio.Id,
                 UrlImagem = patrocinio.UrlImagem,
+                UrlImagemAnterior = patrocinio.UrlImagem,
                 UrlPatrocinador = patrocinio.UrlPatrocinador
             };
 
@@ -67,34 +78,26 @@ namespace Barragem.Controllers
         [Authorize(Roles = "admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,UrlImagem,UrlPatrocinador,FileImage")] PatrocinioModel patrocinio)
+        public ActionResult Edit(PatrocinioModel patrocinio)
         {
-            //TODO: VALIDAR...
+            if (!ValidarDados(patrocinio))
+                return View(patrocinio);
 
-            var path = "/Content/image/patrocinios";
-            string fileNameApplication = System.IO.Path.GetFileName(patrocinio.FileImage.FileName);
-            string fileExtensionApplication = System.IO.Path.GetExtension(fileNameApplication);
-            string newFile = $"logo_patrocinio_{patrocinio.Id}{fileExtensionApplication}";
-            string filePath = System.IO.Path.Combine(Server.MapPath(path), newFile);
+            SalvarImagemPatrocinador(patrocinio);
+            var entidadePatrocinio = MapearEntidade(patrocinio);
 
-            if (fileNameApplication != String.Empty)
-            {
-                patrocinio.FileImage.SaveAs(filePath);
-                patrocinio.UrlImagem = $"{path}/{newFile}";
-            }
-
-            var entidadePatrocinio = new Patrocinio()
-            {
-                Id = patrocinio.Id,
-                UrlImagem = patrocinio.UrlImagem,
-                UrlPatrocinador = patrocinio.UrlPatrocinador
-            };
+            TryValidateModel(entidadePatrocinio);
 
             if (ModelState.IsValid)
             {
                 db.Entry(entidadePatrocinio).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
+            }
+            else
+            {
+                var message = string.Join(" | ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage));
+                ViewBag.MsgErro = message;
             }
             return View(patrocinio);
         }
@@ -106,6 +109,60 @@ namespace Barragem.Controllers
             db.Patrocinio.Remove(patrocinio);
             db.SaveChanges();
             return RedirectToAction("Index");
+        }
+
+
+        private bool ValidarDados(PatrocinioModel patrocinio)
+        {
+            if (patrocinio == null)
+            {
+                ViewBag.MsgErro = "Dados de patrocinador inválidos";
+                return false;
+            }
+
+            if (patrocinio.FileImage != null && (patrocinio.FileImage.ContentLength / 1024) > 2048)
+            {
+                ViewBag.MsgErro = "O tamanho máximo permitido para imagens é de 2Mb";
+                return false;
+            }
+            return true;
+        }
+
+        private void SalvarImagemPatrocinador(PatrocinioModel patrocinio)
+        {
+            if (patrocinio.FileImage != null)
+            {
+                var fileName = GetFileImageName(patrocinio.FileImage);
+                var filePath = GetFileImagePath(fileName);
+                patrocinio.FileImage.SaveAs(filePath);
+                patrocinio.UrlImagem = $"{DIR_IMAGES_PATROCINADOR}/{fileName}";
+            }
+            else
+            {
+                patrocinio.UrlImagem = patrocinio.UrlImagemAnterior;
+            }
+        }
+
+        private Patrocinio MapearEntidade(PatrocinioModel patrocinio)
+        {
+            return new Patrocinio()
+            {
+                Id = patrocinio.Id,
+                UrlImagem = patrocinio.UrlImagem,
+                UrlPatrocinador = patrocinio.UrlPatrocinador
+            };
+        }
+
+        private string GetFileImageName(HttpPostedFileBase file)
+        {
+            string fileNameApplication = System.IO.Path.GetFileName(file.FileName);
+            string fileExtensionApplication = System.IO.Path.GetExtension(fileNameApplication);
+            return $"logo_patrocinio_{Guid.NewGuid().ToString("N")}{fileExtensionApplication}";
+        }
+
+        private string GetFileImagePath(string fileName)
+        {
+            return System.IO.Path.Combine(Server.MapPath(DIR_IMAGES_PATROCINADOR), fileName);
         }
 
         protected override void Dispose(bool disposing)

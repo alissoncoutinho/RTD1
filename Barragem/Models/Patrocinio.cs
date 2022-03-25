@@ -10,10 +10,10 @@ namespace Barragem.Models
         [Key]
         public int Id { get; set; }
 
-        [Display(Name = "Imagem")]
+        [Required(ErrorMessage = "O campo Imagem é obrigatório")]
         public string UrlImagem { get; set; }
 
-        [Display(Name = "Url")]
+        [Required(ErrorMessage = "O campo Url é obrigatório")]
         public string UrlPatrocinador { get; set; }
     }
 
@@ -21,8 +21,11 @@ namespace Barragem.Models
     {
         public int Id { get; set; }
 
+        [Display(Name = "Imagem")]
         public string UrlImagem { get; set; }
+        public string UrlImagemAnterior { get; set; }
 
+        [Display(Name = "Url")]
         public string UrlPatrocinador { get; set; }
 
         public HttpPostedFileBase FileImage { get; set; }

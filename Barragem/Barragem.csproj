@@ -985,8 +985,9 @@
     <Content Include="Views\Account\LoginBT.cshtml" />
     <Content Include="Views\Account\LoginPasswordBT.cshtml" />
     <Content Include="Views\Account\RegisterEmail.cshtml" />
-    <Content Include="Views\Patrocinador\Create.cshtml" />
     <Content Include="Views\Patrocinador\Index.cshtml" />
+    <Content Include="Views\Patrocinador\Create.cshtml" />
+    <Content Include="Views\Patrocinador\Edit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
