@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Barragem.Models
 {
@@ -10,6 +11,7 @@ namespace Barragem.Models
         }
 
         public int Id { get; set; }
+
         public string Nome { get; set; }
 
         public virtual ICollection<CalendarioTorneio> CalendarioTorneio { get; set; }

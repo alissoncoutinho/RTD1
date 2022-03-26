@@ -79,13 +79,15 @@ namespace Barragem.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(CalendarioTorneio calendarioTorneio)
         {
-            if (ModelState.IsValid)
+            if (ValidarDados(calendarioTorneio))
             {
-                db.CalendarioTorneio.Add(calendarioTorneio);
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                if (ModelState.IsValid)
+                {
+                    db.CalendarioTorneio.Add(calendarioTorneio);
+                    db.SaveChanges();
+                    return RedirectToAction("Index");
+                }
             }
-
             ViewBag.ModalidadeTorneioId = new SelectList(db.ModalidadeTorneio, "Id", "Nome", calendarioTorneio.ModalidadeTorneioId);
             ViewBag.StatusInscricaoTorneioId = new SelectList(db.StatusInscricaoTorneio, "Id", "Nome", calendarioTorneio.StatusInscricaoTorneioId);
             return View(calendarioTorneio);
@@ -111,11 +113,14 @@ namespace Barragem.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(CalendarioTorneio calendarioTorneio)
         {
-            if (ModelState.IsValid)
+            if (ValidarDados(calendarioTorneio))
             {
-                db.Entry(calendarioTorneio).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                if (ModelState.IsValid)
+                {
+                    db.Entry(calendarioTorneio).State = EntityState.Modified;
+                    db.SaveChanges();
+                    return RedirectToAction("Index");
+                }
             }
             ViewBag.ModalidadeTorneioId = new SelectList(db.ModalidadeTorneio, "Id", "Nome", calendarioTorneio.ModalidadeTorneioId);
             ViewBag.StatusInscricaoTorneioId = new SelectList(db.StatusInscricaoTorneio, "Id", "Nome", calendarioTorneio.StatusInscricaoTorneioId);
@@ -128,6 +133,21 @@ namespace Barragem.Controllers
             db.CalendarioTorneio.Remove(calendarioTorneio);
             db.SaveChanges();
             return RedirectToAction("Index");
+        }
+        private bool ValidarDados(CalendarioTorneio calendarioTorneio)
+        {
+            if (calendarioTorneio == null)
+            {
+                ViewBag.MsgErro = "Dados inválidos";
+                return false;
+            }
+
+            if (calendarioTorneio.StatusInscricaoTorneioId == 1 && string.IsNullOrEmpty(calendarioTorneio.LinkInscricao))
+            {
+                ViewBag.MsgErro = "Inscrição Aberta requer que seja informado o link de inscrição.";
+                return false;
+            }
+            return true;
         }
 
         protected override void Dispose(bool disposing)

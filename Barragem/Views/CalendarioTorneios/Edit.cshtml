@@ -4,14 +4,13 @@
     ViewBag.Title = "Edit";
 }
 
-<h2>Edit</h2>
+<h2>Edição de torneio</h2>
 
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-    
+
     <div class="form-horizontal">
-        <h4>CalendarioTorneio</h4>
         <hr />
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         @Html.HiddenFor(model => model.Id)
@@ -19,7 +18,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.DataInicial, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.DataInicial, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.EditorFor(model => model.DataInicial, new { htmlAttributes = new { @Value = @Model.DataInicial.ToString("yyyy-MM-dd"), @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.DataInicial, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -27,7 +26,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.DataFinal, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.DataFinal, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.EditorFor(model => model.DataFinal, new { htmlAttributes = new { @Value = @Model.DataFinal.ToString("yyyy-MM-dd"), @class = "form-control" } })
                 @Html.ValidationMessageFor(model => model.DataFinal, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -41,7 +40,7 @@
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.ModalidadeTorneioId, "ModalidadeTorneioId", htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(model => model.ModalidadeTorneioId, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 @Html.DropDownList("ModalidadeTorneioId", null, htmlAttributes: new { @class = "form-control" })
                 @Html.ValidationMessageFor(model => model.ModalidadeTorneioId, "", new { @class = "text-danger" })
@@ -65,14 +64,14 @@
         </div>
 
         <div class="form-group">
-            @Html.LabelFor(model => model.StatusInscricaoTorneioId, "StatusInscricaoTorneioId", htmlAttributes: new { @class = "control-label col-md-2" })
+            @Html.LabelFor(model => model.StatusInscricaoTorneioId, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.DropDownList("StatusInscricaoTorneioId", null, htmlAttributes: new { @class = "form-control" })
+                @Html.DropDownList("StatusInscricaoTorneioId", null, htmlAttributes: new { @id = "ddlStatusInscricaoTorneioId", @class = "form-control" })
                 @Html.ValidationMessageFor(model => model.StatusInscricaoTorneioId, "", new { @class = "text-danger" })
             </div>
         </div>
 
-        <div class="form-group">
+        <div id="divLinkInscricao" class="form-group">
             @Html.LabelFor(model => model.LinkInscricao, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
                 @Html.EditorFor(model => model.LinkInscricao, new { htmlAttributes = new { @class = "form-control" } })
@@ -82,12 +81,31 @@
 
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Save" class="btn btn-default" />
+                <input type="submit" value="Salvar" class="btn btn-success" />
+                @Html.ActionLink("Voltar", "Index", null, new { @class = "btn btn-primary btn-small" })
             </div>
         </div>
     </div>
 }
 
-<div>
-    @Html.ActionLink("Back to List", "Index")
-</div>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script type="text/javascript">
+
+    const INSCRICAO_ABERTA = 1;
+
+    $("body").on("change", "#ddlStatusInscricaoTorneioId", function () {
+        habilitarLinkInscricao();
+    });
+
+    function habilitarLinkInscricao() {
+        var valueSelected = $("#ddlStatusInscricaoTorneioId").val();
+        if (valueSelected == INSCRICAO_ABERTA) {
+            document.getElementById("divLinkInscricao").style.display = "block";
+        }
+        else {
+            document.getElementById("divLinkInscricao").style.display = "none";
+            $("#LinkInscricao").val("");
+        }
+    }
+    habilitarLinkInscricao();
+</script>

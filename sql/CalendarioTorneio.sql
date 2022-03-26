@@ -9,7 +9,7 @@ CREATE TABLE [dbo].[CalendarioTorneio] (
     [Local] nvarchar(300)  NOT NULL,
     [Pontuacao] int  NOT NULL,
     [StatusInscricaoTorneioId] int  NOT NULL,
-    [LinkInscricao] nvarchar(200)  NOT NULL
+    [LinkInscricao] nvarchar(200)  NULL
 );
 GO
 
