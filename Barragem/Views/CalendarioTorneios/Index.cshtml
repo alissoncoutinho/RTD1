@@ -1,0 +1,71 @@
+﻿@model Barragem.Models.CalendarioTorneioModel
+
+@{
+    ViewBag.Title = "Index";
+}
+<div class="form-horizontal">
+    <div class="form-group">
+
+        <div class="col-md-2">
+            @using (Html.BeginForm("Index", "CalendarioTorneios", FormMethod.Get, new { @Id = "formCalendario" }))
+            {
+                @Html.DropDownList("FiltroAno", Model.FiltroAno, new { @id = "ddlFiltroAno", @class = "col-md-1 form-control" })
+            }
+        </div>
+        <div style="display: inline-block" class="col-md-2">
+            @Html.ActionLink("Adicionar", "Create", null, new { @class = "btn btn-primary" })
+        </div>
+    </div>
+
+    <table class="table">
+        <tr>
+            <th>
+                Mês
+            </th>
+            <th>
+                Nome
+            </th>
+            <th>
+                Modalidade
+            </th>
+            <th>
+                Pontuação
+            </th>
+            <th>
+                Inscrição
+            </th>
+            <th>Ação</th>
+        </tr>
+
+        @foreach (var item in Model.Registros)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Mes)
+                </td>
+                <td>
+                    @Html.ActionLink(item.Nome, "Edit", new { id = item.Id })
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ModalidadeTorneio)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Pontuacao)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.StatusInscricaoTorneio)
+                </td>
+                <td>
+                    @Html.ActionLink("Excluir", "Delete", new { id = item.Id }, new { @class = "btn btn-danger btn-xs excluirButton" })
+                </td>
+            </tr>
+        }
+
+    </table>
+</div>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script type="text/javascript">
+    $("body").on("change", "#ddlFiltroAno", function () {
+        $('#formCalendario')[0].submit();
+    });
+</script>

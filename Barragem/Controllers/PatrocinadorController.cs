@@ -106,7 +106,6 @@ namespace Barragem.Controllers
             return RedirectToAction("Index");
         }
 
-
         private bool ValidarDados(PatrocinioModel patrocinio)
         {
             if (patrocinio == null)

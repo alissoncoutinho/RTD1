@@ -208,6 +208,7 @@
     <Compile Include="Context\BarragemDbContext.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AguasClarasController.cs" />
+    <Compile Include="Controllers\CalendarioTorneiosController.cs" />
     <Compile Include="Controllers\CidadeController.cs" />
     <Compile Include="Controllers\InscricaoAPIController.cs" />
     <Compile Include="Controllers\JogoAPIController.cs" />
@@ -252,6 +253,7 @@
     <Compile Include="Models\BarragemLiga.cs" />
     <Compile Include="Models\Barragens.cs" />
     <Compile Include="Models\CalculadoraDePontos.cs" />
+    <Compile Include="Models\CalendarioTorneio.cs" />
     <Compile Include="Models\Categoria.cs" />
     <Compile Include="Models\Cidade.cs" />
     <Compile Include="Models\Classe.cs" />
@@ -265,6 +267,7 @@
     <Compile Include="Models\JogoCabecaChave.cs" />
     <Compile Include="Models\Liga.cs" />
     <Compile Include="Models\Log.cs" />
+    <Compile Include="Models\ModalidadeTorneio.cs" />
     <Compile Include="Models\Pagamento.cs" />
     <Compile Include="Models\PagamentoBarragem.cs" />
     <Compile Include="Models\Patrocinio.cs" />
@@ -275,6 +278,7 @@
     <Compile Include="Models\SituacaoJogo.cs" />
     <Compile Include="Models\Snapshot.cs" />
     <Compile Include="Models\SnapshotRanking.cs" />
+    <Compile Include="Models\StatusInscricaoTorneio.cs" />
     <Compile Include="Models\Temporada.cs" />
     <Compile Include="Models\TipoTorneio.cs" />
     <Compile Include="Models\Torneio.cs" />
@@ -988,6 +992,9 @@
     <Content Include="Views\Patrocinador\Index.cshtml" />
     <Content Include="Views\Patrocinador\Create.cshtml" />
     <Content Include="Views\Patrocinador\Edit.cshtml" />
+    <Content Include="Views\CalendarioTorneios\Create.cshtml" />
+    <Content Include="Views\CalendarioTorneios\Edit.cshtml" />
+    <Content Include="Views\CalendarioTorneios\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -996,6 +1003,7 @@
     <Folder Include="Content\themes\base\minified\images\" />
     <Folder Include="Scripts\FitVids\" />
     <Folder Include="Scripts\gmaps\" />
+    <Folder Include="Views\Calendario\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config">

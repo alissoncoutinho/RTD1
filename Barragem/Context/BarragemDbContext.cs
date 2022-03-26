@@ -73,5 +73,8 @@ namespace Barragem.Context
         public DbSet<Regra> Regra { get; set; }
 
         public DbSet<Cidade> Cidade { get; set; }
+        public virtual DbSet<CalendarioTorneio> CalendarioTorneio { get; set; }
+        public virtual DbSet<ModalidadeTorneio> ModalidadeTorneio { get; set; }
+        public virtual DbSet<StatusInscricaoTorneio> StatusInscricaoTorneio { get; set; }
     }
 }
