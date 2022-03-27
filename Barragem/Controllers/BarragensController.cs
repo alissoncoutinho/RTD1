@@ -60,7 +60,7 @@ namespace Barragem.Controllers
         [Authorize(Roles = "admin")]
         public ActionResult Create()
         {
-            ViewBag.PaginaEspecialId = ObterDadosDropDownPaginaEspecial();
+            ViewBag.PaginaEspecialId = ObterDadosDropDownPaginaEspecial(null);
             return View(new Barragens());
         }
 
@@ -120,7 +120,7 @@ namespace Barragem.Controllers
             {
                 ViewBag.MsgErro = ex.Message;
             }
-            ViewBag.PaginaEspecialId = ObterDadosDropDownPaginaEspecial();
+            ViewBag.PaginaEspecialId = ObterDadosDropDownPaginaEspecial(barragens.PaginaEspecialId);
             return View(barragens);
         }
 
@@ -148,7 +148,7 @@ namespace Barragem.Controllers
                 return HttpNotFound();
             }
             ViewBag.flag = "edit";
-            ViewBag.PaginaEspecialId = ObterDadosDropDownPaginaEspecial();
+            ViewBag.PaginaEspecialId = ObterDadosDropDownPaginaEspecial(barragens.PaginaEspecialId);
 
             return View(barragens);
         }
@@ -194,7 +194,7 @@ namespace Barragem.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            ViewBag.PaginaEspecialId = ObterDadosDropDownPaginaEspecial();
+            ViewBag.PaginaEspecialId = ObterDadosDropDownPaginaEspecial(barragens.PaginaEspecialId);
             return View(barragens);
         }
 
@@ -456,10 +456,10 @@ namespace Barragem.Controllers
             base.Dispose(disposing);
         }
 
-        public SelectList ObterDadosDropDownPaginaEspecial()
+        public SelectList ObterDadosDropDownPaginaEspecial(int? idPaginaEspecial)
         {
             return new SelectList(new[] { new PaginaEspecial() { Id = -1, Nome = "Selecione" } }
-                           .Union(db.PaginaEspecial), "Id", "Nome");
+                           .Union(db.PaginaEspecial), "Id", "Nome", idPaginaEspecial == null ? -1 : idPaginaEspecial);
         }
     }
 
