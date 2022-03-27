@@ -76,5 +76,6 @@ namespace Barragem.Context
         public virtual DbSet<CalendarioTorneio> CalendarioTorneio { get; set; }
         public virtual DbSet<ModalidadeTorneio> ModalidadeTorneio { get; set; }
         public virtual DbSet<StatusInscricaoTorneio> StatusInscricaoTorneio { get; set; }
+        public virtual DbSet<PaginaEspecial> PaginaEspecial { get; set; }
     }
 }

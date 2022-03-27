@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -66,6 +67,10 @@ namespace Barragem.Models
         [Display(Name = "Modelo todos contra todos")]
         public bool isModeloTodosContraTodos { get; set; }
 
+        [Display(Name = "Página Especial")]
+        public int? PaginaEspecialId { get; set; }
+
+        public PaginaEspecial PaginaEspecial { get; set; }
     }
 
     [Table("BarragemView")]
@@ -109,9 +114,11 @@ namespace Barragem.Models
         public bool isBeachTenis { get; set; }
         [Display(Name = "Modelo todos contra todos")]
         public bool isModeloTodosContraTodos { get; set; }
+        public int? PaginaEspecialId { get; set; }
     }
 
-    public class CreateBarragemLiga {
+    public class CreateBarragemLiga
+    {
         [Required(ErrorMessage = "O campo nome da agremiação é obrigatório")]
         [Display(Name = "Nome da agremiação")]
         public string nomeBarragem { get; set; }
@@ -126,6 +133,5 @@ namespace Barragem.Models
 
         [Display(Name = "Modalidade dos torneios")]
         public string modalidadeBarragem { get; set; }
-
     }
 }

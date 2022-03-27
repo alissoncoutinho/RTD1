@@ -271,6 +271,7 @@
     <Compile Include="Models\ModalidadeTorneio.cs" />
     <Compile Include="Models\Pagamento.cs" />
     <Compile Include="Models\PagamentoBarragem.cs" />
+    <Compile Include="Models\PaginaEspecial.cs" />
     <Compile Include="Models\Patrocinio.cs" />
     <Compile Include="Models\Rancking.cs" />
     <Compile Include="Models\RankingView.cs" />

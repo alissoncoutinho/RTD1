@@ -1,7 +1,6 @@
 ﻿using Barragem.Context;
 using Barragem.Models;
 using System;
-using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
@@ -10,7 +9,7 @@ using System.Web.Mvc;
 
 namespace Barragem.Controllers
 {
-    [Authorize(Roles = "admin")]
+    [Authorize(Roles = "admin,organizador")]
     public class PatrocinadorController : Controller
     {
         const string DIR_IMAGES_PATROCINADOR = "/Content/image/patrocinios";

@@ -3,6 +3,8 @@
 @{
     ViewBag.Title = "Index";
 }
+<legend>Calendário</legend>
+
 <div class="form-horizontal">
     <div class="form-group">
 
@@ -34,7 +36,7 @@
             <th>
                 Inscrição
             </th>
-            <th>Ação</th>
+            <th style="text-align:center;width:80px">Ação</th>
         </tr>
 
         @foreach (var item in Model.Registros)
@@ -55,7 +57,7 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.StatusInscricaoTorneio)
                 </td>
-                <td>
+                <td align="right">
                     @Html.ActionLink("Excluir", "Delete", new { id = item.Id }, new { @class = "btn btn-danger btn-xs excluirButton" })
                 </td>
             </tr>

@@ -3,19 +3,19 @@
     @{
         ViewBag.Title = "Index";
     }
-
+    <legend>Patrocinadores</legend>
     <p>
         @Html.ActionLink("Adicionar", "Create", null, new { @class = "btn btn-primary btn-small" })
     </p>
     <table class="table">
         <tr>
-            <th>
+            <th style="width:90px">
                 @Html.DisplayNameFor(model => model.UrlImagem)
             </th>
-            <th>
+            <th style="width:auto">
                 @Html.DisplayNameFor(model => model.UrlPatrocinador)
             </th>
-            <th></th>
+            <th style="text-align:center;width:160px">Ação</th>
         </tr>
 
         @foreach (var item in Model)
@@ -27,7 +27,7 @@
                 <td>
                     @Html.DisplayFor(modelItem => item.UrlPatrocinador)
                 </td>
-                <td align="center">
+                <td align="right">
                     @Html.ActionLink("Editar", "Edit", new { id = item.Id }, new { @class = "btn btn-primary btn-xs" }) |
                     @Html.ActionLink("Excluir", "Delete", new { id = item.Id }, new { @class = "btn btn-danger btn-xs excluirButton" })
                 </td>
