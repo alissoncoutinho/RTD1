@@ -17,4 +17,12 @@ namespace Barragem.Models
 
         public virtual ICollection<Barragens> Barragem { get; set; }
     }
+
+    public enum EnumPaginaEspecial
+    {
+        Circuito = 1,
+        Federacao = 2,
+        Liga = 3
+    }
+
 }

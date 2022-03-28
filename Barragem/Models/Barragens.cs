@@ -115,6 +115,7 @@ namespace Barragem.Models
         [Display(Name = "Modelo todos contra todos")]
         public bool isModeloTodosContraTodos { get; set; }
         public int? PaginaEspecialId { get; set; }
+        public string PaginaEspecialNome { get; set; }
     }
 
     public class CreateBarragemLiga
