@@ -55,7 +55,8 @@ namespace Barragem.Controllers
         [Authorize(Roles = "admin, organizador, usuario,adminTorneio,adminTorneioTenis")]
         public ActionResult Create()
         {
-            
+            ViewBag.ModalidadeTorneioId = ObterDadosDropDownModalidade(null);
+
             Liga liga = new Liga();
             /*liga.Nome = "liga teste";
             var classes = new List<ClasseLiga>();
@@ -93,7 +94,7 @@ namespace Barragem.Controllers
                 }
                 return RedirectToAction("PainelControle", "Torneio");
             }
-
+            ViewBag.ModalidadeTorneioId = ObterDadosDropDownModalidade(liga.ModalidadeTorneioId);
             return View(liga);
         }
 
@@ -110,17 +111,18 @@ namespace Barragem.Controllers
             {
                 ViewBag.MsgErro = MsgErro;
             }
+            ViewBag.ModalidadeTorneioId = ObterDadosDropDownModalidade(liga.ModalidadeTorneioId);
             return View(classes);
         }
 
         [Authorize(Roles = "admin, organizador,adminTorneio,adminTorneioTenis")]
         [HttpPost]
-        public ActionResult EditNome(int idLiga, string nomeLiga, string modalidadeBarragem)
+        public ActionResult EditNome(int idLiga, string nomeLiga, string modalidadeBarragem, int? ModalidadeTorneioId)
         {
             try { 
                 Liga liga = db.Liga.Find(idLiga);
                 liga.Nome = nomeLiga;
-                
+                liga.ModalidadeTorneioId = ModalidadeTorneioId;
                 var jaExisteTorneio = db.TorneioLiga.Where(l => l.LigaId == idLiga).Any();
                 if (jaExisteTorneio)
                 {
@@ -140,6 +142,9 @@ namespace Barragem.Controllers
                 }
                 db.Entry(liga).State = EntityState.Modified;
                 db.SaveChanges();
+
+                ViewBag.ModalidadeTorneioId = ObterDadosDropDownModalidade(liga.ModalidadeTorneioId);
+                
                 return RedirectToAction("Edit", new { idLiga = idLiga });
                 //return Json(new { erro = "", retorno = 1 }, "text/plain", JsonRequestBehavior.AllowGet);
             }
@@ -423,6 +428,13 @@ namespace Barragem.Controllers
             }
 
             return View(createBarragemLiga);
+        }
+
+
+        public SelectList ObterDadosDropDownModalidade(int? idModalidade)
+        {
+            return new SelectList(new[] { new ModalidadeTorneio() { Id = -1, Nome = "Selecione" } }
+                           .Union(db.ModalidadeTorneio), "Id", "Nome", idModalidade == null ? -1 : idModalidade);
         }
     }
 }
