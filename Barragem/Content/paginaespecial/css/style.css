@@ -129,7 +129,6 @@ header.header h3{
 }
 .navbar-btn{
     color:#302E93!important;
-    max-width:95px!important;
     width: 100%!important;
     padding: 8px;
     display: block;
@@ -379,9 +378,11 @@ section.patrocinadores .mySwiper{
     padding:30px;
 }
 
-.patrocinador__img{
-    max-width:197px;
+.patrocinador__img {
+    max-width: 197px;
+    max-height: 80px;
     width: 100%;
+    height: 100%;
 }
 
 section.patrocinadores .swiper-button-next, section.patrocinadores .swiper-button-prev{
