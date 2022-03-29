@@ -2,6 +2,7 @@
 using Barragem.Context;
 using Barragem.Models;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Web.Mvc;
 
@@ -16,6 +17,8 @@ namespace Barragem.Controllers
         {
             var barragem = BuscarBarragemPorId(idBarragem, idPaginaEspecial);
             var patrocinadores = BuscarPatrocinadores();
+            var ranking = BuscarDadosRanking(idBarragem);
+
             var model = new PaginaEspecialModel()
             {
                 TipoPaginaEspecial = idPaginaEspecial,
@@ -25,8 +28,8 @@ namespace Barragem.Controllers
                 Contato = barragem.contato,
                 Patrocinadores = patrocinadores,
                 TituloFilieSeOuQuemSomos = idPaginaEspecial == EnumPaginaEspecial.Federacao ? "Filie-se" : "Quem Somos",
-                TextoFilieSeOuQuemSomos = barragem.quemsomos
-
+                TextoFilieSeOuQuemSomos = barragem.quemsomos,
+                Rankings = ranking
             };
 
             return View(model);
@@ -74,6 +77,62 @@ namespace Barragem.Controllers
         private List<Patrocinio> BuscarPatrocinadores()
         {
             return db.Patrocinio.ToList();
+        }
+
+        private List<PaginaEspecialModel.RankingModel> BuscarDadosRanking(int idBarragem)
+        {
+            var rankings = new List<PaginaEspecialModel.RankingModel>();
+
+            var ligas = db.Liga.Include(i => i.ModalidadeTorneio).Where(x => x.barragemId == idBarragem && x.isAtivo == true);
+
+            foreach (var liga in ligas)
+            {
+                var itemRanking = new PaginaEspecialModel.RankingModel();
+
+                var snapshotsDaLiga = db.Snapshot.Where(snap => snap.LigaId == liga.Id).OrderByDescending(s => s.Id).FirstOrDefault();
+                if (snapshotsDaLiga != null)
+                {
+                    var ranking = db.SnapshotRanking.Where(snapR => snapR.SnapshotId == snapshotsDaLiga.Id)
+                                                    .Include(s => s.Categoria)
+                                                    .Include(s => s.Jogador)
+                                                    .OrderBy(snap => snap.Categoria.Nome)
+                                                    .ThenBy(snap => snap.Posicao)
+                                                    .ThenBy(snap => snap.Jogador.nome)
+                                                    .ToList();
+
+                    var categorias = db.SnapshotRanking.Where(sr => sr.SnapshotId == snapshotsDaLiga.Id)
+                                                        .Include(sr => sr.Categoria)
+                                                        .Select(sr => sr.Categoria)
+                                                        .OrderBy(sr => sr.ordemExibicao)
+                                                        .Distinct()
+                                                        .Select(s => new PaginaEspecialModel.RankingModel.RankingModalidade.CategoriaModalidade()
+                                                        {
+                                                            IdCategoria = s.Id,
+                                                            NomeCategoria = s.Nome
+                                                        })
+                                                        .ToList();
+
+                    foreach (var categoria in categorias)
+                    {
+                        categoria.Jogadores = ranking.Where(x => x.CategoriaId == categoria.IdCategoria).Select(s => new PaginaEspecialModel.RankingModel.RankingModalidade.CategoriaModalidade.Jogador()
+                        {
+                            NomeJogador = s.Jogador.nome,
+                            Pontuacao = s.Pontuacao,
+                            Posicao = s.Posicao
+                        }).ToList();
+                    }
+
+                    itemRanking.IdModalidade = liga.ModalidadeTorneio.Id;
+                    itemRanking.Modalidade = liga.ModalidadeTorneio.Nome;
+                    itemRanking.Ranking = new PaginaEspecialModel.RankingModel.RankingModalidade()
+                    {
+                        NomeLiga = liga.Nome,
+                        Categoria = categorias
+                    };
+                    rankings.Add(itemRanking);
+                }
+            }
+            return rankings;
         }
     }
 }

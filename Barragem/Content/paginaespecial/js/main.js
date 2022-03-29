@@ -7,13 +7,13 @@
     tab.addEventListener('click',()=>{
       switch (tab.innerText) {
         case 'Tênis':
-          kidsImage.src = '../images/calendario.png'
+              kidsImage.src = '/Content/paginaespecial/images/calendario.png'
           break;
         case 'Kids':
-          kidsImage.src = '../images/kid.png'
+              kidsImage.src = '/Content/paginaespecial/images/kid.png'
           break;
         case 'Beach Tennis':
-          kidsImage.src = '../images/calendario-beach.png'
+              kidsImage.src = '/Content/paginaespecial/images/calendario-beach.png'
           break;
         default:
           break;
@@ -27,13 +27,13 @@
     tab.addEventListener('click',()=>{
       switch (tab.innerText) {
         case 'Tênis':
-          tabelasImage.src = '../images/ranking-tenis.jpg'
+              tabelasImage.src = '/Content/paginaespecial/images/ranking-tenis.jpg'
           break;
         case 'Beach Tennis':
-          tabelasImage.src = '../images/ranking-beach.jpg'
+              tabelasImage.src = '/Content/paginaespecial/images/ranking-beach.jpg'
           break;
         case 'Kids':
-          tabelasImage.src = '../images/ranking-kids.jpg'
+              tabelasImage.src = '/Content/paginaespecial/images/ranking-kids.jpg'
           break;
         default:
           break;
