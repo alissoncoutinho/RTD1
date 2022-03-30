@@ -525,13 +525,15 @@
                             var modalidadeRanking = Model.Rankings[i];
 
                             <li class="nav-item" role="presentation">
-                                <button data-tabelas class="nav-link @if (i==0) { @Html.Raw("active") }" id="modalidade-@modalidadeRanking.IdModalidade-tab" data-bs-toggle="tab" data-bs-target="#modalidade-@modalidadeRanking.IdModalidade" type="button" role="tab" aria-controls="modalidade-@modalidadeRanking.IdModalidade" aria-selected="@if (i == 0) { @Html.Raw("true") } else {@Html.Raw("false") } ">@modalidadeRanking.Modalidade</button>
+                                <button data-tabelas class="nav-link @if (i==0) { @Html.Raw("active") }" id="modalidade-@modalidadeRanking.IdModalidade-tab" onclick="atribuirNomeLiga(this, '@modalidadeRanking.Ranking.NomeLiga')" data-bs-toggle="tab" data-bs-target="#modalidade-@modalidadeRanking.IdModalidade" type="button" role="tab" aria-controls="modalidade-@modalidadeRanking.IdModalidade" aria-selected="@if (i == 0) { @Html.Raw("true") } else {@Html.Raw("false") } ">@modalidadeRanking.Modalidade</button>
                             </li>
                         }
                     </ul>
-                    <!-- TODO: Alimentar tag span -->
-                    <h2 class="d-flex align-items-center gap-3">Ranking <span>modalidadeRanking.Ranking.NomeLiga</span></h2>
 
+                    @if (Model.Rankings[0] != null)
+                    {
+                        <h2 class="d-flex align-items-center gap-3">Classificação <span id="spanNomeLiga">@Model.Rankings[0].Ranking.NomeLiga</span></h2>
+                    }
                     <div class="line"></div>
 
                     <section class="tabelas__tabs">
@@ -568,85 +570,44 @@
                                             var categoria = modalidadeRanking.Ranking.Categoria[countCategoria];
 
                                             <div class="tab-pane fade @if (countCategoria==0) { @Html.Raw("show active") }" id="categoria-@categoria.IdCategoria" role="tabpanel" aria-labelledby="categoria-@categoria.IdCategoria-tab">
+                                                <table class="table table-striped">
+                                                    <thead>
+                                                        <tr class="row  row-line">
+                                                            <th class="col-2" scope="col"><h6>Posição</h6></th>
+                                                            <th class="col-5" scope="col"><h6>Nome</h6></th>
+                                                            <th class="col-5 d-flex justify-content-end" scope="col"> <h6>Pontuação</h6></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
 
-                                                <div class="row  row-line">
-                                                    <div class="col-2">
-                                                        <h6>Posição</h6>
-                                                    </div>
+                                                        @if (categoria.Jogadores == null || categoria.Jogadores.Count == 0)
+                                                        {
+                                                            <tr class="empty d-flex justify-content-center align-items-center flex-column">
+                                                                <img src="/Content/paginaespecial/images/empty.png" alt="icone de vazio" />
+                                                                <h6>Não há ranking de jogadores nesta categoria</h6>
+                                                            </tr>
+                                                        }
+                                                        else
+                                                        {
+                                                            foreach (var jogador in categoria.Jogadores)
+                                                            {
+                                                                <tr class="row row-line">
+                                                                    <td class="col-2 trTable">
+                                                                        <span class="info-table-1">@jogador.Posicao</span>
+                                                                    </td><!--col-3-->
 
-                                                    <div class="col-5">
-                                                        <h6>Nome</h6>
-                                                    </div>
+                                                                    <td class="col-5 trTable">
+                                                                        <span class="info-table">@jogador.NomeJogador</span>
+                                                                    </td><!--col-3-->
 
-                                                    <div class="col-5 d-flex justify-content-end">
-                                                        <h6>Pontuação</h6>
-                                                    </div>
-                                                </div>
-
-                                                <hr>
-
-                                                @if (categoria.Jogadores == null || categoria.Jogadores.Count == 0)
-                                                {
-                                                    <div class="empty d-flex justify-content-center align-items-center flex-column">
-                                                        <img src="/Content/paginaespecial/images/empty.png" alt="icone de vazio" />
-                                                        <h6>Não há ranking de jogadores nesta categoria</h6>
-                                                    </div>
-                                                }
-                                                else
-                                                {
-                                                    foreach (var jogador in categoria.Jogadores)
-                                                    {
-                                                        <div class="row row-line  bg-table">
-                                                            <div class="col-2">
-                                                                <span class="info-table-1">@jogador.Posicao</span>
-                                                            </div>
-
-                                                            <div class="col-5">
-                                                                <span class="info-table">@jogador.NomeJogador</span>
-                                                            </div>
-
-                                                            <div class="col-5 d-flex justify-content-end">
-                                                                <span class="info-table">@jogador.Pontuacao</span>
-                                                            </div>
-                                                        </div>
-                                                    }
-                                                }
-                                                <div class="pagination d-flex justify-content-center">
-                                                    <div class="pagination__content d-flex gap-3">
-                                                        <a href="#" class="disabled d-flex align-items-center justify-content-center">
-                                                            <svg width="7" height="12" viewBox="0 0 7 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                <path d="M0.22 6.71997C0.0793075 6.57946 0.000175052 6.38882 0 6.18997V5.80997C0.00230401 5.61156 0.081116 5.4217 0.22 5.27997L5.36 0.149974C5.45388 0.055318 5.58168 0.0020752 5.715 0.0020752C5.84832 0.0020752 5.97612 0.055318 6.07 0.149974L6.78 0.859974C6.87406 0.952138 6.92707 1.07828 6.92707 1.20997C6.92707 1.34166 6.87406 1.46781 6.78 1.55997L2.33 5.99997L6.78 10.44C6.87466 10.5339 6.9279 10.6617 6.9279 10.795C6.9279 10.9283 6.87466 11.0561 6.78 11.15L6.07 11.85C5.97612 11.9446 5.84832 11.9979 5.715 11.9979C5.58168 11.9979 5.45388 11.9446 5.36 11.85L0.22 6.71997Z" fill="#E0E3FE" />
-                                                            </svg>
-                                                        </a>
-
-                                                        <a href="#" class="d-flex align-items-center justify-content-center pagination-active">
-                                                            1
-                                                        </a>
-
-                                                        <a href="#" class="d-flex align-items-center justify-content-center">
-                                                            2
-                                                        </a>
-
-                                                        <a href="#" class="d-flex align-items-center justify-content-center">
-                                                            3
-                                                        </a>
-
-                                                        <a href="#" class="d-flex align-items-center justify-content-center">
-                                                            4
-                                                        </a>
-
-                                                        <a href="#" class="d-flex align-items-center justify-content-center">
-                                                            5
-                                                        </a>
-
-                                                        <a href="#" class="d-flex align-items-center justify-content-center">
-                                                            <svg width="7" height="12" viewBox="0 0 7 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                <path d="M6.78 6.71997C6.92069 6.57946 6.99982 6.38882 7 6.18997V5.80997C6.9977 5.61156 6.91888 5.4217 6.78 5.27997L1.64 0.149974C1.54612 0.055318 1.41832 0.0020752 1.285 0.0020752C1.15168 0.0020752 1.02388 0.055318 0.93 0.149974L0.22 0.859974C0.125936 0.952138 0.0729284 1.07828 0.0729284 1.20997C0.0729284 1.34166 0.125936 1.46781 0.22 1.55997L4.67 5.99997L0.22 10.44C0.125343 10.5339 0.0721006 10.6617 0.0721006 10.795C0.0721006 10.9283 0.125343 11.0561 0.22 11.15L0.93 11.85C1.02388 11.9446 1.15168 11.9979 1.285 11.9979C1.41832 11.9979 1.54612 11.9446 1.64 11.85L6.78 6.71997Z" fill="#E0E3FE" />
-                                                            </svg>
-                                                        </a>
-                                                    </div>
-                                                </div>
-
+                                                                    <td class="col-5 trTable d-flex justify-content-end">
+                                                                        <span class="info-table">@jogador.Pontuacao</span>
+                                                                    </td><!--col-3-->
+                                                                </tr>
+                                                            }
+                                                        }
+                                                    </tbody>
+                                                </table>
                                             </div>
                                         }
 
@@ -712,12 +673,33 @@
         </div>
     </footer>
 
-    @*<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>*@
     <script src="https://unpkg.com/swiper@8/swiper-bundle.min.js"></script>
-
     <script src="/content/bootstrap-5.0.2-dist/js/bootstrap.bundle.min.js"></script>
     <script src="/content/paginaespecial/js/menu.js"></script>
     <script src="/content/paginaespecial/js/main.js"></script>
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script src="/content/paginaespecial/js/paginathing.js"></script>
+
+    <script type="text/javascript">
+
+        function atribuirNomeLiga(element, nomeLiga) {
+            document.getElementById("spanNomeLiga").textContent = nomeLiga;
+        }
+
+        $('.table tbody').paginathing({
+            perPage: 10,
+            limitPagination: false,
+            prevNext: true,
+            firstLast: false,
+            prevText: '<a class=\'d-flex align-items-center justify-content-center\'><svg width=\'7\' height=\'12\' viewBox=\'0 0 7 12\' fill=\'none\' xmlns=\'http://www.w3.org/2000/svg\'><path d=\'M0.22 6.71997C0.0793075 6.57946 0.000175052 6.38882 0 6.18997V5.80997C0.00230401 5.61156 0.081116 5.4217 0.22 5.27997L5.36 0.149974C5.45388 0.055318 5.58168 0.0020752 5.715 0.0020752C5.84832 0.0020752 5.97612 0.055318 6.07 0.149974L6.78 0.859974C6.87406 0.952138 6.92707 1.07828 6.92707 1.20997C6.92707 1.34166 6.87406 1.46781 6.78 1.55997L2.33 5.99997L6.78 10.44C6.87466 10.5339 6.9279 10.6617 6.9279 10.795C6.9279 10.9283 6.87466 11.0561 6.78 11.15L6.07 11.85C5.97612 11.9446 5.84832 11.9979 5.715 11.9979C5.58168 11.9979 5.45388 11.9446 5.36 11.85L0.22 6.71997Z\' fill=\'#E0E3FE\'/></svg></a>',
+            nextText: '<a class=\'d-flex align-items-center justify-content-center\'><svg width=\'7\' height=\'12\' viewBox=\'0 0 7 12\' fill=\'none\' xmlns=\'http://www.w3.org/2000/svg\'><path d=\'M6.78 6.71997C6.92069 6.57946 6.99982 6.38882 7 6.18997V5.80997C6.9977 5.61156 6.91888 5.4217 6.78 5.27997L1.64 0.149974C1.54612 0.055318 1.41832 0.0020752 1.285 0.0020752C1.15168 0.0020752 1.02388 0.055318 0.93 0.149974L0.22 0.859974C0.125936 0.952138 0.0729284 1.07828 0.0729284 1.20997C0.0729284 1.34166 0.125936 1.46781 0.22 1.55997L4.67 5.99997L0.22 10.44C0.125343 10.5339 0.0721006 10.6617 0.0721006 10.795C0.0721006 10.9283 0.125343 11.0561 0.22 11.15L0.93 11.85C1.02388 11.9446 1.15168 11.9979 1.285 11.9979C1.41832 11.9979 1.54612 11.9446 1.64 11.85L6.78 6.71997Z\' fill=\'#E0E3FE\'/></svg></a>',
+            containerClass: 'pagination d-flex justify-content-center',
+            ulClass: 'pagination pagination__content d-flex gap-3',
+            liClass: 'd-flex align-items-center justify-content-center pagination__content li',
+            activeClass: 'pagination-active',
+            disabledClass: 'disabled'
+        });
+    </script>
 
 </body>
 </html>

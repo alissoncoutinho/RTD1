@@ -122,6 +122,7 @@ namespace Barragem.Controllers
                         }).ToList();
                     }
 
+                    itemRanking.DataRanking = snapshotsDaLiga.Data;
                     itemRanking.IdModalidade = liga.ModalidadeTorneio.Id;
                     itemRanking.Modalidade = liga.ModalidadeTorneio.Nome;
                     itemRanking.Ranking = new PaginaEspecialModel.RankingModel.RankingModalidade()
@@ -132,6 +133,17 @@ namespace Barragem.Controllers
                     rankings.Add(itemRanking);
                 }
             }
+
+            foreach (var gruposPorModalidade in rankings.GroupBy(g => g.Modalidade))
+            {
+                if (gruposPorModalidade.Count() > 1)
+                {
+                    var menorData = gruposPorModalidade.Min(x => x.DataRanking);
+                    PaginaEspecialModel.RankingModel rankingMaisAntigo = gruposPorModalidade.First(x => x.DataRanking == menorData);
+                    rankings.Remove(rankingMaisAntigo);
+                }
+            }
+
             return rankings;
         }
     }

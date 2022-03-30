@@ -381,8 +381,8 @@ section.patrocinadores .mySwiper{
 .patrocinador__img {
     max-width: 197px;
     max-height: 80px;
-    width: 100%;
-    height: 100%;
+	width: 100%;
+	height: 100%;
 }
 
 section.patrocinadores .swiper-button-next, section.patrocinadores .swiper-button-prev{
@@ -740,6 +740,10 @@ section.tabelas .line{
 .bg-table{
     padding:12px 0;
 }
+.trTable
+{
+	padding:12px 0.5rem !important;
+}
 .bg-table:nth-child(2n){
     background: #F4F4F4;
     box-shadow: 0px 1px 0px rgba(196, 196, 196, 0.3);
@@ -750,7 +754,7 @@ section.tabelas .line{
 
 }
 
-.pagination__content a{
+.pagination__content li{
     width: 30px;
     height:30px;
     border-radius: 6px;
@@ -759,18 +763,29 @@ section.tabelas .line{
     color:white;
     transition: 0.1s ease-in-out;
 }
-.pagination__content a:hover{
+.pagination__content li:hover{
     background:white;
     border:1px solid white;
     color:#3243D6;
     font-weight: 500;
 }
 
+.pagination__content a{
+    text-decoration: none;
+    color:white;
+}
+
+.pagination__content a:hover{
+    background:white;
+    color:#3243D6;
+    font-weight: 500;
+}
 
 .pagination__content .disabled {
     cursor:not-allowed;
     opacity: 0.3;
 }
+
 .pagination__content .pagination-active{
     font-weight: 500;
     font-family: 'Poppins', sans-serif;

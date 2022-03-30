@@ -26,6 +26,7 @@ namespace Barragem.Models
             public int IdModalidade { get; set; }
             public string Modalidade { get; set; }
             public RankingModalidade Ranking { get; set; }
+            public DateTime DataRanking { get; set; }
 
             public class RankingModalidade
             {
