@@ -48,7 +48,7 @@
                                     @Html.ValidationSummary(true)
                                     <div class="mt-3 form-input">
                                         <label for="">Nome da Categoria</label>
-                                        <input type="text" name="nome" class="form-control" placeholder="Ex: Dupla Masculina A, Masculino 1a Classe">
+                                        <input type="text" name="nome" class="form-control" placeholder="Ex: Dupla Marculina A, Masculino 1a Classe">
                                     </div>
                                     <div class="mt-3 form-input">
                                         <div class="form-check">
@@ -73,11 +73,21 @@
                                         @Html.ValidationSummary(true)
                                         <div class="wrapper d-flex justify-content-between align-items-center mt-4">
                                             <h5>
-                                                <input class="input-edit" type="text" name="nomeClasse" id="input-masc-1" placeholder="Masc 1º Classe" value="@classeLiga.Nome">
+                                                @if (classeLiga.Categoria.rankingId != 0)
+                                                {
+                                                    <input class="input-edit" type="text" name="nomeClasse" id="input-masc-1" placeholder="Masc 1º Classe" value="@classeLiga.Nome">
+                                                }
+                                                else
+                                                {
+                                                    @classeLiga.Nome
+                                                }
                                             </h5>
                                             <input type="hidden" name="Id" id="IdClasseLiga" value="@classeLiga.Id">
                                             <div class="wrapper__buttons d-flex">
-                                                <button class="btn-white" type="submit" formaction="/Liga/EditNomeClasse" formmethod="post">Salvar</button>
+                                                @if (classeLiga.Categoria.rankingId != 0)
+                                                {
+                                                    <button class="btn-white" type="submit" formaction="/Liga/EditNomeClasse" formmethod="post">Salvar</button>
+                                                }
                                                 <button class="btn-danger" type="submit" formaction="/Liga/RemoveClasse" formmethod="post">Excluir</button>
                                             </div>
                                         </div>

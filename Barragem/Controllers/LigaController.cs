@@ -104,7 +104,7 @@ namespace Barragem.Controllers
             ViewBag.nomeLiga = liga.Nome;
             ViewBag.isModeloTodosContraTodos = liga.isModeloTodosContraTodos;
 
-            var classes = db.ClasseLiga.Where(c => c.LigaId == idLiga).ToList();
+            var classes = db.ClasseLiga.Include(c => c.Categoria).Where(c => c.LigaId == idLiga).ToList();
             ViewBag.flag = "classes";
             if(MsgErro != "")
             {

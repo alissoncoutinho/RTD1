@@ -81,10 +81,10 @@ namespace Barragem.Models
                 db.Entry(tl).State = EntityState.Modified;
                 db.SaveChanges();
                 //para cada categoria da liga, gerar um ranking
-                List<ClasseLiga> classesDaLiga = db.ClasseLiga.Include(cl => cl.Categoria).Where(cl => cl.LigaId == liga.Id).ToList();
-                foreach(ClasseLiga cl in classesDaLiga)
+                List<Categoria> categoriasDaLiga = db.ClasseLiga.Include(cl => cl.Categoria).Where(cl => cl.LigaId == liga.Id).Select(u => u.Categoria).Distinct().ToList(); 
+                foreach(Categoria categoriaDaLiga in categoriasDaLiga)
                 {
-                    Categoria categoriaDaLiga = cl.Categoria;
+                    //Categoria categoriaDaLiga = cl.Categoria;
                     //copia os resultados que ja existem para o novo ranking
                     List<SnapshotRanking> ultimoRankingDaCategoriaNaLiga = new List<SnapshotRanking>();
                     if (ultimoSnap != null)

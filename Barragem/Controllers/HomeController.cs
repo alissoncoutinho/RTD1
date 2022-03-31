@@ -27,6 +27,11 @@ namespace Barragem.Controllers
                         return RedirectToAction("Dashboard", "Home");
                     } else if (perfil.Equals("adminTorneio") || perfil.Equals("adminTorneioTenis"))
                     {
+                        UserProfile usu = db.UserProfiles.Find(WebSecurity.GetUserId(User.Identity.Name));
+                        if (usu.barragemId == 0)
+                        {
+                            return RedirectToAction("IndexBT");
+                        }
                         return RedirectToAction("PainelControle", "Torneio");
                     }
                 }  catch (Exception) { }

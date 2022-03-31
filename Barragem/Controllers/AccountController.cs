@@ -157,7 +157,18 @@ namespace Barragem.Controllers
         [AllowAnonymous]
         public ActionResult RegisterOrganizador()
         {
-            return View();
+            if (User.Identity.IsAuthenticated){
+                UserProfile usu = db.UserProfiles.Find(WebSecurity.GetUserId(User.Identity.Name));
+                if (usu.barragemId == 0)
+                {
+                    return RedirectToAction("CreateRankingLiga", "Liga");
+                }
+                else
+                {
+                    return RedirectToAction("PainelControle", "Torneio");
+                }
+            }
+                return View();
         }
 
         [HttpPost]
