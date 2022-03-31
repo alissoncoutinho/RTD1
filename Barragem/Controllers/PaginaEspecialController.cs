@@ -64,7 +64,7 @@ namespace Barragem.Controllers
                     StatusInscricaoTorneio = s.StatusInscricaoTorneio.Nome,
                     IdStatusInscricaoTorneio = s.StatusInscricaoTorneio.Id,
                     LinkInscricao = s.LinkInscricao
-                }).ToList();
+                }).OrderBy(o => o.DataInicial).ThenBy(o => o.DataFinal).ToList();
 
             return new PaginaEspecialModel.CalendarioTorneioMes() { Torneios = calendarioTorneios };
         }

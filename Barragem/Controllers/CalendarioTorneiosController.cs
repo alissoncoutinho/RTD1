@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
-using System.Globalization;
 using System.Linq;
 using System.Net;
-using System.Web;
 using System.Web.Mvc;
 using Barragem.Context;
 using Barragem.Helper;
@@ -13,6 +11,7 @@ using Barragem.Models;
 
 namespace Barragem.Controllers
 {
+    [Authorize(Roles = "admin,organizador")]
     public class CalendarioTorneiosController : Controller
     {
         private BarragemDbContext db = new BarragemDbContext();
@@ -35,6 +34,91 @@ namespace Barragem.Controllers
             var dadosListagem = MapearDadosModelo(calendarioTorneio.ToList());
 
             return View(dadosListagem);
+        }
+
+        public ActionResult Create()
+        {
+            CarregarDropDownLists(null);
+            return View(new CalendarioTorneio());
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Create(CalendarioTorneio calendarioTorneio)
+        {
+            if (ValidarDados(calendarioTorneio))
+            {
+                if (ModelState.IsValid)
+                {
+                    db.CalendarioTorneio.Add(calendarioTorneio);
+                    db.SaveChanges();
+                    return RedirectToAction("Index");
+                }
+            }
+            CarregarDropDownLists(calendarioTorneio);
+            return View(calendarioTorneio);
+        }
+
+        public ActionResult Edit(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            CalendarioTorneio calendarioTorneio = db.CalendarioTorneio.Find(id);
+            if (calendarioTorneio == null)
+            {
+                return HttpNotFound();
+            }
+            CarregarDropDownLists(calendarioTorneio);
+            return View(calendarioTorneio);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit(CalendarioTorneio calendarioTorneio)
+        {
+            if (ValidarDados(calendarioTorneio))
+            {
+                if (ModelState.IsValid)
+                {
+                    db.Entry(calendarioTorneio).State = EntityState.Modified;
+                    db.SaveChanges();
+                    return RedirectToAction("Index");
+                }
+            }
+            CarregarDropDownLists(calendarioTorneio);
+            return View(calendarioTorneio);
+        }
+
+        public ActionResult Delete(int id)
+        {
+            CalendarioTorneio calendarioTorneio = db.CalendarioTorneio.Find(id);
+            db.CalendarioTorneio.Remove(calendarioTorneio);
+            db.SaveChanges();
+            return RedirectToAction("Index");
+        }
+
+        private bool ValidarDados(CalendarioTorneio calendarioTorneio)
+        {
+            if (calendarioTorneio == null)
+            {
+                ViewBag.MsgErro = "Dados inválidos";
+                return false;
+            }
+
+            if (calendarioTorneio.DataFinal < calendarioTorneio.DataInicial)
+            {
+                ViewBag.MsgErro = "Data Final não pode ser menor que a Data Inicial.";
+                return false;
+            }
+
+            if (calendarioTorneio.StatusInscricaoTorneioId == 1 && string.IsNullOrEmpty(calendarioTorneio.LinkInscricao))
+            {
+                ViewBag.MsgErro = "Inscrição Aberta requer que seja informado o link de inscrição.";
+                return false;
+            }
+            return true;
         }
 
         private CalendarioTorneioModel MapearDadosModelo(List<CalendarioTorneio> torneios)
@@ -66,86 +150,18 @@ namespace Barragem.Controllers
             return new CalendarioTorneioModel() { Registros = lista, FiltroAno = listaFiltroAnos };
         }
 
-        public ActionResult Create()
-        {
-            ViewBag.ModalidadeTorneioId = new SelectList(db.ModalidadeTorneio, "Id", "Nome");
-            ViewBag.StatusInscricaoTorneioId = new SelectList(db.StatusInscricaoTorneio, "Id", "Nome");
-            return View(new CalendarioTorneio());
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(CalendarioTorneio calendarioTorneio)
-        {
-            if (ValidarDados(calendarioTorneio))
-            {
-                if (ModelState.IsValid)
-                {
-                    db.CalendarioTorneio.Add(calendarioTorneio);
-                    db.SaveChanges();
-                    return RedirectToAction("Index");
-                }
-            }
-            ViewBag.ModalidadeTorneioId = new SelectList(db.ModalidadeTorneio, "Id", "Nome", calendarioTorneio.ModalidadeTorneioId);
-            ViewBag.StatusInscricaoTorneioId = new SelectList(db.StatusInscricaoTorneio, "Id", "Nome", calendarioTorneio.StatusInscricaoTorneioId);
-            return View(calendarioTorneio);
-        }
-
-        public ActionResult Edit(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            CalendarioTorneio calendarioTorneio = db.CalendarioTorneio.Find(id);
-            if (calendarioTorneio == null)
-            {
-                return HttpNotFound();
-            }
-            ViewBag.ModalidadeTorneioId = new SelectList(db.ModalidadeTorneio, "Id", "Nome", calendarioTorneio.ModalidadeTorneioId);
-            ViewBag.StatusInscricaoTorneioId = new SelectList(db.StatusInscricaoTorneio, "Id", "Nome", calendarioTorneio.StatusInscricaoTorneioId);
-            return View(calendarioTorneio);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(CalendarioTorneio calendarioTorneio)
-        {
-            if (ValidarDados(calendarioTorneio))
-            {
-                if (ModelState.IsValid)
-                {
-                    db.Entry(calendarioTorneio).State = EntityState.Modified;
-                    db.SaveChanges();
-                    return RedirectToAction("Index");
-                }
-            }
-            ViewBag.ModalidadeTorneioId = new SelectList(db.ModalidadeTorneio, "Id", "Nome", calendarioTorneio.ModalidadeTorneioId);
-            ViewBag.StatusInscricaoTorneioId = new SelectList(db.StatusInscricaoTorneio, "Id", "Nome", calendarioTorneio.StatusInscricaoTorneioId);
-            return View(calendarioTorneio);
-        }
-
-        public ActionResult Delete(int id)
-        {
-            CalendarioTorneio calendarioTorneio = db.CalendarioTorneio.Find(id);
-            db.CalendarioTorneio.Remove(calendarioTorneio);
-            db.SaveChanges();
-            return RedirectToAction("Index");
-        }
-        private bool ValidarDados(CalendarioTorneio calendarioTorneio)
+        private void CarregarDropDownLists(CalendarioTorneio calendarioTorneio)
         {
             if (calendarioTorneio == null)
             {
-                ViewBag.MsgErro = "Dados inválidos";
-                return false;
+                ViewBag.ModalidadeTorneioId = new SelectList(db.ModalidadeTorneio, "Id", "Nome");
+                ViewBag.StatusInscricaoTorneioId = new SelectList(db.StatusInscricaoTorneio, "Id", "Nome");
             }
-
-            if (calendarioTorneio.StatusInscricaoTorneioId == 1 && string.IsNullOrEmpty(calendarioTorneio.LinkInscricao))
+            else
             {
-                ViewBag.MsgErro = "Inscrição Aberta requer que seja informado o link de inscrição.";
-                return false;
+                ViewBag.ModalidadeTorneioId = new SelectList(db.ModalidadeTorneio, "Id", "Nome", calendarioTorneio.ModalidadeTorneioId);
+                ViewBag.StatusInscricaoTorneioId = new SelectList(db.StatusInscricaoTorneio, "Id", "Nome", calendarioTorneio.StatusInscricaoTorneioId);
             }
-            return true;
         }
 
         protected override void Dispose(bool disposing)
