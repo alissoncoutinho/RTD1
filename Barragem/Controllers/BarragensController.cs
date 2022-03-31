@@ -74,7 +74,7 @@ namespace Barragem.Controllers
             {
                 var codigo = 91;
                 var sql = "";
-                if (barragens.PaginaEspecialId == -1) barragens.PaginaEspecialId = null;
+                if (barragens.PaginaEspecialId == (int)EnumPaginaEspecial.Selecione) barragens.PaginaEspecialId = null;
                 if (barragens.valorPorUsuario == null) barragens.valorPorUsuario = 5;
                 if (barragens.soTorneio == null) barragens.soTorneio = false;
 
@@ -177,7 +177,7 @@ namespace Barragem.Controllers
                 barragens.soTorneio = barraAtual.soTorneio;
             }
 
-            if (barragens.PaginaEspecialId == -1) barragens.PaginaEspecialId = null;
+            if (barragens.PaginaEspecialId == (int)EnumPaginaEspecial.Selecione) barragens.PaginaEspecialId = null;
             barragens.isBeachTenis = barraAtual.isBeachTenis;
             if (barragens.soTorneio == null) barragens.soTorneio = false;
             if (ModelState.IsValid)
@@ -458,8 +458,8 @@ namespace Barragem.Controllers
 
         public SelectList ObterDadosDropDownPaginaEspecial(int? idPaginaEspecial)
         {
-            return new SelectList(new[] { new PaginaEspecial() { Id = -1, Nome = "Selecione" } }
-                           .Union(db.PaginaEspecial), "Id", "Nome", idPaginaEspecial == null ? -1 : idPaginaEspecial);
+            return new SelectList(new[] { new PaginaEspecial() { Id = (int)EnumPaginaEspecial.Selecione, Nome = "Selecione" } }
+                           .Union(db.PaginaEspecial), "Id", "Nome", idPaginaEspecial == null ? EnumPaginaEspecial.Selecione : (EnumPaginaEspecial)idPaginaEspecial);
         }
     }
 

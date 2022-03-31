@@ -39,34 +39,9 @@ namespace Barragem.Controllers
             return View(model);
         }
 
-        public PartialViewResult ObterCalendarioMensal(int mes, int idmodalidade)
+        public PartialViewResult ObterCalendarioMensal(int mes, EnumModalidadeTorneio idmodalidade)
         {
             return PartialView("_PartialCalendarioMes", ObterTorneios(mes, idmodalidade));
-        }
-
-
-        private PaginaEspecialModel.CalendarioTorneioMes ObterTorneios(int mes, int idmodalidade)
-        {
-            var dataInicialMes = new DateTime(DateTime.Now.Year, mes, 1);
-            var dataFinalMes = new DateTime(DateTime.Now.Year, mes, DateTime.DaysInMonth(dataInicialMes.Year, dataInicialMes.Month));
-
-            var calendarioTorneios = db.CalendarioTorneio
-                .Include(i => i.ModalidadeTorneio)
-                .Include(i => i.StatusInscricaoTorneio)
-                .Where(x => x.DataInicial >= dataInicialMes && x.DataInicial <= dataFinalMes && x.ModalidadeTorneioId == idmodalidade)
-                .Select(s => new PaginaEspecialModel.CalendarioTorneioItem()
-                {
-                    DataInicial = s.DataInicial,
-                    DataFinal = s.DataFinal,
-                    Local = s.Local,
-                    Nome = s.Nome,
-                    Pontuacao = s.Pontuacao,
-                    StatusInscricaoTorneio = s.StatusInscricaoTorneio.Nome,
-                    IdStatusInscricaoTorneio = s.StatusInscricaoTorneio.Id,
-                    LinkInscricao = s.LinkInscricao
-                }).OrderBy(o => o.DataInicial).ThenBy(o => o.DataFinal).ToList();
-
-            return new PaginaEspecialModel.CalendarioTorneioMes() { Torneios = calendarioTorneios };
         }
 
         public ActionResult LigaRedirect(string key)
@@ -106,6 +81,44 @@ namespace Barragem.Controllers
         {
             return db.Barragens
                         .FirstOrDefault(b => b.Id == id && b.PaginaEspecialId == (int)idPaginaEspecial);
+        }
+
+        private PaginaEspecialModel.TorneioDestaqueBanner ObterTorneiosDestaqueBanner()
+        {
+            var dadosBanner = new PaginaEspecialModel.TorneioDestaqueBanner();
+
+            var proximosTorneios = db.CalendarioTorneio
+                .Include(i => i.ModalidadeTorneio)
+                .Include(i => i.StatusInscricaoTorneio)
+                .Where(x => x.DataInicial.Date >= DateTime.Now.Date && (x.StatusInscricaoTorneioId == (int)EnumStatusInscricao.ABERTA || x.StatusInscricaoTorneioId == (int)EnumStatusInscricao.ENCERRADA));
+
+
+            return null;
+
+        }
+
+        private PaginaEspecialModel.CalendarioTorneioMes ObterTorneios(int mes, EnumModalidadeTorneio idmodalidade)
+        {
+            var dataInicialMes = new DateTime(DateTime.Now.Year, mes, 1);
+            var dataFinalMes = new DateTime(DateTime.Now.Year, mes, DateTime.DaysInMonth(dataInicialMes.Year, dataInicialMes.Month));
+
+            var calendarioTorneios = db.CalendarioTorneio
+                .Include(i => i.ModalidadeTorneio)
+                .Include(i => i.StatusInscricaoTorneio)
+                .Where(x => x.DataInicial >= dataInicialMes && x.DataInicial <= dataFinalMes && x.ModalidadeTorneioId == (int)idmodalidade)
+                .Select(s => new PaginaEspecialModel.CalendarioTorneioItem()
+                {
+                    DataInicial = s.DataInicial,
+                    DataFinal = s.DataFinal,
+                    Local = s.Local,
+                    Nome = s.Nome,
+                    Pontuacao = s.Pontuacao,
+                    StatusInscricaoTorneio = s.StatusInscricaoTorneio.Nome,
+                    IdStatusInscricaoTorneio = s.StatusInscricaoTorneio.Id,
+                    LinkInscricao = s.LinkInscricao
+                }).OrderBy(o => o.DataInicial).ThenBy(o => o.DataFinal).ToList();
+
+            return new PaginaEspecialModel.CalendarioTorneioMes() { Torneios = calendarioTorneios };
         }
 
         private void CarregarDropDownMesesAno()

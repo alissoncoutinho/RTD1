@@ -18,4 +18,12 @@ namespace Barragem.Models
         public virtual ICollection<CalendarioTorneio> CalendarioTorneio { get; set; }
         public virtual ICollection<Liga> Liga { get; set; }
     }
+
+    public enum EnumModalidadeTorneio
+    {
+        SELECIONE = -1,
+        TENIS = 1,
+        BEACH_TENNIS = 2,
+        KIDS = 3
+    }
 }

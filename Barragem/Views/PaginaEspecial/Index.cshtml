@@ -455,6 +455,12 @@
 
     <script type="text/javascript">
 
+        const ENUM_MODALIDADES = {
+            TENIS: 1,
+            BEACH_TENNIS: 2,
+            KIDS: 3
+        }
+
         function atribuirNomeLiga(element, nomeLiga) {
             document.getElementById("spanNomeLiga").textContent = nomeLiga;
         }
@@ -484,13 +490,13 @@
         }
 
         function atualizarPartialCalendarioMes(mes, idModalidade) {
-            if (idModalidade == 1) {
+            if (idModalidade == ENUM_MODALIDADES.TENIS) {
                 $("#partialDivCalendarioMes-1").load('/PaginaEspecial/ObterCalendarioMensal?mes=' + mes + '&idmodalidade=' + idModalidade);
             }
-            else if (idModalidade == 2) {
+            else if (idModalidade == ENUM_MODALIDADES.BEACH_TENNIS) {
                 $("#partialDivCalendarioMes-2").load('/PaginaEspecial/ObterCalendarioMensal?mes=' + mes + '&idmodalidade=' + idModalidade);
             }
-            else if (idModalidade == 3) {
+            else if (idModalidade == ENUM_MODALIDADES.KIDS) {
                 $("#partialDivCalendarioMes-3").load('/PaginaEspecial/ObterCalendarioMensal?mes=' + mes + '&idmodalidade=' + idModalidade);
             }
         }

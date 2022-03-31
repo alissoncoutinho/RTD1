@@ -16,4 +16,11 @@ namespace Barragem.Models
 
         public virtual ICollection<CalendarioTorneio> CalendarioTorneio { get; set; }
     }
+
+    public enum EnumStatusInscricao
+    {
+        ABERTA = 1,
+        ENCERRADA = 2,
+        NAO_ABRIU = 3
+    }
 }

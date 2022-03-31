@@ -113,7 +113,7 @@ namespace Barragem.Controllers
                 return false;
             }
 
-            if (calendarioTorneio.StatusInscricaoTorneioId == 1 && string.IsNullOrEmpty(calendarioTorneio.LinkInscricao))
+            if (calendarioTorneio.StatusInscricaoTorneioId == (int)EnumStatusInscricao.ABERTA && string.IsNullOrEmpty(calendarioTorneio.LinkInscricao))
             {
                 ViewBag.MsgErro = "Inscrição Aberta requer que seja informado o link de inscrição.";
                 return false;

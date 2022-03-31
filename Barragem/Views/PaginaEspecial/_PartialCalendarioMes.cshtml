@@ -1,4 +1,6 @@
-﻿@model Barragem.Models.PaginaEspecialModel.CalendarioTorneioMes
+﻿@using Barragem.Models;
+
+@model Barragem.Models.PaginaEspecialModel.CalendarioTorneioMes
 
 @if (Model.Torneios == null || Model.Torneios.Count == 0)
 {
@@ -35,11 +37,11 @@ else
                 <div class="calendario__infos">
                     <h6>@torneio.Nome</h6>
                     <p><span>@torneio.Pontuacao pts</span> | @torneio.Local</p>
-                    @if (torneio.IdStatusInscricaoTorneio == 1)
+                    @if (torneio.IdStatusInscricaoTorneio == (int)EnumStatusInscricao.ABERTA)
                     {
                         <a class="calendario__infos-btn" href="@torneio.LinkInscricao">Inscreva-se</a>
                     }
-                    else if (torneio.IdStatusInscricaoTorneio == 2)
+                    else if (torneio.IdStatusInscricaoTorneio == (int)EnumStatusInscricao.ENCERRADA)
                     {
                         <a class="calendario__infos-btn encerrada">Encerradas</a>
                     }

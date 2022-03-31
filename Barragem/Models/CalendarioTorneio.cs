@@ -84,5 +84,4 @@ namespace Barragem.Models
         public List<CalendarioTorneioItens> Registros { get; set; }
         public List<SelectListItem> FiltroAno { get; set; }
     }
-
 }

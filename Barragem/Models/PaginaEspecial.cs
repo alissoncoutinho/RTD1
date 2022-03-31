@@ -20,6 +20,7 @@ namespace Barragem.Models
 
     public enum EnumPaginaEspecial
     {
+        Selecione = -1,
         Circuito = 1,
         Federacao = 2,
         Liga = 3

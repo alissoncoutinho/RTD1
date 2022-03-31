@@ -23,7 +23,7 @@ namespace Barragem.Models
         public string AnoCalendario { get { return DateTime.Now.ToString("yy"); } }
         public List<RankingModel> Rankings { get; set; }
         public List<CalendarioModalidades> ModalidadesCalendario { get; set; }
-        
+
         public class RankingModel
         {
             public int IdModalidade { get; set; }
@@ -86,5 +86,21 @@ namespace Barragem.Models
             public int Dia { get { return DataInicial.Day; } }
         }
 
+        public class TorneioDestaqueBanner
+        {
+            public List<TorneioDestaqueBannerItem> TorneiosBanner { get; set; }
+
+            public class TorneioDestaqueBannerItem
+            {
+                public string Nome { get; set; }
+                public string DataInicial { get; set; }
+                public string DataFinal { get; set; }
+                public string LinkInscricao { get; set; }
+                public EnumStatusInscricao IdStatusInscricaoTorneio { get; set; }
+                public int Pontuacao { get; set; }
+                public string Local { get; set; }
+                public string UrlImagemBanner { get; set; }
+            }
+        }
     }
 }
