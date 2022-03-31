@@ -1,0 +1,72 @@
+﻿@model Barragem.Models.PaginaEspecialModel.CalendarioTorneioMes
+
+@if (Model.Torneios == null || Model.Torneios.Count == 0)
+{
+    <div class="empty d-flex justify-content-center align-items-center flex-column">
+        <img src="/Content/paginaespecial/images/empty.png" alt="icone de vazio" />
+        <h6>Não existem torneios disponíveis</h6>
+    </div>
+}
+else
+{
+    var totalRegistros = Model.Torneios.Count;
+    var metadeRegistros = totalRegistros / 2;
+    var sobra = totalRegistros - (totalRegistros - metadeRegistros);
+    bool jaValidouMetadeRegistros = false;
+    <div class="py-3 d-flex flex-wrap justify-content-between gap-3">
+        @for (int i = 1; i <= totalRegistros; i++)
+        {
+            var torneio = Model.Torneios[i - 1];
+
+            if (i == 1)
+            {
+                @Html.Raw("<div class='d-flex flex-wrap gap-3 calendario__box'>");
+            }
+
+            <div class="d-flex gap-3 calendario__content">
+                <div class="calendario__forma">
+                    <img src="/Content/paginaespecial/images/mes.png" alt="formato geometrico" />
+                    <h4>
+                        @torneio.MesAbreviado
+                        <span>@torneio.Dia</span>
+                    </h4>
+                </div>
+
+                <div class="calendario__infos">
+                    <h6>@torneio.Nome</h6>
+                    <p><span>@torneio.Pontuacao pts</span> | @torneio.Local</p>
+                    @if (torneio.IdStatusInscricaoTorneio == 1)
+                    {
+                        <a class="calendario__infos-btn" href="@torneio.LinkInscricao">Inscreva-se</a>
+                    }
+                    else if (torneio.IdStatusInscricaoTorneio == 2)
+                    {
+                        <a class="calendario__infos-btn encerrada">Encerradas</a>
+                    }
+                    else if (torneio.IdStatusInscricaoTorneio == 3)
+                    {
+                        <a class="calendario__infos-btn naoabriu">Não Abriu</a>
+                    }
+                </div>
+            </div>
+
+
+            if (((i > metadeRegistros && sobra != 0) || (i == metadeRegistros && sobra == 0)) && jaValidouMetadeRegistros == false)
+            {
+                @Html.Raw("</div><div class='d-flex flex-wrap gap-3 calendario__box'>");
+                jaValidouMetadeRegistros = true;
+            }
+            if (i == totalRegistros)
+            {
+                if (totalRegistros - metadeRegistros != 0)
+                {
+                    <div style="height:100px;width:200px" class="d-flex gap-3 calendario__content">
+                    </div>
+                }
+
+                @Html.Raw("</div>");
+            }
+        }
+    </div>
+}
+

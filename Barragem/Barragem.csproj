@@ -248,6 +248,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helper\DateTimeHelper.cs" />
     <Compile Include="Helper\HtmlHelpers.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountModels.cs" />
@@ -1096,6 +1097,7 @@
     <Content Include="Views\CalendarioTorneios\Index.cshtml" />
     <Content Include="Views\Shared\_LayoutLandingPage.cshtml" />
     <Content Include="Views\PaginaEspecial\Index.cshtml" />
+    <Content Include="Views\PaginaEspecial\_PartialCalendarioMes.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

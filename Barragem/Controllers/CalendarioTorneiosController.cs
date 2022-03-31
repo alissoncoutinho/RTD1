@@ -8,6 +8,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using Barragem.Context;
+using Barragem.Helper;
 using Barragem.Models;
 
 namespace Barragem.Controllers
@@ -38,13 +39,10 @@ namespace Barragem.Controllers
 
         private CalendarioTorneioModel MapearDadosModelo(List<CalendarioTorneio> torneios)
         {
-            CultureInfo culture = new CultureInfo("pt-BR");
-            DateTimeFormatInfo dtfi = culture.DateTimeFormat;
-
             var lista = new List<CalendarioTorneioModel.CalendarioTorneioItens>();
             foreach (var item in torneios)
             {
-                var mes = culture.TextInfo.ToTitleCase(dtfi.GetMonthName(item.DataInicial.Month));
+                var mes = item.DataInicial.GetMonthName();
                 var torneioModel = new CalendarioTorneioModel.CalendarioTorneioItens()
                 {
                     Id = item.Id,

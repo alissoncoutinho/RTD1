@@ -1,6 +1,8 @@
 ﻿using Barragem.Class;
 using Barragem.Context;
+using Barragem.Helper;
 using Barragem.Models;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
@@ -18,6 +20,7 @@ namespace Barragem.Controllers
             var barragem = BuscarBarragemPorId(idBarragem, idPaginaEspecial);
             var patrocinadores = BuscarPatrocinadores();
             var ranking = BuscarDadosRanking(idBarragem);
+            var modalidadesCalendario = BuscarModalidadesCalendario();
 
             var model = new PaginaEspecialModel()
             {
@@ -29,10 +32,41 @@ namespace Barragem.Controllers
                 Patrocinadores = patrocinadores,
                 TituloFilieSeOuQuemSomos = idPaginaEspecial == EnumPaginaEspecial.Federacao ? "Filie-se" : "Quem Somos",
                 TextoFilieSeOuQuemSomos = barragem.quemsomos,
-                Rankings = ranking
+                Rankings = ranking,
+                ModalidadesCalendario = modalidadesCalendario
             };
-
+            CarregarDropDownMesesAno();
             return View(model);
+        }
+
+        public PartialViewResult ObterCalendarioMensal(int mes, int idmodalidade)
+        {
+            return PartialView("_PartialCalendarioMes", ObterTorneios(mes, idmodalidade));
+        }
+
+
+        private PaginaEspecialModel.CalendarioTorneioMes ObterTorneios(int mes, int idmodalidade)
+        {
+            var dataInicialMes = new DateTime(DateTime.Now.Year, mes, 1);
+            var dataFinalMes = new DateTime(DateTime.Now.Year, mes, DateTime.DaysInMonth(dataInicialMes.Year, dataInicialMes.Month));
+
+            var calendarioTorneios = db.CalendarioTorneio
+                .Include(i => i.ModalidadeTorneio)
+                .Include(i => i.StatusInscricaoTorneio)
+                .Where(x => x.DataInicial >= dataInicialMes && x.DataInicial <= dataFinalMes && x.ModalidadeTorneioId == idmodalidade)
+                .Select(s => new PaginaEspecialModel.CalendarioTorneioItem()
+                {
+                    DataInicial = s.DataInicial,
+                    DataFinal = s.DataFinal,
+                    Local = s.Local,
+                    Nome = s.Nome,
+                    Pontuacao = s.Pontuacao,
+                    StatusInscricaoTorneio = s.StatusInscricaoTorneio.Nome,
+                    IdStatusInscricaoTorneio = s.StatusInscricaoTorneio.Id,
+                    LinkInscricao = s.LinkInscricao
+                }).ToList();
+
+            return new PaginaEspecialModel.CalendarioTorneioMes() { Torneios = calendarioTorneios };
         }
 
         public ActionResult LigaRedirect(string key)
@@ -74,9 +108,26 @@ namespace Barragem.Controllers
                         .FirstOrDefault(b => b.Id == id && b.PaginaEspecialId == (int)idPaginaEspecial);
         }
 
+        private void CarregarDropDownMesesAno()
+        {
+            List<dynamic> mesesAno = new List<dynamic>();
+            var ano = DateTime.Now.Year;
+            for (int i = 1; i <= 12; i++)
+            {
+                var mes = new DateTime(ano, i, 1);
+                mesesAno.Add(new { Id = mes.Month, Nome = mes.GetMonthName() });
+            }
+            ViewBag.MesesAno = new SelectList(mesesAno, "Id", "Nome");
+        }
+
         private List<Patrocinio> BuscarPatrocinadores()
         {
             return db.Patrocinio.ToList();
+        }
+
+        private List<PaginaEspecialModel.CalendarioModalidades> BuscarModalidadesCalendario()
+        {
+            return db.ModalidadeTorneio.Select(s => new PaginaEspecialModel.CalendarioModalidades() { IdModalidade = s.Id, Modalidade = s.Nome }).ToList();
         }
 
         private List<PaginaEspecialModel.RankingModel> BuscarDadosRanking(int idBarragem)
