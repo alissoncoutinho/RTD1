@@ -14,8 +14,9 @@
             scrLogo = "/Content/paginaespecial/images/logo.png";
         }
     }
-}
 
+    var primeiroTorneio = Model.Banner.TorneiosBanner[0];
+}
 <html>
 <head>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -54,7 +55,7 @@
 
                 <div class="d-md-none d-block">
                     <div class="d-flex justify-content-between align-items-center">
-                        <img class="img-fluid logo" src="/Content/paginaespecial/images/logo.png" alt="logo da empresa" />
+                        <img class="img-fluid logo" src="@scrLogo" alt="logo da empresa" />
                         <button class="d-md-none d-block hamburger hamburger--stand" type="button">
                             <span class="hamburger-box">
                                 <span class="hamburger-inner"></span>
@@ -83,13 +84,13 @@
                     <p>Os principais torneios aqui</p>
                 </div>
                 <div class="col-md-9 mt-3 hero__content">
-                    <h3>Inscrições abertas</h3>
-                    <h2 data-torneio>Torneio X</h2>
+                    <h2 data-torneio>@primeiroTorneio.Nome</h2>
                     <p>
-                        Clube Y  - 500 pontos
-                        <b data-date>14/05 a 29/05</b>
+                        <a data-localPontuacao>@primeiroTorneio.Local - @primeiroTorneio.Pontuacao pontos</a>
+                        </br>
+                        <b data-date>@primeiroTorneio.DataInicial a @primeiroTorneio.DataFinal</b>
                     </p>
-                    <a class="custom-btn" href="#">Inscreva-se até 30/04</a>
+                    <a data-inscrevase class="custom-btn" href="@primeiroTorneio.LinkInscricao">Inscreva-se até @primeiroTorneio.DataFinal</a>
                 </div>
             </section>
 
@@ -105,56 +106,32 @@
                     <!-- Additional required wrapper -->
                     <div class="swiper-wrapper">
 
-                        <!-- Slides -->
-                        <div class="swiper-slide">
-                            <img class="img-fluid" src="/Content/paginaespecial/images/banner-1.png" alt="" />
-                            <h4 class="foward">
-                                Torneio X
-                            </h4>
-                            <h5 class="foward">14/05 a 30/05</h5>
-                        </div>
-
-                        <!-- Slides -->
-                        <div class="swiper-slide">
-                            <img class="img-fluid" src="/Content/paginaespecial/images/banner-2.png" alt="" />
-                            <h4 class="foward">
-                                Torneio Beach A
-                            </h4>
-                            <h5 class="foward">15/05 a 30/05</h5>
-                        </div>
-
-                        <!-- Slides -->
-                        <div class="swiper-slide">
-                            <img class="img-fluid" src="/Content/paginaespecial/images/banner-3.png" alt="" />
-                            <h4 class="foward">
-                                Torneio Kids B
-                            </h4>
-                            <h5 class="foward">16/05 a 30/05</h5>
-                        </div>
-
-
-                        <!-- Slides -->
-                        <div class="swiper-slide">
-                            <img class="img-fluid" src="/Content/paginaespecial/images/banner-4.png" alt="" />
-                            <h4 class="foward">
-                                Torneio Z
-                            </h4>
-                            <h5 class="foward">17/05 a 30/05</h5>
-                        </div>
-
-                        <!-- Slides -->
-                        <div class="swiper-slide">
-                            <img class="img-fluid" src="/Content/paginaespecial/images/banner-5.png" alt="" />
-                            <h4 class="foward">
-                                Saibro II 2022
-                            </h4>
-                            <h5 class="foward">18/05 a 30/05</h5>
-                        </div>
-
-
+                        @foreach (var torneioBanner in Model.Banner.TorneiosBanner)
+                        {
+                            <div class="swiper-slide">
+                                <!-- Posicao: 0 -->
+                                <img class="img-fluid" src="@torneioBanner.UrlImagemBanner" alt="" />
+                                <!-- Posicao: 1 -->
+                                <h4 class="foward">
+                                    @torneioBanner.Nome
+                                </h4>
+                                <!-- Posicao: 2 -->
+                                <h5 class="foward">@torneioBanner.DataInicial a @torneioBanner.DataFinal</h5>
+                                <!-- Posicao: 3 -->
+                                <input type="hidden" value="@torneioBanner.Local" />
+                                <!-- Posicao: 4 -->
+                                <input type="hidden" value="@torneioBanner.Pontuacao" />
+                                <!-- Posicao: 5 -->
+                                <input type="hidden" value="@torneioBanner.LinkInscricao" />
+                                <!-- Posicao: 6 -->
+                                <input type="hidden" value="@torneioBanner.DataFinal" />
+                                <!-- Posicao: 7 -->
+                                <input type="hidden" value="@torneioBanner.IdStatusInscricaoTorneio" />
+                                <!-- Posicao: 8 -->
+                                <input type="hidden" value="@torneioBanner.UrlImagemBannerMobile" />
+                            </div>
+                        }
                     </div>
-
-
                     <!-- If we need navigation buttons -->
                     <div class="swiper-button-prev"></div>
                     <div class="swiper-button-next"></div>
@@ -167,65 +144,16 @@
         <div class="header__img">
             <div class="mySwiper2">
                 <div class="swiper-wrapper">
-
                     <!--imagem grande de fundo do topo da página-->
                     <div class="swiper-slide">
                         <div class="d-md-block d-none">
-                            <img src="/Content/paginaespecial/images/banner-1.png" />
+                            <img data-imagem-banner src="@primeiroTorneio.UrlImagemBanner" />
                         </div>
 
                         <div class="d-md-none d-block">
-                            <img src="/Content/paginaespecial/images/mobile-1.png" />
+                            <img data-imagem-banner-mobile src="@primeiroTorneio.UrlImagemBannerMobile" />
                         </div>
                     </div>
-
-                    <!--imagem grande de fundo do topo da página-->
-                    <div class="swiper-slide">
-                        <div class="d-md-block d-none">
-                            <img src="/Content/paginaespecial/images/banner-2.png" />
-                        </div>
-
-                        <div class="d-md-none d-block">
-                            <img src="/Content/paginaespecial/images/mobile-2.png" />
-                        </div>
-                    </div>
-
-
-                    <!--imagem grande de fundo do topo da página-->
-                    <div class="swiper-slide">
-                        <div class="d-md-block d-none">
-                            <img src="/Content/paginaespecial/images/banner-3.png" />
-                        </div>
-
-                        <div class="d-md-none d-block">
-                            <img src="/Content/paginaespecial/images/mobile-7.png" />
-                        </div>
-                    </div>
-
-                    <!--imagem grande de fundo do topo da página-->
-
-                    <div class="swiper-slide">
-                        <div class="d-md-block d-none">
-                            <img src="/Content/paginaespecial/images/banner-4.png" />
-                        </div>
-
-                        <div class="d-md-none d-block">
-                            <img src="/Content/paginaespecial/images/mobile-4.png" />
-                        </div>
-                    </div>
-
-                    <!--imagem grande de fundo do topo da página-->
-
-                    <div class="swiper-slide">
-                        <div class="d-md-block d-none">
-                            <img src="/Content/paginaespecial/images/banner-5.png" />
-                        </div>
-
-                        <div class="d-md-none d-block">
-                            <img src="/Content/paginaespecial/images/mobile-5.png" />
-                        </div>
-                    </div>
-
                 </div>
             </div>
         </div>
@@ -307,92 +235,99 @@
                         }
                     </ul>
 
-                    @if (Model.Rankings[0] != null)
+                    @if (Model.Rankings.Count > 0 && Model.Rankings[0] != null)
                     {
                         <h2 class="d-flex align-items-center gap-3">Classificação <span id="spanNomeLiga">@Model.Rankings[0].Ranking.NomeLiga</span></h2>
+                        <div class="line"></div>
                     }
-                    <div class="line"></div>
-
                     <section class="tabelas__tabs">
 
                         <div class="tab-content" id="myTabContent">
 
-                            @for (int i = 0; i < Model.Rankings.Count; i++)
+                            @if (Model.Rankings.Count == 0)
                             {
-                                var modalidadeRanking = Model.Rankings[i];
+                                <div class="empty d-flex justify-content-center align-items-center flex-column">
+                                    <img src="/Content/paginaespecial/images/empty.png" alt="icone de vazio">
+                                    <h6>Não existem rankings disponíveis</h6>
+                                </div>
+                            }
+                            else
+                            {
+                                for (int i = 0; i < Model.Rankings.Count; i++)
+                                {
+                                    var modalidadeRanking = Model.Rankings[i];
 
-                                <div class="tab-pane fade @if (i==0) { @Html.Raw("show active") }" id="modalidade-@modalidadeRanking.IdModalidade" role="tabpanel" aria-labelledby="modalidade-@modalidadeRanking.IdModalidade-tab">
-                                    <div class="swiper3">
-                                        <ul class="nav nav-tabs swiper-wrapper" id="tabsCategoriasModalidade-@modalidadeRanking.IdModalidade" role="tablist">
+                                    <div class="tab-pane fade @if (i==0) { @Html.Raw("show active") }" id="modalidade-@modalidadeRanking.IdModalidade" role="tabpanel" aria-labelledby="modalidade-@modalidadeRanking.IdModalidade-tab">
+                                        <div class="swiper3">
+                                            <ul class="nav nav-tabs swiper-wrapper" id="tabsCategoriasModalidade-@modalidadeRanking.IdModalidade" role="tablist">
+
+                                                @for (int countCategoria = 0; countCategoria < modalidadeRanking.Ranking.Categoria.Count; countCategoria++)
+                                                {
+                                                    var categoria = modalidadeRanking.Ranking.Categoria[countCategoria];
+
+                                                    <li class="nav-item swiper-slide @if (countCategoria!=0) { @Html.Raw("ms-2") }" role="presentation">
+                                                        <button class="nav-link nav-links @if (countCategoria==0) { @Html.Raw("active") }" id="categoria-@categoria.IdCategoria-tab" data-bs-toggle="tab"
+                                                                data-bs-target="#categoria-@categoria.IdCategoria" type="button" role="tab" aria-controls="categoria-@categoria.IdCategoria"
+                                                                aria-selected="@if (countCategoria == 0) { @Html.Raw("true") } else {@Html.Raw("false") } ">
+                                                            @categoria.NomeCategoria
+                                                        </button>
+                                                    </li>
+                                                }
+                                            </ul>
+                                        </div>
+
+                                        <div class="tab-content mt-3" id="tabContentModalidade-@modalidadeRanking.IdModalidade">
 
                                             @for (int countCategoria = 0; countCategoria < modalidadeRanking.Ranking.Categoria.Count; countCategoria++)
                                             {
                                                 var categoria = modalidadeRanking.Ranking.Categoria[countCategoria];
 
-                                                <li class="nav-item swiper-slide @if (countCategoria!=0) { @Html.Raw("ms-2") }" role="presentation">
-                                                    <button class="nav-link nav-links @if (countCategoria==0) { @Html.Raw("active") }" id="categoria-@categoria.IdCategoria-tab" data-bs-toggle="tab"
-                                                            data-bs-target="#categoria-@categoria.IdCategoria" type="button" role="tab" aria-controls="categoria-@categoria.IdCategoria"
-                                                            aria-selected="@if (countCategoria == 0) { @Html.Raw("true") } else {@Html.Raw("false") } ">
-                                                        @categoria.NomeCategoria
-                                                    </button>
-                                                </li>
-                                            }
-                                        </ul>
-                                    </div>
-
-                                    <div class="tab-content mt-3" id="tabContentModalidade-@modalidadeRanking.IdModalidade">
-
-                                        @for (int countCategoria = 0; countCategoria < modalidadeRanking.Ranking.Categoria.Count; countCategoria++)
-                                        {
-                                            var categoria = modalidadeRanking.Ranking.Categoria[countCategoria];
-
-                                            <div class="tab-pane fade @if (countCategoria==0) { @Html.Raw("show active") }" id="categoria-@categoria.IdCategoria" role="tabpanel" aria-labelledby="categoria-@categoria.IdCategoria-tab">
-                                                <table class="table table-striped">
-                                                    <thead>
-                                                        <tr class="row  row-line">
-                                                            <th class="col-2" scope="col"><h6>Posição</h6></th>
-                                                            <th class="col-5" scope="col"><h6>Nome</h6></th>
-                                                            <th class="col-5 d-flex justify-content-end" scope="col"> <h6>Pontuação</h6></th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-
-                                                        @if (categoria.Jogadores == null || categoria.Jogadores.Count == 0)
-                                                        {
-                                                            <tr class="empty d-flex justify-content-center align-items-center flex-column">
-                                                                <img src="/Content/paginaespecial/images/empty.png" alt="icone de vazio" />
-                                                                <h6>Não há ranking de jogadores nesta categoria</h6>
+                                                <div class="tab-pane fade @if (countCategoria==0) { @Html.Raw("show active") }" id="categoria-@categoria.IdCategoria" role="tabpanel" aria-labelledby="categoria-@categoria.IdCategoria-tab">
+                                                    <table class="table table-striped">
+                                                        <thead>
+                                                            <tr class="row  row-line">
+                                                                <th class="col-2" scope="col"><h6>Posição</h6></th>
+                                                                <th class="col-5" scope="col"><h6>Nome</h6></th>
+                                                                <th class="col-5 d-flex justify-content-end" scope="col"> <h6>Pontuação</h6></th>
                                                             </tr>
-                                                        }
-                                                        else
-                                                        {
-                                                            foreach (var jogador in categoria.Jogadores)
+                                                        </thead>
+                                                        <tbody>
+
+                                                            @if (categoria.Jogadores == null || categoria.Jogadores.Count == 0)
                                                             {
-                                                                <tr class="row row-line">
-                                                                    <td class="col-2 trTable">
-                                                                        <span class="info-table-1">@jogador.Posicao</span>
-                                                                    </td><!--col-3-->
-
-                                                                    <td class="col-5 trTable">
-                                                                        <span class="info-table">@jogador.NomeJogador</span>
-                                                                    </td><!--col-3-->
-
-                                                                    <td class="col-5 trTable d-flex justify-content-end">
-                                                                        <span class="info-table">@jogador.Pontuacao</span>
-                                                                    </td><!--col-3-->
+                                                                <tr class="empty d-flex justify-content-center align-items-center flex-column">
+                                                                    <img src="/Content/paginaespecial/images/empty.png" alt="icone de vazio" />
+                                                                    <h6>Não há ranking de jogadores nesta categoria</h6>
                                                                 </tr>
                                                             }
-                                                        }
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        }
+                                                            else
+                                                            {
+                                                                foreach (var jogador in categoria.Jogadores)
+                                                                {
+                                                                    <tr class="row row-line">
+                                                                        <td class="col-2 trTable">
+                                                                            <span class="info-table-1">@jogador.Posicao</span>
+                                                                        </td><!--col-3-->
 
+                                                                        <td class="col-5 trTable">
+                                                                            <span class="info-table">@jogador.NomeJogador</span>
+                                                                        </td><!--col-3-->
+
+                                                                        <td class="col-5 trTable d-flex justify-content-end">
+                                                                            <span class="info-table">@jogador.Pontuacao</span>
+                                                                        </td><!--col-3-->
+                                                                    </tr>
+                                                                }
+                                                            }
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            }
+
+                                        </div>
                                     </div>
-                                </div>
+                                }
                             }
-
-
 
                         </div>
 
@@ -447,11 +382,11 @@
     </footer>
 
     <script src="https://unpkg.com/swiper@8/swiper-bundle.min.js"></script>
-    <script src="/content/bootstrap-5.0.2-dist/js/bootstrap.bundle.min.js"></script>
-    <script src="/content/paginaespecial/js/menu.js"></script>
-    <script src="/content/paginaespecial/js/main.js"></script>
+    <script src="/Content/bootstrap-5.0.2-dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/Content/paginaespecial/js/menu.js"></script>
+    <script src="/Content/paginaespecial/js/main.js"></script>
     <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
-    <script src="/content/paginaespecial/js/paginathing.js"></script>
+    <script src="/Content/paginaespecial/js/paginathing.js"></script>
 
     <script type="text/javascript">
 

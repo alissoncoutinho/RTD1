@@ -41,9 +41,6 @@ tabelasTab.forEach(tab => {
     })
 })
 
-
-
-
 const gallery = new Swiper(".mySwiper2", {
     spaceBetween: 10,
     watchSlidesProgress: true,
@@ -53,7 +50,6 @@ const gallery = new Swiper(".mySwiper2", {
     },
     loop: false,
 });
-
 
 const swiper = new Swiper('.swiper', {
     // Optional parameters
@@ -90,21 +86,46 @@ swiper.on('init', () => {
 let torneio = document.querySelector('[data-torneio]')
 let data = document.querySelector('[data-date]')
 let bgImage = document.querySelector('[data-background]')
+let localPontuacao = document.querySelector('[data-localPontuacao]')
+let inscrevaSe = document.querySelector('[data-inscrevase]')
+let imagemBanner = document.querySelector('[data-imagem-banner]')
+let imagemBannerMobile = document.querySelector('[data-imagem-banner-mobile]')
 
 swiper.on('slideNextTransitionStart', function (e) {
     let slides = [...swiper.$wrapperEl[0].children]
     let slideActive = slides.find(active => active.className == 'swiper-slide swiper-slide-active');
     let slideActiveRepater = slides.find(active => active.className == 'swiper-slide swiper-slide-duplicate-active');
 
-
     if (slideActive != undefined) {
         torneio.textContent = slideActive.children[1].innerText
         data.textContent = slideActive.children[2].innerText
+        localPontuacao.textContent = slideActive.children[3].value + ' - ' + slideActive.children[4].value + ' pontos'
+        if (slideActive.children[7].value == 'ABERTA') {
+            inscrevaSe.style.display = "block";
+            inscrevaSe.href = slideActive.children[5].value
+            inscrevaSe.textContent = 'Inscreva-se até ' + slideActive.children[6].value
+        }
+        else {
+            inscrevaSe.style.display = "none";
+        }
+        imagemBanner.src = slideActive.children[0].src
+        imagemBannerMobile.src = slideActive.children[8].value
     }
 
     if (slideActiveRepater != undefined) {
         torneio.textContent = slideActiveRepater.children[1].innerText
         data.textContent = slideActiveRepater.children[2].innerText
+        localPontuacao.textContent = slideActiveRepater.children[3].value + ' - ' + slideActiveRepater.children[4].value + ' pontos'
+        if (slideActiveRepater.children[7].value == 'ABERTA') {
+            inscrevaSe.style.display = "block";
+            inscrevaSe.href = slideActiveRepater.children[5].value
+            inscrevaSe.textContent = 'Inscreva-se até ' + slideActiveRepater.children[6].value
+        }
+        else {
+            inscrevaSe.style.display = "none";
+        }
+        imagemBanner.src = slideActiveRepater.children[0].src
+        imagemBannerMobile.src = slideActiveRepater.children[8].value
     }
 
 });
@@ -114,26 +135,46 @@ swiper.on('slidePrevTransitionStart', function () {
     let slideActive = slides.find(active => active.className == 'swiper-slide swiper-slide-active');
     let slideActiveRepater = slides.find(active => active.className == 'swiper-slide swiper-slide-duplicate-active');
 
-
     if (slideActive != undefined) {
         torneio.textContent = slideActive.children[1].innerText
         data.textContent = slideActive.children[2].innerText
+        localPontuacao.textContent = slideActive.children[3].value + ' - ' + slideActive.children[4].value + ' pontos'
+        if (slideActive.children[7].value == 'ABERTA') {
+            inscrevaSe.style.display = "block";
+            inscrevaSe.href = slideActive.children[5].value
+            inscrevaSe.textContent = 'Inscreva-se até ' + slideActive.children[6].value
+        }
+        else {
+            inscrevaSe.style.display = "none";
+        }
+        imagemBanner.src = slideActive.children[0].src
+        imagemBannerMobile.src = slideActive.children[8].value
     }
 
     if (slideActiveRepater != undefined) {
         torneio.textContent = slideActiveRepater.children[1].innerText
         data.textContent = slideActiveRepater.children[2].innerText
+        localPontuacao.textContent = slideActiveRepater.children[3].value + ' - ' + slideActiveRepater.children[4].value + ' pontos'
+        if (slideActiveRepater.children[7].value == 'ABERTA') {
+            inscrevaSe.style.display = "block";
+            inscrevaSe.href = slideActiveRepater.children[5].value
+            inscrevaSe.textContent = 'Inscreva-se até ' + slideActiveRepater.children[6].value
+        }
+        else {
+            inscrevaSe.style.display = "none";
+        }
+        imagemBanner.src = slideActiveRepater.children[0].src
+        imagemBannerMobile.src = slideActiveRepater.children[8].value
     }
-
 })
 
 
-
+//swipper Patrocinadores
 const swiper2 = new Swiper('.mySwiper', {
     // Optional parameters
     direction: 'horizontal',
     loop: false,
-    slidesPerView: 6,
+    slidesPerView: 2,
     spaceBetween: 20,
     centerInsufficientSlides: true,
     centeredSlides: false,

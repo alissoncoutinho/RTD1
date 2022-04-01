@@ -124,11 +124,10 @@ header.header {
     height: 177px;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
 }
 
     .hero__content:last-child p {
-        max-width: 170px;
+        max-width: 270px;
     }
 
 .navbar-btn {

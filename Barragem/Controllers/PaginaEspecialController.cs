@@ -21,6 +21,7 @@ namespace Barragem.Controllers
             var patrocinadores = BuscarPatrocinadores();
             var ranking = BuscarDadosRanking(idBarragem);
             var modalidadesCalendario = BuscarModalidadesCalendario();
+            var torneiosBanner = ObterTorneiosDestaqueBanner();
 
             var model = new PaginaEspecialModel()
             {
@@ -32,8 +33,9 @@ namespace Barragem.Controllers
                 Patrocinadores = patrocinadores,
                 TituloFilieSeOuQuemSomos = idPaginaEspecial == EnumPaginaEspecial.Federacao ? "Filie-se" : "Quem Somos",
                 TextoFilieSeOuQuemSomos = barragem.quemsomos,
-                Rankings = ranking,
-                ModalidadesCalendario = modalidadesCalendario
+                Rankings = ranking ?? new List<PaginaEspecialModel.RankingModel>(),
+                ModalidadesCalendario = modalidadesCalendario,
+                Banner = torneiosBanner
             };
             CarregarDropDownMesesAno();
             return View(model);
@@ -85,16 +87,90 @@ namespace Barragem.Controllers
 
         private PaginaEspecialModel.TorneioDestaqueBanner ObterTorneiosDestaqueBanner()
         {
+            const int MAXIMO_TORNEIOS_BANNER = 5;
             var dadosBanner = new PaginaEspecialModel.TorneioDestaqueBanner();
+            var listaTorneios = new List<PaginaEspecialModel.TorneioDestaqueBanner.TorneioDestaqueBannerItem>();
+
+            var ultimoDiaAno = new DateTime(DateTime.Now.Year, 12, DateTime.DaysInMonth(DateTime.Now.Year, 12));
 
             var proximosTorneios = db.CalendarioTorneio
                 .Include(i => i.ModalidadeTorneio)
                 .Include(i => i.StatusInscricaoTorneio)
-                .Where(x => x.DataInicial.Date >= DateTime.Now.Date && (x.StatusInscricaoTorneioId == (int)EnumStatusInscricao.ABERTA || x.StatusInscricaoTorneioId == (int)EnumStatusInscricao.ENCERRADA));
+                .Where(x => x.DataInicial >= DateTime.Now && x.DataInicial <= ultimoDiaAno && (x.StatusInscricaoTorneioId == (int)EnumStatusInscricao.ABERTA || x.StatusInscricaoTorneioId == (int)EnumStatusInscricao.ENCERRADA))
+                .OrderBy(o => o.StatusInscricaoTorneioId)
+                .ThenBy(o => o.DataInicial)
+                .ThenBy(o => o.DataFinal).ToList();
 
+            if (proximosTorneios.Count() == 1)
+            {
+                //Exibir somente o unico torneio
+                listaTorneios.Add(ObterTorneioDestaque(proximosTorneios.First()));
+            }
+            else if (proximosTorneios.Count() > 1 && proximosTorneios.Count() < MAXIMO_TORNEIOS_BANNER)
+            {
+                //Completar para checar em 5 torneios (replicar torneios encontrados)
+                var qtdFaltanteTorneios = MAXIMO_TORNEIOS_BANNER - proximosTorneios.Count();
 
-            return null;
+                foreach (var item in proximosTorneios)
+                {
+                    listaTorneios.Add(ObterTorneioDestaque(item));
+                }
 
+                int totalRegistrosReplicados = 0;
+                int index = 0;
+                while (totalRegistrosReplicados <= qtdFaltanteTorneios)
+                {
+                    if (index > proximosTorneios.Count - 1)
+                    {
+                        index = 0;
+                    }
+
+                    listaTorneios.Add(ObterTorneioDestaque(proximosTorneios[index]));
+
+                    index++;
+                    totalRegistrosReplicados++;
+                }
+            }
+            else
+            {
+                foreach (var item in proximosTorneios)
+                {
+                    listaTorneios.Add(ObterTorneioDestaque(item));
+                }
+            }
+
+            CarregarImagemBanner(listaTorneios);
+
+            dadosBanner.TorneiosBanner = listaTorneios;
+
+            return dadosBanner;
+
+        }
+
+        private void CarregarImagemBanner(List<PaginaEspecialModel.TorneioDestaqueBanner.TorneioDestaqueBannerItem> listaTorneios)
+        {
+            var banner = new PaginaEspecialModel.ImagemBanner();
+            foreach (var item in listaTorneios)
+            {
+                var itemImagem = banner.ObterImagemBanner(item.IdModalidade);
+                item.UrlImagemBanner = itemImagem.UrlImagem;
+                item.UrlImagemBannerMobile = itemImagem.UrlImagemMobile;
+            }
+        }
+
+        private PaginaEspecialModel.TorneioDestaqueBanner.TorneioDestaqueBannerItem ObterTorneioDestaque(CalendarioTorneio entidade)
+        {
+            return new PaginaEspecialModel.TorneioDestaqueBanner.TorneioDestaqueBannerItem()
+            {
+                DataInicial = entidade.DataInicial.ToString("dd/MM"),
+                DataFinal = entidade.DataFinal.ToString("dd/MM"),
+                IdStatusInscricaoTorneio = (EnumStatusInscricao)entidade.StatusInscricaoTorneioId,
+                Nome = entidade.Nome,
+                Local = entidade.Local,
+                Pontuacao = entidade.Pontuacao,
+                LinkInscricao = entidade.LinkInscricao,
+                IdModalidade = (EnumModalidadeTorneio)entidade.ModalidadeTorneioId
+            };
         }
 
         private PaginaEspecialModel.CalendarioTorneioMes ObterTorneios(int mes, EnumModalidadeTorneio idmodalidade)
