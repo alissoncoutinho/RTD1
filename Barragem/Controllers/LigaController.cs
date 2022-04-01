@@ -445,7 +445,7 @@ namespace Barragem.Controllers
         public SelectList ObterDadosDropDownModalidade(int? idModalidade)
         {
             return new SelectList(new[] { new ModalidadeTorneio() { Id = (int)EnumModalidadeTorneio.SELECIONE, Nome = "Selecione" } }
-                           .Union(db.ModalidadeTorneio), "Id", "Nome", idModalidade == null ? -1 : idModalidade);
+                           .Union(db.ModalidadeTorneio), "Id", "Nome", idModalidade == null ? (int)EnumModalidadeTorneio.SELECIONE : idModalidade);
         }
     }
 }

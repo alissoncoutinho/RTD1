@@ -459,7 +459,7 @@ namespace Barragem.Controllers
         public SelectList ObterDadosDropDownPaginaEspecial(int? idPaginaEspecial)
         {
             return new SelectList(new[] { new PaginaEspecial() { Id = (int)EnumPaginaEspecial.Selecione, Nome = "Selecione" } }
-                           .Union(db.PaginaEspecial), "Id", "Nome", idPaginaEspecial == null ? EnumPaginaEspecial.Selecione : (EnumPaginaEspecial)idPaginaEspecial);
+                           .Union(db.PaginaEspecial), "Id", "Nome", idPaginaEspecial == null ? (int)EnumPaginaEspecial.Selecione : idPaginaEspecial);
         }
     }
 

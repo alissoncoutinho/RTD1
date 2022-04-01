@@ -1,3 +1,9 @@
+function checarRegistrosBanner() {
+    var qtdeRegistros = document.getElementById("totalRegistrosBanner").value;
+    if (qtdeRegistros == 0) {
+        document.getElementById("sectionDetalhesPrimeiroTorneioBanner").style.display = "none";
+    }
+}
 
 //funções responsaveis por mudar o background do calendário
 
@@ -51,31 +57,42 @@ const gallery = new Swiper(".mySwiper2", {
     loop: false,
 });
 
-const swiper = new Swiper('.swiper', {
-    // Optional parameters
-    direction: 'horizontal',
-    loop: true,
-    slidesPerView: "auto",
-    spaceBetween: 20,
-    slideToClickedSlide: true,
-    // loopAdditionalSlides:4,
-    // autoplay:true,
-    // loopedSlides:4,
-    // initialSlide:0,
-    // centeredSlides:true,
-    navigation: {
-        nextEl: '.swiper-button-next',
-        prevEl: '.swiper-button-prev',
-    },
-    thumbs: {
-        swiper: gallery,
-    },
-    // on:{
-    //   click: function(e){
-    //     e.slideNext(200, true)
-    //   }
-    // }
-});
+
+let optionsBanner = {};
+let totalRegistrosBanner = document.getElementById("totalRegistrosBanner").value;
+if (totalRegistrosBanner == 1) {
+    optionsBanner = {
+        direction: 'horizontal',
+        loop: false,
+        slidesPerView: "auto",
+        spaceBetween: 20,
+        slideToClickedSlide: true,
+        navigation: {
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev',
+        },
+        thumbs: {
+            swiper: gallery,
+        },
+    };
+}
+else {
+    optionsBanner = {
+        direction: 'horizontal',
+        loop: true,
+        slidesPerView: "auto",
+        spaceBetween: 20,
+        slideToClickedSlide: true,
+        navigation: {
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev',
+        },
+        thumbs: {
+            swiper: gallery,
+        },
+    };
+}
+const swiper = new Swiper('.swiper', optionsBanner);
 
 swiper.on('init', () => {
     console.log('iniciado')
@@ -234,3 +251,5 @@ const swiper4 = new Swiper('.swiper3', {
     },
 
 });
+
+checarRegistrosBanner();

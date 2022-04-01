@@ -1,4 +1,6 @@
-﻿@model Barragem.Models.PaginaEspecialModel
+﻿@using Barragem.Models;
+
+@model Barragem.Models.PaginaEspecialModel
 
 @{
     Layout = null;
@@ -15,7 +17,20 @@
         }
     }
 
-    var primeiroTorneio = Model.Banner.TorneiosBanner[0];
+    PaginaEspecialModel.TorneioDestaqueBanner.TorneioDestaqueBannerItem primeiroTorneio;
+
+    if (Model.Banner.TorneiosBanner.Count > 0)
+    {
+        primeiroTorneio = Model.Banner.TorneiosBanner[0];
+    }
+    else
+    {
+        primeiroTorneio = new PaginaEspecialModel.TorneioDestaqueBanner.TorneioDestaqueBannerItem()
+        {
+            UrlImagemBanner = "/Content/paginaespecial/images/banner-1.png",
+            UrlImagemBannerMobile = "/Content/paginaespecial/images/mobile-1.png"
+        };
+    }
 }
 <html>
 <head>
@@ -47,6 +62,8 @@
     </div>
 
     <header class="header" id="inicio">
+        <input id="totalRegistrosBanner" type="hidden" value="@Model.Banner.TorneiosBanner.Count" />
+
         <div class="container">
             <nav class="row">
                 <div class="col-md-3 d-md-block d-none">
@@ -55,7 +72,7 @@
 
                 <div class="d-md-none d-block">
                     <div class="d-flex justify-content-between align-items-center">
-                        <img class="img-fluid logo" src="@scrLogo" alt="logo da empresa" />
+                        <img class="img-fluid logo" style="max-width:100px;min-width:80px" src="@scrLogo" alt="logo da empresa" />
                         <button class="d-md-none d-block hamburger hamburger--stand" type="button">
                             <span class="hamburger-box">
                                 <span class="hamburger-inner"></span>
@@ -78,11 +95,12 @@
                 </div>
             </nav>
 
-            <section class="row">
+            <section id="sectionDetalhesPrimeiroTorneioBanner" class="row">
                 <div class="col-md-3 mt-3 hero__content">
                     <h1>@Model.NomeBarragem</h1>
                     <p>Os principais torneios aqui</p>
                 </div>
+
                 <div class="col-md-9 mt-3 hero__content">
                     <h2 data-torneio>@primeiroTorneio.Nome</h2>
                     <p>
@@ -94,51 +112,51 @@
                 </div>
             </section>
 
-
-            <div class="header__slide">
-                <div class="position-relative d-flex seta">
-                    <h6>Selecione um dos torneios</h6>
-                    <img src="/Content/paginaespecial/images/seta.png" alt="icone" />
-                </div>
-
-                <!-- Slider main container -->
-                <div thumbsSlider="" class="swiper">
-                    <!-- Additional required wrapper -->
-                    <div class="swiper-wrapper">
-
-                        @foreach (var torneioBanner in Model.Banner.TorneiosBanner)
-                        {
-                            <div class="swiper-slide">
-                                <!-- Posicao: 0 -->
-                                <img class="img-fluid" src="@torneioBanner.UrlImagemBanner" alt="" />
-                                <!-- Posicao: 1 -->
-                                <h4 class="foward">
-                                    @torneioBanner.Nome
-                                </h4>
-                                <!-- Posicao: 2 -->
-                                <h5 class="foward">@torneioBanner.DataInicial a @torneioBanner.DataFinal</h5>
-                                <!-- Posicao: 3 -->
-                                <input type="hidden" value="@torneioBanner.Local" />
-                                <!-- Posicao: 4 -->
-                                <input type="hidden" value="@torneioBanner.Pontuacao" />
-                                <!-- Posicao: 5 -->
-                                <input type="hidden" value="@torneioBanner.LinkInscricao" />
-                                <!-- Posicao: 6 -->
-                                <input type="hidden" value="@torneioBanner.DataFinal" />
-                                <!-- Posicao: 7 -->
-                                <input type="hidden" value="@torneioBanner.IdStatusInscricaoTorneio" />
-                                <!-- Posicao: 8 -->
-                                <input type="hidden" value="@torneioBanner.UrlImagemBannerMobile" />
-                            </div>
-                        }
+            @if (Model.Banner.TorneiosBanner.Count > 0)
+            {
+                <div class="header__slide">
+                    <div class="position-relative d-flex seta">
+                        <h6>Selecione um dos torneios</h6>
+                        <img src="/Content/paginaespecial/images/seta.png" alt="icone" />
                     </div>
-                    <!-- If we need navigation buttons -->
-                    <div class="swiper-button-prev"></div>
-                    <div class="swiper-button-next"></div>
 
+                    <!-- Slider main container -->
+                    <div thumbsSlider="" class="swiper">
+                        <!-- Additional required wrapper -->
+                        <div class="swiper-wrapper">
+                            @foreach (var torneioBanner in Model.Banner.TorneiosBanner)
+                            {
+                                <div class="swiper-slide">
+                                    <!-- Posicao: 0 -->
+                                    <img class="img-fluid" src="@torneioBanner.UrlImagemBanner" alt="" />
+                                    <!-- Posicao: 1 -->
+                                    <h4 class="foward">
+                                        @torneioBanner.Nome
+                                    </h4>
+                                    <!-- Posicao: 2 -->
+                                    <h5 class="foward">@torneioBanner.DataInicial a @torneioBanner.DataFinal</h5>
+                                    <!-- Posicao: 3 -->
+                                    <input type="hidden" value="@torneioBanner.Local" />
+                                    <!-- Posicao: 4 -->
+                                    <input type="hidden" value="@torneioBanner.Pontuacao" />
+                                    <!-- Posicao: 5 -->
+                                    <input type="hidden" value="@torneioBanner.LinkInscricao" />
+                                    <!-- Posicao: 6 -->
+                                    <input type="hidden" value="@torneioBanner.DataFinal" />
+                                    <!-- Posicao: 7 -->
+                                    <input type="hidden" value="@torneioBanner.IdStatusInscricaoTorneio" />
+                                    <!-- Posicao: 8 -->
+                                    <input type="hidden" value="@torneioBanner.UrlImagemBannerMobile" />
+                                </div>
+                            }
+                        </div>
+                        <!-- If we need navigation buttons -->
+                        <div class="swiper-button-prev"></div>
+                        <div class="swiper-button-next"></div>
+
+                    </div>
                 </div>
-            </div>
-
+            }
         </div>
 
         <div class="header__img">
@@ -160,6 +178,7 @@
 
     </header>
 
+    @*-----------------------------------------------------------------------INICIO SESSAO PATROCINADORES--------------------------------------------------------------------*@
     <section class="patrocinadores" id="patrocinadores">
         <div class="container">
             <h2>Patrocinadores</h2>
@@ -176,6 +195,8 @@
             </div>
         </div>
     </section>
+    @*-----------------------------------------------------------------------FIM SESSAO PATROCINADORES-----------------------------------------------------------------------*@
+
     @*-----------------------------------------------------------------------INICIO SESSAO CALENDARIO -----------------------------------------------------------------------*@
     <section class="calendario" id="calendario">
         <h2 class="d-md-block d-none">Calendário/@Model.AnoCalendario</h2>
