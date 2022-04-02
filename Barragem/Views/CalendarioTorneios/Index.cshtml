@@ -11,7 +11,7 @@
         <div class="col-md-2">
             @using (Html.BeginForm("Index", "CalendarioTorneios", FormMethod.Get, new { @Id = "formCalendario" }))
             {
-                @Html.DropDownList("FiltroAno", Model.FiltroAno, new { @id = "ddlFiltroAno", @class = "col-md-1 form-control" })
+                @Html.DropDownList("FiltroAno", Model.FiltroAno, new { @id = "ddlFiltroAno", @class = "col-md-1 form-control", onchange = "selectedFiltroAno(this)" })
             }
         </div>
         <div style="display: inline-block" class="col-md-2">
@@ -67,7 +67,7 @@
 </div>
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
 <script type="text/javascript">
-    $("body").on("change", "#ddlFiltroAno", function () {
+    function selectedFiltroAno(element) {
         $('#formCalendario')[0].submit();
-    });
+    }
 </script>
