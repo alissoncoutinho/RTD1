@@ -10,6 +10,7 @@ using System.Web.Mvc;
 
 namespace Barragem.Controllers
 {
+    [Authorize(Roles = "admin,organizador")]
     public class PaginaEspecialController : Controller
     {
         private BarragemDbContext db = new BarragemDbContext();
