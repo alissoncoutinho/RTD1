@@ -1,0 +1,37 @@
+﻿@model IEnumerable<Barragem.Models.PatrocinioModel>
+
+    @{
+        ViewBag.Title = "Index";
+    }
+    <legend>Patrocinadores</legend>
+    <p>
+        @Html.ActionLink("Adicionar", "Create", null, new { @class = "btn btn-primary btn-small" })
+    </p>
+    <table class="table">
+        <tr>
+            <th style="width:90px">
+                @Html.DisplayNameFor(model => model.UrlImagem)
+            </th>
+            <th style="width:auto">
+                @Html.DisplayNameFor(model => model.UrlPatrocinador)
+            </th>
+            <th style="text-align:center;width:160px">Ação</th>
+        </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    <img width="50" height="50" src="@item.UrlImagem" id="@Html.Raw("imagem")">
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.UrlPatrocinador)
+                </td>
+                <td align="right">
+                    @Html.ActionLink("Editar", "Edit", new { id = item.Id }, new { @class = "btn btn-primary btn-xs" }) |
+                    @Html.ActionLink("Excluir", "Delete", new { id = item.Id }, new { @class = "btn btn-danger btn-xs excluirButton" })
+                </td>
+            </tr>
+        }
+
+    </table>

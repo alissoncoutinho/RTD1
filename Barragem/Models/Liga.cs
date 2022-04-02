@@ -21,8 +21,13 @@ namespace Barragem.Models
 
         public bool isModeloTodosContraTodos { get; set; }
 
+        [Display(Name = "Tipo")]
+        public int? ModalidadeTorneioId { get; set; }
+
         [ForeignKey("barragemId")]
         public virtual BarragemView barragem { get; set; }
+
+        public virtual ModalidadeTorneio ModalidadeTorneio { get; set; }
     }
 }
 

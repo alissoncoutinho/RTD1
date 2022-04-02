@@ -1,0 +1,7 @@
+Ordem de execução dos scripts:
+
+1-Patrocinio.sql
+2-CalendarioTorneio.sql
+3-Barragem - Criação nova coluna.sql
+4-Liga-Criaçao nova coluna.sql
+5-Popular tabelas de parametrização.sql

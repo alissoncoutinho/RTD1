@@ -68,8 +68,14 @@ namespace Barragem.Context
 
         public DbSet<Patrocinador> Patrocinador { get; set; }
 
+        public DbSet<Patrocinio> Patrocinio { get; set; }
+        
         public DbSet<Regra> Regra { get; set; }
 
         public DbSet<Cidade> Cidade { get; set; }
+        public virtual DbSet<CalendarioTorneio> CalendarioTorneio { get; set; }
+        public virtual DbSet<ModalidadeTorneio> ModalidadeTorneio { get; set; }
+        public virtual DbSet<StatusInscricaoTorneio> StatusInscricaoTorneio { get; set; }
+        public virtual DbSet<PaginaEspecial> PaginaEspecial { get; set; }
     }
 }
