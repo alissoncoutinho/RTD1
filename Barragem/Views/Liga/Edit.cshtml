@@ -109,7 +109,7 @@
                                 <div class="mt-3 form-input">
                                     <label for="">Escolha a modalidade dos torneios *</label>
                                     <select class="form-select" aria-label="Default select example" name="modalidadeBarragem" id="options">
-                                        @if(ViewBag.isModeloTodosContraTodos)
+                                        @if (ViewBag.isModeloTodosContraTodos)
                                         {
                                             <option value="1">Regras da Federação</option>
                                             <option value="2" selected>Todos contra todos</option>
@@ -137,6 +137,12 @@
                                         Será campeão aquele que tiver mais vitórias.
                                     </div>
                                 </div>
+
+                                <div class="mt-3 form-input">
+                                    <label for="">Tipo</label>
+                                    @Html.DropDownList("ModalidadeTorneioId", null, htmlAttributes: new { @class = "form-select" })
+                                </div>
+
                                 <div class="mt-3 form-input mb-5">
                                     <button type="submit" class="btn btn-success w-100">Gravar</button>
                                 </div>

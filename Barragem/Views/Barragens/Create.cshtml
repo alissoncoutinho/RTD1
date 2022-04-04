@@ -75,12 +75,12 @@
             </div>
         </div>
     </div>
-    
+
     <div class="row">
         <div class="col-xs-2">
             <label>
                 <input type="checkbox" value="true" name="soTorneio"> Só Torneio
-                
+
             </label>
         </div>
     </div>
@@ -119,6 +119,18 @@
             </label>
         </div>
     </div>
+    if (Roles.IsUserInRole("admin"))
+    {
+        <div class="row">
+            <div class="col-xs-8 col-sm-8">
+                @Html.LabelFor(model => model.PaginaEspecialId)
+                <div class="input-group">
+                    @Html.DropDownList("PaginaEspecialId", null, htmlAttributes: new { @class = "form-control" })
+                </div>
+                @Html.ValidationMessageFor(model => model.PaginaEspecialId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+    }
     <div class="row">
         <div class="col-xs-6">
             @Html.LabelFor(model => model.emailPagSeguro)

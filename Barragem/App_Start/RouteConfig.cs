@@ -26,6 +26,24 @@ namespace Barragem
            );
 
             routes.MapRoute(
+               name: "PaginaEspecialLiga",
+               url: "liga-{key}",
+               defaults: new { controller = "PaginaEspecial", action = "LigaRedirect", key = UrlParameter.Optional }
+           );
+
+            routes.MapRoute(
+               name: "PaginaEspecialCircuito",
+               url: "circuito-{key}",
+               defaults: new { controller = "PaginaEspecial", action = "CircuitoRedirect", key = UrlParameter.Optional }
+           );
+
+            routes.MapRoute(
+               name: "PaginaEspecialFederacao",
+               url: "federacao-{key}",
+               defaults: new { controller = "PaginaEspecial", action = "FederacaoRedirect", key = UrlParameter.Optional }
+           );
+            
+            routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",
                 defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }

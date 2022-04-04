@@ -51,7 +51,10 @@
                 <li>@Html.ActionLink("Regra", "Index", "Regra")</li>
             }
 
-
+            @if ((Roles.IsUserInRole("admin")) || (Roles.IsUserInRole("organizador")))
+            {
+                <li>@Html.ActionLink("Patrocinador", "Index", "Patrocinador")</li>
+            }
 
             <!--li class="divider"></!--li-->
             <li>

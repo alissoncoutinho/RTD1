@@ -60,7 +60,8 @@ namespace Barragem.Controllers
         [Authorize(Roles = "admin")]
         public ActionResult Create()
         {
-            return View();
+            ViewBag.PaginaEspecialId = ObterDadosDropDownPaginaEspecial(null);
+            return View(new Barragens());
         }
 
 
@@ -73,8 +74,12 @@ namespace Barragem.Controllers
             {
                 var codigo = 91;
                 var sql = "";
+                if (barragens.PaginaEspecialId == (int)EnumPaginaEspecial.Selecione) barragens.PaginaEspecialId = null;
                 if (barragens.valorPorUsuario == null) barragens.valorPorUsuario = 5;
                 if (barragens.soTorneio == null) barragens.soTorneio = false;
+
+                TryValidateModel(barragens);
+
                 using (TransactionScope scope = new TransactionScope())
                 {
                     if (ModelState.IsValid)
@@ -115,7 +120,7 @@ namespace Barragem.Controllers
             {
                 ViewBag.MsgErro = ex.Message;
             }
-
+            ViewBag.PaginaEspecialId = ObterDadosDropDownPaginaEspecial(barragens.PaginaEspecialId);
             return View(barragens);
         }
 
@@ -125,7 +130,7 @@ namespace Barragem.Controllers
         {
             UserProfile usu = db.UserProfiles.Find(WebSecurity.GetUserId(User.Identity.Name));
             var barraAtual = db.Barragens.Find(usu.barragemId);
-            if(barraAtual != null && !String.IsNullOrEmpty(barraAtual.tokenPagSeguro))
+            if (barraAtual != null && !String.IsNullOrEmpty(barraAtual.tokenPagSeguro))
             {
                 ViewBag.tokenPagSeguroConfigurado = "OK";
             }
@@ -143,6 +148,8 @@ namespace Barragem.Controllers
                 return HttpNotFound();
             }
             ViewBag.flag = "edit";
+            ViewBag.PaginaEspecialId = ObterDadosDropDownPaginaEspecial(barragens.PaginaEspecialId);
+
             return View(barragens);
         }
 
@@ -169,6 +176,8 @@ namespace Barragem.Controllers
                 barragens.isTeste = barraAtual.isTeste;
                 barragens.soTorneio = barraAtual.soTorneio;
             }
+
+            if (barragens.PaginaEspecialId == (int)EnumPaginaEspecial.Selecione) barragens.PaginaEspecialId = null;
             barragens.isBeachTenis = barraAtual.isBeachTenis;
             if (barragens.soTorneio == null) barragens.soTorneio = false;
             if (ModelState.IsValid)
@@ -185,6 +194,7 @@ namespace Barragem.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
+            ViewBag.PaginaEspecialId = ObterDadosDropDownPaginaEspecial(barragens.PaginaEspecialId);
             return View(barragens);
         }
 
@@ -444,6 +454,12 @@ namespace Barragem.Controllers
         {
             db.Dispose();
             base.Dispose(disposing);
+        }
+
+        public SelectList ObterDadosDropDownPaginaEspecial(int? idPaginaEspecial)
+        {
+            return new SelectList(new[] { new PaginaEspecial() { Id = (int)EnumPaginaEspecial.Selecione, Nome = "Selecione" } }
+                           .Union(db.PaginaEspecial), "Id", "Nome", idPaginaEspecial == null ? (int)EnumPaginaEspecial.Selecione : idPaginaEspecial);
         }
     }
 

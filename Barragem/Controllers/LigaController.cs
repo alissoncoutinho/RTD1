@@ -41,7 +41,7 @@ namespace Barragem.Controllers
             }
             else
             {
-                ligasDaBarragem = db.BarragemLiga.Include(r=>r.Liga).Where(r => r.BarragemId == barragemId).OrderByDescending(c => c.Id).ToList();
+                ligasDaBarragem = db.BarragemLiga.Include(r => r.Liga).Where(r => r.BarragemId == barragemId).OrderByDescending(c => c.Id).ToList();
                 ligas = new List<Liga>();
                 foreach (BarragemLiga ligaBarragem in ligasDaBarragem)
                 {
@@ -55,7 +55,8 @@ namespace Barragem.Controllers
         [Authorize(Roles = "admin, organizador, usuario,adminTorneio,adminTorneioTenis")]
         public ActionResult Create()
         {
-            
+            ViewBag.ModalidadeTorneioId = ObterDadosDropDownModalidade(null);
+
             Liga liga = new Liga();
             /*liga.Nome = "liga teste";
             var classes = new List<ClasseLiga>();
@@ -76,15 +77,20 @@ namespace Barragem.Controllers
             string perfil = Roles.GetRolesForUser(User.Identity.Name)[0];
             var user = db.UserProfiles.Find(userId);
             liga.barragemId = user.barragemId;
-            if (modalidadeBarragem == "1") {
+            if (modalidadeBarragem == "1")
+            {
                 liga.isModeloTodosContraTodos = false;
-            } else {
+            }
+            else
+            {
                 liga.isModeloTodosContraTodos = true;
             }
-            if (ModelState.IsValid) {
+            if (ModelState.IsValid)
+            {
                 db.Liga.Add(liga);
                 db.SaveChanges();
-                if (perfil.Equals("adminTorneio") || perfil.Equals("organizador") || perfil.Equals("adminTorneioTenis")) {
+                if (perfil.Equals("adminTorneio") || perfil.Equals("organizador") || perfil.Equals("adminTorneioTenis"))
+                {
                     var bL = new BarragemLiga();
                     bL.BarragemId = user.barragemId;
                     bL.LigaId = liga.Id;
@@ -93,7 +99,7 @@ namespace Barragem.Controllers
                 }
                 return RedirectToAction("PainelControle", "Torneio");
             }
-
+            ViewBag.ModalidadeTorneioId = ObterDadosDropDownModalidade(liga.ModalidadeTorneioId);
             return View(liga);
         }
 
@@ -106,25 +112,27 @@ namespace Barragem.Controllers
 
             var classes = db.ClasseLiga.Include(c => c.Categoria).Where(c => c.LigaId == idLiga).ToList();
             ViewBag.flag = "classes";
-            if(MsgErro != "")
+            if (MsgErro != "")
             {
                 ViewBag.MsgErro = MsgErro;
             }
+            ViewBag.ModalidadeTorneioId = ObterDadosDropDownModalidade(liga.ModalidadeTorneioId);
             return View(classes);
         }
 
         [Authorize(Roles = "admin, organizador,adminTorneio,adminTorneioTenis")]
         [HttpPost]
-        public ActionResult EditNome(int idLiga, string nomeLiga, string modalidadeBarragem)
+        public ActionResult EditNome(int idLiga, string nomeLiga, string modalidadeBarragem, int? ModalidadeTorneioId)
         {
-            try { 
+            try
+            {
                 Liga liga = db.Liga.Find(idLiga);
                 liga.Nome = nomeLiga;
-                
+                liga.ModalidadeTorneioId = ModalidadeTorneioId;
                 var jaExisteTorneio = db.TorneioLiga.Where(l => l.LigaId == idLiga).Any();
                 if (jaExisteTorneio)
                 {
-                    if (((liga.isModeloTodosContraTodos) && (modalidadeBarragem=="1")) || ((!liga.isModeloTodosContraTodos) && (modalidadeBarragem == "2")))
+                    if (((liga.isModeloTodosContraTodos) && (modalidadeBarragem == "1")) || ((!liga.isModeloTodosContraTodos) && (modalidadeBarragem == "2")))
                     {
                         var MsgErro = "Não é permitido alterar a modalidade do circuito, pois já existem torneios em andamento vinculados a ele. ";
                         return RedirectToAction("Edit", new { idLiga = idLiga, MsgErro = MsgErro });
@@ -140,6 +148,9 @@ namespace Barragem.Controllers
                 }
                 db.Entry(liga).State = EntityState.Modified;
                 db.SaveChanges();
+
+                ViewBag.ModalidadeTorneioId = ObterDadosDropDownModalidade(liga.ModalidadeTorneioId);
+
                 return RedirectToAction("Edit", new { idLiga = idLiga });
                 //return Json(new { erro = "", retorno = 1 }, "text/plain", JsonRequestBehavior.AllowGet);
             }
@@ -148,7 +159,7 @@ namespace Barragem.Controllers
                 return RedirectToAction("Edit", new { idLiga = idLiga });
                 //return Json(new { erro = ex.Message, retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
             }
-            
+
         }
 
         [Authorize(Roles = "admin, organizador,adminTorneio,adminTorneioTenis")]
@@ -177,7 +188,7 @@ namespace Barragem.Controllers
             Liga liga = db.Liga.Find(idLiga);
             ViewBag.idLiga = idLiga;
             ViewBag.nomeLiga = liga.Nome;
-            
+
             List<Categoria> categorias = new List<Categoria>();
             categorias.Add(new Categoria { Id = 0, Nome = "" });
             categorias.AddRange(db.Categoria.OrderBy(c => c.Nome).ToList());
@@ -189,9 +200,10 @@ namespace Barragem.Controllers
         }
 
         [HttpPost]
-        public ActionResult AddClasse(int idLiga, String nome, String idCategoria, bool isDupla=false)
+        public ActionResult AddClasse(int idLiga, String nome, String idCategoria, bool isDupla = false)
         {
-            try {
+            try
+            {
                 int idCat = Int32.Parse(idCategoria);
                 if (nome == "")
                 {
@@ -204,11 +216,13 @@ namespace Barragem.Controllers
                     cat = new Categoria();
                     cat.Nome = nome;
                     cat.isDupla = isDupla;
-                    cat.rankingId = (int) liga.barragemId;
+                    cat.rankingId = (int)liga.barragemId;
                     db.Categoria.Add(cat);
                     db.SaveChanges();
                     idCat = cat.Id;
-                } else {
+                }
+                else
+                {
                     cat = db.Categoria.Find(idCat);
                 }
                 ClasseLiga cl = new ClasseLiga();
@@ -286,7 +300,7 @@ namespace Barragem.Controllers
                 db.BarragemLiga.Add(bl);
                 db.SaveChanges();
                 Barragens barra = db.Barragens.Find(idBarra);
-                return Json(new { erro = "", retorno = 1, Nome = barra.nome, IdBarragemLiga = bl.Id , TipoTorneio = TipoTorneio}, "text/plain", JsonRequestBehavior.AllowGet);
+                return Json(new { erro = "", retorno = 1, Nome = barra.nome, IdBarragemLiga = bl.Id, TipoTorneio = TipoTorneio }, "text/plain", JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {
@@ -381,7 +395,9 @@ namespace Barragem.Controllers
                         if (createBarragemLiga.modalidadeBarragem == "1")
                         {
                             barragens.isModeloTodosContraTodos = false;
-                        } else {
+                        }
+                        else
+                        {
                             barragens.isModeloTodosContraTodos = true;
                         }
                         barragens.soTorneio = true;
@@ -413,7 +429,7 @@ namespace Barragem.Controllers
 
                         scope.Complete();
                         Funcoes.CriarCookieBarragem(Response, Server, barragens.Id, barragens.nome);
-                        return RedirectToAction("PainelControle", "Torneio", new { msg="ok" });
+                        return RedirectToAction("PainelControle", "Torneio", new { msg = "ok" });
                     }
                 }
             }
@@ -423,6 +439,13 @@ namespace Barragem.Controllers
             }
 
             return View(createBarragemLiga);
+        }
+
+
+        public SelectList ObterDadosDropDownModalidade(int? idModalidade)
+        {
+            return new SelectList(new[] { new ModalidadeTorneio() { Id = (int)EnumModalidadeTorneio.SELECIONE, Nome = "Selecione" } }
+                           .Union(db.ModalidadeTorneio), "Id", "Nome", idModalidade == null ? (int)EnumModalidadeTorneio.SELECIONE : idModalidade);
         }
     }
 }

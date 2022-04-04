@@ -1,0 +1,479 @@
+﻿@using Barragem.Models;
+
+@model Barragem.Models.PaginaEspecialModel
+
+@{
+    Layout = null;
+    ViewBag.Title = "Ranking de Tênis";
+
+    var scrLogo = "/Content/image/logo" + Model.IdBarragem + ".png";
+    var path = Server.MapPath(scrLogo);
+    if (!File.Exists(path))
+    {
+        scrLogo = "/Content/image/logo" + Model.IdBarragem + ".jpg";
+        if (!File.Exists(path))
+        {
+            scrLogo = "/Content/paginaespecial/images/logo.png";
+        }
+    }
+
+    PaginaEspecialModel.TorneioDestaqueBanner.TorneioDestaqueBannerItem primeiroTorneio;
+
+    if (Model.Banner.TorneiosBanner.Count > 0)
+    {
+        primeiroTorneio = Model.Banner.TorneiosBanner[0];
+    }
+    else
+    {
+        primeiroTorneio = new PaginaEspecialModel.TorneioDestaqueBanner.TorneioDestaqueBannerItem()
+        {
+            UrlImagemBanner = "/Content/paginaespecial/images/banner-1.png",
+            UrlImagemBannerMobile = "/Content/paginaespecial/images/mobile-1.png"
+        };
+    }
+}
+<html>
+<head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Poppins:wght@500;700&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/swiper@8/swiper-bundle.min.css" />
+
+    <link href="@Url.Content("/content/bootstrap-5.0.2-dist/css/bootstrap.min.css")" rel="stylesheet" />
+    <link href="@Url.Content("/content/paginaespecial/css/style.css")" rel="stylesheet" />
+    <link href="@Url.Content("/content/paginaespecial/css/hamburgers.min.css")" rel="stylesheet" />
+</head>
+<body>
+    <!--menu mobile-->
+    <div class="menu">
+        <ul class="d-flex flex-column pt-4 gap-3">
+            <li><a href="#inicio">Início</a></li>
+            <li><a href="#patrocinadores">Patrocinadores</a></li>
+            <li><a href="#calendario">Calendário</a></li>
+            <li><a href="#ranking">Ranking</a></li>
+            <li><a href="#regulamentos">Regulamento</a></li>
+            <li><a href="#contato">Contato</a></li>
+            <li><a class="menu__btn" href="#contato">@Model.TituloFilieSeOuQuemSomos</a></li>
+            </li>
+        </ul>
+    </div>
+
+    <header class="header" id="inicio">
+        <input id="totalRegistrosBanner" type="hidden" value="@Model.Banner.TorneiosBanner.Count" />
+
+        <div class="container">
+            <nav class="row">
+                <div class="col-md-3 d-md-block d-none">
+                    <img width="120" height="120" class="img-fluid logo" src="@scrLogo" alt="logo" />
+                </div>
+
+                <div class="d-md-none d-block">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <img class="img-fluid logo" style="max-width:100px;min-width:80px" src="@scrLogo" alt="logo da empresa" />
+                        <button class="d-md-none d-block hamburger hamburger--stand" type="button">
+                            <span class="hamburger-box">
+                                <span class="hamburger-inner"></span>
+                            </span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="col-md-9 d-md-block d-none">
+                    <ul class="d-flex align-items-center flex-wrap pt-4 gap-3">
+                        <li><a href="#inicio">Início</a></li>
+                        <li><a href="#patrocinadores">Patrocinadores</a></li>
+                        <li><a href="#calendario">Calendário</a></li>
+                        <li><a href="#ranking">Ranking</a></li>
+                        <li><a href="#regulamentos">Regulamento</a></li>
+                        <li><a href="#contato">Contato</a></li>
+                        <li><a class="navbar-btn" href="#contato">@Model.TituloFilieSeOuQuemSomos</a></li>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <section id="sectionDetalhesPrimeiroTorneioBanner" class="row">
+                <div class="col-md-3 mt-3 hero__content">
+                    <h1>@Model.NomeBarragem</h1>
+                    <p>Os principais torneios aqui</p>
+                </div>
+
+                <div class="col-md-9 mt-3 hero__content">
+                    <h2 data-torneio>@primeiroTorneio.Nome</h2>
+                    <p>
+                        <a data-localPontuacao>@primeiroTorneio.Local - @primeiroTorneio.Pontuacao pontos</a>
+                        </br>
+                        <b data-date>@primeiroTorneio.DataInicial a @primeiroTorneio.DataFinal</b>
+                    </p>
+                    <a data-inscrevase class="custom-btn" href="@primeiroTorneio.LinkInscricao">Inscreva-se até @primeiroTorneio.DataFinal</a>
+                </div>
+            </section>
+
+            @if (Model.Banner.TorneiosBanner.Count > 0)
+            {
+                <div class="header__slide">
+                    <div class="position-relative d-flex seta">
+                        <h6>Selecione um dos torneios</h6>
+                        <img src="/Content/paginaespecial/images/seta.png" alt="icone" />
+                    </div>
+
+                    <!-- Slider main container -->
+                    <div thumbsSlider="" class="swiper">
+                        <!-- Additional required wrapper -->
+                        <div class="swiper-wrapper">
+                            @foreach (var torneioBanner in Model.Banner.TorneiosBanner)
+                            {
+                                <div class="swiper-slide">
+                                    <!-- Posicao: 0 -->
+                                    <img class="img-fluid" src="@torneioBanner.UrlImagemBanner" alt="" />
+                                    <!-- Posicao: 1 -->
+                                    <h4 class="foward">
+                                        @torneioBanner.Nome
+                                    </h4>
+                                    <!-- Posicao: 2 -->
+                                    <h5 class="foward">@torneioBanner.DataInicial a @torneioBanner.DataFinal</h5>
+                                    <!-- Posicao: 3 -->
+                                    <input type="hidden" value="@torneioBanner.Local" />
+                                    <!-- Posicao: 4 -->
+                                    <input type="hidden" value="@torneioBanner.Pontuacao" />
+                                    <!-- Posicao: 5 -->
+                                    <input type="hidden" value="@torneioBanner.LinkInscricao" />
+                                    <!-- Posicao: 6 -->
+                                    <input type="hidden" value="@torneioBanner.DataFinal" />
+                                    <!-- Posicao: 7 -->
+                                    <input type="hidden" value="@torneioBanner.IdStatusInscricaoTorneio" />
+                                    <!-- Posicao: 8 -->
+                                    <input type="hidden" value="@torneioBanner.UrlImagemBannerMobile" />
+                                </div>
+                            }
+                        </div>
+                        <!-- If we need navigation buttons -->
+                        <div class="swiper-button-prev"></div>
+                        <div class="swiper-button-next"></div>
+
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="header__img">
+            <div class="mySwiper2">
+                <div class="swiper-wrapper">
+                    <!--imagem grande de fundo do topo da página-->
+                    <div class="swiper-slide">
+                        <div class="d-md-block d-none">
+                            <img data-imagem-banner src="@primeiroTorneio.UrlImagemBanner" />
+                        </div>
+
+                        <div class="d-md-none d-block">
+                            <img data-imagem-banner-mobile src="@primeiroTorneio.UrlImagemBannerMobile" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </header>
+
+    @*-----------------------------------------------------------------------INICIO SESSAO PATROCINADORES--------------------------------------------------------------------*@
+    <section class="patrocinadores" id="patrocinadores">
+        <div class="container">
+            <h2>Patrocinadores</h2>
+            <div class="mySwiper">
+                <div class="swiper-wrapper">
+                    @foreach (var item in Model.Patrocinadores)
+                    {
+                        <a href="@item.UrlPatrocinador" class="swiper-slide"><img class="patrocinador__img" src="@item.UrlImagem" alt="patrocinador"></a>
+                    }
+                </div>
+                <div class="swiper-button-prev"></div>
+                <div class="swiper-button-next"></div>
+                <div class="swiper-pagination"></div>
+            </div>
+        </div>
+    </section>
+    @*-----------------------------------------------------------------------FIM SESSAO PATROCINADORES-----------------------------------------------------------------------*@
+
+    @*-----------------------------------------------------------------------INICIO SESSAO CALENDARIO -----------------------------------------------------------------------*@
+    <section class="calendario" id="calendario">
+        <h2 class="d-md-block d-none">Calendário/@Model.AnoCalendario</h2>
+        <div class="container">
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                @for (int i = 0; i < Model.ModalidadesCalendario.Count; i++)
+                {
+                    var modalidade = Model.ModalidadesCalendario[i];
+
+                    <li class="nav-item" role="presentation">
+                        <button data-kid-tab class="nav-link @if (i==0) { @Html.Raw("active") }" id="modalidadeCalendario-@modalidade.IdModalidade-tab" data-bs-toggle="tab" data-bs-target="#modalidadeCalendario-@modalidade.IdModalidade" type="button" onclick="atribuirModalidadeSelecionadaCalendario(@modalidade.IdModalidade)" role="tab" aria-controls="modalidadeCalendario-@modalidade.IdModalidade" aria-selected="@if (i == 0) { @Html.Raw("true") } else {@Html.Raw("false") }">@modalidade.Modalidade</button>
+                    </li>
+                }
+            </ul>
+            <h3 class="d-md-none d-block custom-title">Calendário/@Model.AnoCalendario</h3>
+
+            <div class="line"></div>
+            <div class="tab-content" id="myTabContent">
+                <input type="hidden" id="idModalidadeCalendario" value="@Model.ModalidadesCalendario[0].IdModalidade" />
+                @for (int i = 0; i < Model.ModalidadesCalendario.Count; i++)
+                {
+                    var modalidade = Model.ModalidadesCalendario[i];
+
+                    <div class="tab-pane fade @if (i==0) { @Html.Raw("show active") }" id="modalidadeCalendario-@modalidade.IdModalidade" role="tabpanel" aria-labelledby="modalidadeCalendario-@modalidade.IdModalidade-tab">
+                        <div class="d-flex gap-2 align-items-center calendario__mes">
+                            <h6>Selecione o mês:</h6>
+                            @Html.DropDownList("MesesAno", null, htmlAttributes: new { id = "MesesAno-" + @modalidade.IdModalidade, @class = "form-select", onchange = "selectedMesCalendario(this)" })
+                        </div>
+
+                        <div id="partialDivCalendarioMes-@modalidade.IdModalidade"></div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <img data-kid class="calendario__img d-xl-block d-none" src="/Content/paginaespecial/images/calendario.png" alt="pessoa jogando" />
+    </section>
+
+    @*-----------------------------------------------------------------------FIM SESSAO CALENDARIO -----------------------------------------------------------------------*@
+
+    <section class="tabelas" id="ranking">
+        <img data-ranking class="d-xl-block d-none img" src="/Content/paginaespecial/images/ranking-tenis.jpg" alt="homem jogando tênis" />
+        <div class="container">
+            <div class="row flex-xl-nowrap">
+                <div class="col-xl-3">
+                </div>
+
+                <div class="col-xl-9">
+                    <ul class="nav nav-tabs" id="tabsModalidades" role="tablist">
+                        @for (int i = 0; i < Model.Rankings.Count; i++)
+                        {
+                            var modalidadeRanking = Model.Rankings[i];
+
+                            <li class="nav-item" role="presentation">
+                                <button data-tabelas class="nav-link @if (i==0) { @Html.Raw("active") }" id="modalidade-@modalidadeRanking.IdModalidade-tab" onclick="atribuirNomeLiga(this, '@modalidadeRanking.Ranking.NomeLiga')" data-bs-toggle="tab" data-bs-target="#modalidade-@modalidadeRanking.IdModalidade" type="button" role="tab" aria-controls="modalidade-@modalidadeRanking.IdModalidade" aria-selected="@if (i == 0) { @Html.Raw("true") } else {@Html.Raw("false") } ">@modalidadeRanking.Modalidade</button>
+                            </li>
+                        }
+                    </ul>
+
+                    @if (Model.Rankings.Count > 0 && Model.Rankings[0] != null)
+                    {
+                        <h2 class="d-flex align-items-center gap-3">Classificação <span id="spanNomeLiga">@Model.Rankings[0].Ranking.NomeLiga</span></h2>
+                        <div class="line"></div>
+                    }
+                    <section class="tabelas__tabs">
+
+                        <div class="tab-content" id="myTabContent">
+
+                            @if (Model.Rankings.Count == 0)
+                            {
+                                <div class="empty d-flex justify-content-center align-items-center flex-column">
+                                    <img src="/Content/paginaespecial/images/empty.png" alt="icone de vazio">
+                                    <h6>Não existem rankings disponíveis</h6>
+                                </div>
+                            }
+                            else
+                            {
+                                for (int i = 0; i < Model.Rankings.Count; i++)
+                                {
+                                    var modalidadeRanking = Model.Rankings[i];
+
+                                    <div class="tab-pane fade @if (i==0) { @Html.Raw("show active") }" id="modalidade-@modalidadeRanking.IdModalidade" role="tabpanel" aria-labelledby="modalidade-@modalidadeRanking.IdModalidade-tab">
+                                        <div class="swiper3">
+                                            <ul class="nav nav-tabs swiper-wrapper" id="tabsCategoriasModalidade-@modalidadeRanking.IdModalidade" role="tablist">
+
+                                                @for (int countCategoria = 0; countCategoria < modalidadeRanking.Ranking.Categoria.Count; countCategoria++)
+                                                {
+                                                    var categoria = modalidadeRanking.Ranking.Categoria[countCategoria];
+
+                                                    <li class="nav-item swiper-slide @if (countCategoria!=0) { @Html.Raw("ms-2") }" role="presentation">
+                                                        <button class="nav-link nav-links @if (countCategoria==0) { @Html.Raw("active") }" id="categoria-@categoria.IdCategoria-tab" data-bs-toggle="tab"
+                                                                data-bs-target="#categoria-@categoria.IdCategoria" type="button" role="tab" aria-controls="categoria-@categoria.IdCategoria"
+                                                                aria-selected="@if (countCategoria == 0) { @Html.Raw("true") } else {@Html.Raw("false") } ">
+                                                            @categoria.NomeCategoria
+                                                        </button>
+                                                    </li>
+                                                }
+                                            </ul>
+                                        </div>
+
+                                        <div class="tab-content mt-3" id="tabContentModalidade-@modalidadeRanking.IdModalidade">
+
+                                            @for (int countCategoria = 0; countCategoria < modalidadeRanking.Ranking.Categoria.Count; countCategoria++)
+                                            {
+                                                var categoria = modalidadeRanking.Ranking.Categoria[countCategoria];
+
+                                                <div class="tab-pane fade @if (countCategoria==0) { @Html.Raw("show active") }" id="categoria-@categoria.IdCategoria" role="tabpanel" aria-labelledby="categoria-@categoria.IdCategoria-tab">
+                                                    <table class="table table-striped">
+                                                        <thead>
+                                                            <tr class="row  row-line">
+                                                                <th class="col-2" scope="col"><h6>Posição</h6></th>
+                                                                <th class="col-5" scope="col"><h6>Nome</h6></th>
+                                                                <th class="col-5 d-flex justify-content-end" scope="col"> <h6>Pontuação</h6></th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+
+                                                            @if (categoria.Jogadores == null || categoria.Jogadores.Count == 0)
+                                                            {
+                                                                <tr class="empty d-flex justify-content-center align-items-center flex-column">
+                                                                    <img src="/Content/paginaespecial/images/empty.png" alt="icone de vazio" />
+                                                                    <h6>Não há ranking de jogadores nesta categoria</h6>
+                                                                </tr>
+                                                            }
+                                                            else
+                                                            {
+                                                                foreach (var jogador in categoria.Jogadores)
+                                                                {
+                                                                    <tr class="row row-line">
+                                                                        <td class="col-2 trTable">
+                                                                            <span class="info-table-1">@jogador.Posicao</span>
+                                                                        </td><!--col-3-->
+
+                                                                        <td class="col-5 trTable">
+                                                                            <span class="info-table">@jogador.NomeJogador</span>
+                                                                        </td><!--col-3-->
+
+                                                                        <td class="col-5 trTable d-flex justify-content-end">
+                                                                            <span class="info-table">@jogador.Pontuacao</span>
+                                                                        </td><!--col-3-->
+                                                                    </tr>
+                                                                }
+                                                            }
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            }
+
+                                        </div>
+                                    </div>
+                                }
+                            }
+
+                        </div>
+
+                    </section>
+
+                </div>
+
+            </div>
+
+        </div>
+    </section>
+
+    <section class="regulamentos" id="regulamentos">
+        <div class="container">
+            <div class="regulamento__box">
+                <h2>Regulamento</h2>
+                @Html.Raw(Model.Regulamento)
+            </div>
+        </div>
+    </section>
+
+    <section class="contato" id="contato">
+        <div class="container">
+            <div class="row">
+
+                <div class="col-md-5 mt-3">
+                    <h2> Entre em contato </h2>
+                    @Html.Raw(Model.Contato)
+                </div>
+
+                <div class="col-md-5 mt-3">
+                    <h2>@Model.TituloFilieSeOuQuemSomos</h2>
+                    @Html.Raw(Model.TextoFilieSeOuQuemSomos)
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="container d-flex justify-content-center flex-column align-items-center">
+                <img width="120" height="120" class="img-fluid" src="@scrLogo" alt="logo" />
+                <div class="line"></div>
+
+                <p>
+                    © 2022 Desenvolvido por RDT Soluções Tecnológicas
+                    Todos Direitos Reservados
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://unpkg.com/swiper@8/swiper-bundle.min.js"></script>
+    <script src="/Content/bootstrap-5.0.2-dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/Content/paginaespecial/js/menu.js"></script>
+    <script src="/Content/paginaespecial/js/main.js"></script>
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script src="/Content/paginaespecial/js/paginathing.js"></script>
+
+    <script type="text/javascript">
+
+        const ENUM_MODALIDADES = {
+            TENIS: 1,
+            BEACH_TENNIS: 2,
+            KIDS: 3
+        }
+
+        function atribuirNomeLiga(element, nomeLiga) {
+            document.getElementById("spanNomeLiga").textContent = nomeLiga;
+        }
+
+        function atribuirModalidadeSelecionadaCalendario(idModalidade) {
+            $("#idModalidadeCalendario").val(idModalidade)
+            loadMesCalendarioInicial();
+        }
+
+        function selectedMesCalendario(element) {
+            var mes = element.value;
+            var idModalidade = $("#idModalidadeCalendario").val();
+            atualizarPartialCalendarioMes(mes, idModalidade);
+        }
+
+        function loadMesCalendarioInicial() {
+            var idModalidade = $("#idModalidadeCalendario").val();
+            mes = $("#MesesAno-" + idModalidade).val();
+            atualizarPartialCalendarioMes(mes, idModalidade);
+        }
+
+        function atribuirMesAtual() {
+            var mesAtual = new Date().getMonth() + 1;
+            $("#MesesAno-1").val(mesAtual);
+            $("#MesesAno-2").val(mesAtual);
+            $("#MesesAno-3").val(mesAtual);
+        }
+
+        function atualizarPartialCalendarioMes(mes, idModalidade) {
+            if (idModalidade == ENUM_MODALIDADES.TENIS) {
+                $("#partialDivCalendarioMes-1").load('/PaginaEspecial/ObterCalendarioMensal?mes=' + mes + '&idmodalidade=' + idModalidade);
+            }
+            else if (idModalidade == ENUM_MODALIDADES.BEACH_TENNIS) {
+                $("#partialDivCalendarioMes-2").load('/PaginaEspecial/ObterCalendarioMensal?mes=' + mes + '&idmodalidade=' + idModalidade);
+            }
+            else if (idModalidade == ENUM_MODALIDADES.KIDS) {
+                $("#partialDivCalendarioMes-3").load('/PaginaEspecial/ObterCalendarioMensal?mes=' + mes + '&idmodalidade=' + idModalidade);
+            }
+        }
+
+        $('.table tbody').paginathing({
+            perPage: 10,
+            limitPagination: false,
+            prevNext: true,
+            firstLast: false,
+            prevText: '<a class=\'d-flex align-items-center justify-content-center\'><svg width=\'7\' height=\'12\' viewBox=\'0 0 7 12\' fill=\'none\' xmlns=\'http://www.w3.org/2000/svg\'><path d=\'M0.22 6.71997C0.0793075 6.57946 0.000175052 6.38882 0 6.18997V5.80997C0.00230401 5.61156 0.081116 5.4217 0.22 5.27997L5.36 0.149974C5.45388 0.055318 5.58168 0.0020752 5.715 0.0020752C5.84832 0.0020752 5.97612 0.055318 6.07 0.149974L6.78 0.859974C6.87406 0.952138 6.92707 1.07828 6.92707 1.20997C6.92707 1.34166 6.87406 1.46781 6.78 1.55997L2.33 5.99997L6.78 10.44C6.87466 10.5339 6.9279 10.6617 6.9279 10.795C6.9279 10.9283 6.87466 11.0561 6.78 11.15L6.07 11.85C5.97612 11.9446 5.84832 11.9979 5.715 11.9979C5.58168 11.9979 5.45388 11.9446 5.36 11.85L0.22 6.71997Z\' fill=\'#E0E3FE\'/></svg></a>',
+            nextText: '<a class=\'d-flex align-items-center justify-content-center\'><svg width=\'7\' height=\'12\' viewBox=\'0 0 7 12\' fill=\'none\' xmlns=\'http://www.w3.org/2000/svg\'><path d=\'M6.78 6.71997C6.92069 6.57946 6.99982 6.38882 7 6.18997V5.80997C6.9977 5.61156 6.91888 5.4217 6.78 5.27997L1.64 0.149974C1.54612 0.055318 1.41832 0.0020752 1.285 0.0020752C1.15168 0.0020752 1.02388 0.055318 0.93 0.149974L0.22 0.859974C0.125936 0.952138 0.0729284 1.07828 0.0729284 1.20997C0.0729284 1.34166 0.125936 1.46781 0.22 1.55997L4.67 5.99997L0.22 10.44C0.125343 10.5339 0.0721006 10.6617 0.0721006 10.795C0.0721006 10.9283 0.125343 11.0561 0.22 11.15L0.93 11.85C1.02388 11.9446 1.15168 11.9979 1.285 11.9979C1.41832 11.9979 1.54612 11.9446 1.64 11.85L6.78 6.71997Z\' fill=\'#E0E3FE\'/></svg></a>',
+            containerClass: 'pagination d-flex justify-content-center',
+            ulClass: 'pagination pagination__content d-flex gap-3',
+            liClass: 'd-flex align-items-center justify-content-center pagination__content li',
+            activeClass: 'pagination-active',
+            disabledClass: 'disabled'
+        });
+
+        atribuirMesAtual();
+        loadMesCalendarioInicial();
+    </script>
+
+</body>
+</html>
