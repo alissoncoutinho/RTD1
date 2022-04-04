@@ -9,7 +9,7 @@ using System.Web.Mvc;
 
 namespace Barragem.Controllers
 {
-    [Authorize(Roles = "admin,organizador")]
+    [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis")]
     public class PatrocinadorController : Controller
     {
         const string DIR_IMAGES_PATROCINADOR = "/Content/image/patrocinios";

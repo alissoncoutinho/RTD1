@@ -44,7 +44,6 @@ namespace Barragem.Models
         public int StatusInscricaoTorneioId { get; set; }
 
         [Display(Name = "Link Inscrição")]
-        [Url(ErrorMessage = "Link de inscrição inválido")]
         public string LinkInscricao
         {
             get { return _LinkInscricao; }

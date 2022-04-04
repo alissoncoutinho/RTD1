@@ -11,7 +11,7 @@ using Barragem.Models;
 
 namespace Barragem.Controllers
 {
-    [Authorize(Roles = "admin,organizador")]
+    [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis")]
     public class CalendarioTorneiosController : Controller
     {
         private BarragemDbContext db = new BarragemDbContext();
