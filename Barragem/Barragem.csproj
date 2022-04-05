@@ -535,6 +535,7 @@
     <Content Include="Content\js\menu.js" />
     <Content Include="Content\js\render.js" />
     <Content Include="Content\PagedList.css" />
+	<Content Include="Content\paginaespecial\js\paginathing.js" />
     <Content Include="Content\styles-6.css" />
     <Content Include="Content\styles-5.css" />
     <Content Include="Content\styles-4.css" />
@@ -1127,7 +1128,6 @@
     <Content Include="Views\CalendarioTorneios\Create.cshtml" />
     <Content Include="Views\CalendarioTorneios\Edit.cshtml" />
     <Content Include="Views\CalendarioTorneios\Index.cshtml" />
-    <Content Include="Views\Shared\_LayoutLandingPage.cshtml" />
     <Content Include="Views\PaginaEspecial\Index.cshtml" />
     <Content Include="Views\PaginaEspecial\_PartialCalendarioMes.cshtml" />
   </ItemGroup>
