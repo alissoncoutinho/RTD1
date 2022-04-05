@@ -1,5 +1,4 @@
-﻿using Barragem.Class;
-using Barragem.Context;
+﻿using Barragem.Context;
 using Barragem.Helper;
 using Barragem.Models;
 using System;
@@ -15,44 +14,15 @@ namespace Barragem.Controllers
         private BarragemDbContext db = new BarragemDbContext();
         private const string MSG_DOMINIO_NAO_ENCONTRADO = "Desculpe mas não encontramos um ranking com esse nome. Favor verificar se o nome do ranking foi digitado corretamente.";
 
-        public ActionResult Index(int idBarragem, EnumPaginaEspecial idPaginaEspecial)
-        {
-            var barragem = BuscarBarragemPorId(idBarragem, idPaginaEspecial);
-            var patrocinadores = BuscarPatrocinadores();
-            var ranking = BuscarDadosRanking(idBarragem);
-            var modalidadesCalendario = BuscarModalidadesCalendario();
-            var torneiosBanner = ObterTorneiosDestaqueBanner();
-
-            var model = new PaginaEspecialModel()
-            {
-                TipoPaginaEspecial = idPaginaEspecial,
-                IdBarragem = barragem.Id,
-                NomeBarragem = barragem.nome,
-                Regulamento = barragem.regulamento,
-                Contato = barragem.contato,
-                Patrocinadores = patrocinadores,
-                TituloFilieSeOuQuemSomos = idPaginaEspecial == EnumPaginaEspecial.Federacao ? "Filie-se" : "Quem Somos",
-                TextoFilieSeOuQuemSomos = barragem.quemsomos,
-                Rankings = ranking ?? new List<PaginaEspecialModel.RankingModel>(),
-                ModalidadesCalendario = modalidadesCalendario,
-                Banner = torneiosBanner
-            };
-            CarregarDropDownMesesAno();
-            return View(model);
-        }
-
-        public PartialViewResult ObterCalendarioMensal(int mes, EnumModalidadeTorneio idmodalidade)
-        {
-            return PartialView("_PartialCalendarioMes", ObterTorneios(mes, idmodalidade));
-        }
-
         public ActionResult LigaRedirect(string key)
         {
             var barragem = BuscarBarragemPorDominio(key, EnumPaginaEspecial.Liga);
             if (barragem == null)
                 return RedirectToAction("Index", "Home", new { msg = MSG_DOMINIO_NAO_ENCONTRADO });
-            //Funcoes.CriarCookieBarragem(Response, Server, barragem.Id, barragem.nome);
-            return RedirectToAction("Index", "PaginaEspecial", new { idBarragem = barragem.Id, idPaginaEspecial = (int)EnumPaginaEspecial.Liga });
+
+            CarregarDropDownMesesAno();
+
+            return View("Index", ObterDadosPaginaEspecial(barragem.Id, EnumPaginaEspecial.Liga));
         }
 
         public ActionResult CircuitoRedirect(string key)
@@ -61,7 +31,9 @@ namespace Barragem.Controllers
             if (barragem == null)
                 return RedirectToAction("Index", "Home", new { msg = MSG_DOMINIO_NAO_ENCONTRADO });
 
-            return RedirectToAction("Index", "PaginaEspecial", new { idBarragem = barragem.Id, idPaginaEspecial = (int)EnumPaginaEspecial.Circuito });
+            CarregarDropDownMesesAno();
+
+            return View("Index", ObterDadosPaginaEspecial(barragem.Id, EnumPaginaEspecial.Circuito));
         }
 
         public ActionResult FederacaoRedirect(string key)
@@ -70,7 +42,14 @@ namespace Barragem.Controllers
             if (barragem == null)
                 return RedirectToAction("Index", "Home", new { msg = MSG_DOMINIO_NAO_ENCONTRADO });
 
-            return RedirectToAction("Index", "PaginaEspecial", new { idBarragem = barragem.Id, idPaginaEspecial = (int)EnumPaginaEspecial.Federacao });
+            CarregarDropDownMesesAno();
+
+            return View("Index", ObterDadosPaginaEspecial(barragem.Id, EnumPaginaEspecial.Federacao));
+        }
+
+        public PartialViewResult ObterCalendarioMensal(int mes, EnumModalidadeTorneio idmodalidade)
+        {
+            return PartialView("_PartialCalendarioMes", ObterTorneios(mes, idmodalidade));
         }
 
         private BarragemView BuscarBarragemPorDominio(string dominio, EnumPaginaEspecial idPaginaEspecial)
@@ -145,6 +124,30 @@ namespace Barragem.Controllers
 
             return dadosBanner;
 
+        }
+
+        private PaginaEspecialModel ObterDadosPaginaEspecial(int idBarragem, EnumPaginaEspecial idPaginaEspecial)
+        {
+            var barragem = BuscarBarragemPorId(idBarragem, idPaginaEspecial);
+            var patrocinadores = BuscarPatrocinadores();
+            var ranking = BuscarDadosRanking(idBarragem);
+            var modalidadesCalendario = BuscarModalidadesCalendario();
+            var torneiosBanner = ObterTorneiosDestaqueBanner();
+
+            return new PaginaEspecialModel()
+            {
+                TipoPaginaEspecial = idPaginaEspecial,
+                IdBarragem = barragem.Id,
+                NomeBarragem = barragem.nome,
+                Regulamento = barragem.regulamento,
+                Contato = barragem.contato,
+                Patrocinadores = patrocinadores,
+                TituloFilieSeOuQuemSomos = idPaginaEspecial == EnumPaginaEspecial.Federacao ? "Filie-se" : "Quem Somos",
+                TextoFilieSeOuQuemSomos = barragem.quemsomos,
+                Rankings = ranking ?? new List<PaginaEspecialModel.RankingModel>(),
+                ModalidadesCalendario = modalidadesCalendario,
+                Banner = torneiosBanner
+            };
         }
 
         private void CarregarImagemBanner(List<PaginaEspecialModel.TorneioDestaqueBanner.TorneioDestaqueBannerItem> listaTorneios)
@@ -223,12 +226,12 @@ namespace Barragem.Controllers
         {
             var rankings = new List<PaginaEspecialModel.RankingModel>();
 
-            var ligas = db.Liga.Include(i => i.ModalidadeTorneio).Where(x => x.barragemId == idBarragem && x.isAtivo == true);
+            var ligas = db.Liga.Include(i => i.ModalidadeTorneio).Where(x => x.barragemId == idBarragem && x.isAtivo == true).ToList();
 
             foreach (var liga in ligas)
             {
                 var itemRanking = new PaginaEspecialModel.RankingModel();
-
+                
                 var snapshotsDaLiga = db.Snapshot.Where(snap => snap.LigaId == liga.Id).OrderByDescending(s => s.Id).FirstOrDefault();
                 if (snapshotsDaLiga != null)
                 {
@@ -263,8 +266,8 @@ namespace Barragem.Controllers
                     }
 
                     itemRanking.DataRanking = snapshotsDaLiga.Data;
-                    itemRanking.IdModalidade = liga.ModalidadeTorneio.Id;
-                    itemRanking.Modalidade = liga.ModalidadeTorneio.Nome;
+                    itemRanking.IdModalidade = liga.ModalidadeTorneio?.Id ?? 0;
+                    itemRanking.Modalidade = liga.ModalidadeTorneio?.Nome ?? string.Empty;
                     itemRanking.Ranking = new PaginaEspecialModel.RankingModel.RankingModalidade()
                     {
                         NomeLiga = liga.Nome,
