@@ -171,7 +171,7 @@ namespace Barragem.Controllers
                 Nome = entidade.Nome,
                 Local = entidade.Local,
                 Pontuacao = entidade.Pontuacao,
-                LinkInscricao = entidade.LinkInscricao,
+                LinkInscricao = entidade.LinkInscricao.ToHttp(),
                 IdModalidade = (EnumModalidadeTorneio)entidade.ModalidadeTorneioId
             };
         }
@@ -194,7 +194,7 @@ namespace Barragem.Controllers
                     Pontuacao = s.Pontuacao,
                     StatusInscricaoTorneio = s.StatusInscricaoTorneio.Nome,
                     IdStatusInscricaoTorneio = s.StatusInscricaoTorneio.Id,
-                    LinkInscricao = s.LinkInscricao
+                    LinkInscricao = s.LinkInscricao.ToHttp()
                 }).OrderBy(o => o.DataInicial).ThenBy(o => o.DataFinal).ToList();
 
             return new PaginaEspecialModel.CalendarioTorneioMes() { Torneios = calendarioTorneios };
@@ -214,7 +214,8 @@ namespace Barragem.Controllers
 
         private List<Patrocinio> BuscarPatrocinadores()
         {
-            return db.Patrocinio.ToList();
+            var patrocinadores = db.Patrocinio.ToList();
+            return patrocinadores.Select(s => new Patrocinio() { Id = s.Id, UrlImagem = s.UrlImagem, UrlPatrocinador = s.UrlPatrocinador.ToHttp() }).ToList();
         }
 
         private List<PaginaEspecialModel.CalendarioModalidades> BuscarModalidadesCalendario()
@@ -231,7 +232,7 @@ namespace Barragem.Controllers
             foreach (var liga in ligas)
             {
                 var itemRanking = new PaginaEspecialModel.RankingModel();
-                
+
                 var snapshotsDaLiga = db.Snapshot.Where(snap => snap.LigaId == liga.Id).OrderByDescending(s => s.Id).FirstOrDefault();
                 if (snapshotsDaLiga != null)
                 {

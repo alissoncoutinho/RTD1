@@ -282,6 +282,7 @@
     </Compile>
     <Compile Include="Helper\HtmlHelpers.cs" />
 	<Compile Include="Helper\DateTimeHelper.cs" />
+	<Compile Include="Helper\StringHelper.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\BarragemLiga.cs" />
