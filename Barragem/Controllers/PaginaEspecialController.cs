@@ -75,7 +75,7 @@ namespace Barragem.Controllers
             var proximosTorneios = db.CalendarioTorneio
                 .Include(i => i.ModalidadeTorneio)
                 .Include(i => i.StatusInscricaoTorneio)
-                .Where(x => x.DataInicial >= DateTime.Now && x.DataInicial <= ultimoDiaAno && (x.StatusInscricaoTorneioId == (int)EnumStatusInscricao.ABERTA || x.StatusInscricaoTorneioId == (int)EnumStatusInscricao.ENCERRADA))
+                .Where(x => x.DataInicial >= DateTime.Now && x.DataInicial <= ultimoDiaAno && (x.StatusInscricaoTorneioId == (int)EnumStatusInscricao.ABERTA || x.StatusInscricaoTorneioId == (int)EnumStatusInscricao.NAO_ABRIU))
                 .OrderBy(o => o.StatusInscricaoTorneioId)
                 .ThenBy(o => o.DataInicial)
                 .ThenBy(o => o.DataFinal).ToList();
