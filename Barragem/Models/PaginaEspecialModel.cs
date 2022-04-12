@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Barragem.Helper;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -70,7 +71,14 @@ namespace Barragem.Models
             public string StatusInscricaoTorneio { get; set; }
             public int IdStatusInscricaoTorneio { get; set; }
             public string Local { get; set; }
-            public string LinkInscricao { get; set; }
+
+            private string _linkInscricao;
+            public string LinkInscricao
+            {
+                get { return _linkInscricao.ToHttp(); }
+                set { _linkInscricao = value; }
+            }
+
             public DateTime DataInicial { get; set; }
             public DateTime DataFinal { get; set; }
             public string MesAbreviado

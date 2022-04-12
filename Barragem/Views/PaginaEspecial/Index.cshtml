@@ -108,7 +108,7 @@
                         </br>
                         <b data-date>@primeiroTorneio.DataInicial a @primeiroTorneio.DataFinal</b>
                     </p>
-                    <a data-inscrevase class="custom-btn" href="@primeiroTorneio.LinkInscricao">Inscreva-se até @primeiroTorneio.DataFinal</a>
+                    <a data-inscrevase class="custom-btn" href="@primeiroTorneio.LinkInscricao" target="_blank">Inscreva-se até @primeiroTorneio.DataFinal</a>
                 </div>
             </section>
 
@@ -186,7 +186,7 @@
                 <div class="swiper-wrapper">
                     @foreach (var item in Model.Patrocinadores)
                     {
-                        <a href="@item.UrlPatrocinador" class="swiper-slide"><img class="patrocinador__img" src="@item.UrlImagem" alt="patrocinador"></a>
+                        <a href="@item.UrlPatrocinador" target="_blank" class="swiper-slide"><img class="patrocinador__img" src="@item.UrlImagem" alt="patrocinador"></a>
                     }
                 </div>
                 <div class="swiper-button-prev"></div>

@@ -194,7 +194,7 @@ namespace Barragem.Controllers
                     Pontuacao = s.Pontuacao,
                     StatusInscricaoTorneio = s.StatusInscricaoTorneio.Nome,
                     IdStatusInscricaoTorneio = s.StatusInscricaoTorneio.Id,
-                    LinkInscricao = s.LinkInscricao.ToHttp()
+                    LinkInscricao = s.LinkInscricao
                 }).OrderBy(o => o.DataInicial).ThenBy(o => o.DataFinal).ToList();
 
             return new PaginaEspecialModel.CalendarioTorneioMes() { Torneios = calendarioTorneios };
@@ -220,7 +220,10 @@ namespace Barragem.Controllers
 
         private List<PaginaEspecialModel.CalendarioModalidades> BuscarModalidadesCalendario()
         {
-            return db.ModalidadeTorneio.Select(s => new PaginaEspecialModel.CalendarioModalidades() { IdModalidade = s.Id, Modalidade = s.Nome }).ToList();
+            return db.ModalidadeTorneio
+                .Include(i => i.CalendarioTorneio)
+                .Where(x => x.CalendarioTorneio.Count > 0)
+                .Select(s => new PaginaEspecialModel.CalendarioModalidades() { IdModalidade = s.Id, Modalidade = s.Nome }).ToList();
         }
 
         private List<PaginaEspecialModel.RankingModel> BuscarDadosRanking(int idBarragem)
