@@ -36,7 +36,15 @@ else
 
                 <div class="calendario__infos">
                     <h6>@torneio.Nome</h6>
-                    <p><span>@torneio.Pontuacao pts</span> | @torneio.Local</p>
+                    @if (torneio.Pontuacao > 0)
+                    {
+                        <p><span>@torneio.Pontuacao pts</span> | @torneio.Local</p>
+                    }
+                    else
+                    {
+                        <p>@torneio.Local</p>
+                    }
+
                     @if (torneio.IdStatusInscricaoTorneio == (int)EnumStatusInscricao.ABERTA)
                     {
                         <a class="calendario__infos-btn" href="@torneio.LinkInscricao" target="_blank">Inscreva-se</a>
