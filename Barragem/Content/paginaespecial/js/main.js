@@ -116,7 +116,14 @@ swiper.on('slideNextTransitionStart', function (e) {
     if (slideActive != undefined) {
         torneio.textContent = slideActive.children[1].innerText
         data.textContent = slideActive.children[2].innerText
-        localPontuacao.textContent = slideActive.children[3].value + ' - ' + slideActive.children[4].value + ' pontos'
+
+        if (slideActive.children[4].value > 0) {
+            localPontuacao.textContent = slideActive.children[3].value + ' - ' + slideActive.children[4].value + ' pontos'
+        }
+        else {
+            localPontuacao.textContent = slideActive.children[3].value
+        }
+
         if (slideActive.children[7].value == 'ABERTA') {
             inscrevaSe.style.display = "block";
             inscrevaSe.href = slideActive.children[5].value
@@ -132,7 +139,13 @@ swiper.on('slideNextTransitionStart', function (e) {
     if (slideActiveRepater != undefined) {
         torneio.textContent = slideActiveRepater.children[1].innerText
         data.textContent = slideActiveRepater.children[2].innerText
-        localPontuacao.textContent = slideActiveRepater.children[3].value + ' - ' + slideActiveRepater.children[4].value + ' pontos'
+
+        if (slideActiveRepater.children[4].value > 0) {
+            localPontuacao.textContent = slideActiveRepater.children[3].value + ' - ' + slideActiveRepater.children[4].value + ' pontos'
+        }
+        else {
+            localPontuacao.textContent = slideActiveRepater.children[3].value
+        }
         if (slideActiveRepater.children[7].value == 'ABERTA') {
             inscrevaSe.style.display = "block";
             inscrevaSe.href = slideActiveRepater.children[5].value
@@ -155,7 +168,12 @@ swiper.on('slidePrevTransitionStart', function () {
     if (slideActive != undefined) {
         torneio.textContent = slideActive.children[1].innerText
         data.textContent = slideActive.children[2].innerText
-        localPontuacao.textContent = slideActive.children[3].value + ' - ' + slideActive.children[4].value + ' pontos'
+        if (slideActive.children[4].value > 0) {
+            localPontuacao.textContent = slideActive.children[3].value + ' - ' + slideActive.children[4].value + ' pontos'
+        }
+        else {
+            localPontuacao.textContent = slideActive.children[3].value
+        }
         if (slideActive.children[7].value == 'ABERTA') {
             inscrevaSe.style.display = "block";
             inscrevaSe.href = slideActive.children[5].value
@@ -171,7 +189,12 @@ swiper.on('slidePrevTransitionStart', function () {
     if (slideActiveRepater != undefined) {
         torneio.textContent = slideActiveRepater.children[1].innerText
         data.textContent = slideActiveRepater.children[2].innerText
-        localPontuacao.textContent = slideActiveRepater.children[3].value + ' - ' + slideActiveRepater.children[4].value + ' pontos'
+        if (slideActiveRepater.children[4].value > 0) {
+            localPontuacao.textContent = slideActiveRepater.children[3].value + ' - ' + slideActiveRepater.children[4].value + ' pontos'
+        }
+        else {
+            localPontuacao.textContent = slideActiveRepater.children[3].value
+        }
         if (slideActiveRepater.children[7].value == 'ABERTA') {
             inscrevaSe.style.display = "block";
             inscrevaSe.href = slideActiveRepater.children[5].value

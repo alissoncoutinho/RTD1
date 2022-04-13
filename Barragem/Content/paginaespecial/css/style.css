@@ -399,9 +399,9 @@ section.patrocinadores {
     }
 
 .patrocinador__img {
-    max-width: 197px;
+    /*max-width: 200px;*/
     max-height: 80px;
-    width: 100%;
+    width: auto;
     height: 100%;
 }
 
