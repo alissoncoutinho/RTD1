@@ -3591,7 +3591,7 @@ namespace Barragem.Controllers
             order.reference_id = "COB-" + torneio.Id;
             order.customer = new Customer();
             order.customer.name = torneio.barragem.nomeResponsavel;
-            order.customer.email = torneio.barragem.emailPagSeguro;
+            order.customer.email = torneio.barragem.email;
             order.customer.tax_id = torneio.barragem.cpfResponsavel;
             var item = new ItemPedido();
             item.reference_id = torneio.Id + "";

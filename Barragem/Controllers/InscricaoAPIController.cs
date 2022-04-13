@@ -308,6 +308,11 @@ namespace Barragem.Controllers
 
         private Order montarPedidoPIX(InscricaoTorneio inscricaoTorneio)
         {
+            var valor = inscricaoTorneio.valor;
+            if ((inscricaoTorneio.valorPendente != null) && (inscricaoTorneio.valorPendente != 0))
+            {
+                valor = inscricaoTorneio.valorPendente;
+            }
             var order = new Order();
             order.reference_id = "T-" + inscricaoTorneio.Id;
             order.customer = new Customer();
@@ -318,12 +323,12 @@ namespace Barragem.Controllers
             item.reference_id = inscricaoTorneio.torneioId + "";
             item.name = inscricaoTorneio.torneio.nome;
             item.quantity = 1;
-            item.unit_amount = Convert.ToInt32(inscricaoTorneio.valor) * 100;
+            item.unit_amount = Convert.ToInt32(valor) * 100;
             order.items = new List<ItemPedido>();
             order.items.Add(item);
             var qr_code = new QrCode();
             var amount = new Amount();
-            amount.value = Convert.ToInt32(inscricaoTorneio.valor)*100;
+            amount.value = Convert.ToInt32(valor)*100;
             qr_code.amount = amount;
             order.qr_codes = new List<QrCode>();
             order.qr_codes.Add(qr_code);
