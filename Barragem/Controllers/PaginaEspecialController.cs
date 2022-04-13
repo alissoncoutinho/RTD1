@@ -75,7 +75,7 @@ namespace Barragem.Controllers
             var proximosTorneios = db.CalendarioTorneio
                 .Include(i => i.ModalidadeTorneio)
                 .Include(i => i.StatusInscricaoTorneio)
-                .Where(x => x.DataInicial >= DateTime.Now && x.DataInicial <= ultimoDiaAno && (x.StatusInscricaoTorneioId == (int)EnumStatusInscricao.ABERTA || x.StatusInscricaoTorneioId == (int)EnumStatusInscricao.ENCERRADA))
+                .Where(x => x.DataInicial >= DateTime.Now && x.DataInicial <= ultimoDiaAno && (x.StatusInscricaoTorneioId == (int)EnumStatusInscricao.ABERTA || x.StatusInscricaoTorneioId == (int)EnumStatusInscricao.NAO_ABRIU))
                 .OrderBy(o => o.StatusInscricaoTorneioId)
                 .ThenBy(o => o.DataInicial)
                 .ThenBy(o => o.DataFinal).ToList();
@@ -171,7 +171,7 @@ namespace Barragem.Controllers
                 Nome = entidade.Nome,
                 Local = entidade.Local,
                 Pontuacao = entidade.Pontuacao,
-                LinkInscricao = entidade.LinkInscricao,
+                LinkInscricao = entidade.LinkInscricao.ToHttp(),
                 IdModalidade = (EnumModalidadeTorneio)entidade.ModalidadeTorneioId
             };
         }
@@ -214,12 +214,16 @@ namespace Barragem.Controllers
 
         private List<Patrocinio> BuscarPatrocinadores()
         {
-            return db.Patrocinio.ToList();
+            var patrocinadores = db.Patrocinio.ToList();
+            return patrocinadores.Select(s => new Patrocinio() { Id = s.Id, UrlImagem = s.UrlImagem, UrlPatrocinador = s.UrlPatrocinador.ToHttp() }).ToList();
         }
 
         private List<PaginaEspecialModel.CalendarioModalidades> BuscarModalidadesCalendario()
         {
-            return db.ModalidadeTorneio.Select(s => new PaginaEspecialModel.CalendarioModalidades() { IdModalidade = s.Id, Modalidade = s.Nome }).ToList();
+            return db.ModalidadeTorneio
+                .Include(i => i.CalendarioTorneio)
+                .Where(x => x.CalendarioTorneio.Count > 0)
+                .Select(s => new PaginaEspecialModel.CalendarioModalidades() { IdModalidade = s.Id, Modalidade = s.Nome }).ToList();
         }
 
         private List<PaginaEspecialModel.RankingModel> BuscarDadosRanking(int idBarragem)
@@ -231,7 +235,7 @@ namespace Barragem.Controllers
             foreach (var liga in ligas)
             {
                 var itemRanking = new PaginaEspecialModel.RankingModel();
-                
+
                 var snapshotsDaLiga = db.Snapshot.Where(snap => snap.LigaId == liga.Id).OrderByDescending(s => s.Id).FirstOrDefault();
                 if (snapshotsDaLiga != null)
                 {

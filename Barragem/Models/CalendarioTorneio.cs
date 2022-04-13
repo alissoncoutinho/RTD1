@@ -11,13 +11,13 @@ namespace Barragem.Models
         [Display(Name = "Inicio")]
         [Required(ErrorMessage = "O campo Inicio é obrigatório")]
         [DataType(DataType.Date)]
-        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd-MM-yyyy}")]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public System.DateTime DataInicial { get; set; }
 
         [Display(Name = "Fim")]
         [Required(ErrorMessage = "O campo Fim é obrigatório")]
         [DataType(DataType.Date)]
-        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd-MM-yyyy}")]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public System.DateTime DataFinal { get; set; }
 
         [Display(Name = "Nome torneio")]
@@ -36,7 +36,7 @@ namespace Barragem.Models
 
         [Display(Name = "Pontuação")]
         [Required(ErrorMessage = "O campo Pontuação é obrigatório")]
-        [Range(1, 99999999, ErrorMessage = "Pontuação inválida")]
+        [Range(0, 9999999, ErrorMessage = "Pontuação inválida")]
         public int Pontuacao { get; set; }
 
         [Display(Name = "Inscrição")]

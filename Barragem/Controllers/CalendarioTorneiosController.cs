@@ -155,7 +155,7 @@ namespace Barragem.Controllers
             if (calendarioTorneio == null)
             {
                 ViewBag.ModalidadeTorneioId = new SelectList(db.ModalidadeTorneio, "Id", "Nome");
-                ViewBag.StatusInscricaoTorneioId = new SelectList(db.StatusInscricaoTorneio, "Id", "Nome");
+                ViewBag.StatusInscricaoTorneioId = new SelectList(db.StatusInscricaoTorneio, "Id", "Nome", (int)EnumStatusInscricao.NAO_ABRIU);
             }
             else
             {

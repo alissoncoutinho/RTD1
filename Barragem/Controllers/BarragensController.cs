@@ -175,9 +175,12 @@ namespace Barragem.Controllers
                 barragens.isAtiva = barraAtual.isAtiva;
                 barragens.isTeste = barraAtual.isTeste;
                 barragens.soTorneio = barraAtual.soTorneio;
+                barragens.PaginaEspecialId = barraAtual.PaginaEspecialId;
             }
 
-            if (barragens.PaginaEspecialId == (int)EnumPaginaEspecial.Selecione) barragens.PaginaEspecialId = null;
+            if (barragens.PaginaEspecialId == (int)EnumPaginaEspecial.Selecione) 
+                barragens.PaginaEspecialId = null;
+
             barragens.isBeachTenis = barraAtual.isBeachTenis;
             if (barragens.soTorneio == null) barragens.soTorneio = false;
             if (ModelState.IsValid)
