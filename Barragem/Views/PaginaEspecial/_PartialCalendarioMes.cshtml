@@ -39,7 +39,7 @@ else
                     <p><span>@torneio.Pontuacao pts</span> | @torneio.Local</p>
                     @if (torneio.IdStatusInscricaoTorneio == (int)EnumStatusInscricao.ABERTA)
                     {
-                        <a class="calendario__infos-btn" href="@torneio.LinkInscricao">Inscreva-se</a>
+                        <a class="calendario__infos-btn" href="@torneio.LinkInscricao" target="_blank">Inscreva-se</a>
                     }
                     else if (torneio.IdStatusInscricaoTorneio == (int)EnumStatusInscricao.ENCERRADA)
                     {
