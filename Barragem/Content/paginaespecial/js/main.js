@@ -108,59 +108,10 @@ let inscrevaSe = document.querySelector('[data-inscrevase]')
 let imagemBanner = document.querySelector('[data-imagem-banner]')
 let imagemBannerMobile = document.querySelector('[data-imagem-banner-mobile]')
 
-swiper.on('slideNextTransitionStart', function (e) {
-    let slides = [...swiper.$wrapperEl[0].children]
-    let slideActive = slides.find(active => active.className == 'swiper-slide swiper-slide-active');
-    let slideActiveRepater = slides.find(active => active.className == 'swiper-slide swiper-slide-duplicate-active');
+swiper.on('slideNextTransitionStart', obterDetalhesBannerSelecionado);
+swiper.on('slidePrevTransitionStart', obterDetalhesBannerSelecionado);
 
-    if (slideActive != undefined) {
-        torneio.textContent = slideActive.children[1].innerText
-        data.textContent = slideActive.children[2].innerText
-
-        if (slideActive.children[4].value > 0) {
-            localPontuacao.textContent = slideActive.children[3].value + ' - ' + slideActive.children[4].value + ' pontos'
-        }
-        else {
-            localPontuacao.textContent = slideActive.children[3].value
-        }
-
-        if (slideActive.children[7].value == 'ABERTA') {
-            inscrevaSe.style.display = "block";
-            inscrevaSe.href = slideActive.children[5].value
-            inscrevaSe.textContent = 'Inscreva-se até ' + slideActive.children[6].value
-        }
-        else {
-            inscrevaSe.style.display = "none";
-        }
-        imagemBanner.src = slideActive.children[0].src
-        imagemBannerMobile.src = slideActive.children[8].value
-    }
-
-    if (slideActiveRepater != undefined) {
-        torneio.textContent = slideActiveRepater.children[1].innerText
-        data.textContent = slideActiveRepater.children[2].innerText
-
-        if (slideActiveRepater.children[4].value > 0) {
-            localPontuacao.textContent = slideActiveRepater.children[3].value + ' - ' + slideActiveRepater.children[4].value + ' pontos'
-        }
-        else {
-            localPontuacao.textContent = slideActiveRepater.children[3].value
-        }
-        if (slideActiveRepater.children[7].value == 'ABERTA') {
-            inscrevaSe.style.display = "block";
-            inscrevaSe.href = slideActiveRepater.children[5].value
-            inscrevaSe.textContent = 'Inscreva-se até ' + slideActiveRepater.children[6].value
-        }
-        else {
-            inscrevaSe.style.display = "none";
-        }
-        imagemBanner.src = slideActiveRepater.children[0].src
-        imagemBannerMobile.src = slideActiveRepater.children[8].value
-    }
-
-});
-
-swiper.on('slidePrevTransitionStart', function () {
+function obterDetalhesBannerSelecionado () {
     let slides = [...swiper.$wrapperEl[0].children]
     let slideActive = slides.find(active => active.className == 'swiper-slide swiper-slide-active');
     let slideActiveRepater = slides.find(active => active.className == 'swiper-slide swiper-slide-duplicate-active');
@@ -177,7 +128,6 @@ swiper.on('slidePrevTransitionStart', function () {
         if (slideActive.children[7].value == 'ABERTA') {
             inscrevaSe.style.display = "block";
             inscrevaSe.href = slideActive.children[5].value
-            inscrevaSe.textContent = 'Inscreva-se até ' + slideActive.children[6].value
         }
         else {
             inscrevaSe.style.display = "none";
@@ -198,7 +148,6 @@ swiper.on('slidePrevTransitionStart', function () {
         if (slideActiveRepater.children[7].value == 'ABERTA') {
             inscrevaSe.style.display = "block";
             inscrevaSe.href = slideActiveRepater.children[5].value
-            inscrevaSe.textContent = 'Inscreva-se até ' + slideActiveRepater.children[6].value
         }
         else {
             inscrevaSe.style.display = "none";
@@ -206,8 +155,7 @@ swiper.on('slidePrevTransitionStart', function () {
         imagemBanner.src = slideActiveRepater.children[0].src
         imagemBannerMobile.src = slideActiveRepater.children[8].value
     }
-})
-
+}
 
 //swipper Patrocinadores
 const swiper2 = new Swiper('.mySwiper', {
