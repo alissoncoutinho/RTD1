@@ -47,9 +47,9 @@ namespace Barragem.Controllers
             return View("Index", ObterDadosPaginaEspecial(barragem.Id, EnumPaginaEspecial.Federacao));
         }
 
-        public PartialViewResult ObterCalendarioMensal(int mes, EnumModalidadeTorneio idmodalidade)
+        public PartialViewResult ObterCalendarioMensal(int mes, EnumModalidadeTorneio idmodalidade, int idBarragem)
         {
-            return PartialView("_PartialCalendarioMes", ObterTorneios(mes, idmodalidade));
+            return PartialView("_PartialCalendarioMes", ObterTorneios(mes, idmodalidade, idBarragem));
         }
 
         private BarragemView BuscarBarragemPorDominio(string dominio, EnumPaginaEspecial idPaginaEspecial)
@@ -64,7 +64,7 @@ namespace Barragem.Controllers
                         .FirstOrDefault(b => b.Id == id && b.PaginaEspecialId == (int)idPaginaEspecial);
         }
 
-        private PaginaEspecialModel.TorneioDestaqueBanner ObterTorneiosDestaqueBanner()
+        private PaginaEspecialModel.TorneioDestaqueBanner ObterTorneiosDestaqueBanner(int idBarragem)
         {
             const int MAXIMO_TORNEIOS_BANNER = 5;
             var dadosBanner = new PaginaEspecialModel.TorneioDestaqueBanner();
@@ -75,7 +75,7 @@ namespace Barragem.Controllers
             var proximosTorneios = db.CalendarioTorneio
                 .Include(i => i.ModalidadeTorneio)
                 .Include(i => i.StatusInscricaoTorneio)
-                .Where(x => x.DataInicial >= DateTime.Now && x.DataInicial <= ultimoDiaAno && (x.StatusInscricaoTorneioId == (int)EnumStatusInscricao.ABERTA || x.StatusInscricaoTorneioId == (int)EnumStatusInscricao.NAO_ABRIU))
+                .Where(x => x.BarragemId == idBarragem && x.DataInicial >= DateTime.Now && x.DataInicial <= ultimoDiaAno && (x.StatusInscricaoTorneioId == (int)EnumStatusInscricao.ABERTA || x.StatusInscricaoTorneioId == (int)EnumStatusInscricao.NAO_ABRIU))
                 .OrderBy(o => o.StatusInscricaoTorneioId)
                 .ThenBy(o => o.DataInicial)
                 .ThenBy(o => o.DataFinal).ToList();
@@ -129,10 +129,10 @@ namespace Barragem.Controllers
         private PaginaEspecialModel ObterDadosPaginaEspecial(int idBarragem, EnumPaginaEspecial idPaginaEspecial)
         {
             var barragem = BuscarBarragemPorId(idBarragem, idPaginaEspecial);
-            var patrocinadores = BuscarPatrocinadores();
+            var patrocinadores = BuscarPatrocinadores(idBarragem);
             var ranking = BuscarDadosRanking(idBarragem);
-            var modalidadesCalendario = BuscarModalidadesCalendario();
-            var torneiosBanner = ObterTorneiosDestaqueBanner();
+            var modalidadesCalendario = BuscarModalidadesCalendario(idBarragem);
+            var torneiosBanner = ObterTorneiosDestaqueBanner(idBarragem);
 
             return new PaginaEspecialModel()
             {
@@ -176,7 +176,7 @@ namespace Barragem.Controllers
             };
         }
 
-        private PaginaEspecialModel.CalendarioTorneioMes ObterTorneios(int mes, EnumModalidadeTorneio idmodalidade)
+        private PaginaEspecialModel.CalendarioTorneioMes ObterTorneios(int mes, EnumModalidadeTorneio idmodalidade, int idBarragem)
         {
             var dataInicialMes = new DateTime(DateTime.Now.Year, mes, 1);
             var dataFinalMes = new DateTime(DateTime.Now.Year, mes, DateTime.DaysInMonth(dataInicialMes.Year, dataInicialMes.Month));
@@ -184,7 +184,7 @@ namespace Barragem.Controllers
             var calendarioTorneios = db.CalendarioTorneio
                 .Include(i => i.ModalidadeTorneio)
                 .Include(i => i.StatusInscricaoTorneio)
-                .Where(x => x.DataInicial >= dataInicialMes && x.DataInicial <= dataFinalMes && x.ModalidadeTorneioId == (int)idmodalidade)
+                .Where(x => x.BarragemId == idBarragem && x.DataInicial >= dataInicialMes && x.DataInicial <= dataFinalMes && x.ModalidadeTorneioId == (int)idmodalidade)
                 .Select(s => new PaginaEspecialModel.CalendarioTorneioItem()
                 {
                     DataInicial = s.DataInicial,
@@ -212,17 +212,17 @@ namespace Barragem.Controllers
             ViewBag.MesesAno = new SelectList(mesesAno, "Id", "Nome");
         }
 
-        private List<Patrocinio> BuscarPatrocinadores()
+        private List<Patrocinio> BuscarPatrocinadores(int idBarragem)
         {
-            var patrocinadores = db.Patrocinio.ToList();
+            var patrocinadores = db.Patrocinio.Where(x => x.BarragemId == idBarragem).ToList();
             return patrocinadores.Select(s => new Patrocinio() { Id = s.Id, UrlImagem = s.UrlImagem, UrlPatrocinador = s.UrlPatrocinador.ToHttp() }).ToList();
         }
 
-        private List<PaginaEspecialModel.CalendarioModalidades> BuscarModalidadesCalendario()
+        private List<PaginaEspecialModel.CalendarioModalidades> BuscarModalidadesCalendario(int idBarragem)
         {
             return db.ModalidadeTorneio
                 .Include(i => i.CalendarioTorneio)
-                .Where(x => x.CalendarioTorneio.Count > 0)
+                .Where(x => x.CalendarioTorneio.Where(y => y.BarragemId == idBarragem).Count() > 0)
                 .Select(s => new PaginaEspecialModel.CalendarioModalidades() { IdModalidade = s.Id, Modalidade = s.Nome }).ToList();
         }
 

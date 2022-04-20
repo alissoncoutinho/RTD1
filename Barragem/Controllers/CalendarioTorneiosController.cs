@@ -25,11 +25,13 @@ namespace Barragem.Controllers
 
             ViewBag.FiltroAno = filtroAno;
 
+            var idBarragem = Request.ObterIdBarragemUsuarioLogado();
+
             var calendarioTorneio =
                 db.CalendarioTorneio
                     .Include(c => c.ModalidadeTorneio)
                     .Include(c => c.StatusInscricaoTorneio)
-                    .Where(x => x.DataInicial.Year == filtroAno || x.DataFinal.Year == filtroAno);
+                    .Where(x => (x.DataInicial.Year == filtroAno || x.DataFinal.Year == filtroAno) && x.BarragemId == idBarragem);
 
             var dadosListagem = MapearDadosModelo(calendarioTorneio.ToList());
 
@@ -46,6 +48,8 @@ namespace Barragem.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(CalendarioTorneio calendarioTorneio)
         {
+            calendarioTorneio.BarragemId = Request.ObterIdBarragemUsuarioLogado();
+
             if (ValidarDados(calendarioTorneio))
             {
                 if (ModelState.IsValid)
@@ -66,10 +70,19 @@ namespace Barragem.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             CalendarioTorneio calendarioTorneio = db.CalendarioTorneio.Find(id);
+
             if (calendarioTorneio == null)
             {
                 return HttpNotFound();
             }
+
+            var idBarragem = Request.ObterIdBarragemUsuarioLogado();
+            if (calendarioTorneio.BarragemId != idBarragem)
+            {
+                ViewBag.MsgErro = "Usuário sem permissão para alterar o torneio";
+                return RedirectToAction("Index");
+            }
+
             CarregarDropDownLists(calendarioTorneio);
             return View(calendarioTorneio);
         }
@@ -78,6 +91,7 @@ namespace Barragem.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(CalendarioTorneio calendarioTorneio)
         {
+            calendarioTorneio.BarragemId = Request.ObterIdBarragemUsuarioLogado();
             if (ValidarDados(calendarioTorneio))
             {
                 if (ModelState.IsValid)
@@ -94,6 +108,14 @@ namespace Barragem.Controllers
         public ActionResult Delete(int id)
         {
             CalendarioTorneio calendarioTorneio = db.CalendarioTorneio.Find(id);
+
+            var idBarragem = Request.ObterIdBarragemUsuarioLogado();
+            if (calendarioTorneio.BarragemId != idBarragem)
+            {
+                ViewBag.MsgErro = "Usuário sem permissão para alterar o torneio";
+                return RedirectToAction("Index");
+            }
+
             db.CalendarioTorneio.Remove(calendarioTorneio);
             db.SaveChanges();
             return RedirectToAction("Index");

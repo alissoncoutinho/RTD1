@@ -15,6 +15,9 @@ namespace Barragem.Models
 
         [Required(ErrorMessage = "O campo Url é obrigatório")]
         public string UrlPatrocinador { get; set; }
+
+        public int BarragemId { get; set; }
+        public virtual Barragens Barragem { get; set; }
     }
 
     public class PatrocinioModel

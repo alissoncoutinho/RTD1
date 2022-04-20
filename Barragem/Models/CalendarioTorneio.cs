@@ -53,9 +53,12 @@ namespace Barragem.Models
             }
         }
         private string _LinkInscricao;
+        
+        public int BarragemId { get; set; }
 
         public virtual ModalidadeTorneio ModalidadeTorneio { get; set; }
         public virtual StatusInscricaoTorneio StatusInscricaoTorneio { get; set; }
+        public virtual Barragens Barragem { get; set; }
     }
 
     public class CalendarioTorneioModel

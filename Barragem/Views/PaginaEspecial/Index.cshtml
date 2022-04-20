@@ -98,6 +98,7 @@
             <section id="sectionDetalhesPrimeiroTorneioBanner" class="row">
                 <div class="col-md-3 mt-3 hero__content">
                     <h1>@Model.NomeBarragem</h1>
+                    <input type="hidden" id="hiddenIdBarragem" value="@Model.IdBarragem" />
                 </div>
 
                 <div class="col-md-9 mt-3 hero__content">
@@ -452,14 +453,15 @@
         }
 
         function atualizarPartialCalendarioMes(mes, idModalidade) {
+            var idBarragem = $("#hiddenIdBarragem").val();
             if (idModalidade == ENUM_MODALIDADES.TENIS) {
-                $("#partialDivCalendarioMes-1").load('/PaginaEspecial/ObterCalendarioMensal?mes=' + mes + '&idmodalidade=' + idModalidade);
+                $("#partialDivCalendarioMes-1").load('/PaginaEspecial/ObterCalendarioMensal?mes=' + mes + '&idmodalidade=' + idModalidade + '&idBarragem=' + idBarragem);
             }
             else if (idModalidade == ENUM_MODALIDADES.BEACH_TENNIS) {
-                $("#partialDivCalendarioMes-2").load('/PaginaEspecial/ObterCalendarioMensal?mes=' + mes + '&idmodalidade=' + idModalidade);
+                $("#partialDivCalendarioMes-2").load('/PaginaEspecial/ObterCalendarioMensal?mes=' + mes + '&idmodalidade=' + idModalidade + '&idBarragem=' + idBarragem);
             }
             else if (idModalidade == ENUM_MODALIDADES.KIDS) {
-                $("#partialDivCalendarioMes-3").load('/PaginaEspecial/ObterCalendarioMensal?mes=' + mes + '&idmodalidade=' + idModalidade);
+                $("#partialDivCalendarioMes-3").load('/PaginaEspecial/ObterCalendarioMensal?mes=' + mes + '&idmodalidade=' + idModalidade + '&idBarragem=' + idBarragem);
             }
         }
 
