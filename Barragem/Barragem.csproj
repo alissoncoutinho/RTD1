@@ -240,11 +240,11 @@
     <Compile Include="Context\BarragemDbContext.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AguasClarasController.cs" />
-	<Compile Include="Controllers\CalendarioTorneiosController.cs" />
+    <Compile Include="Controllers\CalendarioTorneiosController.cs" />
     <Compile Include="Controllers\CidadeController.cs" />
     <Compile Include="Controllers\InscricaoAPIController.cs" />
     <Compile Include="Controllers\JogoAPIController.cs" />
-	<Compile Include="Controllers\PaginaEspecialController.cs" />
+    <Compile Include="Controllers\PaginaEspecialController.cs" />
     <Compile Include="Controllers\LigaController.cs" />
     <Compile Include="Controllers\LuzianiaController.cs" />
     <Compile Include="Controllers\MeuRankingController.cs" />
@@ -264,7 +264,7 @@
     <Compile Include="Controllers\JogoController.cs" />
     <Compile Include="Controllers\NotificacaoController.cs" />
     <Compile Include="Controllers\PagamentoController.cs" />
-	<Compile Include="Controllers\PatrocinadorController.cs" />
+    <Compile Include="Controllers\PatrocinadorController.cs" />
     <Compile Include="Controllers\PerfilAPIController.cs" />
     <Compile Include="Controllers\RankingController.cs" />
     <Compile Include="Controllers\RankingAPIController.cs" />
@@ -281,14 +281,15 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helper\HtmlHelpers.cs" />
-	<Compile Include="Helper\DateTimeHelper.cs" />
-	<Compile Include="Helper\StringHelper.cs" />
+    <Compile Include="Helper\DateTimeHelper.cs" />
+    <Compile Include="Helper\SessionHelper.cs" />
+    <Compile Include="Helper\StringHelper.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountModels.cs" />
     <Compile Include="Models\BarragemLiga.cs" />
     <Compile Include="Models\Barragens.cs" />
     <Compile Include="Models\CalculadoraDePontos.cs" />
-	<Compile Include="Models\CalendarioTorneio.cs" />
+    <Compile Include="Models\CalendarioTorneio.cs" />
     <Compile Include="Models\Categoria.cs" />
     <Compile Include="Models\Cidade.cs" />
     <Compile Include="Models\Classe.cs" />
@@ -302,10 +303,10 @@
     <Compile Include="Models\JogoCabecaChave.cs" />
     <Compile Include="Models\Liga.cs" />
     <Compile Include="Models\Log.cs" />
-	<Compile Include="Models\ModalidadeTorneio.cs" />
+    <Compile Include="Models\ModalidadeTorneio.cs" />
     <Compile Include="Models\Pagamento.cs" />
     <Compile Include="Models\PagamentoBarragem.cs" />
-	<Compile Include="Models\PaginaEspecial.cs" />
+    <Compile Include="Models\PaginaEspecial.cs" />
     <Compile Include="Models\PaginaEspecialModel.cs" />
     <Compile Include="Models\Patrocinio.cs" />
     <Compile Include="Models\Rancking.cs" />
@@ -315,7 +316,7 @@
     <Compile Include="Models\SituacaoJogo.cs" />
     <Compile Include="Models\Snapshot.cs" />
     <Compile Include="Models\SnapshotRanking.cs" />
-	<Compile Include="Models\StatusInscricaoTorneio.cs" />
+    <Compile Include="Models\StatusInscricaoTorneio.cs" />
     <Compile Include="Models\Temporada.cs" />
     <Compile Include="Models\TipoTorneio.cs" />
     <Compile Include="Models\Torneio.cs" />
@@ -332,7 +333,7 @@
   <ItemGroup>
     <Content Include="Content\AdminLTE.css" />
     <Content Include="Content\AdminLTE.min.css" />
-	<Content Include="Content\bootstrap-5.0.2-dist\css\bootstrap-grid.css" />
+    <Content Include="Content\bootstrap-5.0.2-dist\css\bootstrap-grid.css" />
     <Content Include="Content\bootstrap-5.0.2-dist\css\bootstrap-grid.min.css" />
     <Content Include="Content\bootstrap-5.0.2-dist\css\bootstrap-grid.rtl.css" />
     <Content Include="Content\bootstrap-5.0.2-dist\css\bootstrap-grid.rtl.min.css" />
@@ -374,7 +375,7 @@
     <Content Include="Content\css\hamburgers.min.css" />
     <Content Include="Content\css\integracao-pagseguro.css" />
     <Content Include="Content\css\jquery-ui-1.10.4.min.css" />
-	<Content Include="Content\paginaespecial\css\hamburgers.min.css" />
+    <Content Include="Content\paginaespecial\css\hamburgers.min.css" />
     <Content Include="Content\paginaespecial\css\style.css" />
     <Content Include="Content\css\login.css" />
     <Content Include="Content\css\login2.css" />
@@ -483,7 +484,7 @@
     <Content Include="Content\jquery.Jcrop.css" />
     <Content Include="Content\js\circuito-exemplo.js" />
     <Content Include="Content\js\copylink.js" />
-	<Content Include="Content\paginaespecial\images\banner-1.png" />
+    <Content Include="Content\paginaespecial\images\banner-1.png" />
     <Content Include="Content\paginaespecial\images\banner-2.png" />
     <Content Include="Content\paginaespecial\images\banner-3.png" />
     <Content Include="Content\paginaespecial\images\banner-4.png" />
@@ -536,7 +537,7 @@
     <Content Include="Content\js\menu.js" />
     <Content Include="Content\js\render.js" />
     <Content Include="Content\PagedList.css" />
-	<Content Include="Content\paginaespecial\js\paginathing.js" />
+    <Content Include="Content\paginaespecial\js\paginathing.js" />
     <Content Include="Content\styles-6.css" />
     <Content Include="Content\styles-5.css" />
     <Content Include="Content\styles-4.css" />
@@ -1099,7 +1100,7 @@
     <Content Include="Views\Shared\_LayoutTorneioFaseGrupo.cshtml" />
     <Content Include="Views\Torneio\EditTeste.cshtml" />
     <Content Include="Views\Torneio\CreateTorneio.cshtml" />
-    <Content Include="Views\Torneio\_PartialTabsTorneio.cshtml" />
+	<Content Include="Views\Torneio\_PartialTabsTorneio.cshtml" />
     <Content Include="Views\Torneio\EditTorneio.cshtml" />
     <Content Include="Views\Torneio\EditPatrocinadores.cshtml" />
     <Content Include="Views\Torneio\Teste.cshtml" />
@@ -1123,7 +1124,7 @@
     <Content Include="Views\Account\LoginBT.cshtml" />
     <Content Include="Views\Account\LoginPasswordBT.cshtml" />
     <Content Include="Views\Account\RegisterEmail.cshtml" />
-	<Content Include="Views\Patrocinador\Index.cshtml" />
+    <Content Include="Views\Patrocinador\Index.cshtml" />
     <Content Include="Views\Patrocinador\Create.cshtml" />
     <Content Include="Views\Patrocinador\Edit.cshtml" />
     <Content Include="Views\CalendarioTorneios\Create.cshtml" />
