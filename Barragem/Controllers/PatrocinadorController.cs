@@ -1,4 +1,5 @@
 ﻿using Barragem.Context;
+using Barragem.Helper;
 using Barragem.Models;
 using System;
 using System.Data.Entity;
@@ -17,7 +18,8 @@ namespace Barragem.Controllers
         private BarragemDbContext db = new BarragemDbContext();
         public ActionResult Index()
         {
-            return View(db.Patrocinio.Select(s => new PatrocinioModel { Id = s.Id, UrlImagem = s.UrlImagem, UrlPatrocinador = s.UrlPatrocinador }).ToList());
+            var idBarragem = Request.ObterIdBarragemUsuarioLogado();
+            return View(db.Patrocinio.Where(x => x.BarragemId == idBarragem).Select(s => new PatrocinioModel { Id = s.Id, UrlImagem = s.UrlImagem, UrlPatrocinador = s.UrlPatrocinador }).ToList());
         }
 
         public ActionResult Create()
@@ -34,6 +36,8 @@ namespace Barragem.Controllers
 
             SalvarImagemPatrocinador(patrocinio);
             var entidadePatrocinio = MapearEntidade(patrocinio);
+
+            entidadePatrocinio.BarragemId = Request.ObterIdBarragemUsuarioLogado();
 
             TryValidateModel(entidadePatrocinio);
 
@@ -60,6 +64,13 @@ namespace Barragem.Controllers
                 return HttpNotFound();
             }
 
+            var idBarragem = Request.ObterIdBarragemUsuarioLogado();
+            if (patrocinio.BarragemId != idBarragem)
+            {
+                ViewBag.MsgErro = "Usuário sem permissão para alterar o patrocinador";
+                return RedirectToAction("Index");
+            }
+
             var patrocinioModel = new PatrocinioModel()
             {
                 Id = patrocinio.Id,
@@ -80,7 +91,7 @@ namespace Barragem.Controllers
 
             SalvarImagemPatrocinador(patrocinio);
             var entidadePatrocinio = MapearEntidade(patrocinio);
-
+            entidadePatrocinio.BarragemId = Request.ObterIdBarragemUsuarioLogado();
             TryValidateModel(entidadePatrocinio);
 
             if (ModelState.IsValid)
@@ -100,6 +111,14 @@ namespace Barragem.Controllers
         public ActionResult Delete(int id)
         {
             Patrocinio patrocinio = db.Patrocinio.Find(id);
+
+            var idBarragem = Request.ObterIdBarragemUsuarioLogado();
+            if (patrocinio.BarragemId != idBarragem)
+            {
+                ViewBag.MsgErro = "Usuário sem permissão para alterar o torneio";
+                return RedirectToAction("Index");
+            }
+
             db.Patrocinio.Remove(patrocinio);
             db.SaveChanges();
             return RedirectToAction("Index");
