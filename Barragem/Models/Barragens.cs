@@ -71,6 +71,8 @@ namespace Barragem.Models
         public int? PaginaEspecialId { get; set; }
 
         public PaginaEspecial PaginaEspecial { get; set; }
+        public virtual ICollection<CalendarioTorneio> CalendarioTorneio { get; set; }
+        public virtual ICollection<Patrocinio> Patrocinio { get; set; }
     }
 
     [Table("BarragemView")]
