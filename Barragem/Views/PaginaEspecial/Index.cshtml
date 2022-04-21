@@ -289,14 +289,14 @@
                                     var modalidadeRanking = Model.Rankings[i];
 
                                     <div class="tab-pane fade @if (i==0) { @Html.Raw("show active") }" id="modalidade-@modalidadeRanking.IdModalidade" role="tabpanel" aria-labelledby="modalidade-@modalidadeRanking.IdModalidade-tab">
-                                        <div class="swiper3">
-                                            <ul class="nav nav-tabs swiper-wrapper" id="tabsCategoriasModalidade-@modalidadeRanking.IdModalidade" role="tablist">
+                                        <div class="slide">
+                                            <ul class="nav nav-tabs slide__wrapper" id="tabsCategoriasModalidade-@modalidadeRanking.IdModalidade" role="tablist">
 
                                                 @for (int countCategoria = 0; countCategoria < modalidadeRanking.Ranking.Categoria.Count; countCategoria++)
                                                 {
                                                     var categoria = modalidadeRanking.Ranking.Categoria[countCategoria];
 
-                                                    <li class="nav-item swiper-slide @if (countCategoria!=0) { @Html.Raw("ms-2") }" role="presentation">
+                                                    <li class="nav-item slide__single @if (countCategoria!=0) { @Html.Raw("ms-2") }" role="presentation">
                                                         <button class="nav-link nav-links @if (countCategoria==0) { @Html.Raw("active") }" id="categoria-@categoria.IdCategoria-tab" data-bs-toggle="tab"
                                                                 data-bs-target="#categoria-@categoria.IdCategoria" type="button" role="tab" aria-controls="categoria-@categoria.IdCategoria"
                                                                 aria-selected="@if (countCategoria == 0) { @Html.Raw("true") } else {@Html.Raw("false") } ">
