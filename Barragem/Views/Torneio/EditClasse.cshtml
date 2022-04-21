@@ -265,6 +265,10 @@
                 $("#btnAlterarCategoriaCircuito").click(function (event) {
                     event.preventDefault();
 
+                    if ($("#CategoriaId").val() == 0) {
+                        toastr.warning("Selecione uma categoria", "Aviso");
+                    }
+
                     $.ajax({
                         type: "POST",
                         url: "/Torneio/AlterarCategoriaCircuitoClasse",
@@ -276,6 +280,7 @@
                             idCategoria: $("#CategoriaId").val()
                         },
                         success: function (response) {
+                            toastr.success("Alteração realizada com sucesso.", "Aviso");
                             $("#modalEditCatCircuito").modal('hide');
                             window.location.href = response.redirectToUrl;
                         }
