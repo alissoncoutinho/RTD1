@@ -606,6 +606,7 @@ section.calendario .line {
     color: white;
     transition: 0.1s ease-in-out;
 }
+
     .encerrada:hover {
         color: white;
         background-color: #ee3737;
@@ -617,6 +618,7 @@ section.calendario .line {
     color: white;
     transition: 0.1s ease-in-out;
 }
+
     .naoabriu:hover {
         color: white;
         background-color: #3345db;
@@ -647,6 +649,7 @@ section.calendario .line {
         max-width: 966px;
         min-height: 400px;
         width: 100%;
+        overflow: hidden;
     }
 
 section.tabelas .nav {
@@ -681,18 +684,41 @@ section.tabelas .line {
     margin-bottom: 20px;
 }
 
+/*
 .swiper3 {
     overflow: hidden;
     position: relative;
     height: max-content;
+}*/
+
+.categorias {
+    position: relative;
+    height: max-content;
+    overflow-x: scroll;
 }
 
+.categorias__wrapper {
+    display: flex;
+    flex-wrap: nowrap !important;
+    min-width: max-content;
+    height: max-content;
+    overflow-x: scroll;
+}
+
+.tabelas__tabs #myTabContent .categorias__items .nav {
+    gap: 0;
+    width: max-content;
+    position: relative;
+    margin: 0;
+    flex-wrap: nowrap;
+}
 
 .tabelas__tabs #myTabContent .swiper3 .nav {
     gap: 0;
     width: max-content;
     position: relative;
     margin: 0;
+    flex-wrap: nowrap;
 }
 /* .tabelas__tabs #myTabContent .swiper3 .nav:after{
     content:"";
@@ -709,6 +735,8 @@ section.tabelas .line {
     position: relative;
     width: 100%;
     overflow-x: scroll;
+    cursor: grab;
+    height: max-content;
 }
 
     .slide::-webkit-scrollbar {
@@ -725,15 +753,18 @@ section.tabelas .line {
 
 .slide__wrapper {
     display: flex;
-    gap: 30px;
+    gap: 20px !important;
     flex-wrap: nowrap !important;
-    width: 200%;
+    width: max-content;
+    height: max-content;
     /* transition-property: transform; */
 }
 
 .slide__single {
     max-width: 251px;
-    width: 100%;
+    width: auto;
+    height: max-content;
+    border-bottom: 0 !important;
 }
 
 .slide .slide__wrapper .slide__single .nav-link {
@@ -744,22 +775,22 @@ section.tabelas .line {
     border: 0 !important;
     background: #C4C4C4;
     max-width: 251px;
-    width: 100%;
+    width: 106%;
+    height: max-content;
 }
 
     .slide .slide__wrapper .slide__single .nav-link.active {
         color: #fff;
-        width: 100%;
         background: #3243D6;
     }
 
-.tabelas__tabs #myTabContent .swiper3 .nav-tabs .nav-item {
+.tabelas__tabs #myTabContent .categorias .nav-tabs .nav-item {
     border: 0;
     max-width: 215px !important;
     width: 100%;
 }
 
-    .tabelas__tabs #myTabContent .swiper3 .nav-tabs .nav-item .nav-link {
+    .tabelas__tabs #myTabContent .categorias .nav-tabs .nav-item .nav-link {
         background: #C4C4C4;
         color: #fff !important;
         border-radius: 15px 15px 0px 0px !important;
@@ -771,7 +802,7 @@ section.tabelas .line {
     }
 
 
-        .tabelas__tabs #myTabContent .swiper3 .nav-tabs .nav-item .nav-link.active {
+        .tabelas__tabs #myTabContent .categorias .nav-tabs .nav-item .nav-link.active {
             color: #fff;
             width: 100%;
             background: #3243D6;
@@ -1002,13 +1033,30 @@ footer {
         padding-bottom: 26px;
     }
 
+@media screen and (min-width: 769px) {
+    .colunaRanking {
+        display: flex !important;
+        justify-content: flex-end !important;
+    }
+}
+
+@media screen and (max-width: 420px) {
+    .slide__wrapper {
+        gap: 80px !important;
+    }
+
+    .slide__single {
+        width: 150%;
+    }
+
+    .slide .slide__wrapper .slide__single .nav-link {
+        width: 150% !important;
+    }
+}
+
 @media screen and (max-width: 768px) {
     header.header {
         height: 700px;
-    }
-
-    .slide__wrapper {
-        width: 300%;
     }
 
     .mySwiper2 img {
@@ -1017,6 +1065,18 @@ footer {
 
     .calendario__box {
         min-height: auto;
+    }
+
+    .slide__single {
+        max-width: 300px !important;
+    }
+
+    .slide .slide__wrapper .slide__single .nav-link {
+        width: 103%;
+    }
+
+    .colunaRanking {
+        text-align: left;
     }
 }
 

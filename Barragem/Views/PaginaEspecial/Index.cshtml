@@ -289,14 +289,14 @@
                                     var modalidadeRanking = Model.Rankings[i];
 
                                     <div class="tab-pane fade @if (i==0) { @Html.Raw("show active") }" id="modalidade-@modalidadeRanking.IdModalidade" role="tabpanel" aria-labelledby="modalidade-@modalidadeRanking.IdModalidade-tab">
-                                        <div class="swiper3">
-                                            <ul class="nav nav-tabs swiper-wrapper" id="tabsCategoriasModalidade-@modalidadeRanking.IdModalidade" role="tablist">
+                                        <div class="slide">
+                                            <ul class="nav nav-tabs slide__wrapper" id="tabsCategoriasModalidade-@modalidadeRanking.IdModalidade" role="tablist">
 
                                                 @for (int countCategoria = 0; countCategoria < modalidadeRanking.Ranking.Categoria.Count; countCategoria++)
                                                 {
                                                     var categoria = modalidadeRanking.Ranking.Categoria[countCategoria];
 
-                                                    <li class="nav-item swiper-slide @if (countCategoria!=0) { @Html.Raw("ms-2") }" role="presentation">
+                                                    <li class="nav-item slide__single @if (countCategoria!=0) { @Html.Raw("ms-2") }" role="presentation">
                                                         <button class="nav-link nav-links @if (countCategoria==0) { @Html.Raw("active") }" id="categoria-@categoria.IdCategoria-tab" data-bs-toggle="tab"
                                                                 data-bs-target="#categoria-@categoria.IdCategoria" type="button" role="tab" aria-controls="categoria-@categoria.IdCategoria"
                                                                 aria-selected="@if (countCategoria == 0) { @Html.Raw("true") } else {@Html.Raw("false") } ">
@@ -316,10 +316,10 @@
                                                 <div class="tab-pane fade @if (countCategoria==0) { @Html.Raw("show active") }" id="categoria-@categoria.IdCategoria" role="tabpanel" aria-labelledby="categoria-@categoria.IdCategoria-tab">
                                                     <table class="table table-striped">
                                                         <thead>
-                                                            <tr class="row  row-line">
+                                                            <tr class="row row-line">
                                                                 <th class="col-2" scope="col"><h6>Posição</h6></th>
                                                                 <th class="col-5" scope="col"><h6>Nome</h6></th>
-                                                                <th class="col-5 d-flex justify-content-end" scope="col"> <h6>Pontuação</h6></th>
+                                                                <th class="col-5 d-flex colunaRanking" scope="col"><h6>Pontuação</h6></th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
@@ -344,7 +344,7 @@
                                                                             <span class="info-table">@jogador.NomeJogador</span>
                                                                         </td><!--col-3-->
 
-                                                                        <td class="col-5 trTable d-flex justify-content-end">
+                                                                        <td class="col-5 trTable colunaRanking">
                                                                             <span class="info-table">@jogador.Pontuacao</span>
                                                                         </td><!--col-3-->
                                                                     </tr>

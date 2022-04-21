@@ -195,32 +195,35 @@ const swiper2 = new Swiper('.mySwiper', {
 
 });
 
-const swiper4 = new Swiper('.swiper3', {
-    // Optional parameters
-    direction: 'horizontal',
-    loop: false,
-    slidesPerView: 'auto',
-    spaceBetween: 0,
-    freeMode: true,
-    preventInteractionOnTransition: true,
-    centeredSlides: false,
-    slideToClickedSlide: true,
-    setWrapperSize: true,
-    breakpoints: {
-        640: {
-            slidesPerView: 'auto',
-            spaceBetween: 0,
-        },
-        768: {
-            slidesPerView: 'auto',
-            spaceBetween: 0,
-        },
-        1200: {
-            slidesPerView: 'auto',
-            spaceBetween: 0,
-        },
-    },
+//alternativa para tablist
+const slider = document.querySelectorAll('.slide');
+let isDown = false;
+let startX;
+let scrollLeft;
 
+slider.forEach(slide => {
+    slide.addEventListener('mousedown', (e) => {
+        isDown = true;
+        slide.classList.add('active');
+        startX = e.pageX - slide.offsetLeft;
+        scrollLeft = slide.scrollLeft;
+    });
+    slide.addEventListener('mouseleave', () => {
+        isDown = false;
+        slide.classList.remove('active');
+    });
+    slide.addEventListener('mouseup', () => {
+        isDown = false;
+        slide.classList.remove('active');
+    });
+    slide.addEventListener('mousemove', (e) => {
+        if (!isDown) return;
+        e.preventDefault();
+        const x = e.pageX - slide.offsetLeft;
+        const walk = (x - startX) * 3; //scroll-fast
+        slide.scrollLeft = scrollLeft - walk;
+    });
 });
 
 checarRegistrosBanner();
+obterDetalhesBannerSelecionado();
