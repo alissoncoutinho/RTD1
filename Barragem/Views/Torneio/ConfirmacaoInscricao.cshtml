@@ -14,57 +14,68 @@
 <section class="content">
     @if ((ViewBag.Msg != "") && (ViewBag.Msg != null))
     {
-    <div class="row">
-        <div class="box box-success">
-            <div class="box-header with-border">
-                <h3 class="box-title">@ViewBag.Msg</h3>
-            </div>
-            <div class="box-body">
-                Escolha a opção de pagamento abaixo para participar do torneio:
-            </div>
-            <div class="box-footer">
-                @if (Model.valor != 0)
-                {
-                    if (ViewBag.isAceitaCartao) {
-                        <!--a href="Url.Action("EfetuarPagamento", "Torneio", new { inscricaoId = inscId })" style="text-decoration: none" class="btn btn-success" data-id="Model.Id" title="Efetuar Pagamento">PIX</a-->
-                        <button class="btn btn-success" onclick="buscarQR_code(@inscId)" title="PIX">PIX</button>
-                    }
-                    if ((Model.torneio.dadosBancarios != null) && (Model.torneio.dadosBancarios.Length > 100))
+        <div class="row">
+            <div class="box box-success">
+                <div class="box-header with-border">
+                    <h3 class="box-title">@ViewBag.Msg</h3>
+                </div>
+                <div class="box-body">
+                    Escolha a opção de pagamento abaixo para participar do torneio:
+                </div>
+                <div class="box-footer">
+                    @if (Model.valor != 0)
                     {
-                        <button class="btn btn-success" onclick="mostrarDadosBancarios()" title="Transferência bancária">Transferência</button>
+                        if (ViewBag.isAceitaCartao)
+                        {
+                            <!--a href="Url.Action("EfetuarPagamento", "Torneio", new { inscricaoId = inscId })" style="text-decoration: none" class="btn btn-success" data-id="Model.Id" title="Efetuar Pagamento">PIX</a-->
+                            <button class="btn btn-success" onclick="buscarQR_code(@inscId)" title="PIX">PIX</button>
+                        }
+                        if ((Model.torneio.dadosBancarios != null) && (Model.torneio.dadosBancarios.Length > 100))
+                        {
+                            <button class="btn btn-success" onclick="mostrarDadosBancarios()" title="Transferência bancária">Transferência</button>
+                        }
                     }
-                }
+                </div>
             </div>
         </div>
-    </div>
     }
-    
-    <div class="row exibir-pix" id="qrcode"> 
+
+    <div class="row exibir-pix" id="qrcode">
         <div class="box box-warning">
             <div class="box-header with-border">
-                <h3 class="box-title">PIX</h3> 
+                <h3 class="box-title">PIX</h3>
             </div>
             <div class="box-body" id="qrcode_conteudo">
                 Para confirmar sua inscrição faça um pix seguindo as instruções abaixo ou leia o QR code se estiver no computador:</br></br>
                 <div class="box-body" id="qrcode_img"></div>
-                    1. Acesse seu internet Banking ou app de pagamento;</br>
-                    2. Escolha pagar via PIX;</br>
-                    3. Em alguns apps existe a opção PIX copia e cola;</br>
-                    4. Cole o código abaixo no app e efetue o pagamento;</br>
-                    <div class="row">
-                        <div class="form-group col-sm-8  col-xs-8">
-                            <input type="text" id="textqrcode" class="form-control" readonly value="" />
-                        </div>
-                        <div class="form-group col-sm-2  col-xs-2">
-                            <button id="btnCopiar" class="btn btn-primary">Copiar</button>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-sm-12">
-                            <b>IMPORTANTE:</b> não é necessário enviar comprovante para o organizador.
-                        </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        Para confirmar a sua inscrição leia o QR CODE com o app do banco;
+                        </br>
+                        ou
+                        </br>
+                        COPIE o código abaixo e cole na opção <b>PIX COPIA E COLA</b> no app ou no site do banco.
+                        </br>
+                        <b>Atenção: não</b> cole em Pix Chave Aleatória. Utilize sempre o <b>PIX COPIA E COLA</b>. 
+                        </br>
+                        (Todo banco tem está função)
                     </div>
                 </div>
+
+                <div class="row">
+                    <div class="form-group col-sm-8  col-xs-8">
+                        <input type="text" id="textqrcode" class="form-control" readonly value="" />
+                    </div>
+                    <div class="form-group col-sm-2  col-xs-2">
+                        <button id="btnCopiar" class="btn btn-primary">Copiar</button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <b>IMPORTANTE:</b> não é necessário enviar comprovante para o organizador.
+                    </div>
+                </div>
+            </div>
 
         </div>
     </div>
@@ -89,104 +100,106 @@
 
         </div>
     </div>
-                <div class="row">
+    <div class="row">
 
-                    <div class="box box-info">
-                        <div class="box-header with-border">
-                            <h3 class="box-title">Dados da Inscrição</h3>
+        <div class="box box-info">
+            <div class="box-header with-border">
+                <h3 class="box-title">Dados da Inscrição</h3>
+            </div>
+            <div class="box-body">
+                <div class="col-md-6">
+                    <div class="row">
+                        @Html.Label("Torneio", new { @class = "col-sm-3" })
+                        <div class="col-sm-8 info-box-text">
+                            @Html.Raw(Model.torneio.nome)
                         </div>
-                        <div class="box-body">
-                            <div class="col-md-6">
-                                <div class="row">
-                                    @Html.Label("Torneio", new { @class = "col-sm-3" })
-                                    <div class="col-sm-8 info-box-text">
-                                        @Html.Raw(Model.torneio.nome)
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    @Html.Label("Período", new { @class = "col-sm-3" })
-                                    <div class="col-sm-8 info-box-text">
-                                        @Html.Raw(Model.torneio.dataInicio.ToShortDateString()) a @Html.Raw(Model.torneio.dataFim.ToShortDateString())
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    @Html.Label("Premiação", new { @class = "col-sm-3" })
-                                    <div class="col-sm-8 info-box-text">
-                                        @Html.Raw(Model.torneio.premiacao)
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="row">
-                                    @Html.Label("Inscrito", new { @class = "col-sm-3" })
-                                    <div class="col-sm-8 info-box-text">
-                                        @Html.Raw(Model.participante.nome)
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    @Html.Label("Valor Insrição", new { @class = "col-sm-3" })
-                                    <div class="col-sm-8 info-box-text">
-                                        @Html.Raw("R$ " + valor + ",00")
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    @Html.Label("Classe", new { @class = "col-sm-3" })
-                                    <div class="col-sm-8 info-box-text">
-                                        @Html.Raw(Model.classeTorneio.nome)
-                                    </div>
-                                </div>
-                                @if (!String.IsNullOrEmpty(ViewBag.SegundaOpcaoClasse))
-                                {
-                                    <div class="row">
-                                        @Html.Label("Classe", new { @class = "col-sm-3" })
-                                        <div class="col-sm-8 info-box-text">
-                                            @Html.Raw(ViewBag.SegundaOpcaoClasse)
-                                        </div>
-                                    </div>
-                                }
-                                @if (!String.IsNullOrEmpty(ViewBag.TerceiraOpcaoClasse))
-                                {
-                                    <div class="row">
-                                        @Html.Label("Classe", new { @class = "col-sm-3" })
-                                        <div class="col-sm-8 info-box-text">
-                                            @Html.Raw(ViewBag.TerceiraOpcaoClasse)
-                                        </div>
-                                    </div>
-                                }
-                                @if (!String.IsNullOrEmpty(ViewBag.QuartaOpcaoClasse))
-                                {
-                                    <div class="row">
-                                        @Html.Label("Classe", new { @class = "col-sm-3" })
-                                        <div class="col-sm-8 info-box-text">
-                                            @Html.Raw(ViewBag.QuartaOpcaoClasse)
-                                        </div>
-                                    </div>
-                                }
-                                @if (Model.valor != 0)
-                                {
-                                    <div class="row">
-                                        @Html.Label("Situação", new { @class = "col-sm-3" })
-                                        <div class="col-sm-8 info-box-text">
-                                            @Html.Raw("Pendente Pagamento")
-                                        </div>
-                                    </div>
-                                }
-                            </div>
-                        </div>
-                        
                     </div>
-
+                    <div class="row">
+                        @Html.Label("Período", new { @class = "col-sm-3" })
+                        <div class="col-sm-8 info-box-text">
+                            @Html.Raw(Model.torneio.dataInicio.ToShortDateString()) a @Html.Raw(Model.torneio.dataFim.ToShortDateString())
+                        </div>
+                    </div>
+                    <div class="row">
+                        @Html.Label("Premiação", new { @class = "col-sm-3" })
+                        <div class="col-sm-8 info-box-text">
+                            @Html.Raw(Model.torneio.premiacao)
+                        </div>
+                    </div>
                 </div>
+                <div class="col-md-6">
+                    <div class="row">
+                        @Html.Label("Inscrito", new { @class = "col-sm-3" })
+                        <div class="col-sm-8 info-box-text">
+                            @Html.Raw(Model.participante.nome)
+                        </div>
+                    </div>
+                    <div class="row">
+                        @Html.Label("Valor Insrição", new { @class = "col-sm-3" })
+                        <div class="col-sm-8 info-box-text">
+                            @Html.Raw("R$ " + valor + ",00")
+                        </div>
+                    </div>
+                    <div class="row">
+                        @Html.Label("Classe", new { @class = "col-sm-3" })
+                        <div class="col-sm-8 info-box-text">
+                            @Html.Raw(Model.classeTorneio.nome)
+                        </div>
+                    </div>
+                    @if (!String.IsNullOrEmpty(ViewBag.SegundaOpcaoClasse))
+                    {
+                        <div class="row">
+                            @Html.Label("Classe", new { @class = "col-sm-3" })
+                            <div class="col-sm-8 info-box-text">
+                                @Html.Raw(ViewBag.SegundaOpcaoClasse)
+                            </div>
+                        </div>
+                    }
+                    @if (!String.IsNullOrEmpty(ViewBag.TerceiraOpcaoClasse))
+                    {
+                        <div class="row">
+                            @Html.Label("Classe", new { @class = "col-sm-3" })
+                            <div class="col-sm-8 info-box-text">
+                                @Html.Raw(ViewBag.TerceiraOpcaoClasse)
+                            </div>
+                        </div>
+                    }
+                    @if (!String.IsNullOrEmpty(ViewBag.QuartaOpcaoClasse))
+                    {
+                        <div class="row">
+                            @Html.Label("Classe", new { @class = "col-sm-3" })
+                            <div class="col-sm-8 info-box-text">
+                                @Html.Raw(ViewBag.QuartaOpcaoClasse)
+                            </div>
+                        </div>
+                    }
+                    @if (Model.valor != 0)
+                    {
+                        <div class="row">
+                            @Html.Label("Situação", new { @class = "col-sm-3" })
+                            <div class="col-sm-8 info-box-text">
+                                @Html.Raw("Pendente Pagamento")
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+        </div>
+
+    </div>
 </section>
 
 @section Scripts {
     <script type="text/javascript">
         function mostrarDadosBancarios() {
+            ocultarDadosOutrosMeiosPagamento("DADOS_BANCARIOS");
             var element = document.getElementById("dadosBancarios");
             element.classList.add("show");
         }
 
         function buscarQR_code(inscricaoId) {
+            ocultarDadosOutrosMeiosPagamento("PIX");
             var retorno = null
             $.ajax({
                 url: "/api/InscricaoAPI/" + inscricaoId + "/CobrancaPIXQRCode",
@@ -200,6 +213,7 @@
                     }
                     document.getElementById("textqrcode").value = response.text
                     document.getElementById("qrcodeerro").classList.remove('show');
+
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
                     retorno = jqXHR.responseJSON.Message
@@ -209,7 +223,16 @@
                     document.getElementById("qrcode").classList.remove('show');
                 }
             });
+        }
 
+        function ocultarDadosOutrosMeiosPagamento(opcaoSelecionada) {
+            if (opcaoSelecionada == "PIX") {
+                document.getElementById("dadosBancarios").classList.remove('show');
+            }
+            else if (opcaoSelecionada == "DADOS_BANCARIOS") {
+                document.getElementById("qrcode").classList.remove('show');
+                document.getElementById("qrcodeerro").classList.remove('show');
+            }
         }
 
         function isCelular() {
