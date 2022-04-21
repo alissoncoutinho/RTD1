@@ -16,7 +16,7 @@
         body {
             margin: 10px;
         }
-        </style>
+    </style>
 
 </head>
 
@@ -61,18 +61,32 @@
                     }
                     else
                     {
-                        @item.desafiante.nome
+                        if (item.desafiante2 != null)
+                        {
+                            @Html.Raw(item.desafiante.nome + " / " + item.desafiante2.nome);
+                        }
+                        else
+                        {
+                            @item.desafiante.nome
+                        }
                     }
 
                 </td>
                 <td>
                     @if (item.desafiado == null)
-                {
+                    {
                         @Html.Raw("Aguardando")
                     }
                     else
                     {
-                        @item.desafiado.nome
+                        if (item.desafiado2 != null)
+                        {
+                            @Html.Raw(item.desafiado.nome + " / " + item.desafiado2.nome);
+                        }
+                        else
+                        {
+                            @item.desafiado.nome
+                        }
                     }
                 </td>
                 <td>
