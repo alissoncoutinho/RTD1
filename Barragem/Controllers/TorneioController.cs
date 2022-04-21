@@ -117,6 +117,26 @@ namespace Barragem.Controllers
             }
         }
 
+        [Authorize(Roles = "admin,adminTorneio,adminTorneioTenis")]
+        public ActionResult ExcluirTorneio(int id)
+        {
+            var torneio = db.Torneio.Find(id);
+            var ligasTorneio = db.TorneioLiga.Where(x => x.TorneioId == id);
+            var classesTorneio = db.ClasseTorneio.Where(x => x.torneioId == id);
+
+            if (ligasTorneio != null && ligasTorneio.Any())
+            {
+                db.TorneioLiga.RemoveRange(ligasTorneio);
+            }
+            if (classesTorneio != null && classesTorneio.Any())
+            {
+                db.ClasseTorneio.RemoveRange(classesTorneio);
+            }
+            db.Torneio.Remove(torneio);
+            db.SaveChanges();
+
+            return RedirectToAction("Index");
+        }
 
         [Authorize(Roles = "admin,usuario,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
         public ActionResult AlterarClasse(int torneioId)
@@ -179,6 +199,7 @@ namespace Barragem.Controllers
             }
             var barragem = db.BarragemView.Find(barragemId);
             ViewBag.isBarragemAtiva = barragem.isAtiva;
+
             return View(torneio);
         }
 
