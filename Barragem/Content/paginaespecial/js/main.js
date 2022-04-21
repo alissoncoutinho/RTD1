@@ -226,3 +226,4 @@ slider.forEach(slide => {
 });
 
 checarRegistrosBanner();
+obterDetalhesBannerSelecionado();
