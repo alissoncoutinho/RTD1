@@ -1033,6 +1033,13 @@ footer {
         padding-bottom: 26px;
     }
 
+@media screen and (min-width: 769px) {
+    .colunaRanking {
+        display: flex !important;
+        justify-content: flex-end !important;
+    }
+}
+
 @media screen and (max-width: 420px) {
     .slide__wrapper {
         gap: 80px !important;
@@ -1066,6 +1073,10 @@ footer {
 
     .slide .slide__wrapper .slide__single .nav-link {
         width: 103%;
+    }
+
+    .colunaRanking {
+        text-align: left;
     }
 }
 

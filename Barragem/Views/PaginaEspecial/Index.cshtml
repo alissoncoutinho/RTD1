@@ -316,10 +316,10 @@
                                                 <div class="tab-pane fade @if (countCategoria==0) { @Html.Raw("show active") }" id="categoria-@categoria.IdCategoria" role="tabpanel" aria-labelledby="categoria-@categoria.IdCategoria-tab">
                                                     <table class="table table-striped">
                                                         <thead>
-                                                            <tr class="row  row-line">
+                                                            <tr class="row row-line">
                                                                 <th class="col-2" scope="col"><h6>Posição</h6></th>
                                                                 <th class="col-5" scope="col"><h6>Nome</h6></th>
-                                                                <th class="col-5 d-flex justify-content-end" scope="col"> <h6>Pontuação</h6></th>
+                                                                <th class="col-5 d-flex colunaRanking" scope="col"><h6>Pontuação</h6></th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
@@ -344,7 +344,7 @@
                                                                             <span class="info-table">@jogador.NomeJogador</span>
                                                                         </td><!--col-3-->
 
-                                                                        <td class="col-5 trTable d-flex justify-content-end">
+                                                                        <td class="col-5 trTable colunaRanking">
                                                                             <span class="info-table">@jogador.Pontuacao</span>
                                                                         </td><!--col-3-->
                                                                     </tr>
