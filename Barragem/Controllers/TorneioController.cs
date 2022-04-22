@@ -117,7 +117,7 @@ namespace Barragem.Controllers
             }
         }
 
-        [Authorize(Roles = "admin,adminTorneio,adminTorneioTenis")]
+        [Authorize(Roles = "admin")]
         public ActionResult ExcluirTorneio(int id)
         {
             var torneio = db.Torneio.Find(id);
