@@ -3712,7 +3712,7 @@ p#set {
 }
 
 .exibir-dadosbancarios.show {
-  max-height: 400px;
+  max-height: 500px;
   pointer-events: none;
 }
 
@@ -3743,7 +3743,7 @@ p#set {
 }
 
     .exibir-pix.show {
-        max-height: 500px;
+        max-height: 800px;
         pointer-events: auto;
         margin-bottom: 7px;
     }
