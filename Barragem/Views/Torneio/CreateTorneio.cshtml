@@ -29,7 +29,7 @@
                 <div class="form-group">
                     @Html.LabelFor(model => model.dataInicio, new { @class = "col-sm-2 control-label" })
                     <div class="col-sm-4 input-group date" id="dataInicio" data-date-format="dd/mm/yyyy">
-                        @Html.TextBoxFor(model => model.dataInicio, new { @class = "form-control", @type="dataTorneio" })
+                        @Html.TextBoxFor(model => model.dataInicio, new { @class = "form-control", @type = "dataTorneio" })
                         <span class="input-group-addon">
                             <span class="glyphicon glyphicon-calendar">
                             </span>
@@ -40,7 +40,7 @@
                 <div class="form-group">
                     @Html.LabelFor(model => model.dataFim, new { @class = "col-sm-2 control-label" })
                     <div class="col-sm-4 input-group date" id="dataFim" data-date-format="dd/mm/yyyy">
-                        @Html.TextBoxFor(model => model.dataFim, new { @class = "form-control", @type="dataTorneio" })
+                        @Html.TextBoxFor(model => model.dataFim, new { @class = "form-control", @type = "dataTorneio" })
                         <span class="input-group-addon">
                             <span class="glyphicon glyphicon-calendar">
                             </span>
@@ -75,8 +75,8 @@
                         @Html.TextAreaFor(model => model.contato)
                     </div>
                 </div>
-                    <a href="#tabInscricao" id="btnTab1" class="btn btn-info" data-toggle="tab"><b>Avançar</b></a>
-                </div>
+                <a href="#tabInscricao" id="btnTab1" class="btn btn-info" data-toggle="tab"><b>Avançar</b></a>
+            </div>
         </div>
 
 
@@ -196,51 +196,55 @@
                 @if (ViewBag.LigasDisponiveis.Count > 0)
                 {
                     <div class="panel panel-default">
-                    @if (ViewBag.LigasDisponiveis.Count == 1){
-                        <div class="panel-heading"><b>Este torneio pontuará para o circuito?</b></div>
-                    } else {
-                        <div class="panel-heading"><b>Este torneio pontuará para quais circuitos?</b></div>
-                    }
-                    <div class="panel-body">
-                        @foreach (var lg in ViewBag.LigasDisponiveis)
+                        @if (ViewBag.LigasDisponiveis.Count == 1)
                         {
-                            <div class="row" style="padding-left: 15px;">
-                                <input type="checkbox" name="liga" class="ligas" value="@lg.Liga.Id" onchange="inputCheckboxSelectPontos(this);">
-                                @if (ViewBag.isModeloTodosContraTodos)
-                                {
-                                    <span>@Html.Raw(lg.Liga.Nome)</span>
-                                }
-                                else
-                                {
-                                    if (ViewBag.barragemId == lg.Liga.barragemId) 
+                            <div class="panel-heading"><b>Este torneio pontuará para o circuito?</b></div>
+                        }
+                        else
+                        {
+                            <div class="panel-heading"><b>Este torneio pontuará para quais circuitos?</b></div>
+                        }
+                        <div class="panel-body">
+                            @foreach (var lg in ViewBag.LigasDisponiveis)
+                            {
+                                <div class="row" style="padding-left: 15px;">
+                                    <input type="checkbox" name="liga" class="ligas" value="@lg.Liga.Id" onchange="inputCheckboxSelectPontos(this);">
+                                    @if (ViewBag.isModeloTodosContraTodos)
                                     {
                                         <span>@Html.Raw(lg.Liga.Nome)</span>
-
-                                        <span class="pontuacao-circuito" style="display:none;">
-                                            <span>- Selecione a pontuação: </span>
-                                            <select name="pontuaLiga" id="pontuaLiga" onchange="document.getElementById('pontuacaoLiga').value = this.value">
-                                                <option value="-">-</option>
-                                                <option value="100">100</option>
-                                                <option value="250">250</option>
-                                                <option value="500">500</option>
-                                                <option value="1000">1000</option>
-                                            </select>
-                                        </span>
-                                    } 
-                                    else 
-                                    {
-                                        <span>@Html.Raw(lg.Liga.Nome + " - Pt. " + lg.TipoTorneio)</span>
                                     }
+                                    else
+                                    {
+                                        if (ViewBag.barragemId == lg.Liga.barragemId)
+                                        {
+                                            <span>@Html.Raw(lg.Liga.Nome)</span>
 
-                                }
-                            </div>
-                        }
+                                            <span class="pontuacao-circuito" style="display:none;">
+                                                <span>- Selecione a pontuação: </span>
+                                                <select name="pontuaLiga" id="pontuaLiga" onchange="document.getElementById('pontuacaoLiga').value = this.value">
+                                                    <option value="-">-</option>
+                                                    <option value="100">100</option>
+                                                    <option value="250">250</option>
+                                                    <option value="500">500</option>
+                                                    <option value="1000">1000</option>
+                                                </select>
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span>@Html.Raw(lg.Liga.Nome + " - Pt. " + lg.TipoTorneio)</span>
+                                        }
+
+                                    }
+                                </div>
+                            }
+                        </div>
                     </div>
-                </div>
                 }
 
                 <div class="panel panel-default">
-                    <div class="panel-heading"><b>Marque as categorias que deseja incluir no torneio:</b><br>
+                    <div class="panel-heading">
+                        <b>Marque as categorias que deseja incluir no torneio:</b><br>
                         <small style="color:red">Você poderá adicionar e editar nome de categorias depois</small><br>
                         <small><span class="glyphicon glyphicon-flag"></span> Categorias que pontuam para o ranking</small>
                     </div>
@@ -249,23 +253,28 @@
                         {
                             <div class="row">
                                 <div class="col-sm-3 col-xs-8"><input type="checkbox" class="categorias" name="classes" id="classes" data-qtddtorneios="@ViewBag.qtddTorneios" data-valor="@categoria.Id" data-isLiga="@if (categoria.Ligas.Count > 0) { @Html.Raw("sim") }else{ @Html.Raw("nao") }" value="@categoria.Id"> @categoria.Nome</div>
-                            @if (categoria.Ligas.Count > 0)
-                            {
-                                var title = "";
-                                foreach (var item in categoria.Ligas)
+                                @if (categoria.Ligas.Count > 0)
                                 {
-                                    title = title + item + "; ";
+                                    var title = "";
+                                    foreach (var item in categoria.Ligas)
+                                    {
+                                        title = title + item + "; ";
+                                    }
+                                    <div class="col-sm-2 col-xs-2">
+                                        <span class="glyphicon glyphicon-flag" title="@title">
+                                        </span>
+                                    </div>
                                 }
-                                <div class="col-sm-2 col-xs-2"><span class="glyphicon glyphicon-flag" title="@title">
-                                </span></div>
-                            }
-                            else
-                            {
-                                <div class="col-sm-2 col-xs-2" id=@("flag-" + categoria.Id)></div>
-                            }
+                                else
+                                {
+                                    <div class="col-sm-2 col-xs-2" id=@("flag-" + categoria.Id)></div>
+                                }
                             </div>
                         }
-                    </div></div><a href="#tabConfigFinais" id="btnTab3" class="btn btn-info" data-toggle="tab"><b>Avançar</b></a></div></div><!-- QUARTA ABA: CONFIGURAÇÕES --><div id="tabConfigFinais" class="tab-pane fade">
+                    </div>
+                </div><a href="#tabConfigFinais" id="btnTab3" class="btn btn-info" data-toggle="tab"><b>Avançar</b></a>
+            </div>
+        </div><!-- QUARTA ABA: CONFIGURAÇÕES --><div id="tabConfigFinais" class="tab-pane fade">
             <div class="box-header with-border">
                 <h4 class="box-title">Configurações finais</h4>
             </div>
@@ -376,14 +385,15 @@
                 <input type="submit" id="criarTorneio" class="btn btn-primary" value="Criar Torneio" />
             </div>
         </div>
-    
-</div>
+
+    </div>
 }
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <style>
     .nav-tabs {
         flex-wrap: wrap;
     }
+
     select {
         appearance: auto;
     }
@@ -401,7 +411,7 @@
 
 @section Scripts {
 
-    
+
 
 
     @Scripts.Render("~/bundles/editor")
@@ -516,7 +526,7 @@
                                         toastr.error(textStatus, "Erro");
                                     }
                                 });
-                                
+
                             }
                         },
                         cancelar: { text: 'Não' }
@@ -532,7 +542,7 @@
             if (document.getElementById('valor2').value != "" && (parseInt(document.getElementById('valor2').value) < parseInt(document.getElementById('valor').value))) {
                 alert("O valor da 2ª categoria não pode ser menor que o valor da 1º categoria.");
                 document.getElementById('valor2').value = "";
-                
+
             }
         });
 
@@ -540,7 +550,7 @@
             if (document.getElementById('valor3').value != "" && (parseInt(document.getElementById('valor3').value) < parseInt(document.getElementById('valor').value))) {
                 alert("O valor da 3ª categoria não pode ser menor que o valor da 1º categoria.");
                 document.getElementById('valor3').value = "";
-                
+
             }
         });
 
@@ -548,11 +558,11 @@
             if (document.getElementById('valor4').value != "" && (parseInt(document.getElementById('valor4').value) < parseInt(document.getElementById('valor').value))) {
                 alert("O valor da 4ª categoria não pode ser menor que o valor da 1º categoria.");
                 document.getElementById('valor4').value = "";
-                
+
             }
         });
 
-        
+
 
     function CadastrarValorDescontoSocio() {
         if (document.getElementById('isDesconto').checked) {
