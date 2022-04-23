@@ -618,7 +618,7 @@
                                 toastr.error(response.erro, "Erro");
                             } else {
                                 if (response.retorno != "OK") {
-                                    ExibirMensagem(response.retorno);
+                                    ExibirMsgConfirmaExclusaoJogos(response.retorno);
                                 }
                                 else {
                                     document.forms[2].submit();
@@ -632,7 +632,7 @@
                 });
             }
            
-            function ExibirMensagem(conteudoMensagem) {
+            function ExibirMsgConfirmaExclusaoJogos(conteudoMensagem) {
 
                 var textoInicial = "<p>Você selecionou categorias que já tem jogos concluídos ou horários marcados. <b>Deseja substituir as tabelas já existentes? </b></p>Categorias cujas tabelas serão zeradas:</br>";
 
