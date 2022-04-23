@@ -40,7 +40,7 @@
         </div>
     }
 
-    <div class="row exibir-pix" id="qrcode">
+    <div class="collapse" id="qrcode">
         <div class="box box-warning">
             <div class="box-header with-border">
                 <h3 class="box-title">PIX</h3>
@@ -56,7 +56,7 @@
                         </br>
                         COPIE o código abaixo e cole na opção <b>PIX COPIA E COLA</b> no app ou no site do banco.
                         </br>
-                        <b>Atenção: não</b> cole em Pix Chave Aleatória. Utilize sempre o <b>PIX COPIA E COLA</b>. 
+                        <b>Atenção: não</b> cole em Pix Chave Aleatória. Utilize sempre o <b>PIX COPIA E COLA</b>.
                         </br>
                         (Todo banco tem está função)
                     </div>
@@ -79,7 +79,7 @@
 
         </div>
     </div>
-    <div class="row exibir-pix" id="qrcodeerro">
+    <div class="collapse" id="qrcodeerro">
         <div class="box box-warning">
             <div class="box-header with-border">
                 <h3 class="box-title">Erro: PIX</h3>
@@ -88,7 +88,7 @@
             </div>
         </div>
     </div>
-    <div class="row exibir-dadosbancarios" id="dadosBancarios">
+    <div class="collapse" id="dadosBancarios">
         <div class="box box-warning">
             <div class="box-header with-border">
                 <h3 class="box-title">Transferência</h3>
@@ -194,8 +194,7 @@
     <script type="text/javascript">
         function mostrarDadosBancarios() {
             ocultarDadosOutrosMeiosPagamento("DADOS_BANCARIOS");
-            var element = document.getElementById("dadosBancarios");
-            element.classList.add("show");
+            $("#dadosBancarios").collapse('show');
         }
 
         function buscarQR_code(inscricaoId) {
@@ -206,33 +205,45 @@
                 dataType: "json",
                 contentType: "application/json; charset=utf-8",
                 success: function (response) {
-                    var element = document.getElementById("qrcode");
-                    element.classList.add("show");
+                    exibirDivQrCode(true);
                     if (isCelular() == false) {
                         document.getElementById("qrcode_img").innerHTML = "<center><img id='imgFoto' src='" + response.link + "' style='width:148px;height:148px;'  /></center><br>"
                     }
                     document.getElementById("textqrcode").value = response.text
-                    document.getElementById("qrcodeerro").classList.remove('show');
-
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
                     retorno = jqXHR.responseJSON.Message
-                    var element = document.getElementById("qrcodeerro");
-                    element.classList.add("show");
+                    exibirDivQrCode(false);
                     document.getElementById("qrcodeerro_conteudo").innerHTML = "<p style='color: red;'><b>Erro: </b>" + retorno + "</p>"
-                    document.getElementById("qrcode").classList.remove('show');
                 }
             });
         }
 
         function ocultarDadosOutrosMeiosPagamento(opcaoSelecionada) {
             if (opcaoSelecionada == "PIX") {
-                document.getElementById("dadosBancarios").classList.remove('show');
+                $("#dadosBancarios").collapse('hide');
             }
             else if (opcaoSelecionada == "DADOS_BANCARIOS") {
-                document.getElementById("qrcode").classList.remove('show');
-                document.getElementById("qrcodeerro").classList.remove('show');
+                $("#qrcode").collapse('hide');
+                $("#qrcodeerro").collapse('hide');
             }
+        }
+
+        function exibirDivQrCode(ehSucesso) {
+            if (ehSucesso == true) {
+                $("#qrcode").collapse('show');
+                $("#qrcodeerro").collapse('hide');
+            }
+            else {
+                $("#qrcode").collapse('hide');
+                $("#qrcodeerro").collapse('show');
+            }
+        }
+
+        function inicializarCollapses() {
+            $("#dadosBancarios").collapse('hide');
+            $("#qrcode").collapse('hide');
+            $("#qrcodeerro").collapse('hide');
         }
 
         function isCelular() {
@@ -256,6 +267,8 @@
             navigator.clipboard.writeText(document.getElementById("textqrcode").value);
             toastr.success("Link copiado com sucesso.", "Aviso");
         });
+
+        inicializarCollapses();
     </script>
 }
 
