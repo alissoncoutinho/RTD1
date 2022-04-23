@@ -594,9 +594,6 @@
             });
 
             function gerarTabelas() {
-
-                // Verificar se há jogos já registrados
-
                 var classesSelecionadas = $('input[name=classeIds]:checked').map(function (_, el) {
                     return $(el).val();
                 }).get();
@@ -624,7 +621,7 @@
                                     ExibirMensagem(response.retorno);
                                 }
                                 else {
-                                    //TODO: FORM SUBMIT
+                                    document.forms[2].submit();
                                 }
                             }
                         }
@@ -633,11 +630,6 @@
                         toastr.error(errorThrown, "Erro");
                     }
                 });
-
-
-                //Se ouver então mostra-los na mensagem
-                
-
             }
            
             function ExibirMensagem(conteudoMensagem) {

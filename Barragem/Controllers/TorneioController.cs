@@ -3712,7 +3712,7 @@ namespace Barragem.Controllers
         public ActionResult ValidarJogosJaGerados(int torneioId, int[] classeIds)
         {
             List<string> classesComJogosGerados = new List<string>();
-            List<int> idsSituacao = new List<int>() { { 3 }, { 4 }, { 5 }, { 6 } };
+            List<int> idsSituacaoJogosFinalizados = new List<int>() { { 3 }, { 4 }, { 5 }, { 6 } };
             bool ehMataMata = false;
 
             try
@@ -3742,17 +3742,17 @@ namespace Barragem.Controllers
                         }
 
                         //Validar jogos gerados
-                        var jogoClasse = db.Jogo.Count(x => x.torneioId == torneioId && x.classeTorneio == classeId
+                        var classeComJogosGerados = db.Jogo.Any(x => x.torneioId == torneioId && x.classeTorneio == classeId
                           && ((x.rodadaFaseGrupo != 0 && !ehMataMata) || (x.rodadaFaseGrupo == 0 && ehMataMata))
                           &&
                           (
                               (x.dataJogo != null && x.horaJogo != null)
                               ||
-                              (idsSituacao.Contains(x.situacao_Id) && (x.qtddGames1setDesafiado > 0 || x.qtddGames1setDesafiante > 0 || x.qtddGames2setDesafiado > 0 || x.qtddGames2setDesafiante > 0 || x.qtddGames3setDesafiado > 0 || x.qtddGames3setDesafiante > 0) && x.desafiante2_id != 10)
+                              (idsSituacaoJogosFinalizados.Contains(x.situacao_Id) && (x.qtddGames1setDesafiado > 0 || x.qtddGames1setDesafiante > 0 || x.qtddGames2setDesafiado > 0 || x.qtddGames2setDesafiante > 0 || x.qtddGames3setDesafiado > 0 || x.qtddGames3setDesafiante > 0) && x.desafiante2_id != 10)
                           )
                          );
 
-                        if (jogoClasse > 0)
+                        if (classeComJogosGerados)
                         {
                             classesComJogosGerados.Add(classe.nome);
                         }
