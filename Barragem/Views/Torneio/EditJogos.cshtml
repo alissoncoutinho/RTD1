@@ -47,7 +47,7 @@
                         <div class="form-group">
                             <input type="hidden" name="Id" id="Id" class="form-control">
                             <input type="hidden" id="desafiante_id" name="desafiante_id" value="0">
-                            <input type="hidden" id="desafiado_id" name="desafiado_id"  value="0">
+                            <input type="hidden" id="desafiado_id" name="desafiado_id" value="0">
                         </div>
                         <div class="row clearfix">
                             <div id="nomeDesafiante" class="form-group col-md-3 col-xs-5" style="color:#40898e"></div>
@@ -100,18 +100,18 @@
                                     </select>
                                 </div>
                             </div>
-                         </div>
-                            <div class="row clearfix exibir-inserirResultados" style="margin-top:5px;padding:0px" id="IndicadorVencedor">
-                                <div class="form-group col-md-12 col-xs-12" style="margin-bottom:5px">Marque o <b>VENCEDOR</b> do jogo:</div>
-                                <div class="col-md-12 col-xs-12">
-                                    <input type="radio" id="vDesafiante" name="vencedorWO" value="0"> <label id="vencedorDesafianteNome" style="color:#40898e"></label><br>
-                                    <input type="radio" id="vDesafiado" name="vencedorWO" value="0"> <label id="vencedorDesafiadoNome" style="color:#ff6a00"></label>
-                                </div>
+                        </div>
+                        <div class="row clearfix exibir-inserirResultados" style="margin-top:5px;padding:0px" id="IndicadorVencedor">
+                            <div class="form-group col-md-12 col-xs-12" style="margin-bottom:5px">Marque o <b>VENCEDOR</b> do jogo:</div>
+                            <div class="col-md-12 col-xs-12">
+                                <input type="radio" id="vDesafiante" name="vencedorWO" value="0"> <label id="vencedorDesafianteNome" style="color:#40898e"></label><br>
+                                <input type="radio" id="vDesafiado" name="vencedorWO" value="0"> <label id="vencedorDesafiadoNome" style="color:#ff6a00"></label>
                             </div>
                         </div>
+                    </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal"><span class="spinner-border spinner-border-sm"></span>Cancelar</button>
-                        <input type="submit" value="Salvar" class="btn btn-success" id="salvarPlacar" name="salvarPlacar"/>
+                        <input type="submit" value="Salvar" class="btn btn-success" id="salvarPlacar" name="salvarPlacar" />
                     </div>
                 </form>
             </div>
@@ -137,35 +137,39 @@
                         <h3 class="box-title">Selecione as classes para a geração de tabela</h3>
                     </div>
                     <div class="box-body">
-                        @using (Html.BeginForm("MontarChaveamento", "Torneio", FormMethod.Post, new { @class = "form-row", @name = "FormClasses", @id="FormClasses" }))
+                        @using (Html.BeginForm("MontarChaveamento", "Torneio", FormMethod.Post, new { @class = "form-row", @name = "FormClasses", @id = "FormClasses" }))
                         {
-                        <div class="col-sm-4">
-                            <input type="checkbox" value="1" name="todos" id="todos" onclick="marcarTodos()" /> <b>Todos</b>
-                        </div>
+                            <div class="col-sm-4">
+                                <input type="checkbox" value="1" name="todos" id="todos" onclick="marcarTodos()" /> <b>Todos</b>
+                            </div>
                             foreach (var item2 in ViewBag.Classes)
                             {
                                 var nome = item2.nome;
-                                if (item2.faseGrupo){
+                                if (item2.faseGrupo)
+                                {
                                     nome = item2.nome + " <b style='color:green'>(Fase de Grupo)</b>";
                                 }
                                 var jogosGerados = false;
-                                if (ViewBag.ClassesGeradas.Contains(item2.Id)){
+                                if (ViewBag.ClassesGeradas.Contains(item2.Id))
+                                {
                                     jogosGerados = true;
-                                    if ((item2.faseGrupo) && (item2.faseMataMata) && (!ViewBag.classesFaseGrupoNaoFinalizadas.Contains(item2.Id))){
+                                    if ((item2.faseGrupo) && (item2.faseMataMata) && (!ViewBag.classesFaseGrupoNaoFinalizadas.Contains(item2.Id)))
+                                    {
                                         nome = item2.nome + " <b style='color:red'>(Mata-Mata)</b>";
-                                        if (!ViewBag.ClassesGeradasMataMata.Contains(item2.Id)) {
+                                        if (!ViewBag.ClassesGeradasMataMata.Contains(item2.Id))
+                                        {
                                             jogosGerados = false;
                                         }
                                     }
                                 }
 
-                        <div class="col-sm-4">
-                            <input type="checkbox" value="@item2.Id" name="classeIds" id="classeIds" @if (!jogosGerados) { @Html.Raw("checked")   } />
-                            @Html.Raw(nome)
-                        </div>
+                                <div class="col-sm-4">
+                                    <input type="checkbox" value="@item2.Id" name="classeIds" id="classeIds" @if (!jogosGerados) { @Html.Raw("checked") } />
+                                    @Html.Raw(nome)
+                                </div>
                             }
-                        <input type="hidden" value="@ViewBag.TorneioId" name="torneioId" id="torneioId">
-                        <button class="btn btn-primary btn-small confirm">Gerar Tabela</button>
+                            <input type="hidden" value="@ViewBag.TorneioId" name="torneioId" id="torneioId">
+                            <button id="btnGerarTabela" type="button" onclick="gerarTabelas()" class="btn btn-primary btn-small">Gerar Tabela</button>
                         }
                     </div>
                 </div>
@@ -176,7 +180,7 @@
                         <option value="1">Todas classes</option>
                         @foreach (var item2 in ViewBag.Classes)
                         {
-                        <option value="@item2.Id" @if (ViewBag.fClasse == item2.Id) { @Html.Raw("selected")        }>@item2.nome</option>
+                            <option value="@item2.Id" @if (ViewBag.fClasse == item2.Id) { @Html.Raw("selected") }>@item2.nome</option>
                         }
                     </select>
 
@@ -195,28 +199,28 @@
                 </div>
                 <div class="form-group col-sm-2">
                     <select name="fGrupo" id="fGrupo" class="form-control">
-                        <option value="0" @if (ViewBag.fGrupo == "0") { @Html.Raw("selected")  }>Grupos</option>
-                        <option value="1" @if (ViewBag.fGrupo == "1") { @Html.Raw("selected")  }>grupo 1</option>
-                        <option value="2" @if (ViewBag.fGrupo == "2") { @Html.Raw("selected")  }>grupo 2</option>
-                        <option value="3" @if (ViewBag.fGrupo == "3") { @Html.Raw("selected")  }>grupo 3</option>
-                        <option value="4" @if (ViewBag.fGrupo == "4") { @Html.Raw("selected")  }>grupo 4</option>
-                        <option value="5" @if (ViewBag.fGrupo == "5") { @Html.Raw("selected")  }>grupo 5</option>
-                        <option value="6" @if (ViewBag.fGrupo == "6") { @Html.Raw("selected")  }>grupo 6</option>
-                        <option value="7" @if (ViewBag.fGrupo == "7") { @Html.Raw("selected")  }>grupo 7</option>
-                        <option value="8" @if (ViewBag.fGrupo == "8") { @Html.Raw("selected")  }>grupo 8</option>
+                        <option value="0" @if (ViewBag.fGrupo == "0") { @Html.Raw("selected") }>Grupos</option>
+                        <option value="1" @if (ViewBag.fGrupo == "1") { @Html.Raw("selected") }>grupo 1</option>
+                        <option value="2" @if (ViewBag.fGrupo == "2") { @Html.Raw("selected") }>grupo 2</option>
+                        <option value="3" @if (ViewBag.fGrupo == "3") { @Html.Raw("selected") }>grupo 3</option>
+                        <option value="4" @if (ViewBag.fGrupo == "4") { @Html.Raw("selected") }>grupo 4</option>
+                        <option value="5" @if (ViewBag.fGrupo == "5") { @Html.Raw("selected") }>grupo 5</option>
+                        <option value="6" @if (ViewBag.fGrupo == "6") { @Html.Raw("selected") }>grupo 6</option>
+                        <option value="7" @if (ViewBag.fGrupo == "7") { @Html.Raw("selected") }>grupo 7</option>
+                        <option value="8" @if (ViewBag.fGrupo == "8") { @Html.Raw("selected") }>grupo 8</option>
 
                     </select>
                 </div>
                 <div class="form-group col-sm-2">
                     <select name="fase" id="fase" class="form-control">
-                        <option value="0" @if (ViewBag.fase == 0) { @Html.Raw("selected")   }>Fases</option>
-                        <option value="700" @if (ViewBag.fase == 700) { @Html.Raw("selected")   }>Grupo</option>
-                        <option value="6" @if (ViewBag.fase == 6) { @Html.Raw("selected")   }>R1</option>
-                        <option value="5" @if (ViewBag.fase == 5) { @Html.Raw("selected")   }>R2</option>
-                        <option value="4" @if (ViewBag.fase == 4) { @Html.Raw("selected")   }>Oitavas</option>
-                        <option value="3" @if (ViewBag.fase == 3) { @Html.Raw("selected")   }>Quartas</option>
-                        <option value="2" @if (ViewBag.fase == 2) { @Html.Raw("selected")   }>Semi</option>
-                        <option value="1" @if (ViewBag.fase == 1) { @Html.Raw("selected")   }>Final</option>
+                        <option value="0" @if (ViewBag.fase == 0) { @Html.Raw("selected") }>Fases</option>
+                        <option value="700" @if (ViewBag.fase == 700) { @Html.Raw("selected") }>Grupo</option>
+                        <option value="6" @if (ViewBag.fase == 6) { @Html.Raw("selected") }>R1</option>
+                        <option value="5" @if (ViewBag.fase == 5) { @Html.Raw("selected") }>R2</option>
+                        <option value="4" @if (ViewBag.fase == 4) { @Html.Raw("selected") }>Oitavas</option>
+                        <option value="3" @if (ViewBag.fase == 3) { @Html.Raw("selected") }>Quartas</option>
+                        <option value="2" @if (ViewBag.fase == 2) { @Html.Raw("selected") }>Semi</option>
+                        <option value="1" @if (ViewBag.fase == 1) { @Html.Raw("selected") }>Final</option>
                     </select>
                 </div>
                 <div class="form-group col-sm-2">
@@ -261,164 +265,172 @@
                     @foreach (var item in Model)
                     {
                         i++;
-                    <tr>
-                        <td>
-                            @i
-                        </td>
-                        <td>
-                            @if (ViewBag.fClasse != 1 && ((Roles.IsUserInRole("admin")) || ((ViewBag.primeirafase != null) && (ViewBag.primeirafase == item.faseTorneio)) || item.classe.faseGrupo))
+                        <tr>
+                            <td>
+                                @i
+                            </td>
+                            <td>
+                                @if (ViewBag.fClasse != 1 && ((Roles.IsUserInRole("admin")) || ((ViewBag.primeirafase != null) && (ViewBag.primeirafase == item.faseTorneio)) || item.classe.faseGrupo))
                                 {
-                            <select name="@Html.Raw("jogador1_" + i)" id="@Html.Raw("jogador1_" + i)" class="form-control">
-                                <option value="0">aguardando adversário</option>
-                                <option value="10" @if (item.desafiante_id == 10) { @Html.Raw("selected")      }>bye</option>
-                                @foreach (var item2 in ViewBag.Inscritos)
-                            {
-                                var nomeJogadores = item2.participante.nome;
-                                if(item2.parceiroDupla != null)
+                                    <select name="@Html.Raw("jogador1_" + i)" id="@Html.Raw("jogador1_" + i)" class="form-control">
+                                        <option value="0">aguardando adversário</option>
+                                        <option value="10" @if (item.desafiante_id == 10) { @Html.Raw("selected") }>bye</option>
+                                        @foreach (var item2 in ViewBag.Inscritos)
+                                        {
+                                            var nomeJogadores = item2.participante.nome;
+                                            if (item2.parceiroDupla != null)
+                                            {
+                                                nomeJogadores = item2.participante.nome + " / " + item2.parceiroDupla.nome;
+                                            }
+                                            <option value="@item2.userId" @if (item.desafiante_id == item2.userId) { @Html.Raw("selected") }>@nomeJogadores </option>
+                                        }
+                                    </select>
+                                }
+                                else
                                 {
-                                    nomeJogadores = item2.participante.nome + " / " + item2.parceiroDupla.nome;
+                                    <input type="hidden" name="@Html.Raw("jogador1_" + i)" id="@Html.Raw("jogador1_" + i)" value="@item.desafiante_id">
+                                    if (item.desafiante_id == 10)
+                                    {
+                                        @Html.Raw("Bye");
+                                        <input type="hidden" name="@Html.Raw("jogador1Nome_" + i)" id="@Html.Raw("jogador1Nome_" + i)" value="Bye">
+                                    }
+                                    else if (item.desafiante_id == 0)
+                                    {
+                                        @Html.Raw("Aguardando Adversário");
+                                        <input type="hidden" name="@Html.Raw("jogador1Nome_" + i)" id="@Html.Raw("jogador1Nome_" + i)" value="Aguardando Adversário">
+                                    }
+                                    else
+                                    {
+                                        <input type="hidden" name="@Html.Raw("jogador1Nome_" + i)" id="@Html.Raw("jogador1Nome_" + i)" value="@item.desafiante.nome">
+                                        <a href="@Url.Action("../Account/Detalhes", new { userId = item.desafiante_id, mostrarClasse = false })" title="Detalhes do jogador">
+                                            @item.desafiante.nome
+                                        </a>
+                                        <a href="@item.desafiante.linkwhatsapp">
+                                            <img width="25" height="25" src="/Content/image/whatsapp.png">
+                                        </a>
+                                    }
                                 }
-                                <option value="@item2.userId" @if (item.desafiante_id == item2.userId) { @Html.Raw("selected")  }>@nomeJogadores </option>
-                                }
-                            </select>
-                        } else {
-                            <input type="hidden" name="@Html.Raw("jogador1_" + i)" id="@Html.Raw("jogador1_" + i)" value="@item.desafiante_id">
-                            if (item.desafiante_id == 10){
-                            @Html.Raw("Bye");
-                            <input type="hidden" name="@Html.Raw("jogador1Nome_" + i)" id="@Html.Raw("jogador1Nome_" + i)" value="Bye">
-                            }
-                            else if (item.desafiante_id == 0)
-                            {
-                            @Html.Raw("Aguardando Adversário");
-                            <input type="hidden" name="@Html.Raw("jogador1Nome_" + i)" id="@Html.Raw("jogador1Nome_" + i)" value="Aguardando Adversário">
-                            }
-                            else
-                            {
-                            <input type="hidden" name="@Html.Raw("jogador1Nome_" + i)" id="@Html.Raw("jogador1Nome_" + i)" value="@item.desafiante.nome">
-                            <a href="@Url.Action("../Account/Detalhes", new { userId = item.desafiante_id, mostrarClasse = false })" title="Detalhes do jogador">
-                                @item.desafiante.nome
-                            </a>
-                            <a href="@item.desafiante.linkwhatsapp">
-                                <img width="25" height="25" src="/Content/image/whatsapp.png">
-                            </a>
-                            }
-                        }
-                        </td>
-                        <td>
-                            @if (ViewBag.fClasse != 1 && ((Roles.IsUserInRole("admin")) || ((ViewBag.primeirafase != null) && (ViewBag.primeirafase == item.faseTorneio)) || item.classe.faseGrupo))
+                            </td>
+                            <td>
+                                @if (ViewBag.fClasse != 1 && ((Roles.IsUserInRole("admin")) || ((ViewBag.primeirafase != null) && (ViewBag.primeirafase == item.faseTorneio)) || item.classe.faseGrupo))
                                 {
-                            <select name="@Html.Raw("jogador2_" + i)" id="@Html.Raw("jogador2_" + i)" class="form-control">
-                                <option value="0">aguardando adversário</option>
-                                <option value="10">bye</option>
-                                @foreach (var item2 in ViewBag.Inscritos){
-                            var nomeJogadores = item2.participante.nome;
-                            if (item2.parceiroDupla != null)
-                            {
-                                nomeJogadores = item2.participante.nome + " / " + item2.parceiroDupla.nome;
-                            }
-                                <option value="@item2.userId" @if (item.desafiado_id == item2.userId) { @Html.Raw("selected")         }>@nomeJogadores</option>
+                                    <select name="@Html.Raw("jogador2_" + i)" id="@Html.Raw("jogador2_" + i)" class="form-control">
+                                        <option value="0">aguardando adversário</option>
+                                        <option value="10">bye</option>
+                                        @foreach (var item2 in ViewBag.Inscritos)
+                                        {
+                                            var nomeJogadores = item2.participante.nome;
+                                            if (item2.parceiroDupla != null)
+                                            {
+                                                nomeJogadores = item2.participante.nome + " / " + item2.parceiroDupla.nome;
+                                            }
+                                            <option value="@item2.userId" @if (item.desafiado_id == item2.userId) { @Html.Raw("selected") }>@nomeJogadores</option>
+                                        }
+                                    </select>
                                 }
-                            </select>
-                        }else{
-                            <input type="hidden" name="@Html.Raw("jogador2_" + i)" id="@Html.Raw("jogador2_" + i)" value="@item.desafiado_id">
-                            if (item.desafiado_id == 10){
-                            @Html.Raw("Bye");
-                            <input type="hidden" name="@Html.Raw("jogador2Nome_" + i)" id="@Html.Raw("jogador2Nome_" + i)" value="Bye">
-                            }
-                            else if (item.desafiado_id == 0)
-                            {
-                            @Html.Raw("Aguardando Adversário");
-                            <input type="hidden" name="@Html.Raw("jogador2Nome_" + i)" id="@Html.Raw("jogador2Nome_" + i)" value="Aguardando Adversário">
-                            }
-                            else
-                            {
-                            <input type="hidden" name="@Html.Raw("jogador2Nome_" + i)" id="@Html.Raw("jogador2Nome_" + i)" value="@item.desafiado.nome">
-                            <a href="@Url.Action("../Account/Detalhes", new { userId = item.desafiado_id, mostrarClasse = false })" title="Detalhes do jogador">
-                                @item.desafiado.nome
-                            </a>
-                            <a href="@item.desafiado.linkwhatsapp">
-                                <img width="25" height="25" src="/Content/image/whatsapp.png">
-                            </a>
-                            }
-                        }
-                        </td>
-                        <td>
-                            @Html.Raw(item.descricaoFaseTorneio)
-                        </td>
-                        <td>
-                            @if (item.situacao_Id == 1){
-                            @Html.Raw("<p id='badge"+ item.Id +"' class='badge bg-red'>P</p>")
-                        }
-                        else if (item.situacao_Id == 2)
-                        {
-                            @Html.Raw("<p id='badge" + item.Id + "' class='badge bg-yellow'>M</p>")
-                        }
-                        else if ((item.situacao_Id == 4) || (item.situacao_Id == 5) || (item.situacao_Id == 6))
-                        {
-                            @Html.Raw("<p id='badge" + item.Id + "' class='badge bg-green'>F</p>")
-                        }
-                        </td>
+                                else
+                                {
+                                    <input type="hidden" name="@Html.Raw("jogador2_" + i)" id="@Html.Raw("jogador2_" + i)" value="@item.desafiado_id">
+                                    if (item.desafiado_id == 10)
+                                    {
+                                        @Html.Raw("Bye");
+                                        <input type="hidden" name="@Html.Raw("jogador2Nome_" + i)" id="@Html.Raw("jogador2Nome_" + i)" value="Bye">
+                                    }
+                                    else if (item.desafiado_id == 0)
+                                    {
+                                        @Html.Raw("Aguardando Adversário");
+                                        <input type="hidden" name="@Html.Raw("jogador2Nome_" + i)" id="@Html.Raw("jogador2Nome_" + i)" value="Aguardando Adversário">
+                                    }
+                                    else
+                                    {
+                                        <input type="hidden" name="@Html.Raw("jogador2Nome_" + i)" id="@Html.Raw("jogador2Nome_" + i)" value="@item.desafiado.nome">
+                                        <a href="@Url.Action("../Account/Detalhes", new { userId = item.desafiado_id, mostrarClasse = false })" title="Detalhes do jogador">
+                                            @item.desafiado.nome
+                                        </a>
+                                        <a href="@item.desafiado.linkwhatsapp">
+                                            <img width="25" height="25" src="/Content/image/whatsapp.png">
+                                        </a>
+                                    }
+                                }
+                            </td>
+                            <td>
+                                @Html.Raw(item.descricaoFaseTorneio)
+                            </td>
+                            <td>
+                                @if (item.situacao_Id == 1)
+                                {
+                                    @Html.Raw("<p id='badge" + item.Id + "' class='badge bg-red'>P</p>")
+                                }
+                                else if (item.situacao_Id == 2)
+                                {
+                                    @Html.Raw("<p id='badge" + item.Id + "' class='badge bg-yellow'>M</p>")
+                                }
+                                else if ((item.situacao_Id == 4) || (item.situacao_Id == 5) || (item.situacao_Id == 6))
+                                {
+                                    @Html.Raw("<p id='badge" + item.Id + "' class='badge bg-green'>F</p>")
+                                }
+                            </td>
 
 
-                        <td>
+                            <td>
 
 
-                            <div class="input-group date" data-date-format="dd/mm/yyyy">
-                                <input id="@Html.Raw("dataJogo" + i)" name="@Html.Raw("dataJogo" + i)" value="@Html.Raw(String.Format("{0:dd/MM/yyyy}", item.dataJogo))" placeholder="dd/mm/yyyy" type="text" class="form-control col-md-5 date" />
-                                <span class="input-group-addon">
-                                    <span class="glyphicon glyphicon-calendar">
+                                <div class="input-group date" data-date-format="dd/mm/yyyy">
+                                    <input id="@Html.Raw("dataJogo" + i)" name="@Html.Raw("dataJogo" + i)" value="@Html.Raw(String.Format("{0:dd/MM/yyyy}", item.dataJogo))" placeholder="dd/mm/yyyy" type="text" class="form-control col-md-5 date" />
+                                    <span class="input-group-addon">
+                                        <span class="glyphicon glyphicon-calendar">
+                                        </span>
                                     </span>
-                                </span>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="input-group">
-                                <div class="form-group">
-                                    <input id="@Html.Raw("horaJogo" + i)" name="@Html.Raw("horaJogo" + i)" value="@Html.Raw(item.horaJogo)" placeholder="hh:mm" type="text" class="form-control col-sm-4 hora" />
                                 </div>
-                            </div>
-                        </td>
-                        <td>
-                            <select name="@Html.Raw("quadra" + i)" id="@Html.Raw("quadra" + i)" class="form-control">
-                                <option value="100" @if (item.quadra == "100") { @Html.Raw("selected")        }></option>
-                                <option value="1" @if (item.quadra == "1") { @Html.Raw("selected")         }>quadra 1</option>
-                                <option value="2" @if (item.quadra == "2") { @Html.Raw("selected")         }>quadra 2</option>
-                                <option value="3" @if (item.quadra == "3") { @Html.Raw("selected")         }>quadra 3</option>
-                                <option value="4" @if (item.quadra == "4") { @Html.Raw("selected")         }>quadra 4</option>
-                                <option value="5" @if (item.quadra == "5") { @Html.Raw("selected")         }>quadra 5</option>
-                                <option value="6" @if (item.quadra == "6") { @Html.Raw("selected")         }>quadra 6</option>
-                                <option value="7" @if (item.quadra == "7") { @Html.Raw("selected")         }>quadra 7</option>
-                                <option value="8" @if (item.quadra == "8") { @Html.Raw("selected")         }>quadra 8</option>
-                                <option value="9" @if (item.quadra == "9") { @Html.Raw("selected")         }>quadra 9</option>
-                                <option value="10" @if (item.quadra == "10") { @Html.Raw("selected")         }>quadra 10</option>
-                                <option value="11" @if (item.quadra == "11") { @Html.Raw("selected")         }>quadra 11</option>
-                                <option value="12" @if (item.quadra == "12") { @Html.Raw("selected")         }>quadra 12</option>
-                                <option value="13" @if (item.quadra == "13") { @Html.Raw("selected")         }>quadra 13</option>
-                                <option value="14" @if (item.quadra == "14") { @Html.Raw("selected")         }>quadra 14</option>
-                                <option value="15" @if (item.quadra == "15") { @Html.Raw("selected")         }>quadra 15</option>
-                                <option value="G1" @if (item.quadra == "G1") { @Html.Raw("selected")          }>quadra G1</option>
-                                <option value="G2" @if (item.quadra == "G2") { @Html.Raw("selected")          }>quadra G2</option>
-                            </select>
-                        </td>
-                        <td align="center">
-                            <form method="post" enctype="multipart/form-data" action="#" name="@Html.Raw("form"+i)" id="@Html.Raw("form"+i)" class="form">
-                                <input type="hidden" name="Id" id="Id" value="@item.Id">
-                                <button title="salvar" data-valor="@Html.Raw(i)" name="@Html.Raw("button"+i)" id="@Html.Raw("button"+i)" class="btn btn-default btn-xs inscricaoButton">
-                                    Salvar
-                                </button><br>
-                                <!--a href="//Url.Action("LancarResultado", new {id=item.Id })" title="placar" class="btn btn-default btn-xs inscricaoButton">
-                            Placar
-                        </a-->
-                            </form>
-                            <button type="button" id="@Html.Raw("btnPlacar"+item.Id)" class="btn btn-info btn-xs btnLancarPlacar" data-vencedor="@item.idDoVencedor" data-toggle="modal" data-situacao="@item.situacao_Id" data-indice="@i"
-                                    data-placar="@item.qtddGames1setDesafiante|@item.qtddGames1setDesafiado|@item.qtddGames2setDesafiante|@item.qtddGames2setDesafiado|@item.qtddGames3setDesafiante|@item.qtddGames3setDesafiado"
-                                    data-idJogo="@item.Id" data-desafianteId="@item.desafiante_id" data-desafiadoId="@item.desafiado_id" data-target="#placar-modal">
-                                Placar
-                            </button>
+                            </td>
+                            <td>
+                                <div class="input-group">
+                                    <div class="form-group">
+                                        <input id="@Html.Raw("horaJogo" + i)" name="@Html.Raw("horaJogo" + i)" value="@Html.Raw(item.horaJogo)" placeholder="hh:mm" type="text" class="form-control col-sm-4 hora" />
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <select name="@Html.Raw("quadra" + i)" id="@Html.Raw("quadra" + i)" class="form-control">
+                                    <option value="100" @if (item.quadra == "100") { @Html.Raw("selected") }></option>
+                                    <option value="1" @if (item.quadra == "1") { @Html.Raw("selected") }>quadra 1</option>
+                                    <option value="2" @if (item.quadra == "2") { @Html.Raw("selected") }>quadra 2</option>
+                                    <option value="3" @if (item.quadra == "3") { @Html.Raw("selected") }>quadra 3</option>
+                                    <option value="4" @if (item.quadra == "4") { @Html.Raw("selected") }>quadra 4</option>
+                                    <option value="5" @if (item.quadra == "5") { @Html.Raw("selected") }>quadra 5</option>
+                                    <option value="6" @if (item.quadra == "6") { @Html.Raw("selected") }>quadra 6</option>
+                                    <option value="7" @if (item.quadra == "7") { @Html.Raw("selected") }>quadra 7</option>
+                                    <option value="8" @if (item.quadra == "8") { @Html.Raw("selected") }>quadra 8</option>
+                                    <option value="9" @if (item.quadra == "9") { @Html.Raw("selected") }>quadra 9</option>
+                                    <option value="10" @if (item.quadra == "10") { @Html.Raw("selected") }>quadra 10</option>
+                                    <option value="11" @if (item.quadra == "11") { @Html.Raw("selected") }>quadra 11</option>
+                                    <option value="12" @if (item.quadra == "12") { @Html.Raw("selected") }>quadra 12</option>
+                                    <option value="13" @if (item.quadra == "13") { @Html.Raw("selected") }>quadra 13</option>
+                                    <option value="14" @if (item.quadra == "14") { @Html.Raw("selected") }>quadra 14</option>
+                                    <option value="15" @if (item.quadra == "15") { @Html.Raw("selected") }>quadra 15</option>
+                                    <option value="G1" @if (item.quadra == "G1") { @Html.Raw("selected") }>quadra G1</option>
+                                    <option value="G2" @if (item.quadra == "G2") { @Html.Raw("selected") }>quadra G2</option>
+                                </select>
+                            </td>
+                            <td align="center">
+                                <form method="post" enctype="multipart/form-data" action="#" name="@Html.Raw("form"+i)" id="@Html.Raw("form"+i)" class="form">
+                                    <input type="hidden" name="Id" id="Id" value="@item.Id">
+                                    <button title="salvar" data-valor="@Html.Raw(i)" name="@Html.Raw("button"+i)" id="@Html.Raw("button"+i)" class="btn btn-default btn-xs inscricaoButton">
+                                        Salvar
+                                    </button><br>
+                                    <!--a href="//Url.Action("LancarResultado", new {id=item.Id })" title="placar" class="btn btn-default btn-xs inscricaoButton">
+                                        Placar
+                                    </a-->
+                                </form>
+                                <button type="button" id="@Html.Raw("btnPlacar"+item.Id)" class="btn btn-info btn-xs btnLancarPlacar" data-vencedor="@item.idDoVencedor" data-toggle="modal" data-situacao="@item.situacao_Id" data-indice="@i"
+                                        data-placar="@item.qtddGames1setDesafiante|@item.qtddGames1setDesafiado|@item.qtddGames2setDesafiante|@item.qtddGames2setDesafiado|@item.qtddGames3setDesafiante|@item.qtddGames3setDesafiado"
+                                        data-idJogo="@item.Id" data-desafianteId="@item.desafiante_id" data-desafiadoId="@item.desafiado_id" data-target="#placar-modal">
+                                    Placar
+                                </button>
 
-                        </td>
+                            </td>
 
-                    </tr>
+                        </tr>
                     }
                 </table>
             </div>
@@ -432,9 +444,9 @@
             transition: max-height 1s ease-in-out;
         }
 
-        .exibir-escolhaDeClasses.show {
-            max-height: 700px;
-        }
+            .exibir-escolhaDeClasses.show {
+                max-height: 700px;
+            }
 
         .loader,
         .loader:after {
@@ -442,6 +454,7 @@
             width: 10em;
             height: 10em;
         }
+
         .loader {
             margin: 60px auto;
             font-size: 10px;
@@ -457,7 +470,7 @@
             -webkit-animation: load8 1.1s infinite linear;
             animation: load8 1.1s infinite linear;
         }
-        
+
         #loadingDiv {
             display: none;
             position: fixed;
@@ -470,248 +483,302 @@
             z-index: 10000;
         }
     </style>
-            @section Scripts {
-                @Scripts.Render("~/bundles/jqueryval")
-                @Scripts.Render("~/bundles/jqueryform")
-                <script type="text/javascript">
-                    var spinner = $('#loadingDiv');
-                    $(document).on("click", ".btnLancarPlacar", function () {
-                        var indice = $(this).attr('data-indice');
-                        var id = $(this).attr('data-idJogo');
-                        var situacao = $(this).attr('data-situacao');
-                        var vencedorWO = $(this).attr('data-vencedor');
-                        var desafiante_id = $(this).attr('data-desafianteId');
-                        var desafiado_id = $(this).attr('data-desafiadoId');
-                        var placar = $(this).attr('data-placar');
-                        var desafiante = document.querySelector("#jogador1_" + indice);
-                        var desafiado = document.querySelector("#jogador2_" + indice);
-                        if (typeof desafiante.options === "undefined") {
-                            var nomeDesafiante = document.getElementById("jogador1Nome_" + indice).value;
-                            var nomeDesafiado = document.getElementById("jogador2Nome_" + indice).value;
-                        } else {
-                            var nomeDesafiante = desafiante.options[desafiante.selectedIndex].text;
-                            var nomeDesafiado = desafiado.options[desafiado.selectedIndex].text;
+    @section Scripts {
+        @Scripts.Render("~/bundles/jqueryval")
+        @Scripts.Render("~/bundles/jqueryform")
+        <script type="text/javascript">
+            var spinner = $('#loadingDiv');
+            $(document).on("click", ".btnLancarPlacar", function () {
+                var indice = $(this).attr('data-indice');
+                var id = $(this).attr('data-idJogo');
+                var situacao = $(this).attr('data-situacao');
+                var vencedorWO = $(this).attr('data-vencedor');
+                var desafiante_id = $(this).attr('data-desafianteId');
+                var desafiado_id = $(this).attr('data-desafiadoId');
+                var placar = $(this).attr('data-placar');
+                var desafiante = document.querySelector("#jogador1_" + indice);
+                var desafiado = document.querySelector("#jogador2_" + indice);
+                if (typeof desafiante.options === "undefined") {
+                    var nomeDesafiante = document.getElementById("jogador1Nome_" + indice).value;
+                    var nomeDesafiado = document.getElementById("jogador2Nome_" + indice).value;
+                } else {
+                    var nomeDesafiante = desafiante.options[desafiante.selectedIndex].text;
+                    var nomeDesafiado = desafiado.options[desafiado.selectedIndex].text;
 
-                        }
-                        var str = placar.split('|');
-                        var set1Desafiante = str[0];
-                        var set1Desafiado = str[1];
-                        var set2Desafiante = str[2];
-                        var set2Desafiado = str[3];
-                        var set3Desafiante = str[4];
-                        var set3Desafiado = str[5];
-                        $(".modal-body #Id").val(id);
-                        $(".modal-body #qtddGames1setDesafiante").val(set1Desafiante);
-                        $(".modal-body #qtddGames1setDesafiado").val(set1Desafiado);
-                        $(".modal-body #qtddGames2setDesafiante").val(set2Desafiante);
-                        $(".modal-body #qtddGames2setDesafiado").val(set2Desafiado);
-                        $(".modal-body #qtddGames3setDesafiante").val(set3Desafiante);
-                        $(".modal-body #qtddGames3setDesafiado").val(set3Desafiado);
-                        $(".modal-body #vDesafiante").val(desafiante_id);
-                        $(".modal-body #vDesafiado").val(desafiado_id);
-                        $(".modal-body #desafiante_id").val(desafiante_id);
-                        $(".modal-body #desafiado_id").val(desafiado_id);
-                        if (vencedorWO == desafiante_id) {
-                            $(".modal-body #vDesafiante").attr('checked', true);
-                        } else {
-                            $(".modal-body #vDesafiado").attr('checked', true);
-                        }
+                }
+                var str = placar.split('|');
+                var set1Desafiante = str[0];
+                var set1Desafiado = str[1];
+                var set2Desafiante = str[2];
+                var set2Desafiado = str[3];
+                var set3Desafiante = str[4];
+                var set3Desafiado = str[5];
+                $(".modal-body #Id").val(id);
+                $(".modal-body #qtddGames1setDesafiante").val(set1Desafiante);
+                $(".modal-body #qtddGames1setDesafiado").val(set1Desafiado);
+                $(".modal-body #qtddGames2setDesafiante").val(set2Desafiante);
+                $(".modal-body #qtddGames2setDesafiado").val(set2Desafiado);
+                $(".modal-body #qtddGames3setDesafiante").val(set3Desafiante);
+                $(".modal-body #qtddGames3setDesafiado").val(set3Desafiado);
+                $(".modal-body #vDesafiante").val(desafiante_id);
+                $(".modal-body #vDesafiado").val(desafiado_id);
+                $(".modal-body #desafiante_id").val(desafiante_id);
+                $(".modal-body #desafiado_id").val(desafiado_id);
+                if (vencedorWO == desafiante_id) {
+                    $(".modal-body #vDesafiante").attr('checked', true);
+                } else {
+                    $(".modal-body #vDesafiado").attr('checked', true);
+                }
 
-                        $("select#situacao_id").val(situacao);
-                        exibirOpcaoVencedores()
-                        $(".modal-body #nomeDesafiante").html(nomeDesafiante);
-                        $(".modal-body #nomeDesafiado").html(nomeDesafiado);
-                        $(".modal-body #vencedorDesafiadoNome").html(nomeDesafiado);
-                        $(".modal-body #vencedorDesafianteNome").html(nomeDesafiante);
-                    });
+                $("select#situacao_id").val(situacao);
+                exibirOpcaoVencedores()
+                $(".modal-body #nomeDesafiante").html(nomeDesafiante);
+                $(".modal-body #nomeDesafiado").html(nomeDesafiado);
+                $(".modal-body #vencedorDesafiadoNome").html(nomeDesafiado);
+                $(".modal-body #vencedorDesafianteNome").html(nomeDesafiante);
+            });
 
-                    $(".date").datepicker({
-                        language: 'pt-BR',
-                        pickTime: false,
-                        locale: 'pt-br',
-                        dateFormat: 'dd/mm/yy'
-                    });
+            $(".date").datepicker({
+                language: 'pt-BR',
+                pickTime: false,
+                locale: 'pt-br',
+                dateFormat: 'dd/mm/yy'
+            });
 
-                    $(document).ready(function () {
-                        $(".hora").mask("99:99");
+            $(document).ready(function () {
+                $(".hora").mask("99:99");
 
-                        $(".inscricaoButton").click(function (event) {
-                            var i = $(this).data("valor");
-                            var Id = $("#form" + i).find("input[name=Id]").val();
-                            var jogador1 = document.getElementById("jogador1_" + i).value;
-                            var jogador2 = document.getElementById("jogador2_" + i).value;
-                            var dataJogo = document.getElementById("dataJogo" + i).value;
-                            var horaJogo = document.getElementById("horaJogo" + i).value;
-                            var quadra = document.getElementById("quadra" + i).value;
-                            event.preventDefault();
-                            $.ajax({
-                                type: "POST",
-                                url: "/Torneio/EditJogos",
-                                dataType: "json",
-                                data: "{'Id':'" + Id + "', 'jogador1':'" + jogador1 + "', 'jogador2':'" + jogador2 + "', 'dataJogo':'" + dataJogo + "', 'horaJogo':'" + horaJogo + "', 'quadra':'" + quadra + "'}",
-                                contentType: "application/json; charset=utf-8",
-                                success: function (response) {
-                                    if (typeof response == "object") {
-                                        toastr.options = {
-                                            "positionClass": "toast-top-center"
-                                        }
-                                        if (response.retorno === 0) {
-                                            toastr.error(response.erro, "Erro");
-                                        } else {
-                                            toastr.success("Atualização realizada com sucesso.", "Aviso");
-                                            if (response.retorno === 2) {
-                                                location.reload(true);
-                                            }
-                                        }
-                                    }
-                                },
-                                error: function (jqXHR, textStatus, errorThrown) {
-                                    toastr.error(errorThrown, "Erro");
+                $(".inscricaoButton").click(function (event) {
+                    var i = $(this).data("valor");
+                    var Id = $("#form" + i).find("input[name=Id]").val();
+                    var jogador1 = document.getElementById("jogador1_" + i).value;
+                    var jogador2 = document.getElementById("jogador2_" + i).value;
+                    var dataJogo = document.getElementById("dataJogo" + i).value;
+                    var horaJogo = document.getElementById("horaJogo" + i).value;
+                    var quadra = document.getElementById("quadra" + i).value;
+                    event.preventDefault();
+                    $.ajax({
+                        type: "POST",
+                        url: "/Torneio/EditJogos",
+                        dataType: "json",
+                        data: "{'Id':'" + Id + "', 'jogador1':'" + jogador1 + "', 'jogador2':'" + jogador2 + "', 'dataJogo':'" + dataJogo + "', 'horaJogo':'" + horaJogo + "', 'quadra':'" + quadra + "'}",
+                        contentType: "application/json; charset=utf-8",
+                        success: function (response) {
+                            if (typeof response == "object") {
+                                toastr.options = {
+                                    "positionClass": "toast-top-center"
                                 }
-                            });
-                        });
-
-                        $(".exibirClasses").click(function (event) {
-                            var element = document.getElementById("classes");
-                            element.classList.add("show");
-                        });
-
-                        $(".confirm").confirm({
-                            title: "<span style='color:red'>ATENÇÃO!!!</span>",
-                            content: "Caso tenha marcado uma categoria que já tem jogos gerados, os jogos serão excluídos. Está ciente disto?",
-                            buttons: {
-                                sim: {
-                                    text: 'Sim',
-                                    btnClass: 'btn-primary',
-                                    action: function () {
-                                        document.forms[2].submit();
-                                    }
-                                },
-                                cancelar: {}
-                            }
-                        });
-
-                    });
-
-                    function marcarTodos() {
-                        var isChecked = false;
-                        if (document.getElementById('todos').checked) {
-                            isChecked = true;
-                        }
-                        var checkboxes = document.getElementsByTagName("input");
-                        for (var i = 0; i < checkboxes.length; i++) {
-                            if (checkboxes[i].type == "checkbox") {
-                                checkboxes[i].checked = isChecked;
-                            }
-                        }
-                    }
-
-                    function Pesquisar() {
-                        var torneioId = document.getElementById('torneioId').value;
-                        var classeId = document.getElementById('fClasse').value;
-                        var data = document.getElementById('fData').value;
-                        var nomeJogador = document.getElementById('fNomeJogador').value;
-                        var grupo = document.getElementById('fGrupo').value;
-                        var fase = document.getElementById('fase').value;
-                        window.location = "EditJogos?torneioId=" + torneioId + "&fClasse=" + classeId + "&fData=" + data + "&fNomeJogador=" + nomeJogador + "&fGrupo=" + grupo + "&fase=" + fase + "&nomeJogador=" + nomeJogador;
-                    }
-                    function Imprimir() {
-                        var torneioId = document.getElementById('torneioId').value;
-                        var classeId = document.getElementById('fClasse').value;
-                        var data = document.getElementById('fData').value;
-                        var nomeJogador = document.getElementById('fNomeJogador').value;
-                        var grupo = document.getElementById('fGrupo').value;
-                        var fase = document.getElementById('fase').value;
-                        window.location = "ImprimirJogos?torneioId=" + torneioId + "&fClasse=" + classeId + "&fData=" + data + "&fNomeJogador=" + nomeJogador + "&fGrupo=" + grupo + "&fase=" + fase;
-                            }
-
-                    document.getElementById("IndicadorVencedor").classList.remove("show");
-
-                    function exibirOpcaoVencedores() {
-                        if (document.getElementById("situacao_id").value == '5') {
-                            document.getElementById("IndicadorVencedor").classList.add("show");
-                        } else {
-                            if (document.getElementById("situacao_id").value == '1') {
-                                $(".modal-body #qtddGames1setDesafiante").val(0);
-                                $(".modal-body #qtddGames1setDesafiado").val(0);
-                                $(".modal-body #qtddGames2setDesafiante").val(0);
-                                $(".modal-body #qtddGames2setDesafiado").val(0);
-                                $(".modal-body #qtddGames3setDesafiante").val(0);
-                                $(".modal-body #qtddGames3setDesafiado").val(0);
-                            }
-                            document.getElementById("IndicadorVencedor").classList.remove("show");
-                        }
-                    }
-
-                    $("#placarForm").submit(function (event) {
-                        // document.getElementById("salvarPlacar").disabled = true;
-                        event.preventDefault();
-                        spinner.show();
-                        var url = "LancarResultado"
-                        if (document.getElementById("situacao_id").value == '5') {
-                            url = "LancarWO";
-                        }
-                        submitForm(url);
-                        // document.getElementById("salvarPlacar").disabled = false;
-                        return false;
-                    });
-
-                    function submitForm(url) {
-                        $.ajax({
-                            type: "POST",
-                            url: url,
-                            cache: false,
-                            dataType: "json",
-                            data: $('form#placarForm').serialize(),
-                            success: function (resp) {
-                                if (resp.retorno == 0) {
-                                    spinner.hide();
-                                    toastr.error(resp.erro, "Erro");
+                                if (response.retorno === 0) {
+                                    toastr.error(response.erro, "Erro");
                                 } else {
-                                    var id = $(".modal-body #Id").val();
-                                    if ((document.getElementById("situacao_id").value == 2) && (($(".modal-body #qtddGames1setDesafiado").val() != 0) || ($(".modal-body #qtddGames1setDesafiante").val() != 0))) {
-                                        $("#btnPlacar" + id).attr('data-situacao', 4);
-                                        $("#badge" + id).attr('class', 'badge bg-green');
-                                        $("#badge" + id).html('F');
-                                    } else {
-                                        $("#btnPlacar" + id).attr('data-situacao', document.getElementById("situacao_id").value);
-                                    }
-                                    if(document.getElementById("situacao_id").value == 1){
-                                        $("#btnPlacar" + id).attr('data-placar', "0|0|0|0|0|0")
-                                    }else{
-                                        $("#btnPlacar" + id).attr('data-placar', $(".modal-body #qtddGames1setDesafiante").val() + "|" + $(".modal-body #qtddGames1setDesafiado").val() + "|" +
-                                            $(".modal-body #qtddGames2setDesafiante").val() + "|" + $(".modal-body #qtddGames2setDesafiado").val() + "|" +
-                                            $(".modal-body #qtddGames3setDesafiante").val() + "|" + $(".modal-body #qtddGames3setDesafiado").val());
-                                    }
-                                    if (document.getElementById("situacao_id").value == '5' || document.getElementById("situacao_id").value == '6' || document.getElementById("situacao_id").value == '4') {
-                                        $("#badge" + id).attr('class', 'badge bg-green');
-                                        $("#badge" + id).html('F');
-                                    } else if ((document.getElementById("situacao_id").value == '1') && ($(".modal-body #qtddGames1setDesafiante").val() != '0' || $(".modal-body #qtddGames1setDesafiado").val() != '0')) {
-                                        $("#badge" + id).attr('class', 'badge bg-green');
-                                        $("#badge" + id).html('F');
-                                    } else if (document.getElementById("situacao_id").value == '1'){
-                                        $("#badge" + id).attr('class', 'badge bg-red');
-                                        $("#badge" + id).html('P');
-                                    }
-                                    spinner.hide();
-                                    $("#placar-modal").modal('hide');
-                                    toastr.options = {
-                                        "positionClass": "toast-top-center",
-                                        "timeOut": 10000
-                                    }
-                                    if (resp.pontuacaoLiga == 1) {
-                                        toastr.success("<a href='https://www.rankingdetenis.com/Ranking/RankingDasLigas'>Torneio Finalizado: A pontuação da liga foi gerada. CLIQUE AQUI para acessar a pontuação.</a>", "Aviso");
-                                    } else {
-                                        toastr.success("Atualização realizada com sucesso.", "Aviso");
+                                    toastr.success("Atualização realizada com sucesso.", "Aviso");
+                                    if (response.retorno === 2) {
+                                        location.reload(true);
                                     }
                                 }
-
                             }
-                        });
+                        },
+                        error: function (jqXHR, textStatus, errorThrown) {
+                            toastr.error(errorThrown, "Erro");
+                        }
+                    });
+                });
+
+                $(".exibirClasses").click(function (event) {
+                    var element = document.getElementById("classes");
+                    element.classList.add("show");
+                });
+
+
+
+            });
+
+            function gerarTabelas() {
+
+                // Verificar se há jogos já registrados
+
+                var classesSelecionadas = $('input[name=classeIds]:checked').map(function (_, el) {
+                    return $(el).val();
+                }).get();
+
+                event.preventDefault();
+                $.ajax({
+                    type: "GET",
+                    url: "/Torneio/ValidarJogosJaGerados",
+                    dataType: "json",
+                    data: {
+                        "classeIds": classesSelecionadas,
+                        "torneioId": document.getElementById('torneioId').value
+                    },
+                    traditional: true,
+                    contentType: "application/json; charset=utf-8",
+                    success: function (response) {
+                        if (typeof response == "object") {
+                            toastr.options = {
+                                "positionClass": "toast-top-center"
+                            }
+                            if (response.retorno == "ERRO") {
+                                toastr.error(response.erro, "Erro");
+                            } else {
+                                if (response.retorno != "OK") {
+                                    ExibirMensagem(response.retorno);
+                                }
+                                else {
+                                    //TODO: FORM SUBMIT
+                                }
+                            }
+                        }
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        toastr.error(errorThrown, "Erro");
                     }
+                });
 
-                    
 
+                //Se ouver então mostra-los na mensagem
+                
 
-               </script>
             }
+           
+            function ExibirMensagem(conteudoMensagem) {
+
+                var textoInicial = "<p>Você selecionou categorias que já tem jogos concluídos ou horários marcados. <b>Deseja substituir as tabelas já existentes? </b></p>Categorias cujas tabelas serão zeradas:</br>";
+
+                $.confirm({
+                    title: "<span style='color:red'>ATENÇÃO!!!</span>",
+                    content: textoInicial + conteudoMensagem,
+                    buttons: {
+                        sim: {
+                            text: 'Sim',
+                            btnClass: 'btn-primary',
+                            action: function () {
+                                document.forms[2].submit();
+                            }
+                        },
+                        cancelar: {}
+                    }
+                });
+            }
+
+            function marcarTodos() {
+                var isChecked = false;
+                if (document.getElementById('todos').checked) {
+                    isChecked = true;
+                }
+                var checkboxes = document.getElementsByTagName("input");
+                for (var i = 0; i < checkboxes.length; i++) {
+                    if (checkboxes[i].type == "checkbox") {
+                        checkboxes[i].checked = isChecked;
+                    }
+                }
+            }
+
+            function Pesquisar() {
+                var torneioId = document.getElementById('torneioId').value;
+                var classeId = document.getElementById('fClasse').value;
+                var data = document.getElementById('fData').value;
+                var nomeJogador = document.getElementById('fNomeJogador').value;
+                var grupo = document.getElementById('fGrupo').value;
+                var fase = document.getElementById('fase').value;
+                window.location = "EditJogos?torneioId=" + torneioId + "&fClasse=" + classeId + "&fData=" + data + "&fNomeJogador=" + nomeJogador + "&fGrupo=" + grupo + "&fase=" + fase + "&nomeJogador=" + nomeJogador;
+            }
+            function Imprimir() {
+                var torneioId = document.getElementById('torneioId').value;
+                var classeId = document.getElementById('fClasse').value;
+                var data = document.getElementById('fData').value;
+                var nomeJogador = document.getElementById('fNomeJogador').value;
+                var grupo = document.getElementById('fGrupo').value;
+                var fase = document.getElementById('fase').value;
+                window.location = "ImprimirJogos?torneioId=" + torneioId + "&fClasse=" + classeId + "&fData=" + data + "&fNomeJogador=" + nomeJogador + "&fGrupo=" + grupo + "&fase=" + fase;
+            }
+
+            document.getElementById("IndicadorVencedor").classList.remove("show");
+
+            function exibirOpcaoVencedores() {
+                if (document.getElementById("situacao_id").value == '5') {
+                    document.getElementById("IndicadorVencedor").classList.add("show");
+                } else {
+                    if (document.getElementById("situacao_id").value == '1') {
+                        $(".modal-body #qtddGames1setDesafiante").val(0);
+                        $(".modal-body #qtddGames1setDesafiado").val(0);
+                        $(".modal-body #qtddGames2setDesafiante").val(0);
+                        $(".modal-body #qtddGames2setDesafiado").val(0);
+                        $(".modal-body #qtddGames3setDesafiante").val(0);
+                        $(".modal-body #qtddGames3setDesafiado").val(0);
+                    }
+                    document.getElementById("IndicadorVencedor").classList.remove("show");
+                }
+            }
+
+            $("#placarForm").submit(function (event) {
+                // document.getElementById("salvarPlacar").disabled = true;
+                event.preventDefault();
+                spinner.show();
+                var url = "LancarResultado"
+                if (document.getElementById("situacao_id").value == '5') {
+                    url = "LancarWO";
+                }
+                submitForm(url);
+                // document.getElementById("salvarPlacar").disabled = false;
+                return false;
+            });
+
+            function submitForm(url) {
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    cache: false,
+                    dataType: "json",
+                    data: $('form#placarForm').serialize(),
+                    success: function (resp) {
+                        if (resp.retorno == 0) {
+                            spinner.hide();
+                            toastr.error(resp.erro, "Erro");
+                        } else {
+                            var id = $(".modal-body #Id").val();
+                            if ((document.getElementById("situacao_id").value == 2) && (($(".modal-body #qtddGames1setDesafiado").val() != 0) || ($(".modal-body #qtddGames1setDesafiante").val() != 0))) {
+                                $("#btnPlacar" + id).attr('data-situacao', 4);
+                                $("#badge" + id).attr('class', 'badge bg-green');
+                                $("#badge" + id).html('F');
+                            } else {
+                                $("#btnPlacar" + id).attr('data-situacao', document.getElementById("situacao_id").value);
+                            }
+                            if (document.getElementById("situacao_id").value == 1) {
+                                $("#btnPlacar" + id).attr('data-placar', "0|0|0|0|0|0")
+                            } else {
+                                $("#btnPlacar" + id).attr('data-placar', $(".modal-body #qtddGames1setDesafiante").val() + "|" + $(".modal-body #qtddGames1setDesafiado").val() + "|" +
+                                    $(".modal-body #qtddGames2setDesafiante").val() + "|" + $(".modal-body #qtddGames2setDesafiado").val() + "|" +
+                                    $(".modal-body #qtddGames3setDesafiante").val() + "|" + $(".modal-body #qtddGames3setDesafiado").val());
+                            }
+                            if (document.getElementById("situacao_id").value == '5' || document.getElementById("situacao_id").value == '6' || document.getElementById("situacao_id").value == '4') {
+                                $("#badge" + id).attr('class', 'badge bg-green');
+                                $("#badge" + id).html('F');
+                            } else if ((document.getElementById("situacao_id").value == '1') && ($(".modal-body #qtddGames1setDesafiante").val() != '0' || $(".modal-body #qtddGames1setDesafiado").val() != '0')) {
+                                $("#badge" + id).attr('class', 'badge bg-green');
+                                $("#badge" + id).html('F');
+                            } else if (document.getElementById("situacao_id").value == '1') {
+                                $("#badge" + id).attr('class', 'badge bg-red');
+                                $("#badge" + id).html('P');
+                            }
+                            spinner.hide();
+                            $("#placar-modal").modal('hide');
+                            toastr.options = {
+                                "positionClass": "toast-top-center",
+                                "timeOut": 10000
+                            }
+                            if (resp.pontuacaoLiga == 1) {
+                                toastr.success("<a href='https://www.rankingdetenis.com/Ranking/RankingDasLigas'>Torneio Finalizado: A pontuação da liga foi gerada. CLIQUE AQUI para acessar a pontuação.</a>", "Aviso");
+                            } else {
+                                toastr.success("Atualização realizada com sucesso.", "Aviso");
+                            }
+                        }
+
+                    }
+                });
+            }
+
+
+
+
+        </script>
+    }

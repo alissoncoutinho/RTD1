@@ -3707,5 +3707,74 @@ namespace Barragem.Controllers
 
             ViewBag.Categorias = categorias;
         }
+
+        [HttpGet]
+        public ActionResult ValidarJogosJaGerados(int torneioId, int[] classeIds)
+        {
+            List<string> classesComJogosGerados = new List<string>();
+            List<int> idsSituacao = new List<int>() { { 3 }, { 4 }, { 5 }, { 6 } };
+            bool ehMataMata = false;
+
+            try
+            {
+                if (classeIds != null)
+                {
+                    var classesTorneio = db.ClasseTorneio.Where(x => x.torneioId == torneioId);
+                    foreach (var classeId in classeIds)
+                    {
+                        //obter informacoes da classe e jogos
+                        var classe = classesTorneio.FirstOrDefault(x => x.Id == classeId);
+                        var possuiJogos = db.Jogo.Any(x => x.torneioId == torneioId && x.classeTorneio == classeId);
+                        var qtdeJogosGeradosFaseGrupo = db.Jogo.Count(x => x.torneioId == torneioId && x.classeTorneio == classeId && x.grupoFaseGrupo != null && (x.situacao_Id == 1 || x.situacao_Id == 2));
+
+                        //obter tipo a checar os jogos gerados
+                        if (classe.faseGrupo)
+                        {
+                            ehMataMata = false;
+                        }
+
+                        if (possuiJogos)
+                        {
+                            if (classe.faseGrupo && classe.faseMataMata && qtdeJogosGeradosFaseGrupo == 0)
+                            {
+                                ehMataMata = true;
+                            }
+                        }
+
+                        //Validar jogos gerados
+                        var jogoClasse = db.Jogo.Count(x => x.torneioId == torneioId && x.classeTorneio == classeId
+                          && ((x.rodadaFaseGrupo != 0 && !ehMataMata) || (x.rodadaFaseGrupo == 0 && ehMataMata))
+                          &&
+                          (
+                              (x.dataJogo != null && x.horaJogo != null)
+                              ||
+                              (idsSituacao.Contains(x.situacao_Id) && (x.qtddGames1setDesafiado > 0 || x.qtddGames1setDesafiante > 0 || x.qtddGames2setDesafiado > 0 || x.qtddGames2setDesafiante > 0 || x.qtddGames3setDesafiado > 0 || x.qtddGames3setDesafiante > 0) && x.desafiante2_id != 10)
+                          )
+                         );
+
+                        if (jogoClasse > 0)
+                        {
+                            classesComJogosGerados.Add(classe.nome);
+                        }
+                    }
+                }
+                string dadosMensagem;
+                if (classesComJogosGerados.Count > 0)
+                {
+                    dadosMensagem = string.Join("</br>", classesComJogosGerados);
+                }
+                else
+                {
+                    dadosMensagem = "OK";
+                }
+
+                return Json(new { erro = "", retorno = dadosMensagem }, "text/plain", JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { erro = ex.Message, retorno = "ERRO" }, "text/plain", JsonRequestBehavior.AllowGet);
+            }
+        }
+
     }
 }
