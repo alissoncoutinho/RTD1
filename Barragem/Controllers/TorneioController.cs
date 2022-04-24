@@ -2416,6 +2416,32 @@ namespace Barragem.Controllers
             return View(listaJogos);
         }
 
+        [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
+        public ActionResult ImprimirInscritos(int torneioId, int classeId = 0, string jogador = "")
+        {
+            var inscricoes = db.InscricaoTorneio
+                .Include(i => i.torneio)
+                .Where(x => x.torneioId == torneioId && ((classeId > 0 && x.classe == classeId) || classeId == 0) && (x.participante.nome.ToUpper().Contains(jogador.ToUpper()) || string.IsNullOrEmpty(jogador)))
+                .OrderBy(o => o.participante.nome).ThenBy(o => o.classe).ToList();
+
+            if (inscricoes != null && inscricoes.Any())
+            {
+                var inscricoesImpressao = inscricoes
+                    .GroupBy(g => g.participante.nome)
+                    .Select(s => new ImpressaoInscritosModel() { Inscrito = s.Key, Categorias = string.Join(" / ", s.Select(sc => sc.classeTorneio.nome)), Pago = string.Join(" / ", s.Select(sc => sc.isAtivo ? "Sim" : "Não")) }).ToList();
+
+                ViewBag.NomeTorneio = inscricoes.FirstOrDefault().torneio.nome;
+                ViewBag.DadosNaoEncontrados = false;
+                return View(inscricoesImpressao);
+            }
+            else
+            {
+                ViewBag.NomeTorneio = string.Empty;
+                ViewBag.DadosNaoEncontrados = true;
+                return View(new List<ImpressaoInscritosModel>());
+            }
+        }
+
         private List<Jogo> filtrarJogos(IQueryable<Jogo> jogos, int classe, string data, string grupo, int fase, Boolean isImprimir = false, string nomeJogador = "")
         {
             ViewBag.fClasse = classe;
