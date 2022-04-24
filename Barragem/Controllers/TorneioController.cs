@@ -3245,6 +3245,40 @@ namespace Barragem.Controllers
                 return RedirectToAction("Tabela", "Torneio", new { torneioId = torneioId, filtroClasse = fClasse, Msg = "Não existe tabela para esta categoria portanto não é possível imprimir." });
             }
         }
+
+        [HttpGet]
+        public ActionResult ImprimirTabelaFaseGrupo(int torneioId, int filtroClasse = 0)
+        {
+            var dadosImpressao = new ImpressaoJogoFaseGrupoModel();
+            var torneio = db.Torneio.Find(torneioId);
+
+            dadosImpressao.NomeTorneio = torneio.nome;
+            dadosImpressao.NomeRanking = torneio.barragem.nome;
+            dadosImpressao.IdBarragem = torneio.barragemId;
+
+            var jogos = db.Jogo.Where(r => r.torneioId == torneioId && r.classeTorneio == filtroClasse && r.rodadaFaseGrupo != 0).OrderBy(r => r.rodadaFaseGrupo).ToList();
+
+            if (jogos.Count > 0)
+            {
+                dadosImpressao.NomeClasse = jogos[0].classe.nome;
+
+                dadosImpressao.Grupos = new List<ImpressaoJogoFaseGrupoModel.GrupoJogosModel>();
+
+                foreach (var grupo in jogos.GroupBy(x => x.grupoFaseGrupo))
+                {
+                    var grupoImpressao = new ImpressaoJogoFaseGrupoModel.GrupoJogosModel();
+                    grupoImpressao.Grupo = $"GRUPO {grupo.Key}";
+                    grupoImpressao.Jogos = grupo?.ToList() ?? new List<Jogo>();
+                    dadosImpressao.Grupos.Add(grupoImpressao);
+                }
+                return View(dadosImpressao);
+            }
+            else
+            {
+                return RedirectToAction("Tabela", "Torneio", new { torneioId = torneioId, filtroClasse = filtroClasse, Msg = "Não existe tabela para esta categoria portanto não é possível imprimir." });
+            }
+        }
+
         [Authorize(Roles = "admin")]
         public ActionResult ajustarPontuacaoLiga(int torneioId)
         {

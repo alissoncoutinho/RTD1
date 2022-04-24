@@ -133,6 +133,12 @@
     height: 3350px !important;
 }
 
+.box_rodadaImpressao {
+    min-width: 200px;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
 .alinhamento.primeira_rodada {
     margin-bottom: 8px;
 }
