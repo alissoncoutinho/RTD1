@@ -298,6 +298,7 @@
     <Compile Include="Models\ClassificacaoFaseGrupo.cs" />
     <Compile Include="Models\Configuracao.cs" />
     <Compile Include="Models\Email.cs" />
+    <Compile Include="Models\ImpressaoInscritosModel.cs" />
     <Compile Include="Models\InscricaoTorneio.cs" />
     <Compile Include="Models\Jogo.cs" />
     <Compile Include="Models\JogoCabecaChave.cs" />
@@ -1132,6 +1133,7 @@
     <Content Include="Views\CalendarioTorneios\Index.cshtml" />
     <Content Include="Views\PaginaEspecial\Index.cshtml" />
     <Content Include="Views\PaginaEspecial\_PartialCalendarioMes.cshtml" />
+    <Content Include="Views\Torneio\ImprimirInscritos.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
