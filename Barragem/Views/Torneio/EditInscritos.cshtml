@@ -32,6 +32,14 @@
                     <input id="filtroJogador" name="filtroJogador" type="text" value="" placeholder="Nome Jogador" class="form-control" />
                 </div>
 
+                <div class="form-group col-sm-3">
+                    <select id="filtroStatusPagamento" class="form-control" onchange="Selecionar()">
+                        <option value="-1" @if (ViewBag.FiltroStatusPagamento == -1) { @Html.Raw("selected") }>Todos Status Pagamento</option>
+                        <option value="1" @if (ViewBag.FiltroStatusPagamento == 1) { @Html.Raw("selected") }>Pago</option>
+                        <option value="0" @if (ViewBag.FiltroStatusPagamento == 0) { @Html.Raw("selected") }>Não Pago</option>
+                    </select>
+                </div>
+
                 <input type="hidden" value="@ViewBag.TorneioId" name="torneioId" id="torneioId">
 
                 <div class="form-group col-sm-2">
@@ -110,10 +118,10 @@
                                 @i
                             </td>
                             <td>
-                                <a href="@Url.Action("../Account/EditaUsuario", new { UserName = item.participante.UserName })" title="Editar">
+                                <a href="@Url.Action("../Account/EditaUsuario", new { UserName = item.participante.UserName })" title="Editar" target="_blank">
                                     @Html.DisplayFor(modelItem => item.participante.nome)
                                 </a>
-                                <a href="@item.participante.linkwhatsappSemMsg"><img width="25" height="25" src="/Content/image/whatsapp.png"></a>
+                                <a href="@item.participante.linkwhatsappSemMsg" target="_blank"><img width="25" height="25" src="/Content/image/whatsapp.png"></a>
                             </td>
                             <td>
                                 <select name="@Html.Raw("classe" + i)" id="@Html.Raw("classe" + i)" class="form-control" onchange="this.form.submit()">
@@ -284,15 +292,17 @@
             function Selecionar() {
                 var torneioId = document.getElementById('torneioId').value;
                 var classeId = document.getElementById('filtroClasse').value;
+                var filtroStatusPagamento = document.getElementById('filtroStatusPagamento').value;
                 var filtroJogador = document.getElementById('filtroJogador').value;
-                window.location = "EditInscritos?torneioId=" + torneioId + "&filtroClasse=" + classeId + "&filtroJogador=" + filtroJogador;
+                window.location = "EditInscritos?torneioId=" + torneioId + "&filtroClasse=" + classeId + "&filtroJogador=" + filtroJogador + "&filtroStatusPagamento=" + filtroStatusPagamento;
             }
 
             function Imprimir() {
                 var torneioId = document.getElementById('torneioId').value;
                 var classeId = document.getElementById('filtroClasse').value;
+                var filtroStatusPagamento = document.getElementById('filtroStatusPagamento').value;
                 var jogador = document.getElementById('filtroJogador').value;
-                window.location = "ImprimirInscritos?torneioId=" + torneioId + "&classeId=" + classeId + "&jogador=" + jogador;
+                window.location = "ImprimirInscritos?torneioId=" + torneioId + "&classeId=" + classeId + "&jogador=" + jogador + "&filtroStatusPagamento=" + filtroStatusPagamento;
             }
         </script>
     }

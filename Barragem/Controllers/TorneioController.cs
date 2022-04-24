@@ -1008,7 +1008,7 @@ namespace Barragem.Controllers
         }
 
         [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
-        public ActionResult EditInscritos(int torneioId, int filtroClasse = 0, string filtroJogador = "", string Msg = "")
+        public ActionResult EditInscritos(int torneioId, int filtroClasse = 0, string filtroJogador = "", string Msg = "", int filtroStatusPagamento = -1)
         {
 
             List<InscricaoTorneio> inscricao = db.InscricaoTorneio.Where(i => i.torneioId == torneioId).ToList();
@@ -1022,6 +1022,11 @@ namespace Barragem.Controllers
             {
                 inscricao = inscricao.Where(i => i.participante.nome.ToUpper().Contains(filtroJogador.ToUpper())).ToList();
             }
+            if (filtroStatusPagamento != -1)
+            {
+                inscricao = inscricao.Where(i => i.isAtivo == (filtroStatusPagamento == 1)).ToList();
+            }
+
             ViewBag.descricaoTipoDesconto = torneio.descontoPara;
             if (torneio.valorDescontoFederado > torneio.valorSocio)
             {
@@ -1033,6 +1038,7 @@ namespace Barragem.Controllers
             }
             ViewBag.Classes = db.ClasseTorneio.Where(c => c.torneioId == torneioId).ToList();
             ViewBag.filtroClasse = filtroClasse;
+            ViewBag.FiltroStatusPagamento = filtroStatusPagamento;
             ViewBag.TorneioId = torneioId;
             ViewBag.flag = "inscritos";
             ViewBag.InscIndividuais = db.InscricaoTorneio.Where(i => i.torneioId == torneioId).Select(i => (int)i.userId).Distinct().Count();
@@ -2417,11 +2423,11 @@ namespace Barragem.Controllers
         }
 
         [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
-        public ActionResult ImprimirInscritos(int torneioId, int classeId = 0, string jogador = "")
+        public ActionResult ImprimirInscritos(int torneioId, int classeId = 0, string jogador = "", int filtroStatusPagamento = -1)
         {
             var inscricoes = db.InscricaoTorneio
                 .Include(i => i.torneio)
-                .Where(x => x.torneioId == torneioId && ((classeId > 0 && x.classe == classeId) || classeId == 0) && (x.participante.nome.ToUpper().Contains(jogador.ToUpper()) || string.IsNullOrEmpty(jogador)))
+                .Where(x => x.torneioId == torneioId && ((classeId > 0 && x.classe == classeId) || classeId == 0) && (x.participante.nome.ToUpper().Contains(jogador.ToUpper()) || string.IsNullOrEmpty(jogador)) && ((filtroStatusPagamento == -1) || x.isAtivo == (filtroStatusPagamento == 1)))
                 .OrderBy(o => o.participante.nome).ThenBy(o => o.classe).ToList();
 
             if (inscricoes != null && inscricoes.Any())
