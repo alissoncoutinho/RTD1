@@ -1,10 +1,10 @@
 ﻿@model Barragem.Models.Torneio
 
 <ul class="nav nav-tabs" id="myTab">
-    <li id="tab1" class='active'><a href="#tabPrimario" data-toggle="tab"><b>básico</b></a></li>
-    <li id="tab2" class=""><a href="#tabInscricao" data-toggle="tab">inscrição</a></li>
-    <li id="tab3" class=""><a href="#tabClasse" data-toggle="tab">classes</a></li>
-    <li id="tab4" class=""><a href="#tabConfigFinais" data-toggle="tab">config.</a></li>
+    <li id="tab1" class='active'><a href="#tabPrimario" data-toggle="tab" onclick="ValidarTabAnterior(event,1)"><b>básico</b></a></li>
+    <li id="tab2" class=""><a href="#tabInscricao" data-toggle="tab" onclick="ValidarTabAnterior(event,2)">inscrição</a></li>
+    <li id="tab3" class=""><a href="#tabClasse" data-toggle="tab" onclick="ValidarTabAnterior(event,3)">classes</a></li>
+    <li id="tab4" class=""><a href="#tabConfigFinais" data-toggle="tab" onclick="ValidarTabAnterior(event,4)">config.</a></li>
 </ul>
 @using (Html.BeginForm("CreateTorneio", "Torneio", FormMethod.Post, new { @class = "form-horizontal" }))
 {
@@ -75,7 +75,7 @@
                         @Html.TextAreaFor(model => model.contato)
                     </div>
                 </div>
-                <a href="#tabInscricao" id="btnTab1" class="btn btn-info" data-toggle="tab"><b>Avançar</b></a>
+                <a href="#tabInscricao" id="btnTab1" class="btn btn-info" data-toggle="tab" onclick="ValidarTab1(event, false)"><b>Avançar</b></a>
             </div>
         </div>
 
@@ -181,7 +181,7 @@
                     </div>
                 </div>
 
-                <a href="#tabClasse" id="btnTab2" class="btn btn-info" data-toggle="tab"><b>Avançar</b></a>
+                <a href="#tabClasse" id="btnTab2" class="btn btn-info" data-toggle="tab" onclick="ValidarTab2(event, false)"><b>Avançar</b></a>
                 <!--input type="submit" class="btn btn-cta-secondary" name="salvar" value="salvar" /-->
             </div>
         </div>
@@ -272,7 +272,7 @@
                             </div>
                         }
                     </div>
-                </div><a href="#tabConfigFinais" id="btnTab3" class="btn btn-info" data-toggle="tab"><b>Avançar</b></a>
+                </div><a href="#tabConfigFinais" id="btnTab3" class="btn btn-info" data-toggle="tab" onclick="ValidarTab3(event, false)"><b>Avançar</b></a>
             </div>
         </div><!-- QUARTA ABA: CONFIGURAÇÕES --><div id="tabConfigFinais" class="tab-pane fade">
             <div class="box-header with-border">
@@ -411,11 +411,20 @@
 
 @section Scripts {
 
-
-
-
     @Scripts.Render("~/bundles/editor")
+
     <script type="text/javascript">
+
+        const TABS_CADASTRO = {
+            BASICO: 1,
+            INSCRICAO: 2,
+            CLASSES: 3,
+            CONFIG:4
+        }
+
+        var TabsValidas = [];
+        var TabAnteriorSelecionada = 0;
+
         tinyMCE.baseURL = '@Url.Content("~/Scripts/tinymce/")'
         tinyMCE.init({
             selector: 'textarea#dadosBancarios',
@@ -562,119 +571,172 @@
             }
         });
 
-
-
-    function CadastrarValorDescontoSocio() {
-        if (document.getElementById('isDesconto').checked) {
-            document.getElementById('descontoSocio').style.opacity = "1";
-            document.getElementById('descontoSocio').style.display = "block";
-        } else {
-            document.getElementById('descontoSocio').value = "0";
-            document.getElementById('descontoSocioMaisClasses').value = "0";
-            document.getElementById('descontoSocio').style.opacity = "0 !important";
-            document.getElementById('descontoSocio').style.display = "none";
+        function CadastrarValorDescontoSocio() {
+            if (document.getElementById('isDesconto').checked) {
+                document.getElementById('descontoSocio').style.opacity = "1";
+                document.getElementById('descontoSocio').style.display = "block";
+            } else {
+                document.getElementById('descontoSocio').value = "0";
+                document.getElementById('descontoSocioMaisClasses').value = "0";
+                document.getElementById('descontoSocio').style.opacity = "0 !important";
+                document.getElementById('descontoSocio').style.display = "none";
+            }
         }
-    }
 
-    function isTransferenciaBancaria() {
-        if (document.getElementById('transferencia').checked) {
-            document.getElementById('isTransferencia').style.opacity = "1";
-            document.getElementById('isTransferencia').style.display = "block";
-        } else {
-            document.getElementById('isTransferencia').style.opacity = "0 !important";
-            document.getElementById('isTransferencia').style.display = "none";
+        function isTransferenciaBancaria() {
+            if (document.getElementById('transferencia').checked) {
+                document.getElementById('isTransferencia').style.opacity = "1";
+                document.getElementById('isTransferencia').style.display = "block";
+            } else {
+                document.getElementById('isTransferencia').style.opacity = "0 !important";
+                document.getElementById('isTransferencia').style.display = "none";
+            }
         }
-    }
 
-    function isCartaoCredito() {
-        if (document.getElementById('cartao').checked) {
-            document.getElementById('isCartao').style.opacity = "1";
-            document.getElementById('isCartao').style.display = "block";
-        } else {
-            document.getElementById('isCartao').style.opacity = "0 !important";
-            document.getElementById('isCartao').style.display = "none";
+        function isCartaoCredito() {
+            if (document.getElementById('cartao').checked) {
+                document.getElementById('isCartao').style.opacity = "1";
+                document.getElementById('isCartao').style.display = "block";
+            } else {
+                document.getElementById('isCartao').style.opacity = "0 !important";
+                document.getElementById('isCartao').style.display = "none";
+            }
         }
-    }
 
-    function checkCity(input) {
-        //const re = /[a-zA-Z]-[A-Z][A-Z]$/;
-        //if (re.test(input.value.trim())) {
-        if (input.value.indexOf("-") != -1) {
-            return true;
-        } else {
-            return false;
+        function checkCity(input) {
+            //const re = /[a-zA-Z]-[A-Z][A-Z]$/;
+            //if (re.test(input.value.trim())) {
+            if (input.value.indexOf("-") != -1) {
+                return true;
+            } else {
+                return false;
+            }
         }
-    }
 
         $('[type="datatorneio"]').on("keydown", function () {
             event.preventDefault();
             return false;
         });
 
-        $('#btnTab1').on('click', function (event) {
+        function ValidarTab1(event, ehClickTab) {
+            var erroValidacao = false;
             event.preventDefault();
-           if (document.getElementById('nome').value == '') {
-               toastr.error("Informe um nome para o seu torneio.", "Erro");
-               $("#btnTab1").attr("href", "#tabPrimario");
-           } else if (document.forms[1].dataInicio.value == '') {
-               toastr.error("Informe a data de início do seu torneio.", "Erro");
-               $("#btnTab1").attr("href", "#tabPrimario");
-           } else if (document.forms[1].dataFim.value == '') {
-               toastr.error("Informe a data de encerramento do seu torneio.", "Erro");
-               $("#btnTab1").attr("href", "#tabPrimario");
-           } else if (document.forms[1].cidade.value == '') {
-               toastr.error("Informe o nome da cidade onde ocorrerá o torneio.", "Erro");
-               $("#btnTab1").attr("href", "#tabPrimario");
-           } else {
-               if (checkCity(document.forms[1].cidade)) {
-                   $("#btnTab1").attr("href", "#tabInscricao");
+            if (document.getElementById('nome').value == '') {
+                toastr.error("Informe um nome para o seu torneio.", "Erro");
+                $("#btnTab1").attr("href", "#tabPrimario");
+                erroValidacao = true;
+            } else if (document.forms[1].dataInicio.value == '') {
+                toastr.error("Informe a data de início do seu torneio.", "Erro");
+                $("#btnTab1").attr("href", "#tabPrimario");
+                erroValidacao = true;
+            } else if (document.forms[1].dataFim.value == '') {
+                toastr.error("Informe a data de encerramento do seu torneio.", "Erro");
+                $("#btnTab1").attr("href", "#tabPrimario");
+                erroValidacao = true;
+            } else if (document.forms[1].cidade.value == '') {
+                toastr.error("Informe o nome da cidade onde ocorrerá o torneio.", "Erro");
+                $("#btnTab1").attr("href", "#tabPrimario");
+                erroValidacao = true;
+            } else {
+                if (checkCity(document.forms[1].cidade)) {
+                    $("#btnTab1").attr("href", "#tabInscricao");
                     document.getElementById('tab1').className = '';
                     document.getElementById('tab2').className = 'active';
-               } else {
-                   toastr.error("Digite as primeiras letras da sua cidade e selecione-a da lista oferecida.", "Erro");
-                   document.forms[1].cidade.value = "";
-                   document.forms[1].cidade.focus();
-                   $("#btnTab1").attr("href", "#tabPrimario");
-               }
+                    if (ehClickTab == false) {
+                        AtualizarTabSelecionada(TABS_CADASTRO.INSCRICAO);
+                    }
+                } else {
+                    toastr.error("Digite as primeiras letras da sua cidade e selecione-a da lista oferecida.", "Erro");
+                    document.forms[1].cidade.value = "";
+                    document.forms[1].cidade.focus();
+                    $("#btnTab1").attr("href", "#tabPrimario");
+                    erroValidacao = true;
+                }
             }
-           $('html,body').scrollTop(0);
-        });
+            $('html,body').scrollTop(0);
 
-        $('#btnTab2').on('click', function (event) {
+            return erroValidacao == false;
+        };
+
+        function ValidarRegraTab1() {
+            var erroValidacao = false;
+            if (document.getElementById('nome').value == '') {
+                erroValidacao = true;
+            } else if (document.forms[1].dataInicio.value == '') {
+                erroValidacao = true;
+            } else if (document.forms[1].dataFim.value == '') {
+                erroValidacao = true;
+            } else if (document.forms[1].cidade.value == '') {
+                erroValidacao = true;
+            } else {
+                if (checkCity(document.forms[1].cidade)) {
+                    erroValidacao = false;
+                } else {
+                    erroValidacao = true;
+                }
+            }
+            return erroValidacao == false;
+        };
+
+        function ValidarTab2(event, ehClickTab) {
+            var erroValidacao = false;
             event.preventDefault();
             if (document.forms[1].dataFimInscricoes.value == '') {
                 toastr.error("Informe a data de encerramento das inscrições.", "Erro");
                 $("#btnTab2").attr("href", "#tabInscricao");
+                erroValidacao = true;
             } else if ((document.getElementById('qtddCategoriasPorJogador').value == 1) && (document.getElementById('valor').value == "")) {
                 toastr.error("Informe o valor da inscrição.", "Erro");
                 $("#btnTab2").attr("href", "#tabInscricao");
+                erroValidacao = true;
             } else if ((document.getElementById('qtddCategoriasPorJogador').value == 2) && ((document.getElementById('valor').value == "") || (document.getElementById('valor2').value == ""))) {
                 toastr.error("Informe todos os valores das inscrições.", "Erro");
                 $("#btnTab2").attr("href", "#tabInscricao");
+                erroValidacao = true;
             } else if ((document.getElementById('qtddCategoriasPorJogador').value == 3) && ((document.getElementById('valor').value == "") || (document.getElementById('valor2').value == "") || (document.getElementById('valor3').value == ""))) {
                 toastr.error("Informe todos os valores das inscrições.", "Erro");
                 $("#btnTab2").attr("href", "#tabInscricao");
+                erroValidacao = true;
             } else if ((document.getElementById('qtddCategoriasPorJogador').value == 4) && ((document.getElementById('valor').value == "") || (document.getElementById('valor2').value == "") || (document.getElementById('valor3').value == "") || (document.getElementById('valor4').value == ""))) {
                 toastr.error("Informe todos os valores das inscrições.", "Erro");
                 $("#btnTab2").attr("href", "#tabInscricao");
+                erroValidacao = true;
             } else {
                 $("#btnTab2").attr("href", "#tabClasse");
                 document.getElementById('tab2').className = '';
                 document.getElementById('tab3').className = 'active';
+                if (ehClickTab == false) {
+                    AtualizarTabSelecionada(TABS_CADASTRO.CLASSES);
+                }
             }
             $('html,body').scrollTop(0);
-        });
 
-        $('#btnTab3').on('click', function (event) {
-            event.preventDefault();
-            if (false) {
-                toastr.error("Informe um nome para o seu torneio.", "Erro");
-                $("#btnTab3").attr("href", "#tabClasse");
+            return erroValidacao == false;
+        };
+
+        function ValidarRegraTab2() {
+            var erroValidacao = false;
+
+            if (document.forms[1].dataFimInscricoes.value == '') {
+                erroValidacao = true;
+            } else if ((document.getElementById('qtddCategoriasPorJogador').value == 1) && (document.getElementById('valor').value == "")) {
+                erroValidacao = true;
+            } else if ((document.getElementById('qtddCategoriasPorJogador').value == 2) && ((document.getElementById('valor').value == "") || (document.getElementById('valor2').value == ""))) {
+                erroValidacao = true;
+            } else if ((document.getElementById('qtddCategoriasPorJogador').value == 3) && ((document.getElementById('valor').value == "") || (document.getElementById('valor2').value == "") || (document.getElementById('valor3').value == ""))) {
+                erroValidacao = true;
+            } else if ((document.getElementById('qtddCategoriasPorJogador').value == 4) && ((document.getElementById('valor').value == "") || (document.getElementById('valor2').value == "") || (document.getElementById('valor3').value == "") || (document.getElementById('valor4').value == ""))) {
+                erroValidacao = true;
             } else {
-                $("#btnTab3").attr("href", "#tabConfigFinais");
-                document.getElementById('tab3').className = '';
-                document.getElementById('tab4').className = 'active';
+                erroValidacao = false;
             }
+            return erroValidacao == false;
+        };
+
+        function ValidarTab3(event, ehClickTab) {
+            var erroValidacao = false;
+            event.preventDefault();
+            
             var listLigas = document.getElementsByClassName('ligas');
             for (let item of listLigas) {
                 if (item.checked == true) {
@@ -682,60 +744,253 @@
                     if (select.value == '-') {
                         toastr.error("Selecione a pontuação do circuito escolhido.", "Erro");
                         $("#btnTab3").attr("href", "#tabClasse");
+                        erroValidacao = true;
                     }
                 }
             }
+
+            if (erroValidacao) {
+                $("#btnTab3").attr("href", "#tabClasse");
+            } else {
+                $("#btnTab3").attr("href", "#tabConfigFinais");
+                document.getElementById('tab3').className = '';
+                document.getElementById('tab4').className = 'active';
+                if (ehClickTab == false) {
+                    AtualizarTabSelecionada(TABS_CADASTRO.CONFIG);
+                }
+            }
+
             $('html,body').scrollTop(0);
-        });
 
+            return erroValidacao == false;
+        };
 
+        function ValidarRegraTab3() {
+            var erroValidacao = false;
+            
+            var listLigas = document.getElementsByClassName('ligas');
+            for (let item of listLigas) {
+                if (item.checked == true) {
+                    var select = item.nextElementSibling.nextElementSibling.firstElementChild.nextElementSibling;
+                    if (select.value == '-') {
+                        erroValidacao = true;
+                    }
+                }
+            }
+            return erroValidacao == false;
+        };
 
-    function habilibarValoresInscricao() {
-        if (document.getElementById('qtddCategoriasPorJogador').value == 1) {
-            document.getElementById('valor2').value = "0";
-            document.getElementById('valorDiv2').style.opacity = "0 !important";
-            document.getElementById('valorDiv2').style.display = "none";
-            document.getElementById('valor3').value = "0";
-            document.getElementById('valorDiv3').style.opacity = "0 !important";
-            document.getElementById('valorDiv3').style.display = "none";
-            document.getElementById('valor4').value = "0";
-            document.getElementById('valorDiv4').style.opacity = "0 !important";
-            document.getElementById('valorDiv4').style.display = "none";
-        } else if (document.getElementById('qtddCategoriasPorJogador').value == 2) {
-            document.getElementById('valor2').value = ""
-            document.getElementById('valorDiv2').style.opacity = "1";
-            document.getElementById('valorDiv2').style.display = "block";
-            document.getElementById('valor3').value = "0";
-            document.getElementById('valorDiv3').style.opacity = "0 !important";
-            document.getElementById('valorDiv3').style.display = "none";
-            document.getElementById('valor4').value = "0";
-            document.getElementById('valorDiv4').style.opacity = "0 !important";
-            document.getElementById('valorDiv4').style.display = "none";
-        } else if (document.getElementById('qtddCategoriasPorJogador').value == 3) {
-            document.getElementById('valor2').value = ""
-            document.getElementById('valor3').value = ""
-            document.getElementById('valorDiv2').style.opacity = "1";
-            document.getElementById('valorDiv2').style.display = "block";
-            document.getElementById('valorDiv3').style.opacity = "1";
-            document.getElementById('valorDiv3').style.display = "block";
-            document.getElementById('valor4').value = "0";
-            document.getElementById('valorDiv4').style.opacity = "0 !important";
-            document.getElementById('valorDiv4').style.display = "none";
-        } else if (document.getElementById('qtddCategoriasPorJogador').value == 4) {
-            document.getElementById('valor2').value = ""
-            document.getElementById('valor3').value = ""
-            document.getElementById('valor4').value = ""
-            document.getElementById('valorDiv2').style.opacity = "1";
-            document.getElementById('valorDiv2').style.display = "block";
-            document.getElementById('valorDiv3').style.opacity = "1";
-            document.getElementById('valorDiv3').style.display = "block";
-            document.getElementById('valorDiv4').style.opacity = "1";
-            document.getElementById('valorDiv4').style.display = "block";
+        function ValidarTabAnterior(event, tabSelecionada) {
+            console.log("Tab Anterior é: " + TabAnteriorSelecionada + " Tab Clicada é: " + tabSelecionada);
+            var resultadoValidacaoTabAnterior;
+
+            var resultadoValidacaoTabSelecionada = ChecarTabDadosValidos(tabSelecionada);;
+
+            if (resultadoValidacaoTabSelecionada == true && TabsValidas.indexOf(tabSelecionada) >= 0) {
+                document.getElementById(ObterNomeDiv(TabAnteriorSelecionada)).className = 'tab-pane fade';
+                document.getElementById(ObterNomeDiv(tabSelecionada)).className = 'tab-pane fade active in';
+                AtualizarTabSelecionada(tabSelecionada);
+            }
+            else {
+                if (TabAnteriorSelecionada == TABS_CADASTRO.BASICO) {
+                    resultadoValidacaoTabAnterior = ValidarTab1(event,true);
+                }
+                else if (TabAnteriorSelecionada == TABS_CADASTRO.INSCRICAO) {
+                    resultadoValidacaoTabAnterior = ValidarTab2(event,true);
+                }
+                else if (TabAnteriorSelecionada == TABS_CADASTRO.CLASSES) {
+                    resultadoValidacaoTabAnterior = ValidarTab3(event,true);
+                }
+                else if (TabAnteriorSelecionada == TABS_CADASTRO.CONFIG) {
+                    resultadoValidacaoTabAnterior = true;
+                }
+
+                var tabAnteriorAClicada = ObterTabAnterior(tabSelecionada);
+                tabAnteriorEhValida = ChecarTabDadosValidos(tabAnteriorAClicada);
+
+                if (tabAnteriorEhValida == false && tabAnteriorAClicada != TabAnteriorSelecionada) {
+                    ExibirMensagemTabDadosInvalidos(tabAnteriorAClicada);
+                }
+
+                if (resultadoValidacaoTabAnterior == false || tabAnteriorEhValida == false) {
+                    ChecarTabsValidas();
+                    SelecionarTab(TabAnteriorSelecionada);
+                    event.stopPropagation();
+                }
+                else {
+                    SelecionarTab(tabSelecionada);
+                    document.getElementById(ObterNomeDiv(TabAnteriorSelecionada)).className = 'tab-pane fade';
+                    document.getElementById(ObterNomeDiv(tabSelecionada)).className = 'tab-pane fade active in';
+                    AtualizarTabSelecionada(tabSelecionada);
+                }
+            }
         }
-    }
 
-    //document.getElementById('descontoSocio').style.opacity = "0";
-    //document.getElementById('descontoSocio').style.display = "none";
+        function ExibirMensagemTabDadosInvalidos(tab) {
+            if (tab == TABS_CADASTRO.BASICO) {
+                toastr.error("A aba Básico contém dados inválidos!", "Erro");
+            }
+            else if (tab == TABS_CADASTRO.INSCRICAO) {
+                toastr.error("A aba Inscrição contém dados inválidos!", "Erro");
+            }
+            else if (tab == TABS_CADASTRO.CLASSES) {
+                toastr.error("A aba Classes contém dados inválidos!", "Erro");
+            }
+            else if (tab == TABS_CADASTRO.CONFIG) {
+                toastr.error("A aba Config contém dados inválidos!", "Erro");
+            }
+        }
+
+        function SelecionarTab(tab) {
+            for (var i = 1; i <= 4; i++) {
+                if (tab == i) {
+                    document.getElementById(ObterNomeTab(i)).className = 'active';
+                }
+                else {
+                    document.getElementById(ObterNomeTab(i)).className = '';
+                }
+            }
+        }
+
+        function ObterTabAnterior(tabSelecionada) {
+            if (tabSelecionada <= 1) {
+                return 1;
+            }
+            else {
+                return tabSelecionada - 1;
+            }
+        }
+
+        function ChecarTabDadosValidos(tabSelecionada) {
+            var resultadoValidacao;
+            if (tabSelecionada == TABS_CADASTRO.BASICO) {
+                resultadoValidacao = ValidarRegraTab1();
+            }
+            else if (tabSelecionada == TABS_CADASTRO.INSCRICAO) {
+                resultadoValidacao = ValidarRegraTab2();
+            }
+            else if (tabSelecionada == TABS_CADASTRO.CLASSES) {
+                resultadoValidacao = ValidarRegraTab3();
+            }
+            else if (tabSelecionada == TABS_CADASTRO.CONFIG) {
+                resultadoValidacao = TabsValidas.length == 3;
+            }
+            return resultadoValidacao;
+        }
+
+        function AtualizarTabSelecionada(tabSelecionada) {
+            if (TabsValidas.indexOf(TabAnteriorSelecionada) < 0) {
+                if (ChecarTabDadosValidos(TabAnteriorSelecionada)) {
+                    TabsValidas.push(TabAnteriorSelecionada);
+                }
+            }
+            ChecarTabsValidas();
+            TabAnteriorSelecionada = tabSelecionada;
+        }
+
+        function ChecarTabsValidas() {
+            if (TabsValidas != null) {
+                if (ValidarItemInvalidoTabsValidas(TABS_CADASTRO.BASICO)) {
+                    TabsValidas.splice(TabsValidas.indexOf(TABS_CADASTRO.BASICO), 1);
+                }
+                if (ValidarItemInvalidoTabsValidas(TABS_CADASTRO.INSCRICAO)) {
+                    TabsValidas.splice(TabsValidas.indexOf(TABS_CADASTRO.INSCRICAO), 1);
+                }
+                if (ValidarItemInvalidoTabsValidas(TABS_CADASTRO.CLASSES)) {
+                    TabsValidas.splice(TabsValidas.indexOf(TABS_CADASTRO.CLASSES), 1);
+                }
+                if (ValidarItemInvalidoTabsValidas(TABS_CADASTRO.CONFIG)) {
+                    TabsValidas.splice(TabsValidas.indexOf(TABS_CADASTRO.CONFIG), 1);
+                }
+            }
+        }
+
+        function ValidarItemInvalidoTabsValidas(tab) {
+            if (TabsValidas.indexOf(tab) >= 0) {
+                if (ChecarTabDadosValidos(tab) == false) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+
+        function ObterNomeTab(tabId) {
+            if (tabId == TABS_CADASTRO.BASICO) {
+                return "tab1";
+            }
+            else if (tabId == TABS_CADASTRO.INSCRICAO) {
+                return "tab2";
+            }
+            else if (tabId == TABS_CADASTRO.CLASSES) {
+                return "tab3";
+            }
+            else if (tabId == TABS_CADASTRO.CONFIG) {
+                return "tab4";
+            }
+        }
+
+        function ObterNomeDiv(tabId) {
+            if (tabId == TABS_CADASTRO.BASICO) {
+                return "tabPrimario";
+            }
+            else if (tabId == TABS_CADASTRO.INSCRICAO) {
+                return "tabInscricao";
+            }
+            else if (tabId == TABS_CADASTRO.CLASSES) {
+                return "tabClasse";
+            }
+            else if (tabId == TABS_CADASTRO.CONFIG) {
+                return "tabConfigFinais";
+            }
+        }
+
+        function habilibarValoresInscricao() {
+            if (document.getElementById('qtddCategoriasPorJogador').value == 1) {
+                document.getElementById('valor2').value = "0";
+                document.getElementById('valorDiv2').style.opacity = "0 !important";
+                document.getElementById('valorDiv2').style.display = "none";
+                document.getElementById('valor3').value = "0";
+                document.getElementById('valorDiv3').style.opacity = "0 !important";
+                document.getElementById('valorDiv3').style.display = "none";
+                document.getElementById('valor4').value = "0";
+                document.getElementById('valorDiv4').style.opacity = "0 !important";
+                document.getElementById('valorDiv4').style.display = "none";
+            } else if (document.getElementById('qtddCategoriasPorJogador').value == 2) {
+                document.getElementById('valor2').value = ""
+                document.getElementById('valorDiv2').style.opacity = "1";
+                document.getElementById('valorDiv2').style.display = "block";
+                document.getElementById('valor3').value = "0";
+                document.getElementById('valorDiv3').style.opacity = "0 !important";
+                document.getElementById('valorDiv3').style.display = "none";
+                document.getElementById('valor4').value = "0";
+                document.getElementById('valorDiv4').style.opacity = "0 !important";
+                document.getElementById('valorDiv4').style.display = "none";
+            } else if (document.getElementById('qtddCategoriasPorJogador').value == 3) {
+                document.getElementById('valor2').value = ""
+                document.getElementById('valor3').value = ""
+                document.getElementById('valorDiv2').style.opacity = "1";
+                document.getElementById('valorDiv2').style.display = "block";
+                document.getElementById('valorDiv3').style.opacity = "1";
+                document.getElementById('valorDiv3').style.display = "block";
+                document.getElementById('valor4').value = "0";
+                document.getElementById('valorDiv4').style.opacity = "0 !important";
+                document.getElementById('valorDiv4').style.display = "none";
+            } else if (document.getElementById('qtddCategoriasPorJogador').value == 4) {
+                document.getElementById('valor2').value = ""
+                document.getElementById('valor3').value = ""
+                document.getElementById('valor4').value = ""
+                document.getElementById('valorDiv2').style.opacity = "1";
+                document.getElementById('valorDiv2').style.display = "block";
+                document.getElementById('valorDiv3').style.opacity = "1";
+                document.getElementById('valorDiv3').style.display = "block";
+                document.getElementById('valorDiv4').style.opacity = "1";
+                document.getElementById('valorDiv4').style.display = "block";
+            }
+        }
+
+        //document.getElementById('descontoSocio').style.opacity = "0";
+        //document.getElementById('descontoSocio').style.display = "none";
 
         habilibarValoresInscricao()
 
@@ -750,6 +1005,8 @@
                 span.style.display = 'none';
             }
         }
+
+        AtualizarTabSelecionada(TABS_CADASTRO.BASICO);
 
     </script>
 
