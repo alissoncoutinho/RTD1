@@ -1008,7 +1008,7 @@ namespace Barragem.Controllers
         }
 
         [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
-        public ActionResult EditInscritos(int torneioId, int filtroClasse = 0, string filtroJogador = "", string Msg = "")
+        public ActionResult EditInscritos(int torneioId, int filtroClasse = 0, string filtroJogador = "", string Msg = "", int filtroStatusPagamento = -1)
         {
 
             List<InscricaoTorneio> inscricao = db.InscricaoTorneio.Where(i => i.torneioId == torneioId).ToList();
@@ -1022,6 +1022,11 @@ namespace Barragem.Controllers
             {
                 inscricao = inscricao.Where(i => i.participante.nome.ToUpper().Contains(filtroJogador.ToUpper())).ToList();
             }
+            if (filtroStatusPagamento != -1)
+            {
+                inscricao = inscricao.Where(i => i.isAtivo == (filtroStatusPagamento == 1)).ToList();
+            }
+
             ViewBag.descricaoTipoDesconto = torneio.descontoPara;
             if (torneio.valorDescontoFederado > torneio.valorSocio)
             {
@@ -1033,6 +1038,7 @@ namespace Barragem.Controllers
             }
             ViewBag.Classes = db.ClasseTorneio.Where(c => c.torneioId == torneioId).ToList();
             ViewBag.filtroClasse = filtroClasse;
+            ViewBag.FiltroStatusPagamento = filtroStatusPagamento;
             ViewBag.TorneioId = torneioId;
             ViewBag.flag = "inscritos";
             ViewBag.InscIndividuais = db.InscricaoTorneio.Where(i => i.torneioId == torneioId).Select(i => (int)i.userId).Distinct().Count();
@@ -2416,6 +2422,32 @@ namespace Barragem.Controllers
             return View(listaJogos);
         }
 
+        [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
+        public ActionResult ImprimirInscritos(int torneioId, int classeId = 0, string jogador = "", int filtroStatusPagamento = -1)
+        {
+            var inscricoes = db.InscricaoTorneio
+                .Include(i => i.torneio)
+                .Where(x => x.torneioId == torneioId && ((classeId > 0 && x.classe == classeId) || classeId == 0) && (x.participante.nome.ToUpper().Contains(jogador.ToUpper()) || string.IsNullOrEmpty(jogador)) && ((filtroStatusPagamento == -1) || x.isAtivo == (filtroStatusPagamento == 1)))
+                .OrderBy(o => o.participante.nome).ThenBy(o => o.classe).ToList();
+
+            if (inscricoes != null && inscricoes.Any())
+            {
+                var inscricoesImpressao = inscricoes
+                    .GroupBy(g => g.participante.nome)
+                    .Select(s => new ImpressaoInscritosModel() { Inscrito = s.Key, Categorias = string.Join(" / ", s.Select(sc => sc.classeTorneio.nome)), Pago = string.Join(" / ", s.Select(sc => sc.isAtivo ? "Sim" : "Não")) }).ToList();
+
+                ViewBag.NomeTorneio = inscricoes.FirstOrDefault().torneio.nome;
+                ViewBag.DadosNaoEncontrados = false;
+                return View(inscricoesImpressao);
+            }
+            else
+            {
+                ViewBag.NomeTorneio = string.Empty;
+                ViewBag.DadosNaoEncontrados = true;
+                return View(new List<ImpressaoInscritosModel>());
+            }
+        }
+
         private List<Jogo> filtrarJogos(IQueryable<Jogo> jogos, int classe, string data, string grupo, int fase, Boolean isImprimir = false, string nomeJogador = "")
         {
             ViewBag.fClasse = classe;
@@ -3213,6 +3245,40 @@ namespace Barragem.Controllers
                 return RedirectToAction("Tabela", "Torneio", new { torneioId = torneioId, filtroClasse = fClasse, Msg = "Não existe tabela para esta categoria portanto não é possível imprimir." });
             }
         }
+
+        [HttpGet]
+        public ActionResult ImprimirTabelaFaseGrupo(int torneioId, int filtroClasse = 0)
+        {
+            var dadosImpressao = new ImpressaoJogoFaseGrupoModel();
+            var torneio = db.Torneio.Find(torneioId);
+
+            dadosImpressao.NomeTorneio = torneio.nome;
+            dadosImpressao.NomeRanking = torneio.barragem.nome;
+            dadosImpressao.IdBarragem = torneio.barragemId;
+
+            var jogos = db.Jogo.Where(r => r.torneioId == torneioId && r.classeTorneio == filtroClasse && r.rodadaFaseGrupo != 0).OrderBy(r => r.rodadaFaseGrupo).ToList();
+
+            if (jogos.Count > 0)
+            {
+                dadosImpressao.NomeClasse = jogos[0].classe.nome;
+
+                dadosImpressao.Grupos = new List<ImpressaoJogoFaseGrupoModel.GrupoJogosModel>();
+
+                foreach (var grupo in jogos.GroupBy(x => x.grupoFaseGrupo))
+                {
+                    var grupoImpressao = new ImpressaoJogoFaseGrupoModel.GrupoJogosModel();
+                    grupoImpressao.Grupo = $"GRUPO {grupo.Key}";
+                    grupoImpressao.Jogos = grupo?.ToList() ?? new List<Jogo>();
+                    dadosImpressao.Grupos.Add(grupoImpressao);
+                }
+                return View(dadosImpressao);
+            }
+            else
+            {
+                return RedirectToAction("Tabela", "Torneio", new { torneioId = torneioId, filtroClasse = filtroClasse, Msg = "Não existe tabela para esta categoria portanto não é possível imprimir." });
+            }
+        }
+
         [Authorize(Roles = "admin")]
         public ActionResult ajustarPontuacaoLiga(int torneioId)
         {
@@ -3707,5 +3773,74 @@ namespace Barragem.Controllers
 
             ViewBag.Categorias = categorias;
         }
+
+        [HttpGet]
+        public ActionResult ValidarJogosJaGerados(int torneioId, int[] classeIds)
+        {
+            List<string> classesComJogosGerados = new List<string>();
+            List<int> idsSituacaoJogosFinalizados = new List<int>() { { 3 }, { 4 }, { 5 }, { 6 } };
+            bool ehMataMata = false;
+
+            try
+            {
+                if (classeIds != null)
+                {
+                    var classesTorneio = db.ClasseTorneio.Where(x => x.torneioId == torneioId);
+                    foreach (var classeId in classeIds)
+                    {
+                        //obter informacoes da classe e jogos
+                        var classe = classesTorneio.FirstOrDefault(x => x.Id == classeId);
+                        var possuiJogos = db.Jogo.Any(x => x.torneioId == torneioId && x.classeTorneio == classeId);
+                        var qtdeJogosGeradosFaseGrupo = db.Jogo.Count(x => x.torneioId == torneioId && x.classeTorneio == classeId && x.grupoFaseGrupo != null && (x.situacao_Id == 1 || x.situacao_Id == 2));
+
+                        //obter tipo a checar os jogos gerados
+                        if (classe.faseGrupo)
+                        {
+                            ehMataMata = false;
+                        }
+
+                        if (possuiJogos)
+                        {
+                            if (classe.faseGrupo && classe.faseMataMata && qtdeJogosGeradosFaseGrupo == 0)
+                            {
+                                ehMataMata = true;
+                            }
+                        }
+
+                        //Validar jogos gerados
+                        var classeComJogosGerados = db.Jogo.Any(x => x.torneioId == torneioId && x.classeTorneio == classeId
+                          && ((x.rodadaFaseGrupo != 0 && !ehMataMata) || (x.rodadaFaseGrupo == 0 && ehMataMata))
+                          &&
+                          (
+                              (x.dataJogo != null && x.horaJogo != null)
+                              ||
+                              (idsSituacaoJogosFinalizados.Contains(x.situacao_Id) && (x.qtddGames1setDesafiado > 0 || x.qtddGames1setDesafiante > 0 || x.qtddGames2setDesafiado > 0 || x.qtddGames2setDesafiante > 0 || x.qtddGames3setDesafiado > 0 || x.qtddGames3setDesafiante > 0) && x.desafiante2_id != 10)
+                          )
+                         );
+
+                        if (classeComJogosGerados)
+                        {
+                            classesComJogosGerados.Add(classe.nome);
+                        }
+                    }
+                }
+                string dadosMensagem;
+                if (classesComJogosGerados.Count > 0)
+                {
+                    dadosMensagem = string.Join("</br>", classesComJogosGerados);
+                }
+                else
+                {
+                    dadosMensagem = "OK";
+                }
+
+                return Json(new { erro = "", retorno = dadosMensagem }, "text/plain", JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { erro = ex.Message, retorno = "ERRO" }, "text/plain", JsonRequestBehavior.AllowGet);
+            }
+        }
+
     }
 }

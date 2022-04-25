@@ -1,0 +1,86 @@
+﻿@model Barragem.Models.ImpressaoJogoFaseGrupoModel
+
+@{
+    Layout = null;
+    int? faseTorneio = 0;
+    string faseId = "";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Tabela</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    @Styles.Render("~/css")
+    @Styles.Render("~/tabela")
+    <style type="text/css">
+        body {
+            margin: 10px;
+            height: auto !important;
+        }
+    </style>
+
+</head>
+<body>
+    <h1 class="logo">
+        @{
+            var src = "/Content/image/logo" + Model.IdBarragem + ".png";
+        }
+        <img width="50" height="50" src="@src">&nbsp;@Model.NomeRanking
+    </h1>
+    <br>
+    <h3>@Model.NomeTorneio</h3>
+    <h4>@Model.NomeClasse</h4>
+    <br>
+    <div>
+
+
+        @foreach (var grupo in Model.Grupos)
+        {
+            <h4>@grupo.Grupo</h4>
+            <br>
+            <br>
+            <div class="row" style="margin-left: 0px;" id="tabelaFaseGrupo">
+                <div class="box-body table-responsive no-padding no-border table-hover">
+                    <div class="" id="tabFase2">
+                        <div id="">
+                            <div class="">
+                                @{
+                                    int? rodada = 0;
+                                }
+                                @if (grupo.Jogos != null)
+                                {
+                                    foreach (var item in grupo.Jogos)
+                                    {
+                                        if (rodada != item.rodadaFaseGrupo)
+                                        {
+                                            if (rodada != 0)
+                                            {
+                                                @Html.Raw("</div>");
+                                            }
+                                            rodada = item.rodadaFaseGrupo;
+                                            @Html.Raw("<div class='col-xs-2 box_rodadaImpressao'>");
+                                            <div class="titulo">Rodada @item.rodadaFaseGrupo</div>
+                                        }
+                                        @Html.Partial("_PartialJogoImprimirFaseGrupo", (Barragem.Models.Jogo)item)
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <br>
+        }
+
+    </div>
+    @Scripts.Render("~/js")
+    <script>
+        window.print();
+    </script>
+</body>
+</html>

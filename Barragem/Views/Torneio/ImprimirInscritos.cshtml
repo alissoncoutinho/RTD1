@@ -1,0 +1,79 @@
+﻿@using Barragem.Models;
+@model ICollection<Barragem.Models.ImpressaoInscritosModel>
+
+    @{
+        Layout = null;
+    }
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Tabela</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="">
+        <meta name="author" content="">
+
+        @Styles.Render("~/css")
+        <style type="text/css">
+            
+            body {
+                margin: 10px;
+                height:auto !important;
+            }
+        </style>
+
+    </head>
+
+    <body>
+
+        <h3>@ViewBag.NomeTorneio</h3>
+
+        <table class="table table-striped table-condensed table-bordered">
+            <tr>
+                <th>
+                    @Html.DisplayName("Inscrito")
+                </th>
+                <th>
+                    @Html.DisplayName("Categorias")
+                </th>
+                <th>
+                    @Html.DisplayName("Pago")
+                </th>
+                <th width="100px">
+                </th>
+            </tr>
+            @if (ViewBag.DadosNaoEncontrados == true)
+            {
+                <tr>
+                    <td colspan="4">
+                        Dados de inscrições não encontrados.
+                    </td>
+                </tr>
+            }
+            else
+            {
+                foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @item.Inscrito
+                        </td>
+                        <td>
+                            @item.Categorias
+                        </td>
+                        <td>
+                            @item.Pago
+                        </td>
+                        <td width="100px">
+                        </td>
+                    </tr>
+                }
+            }
+
+        </table>
+        <script>
+            window.print();
+        </script>
+    </body>
+</html>
