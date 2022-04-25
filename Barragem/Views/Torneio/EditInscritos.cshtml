@@ -1,7 +1,8 @@
 ﻿@{
     int i = 0;
     double valor = 0;
-    if (ViewBag.TotalPagantes != 0) {
+    if (ViewBag.TotalPagantes != 0)
+    {
         valor = ViewBag.ValorPago;
     }
 }
@@ -31,260 +32,277 @@
                     <input id="filtroJogador" name="filtroJogador" type="text" value="" placeholder="Nome Jogador" class="form-control" />
                 </div>
 
+                <div class="form-group col-sm-3">
+                    <select id="filtroStatusPagamento" class="form-control" onchange="Selecionar()">
+                        <option value="-1" @if (ViewBag.FiltroStatusPagamento == -1) { @Html.Raw("selected") }>Todos Status Pagamento</option>
+                        <option value="1" @if (ViewBag.FiltroStatusPagamento == 1) { @Html.Raw("selected") }>Pago</option>
+                        <option value="0" @if (ViewBag.FiltroStatusPagamento == 0) { @Html.Raw("selected") }>Não Pago</option>
+                    </select>
+                </div>
+
                 <input type="hidden" value="@ViewBag.TorneioId" name="torneioId" id="torneioId">
 
                 <div class="form-group col-sm-2">
                     <input type="button" value="Filtrar" class="btn btn-primary" onclick="Selecionar()">
+                    <input type="button" value="Imprimir" class="btn btn-primary" onclick="Imprimir()">
                 </div>
             </div>
-                <div class="box-body table-responsive no-padding">
-                    <table class="table table-striped table-condensed table-bordered">
+            <div class="box-body table-responsive no-padding">
+                <table class="table table-striped table-condensed table-bordered">
+                    <tr>
+                        <th>
+                            @Html.DisplayName("Total inscritos")
+                        </th>
+                        <th>
+                            @Html.DisplayName("Sócios")
+                        </th>
+                        <th>
+                            @Html.DisplayName("Federados")
+                        </th>
+                        <th>
+                            @Html.DisplayName("Pagantes")
+                        </th>
+                        <th>
+                            @Html.DisplayName("PagSeguro")
+                        </th>
+                        <th>
+                            @Html.DisplayName("Valor Pago")
+                        </th>
+                    </tr>
+                    <tr>
+                        <td>@ViewBag.InscIndividuais</td>
+                        <td>@ViewBag.InscIndividuaisSocios</td>
+                        <td>@ViewBag.InscIndividuaisFederados</td>
+                        <td>@ViewBag.TotalPagantes</td>
+                        <td>@ViewBag.PagoNoCartao</td>
+                        <td>R$ @string.Format("{0:N}", valor)</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="box-body table-responsive no-padding">
+                <table class="table table-striped table-condensed table-bordered">
+                    <tr>
+                        <th>
+                            <b>#</b>
+                        </th>
+                        <th>
+                            @Html.DisplayName("nome")
+                        </th>
+                        <th>
+                            classe <span style="color:#f9f9f9">____________________</span>
+                        </th>
+                        <th>
+                            @Html.DisplayName("cabeça de chave")
+                            @if (ViewBag.CabecasDeChave == null)
+                            {
+                                <br>
+                                <span style="font-size:10px; font-weight:normal">* Filtre por classe para editar esta coluna</span>
+                            }
+                        </th>
+                        <th>
+                            @Html.DisplayName("pago")
+                        </th>
+                        <th>
+                            @Html.DisplayName("PagSeguro")
+                        </th>
+                        <th>
+                            @Html.DisplayName("Desconto")
+                        </th>
+                        <th></th>
+                    </tr>
+                    @foreach (var item in Model)
+                    {
+                        i++;
                         <tr>
-                            <th>
-                                @Html.DisplayName("Total inscritos")
-                            </th>
-                            <th>
-                                @Html.DisplayName("Sócios")
-                            </th>
-                            <th>
-                                @Html.DisplayName("Federados")
-                            </th>
-                            <th>
-                                @Html.DisplayName("Pagantes")
-                            </th>
-                            <th>
-                                @Html.DisplayName("PagSeguro")
-                            </th>
-                            <th>
-                                @Html.DisplayName("Valor Pago")
-                            </th>
-                        </tr>
-                        <tr>
-                            <td>@ViewBag.InscIndividuais</td>
-                            <td>@ViewBag.InscIndividuaisSocios</td>
-                            <td>@ViewBag.InscIndividuaisFederados</td>
-                            <td>@ViewBag.TotalPagantes</td>
-                            <td>@ViewBag.PagoNoCartao</td>
-                            <td>R$ @string.Format("{0:N}", valor)</td>
-                        </tr>
-                    </table>
-                </div>
-                <div class="box-body table-responsive no-padding">
-                    <table class="table table-striped table-condensed table-bordered">
-                        <tr>
-                            <th>
-                                <b>#</b>
-                            </th>
-                            <th>
-                                @Html.DisplayName("nome")
-                            </th>
-                            <th>
-                                classe <span style="color:#f9f9f9">____________________</span>
-                            </th>
-                            <th>
-                                @Html.DisplayName("cabeça de chave")
-                                @if (ViewBag.CabecasDeChave == null)
+                            <td>
+                                @i
+                            </td>
+                            <td>
+                                <a href="@Url.Action("../Account/EditaUsuario", new { UserName = item.participante.UserName })" title="Editar" target="_blank">
+                                    @Html.DisplayFor(modelItem => item.participante.nome)
+                                </a>
+                                <a href="@item.participante.linkwhatsappSemMsg" target="_blank"><img width="25" height="25" src="/Content/image/whatsapp.png"></a>
+                            </td>
+                            <td>
+                                <select name="@Html.Raw("classe" + i)" id="@Html.Raw("classe" + i)" class="form-control" onchange="this.form.submit()">
+                                    @foreach (var item2 in ViewBag.Classes)
+                                    {
+                                        <option value="@item2.Id" @if (item.classe == item2.Id) { @Html.Raw("selected") }>@item2.nome</option>
+                                    }
+                                </select>
+                            </td>
+                            <td>
+                                @if (ViewBag.CabecasDeChave != null)
                                 {
-                                    <br>
-                                    <span style="font-size:10px; font-weight:normal">* Filtre por classe para editar esta coluna</span>
-                                }
-                            </th>
-                            <th>
-                                @Html.DisplayName("pago")
-                            </th>
-                            <th>
-                                @Html.DisplayName("PagSeguro")
-                            </th>
-                            <th>
-                                @Html.DisplayName("Desconto")
-                            </th>
-                            <th></th>
-                        </tr>
-                        @foreach (var item in Model)
-                        {
-                            i++;
-                            <tr>
-                                <td>
-                                    @i
-                                </td>
-                                <td>
-                                    <a href="@Url.Action("../Account/EditaUsuario", new { UserName = item.participante.UserName })" title="Editar">
-                                        @Html.DisplayFor(modelItem => item.participante.nome)
-                                    </a>
-                                    <a href="@item.participante.linkwhatsappSemMsg"><img width="25" height="25" src="/Content/image/whatsapp.png"></a>
-                                </td>
-                                <td>
-                                    <select name="@Html.Raw("classe" + i)" id="@Html.Raw("classe" + i)" class="form-control" onchange="this.form.submit()">
-                                        @foreach (var item2 in ViewBag.Classes)
+                                    <select name="@Html.Raw("cabecaChave" + i)" id="@Html.Raw("cabecaChave" + i)" class="form-control validarCabecaChave">
+                                        <option value="100" @if (item.cabecaChave == 100) { @Html.Raw("selected") }>não</option>
+                                        @for (int j = 1; j <= ViewBag.CabecasDeChave; j++)
                                         {
-                                            <option value="@item2.Id" @if (item.classe == item2.Id) { @Html.Raw("selected") }>@item2.nome</option>
+                                            <option value="@j" @if (item.cabecaChave == j) { @Html.Raw("selected") }>@j</option>
                                         }
                                     </select>
-                                </td>
-                                <td>
-                                    @if (ViewBag.CabecasDeChave != null)
-                                    {
-                                        <select name="@Html.Raw("cabecaChave" + i)" id="@Html.Raw("cabecaChave" + i)" class="form-control validarCabecaChave">
-                                            <option value="100" @if (item.cabecaChave == 100) { @Html.Raw("selected") }>não</option>
-                                            @for (int j = 1; j <= ViewBag.CabecasDeChave; j++)
-                                            {
-                                                <option value="@j" @if (item.cabecaChave == j) { @Html.Raw("selected") }>@j</option>
-                                            }
-                                        </select>
-                                    }
-                                    else
-                                    {
-                                        <input type="hidden" name="@Html.Raw("cabecaChave" + i)" id="@Html.Raw("cabecaChave" + i)" value=@item.cabecaChave />
-                                        if (item.cabecaChave == 100)
-                                        { @Html.Raw("não") }
-                                    else
-                                    { @Html.Raw(item.cabecaChave)}
-                            }
-                                </td>
-                                <td>
-                                    @if (item.isAtivo)
-                                    {
-                                        <input type="checkbox" checked value="true" name="@Html.Raw("isAtivo" + i)" id="@Html.Raw("isAtivo" + i)" />
-                                    }
-                                    else
-                                    {
-                                        <input type="checkbox" value="true" name="@Html.Raw("isAtivo" + i)" id="@Html.Raw("isAtivo" + i)" />
-                                    }
-                                </td>
-                                <td id="@Html.Raw("statusPagamento" + i)">
-                                    @Html.Raw(item.descricaoStatusPag)
-                                </td>
+                                }
+                                else
+                                {
+                                    <input type="hidden" name="@Html.Raw("cabecaChave" + i)" id="@Html.Raw("cabecaChave" + i)" value=@item.cabecaChave />
+                                    if (item.cabecaChave == 100)
+                                    { @Html.Raw("não") }
+                                else
+                                { @Html.Raw(item.cabecaChave)}
+                        }
+                            </td>
+                            <td>
+                                @if (item.isAtivo)
+                                {
+                                    <input type="checkbox" checked value="true" name="@Html.Raw("isAtivo" + i)" id="@Html.Raw("isAtivo" + i)" />
+                                }
+                                else
+                                {
+                                    <input type="checkbox" value="true" name="@Html.Raw("isAtivo" + i)" id="@Html.Raw("isAtivo" + i)" />
+                                }
+                            </td>
+                            <td id="@Html.Raw("statusPagamento" + i)">
+                                @Html.Raw(item.descricaoStatusPag)
+                            </td>
 
-                                <td>
-                                    @if ((item.isSocio != null) && ((bool)item.isSocio) && (item.isFederado != null) && ((bool)item.isFederado))
-                                    {
-                                        if (ViewBag.descontoFederadoMaior == false)
-                                        {
-                                            @Html.Raw(ViewBag.descricaoTipoDesconto)
-                                        }
-                                        else
-                                        {
-                                            @Html.Raw(" Federado")
-                                        }
-                                    }
-                                    else if ((item.isSocio != null) && ((bool)item.isSocio))
+                            <td>
+                                @if ((item.isSocio != null) && ((bool)item.isSocio) && (item.isFederado != null) && ((bool)item.isFederado))
+                                {
+                                    if (ViewBag.descontoFederadoMaior == false)
                                     {
                                         @Html.Raw(ViewBag.descricaoTipoDesconto)
                                     }
-                                    else if ((item.isFederado != null) && ((bool)item.isFederado))
+                                    else
                                     {
                                         @Html.Raw(" Federado")
                                     }
-                                </td>
-                                <td align="center">
-                                    <form method="post" enctype="multipart/form-data" action="#" name="@Html.Raw("form"+i)" id="@Html.Raw("form"+i)" class="form">
-                                        <input type="hidden" name="Id" id="Id" value="@item.Id">
-                                        <button title="detalhe" data-valor="@Html.Raw(item.torneioId+"|"+item.userId)" name="@Html.Raw("det-button"+i)" id="@Html.Raw("det-button" + i)" class="btn btn-default btn-xs detalhe">
-                                            Detalhe
-                                        </button>
-                                        <button title="salvar" data-valor="@Html.Raw(i)" name="@Html.Raw("button"+i)" id="@Html.Raw("button"+i)" class="btn btn-default btn-xs inscricaoButton">
-                                            Salvar
-                                        </button>
-                                        <button title="excluir" data-valor="@Html.Raw(item.Id)" name="@Html.Raw("exc-button"+i)" id="@Html.Raw("exc-button" + i)" class="btn btn-default btn-xs confirmExclusao">
-                                            Excluir
-                                        </button>
-                                    </form>
-                                </td>
+                                }
+                                else if ((item.isSocio != null) && ((bool)item.isSocio))
+                                {
+                                    @Html.Raw(ViewBag.descricaoTipoDesconto)
+                                }
+                                else if ((item.isFederado != null) && ((bool)item.isFederado))
+                                {
+                                    @Html.Raw(" Federado")
+                                }
+                            </td>
+                            <td align="center">
+                                <form method="post" enctype="multipart/form-data" action="#" name="@Html.Raw("form"+i)" id="@Html.Raw("form"+i)" class="form">
+                                    <input type="hidden" name="Id" id="Id" value="@item.Id">
+                                    <button title="detalhe" data-valor="@Html.Raw(item.torneioId+"|"+item.userId)" name="@Html.Raw("det-button"+i)" id="@Html.Raw("det-button" + i)" class="btn btn-default btn-xs detalhe">
+                                        Detalhe
+                                    </button>
+                                    <button title="salvar" data-valor="@Html.Raw(i)" name="@Html.Raw("button"+i)" id="@Html.Raw("button"+i)" class="btn btn-default btn-xs inscricaoButton">
+                                        Salvar
+                                    </button>
+                                    <button title="excluir" data-valor="@Html.Raw(item.Id)" name="@Html.Raw("exc-button"+i)" id="@Html.Raw("exc-button" + i)" class="btn btn-default btn-xs confirmExclusao">
+                                        Excluir
+                                    </button>
+                                </form>
+                            </td>
 
-                            </tr>
-                        }
-                    </table>
-                </div>
+                        </tr>
+                    }
+                </table>
             </div>
+        </div>
     </div>
     @section Scripts {
         <script type="text/javascript">
-    $(document).ready(function () {
-        $(".inscricaoButton").click(function (event) {
-            var i = $(this).data("valor");
-            var Id = $("#form" + i).find("input[name=Id]").val();
-            var classe = document.getElementById("classe" + i).value;
-            var isAtivo = document.getElementById("isAtivo" + i).checked;
-            var cabecaChave = document.getElementById("cabecaChave" + i).value;
-            event.preventDefault();
-            //var data1 = $(this).closest('.form');
-            //console.log(data1);
-            $.ajax({
-                type: "POST",
-                url: "/Torneio/EditInscritos",
-                dataType: "json",
-                data: "{'Id':'" + Id + "', 'classe':'" + classe + "', 'cabecaChave':'" + cabecaChave + "', 'isAtivo':'" + isAtivo + "'}",
-                contentType: "application/json; charset=utf-8",
-                success: function (response) {
-                    if (typeof response == "object") {
-                        toastr.options = {
-                            "positionClass": "toast-top-center"
-                        }
-                        if (response.retorno === 0) {
-                            toastr.error(response.erro, "Erro");
-                        } else {
-                            document.getElementById('statusPagamento' + i).innerHTML = response.statusPagamento
+            $(document).ready(function () {
+                $(".inscricaoButton").click(function (event) {
+                    var i = $(this).data("valor");
+                    var Id = $("#form" + i).find("input[name=Id]").val();
+                    var classe = document.getElementById("classe" + i).value;
+                    var isAtivo = document.getElementById("isAtivo" + i).checked;
+                    var cabecaChave = document.getElementById("cabecaChave" + i).value;
+                    event.preventDefault();
+                    //var data1 = $(this).closest('.form');
+                    //console.log(data1);
+                    $.ajax({
+                        type: "POST",
+                        url: "/Torneio/EditInscritos",
+                        dataType: "json",
+                        data: "{'Id':'" + Id + "', 'classe':'" + classe + "', 'cabecaChave':'" + cabecaChave + "', 'isAtivo':'" + isAtivo + "'}",
+                        contentType: "application/json; charset=utf-8",
+                        success: function (response) {
+                            if (typeof response == "object") {
+                                toastr.options = {
+                                    "positionClass": "toast-top-center"
+                                }
+                                if (response.retorno === 0) {
+                                    toastr.error(response.erro, "Erro");
+                                } else {
+                                    document.getElementById('statusPagamento' + i).innerHTML = response.statusPagamento
 
-                            toastr.success("Atualização realizada com sucesso.", "Aviso");
+                                    toastr.success("Atualização realizada com sucesso.", "Aviso");
+                                }
+                            }
+                        },
+                        error: function (jqXHR, textStatus, errorThrown) {
+                            location.reload(true);
                         }
+                    });
+                });
+
+                $(".confirmExclusao").confirm({
+                    title: "Confirmação",
+                    content: "Tem certeza que deseja excluir esta inscrição?",
+                    buttons: {
+                        sim: {
+                            text: 'Sim',
+                            btnClass: 'btn-primary',
+                            action: function () {
+                                var i = this.$target.data("valor");
+                                window.location.href = "/Torneio/ExcluirInscricao?Id=" + i;
+                            }
+                        },
+                        cancelar: {}
                     }
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    location.reload(true);
-                }
+                });
+
+                $(".detalhe").click(function (event) {
+                    event.preventDefault();
+                    var arr = $(this).data("valor").split("|");
+                    window.location.href = "/Torneio/Detalhes?Id=" + arr[0] + "&Msg=&userId=" + arr[1];
+                });
+
+                $(".validarCabecaChave").change(function (event) {
+                    //event.preventDefault();
+                    try {
+                        for (var i = 1; i <= 120; i++) {
+                            //alert("item:" + i)
+                            if (document.getElementById("cabecaChave" + i).value == $(this).get(0).value && $(this).get(0).getAttribute("name") != "cabecaChave" + i) {
+                                toastr.options = {
+                                    "positionClass": "toast-top-center"
+                                }
+                                toastr.error("Já existe um cabeça de chave nº: " + $(this).get(0).value, "Erro")
+                                document.getElementById($(this).get(0).getAttribute("name")).selectedIndex = 0;
+                                return;
+                            }
+                        }
+                    } catch (err) {
+                        // alert(err)
+                    }
+                    //isDupla2 = $(this).children(':selected').data("isdupla") == "True";
+                });
+
             });
-        });
 
-        $(".confirmExclusao").confirm({
-            title: "Confirmação",
-            content: "Tem certeza que deseja excluir esta inscrição?",
-            buttons: {
-                sim: {
-                    text: 'Sim',
-                    btnClass: 'btn-primary',
-                    action: function () {
-                        var i = this.$target.data("valor");
-                        window.location.href = "/Torneio/ExcluirInscricao?Id=" + i;
-                    }
-                },
-                cancelar: {}
+            function Selecionar() {
+                var torneioId = document.getElementById('torneioId').value;
+                var classeId = document.getElementById('filtroClasse').value;
+                var filtroStatusPagamento = document.getElementById('filtroStatusPagamento').value;
+                var filtroJogador = document.getElementById('filtroJogador').value;
+                window.location = "EditInscritos?torneioId=" + torneioId + "&filtroClasse=" + classeId + "&filtroJogador=" + filtroJogador + "&filtroStatusPagamento=" + filtroStatusPagamento;
             }
-        });
 
-        $(".detalhe").click(function (event) {
-            event.preventDefault();
-            var arr = $(this).data("valor").split("|");
-            window.location.href = "/Torneio/Detalhes?Id=" + arr[0] +"&Msg=&userId=" + arr[1];
-            });
-
-        $(".validarCabecaChave").change(function (event) {
-            //event.preventDefault();
-            try {
-                for (var i = 1; i <= 120; i++) {
-                    //alert("item:" + i)
-                    if (document.getElementById("cabecaChave" + i).value == $(this).get(0).value && $(this).get(0).getAttribute("name") != "cabecaChave" + i) {
-                        toastr.options = {
-                            "positionClass": "toast-top-center"
-                        }
-                        toastr.error("Já existe um cabeça de chave nº: " + $(this).get(0).value, "Erro")
-                        document.getElementById($(this).get(0).getAttribute("name")).selectedIndex = 0;
-                        return;
-                    }
-                }
-            } catch (err) {
-                // alert(err)
+            function Imprimir() {
+                var torneioId = document.getElementById('torneioId').value;
+                var classeId = document.getElementById('filtroClasse').value;
+                var filtroStatusPagamento = document.getElementById('filtroStatusPagamento').value;
+                var jogador = document.getElementById('filtroJogador').value;
+                window.location = "ImprimirInscritos?torneioId=" + torneioId + "&classeId=" + classeId + "&jogador=" + jogador + "&filtroStatusPagamento=" + filtroStatusPagamento;
             }
-            //isDupla2 = $(this).children(':selected').data("isdupla") == "True";
-        });
-
-    });
-
-    function Selecionar() {
-        var torneioId = document.getElementById('torneioId').value;
-        var classeId = document.getElementById('filtroClasse').value;
-        var filtroJogador = document.getElementById('filtroJogador').value;
-        window.location = "EditInscritos?torneioId=" + torneioId + "&filtroClasse=" + classeId + "&filtroJogador=" + filtroJogador;
-    }
         </script>
     }
-    

@@ -298,6 +298,8 @@
     <Compile Include="Models\ClassificacaoFaseGrupo.cs" />
     <Compile Include="Models\Configuracao.cs" />
     <Compile Include="Models\Email.cs" />
+    <Compile Include="Models\ImpressaoInscritosModel.cs" />
+    <Compile Include="Models\ImpressaoJogoFaseGrupoModel.cs" />
     <Compile Include="Models\InscricaoTorneio.cs" />
     <Compile Include="Models\Jogo.cs" />
     <Compile Include="Models\JogoCabecaChave.cs" />
@@ -630,7 +632,7 @@
     <Content Include="Content\toastr.less" />
     <Content Include="Content\img\banner-mobile.webp" />
     <Content Include="Content\img\hero-bg.webp" />
-	<Content Include="libman.json" />
+    <Content Include="libman.json" />
     <Content Include="Content\bootstrap-5.0.2-dist\css\bootstrap-grid.css.map" />
     <Content Include="Content\bootstrap-5.0.2-dist\css\bootstrap-grid.min.css.map" />
     <Content Include="Content\bootstrap-5.0.2-dist\css\bootstrap-grid.rtl.css.map" />
@@ -1100,7 +1102,7 @@
     <Content Include="Views\Shared\_LayoutTorneioFaseGrupo.cshtml" />
     <Content Include="Views\Torneio\EditTeste.cshtml" />
     <Content Include="Views\Torneio\CreateTorneio.cshtml" />
-	<Content Include="Views\Torneio\_PartialTabsTorneio.cshtml" />
+    <Content Include="Views\Torneio\_PartialTabsTorneio.cshtml" />
     <Content Include="Views\Torneio\EditTorneio.cshtml" />
     <Content Include="Views\Torneio\EditPatrocinadores.cshtml" />
     <Content Include="Views\Torneio\Teste.cshtml" />
@@ -1132,6 +1134,9 @@
     <Content Include="Views\CalendarioTorneios\Index.cshtml" />
     <Content Include="Views\PaginaEspecial\Index.cshtml" />
     <Content Include="Views\PaginaEspecial\_PartialCalendarioMes.cshtml" />
+    <Content Include="Views\Torneio\ImprimirInscritos.cshtml" />
+    <Content Include="Views\Torneio\ImprimirTabelaFaseGrupo.cshtml" />
+    <Content Include="Views\Torneio\_PartialJogoImprimirFaseGrupo.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
