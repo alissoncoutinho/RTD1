@@ -3814,7 +3814,7 @@ namespace Barragem.Controllers
                           (
                               (x.dataJogo != null && x.horaJogo != null)
                               ||
-                              (idsSituacaoJogosFinalizados.Contains(x.situacao_Id) && (x.qtddGames1setDesafiado > 0 || x.qtddGames1setDesafiante > 0 || x.qtddGames2setDesafiado > 0 || x.qtddGames2setDesafiante > 0 || x.qtddGames3setDesafiado > 0 || x.qtddGames3setDesafiante > 0) && x.desafiante2_id != 10)
+                              (idsSituacaoJogosFinalizados.Contains(x.situacao_Id) && (x.qtddGames1setDesafiado > 0 || x.qtddGames1setDesafiante > 0 || x.qtddGames2setDesafiado > 0 || x.qtddGames2setDesafiante > 0 || x.qtddGames3setDesafiado > 0 || x.qtddGames3setDesafiante > 0) && x.desafiante_id != 10 && x.desafiado_id != 10)
                           )
                          );
 
