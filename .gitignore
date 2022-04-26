@@ -4,10 +4,14 @@
 Barragem.v12.suo
 /.vs/
 /packages/
+/Barragem/Content/
 /Barragem/App_Data/aspnet-Barragem-20140717001205.mdf
 /Barragem/App_Data/aspnet-Barragem-20140717001205_log.ldf
 /Barragem/App_Data/ASPNETDB.MDF
 /Barragem/App_Data/aspnetdb_log.ldf
+/Uol.PagSeguro/Uol.PagSeguro/obj/
+/Uol.PagSeguro/Uol.PagSeguro/bin/
+/Barragem/obj/
 *.dll
 /Barragem/bin/Uol.PagSeguro.pdb
 /Barragem/bin/Barragem.dll.config
