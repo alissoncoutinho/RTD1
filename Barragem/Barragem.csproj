@@ -301,6 +301,7 @@
     <Compile Include="Models\ImpressaoInscritosModel.cs" />
     <Compile Include="Models\ImpressaoJogoFaseGrupoModel.cs" />
     <Compile Include="Models\InscricaoTorneio.cs" />
+    <Compile Include="Models\InscricaoTorneioPagaModel.cs" />
     <Compile Include="Models\Jogo.cs" />
     <Compile Include="Models\JogoCabecaChave.cs" />
     <Compile Include="Models\Liga.cs" />

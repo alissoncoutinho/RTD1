@@ -439,6 +439,17 @@ namespace Barragem.Controllers
 
         }
 
+        [ResponseType(typeof(IList<InscricaoTorneioPagaModel>))]
+        [HttpGet]
+        [Route("api/PerfilAPI/Torneio/ValidarInscricaoPaga")]
+        public IList<InscricaoTorneioPagaModel> ValidarInscricaoPaga(int torneioId, int userId)
+        {
+            return db.InscricaoTorneio
+                .Where(x => x.torneioId == torneioId && x.userId == userId && x.isAtivo == false)
+                .Select(s => new InscricaoTorneioPagaModel() { IdClasse = s.classe, NomeClasse = s.classeTorneio.nome, InscricaoPaga = s.isAtivo })
+                .ToList();
+        }
+
         [Route("api/PerfilAPI/GraficoVitoriasTorneio/{userId}")]
         public Estatistica GetGraficoVitoriasTorneio(int userId)
         {
