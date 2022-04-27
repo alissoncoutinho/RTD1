@@ -44,7 +44,7 @@
 
                 <div class="form-group col-sm-2">
                     <input type="button" value="Filtrar" class="btn btn-primary" onclick="Selecionar()">
-                    <input type="button" value="Imprimir" class="btn btn-primary" onclick="Imprimir()">
+                    <input type="button" value="Imprimir" class="btn btn-primary" onclick="Imprimir()" target="_blank">
                 </div>
             </div>
             <div class="box-body table-responsive no-padding">
@@ -302,7 +302,7 @@
                 var classeId = document.getElementById('filtroClasse').value;
                 var filtroStatusPagamento = document.getElementById('filtroStatusPagamento').value;
                 var jogador = document.getElementById('filtroJogador').value;
-                window.location = "ImprimirInscritos?torneioId=" + torneioId + "&classeId=" + classeId + "&jogador=" + jogador + "&filtroStatusPagamento=" + filtroStatusPagamento;
+                window.open("ImprimirInscritos?torneioId=" + torneioId + "&classeId=" + classeId + "&jogador=" + jogador + "&filtroStatusPagamento=" + filtroStatusPagamento, '_blank');
             }
         </script>
     }
