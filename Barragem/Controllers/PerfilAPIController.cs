@@ -341,6 +341,13 @@ namespace Barragem.Controllers
                     j.nomeDesafiante = jogo.desafiante.nome;
                     j.fotoDesafiante = jogo.desafiante.fotoURL;
                     j.idDesafiante = jogo.desafiante_id;
+
+                    if (jogo.desafiante2 != null)
+                    {
+                        j.nomeDesafianteDupla = jogo.desafiante2.nome;
+                        j.fotoDesafianteDupla = jogo.desafiante2.fotoURL;
+                        j.idDesafianteDupla = jogo.desafiante2_id;
+                    }
                 }
                 if ((jogo.torneioId != null) && (jogo.desafiado_id == 10))
                 {
@@ -355,6 +362,13 @@ namespace Barragem.Controllers
                     j.nomeDesafiado = jogo.desafiado.nome;
                     j.fotoDesafiado = jogo.desafiado.fotoURL;
                     j.idDesafiado = jogo.desafiado_id;
+
+                    if (jogo.desafiado2 != null)
+                    {
+                        j.nomeDesafiadoDupla = jogo.desafiado2.nome;
+                        j.fotoDesafiadoDupla = jogo.desafiado2.fotoURL;
+                        j.idDesafiadoDupla = jogo.desafiado2_id;
+                    }
                 }
                 j.dataJogo = jogo.dataJogo;
                 j.horaJogo = jogo.horaJogo;
@@ -423,6 +437,17 @@ namespace Barragem.Controllers
 
             return listCT.OrderByDescending(c => c.dataTorneio).ToList();
 
+        }
+
+        [ResponseType(typeof(IList<InscricaoTorneioPagaModel>))]
+        [HttpGet]
+        [Route("api/PerfilAPI/Torneio/ValidarInscricaoPaga")]
+        public IList<InscricaoTorneioPagaModel> ValidarInscricaoPaga(int torneioId, int userId)
+        {
+            return db.InscricaoTorneio
+                .Where(x => x.torneioId == torneioId && x.userId == userId && x.isAtivo == false)
+                .Select(s => new InscricaoTorneioPagaModel() { IdClasse = s.classe, NomeClasse = s.classeTorneio.nome, InscricaoPaga = s.isAtivo })
+                .ToList();
         }
 
         [Route("api/PerfilAPI/GraficoVitoriasTorneio/{userId}")]

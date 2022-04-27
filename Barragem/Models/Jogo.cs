@@ -405,15 +405,21 @@ namespace Barragem.Models
         public string horaJogo { get; set; }
         public string localJogo { get; set; }
         public string nomeDesafiante { get; set; }
+        public string nomeDesafianteDupla { get; set; }
         public string nomeDesafiado { get; set; }
+        public string nomeDesafiadoDupla { get; set; }
         public int idDesafiante { get; set; }
+        public int? idDesafianteDupla { get; set; }
         public int idDesafiado { get; set; }
+        public int? idDesafiadoDupla { get; set; }
         public int rankingDesafiante { get; set; }
         public int rankingDesafiado { get; set; }
         public double pontuacaoDesafiante { get; set; }
         public double pontuacaoDesafiado { get; set; }
         public string fotoDesafiado { get; set; }
+        public string fotoDesafiadoDupla { get; set; }
         public string fotoDesafiante { get; set; }
+        public string fotoDesafianteDupla { get; set; }
         public int qtddGames1setDesafiante { get; set; }
         public int qtddGames2setDesafiante { get; set; }
         public int qtddGames3setDesafiante { get; set; }
