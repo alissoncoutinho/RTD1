@@ -29,37 +29,52 @@ namespace Barragem.Controllers
         [Route("api/PerfilAPI/ResetarSenha")]
         [ResponseType(typeof(void))]
         [HttpGet]
-        public IHttpActionResult ResetarSenha(string email="", string userName="") {
+        public IHttpActionResult ResetarSenha(string email = "", string userName = "")
+        {
             UserProfile user = null;
-            try {
-                if (userName != ""){
+            try
+            {
+                if (userName != "")
+                {
                     user = db.UserProfiles.Where(u => u.UserName == userName).FirstOrDefault();
                 }
-                else { 
+                else
+                {
                     user = db.UserProfiles.Where(u => u.email == email && u.situacao != "desativado" && u.situacao != "inativado").FirstOrDefault();
                     if (user == null)
                     {
                         user = db.UserProfiles.Where(u => u.email == email).FirstOrDefault();
                     }
                 }
-                if (user != null) {
-                    if (String.IsNullOrEmpty(user.email)) {
+                if (user != null)
+                {
+                    if (String.IsNullOrEmpty(user.email))
+                    {
                         return InternalServerError(new Exception("Este usuário não possui e-mail cadastrado. Por favor, entre em contato com o administrador."));
-                    } else {
+                    }
+                    else
+                    {
                         Database.SetInitializer<BarragemDbContext>(null);
-                        if (!WebSecurity.Initialized) {
+                        if (!WebSecurity.Initialized)
+                        {
                             WebSecurity.InitializeDatabaseConnection("DefaultConnection", "UserProfile", "UserId", "UserName", autoCreateTables: false);
                         }
                         string confirmationToken = WebSecurity.GeneratePasswordResetToken(user.UserName);
                         EnviarMailSenha(confirmationToken, user.nome, user.email);
                         return StatusCode(HttpStatusCode.NoContent);
                     }
-                } else {
+                }
+                else
+                {
                     return InternalServerError(new Exception("Usuário não encontrado. Verifique se o email está correto ou se o usuário está desativado."));
                 }
-            } catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 return InternalServerError(new Exception(ex.Message));
-            } finally {
+            }
+            finally
+            {
                 if (db != null)
                     db.Dispose();
             }
@@ -105,17 +120,22 @@ namespace Barragem.Controllers
             var labels = "";
             var dados = "";
             var primeiraVez = true;
-            foreach (var rk in meuRanking){
-                if (primeiraVez){
+            foreach (var rk in meuRanking)
+            {
+                if (primeiraVez)
+                {
                     primeiraVez = false;
                     labels = "'" + rk.rodada.codigoSeq + ": " + rk.classe.nome.Replace("Classe", "Cl.") + "'";
                     dados = "" + rk.posicaoClasse;
-                }else{
+                }
+                else
+                {
                     dados = rk.posicaoClasse + "," + dados;
                     labels = "'" + rk.rodada.codigoSeq + ": " + rk.classe.nome.Replace("Classe", "Cl.") + "'," + labels;
                 }
             }
-            if (meuRanking.Count() > 0) {
+            if (meuRanking.Count() > 0)
+            {
                 estatistica.labels = labels;
                 estatistica.dados = dados;
             }
@@ -123,7 +143,7 @@ namespace Barragem.Controllers
             var meusJogos = db.Jogo.Where(j => (j.desafiado_id == userId || j.desafiante_id == userId) && (j.situacao_Id == 5 || j.situacao_Id == 4) && j.torneioId == null).ToList();
             estatistica.qtddTotalDerrotas = meusJogos.Where(j => j.idDoVencedor != userId).Count();
             estatistica.qtddTotalVitorias = meusJogos.Where(j => j.idDoVencedor == userId).Count();
-            return estatistica; 
+            return estatistica;
         }
 
         [ResponseType(typeof(HeadToHead))]
@@ -152,7 +172,8 @@ namespace Barragem.Controllers
         [Route("api/PerfilAPI/{userId}")]
         [HttpGet]
         [ResponseType(typeof(Perfil))]
-        public IHttpActionResult GetPerfil(int userId){
+        public IHttpActionResult GetPerfil(int userId)
+        {
             var user = db.UserProfiles.Find(userId);
             var perfil = new Perfil();
             perfil.login = user.UserName;
@@ -187,7 +208,8 @@ namespace Barragem.Controllers
             user.bairro = "não informado";
 
             db.Entry(user).State = EntityState.Modified;
-            try{
+            try
+            {
                 db.SaveChanges();
             }
             catch (System.Data.Entity.Validation.DbEntityValidationException e)
@@ -195,14 +217,15 @@ namespace Barragem.Controllers
                 var erro = "";
                 foreach (var eve in e.EntityValidationErrors)
                 {
-                    erro = "Entidade:" + eve.Entry.Entity.GetType().Name +" - "+ eve.Entry.State;
+                    erro = "Entidade:" + eve.Entry.Entity.GetType().Name + " - " + eve.Entry.State;
                     foreach (var ve in eve.ValidationErrors)
                     {
-                        erro =  erro + ": " + "- Campo: " + ve.PropertyName + ", Valor: " + ve.ErrorMessage;
+                        erro = erro + ": " + "- Campo: " + ve.PropertyName + ", Valor: " + ve.ErrorMessage;
                     }
                 }
                 return BadRequest(erro);
-            }catch(Exception e)
+            }
+            catch (Exception e)
             {
                 return BadRequest("erro inesperado: " + e.Message);
             }
@@ -237,7 +260,7 @@ namespace Barragem.Controllers
                 // Attempt to register the user
                 try
                 {
-                    if (!db.UserProfiles.Where(u=>u.UserName==login).Any())
+                    if (!db.UserProfiles.Where(u => u.UserName == login).Any())
                     {
                         if (!Funcoes.IsValidEmail(email))
                         {
@@ -262,7 +285,7 @@ namespace Barragem.Controllers
 
                         Roles.AddUserToRole(model.UserName, "usuario");
                         WebSecurity.Login(model.UserName, model.Password);
-                                                
+
                     }
                     else
                     {
@@ -275,7 +298,9 @@ namespace Barragem.Controllers
                     return BadRequest(e.Message);
                 }
 
-            } else {
+            }
+            else
+            {
                 var message = string.Join(" | ", ModelState.Values
                                             .SelectMany(v => v.Errors)
                                             .Select(e => e.ErrorMessage));
@@ -297,30 +322,53 @@ namespace Barragem.Controllers
         [Route("api/PerfilAPI/Ranking/{userId}")]
         public IList<JogoRodada> GetRanking(int userId)
         {
-            var jogos = db.Jogo.Where(j => (j.desafiado_id == userId || j.desafiante_id == userId) && j.situacao_Id != 1 && j.situacao_Id != 2 && j.desafiante_id != 10 && j.desafiado_id != 10).OrderByDescending(j=>j.Id).Take(15).ToList<Jogo>();
+            var jogos = db.Jogo.Where(j => (j.desafiado_id == userId || j.desafiante_id == userId) && j.situacao_Id != 1 && j.situacao_Id != 2 && j.desafiante_id != 10 && j.desafiado_id != 10).OrderByDescending(j => j.Id).Take(15).ToList<Jogo>();
             IList<JogoRodada> jogoRodada = new List<JogoRodada>();
-            foreach (var jogo in jogos){
+            foreach (var jogo in jogos)
+            {
                 var j = new JogoRodada();
                 j.Id = jogo.Id;
-                if ((jogo.torneioId!=null)&&(jogo.desafiante_id == 10)){
+                if ((jogo.torneioId != null) && (jogo.desafiante_id == 10))
+                {
                     j.nomeDesafiante = "bye";
                 }
-                else if ((jogo.torneioId != null) && (jogo.desafiante_id == 0)){
+                else if ((jogo.torneioId != null) && (jogo.desafiante_id == 0))
+                {
                     j.nomeDesafiante = "Aguardando Adversário";
-                }else{
+                }
+                else
+                {
                     j.nomeDesafiante = jogo.desafiante.nome;
                     j.fotoDesafiante = jogo.desafiante.fotoURL;
                     j.idDesafiante = jogo.desafiante_id;
+
+                    if (jogo.desafiante2 != null)
+                    {
+                        j.nomeDesafianteDupla = jogo.desafiante2.nome;
+                        j.fotoDesafianteDupla = jogo.desafiante2.fotoURL;
+                        j.idDesafianteDupla = jogo.desafiante2_id;
+                    }
                 }
-                if ((jogo.torneioId!=null)&&(jogo.desafiado_id == 10)){
+                if ((jogo.torneioId != null) && (jogo.desafiado_id == 10))
+                {
                     j.nomeDesafiado = "bye";
                 }
-                else if ((jogo.torneioId != null) && (jogo.desafiado_id == 0)){
+                else if ((jogo.torneioId != null) && (jogo.desafiado_id == 0))
+                {
                     j.nomeDesafiado = "Aguardando Adversário";
-                }else{
+                }
+                else
+                {
                     j.nomeDesafiado = jogo.desafiado.nome;
                     j.fotoDesafiado = jogo.desafiado.fotoURL;
                     j.idDesafiado = jogo.desafiado_id;
+
+                    if (jogo.desafiado2 != null)
+                    {
+                        j.nomeDesafiadoDupla = jogo.desafiado2.nome;
+                        j.fotoDesafiadoDupla = jogo.desafiado2.fotoURL;
+                        j.idDesafiadoDupla = jogo.desafiado2_id;
+                    }
                 }
                 j.dataJogo = jogo.dataJogo;
                 j.horaJogo = jogo.horaJogo;
@@ -355,8 +403,8 @@ namespace Barragem.Controllers
                     var torneioId = (int)jogo.torneioId;
                     j.nomeRodada = db.Torneio.Find(torneioId).nome;
                 }
-                
-                
+
+
                 jogoRodada.Add(j);
 
             }
@@ -365,7 +413,8 @@ namespace Barragem.Controllers
         }
 
         [Route("api/PerfilAPI/Torneio/{userId}")]
-        public IList<ColocacaoTorneio> GetTorneio(int userId) {
+        public IList<ColocacaoTorneio> GetTorneio(int userId)
+        {
             var colocacoesEmTorneios =
                 from inscricao in db.InscricaoTorneio
                 join torneio in db.Torneio on inscricao.torneioId equals torneio.Id into colocacaoJogador
@@ -378,7 +427,7 @@ namespace Barragem.Controllers
                     dataTorneio = inscricao.torneio.dataInicio,
                     pontuacao = inscricao.Pontuacao,
                     nomeLiga = "Ranking"
-                    
+
                 };
             var listCT = new List<ColocacaoTorneio>(colocacoesEmTorneios);
             foreach (var c in listCT)
@@ -387,7 +436,7 @@ namespace Barragem.Controllers
             }
 
             return listCT.OrderByDescending(c => c.dataTorneio).ToList();
-                        
+
         }
 
         [Route("api/PerfilAPI/GraficoVitoriasTorneio/{userId}")]
@@ -395,7 +444,7 @@ namespace Barragem.Controllers
         {
             // gráfico rosca - desempenho nos jogos
             var estatistica = new Estatistica();
-            var meusJogos = db.Jogo.Where(j => (j.desafiado_id == userId || j.desafiante_id == userId || j.desafiante2_id== userId || j.desafiado2_id== userId) && (j.situacao_Id == 5 || j.situacao_Id == 4 || j.situacao_Id == 6) && j.torneioId != null).ToList();
+            var meusJogos = db.Jogo.Where(j => (j.desafiado_id == userId || j.desafiante_id == userId || j.desafiante2_id == userId || j.desafiado2_id == userId) && (j.situacao_Id == 5 || j.situacao_Id == 4 || j.situacao_Id == 6) && j.torneioId != null).ToList();
             estatistica.qtddTotalDerrotas = meusJogos.Where(j => j.idDoVencedor != userId && j.idDoVencedorDupla != userId).Count();
             estatistica.qtddTotalVitorias = meusJogos.Where(j => j.idDoVencedor == userId || j.idDoVencedorDupla == userId).Count();
             return estatistica;
@@ -411,10 +460,13 @@ namespace Barragem.Controllers
         {
             var user = db.UserProfiles.Find(userId);
 
-            if ((user.situacao == "ativo" || user.situacao == "licenciado") && (status=="ativo" || status== "licenciado")){
+            if ((user.situacao == "ativo" || user.situacao == "licenciado") && (status == "ativo" || status == "licenciado"))
+            {
 
                 user.situacao = status;
-            } else {
+            }
+            else
+            {
                 return InternalServerError(new Exception("Status não pode ser alterado nesta situação."));
             }
 
@@ -435,9 +487,9 @@ namespace Barragem.Controllers
         public IList<Perfil> GetBuscaOponentes(int rankingId)
         {
             List<UserProfile> oponentes;
-            oponentes = db.UserProfiles.Where(j => j.barragemId == rankingId && (j.situacao== "ativo" || j.situacao == "licenciado" || j.situacao == "suspenso" || j.situacao == "suspensoWO")).OrderBy(j => j.nome).ToList<UserProfile>();
-            
-             IList<Perfil> Listaperfil = new List<Perfil>();
+            oponentes = db.UserProfiles.Where(j => j.barragemId == rankingId && (j.situacao == "ativo" || j.situacao == "licenciado" || j.situacao == "suspenso" || j.situacao == "suspensoWO")).OrderBy(j => j.nome).ToList<UserProfile>();
+
+            IList<Perfil> Listaperfil = new List<Perfil>();
             foreach (var oponente in oponentes)
             {
                 var j = new Perfil();
@@ -491,7 +543,7 @@ namespace Barragem.Controllers
             return Ok(headToHead);
         }
 
-        private string ProcessImage(string croppedImage, int userId)  
+        private string ProcessImage(string croppedImage, int userId)
         {
 
             string filePath = String.Empty;
@@ -507,7 +559,7 @@ namespace Barragem.Controllers
             }
             catch (Exception ex)
             {
-                throw new Exception("Erro ao gravar imagem "+ex.Message);
+                throw new Exception("Erro ao gravar imagem " + ex.Message);
             }
             if (userId != 0)
             {
@@ -537,19 +589,22 @@ namespace Barragem.Controllers
             try
             {
                 user = db.UserProfiles.Find(avatar.userId);
-                if (!String.IsNullOrEmpty(avatar.avatarCropped)){
+                if (!String.IsNullOrEmpty(avatar.avatarCropped))
+                {
                     string filePath = ProcessImage(avatar.avatarCropped, avatar.userId);
                     user.fotoURL = filePath;
                     db.Entry(user).State = EntityState.Modified;
                     db.SaveChanges();
                 }
-            } catch (Exception e) {
+            }
+            catch (Exception e)
+            {
                 return InternalServerError(e);
             }
 
             return Ok(user.fotoURL);
         }
 
-        
+
     }
 }
