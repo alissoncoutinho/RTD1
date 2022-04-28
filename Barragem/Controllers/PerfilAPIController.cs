@@ -16,6 +16,7 @@ using System.IO;
 using System.Drawing;
 using System.Web.Hosting;
 using System.Web.Security;
+using Barragem.Helper;
 
 namespace Barragem.Controllers
 {
@@ -322,8 +323,6 @@ namespace Barragem.Controllers
         [Route("api/PerfilAPI/Ranking/{userId}")]
         public IList<JogoRodada> GetRanking(int userId)
         {
-            //TODO: FAZER TRATAMENTO DE ERRO E GRAVAR LOG EM ARQUIVO
-            
             var jogos = db.Jogo.Where(j => (j.desafiado_id == userId || j.desafiante_id == userId) && j.situacao_Id != 1 && j.situacao_Id != 2 && j.desafiante_id != 10 && j.desafiado_id != 10).OrderByDescending(j => j.Id).Take(15).ToList<Jogo>();
             IList<JogoRodada> jogoRodada = new List<JogoRodada>();
             foreach (var jogo in jogos)
