@@ -322,6 +322,8 @@ namespace Barragem.Controllers
         [Route("api/PerfilAPI/Ranking/{userId}")]
         public IList<JogoRodada> GetRanking(int userId)
         {
+            //TODO: FAZER TRATAMENTO DE ERRO E GRAVAR LOG EM ARQUIVO
+            
             var jogos = db.Jogo.Where(j => (j.desafiado_id == userId || j.desafiante_id == userId) && j.situacao_Id != 1 && j.situacao_Id != 2 && j.desafiante_id != 10 && j.desafiado_id != 10).OrderByDescending(j => j.Id).Take(15).ToList<Jogo>();
             IList<JogoRodada> jogoRodada = new List<JogoRodada>();
             foreach (var jogo in jogos)
@@ -445,7 +447,7 @@ namespace Barragem.Controllers
         public IList<InscricaoTorneioPagaModel> ValidarInscricaoPaga(int torneioId, int userId)
         {
             return db.InscricaoTorneio
-                .Where(x => x.torneioId == torneioId && x.userId == userId && x.isAtivo == false)
+                .Where(x => x.torneioId == torneioId && x.userId == userId)
                 .Select(s => new InscricaoTorneioPagaModel() { IdClasse = s.classe, NomeClasse = s.classeTorneio.nome, InscricaoPaga = s.isAtivo })
                 .ToList();
         }
