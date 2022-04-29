@@ -736,17 +736,22 @@
         function ValidarTab3(event, ehClickTab) {
             var erroValidacao = false;
             event.preventDefault();
-            
+
             var listLigas = document.getElementsByClassName('ligas');
             for (let item of listLigas) {
-                if (item.checked == true) {
-                    var select = item.nextElementSibling.nextElementSibling.firstElementChild.nextElementSibling;
-                    if (select.value == '-') {
-                        toastr.error("Selecione a pontuação do circuito escolhido.", "Erro");
-                        $("#btnTab3").attr("href", "#tabClasse");
-                        erroValidacao = true;
-                    }
-                }
+				try {
+					if (item.checked == true) {
+					   var select = item.nextElementSibling.nextElementSibling.firstElementChild.nextElementSibling;
+						if (select.value == '-') {
+							toastr.error("Selecione a pontuação do circuito escolhido.", "Erro");
+							$("#btnTab3").attr("href", "#tabClasse");
+							erroValidacao = true;
+						}
+					}
+				}
+				catch (e) {
+				   console.log("Erro ao ler valor selecionado do item " + item.value)
+				}
             }
 
             if (erroValidacao) {
@@ -767,15 +772,21 @@
 
         function ValidarRegraTab3() {
             var erroValidacao = false;
-            
+
             var listLigas = document.getElementsByClassName('ligas');
             for (let item of listLigas) {
-                if (item.checked == true) {
-                    var select = item.nextElementSibling.nextElementSibling.firstElementChild.nextElementSibling;
-                    if (select.value == '-') {
-                        erroValidacao = true;
-                    }
-                }
+
+				try {
+					if (item.checked == true) {
+						var select = item.nextElementSibling.nextElementSibling.firstElementChild.nextElementSibling;
+						if (select.value == '-') {
+							erroValidacao = true;
+						}
+					}
+				}
+				catch (e) {
+				   console.log("Erro ao ler valor selecionado do item " + item.value)
+				}
             }
             return erroValidacao == false;
         };
