@@ -3779,6 +3779,7 @@ namespace Barragem.Controllers
         {
             List<string> classesComJogosGerados = new List<string>();
             List<int> idsSituacaoJogosFinalizados = new List<int>() { { 3 }, { 4 }, { 5 }, { 6 } };
+     
             bool ehMataMata = false;
 
             try
@@ -3812,7 +3813,7 @@ namespace Barragem.Controllers
                           && ((x.rodadaFaseGrupo != 0 && !ehMataMata) || (x.rodadaFaseGrupo == 0 && ehMataMata))
                           &&
                           (
-                              (x.dataJogo != null && x.horaJogo != null)
+                              (x.dataJogo != null && x.horaJogo != null && !ehMataMata)
                               ||
                               (idsSituacaoJogosFinalizados.Contains(x.situacao_Id) && (x.qtddGames1setDesafiado > 0 || x.qtddGames1setDesafiante > 0 || x.qtddGames2setDesafiado > 0 || x.qtddGames2setDesafiante > 0 || x.qtddGames3setDesafiado > 0 || x.qtddGames3setDesafiante > 0) && x.desafiante_id != 10 && x.desafiado_id != 10)
                           )
