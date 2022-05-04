@@ -204,11 +204,22 @@ namespace Barragem.Controllers
 
         [Route("api/RankingAPI/Sobre/{rankingId}")]
         [HttpGet]
-        [ResponseType(typeof(Barragens))]
+        [ResponseType(typeof(DadosBarragemSobreModel))]
         public IHttpActionResult Sobre(int rankingId)
         {
             var barragem = db.Barragens.Find(rankingId);
-            return Ok(barragem);
+            if (barragem == null)
+                return NotFound();
+
+            var dadosSobre = new DadosBarragemSobreModel();
+
+            dadosSobre.nome = barragem.nome;
+            dadosSobre.cidade = barragem.cidade;
+            dadosSobre.regulamento = barragem.regulamento;
+            dadosSobre.quemsomos = barragem.quemsomos;
+            dadosSobre.contato = barragem.contato;
+
+            return Ok(dadosSobre);
         }
 
         [Route("api/RankingAPI/RegrasPontuacao")]
