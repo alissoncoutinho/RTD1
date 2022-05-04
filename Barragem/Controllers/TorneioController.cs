@@ -3779,6 +3779,8 @@ namespace Barragem.Controllers
         {
             List<string> classesComJogosGerados = new List<string>();
             List<int> idsSituacaoJogosFinalizados = new List<int>() { { 3 }, { 4 }, { 5 }, { 6 } };
+     
+            bool ehMataMataSeguidoFaseGrupo = false;
             bool ehMataMata = false;
 
             try
@@ -3796,23 +3798,28 @@ namespace Barragem.Controllers
                         //obter tipo a checar os jogos gerados
                         if (classe.faseGrupo)
                         {
-                            ehMataMata = false;
+                            ehMataMataSeguidoFaseGrupo = false;
+                        }
+
+                        if (classe.faseMataMata) 
+                        {
+                            ehMataMata = true;
                         }
 
                         if (possuiJogos)
                         {
                             if (classe.faseGrupo && classe.faseMataMata && qtdeJogosGeradosFaseGrupo == 0)
                             {
-                                ehMataMata = true;
+                                ehMataMataSeguidoFaseGrupo = true;
                             }
                         }
 
                         //Validar jogos gerados
                         var classeComJogosGerados = db.Jogo.Any(x => x.torneioId == torneioId && x.classeTorneio == classeId
-                          && ((x.rodadaFaseGrupo != 0 && !ehMataMata) || (x.rodadaFaseGrupo == 0 && ehMataMata))
+                          && ((x.rodadaFaseGrupo != 0 && !ehMataMataSeguidoFaseGrupo) || (x.rodadaFaseGrupo == 0 && ehMataMataSeguidoFaseGrupo) || (x.rodadaFaseGrupo == 0 && ehMataMata))
                           &&
                           (
-                              (x.dataJogo != null && x.horaJogo != null)
+                              (x.dataJogo != null && x.horaJogo != null && !ehMataMataSeguidoFaseGrupo)
                               ||
                               (idsSituacaoJogosFinalizados.Contains(x.situacao_Id) && (x.qtddGames1setDesafiado > 0 || x.qtddGames1setDesafiante > 0 || x.qtddGames2setDesafiado > 0 || x.qtddGames2setDesafiante > 0 || x.qtddGames3setDesafiado > 0 || x.qtddGames3setDesafiante > 0) && x.desafiante_id != 10 && x.desafiado_id != 10)
                           )
