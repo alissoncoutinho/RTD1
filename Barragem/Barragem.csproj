@@ -330,6 +330,7 @@
     <Compile Include="Models\Torneio500.cs" />
     <Compile Include="Models\TorneioGenerico.cs" />
     <Compile Include="Models\TorneioLiga.cs" />
+    <Compile Include="Models\UsuarioFirebase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ProviderDeTokensDeAcesso.cs" />
     <Compile Include="Startup.cs" />
