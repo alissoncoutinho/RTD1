@@ -384,19 +384,32 @@ namespace Barragem.Controllers
 
         [HttpGet]
         [Route("api/TorneioAPI/v2/Tabela/{userId}/{torneioId}")]
-        public TabelaApp GetTabelaV2(int userId, int torneioId)
+        public IHttpActionResult GetTabelaV2(int userId, int torneioId)
         {
-            return ObterTabela(userId, torneioId);
+            try
+            {
+                return Ok(ObterTabela(userId, torneioId));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpGet]
         [Route("api/TorneioAPI/Tabela/{torneioId}")]
-        public TabelaApp GetTabela(int torneioId)
+        public IHttpActionResult GetTabela(int torneioId)
         {
-            int userId = 0;
-
-            userId = getUsuarioLogado();
-            return ObterTabela(userId, torneioId);
+            try
+            {
+                var userId = getUsuarioLogado();
+                return Ok(ObterTabela(userId, torneioId));
+                
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         private TabelaApp ObterTabela(int userId, int torneioId)
