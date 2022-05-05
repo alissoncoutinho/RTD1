@@ -71,7 +71,7 @@ namespace Barragem.Context
         public DbSet<Patrocinio> Patrocinio { get; set; }
         
         public DbSet<Regra> Regra { get; set; }
-
+        public DbSet<UsuarioFirebase> UsuarioFirebase { get; set; }
         public DbSet<Cidade> Cidade { get; set; }
         public virtual DbSet<CalendarioTorneio> CalendarioTorneio { get; set; }
         public virtual DbSet<ModalidadeTorneio> ModalidadeTorneio { get; set; }
