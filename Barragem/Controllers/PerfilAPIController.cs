@@ -405,6 +405,8 @@ namespace Barragem.Controllers
                     j.nomeRodada = db.Torneio.Find(torneioId).nome;
                 }
 
+                j.nomeClasse = jogo.classe?.nome ?? string.Empty;
+                j.descricaoFase = FaseTorneio.ObterAbreviacao(jogo.grupoFaseGrupo, jogo.faseTorneio, jogo.rodadaFaseGrupo);
 
                 jogoRodada.Add(j);
 
@@ -624,6 +626,5 @@ namespace Barragem.Controllers
         {
             return Ok(db.UserProfiles.Any(x => x.UserName.ToLower() == nomeUsuario.ToLower()));
         }
-
     }
 }

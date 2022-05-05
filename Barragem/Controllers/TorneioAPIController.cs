@@ -384,40 +384,44 @@ namespace Barragem.Controllers
 
         [HttpGet]
         [Route("api/TorneioAPI/v2/Tabela/{userId}/{torneioId}")]
-        public TabelaApp GetTabelaV2(int userId, int torneioId)
+        public IHttpActionResult GetTabelaV2(int userId, int torneioId)
         {
             try
             {
-                return ObterTabela(userId, torneioId);
+                return Ok(ObterTabela(userId, torneioId));
             }
             catch (Exception ex)
             {
-                var msgErro = $"TORNEIOAPI - {DateTime.Now} - Id Torneio: {torneioId} UserId: {userId} Mensagem: {ex.Message} StackTrace: {ex.StackTrace}";
-                db.Log.Add(new Log() { descricao = msgErro });
-                db.SaveChanges();
-
-                throw;
+                var msgErro = $"TORNEIOAPI_V2 - {DateTime.Now} - Id Torneio: {torneioId} UserId: {userId} Mensagem: {ex.Message} StackTrace: {ex.StackTrace}";
+                GravarLogErro(msgErro);
+                return BadRequest(ex.Message);
             }
         }
 
         [HttpGet]
         [Route("api/TorneioAPI/Tabela/{torneioId}")]
-        public TabelaApp GetTabela(int torneioId)
+        public IHttpActionResult GetTabela(int torneioId)
         {
             int userId = 0;
             try
             {
                 userId = getUsuarioLogado();
-                return ObterTabela(userId, torneioId);
+                return Ok(ObterTabela(userId, torneioId));
+
             }
             catch (Exception ex)
             {
-                var msgErro = $"TORNEIOAPI - {DateTime.Now} - Id Torneio: {torneioId} UserId: {userId} Mensagem: {ex.Message} StackTrace: {ex.StackTrace}";
-                db.Log.Add(new Log() { descricao = msgErro });
-                db.SaveChanges();
-
-                throw;
+                var msgErro = $"TORNEIOAPI_V1 - {DateTime.Now} - Id Torneio: {torneioId} UserId: {userId} Mensagem: {ex.Message} StackTrace: {ex.StackTrace}";
+                GravarLogErro(msgErro);
+                return BadRequest(ex.Message);
             }
+        }
+
+        private void GravarLogErro(string msgErro)
+        {
+            if (msgErro.Length > 500) msgErro = msgErro.Substring(0, 500);
+            db.Log.Add(new Log() { descricao = msgErro });
+            db.SaveChanges();
         }
 
         private TabelaApp ObterTabela(int userId, int torneioId)
@@ -430,6 +434,12 @@ namespace Barragem.Controllers
             var tabelaApp = new TabelaApp();
 
             var inscricaoUser = db.InscricaoTorneio.Where(c => c.torneioId == torneioId && c.isAtivo && c.userId == userId).ToList();
+
+            if (inscricaoUser == null || inscricaoUser.Count == 0)
+            {
+                throw new Exception(message: "Usuário não possui inscrição no torneio");
+            }
+
             var classeUser = inscricaoUser[0].classe;
             var grupoUser = inscricaoUser[0].grupo;
             var classes = db.ClasseTorneio.Where(c => c.torneioId == torneioId).Select(ct => new ClasseTorneioApp
