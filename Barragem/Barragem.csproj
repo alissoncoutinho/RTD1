@@ -227,6 +227,7 @@
     <Compile Include="Class\ClientePagHiper.cs" />
     <Compile Include="Class\ExceptionRankingDesativado.cs" />
     <Compile Include="Class\ExceptionRodadaEmAberto.cs" />
+    <Compile Include="Class\FaseTorneio.cs" />
     <Compile Include="Class\FirebaseNotification.cs" />
     <Compile Include="Class\Funcoes.cs" />
     <Compile Include="Class\Mail.cs" />
