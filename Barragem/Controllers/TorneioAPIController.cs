@@ -386,18 +386,7 @@ namespace Barragem.Controllers
         [Route("api/TorneioAPI/v2/Tabela/{userId}/{torneioId}")]
         public TabelaApp GetTabelaV2(int userId, int torneioId)
         {
-            try
-            {
-                return ObterTabela(userId, torneioId);
-            }
-            catch (Exception ex)
-            {
-                var msgErro = $"TORNEIOAPI - {DateTime.Now} - Id Torneio: {torneioId} UserId: {userId} Mensagem: {ex.Message} StackTrace: {ex.StackTrace}";
-                db.Log.Add(new Log() { descricao = msgErro });
-                db.SaveChanges();
-
-                throw;
-            }
+            return ObterTabela(userId, torneioId);
         }
 
         [HttpGet]
@@ -405,104 +394,111 @@ namespace Barragem.Controllers
         public TabelaApp GetTabela(int torneioId)
         {
             int userId = 0;
-            try
-            {
-                userId = getUsuarioLogado();
-                return ObterTabela(userId, torneioId);
-            }
-            catch (Exception ex)
-            {
-                var msgErro = $"TORNEIOAPI - {DateTime.Now} - Id Torneio: {torneioId} UserId: {userId} Mensagem: {ex.Message} StackTrace: {ex.StackTrace}";
-                db.Log.Add(new Log() { descricao = msgErro });
-                db.SaveChanges();
 
-                throw;
-            }
+            userId = getUsuarioLogado();
+            return ObterTabela(userId, torneioId);
         }
 
         private TabelaApp ObterTabela(int userId, int torneioId)
         {
-            var torneio = db.Torneio.Find(torneioId);
-            if (!torneio.liberarTabela)
+            try
             {
-                throw new Exception(message: "Tabela ainda não liberada.");
-            }
-            var tabelaApp = new TabelaApp();
-
-            var inscricaoUser = db.InscricaoTorneio.Where(c => c.torneioId == torneioId && c.isAtivo && c.userId == userId).ToList();
-            var classeUser = inscricaoUser[0].classe;
-            var grupoUser = inscricaoUser[0].grupo;
-            var classes = db.ClasseTorneio.Where(c => c.torneioId == torneioId).Select(ct => new ClasseTorneioApp
-            {
-                nome = ct.nome,
-                Id = ct.Id,
-                faseGrupo = ct.faseGrupo,
-                faseMataMata = ct.faseMataMata
-            }).OrderBy(c => c.nome).ToList<ClasseTorneioApp>();
-
-            foreach (var c in classes)
-            {
-                if (c.faseGrupo)
+                var torneio = db.Torneio.Find(torneioId);
+                if (!torneio.liberarTabela)
                 {
-                    var classeTorneio = db.ClasseTorneio.Find(c.Id);
-                    var inscricaoTorneio = tn.getInscritosPorClasse(classeTorneio, true);
-                    var qtddGrupo = inscricaoTorneio.Max(i => i.grupo);
-                    c.qtddGruposFaseGrupo = qtddGrupo != null ? (int)qtddGrupo : 1;
-                    var qtddInscritos = inscricaoTorneio.Count();
-                    if (qtddInscritos % 2 == 0)
-                    {
-                        c.qtddRodadaFaseGrupo = (int)qtddInscritos - 1 / c.qtddGruposFaseGrupo;
-                    }
-                    else
-                    {
-                        c.qtddRodadaFaseGrupo = qtddInscritos / c.qtddGruposFaseGrupo;
-                    }
+                    throw new Exception(message: "Tabela ainda não liberada.");
                 }
-                if ((c.faseMataMata) || (!c.faseGrupo))
+                var tabelaApp = new TabelaApp();
+
+                var inscricaoUser = db.InscricaoTorneio.Where(c => c.torneioId == torneioId && c.isAtivo && c.userId == userId).ToList();
+
+                if (inscricaoUser == null || inscricaoUser.Count == 0)
                 {
-                    c.faseMataMata = true;
-                    var jgs = db.Jogo.Where(r => r.classeTorneio == c.Id && r.faseTorneio < 100 && r.faseTorneio != null).ToList();
-                    if (jgs.Count() > 0)
-                    {
-                        c.qtddRodadaMataMata = (int)jgs.Max(r => r.faseTorneio);
-                    }
+                    throw new Exception(message: "Usuário não possui inscrição no torneio");
                 }
-                if (inscricaoUser.Where(i => i.classe == c.Id).Count() > 0)
+
+                var classeUser = inscricaoUser[0].classe;
+                var grupoUser = inscricaoUser[0].grupo;
+                var classes = db.ClasseTorneio.Where(c => c.torneioId == torneioId).Select(ct => new ClasseTorneioApp
                 {
-                    if (classeUser == c.Id)
+                    nome = ct.nome,
+                    Id = ct.Id,
+                    faseGrupo = ct.faseGrupo,
+                    faseMataMata = ct.faseMataMata
+                }).OrderBy(c => c.nome).ToList<ClasseTorneioApp>();
+
+                foreach (var c in classes)
+                {
+                    if (c.faseGrupo)
                     {
-                        c.selected = true;
+                        var classeTorneio = db.ClasseTorneio.Find(c.Id);
+                        var inscricaoTorneio = tn.getInscritosPorClasse(classeTorneio, true);
+                        var qtddGrupo = inscricaoTorneio.Max(i => i.grupo);
+                        c.qtddGruposFaseGrupo = qtddGrupo != null ? (int)qtddGrupo : 1;
+                        var qtddInscritos = inscricaoTorneio.Count();
+                        if (qtddInscritos % 2 == 0)
+                        {
+                            c.qtddRodadaFaseGrupo = (int)qtddInscritos - 1 / c.qtddGruposFaseGrupo;
+                        }
+                        else
+                        {
+                            c.qtddRodadaFaseGrupo = qtddInscritos / c.qtddGruposFaseGrupo;
+                        }
+                    }
+                    if ((c.faseMataMata) || (!c.faseGrupo))
+                    {
+                        c.faseMataMata = true;
+                        var jgs = db.Jogo.Where(r => r.classeTorneio == c.Id && r.faseTorneio < 100 && r.faseTorneio != null).ToList();
+                        if (jgs.Count() > 0)
+                        {
+                            c.qtddRodadaMataMata = (int)jgs.Max(r => r.faseTorneio);
+                        }
+                    }
+                    if (inscricaoUser.Where(i => i.classe == c.Id).Count() > 0)
+                    {
+                        if (classeUser == c.Id)
+                        {
+                            c.selected = true;
+                        }
+                        else
+                        {
+                            c.selected = false;
+                        }
+                        if (c.faseGrupo)
+                        {
+                            if ((classeUser == c.Id) && (grupoUser != null))
+                            {
+                                tabelaApp.classificacaoFaseGrupoApp = getClassificacaoFaseGrupoApp(c.Id, (int)grupoUser);
+                            }
+                            var inscricao = inscricaoUser.Where(i => i.classe == c.Id).FirstOrDefault();
+                            c.grupoUser = (int)inscricao.grupo;
+                        }
                     }
                     else
                     {
                         c.selected = false;
                     }
-                    if (c.faseGrupo)
-                    {
-                        if ((classeUser == c.Id) && (grupoUser != null))
-                        {
-                            tabelaApp.classificacaoFaseGrupoApp = getClassificacaoFaseGrupoApp(c.Id, (int)grupoUser);
-                        }
-                        var inscricao = inscricaoUser.Where(i => i.classe == c.Id).FirstOrDefault();
-                        c.grupoUser = (int)inscricao.grupo;
-                    }
                 }
-                else
+
+                var jogos = montaFaseAtual(tabelaApp, classeUser, grupoUser, 0);
+
+                var ListJogos = new List<MeuJogo>();
+                foreach (var j in jogos)
                 {
-                    c.selected = false;
+                    ListJogos.Add(montaJogoTabela(j));
                 }
+                tabelaApp.classes = classes;
+                tabelaApp.jogos = ListJogos;
+                return tabelaApp;
             }
-
-            var jogos = montaFaseAtual(tabelaApp, classeUser, grupoUser, 0);
-
-            var ListJogos = new List<MeuJogo>();
-            foreach (var j in jogos)
+            catch (Exception ex)
             {
-                ListJogos.Add(montaJogoTabela(j));
+                var msgErro = $"TORNEIOAPI - {DateTime.Now} - Id Torneio: {torneioId} UserId: {userId} Mensagem: {ex.Message} StackTrace: {ex.StackTrace}";
+                if (msgErro.Length > 500) msgErro = msgErro.Substring(0, 500);
+                db.Log.Add(new Log() { descricao = msgErro });
+                db.SaveChanges();
+                throw;
             }
-            tabelaApp.classes = classes;
-            tabelaApp.jogos = ListJogos;
-            return tabelaApp;
         }
 
         private List<Jogo> montaFaseAtual(TabelaApp tabelaApp, int classeId, int? grupo, int numeroFaseAtual, string origemChamada = "")
