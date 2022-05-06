@@ -1379,6 +1379,8 @@ namespace Barragem.Controllers
         {
             try
             {
+                List<string> classesPagtoOk = new List<string>();
+
                 var inscricao = db.InscricaoTorneio.Find(Id);
                 if (inscricao.classeTorneio.faseGrupo)
                 {
@@ -1407,14 +1409,39 @@ namespace Barragem.Controllers
                     inscricao.valor = inscricao.valor + inscricao.valorPendente;
                     inscricao.valorPendente = 0;
                 }
+
+                if (isAtivo) 
+                {
+                    classesPagtoOk.Add(inscricao.classeTorneio.nome);
+                }
+
                 db.Entry(inscricao).State = EntityState.Modified;
                 db.SaveChanges();
+
+                NotificarUsuarioPagamentoRealizado(classesPagtoOk, inscricao.torneio.nome, inscricao.userId);
+
                 return Json(new { erro = "", retorno = 1, statusPagamento = inscricao.descricaoStatusPag }, "text/plain", JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {
                 return Json(new { erro = ex.Message, retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
             }
+        }
+
+        private void NotificarUsuarioPagamentoRealizado(List<string> classes, string nomeTorneio, int userId)
+        {
+            if (classes.Count == 0)
+                return;
+
+            var msgConfirmacao = $"O pagamento da inscrição na(s) categoria(s) {string.Join(", ", classes.Distinct())} do torneio {nomeTorneio} foi confirmado.";
+            var titulo = "Pagamento da inscrição confirmado.";
+
+            var userFb = db.UsuarioFirebase.FirstOrDefault(x => x.UserId == userId);
+            if (userFb == null)
+                return;
+
+            var dadosMensagemUsuario = new FirebaseNotificationModel() { to = userFb.Token, notification = new NotificationModel() { title = titulo, body = msgConfirmacao } };
+            new FirebaseNotification().SendNotification(dadosMensagemUsuario);
         }
 
         [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
