@@ -22,30 +22,30 @@
                         @Html.Label("Onde gostaria de divulgar o torneio?", new { @class = "col-sm-2 control-label" })
                         <div class="col-xs-8 col-md-3 input-group">
                             <select name="divulgacao" id="divulgacao" class="form-control">
-                                <option value="nao divulgar" @if (Model.divulgacao == "nao divulgar") { @Html.Raw(" selected ")  }>Não divulgar por enquanto</option>
-                                <option value="ranking" @if (Model.divulgacao == "ranking") { @Html.Raw(" selected ")  }>no meu ranking</option>
-                                <option value="cidade" @if (Model.divulgacao == "cidade") { @Html.Raw(" selected ")  }>na minha cidade</option>
+                                <option value="nao divulgar" @if (Model.divulgacao == "nao divulgar") { @Html.Raw(" selected ") }>Não divulgar por enquanto</option>
+                                <option value="ranking" @if (Model.divulgacao == "ranking") { @Html.Raw(" selected ") }>no meu ranking</option>
+                                <option value="cidade" @if (Model.divulgacao == "cidade") { @Html.Raw(" selected ") }>na minha cidade</option>
                             </select>
                         </div>
                     </div>
                     @if (Model.isAtivo)
-                {
-                <div class="form-group">
-                    @Html.Label("Copiar link do Torneio" , new { @class = "col-xs-6 col-sm-2 control-label" })
-                    <div class="col-sm-8 input-group">
-                        <!--a href="/torneio-Model.barragem.dominio" title="Link do torneio" class="btn btn-default btn-xs">
-                            <span class="glyphicon glyphicon-link"></span>
-                        </a-->
-                        <button id="btnCopiarLink" data-link='www.teste.com'> <span class="glyphicon glyphicon-share"/></button>
-                    </div>
-                </div>
+                    {
+                        <div class="form-group">
+                            @Html.Label("Copiar link do Torneio", new { @class = "col-xs-6 col-sm-2 control-label" })
+                            <div class="col-sm-8 input-group">
+                                <!--a href="/torneio-Model.barragem.dominio" title="Link do torneio" class="btn btn-default btn-xs">
+                                    <span class="glyphicon glyphicon-link"></span>
+                                </a-->
+                                <button id="btnCopiarLink" data-link='www.teste.com'> <span class="glyphicon glyphicon-share" /></button>
+                            </div>
+                        </div>
 
-                <div class="form-group">
-                    @Html.Label("Divulgar no APP", new { @class = "col-xs-6 col-sm-2 control-label" })
-                    <div class="col-sm-8 input-group">
-                        <button id="btnNotificarApp" data-torneioid="@Model.Id" class="btn btn-default">Enviar Notificação</button>
-                    </div>
-                </div>
+                        <div class="form-group">
+                            @Html.Label("Divulgar no APP", new { @class = "col-xs-6 col-sm-2 control-label" })
+                            <div class="col-sm-8 input-group">
+                                <button id="btnNotificarApp" data-torneioid="@Model.Id" class="btn btn-default">Enviar Notificação</button>
+                            </div>
+                        </div>
 
                     }
                     <div class="form-group">
@@ -110,323 +110,348 @@
 
 
                     @if (Roles.IsUserInRole("admin"))
-                {
-                <div class="form-group">
-                    @Html.LabelFor(model => model.barragem, new { @class = "col-sm-2 control-label" })
-                    <div class="col-sm-6 input-group">
-                        @Html.DropDownList("barragemId", null, new { @class = "form-control" })
-                    </div>
-                    @Html.ValidationMessageFor(model => model.barragemId)
-                </div>
-                }
-                else
-                {
-                <input type="hidden" name="barragemId" value="@ViewBag.barraId" />
-                }
-
-
-                </div>
-                </div>
-                <div class="box box-primary">
-                    <div class="box-header with-border">
-                        <h4 class="box-title">Inscrição</h4>
-                    </div>
-                    <div class="box-body">
+                    {
                         <div class="form-group">
-                            @Html.LabelFor(model => model.dataFimInscricoes, new { @class = "col-sm-2 control-label" })
-                            <div class="col-sm-4 input-group date" id="dataFimInscricoes" data-date-format="dd/mm/yyyy">
-                                <input type="text" name="dataFimInscricoes" id="dataFimInscricoes" value="@Model.dataFimInscricoes.ToShortDateString()" class="form-control" readonly="readonly" />
-                                <span class="input-group-addon">
-                                    <span class="glyphicon glyphicon-calendar">
-                                    </span>
+                            @Html.LabelFor(model => model.barragem, new { @class = "col-sm-2 control-label" })
+                            <div class="col-sm-6 input-group">
+                                @Html.DropDownList("barragemId", null, new { @class = "form-control" })
+                            </div>
+                            @Html.ValidationMessageFor(model => model.barragemId)
+                        </div>
+                    }
+                    else
+                    {
+                        <input type="hidden" name="barragemId" value="@ViewBag.barraId" />
+                    }
+
+
+                </div>
+            </div>
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h4 class="box-title">Inscrição</h4>
+                </div>
+                <div class="box-body">
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.dataFimInscricoes, new { @class = "col-sm-2 control-label" })
+                        <div class="col-sm-4 input-group date" id="dataFimInscricoes" data-date-format="dd/mm/yyyy">
+                            <input type="text" name="dataFimInscricoes" id="dataFimInscricoes" value="@Model.dataFimInscricoes.ToShortDateString()" class="form-control" readonly="readonly" />
+                            <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar">
+                                </span>
+                            </span>
+                        </div>
+                        @Html.ValidationMessageFor(model => model.dataFimInscricoes)
+                    </div>
+                    <div class="form-group">
+                        @Html.Label("Em quantas categorias o jogador poderá se inscrever?", new { @class = "col-sm-2 control-label" })
+                        <div class="col-sm-6 input-group">
+                            <select name="qtddCategoriasPorJogador" id="qtddCategoriasPorJogador" class="form-control" onchange="habilibarValoresInscricao()">
+                                <option value="1" @if (Model.qtddCategoriasPorJogador == 1) { @Html.Raw(" selected ") }>1 categoria</option>
+                                <option value="2" @if (Model.qtddCategoriasPorJogador == 2) { @Html.Raw(" selected ") }>2 categoria</option>
+                                <option value="3" @if (Model.qtddCategoriasPorJogador == 3) { @Html.Raw(" selected ") }>3 categoria</option>
+                                <option value="4" @if (Model.qtddCategoriasPorJogador == 4) { @Html.Raw(" selected ") }>4 categoria</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @Html.Label("Qual valor o jogador irá pagar se inscrever em:", new { @class = "col-sm-4 control-label" })
+                    </div>
+                    <div id="valorDiv" class="form-group">
+                        @Html.Label("1 categoria", new { @class = "col-sm-2 control-label" })
+                        <div class="col-sm-4 input-group">
+                            @Html.TextBoxFor(model => model.valor, new { @class = "form-control", @placeholder = "Informe 0 para torneio gratuito" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.valor)
+                    </div>
+                    <div id="valorDiv2" class="form-group">
+                        @Html.Label("2 categorias", new { @class = "col-sm-2 control-label" })
+                        <div class="col-sm-4 input-group">
+                            @Html.TextBoxFor(model => model.valor2, new { @class = "form-control" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.valor2)
+                    </div>
+                    <div id="valorDiv3" class="form-group">
+                        @Html.Label("3 categorias", new { @class = "col-sm-2 control-label" })
+                        <div class="col-sm-4 input-group">
+                            @Html.TextBoxFor(model => model.valor3, new { @class = "form-control" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.valor3)
+                    </div>
+                    <div id="valorDiv4" class="form-group">
+                        @Html.Label("4 categorias", new { @class = "col-sm-2 control-label" })
+                        <div class="col-sm-4 input-group">
+                            @Html.TextBoxFor(model => model.valor4, new { @class = "form-control" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.valor4)
+                    </div>
+                    @Html.Label("Qual valor do desconto? (opcional)", new { @class = "control-label" })
+                    <div class="form-group">
+                        <div class="col-md-6 col-xs-12">
+                            <div class="row">
+                                <div class="col-xs-1 col-md-1">
+                                    @if (Model.isDesconto != null && (bool)Model.isDesconto)
+                                    {
+                                        <input type="checkbox" checked value="true" name="isDesconto" id="isDesconto" onclick="CadastrarValorDescontoSocio()" />
+                                    }
+                                    else
+                                    {
+                                        <input type="checkbox" value="true" name="isDesconto" id="isDesconto" onclick="CadastrarValorDescontoSocio()" />
+                                    }
+
+                                </div>
+                                <div class="col-xs-6 col-md-4">
+                                    <select name="descontoPara" class="form-control">
+                                        <option @if (Model.descontoPara != null && Model.descontoPara.Equals("sócio do clube")) { @Html.Raw("selected") } value="sócio do clube">sócio</option>
+                                        <option @if (Model.descontoPara != null && Model.descontoPara.Equals("barragista")) { @Html.Raw("selected") } value="barragista">barragista</option>
+                                    </select>
+                                </div>
+                                <div class="col-xs-4 col-md-4">
+                                    <div class="form-group">
+                                        @Html.Label("R$", new { @class = "col-xs-5 col-md-3 control-label" })
+                                        <div class="col-xs-6 col-md-6 input-group">
+                                            @Html.TextBoxFor(model => model.valorSocio, new { @class = "form-control" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-md-6 col-xs-12">
+                            <div class="row">
+                                <div class="col-xs-1 col-md-1">
+                                    @if (Model.valorDescontoFederado != null && Model.valorDescontoFederado > 0)
+                                    {
+                                        <input type="checkbox" checked value="true" name="isDescontoFederado" id="isDescontoFederado" />
+                                    }
+                                    else
+                                    {
+                                        <input type="checkbox" value="true" name="isDescontoFederado" id="isDescontoFederado" />
+                                    }
+
+                                </div>
+                                <div class="col-xs-6 col-md-4">
+                                    @Html.Label("Federado", new { @class = "control-label" })
+                                </div>
+                                <div class="col-xs-4 col-md-4">
+                                    <div class="form-group">
+                                        @Html.Label("R$", new { @class = "col-xs-5 col-md-3 control-label" })
+                                        <div class="col-xs-6 col-md-6 input-group">
+                                            @Html.TextBoxFor(model => model.valorDescontoFederado, new { @class = "form-control" })
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h4 class="box-title">Configurações</h4>
+                </div>
+                <div class="box-body">
+                    <div class="form-group">
+                        @Html.Label("O próprio jogador poderá lançar o resultado do jogo?", new { @class = "col-sm-3 control-label" })
+                        <div class="col-sm-2 input-group">
+                            <select name="jogadorNaoLancaResult" id="jogadorNaoLancaResult" class="form-control">
+                                <option value=true @if (Model.jogadorNaoLancaResult) { @Html.Raw(" selected ") }>Não</option>
+                                <option value=false @if (!Model.jogadorNaoLancaResult) { @Html.Raw(" selected ") }>Sim</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @Html.Label("Seu torneio será gratuito para associado?", new { @class = "col-sm-3 control-label" })
+                        <div class="col-sm-2 input-group">
+                            <select name="isGratuitoSocio" id="isGratuitoSocio" class="form-control">
+                                <option value=false @if (!Model.isGratuitoSocio) { @Html.Raw(" selected ") }>Não</option>
+                                <option value=true @if (Model.isGratuitoSocio) { @Html.Raw(" selected ") }>Sim</option>
+                            </select>
+                        </div>
+                    </div>
+                    @if (Roles.IsUserInRole("adminTorneio"))
+                    {
+                        <div class="form-group" hidden>
+                            @Html.Label("Seu torneio terá repescagem?", new { @class = "col-sm-3 control-label" })
+                            <div class="col-sm-2 input-group">
+                                <select name="temRepescagem" id="temRepescagem" class="form-control">
+                                    <option value=false @if (!Model.temRepescagem) { @Html.Raw(" selected ") }>Não</option>
+                                    <option value=true @if (Model.temRepescagem) { @Html.Raw(" selected ") }>Sim</option>
+                                </select>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="form-group">
+                            @Html.Label("Seu torneio terá repescagem?", new { @class = "col-sm-3 control-label" })
+                            <div class="col-sm-2 input-group">
+                                <select name="temRepescagem" id="temRepescagem" class="form-control">
+                                    <option value=false @if (!Model.temRepescagem) { @Html.Raw(" selected ") }>Não</option>
+                                    <option value=true @if (Model.temRepescagem) { @Html.Raw(" selected ") }>Sim</option>
+                                </select>
+                            </div>
+                        </div>
+                    }
+                    <div class="form-group">
+                        @Html.Label("Seu torneio terá limite de quantidade de inscritos?", new { @class = "col-sm-3 control-label" })
+                        <div class="col-sm-2 input-group">
+                            <select name="temLimiteDeInscricao" id="temLimiteDeInscricao" class="form-control">
+                                <option value=false @if (Model.temLimiteDeInscricao == null || (bool)!Model.temLimiteDeInscricao) { @Html.Raw(" selected ") }>Não</option>
+                                <option value=true @if (Model.temLimiteDeInscricao != null && (bool)Model.temLimiteDeInscricao) { @Html.Raw(" selected ") }>Sim</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @Html.Label("Observação que aparecerá na ficha de inscrição", new { @class = "col-sm-3 control-label" })
+                        <div class="col-sm-8 col-xs-12 input-group">
+                            @Html.TextBoxFor(model => model.observacao, new { @class = "form-control" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.observacao)
+                    </div>
+                    @if ((ViewBag.tokenPagSeguro == "") || (ViewBag.tokenPagSeguro == null))
+                    {
+                        <br><input type="checkbox" name="cartao" id="cartao" value="true" onclick="isCartaoCredito()"> <b>Deseja aceitar inscrição via PIX com detecção automática de pagamento?</b><br>
+                        <div id="isCartao">
+                            <div class="editor-label">
+                                <small style="color:red">Você ainda não integrou o Pagseguro - <a class="" href="/Barragens/EditPagSeguro">Clique aqui</a> para realizar sua inscrição.</small>
+                            </div>
+                        </div>
+                        <script>
+                            document.getElementById('isCartao').style.opacity = "0 !important";
+                            document.getElementById('isCartao').style.display = "none";
+                        </script>
+                    }
+                    else
+                    {
+                        <div class="editor-label"> <b>Torneio configurado para receber pagamento Via PIX com detecção automática de pagamento.</b></div>
+                    }
+                    <br>
+                    @if (Model.dadosBancarios == "")
+                    {
+                        <input type="checkbox" name="transferencia" id="transferencia" value="true" onclick="isTransferenciaBancaria()"> <b>Usar transferência como forma de pagamento</b><br>
+                    }
+                    else
+                    {
+                        <input type="checkbox" name="transferencia" id="transferencia" value="true" checked onclick="isTransferenciaBancaria()"> <b>Usar transferência como forma de pagamento</b><br>
+                    }
+                    <div id="isTransferencia">
+                        <div class="editor-field">
+                            @Html.TextAreaFor(model => model.dadosBancarios)
+                            @Html.ValidationMessageFor(model => model.dadosBancarios)
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h4 class="box-title">Liberar</h4>
+                </div>
+                <div class="box-body">
+                    <div class="col-sm-4">
+                        <div class="checkbox">
+                            <label>
+                                @Html.CheckBoxFor(model => model.liberarTabela) Liberar visualização da tabela do torneio
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="checkbox">
+                            <label>
+                                @Html.CheckBoxFor(model => model.liberaTabelaInscricao) Liberar lista de inscritos
+                            </label>
+                        </div>
+                    </div>
+                    @if (Roles.IsUserInRole("admin"))
+                    {
+                        <div class="col-sm-3">
+                            <div class="checkbox">
+                                <label>
+                                    @Html.CheckBoxFor(model => model.torneioFoiPago) @Html.Raw(" Torneio Foi Pago: R$ " + cobrancaTorneio.valorASerPago + ",00 ?")
+                                </label>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <input type="hidden" name="torneioFoiPago" value="@if (Model.torneioFoiPago) { @Html.Raw("true")  } else { @Html.Raw("false") }" />
+                    }
+                </div>
+            </div>
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h4 class="box-title">Pontuação para circuitos</h4>
+                </div>
+                <div class="box-body">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">Este torneio conta pontos para quais circuito(s) abaixo:</div>
+                        <div class="panel-body">
+                            @{ List<Barragem.Models.Liga> ligasTorneio = ViewBag.LigasDoTorneio;
+                                foreach (var lg in ViewBag.LigasDisponiveis)
+                                {
+                                    <input type="checkbox" class="circuitos" @if (ligasTorneio.Where(l => l.Id == lg.Liga.Id).Count() > 0) { @Html.Raw("checked") } name="liga" value="@lg.Liga.Id" onchange="inputCheckboxSelectPontos(this)">
+                                    if (ViewBag.isModeloTodosContraTodos)
+                                    {
+                                        @Html.Raw(lg.Liga.Nome)
+                                    }
+                                    else
+                                    {
+                                        @Html.Raw(lg.Liga.Nome + " - Pt. " + Model.TipoTorneio)
+                                    }
+                                    <br>
+                                }
+
+                                <ul id="circuitosPermiteEdicaoPontos" style="display:none">
+                                    @foreach (var lg in ViewBag.LigasDisponiveis)
+                                    {
+                                        if (ViewBag.barraId == lg.BarragemId && !ViewBag.isModeloTodosContraTodos)
+                                        {
+                                            <li>@lg.Liga.Id</li>
+
+                                        }
+                                    }
+                                </ul>
+                            }
+
+                            <div>
+                                <input type="hidden" value="@Model.TipoTorneio" id="pontuacaoOriginalTorneio">
+                                <span class="pontuacao-circuito">
+                                    <span id="textoPontuacaoLiga">Selecione a pontuação: </span>
+                                    <select name="pontuacaoCircuito" id="pontuacaoCircuito" onchange="SelecionarCircuito(this)">
+                                        <option @if (Model.TipoTorneio == null) { @Html.Raw("selected") } disabled="disabled" value="-">-</option>
+                                        <option @if (Model.TipoTorneio == "100") { @Html.Raw("selected") } value="100">100</option>
+                                        <option @if (Model.TipoTorneio == "250") { @Html.Raw("selected") } value="250">250</option>
+                                        <option @if (Model.TipoTorneio == "500") { @Html.Raw("selected") } value="500">500</option>
+                                        <option @if (Model.TipoTorneio == "1000") { @Html.Raw("selected") } value="1000">1000</option>
+                                    </select>
                                 </span>
                             </div>
-                            @Html.ValidationMessageFor(model => model.dataFimInscricoes)
-                        </div>
-                        <div class="form-group">
-                            @Html.Label("Em quantas categorias o jogador poderá se inscrever?", new { @class = "col-sm-2 control-label" })
-                            <div class="col-sm-6 input-group">
-                                <select name="qtddCategoriasPorJogador" id="qtddCategoriasPorJogador" class="form-control" onchange="habilibarValoresInscricao()">
-                                    <option value="1" @if (Model.qtddCategoriasPorJogador == 1) { @Html.Raw(" selected ") }>1 categoria</option>
-                                    <option value="2" @if (Model.qtddCategoriasPorJogador == 2) { @Html.Raw(" selected ") }>2 categoria</option>
-                                    <option value="3" @if (Model.qtddCategoriasPorJogador == 3) { @Html.Raw(" selected ") }>3 categoria</option>
-                                    <option value="4" @if (Model.qtddCategoriasPorJogador == 4) { @Html.Raw(" selected ") }>4 categoria</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            @Html.Label("Qual valor o jogador irá pagar se inscrever em:", new { @class = "col-sm-4 control-label" })
-                        </div>
-                        <div id="valorDiv" class="form-group">
-                            @Html.Label("1 categoria", new { @class = "col-sm-2 control-label" })
-                            <div class="col-sm-4 input-group">
-                                @Html.TextBoxFor(model => model.valor, new { @class = "form-control", @placeholder = "Informe 0 para torneio gratuito" })
-                            </div>
-                            @Html.ValidationMessageFor(model => model.valor)
-                        </div>
-                        <div id="valorDiv2" class="form-group">
-                            @Html.Label("2 categorias", new { @class = "col-sm-2 control-label" })
-                            <div class="col-sm-4 input-group">
-                                @Html.TextBoxFor(model => model.valor2, new { @class = "form-control" })
-                            </div>
-                            @Html.ValidationMessageFor(model => model.valor2)
-                        </div>
-                        <div id="valorDiv3" class="form-group">
-                            @Html.Label("3 categorias", new { @class = "col-sm-2 control-label" })
-                            <div class="col-sm-4 input-group">
-                                @Html.TextBoxFor(model => model.valor3, new { @class = "form-control" })
-                            </div>
-                            @Html.ValidationMessageFor(model => model.valor3)
-                        </div>
-                        <div id="valorDiv4" class="form-group">
-                            @Html.Label("4 categorias", new { @class = "col-sm-2 control-label" })
-                            <div class="col-sm-4 input-group">
-                                @Html.TextBoxFor(model => model.valor4, new { @class = "form-control" })
-                            </div>
-                            @Html.ValidationMessageFor(model => model.valor4)
-                        </div>
-                        @Html.Label("Qual valor do desconto? (opcional)", new { @class = "control-label" })
-                        <div class="form-group">
-                            <div class="col-md-6 col-xs-12">
-                                <div class="row">
-                                    <div class="col-xs-1 col-md-1">
-                                        @if (Model.isDesconto != null && (bool)Model.isDesconto)
-                                        {
-                                            <input type="checkbox" checked value="true" name="isDesconto" id="isDesconto" onclick="CadastrarValorDescontoSocio()" />
-                                        }
-                                        else
-                                        {
-                                            <input type="checkbox" value="true" name="isDesconto" id="isDesconto" onclick="CadastrarValorDescontoSocio()" />
-                                        }
-                                        
-                                    </div>
-                                    <div class="col-xs-6 col-md-4">
-                                        <select name="descontoPara" class="form-control">
-                                            <option @if (Model.descontoPara != null && Model.descontoPara.Equals("sócio do clube")) { @Html.Raw("selected") } value="sócio do clube">sócio</option>
-                                            <option @if (Model.descontoPara != null && Model.descontoPara.Equals("barragista")) { @Html.Raw("selected") } value="barragista">barragista</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-xs-4 col-md-4">
-                                        <div class="form-group">
-                                            @Html.Label("R$", new { @class = "col-xs-5 col-md-3 control-label" })
-                                            <div class="col-xs-6 col-md-6 input-group">
-                                                @Html.TextBoxFor(model => model.valorSocio, new { @class = "form-control" })
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="col-md-6 col-xs-12">
-                                <div class="row">
-                                    <div class="col-xs-1 col-md-1">
-                                        @if (Model.valorDescontoFederado != null && Model.valorDescontoFederado>0)
-                                        {
-                                            <input type="checkbox" checked value="true" name="isDescontoFederado" id="isDescontoFederado" />
-                                        }
-                                        else
-                                        {
-                                            <input type="checkbox" value="true" name="isDescontoFederado" id="isDescontoFederado" />
-                                        }
-                                        
-                                    </div>
-                                    <div class="col-xs-6 col-md-4">
-                                        @Html.Label("Federado", new { @class = "control-label" })
-                                    </div>
-                                    <div class="col-xs-4 col-md-4">
-                                        <div class="form-group">
-                                            @Html.Label("R$", new { @class = "col-xs-5 col-md-3 control-label" })
-                                            <div class="col-xs-6 col-md-6 input-group">
-                                                @Html.TextBoxFor(model => model.valorDescontoFederado, new { @class = "form-control" })
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="box box-primary">
-                    <div class="box-header with-border">
-                        <h4 class="box-title">Configurações</h4>
+            </div>
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h4 class="box-title">Regulamento</h4>
+                </div>
+                <div class="box-body">
+                    <div class="editor-field">
+                        @Html.TextAreaFor(model => model.regulamento)
+                        @Html.ValidationMessageFor(model => model.regulamento)
                     </div>
-                    <div class="box-body">
-                        <div class="form-group">
-                            @Html.Label("O próprio jogador poderá lançar o resultado do jogo?", new { @class = "col-sm-3 control-label" })
-                            <div class="col-sm-2 input-group">
-                                <select name="jogadorNaoLancaResult" id="jogadorNaoLancaResult" class="form-control">
-                                    <option value=true @if (Model.jogadorNaoLancaResult) { @Html.Raw(" selected ") }>Não</option>
-                                    <option value=false @if (!Model.jogadorNaoLancaResult) { @Html.Raw(" selected ") }>Sim</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            @Html.Label("Seu torneio será gratuito para associado?", new { @class = "col-sm-3 control-label" })
-                            <div class="col-sm-2 input-group">
-                                <select name="isGratuitoSocio" id="isGratuitoSocio" class="form-control">
-                                    <option value=false @if (!Model.isGratuitoSocio) { @Html.Raw(" selected ") }>Não</option>
-                                    <option value=true @if (Model.isGratuitoSocio) { @Html.Raw(" selected ") }>Sim</option>
-                                </select>
-                            </div>
-                        </div>
-                        @if (Roles.IsUserInRole("adminTorneio"))
-                        {
-                            <div class="form-group" hidden>
-                                @Html.Label("Seu torneio terá repescagem?", new { @class = "col-sm-3 control-label" })
-                                <div class="col-sm-2 input-group">
-                                    <select name="temRepescagem" id="temRepescagem" class="form-control">
-                                        <option value=false @if (!Model.temRepescagem) { @Html.Raw(" selected ") }>Não</option>
-                                        <option value=true @if (Model.temRepescagem) { @Html.Raw(" selected ") }>Sim</option>
-                                    </select>
-                                </div>
-                            </div>
-                        }
-                        else
-                        {
-                            <div class="form-group">
-                                @Html.Label("Seu torneio terá repescagem?", new { @class = "col-sm-3 control-label" })
-                                <div class="col-sm-2 input-group">
-                                    <select name="temRepescagem" id="temRepescagem" class="form-control">
-                                        <option value=false @if (!Model.temRepescagem) { @Html.Raw(" selected ") }>Não</option>
-                                        <option value=true @if (Model.temRepescagem) { @Html.Raw(" selected ") }>Sim</option>
-                                    </select>
-                                </div>
-                            </div>
-                        }
-                        <div class="form-group">
-                            @Html.Label("Seu torneio terá limite de quantidade de inscritos?", new { @class = "col-sm-3 control-label" })
-                            <div class="col-sm-2 input-group">
-                                <select name="temLimiteDeInscricao" id="temLimiteDeInscricao" class="form-control">
-                                    <option value=false @if (Model.temLimiteDeInscricao == null || (bool)!Model.temLimiteDeInscricao) { @Html.Raw(" selected ") }>Não</option>
-                                    <option value=true @if (Model.temLimiteDeInscricao != null && (bool)Model.temLimiteDeInscricao) { @Html.Raw(" selected ") }>Sim</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            @Html.Label("Observação que aparecerá na ficha de inscrição", new { @class = "col-sm-3 control-label" })
-                            <div class="col-sm-8 col-xs-12 input-group">
-                                @Html.TextBoxFor(model => model.observacao, new { @class = "form-control" })
-                            </div>
-                            @Html.ValidationMessageFor(model => model.observacao)
-                        </div>
-                        @if ((ViewBag.tokenPagSeguro == "") || (ViewBag.tokenPagSeguro == null))
-                        {
-                            <br><input type="checkbox" name="cartao" id="cartao" value="true" onclick="isCartaoCredito()"> <b>Deseja aceitar inscrição via PIX com detecção automática de pagamento?</b><br>
-                            <div id="isCartao">
-                                <div class="editor-label">
-                                    <small style="color:red">Você ainda não integrou o Pagseguro - <a class="" href="/Barragens/EditPagSeguro">Clique aqui</a> para realizar sua inscrição.</small>
-                                </div>
-                            </div>
-                            <script>
-                                document.getElementById('isCartao').style.opacity = "0 !important";
-                                document.getElementById('isCartao').style.display = "none";
-                            </script>
-                        }
-                        else
-                        {
-                            <div class="editor-label"> <b>Torneio configurado para receber pagamento Via PIX com detecção automática de pagamento.</b></div>
-                        }
-                        <br>
-                        @if (Model.dadosBancarios == "")
-                        {
-                            <input type="checkbox" name="transferencia" id="transferencia" value="true" onclick="isTransferenciaBancaria()"> <b>Usar transferência como forma de pagamento</b><br>
-                        }
-                        else
-                        {
-                            <input type="checkbox" name="transferencia" id="transferencia" value="true" checked onclick="isTransferenciaBancaria()"> <b>Usar transferência como forma de pagamento</b><br>
-                        }
-                        <div id="isTransferencia">
-                            <div class="editor-field">
-                                @Html.TextAreaFor(model => model.dadosBancarios)
-                                @Html.ValidationMessageFor(model => model.dadosBancarios)
-                            </div>
-                        </div>
+                </div>
+            </div>
+            <!-- /.box-body -->
+            <div class="box-footer">
+                <a href="@Url.Action("Index")" title="Voltar" class="btn btn-default">Voltar</a>
+                <button type="submit" class="btn btn-info pull-right">Gravar</button>
+            </div>
 
-                    </div>
-               </div>
-                        <div class="box box-primary">
-                            <div class="box-header with-border">
-                                <h4 class="box-title">Liberar</h4>
-                            </div>
-                            <div class="box-body">
-                                <div class="col-sm-4">
-                                    <div class="checkbox">
-                                        <label>
-                                            @Html.CheckBoxFor(model => model.liberarTabela) Liberar visualização da tabela do torneio
-                                        </label>
-                                    </div>
-                                </div>
-                                <div class="col-sm-3">
-                                    <div class="checkbox">
-                                        <label>
-                                            @Html.CheckBoxFor(model => model.liberaTabelaInscricao) Liberar lista de inscritos
-                                        </label>
-                                    </div>
-                                </div>
-                                @if (Roles.IsUserInRole("admin"))
-                                {
-                                    <div class="col-sm-3">
-                                        <div class="checkbox">
-                                            <label>
-                                                @Html.CheckBoxFor(model => model.torneioFoiPago) @Html.Raw(" Torneio Foi Pago: R$ " + cobrancaTorneio.valorASerPago + ",00 ?")
-                                            </label>
-                                        </div>
-                                    </div>
-                                }
-                                else
-                                {
-                                    <input type="hidden" name="torneioFoiPago" value="@if (Model.torneioFoiPago) { @Html.Raw("true")  } else { @Html.Raw("false") }" />
-                                }
-                            </div>
-                        </div>
-                        <div class="box box-primary">
-                            <div class="box-header with-border">
-                                <h4 class="box-title">Pontuação para circuitos</h4>
-                            </div>
-                            <div class="box-body">
-                                <div class="panel panel-primary">
-                                    <div class="panel-heading">Este torneio conta pontos para quais circuito(s) abaixo:</div>
-                                    <div class="panel-body">
-                                        @{ List<Barragem.Models.Liga> ligasTorneio = ViewBag.LigasDoTorneio;
-                                            foreach (var lg in ViewBag.LigasDisponiveis)
-                                            {
-                                                <input type="checkbox" @if (ligasTorneio.Where(l => l.Id == lg.Liga.Id).Count() > 0) { @Html.Raw("checked")  } name="liga" value="@lg.Liga.Id"> 
-                                                if (ViewBag.isModeloTodosContraTodos)
-                                                {
-                                                    @Html.Raw(lg.Liga.Nome)
-                                                }
-                                                else
-                                                {
-                                                    @Html.Raw(lg.Liga.Nome + " - Pt. " + Model.TipoTorneio)
-                                                }
-                                                <br>
-                                            }
-                                        }
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="box box-primary">
-                            <div class="box-header with-border">
-                                <h4 class="box-title">Regulamento</h4>
-                            </div>
-                            <div class="box-body">
-                                <div class="editor-field">
-                                    @Html.TextAreaFor(model => model.regulamento)
-                                    @Html.ValidationMessageFor(model => model.regulamento)
-                                </div>
-                            </div>
-                        </div>
-                        <!-- /.box-body -->
-                        <div class="box-footer">
-                            <a href="@Url.Action("Index")" title="Voltar" class="btn btn-default">Voltar</a>
-                            <button type="submit" class="btn btn-info pull-right">Gravar</button>
-                        </div>
+        }
 
-                        }
-
-                    </div>
+    </div>
 
     <div class="tab-pane fade" id="tabClasses">
         <br>
@@ -463,16 +488,16 @@
                                         }
                                         @Html.Raw(nome)
                                     </li>
-                                                }
-                                                else if (item.classe > nivel)
-                                                {
-                                                    break;
-                                                }
-                                            }
+                                }
+                                else if (item.classe > nivel)
+                                {
+                                    break;
+                                }
+                            }
                         </ul>
                     </div>
                 </div>
-                                            }
+            }
         </div>
         <div class="box-footer">
             <button type="button" onclick="saveJogadoresAlterados()" class="btn btn-info">Gravar</button>
@@ -492,9 +517,11 @@
     select {
         appearance: auto;
     }
+
     .box {
         box-shadow: 0 0px 0px rgba(0,0,0,0.1);
     }
+
     .form-control:not(select) {
         -webkit-appearance: none;
         -moz-appearance: none;
@@ -778,11 +805,76 @@
             }
         }
 
+        function inputCheckboxSelectPontos(input) {
+            if (input.checked == true) {
+                var spanSelecione = document.getElementsByClassName("pontuacao-circuito")[0];
+                var comboCircuito = document.getElementById("pontuacaoCircuito");
+                if (comboCircuito.value == "-") {
+                    spanSelecione.style.color = "#ff0000";
+                }
+                else {
+                    spanSelecione.style.color = "#000000";
+                }
+            }
+            habilitarComboPontuacao(validarCircuitosPermitemEdicaoPonto());
+        }
+
+        function habilitarComboPontuacao(podeMostrarCombo)
+        {
+            if (podeMostrarCombo) {
+                $('#pontuacaoCircuito').attr("disabled", false);
+            }
+            else {
+                $('#pontuacaoCircuito').attr("disabled", true);
+            }
+        }
+
+        function SelecionarCircuito(input) {
+            document.getElementById('pontuacaoCircuito').value = input.value
+            var spanSelecione = document.getElementsByClassName("pontuacao-circuito")[0];
+            if (input.value == "-") {
+                spanSelecione.style.color = "#ff0000";
+            }
+            else {
+                spanSelecione.style.color = "#000000";
+            }
+        }
+
+        function validarCircuitosPermitemEdicaoPonto() {
+            var possuiItemOk = false;
+            var checkedItens = [];
+
+            var checkboxes = document.getElementsByClassName("circuitos");
+
+            Array.prototype.forEach.call(checkboxes, function(el) {
+                if (el.checked) {
+                    checkedItens.push(el.value);
+                }
+            });
+
+            $("#circuitosPermiteEdicaoPontos li").each(function(item, el)
+            {
+                if (checkedItens.indexOf(el.textContent) >= 0) {
+                    possuiItemOk = true;
+                }
+            });
+
+
+            if (possuiItemOk == false) {
+                var pontuacaoOriginal = document.getElementById("pontuacaoOriginalTorneio").value;
+                var comboCircuito = document.getElementById("pontuacaoCircuito");
+                comboCircuito.value = pontuacaoOriginal;
+            }
+
+            return possuiItemOk;
+        }
+
         if (!document.getElementById('isDesconto').checked) {
             //document.getElementById('descontoSocio').style.opacity = "0";
             //document.getElementById('descontoSocio').style.display = "none";
         }
 
+        habilitarComboPontuacao(validarCircuitosPermitemEdicaoPonto());
         isTransferenciaBancaria();
         habilibarValoresInscricao();
     </script>

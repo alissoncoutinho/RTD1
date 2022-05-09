@@ -2041,7 +2041,7 @@ namespace Barragem.Controllers
         [Authorize(Roles = "admin, organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult EditTorneio(Torneio torneio, bool transferencia = false)
+        public ActionResult EditTorneio(Torneio torneio, bool transferencia = false, string pontuacaoCircuito = "100")
         {
             torneio.inscricaoSoPeloSite = false;
             var userId = WebSecurity.GetUserId(User.Identity.Name);
@@ -2050,6 +2050,7 @@ namespace Barragem.Controllers
             torneio.isAtivo = true;
             torneio.divulgaCidade = false;
             torneio.isOpen = false;
+            torneio.TipoTorneio = pontuacaoCircuito;
             if (transferencia == false)
             {
                 torneio.dadosBancarios = "";
@@ -3779,7 +3780,7 @@ namespace Barragem.Controllers
         {
             List<string> classesComJogosGerados = new List<string>();
             List<int> idsSituacaoJogosFinalizados = new List<int>() { { 3 }, { 4 }, { 5 }, { 6 } };
-     
+
             bool ehMataMataSeguidoFaseGrupo = false;
             bool ehMataMata = false;
 
@@ -3801,7 +3802,7 @@ namespace Barragem.Controllers
                             ehMataMataSeguidoFaseGrupo = false;
                         }
 
-                        if (classe.faseMataMata) 
+                        if (classe.faseMataMata)
                         {
                             ehMataMata = true;
                         }
