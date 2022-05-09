@@ -31,7 +31,8 @@ namespace Barragem.Controllers
                 db.CalendarioTorneio
                     .Include(c => c.ModalidadeTorneio)
                     .Include(c => c.StatusInscricaoTorneio)
-                    .Where(x => (x.DataInicial.Year == filtroAno || x.DataFinal.Year == filtroAno) && x.BarragemId == idBarragem);
+                    .Where(x => (x.DataInicial.Year == filtroAno || x.DataFinal.Year == filtroAno) && x.BarragemId == idBarragem)
+                    .OrderBy(o => o.DataInicial).ThenBy(o => o.DataFinal).ThenBy(o => o.Nome);
 
             var dadosListagem = MapearDadosModelo(calendarioTorneio.ToList());
 
