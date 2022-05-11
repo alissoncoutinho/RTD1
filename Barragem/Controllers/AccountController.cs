@@ -1162,6 +1162,44 @@ namespace Barragem.Controllers
             db.Database.ExecuteSqlCommand("update inscricaotorneio set userId =" + userIdDestino + " where userId =" + userIdOrigem);
             db.Database.ExecuteSqlCommand("update snapshotranking set userid =" + userIdDestino + " where userid =" + userIdOrigem);
 
+            var rankingsUsuario = db.SnapshotRanking
+                .Where(x => x.UserId == userIdDestino)
+                .GroupBy(g => new { g.UserId, g.CategoriaId, g.SnapshotId, g.LigaId })
+                .Select(s => new { UserId = s.Key.UserId, CategoriaId = s.Key.CategoriaId, SnapshotId = s.Key.SnapshotId, LigaId = s.Key.LigaId, QtdeRegistros = s.Count() })
+                .ToList();
+
+            foreach (var ranking in rankingsUsuario.Where(x => x.QtdeRegistros > 1))
+            {
+                //Soma pontuação do usuário e mantém somente 1 registro com a pontuação total
+                var snapshots = db.SnapshotRanking
+                    .Where(x => x.UserId == ranking.UserId && x.CategoriaId == ranking.CategoriaId && x.SnapshotId == ranking.SnapshotId && x.LigaId == ranking.LigaId)
+                    .ToList();
+
+                var itemAtualizacao = snapshots.First();
+                itemAtualizacao.Pontuacao = snapshots.Sum(x => x.Pontuacao);
+                db.Entry(itemAtualizacao).State = EntityState.Modified;
+                db.SaveChanges();
+
+                foreach (var itemExcluir in snapshots.Where(x => x.Id != itemAtualizacao.Id))
+                {
+                    db.SnapshotRanking.Remove(itemExcluir);
+                    db.SaveChanges();
+                }
+
+                //Refaz a posição dos usuários no ranking
+                List<SnapshotRanking> rankingAtual = db.SnapshotRanking
+                    .Where(sr => sr.LigaId == itemAtualizacao.LigaId && sr.CategoriaId == itemAtualizacao.CategoriaId && sr.SnapshotId == itemAtualizacao.SnapshotId)
+                    .OrderByDescending(sr => sr.Pontuacao)
+                    .ToList();
+
+                SnapshotRankingUtil.GerarPosicoesRanking(rankingAtual);
+                foreach (SnapshotRanking rankingPosicao in rankingAtual)
+                {
+                    db.Entry(rankingPosicao).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+            }
+
             return RedirectToAction("EditaUsuario", "Account", new { UserName = UserName, isAlterarFoto = false, ConfirmaSenha = "", ConfirmaUnificacaoConta = "ok" });
         }
 

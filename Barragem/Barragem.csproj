@@ -235,6 +235,7 @@
     <Compile Include="Class\MontaJogosTorneioRegraCBT.cs" />
     <Compile Include="Class\PIXPagSeguro.cs" />
     <Compile Include="Class\RodadaNegocio.cs" />
+    <Compile Include="Class\SnapshotRankingUtil.cs" />
     <Compile Include="Class\TemporadaNegocio.cs" />
     <Compile Include="Class\Tipos.cs" />
     <Compile Include="Class\TorneioNegocio.cs" />
