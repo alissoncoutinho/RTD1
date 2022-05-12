@@ -1662,9 +1662,7 @@ namespace Barragem.Controllers
         {
             var situacoesExcecao = new List<string>();
             situacoesExcecao.Add("torneio");
-            situacoesExcecao.Add("desativado");
-            situacoesExcecao.Add("inativo");
-
+            
             var dadosListagem =
                 from usuario in db.UserProfiles
                 join usuarioTorneio in (from usuario in db.UserProfiles where usuario.situacao == "torneio" select usuario)
