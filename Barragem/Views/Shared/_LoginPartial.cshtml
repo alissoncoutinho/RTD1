@@ -56,6 +56,11 @@
                 <li>@Html.ActionLink("Patrocinador", "Index", "Patrocinador")</li>
             }
 
+            @if (Roles.IsUserInRole("admin"))
+            {
+                <li>@Html.ActionLink("Usuários Duplicados", "UsuariosDuplicado", "Account")</li>
+            }
+
             <!--li class="divider"></!--li-->
             <li>
                 <a href="javascript:document.getElementById('logoutForm').submit()">Sair-</a>

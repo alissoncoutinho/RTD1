@@ -1156,6 +1156,20 @@ namespace Barragem.Controllers
         [Authorize(Roles = "admin")]
         public ActionResult UnificarConta(int userIdOrigem, int userIdDestino, string UserName)
         {
+            EfetuarUnificacaoContas(userIdOrigem, userIdDestino);
+            return RedirectToAction("EditaUsuario", "Account", new { UserName = UserName, isAlterarFoto = false, ConfirmaSenha = "", ConfirmaUnificacaoConta = "ok" });
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "admin")]
+        public ActionResult UnificarContaUsuario(int userIdOrigem, int userIdDestino)
+        {
+            EfetuarUnificacaoContas(userIdOrigem, userIdDestino);
+            return RedirectToAction("UsuariosDuplicado");
+        }
+
+        private void EfetuarUnificacaoContas(int userIdOrigem, int userIdDestino) 
+        {
             db.Database.ExecuteSqlCommand("update userprofile set situacao = 'inativo' where userId =" + userIdOrigem);
             db.Database.ExecuteSqlCommand("update jogo set desafiante_id =" + userIdDestino + " where desafiante_id =" + userIdOrigem);
             db.Database.ExecuteSqlCommand("update jogo set desafiado_id =" + userIdDestino + " where desafiado_id =" + userIdOrigem);
@@ -1199,8 +1213,6 @@ namespace Barragem.Controllers
                     db.SaveChanges();
                 }
             }
-
-            return RedirectToAction("EditaUsuario", "Account", new { UserName = UserName, isAlterarFoto = false, ConfirmaSenha = "", ConfirmaUnificacaoConta = "ok" });
         }
 
         [Authorize(Roles = "admin")]
@@ -1643,6 +1655,31 @@ namespace Barragem.Controllers
             return File("/Content/image/sem-foto.png", "image/png");
 
 
+        }
+
+        [Authorize(Roles = "admin")]
+        public ActionResult UsuariosDuplicado()
+        {
+            var situacoesExcecao = new List<string>();
+            situacoesExcecao.Add("torneio");
+            situacoesExcecao.Add("desativado");
+            situacoesExcecao.Add("inativo");
+
+            var dadosListagem =
+                from usuario in db.UserProfiles
+                join usuarioTorneio in (from usuario in db.UserProfiles where usuario.situacao == "torneio" select usuario)
+                on usuario.email equals usuarioTorneio.email
+                where !situacoesExcecao.Contains(usuario.situacao)
+                select new UsuarioDuplicadoModel
+                {
+                    Email = usuario.email,
+                    NomeUsuarioBarragem = usuario.UserName,
+                    NomeUsuarioTorneio = usuarioTorneio.UserName,
+                    UsuarioBarragemId = usuario.UserId,
+                    UsuarioTorneioId = usuarioTorneio.UserId
+                };
+
+            return View(dadosListagem);
         }
 
         public ActionResult ListarUsuarios(String filtroSituacao = "", int filtroBarragem = 0, string msg = "")
