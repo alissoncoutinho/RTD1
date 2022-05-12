@@ -1168,7 +1168,7 @@ namespace Barragem.Controllers
             return RedirectToAction("UsuariosDuplicado");
         }
 
-        private void EfetuarUnificacaoContas(int userIdOrigem, int userIdDestino) 
+        private void EfetuarUnificacaoContas(int userIdOrigem, int userIdDestino)
         {
             db.Database.ExecuteSqlCommand("update userprofile set situacao = 'inativo' where userId =" + userIdOrigem);
             db.Database.ExecuteSqlCommand("update jogo set desafiante_id =" + userIdDestino + " where desafiante_id =" + userIdOrigem);
@@ -1662,19 +1662,27 @@ namespace Barragem.Controllers
         {
             var situacoesExcecao = new List<string>();
             situacoesExcecao.Add("torneio");
-            
+            situacoesExcecao.Add("inativo");
+
             var dadosListagem =
                 from usuario in db.UserProfiles
                 join usuarioTorneio in (from usuario in db.UserProfiles where usuario.situacao == "torneio" select usuario)
                 on usuario.email equals usuarioTorneio.email
+                join barragem in db.Barragens
+                on usuario.barragemId equals barragem.Id
+                join barragemTorneio in db.Barragens
+                on usuarioTorneio.barragemId equals barragemTorneio.Id
                 where !situacoesExcecao.Contains(usuario.situacao)
+                orderby usuario.UserId descending
                 select new UsuarioDuplicadoModel
                 {
                     Email = usuario.email,
                     NomeUsuarioBarragem = usuario.UserName,
                     NomeUsuarioTorneio = usuarioTorneio.UserName,
                     UsuarioBarragemId = usuario.UserId,
-                    UsuarioTorneioId = usuarioTorneio.UserId
+                    UsuarioTorneioId = usuarioTorneio.UserId,
+                    NomeBarragemUsuarioBarragem = barragem.nome,
+                    NomeBarragemUsuarioTorneio = barragemTorneio.nome
                 };
 
             return View(dadosListagem);

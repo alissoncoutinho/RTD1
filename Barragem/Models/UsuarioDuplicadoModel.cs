@@ -7,5 +7,7 @@
         public int UsuarioTorneioId { get; set; }
         public string NomeUsuarioBarragem { get; set; }
         public string NomeUsuarioTorneio { get; set; }
+        public string NomeBarragemUsuarioBarragem { get; set; }
+        public string NomeBarragemUsuarioTorneio { get; set; }
     }
 }

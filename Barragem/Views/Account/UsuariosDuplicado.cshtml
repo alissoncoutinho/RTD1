@@ -27,10 +27,10 @@
                         @Html.DisplayFor(modelItem => item.Email)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.NomeUsuarioTorneio)
+                        @Html.DisplayFor(modelItem => item.NomeUsuarioTorneio) (@Html.DisplayFor(modelItem => item.NomeBarragemUsuarioTorneio))
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.NomeUsuarioBarragem)
+                        @Html.DisplayFor(modelItem => item.NomeUsuarioBarragem) (@Html.DisplayFor(modelItem => item.NomeBarragemUsuarioBarragem))
                     </td>
                     <td align="right">
                         @Html.ActionLink("Unificar", "UnificarContaUsuario", new { userIdOrigem = item.UsuarioTorneioId, userIdDestino = item.UsuarioBarragemId }, new { @class = "btn btn-info btn-xs" })
