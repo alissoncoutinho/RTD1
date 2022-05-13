@@ -392,8 +392,6 @@ namespace Barragem.Controllers
             }
             catch (Exception ex)
             {
-                
-
                 var msgErro = $"TORNEIOAPI_V2 - {DateTimeHelper.GetDateTimeBrasilia()} - Id Torneio: {torneioId} UserId: {userId} Mensagem: {ex.Message} StackTrace: {ex.StackTrace}";
                 GravarLogErro(msgErro);
                 return BadRequest(ex.Message);
