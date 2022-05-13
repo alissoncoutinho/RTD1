@@ -315,6 +315,9 @@ namespace Barragem.Controllers
             if (ModelState.IsValid)
             {
                 var registers = db.UserProfiles.Where(u => (u.email.Equals(model.email) || u.UserName.ToLower() == model.email.ToLower())).ToList();
+
+                //TODO: IMPLEMENTAR REGRAS AQUI
+
                 if (registers.Count() > 1)
                 {
                     return RedirectToAction("ListaLogins", "Account", model);

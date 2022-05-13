@@ -15,7 +15,7 @@
         <p class="intro">Um ranking de tênis criado para você se divertir ao máximo e se aperfeiçoar sempre.</p>
         <p>
             <a class="btn btn-cta btn-cta-primary" href="@Url.Action("Login", "Account")">Login</a>
-            <a style="border: 1px solid #fff;color: #fff;" class="btn btn-cta btn-cta-secondary" href="@Url.Action("Register", "Account")">Cadastre-se</a>
+            <a style="border: 1px solid #fff;color: #fff;" class="btn btn-cta btn-cta-secondary" href="@Url.Action("Login", "Account", new { returnUrl = "cadastro_barragem" })">Cadastre-se</a>
         </p>
     </div><!--//container-->
 </section><!--//promo-->
@@ -129,7 +129,8 @@
     <section id="cta-section" class="section cta-section text-center home-cta-section">
         <div class="container">
             <h2 class="title">Não fique sozinho. Venha jogar conosco.</h2>
-            <p><a class="btn btn-cta btn-cta-primary" href="@Url.Action("Register", "Account")">Cadastre-se</a></p>
+            @*<p><a class="btn btn-cta btn-cta-primary" href="@Url.Action("Register", "Account")">Cadastre-se</a></p>*@
+            <p><a class="btn btn-cta btn-cta-primary" href="@Url.Action("Login", "Account", new { returnUrl = "cadastro_barragem" })">Cadastre-se</a>
         </div><!--//container-->
     </section><!--//cta-section-->
 
