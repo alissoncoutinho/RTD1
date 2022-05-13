@@ -1673,9 +1673,10 @@ namespace Barragem.Controllers
                 join barragemTorneio in db.Barragens
                 on usuarioTorneio.barragemId equals barragemTorneio.Id
                 where !situacoesExcecao.Contains(usuario.situacao)
-                orderby usuario.UserId descending
+                orderby usuario.dataInicioRancking descending
                 select new UsuarioDuplicadoModel
                 {
+                    DataInicioRanking = usuario.dataInicioRancking,
                     Email = usuario.email,
                     NomeUsuarioBarragem = usuario.UserName,
                     NomeUsuarioTorneio = usuarioTorneio.UserName,
