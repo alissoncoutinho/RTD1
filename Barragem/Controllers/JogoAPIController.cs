@@ -12,6 +12,7 @@ using Barragem.Models;
 using Barragem.Class;
 using System.Net.Http;
 using System.Security.Claims;
+using Barragem.Helper;
 
 namespace Barragem.Controllers
 {
@@ -126,26 +127,44 @@ namespace Barragem.Controllers
         [Route("api/JogoAPI/JogoTorneio/{userId}")]
         public IList<MeuJogo> GetJogoTorneio(int userId, int torneioId)
         {
-            List<MeuJogo> jogosTorneio = new List<MeuJogo>();
-            var classesUser = db.InscricaoTorneio.Where(c => c.torneioId == torneioId && c.isAtivo && c.userId == userId).Select(c=>c.classe).ToList();
-            var torneio = db.Torneio.Find(torneioId);
-            foreach(var i in classesUser)
+            try
             {
-                    var jogos = db.Jogo.Where(u => u.classeTorneio == i && (u.situacao_Id==1 || u.situacao_Id == 2) && 
+                List<MeuJogo> jogosTorneio = new List<MeuJogo>();
+                var classesUser = db.InscricaoTorneio.Where(c => c.torneioId == torneioId && c.isAtivo && c.userId == userId).Select(c => c.classe).ToList();
+                var torneio = db.Torneio.Find(torneioId);
+                foreach (var i in classesUser)
+                {
+                    var jogos = db.Jogo.Where(u => u.classeTorneio == i && (u.situacao_Id == 1 || u.situacao_Id == 2) &&
                         (u.desafiado_id == userId || u.desafiante_id == userId || u.desafiado2_id == userId || u.desafiante2_id == userId) &&
-                        !(u.desafiado_id == 10 || u.desafiante_id == 10)).OrderBy(u => u.Id).ToList(); 
-                
-                foreach (var jogo in jogos){
-                    try { 
-                        MeuJogo meuJogo = montarMeuJogo(jogo, userId);
-                        meuJogo.naoPodelancarResultado = torneio.jogadorNaoLancaResult;
-                        jogosTorneio.Add(meuJogo);
-                    }catch (Exception e) { }
+                        !(u.desafiado_id == 10 || u.desafiante_id == 10)).OrderBy(u => u.Id).ToList();
+
+                    foreach (var jogo in jogos)
+                    {
+                        try
+                        {
+                            MeuJogo meuJogo = montarMeuJogo(jogo, userId);
+                            meuJogo.naoPodelancarResultado = torneio.jogadorNaoLancaResult;
+                            jogosTorneio.Add(meuJogo);
+                        }
+                        catch (Exception e) { }
+                    }
                 }
+                return jogosTorneio;
             }
-            return jogosTorneio;
+            catch (Exception ex)
+            {
+                var msgErro = $"JogoAPI_JogoTorneio - {DateTimeHelper.GetDateTimeBrasilia()} - Id Torneio: {torneioId} UserId: {userId} Mensagem: {ex.Message} StackTrace: {ex.StackTrace}";
+                GravarLogErro(msgErro);
+                throw;
+            }
         }
 
+        private void GravarLogErro(string msgErro)
+        {
+            if (msgErro.Length > 500) msgErro = msgErro.Substring(0, 500);
+            db.Log.Add(new Log() { descricao = msgErro });
+            db.SaveChanges();
+        }
 
         private MeuJogo montarMeuJogo(Jogo jogo, int userId) {
             var qtddRodada = 0;
