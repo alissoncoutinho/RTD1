@@ -1,4 +1,5 @@
-﻿using System.Web;
+﻿using System;
+using System.Web;
 
 namespace Barragem.Helper
 {
@@ -20,6 +21,11 @@ namespace Barragem.Helper
                 int.TryParse(cookie.Value.ToString(), out int idBarragem);
                 return idBarragem;
             }
+        }
+
+        public static int ObterIdBarragem(this HttpRequestBase request)
+        {
+            return request.ObterIdBarragemUsuarioLogado(false);
         }
     }
 }

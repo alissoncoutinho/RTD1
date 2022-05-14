@@ -17,7 +17,7 @@ using System.Web.Routing;
 using System.Web.Security;
 using WebMatrix.WebData;
 using System.Data.Entity;
-
+using Barragem.Helper;
 
 namespace Barragem.Controllers
 {
@@ -66,7 +66,11 @@ namespace Barragem.Controllers
         {
             if (ModelState.IsValid && WebSecurity.Login(model.UserName, model.Password, persistCookie: model.RememberMe))
             {
-                if ((!returnUrl.Equals("torneio")) && (!returnUrl.Contains("/Torneio/LancarResultado")))
+                if (returnUrl == "cadastro_barragem")
+                {
+                    return RedirectToAction("RegisterUserBarragem", "Account", new { barragemId = Request.ObterIdBarragem(), userName = model.UserName });
+                }
+                else if ((!returnUrl.Equals("torneio")) && (!returnUrl.Contains("/Torneio/LancarResultado")))
                 {
                     var usuario = db.UserProfiles.Find(WebSecurity.GetUserId(model.UserName));
                     Funcoes.CriarCookieBarragem(Response, Server, usuario.barragemId, usuario.barragem.nome);
@@ -155,16 +159,75 @@ namespace Barragem.Controllers
         // GET: /Account/Register
 
         [AllowAnonymous]
-        public ActionResult Register(int barragemId = 0)
+        public ActionResult Register(int barragemId = 0, string email = "")
         {
-            HttpCookie cookie = Request.Cookies["_barragemId"];
-            if ((barragemId == 0) && (cookie != null))
+            if (barragemId == 0)
             {
-                barragemId = Convert.ToInt32(cookie.Value.ToString());
+                barragemId = Request.ObterIdBarragem();
             }
             ViewBag.barragemId = barragemId;
             ViewBag.classeId = new SelectList(db.Classe.Where(c => c.barragemId == barragemId && c.ativa == true).ToList(), "Id", "nome");
-            return View();
+            if (!string.IsNullOrEmpty(email))
+            {
+                return View(new RegisterModel() { email = email });
+            }
+            else
+            {
+                return View();
+            }
+        }
+
+        [AllowAnonymous]
+        public ActionResult RegisterUserBarragem(int barragemId, string userName)
+        {
+            ViewBag.classeId = new SelectList(db.Classe.Where(c => c.barragemId == barragemId && c.ativa).ToList(), "Id", "nome");
+            return View(new RegisterModel() { UserName = userName, barragemId = barragemId });
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public ActionResult RegisterUserBarragem(RegisterModel model)
+        {
+            var mensagemErro = ValidarCamposObrigatoriosFinalizacaoCadastroBarragem(model);
+            if (!string.IsNullOrEmpty(mensagemErro))
+            {
+                ViewBag.barragemId = model.barragemId;
+                ViewBag.classeId = new SelectList(db.Classe.Where(c => c.barragemId == model.barragemId && c.ativa == true).ToList(), "Id", "nome");
+                ViewBag.MsgErro = mensagemErro;
+                return View(model);
+            }
+
+            var usuarioAlteracao = db.UserProfiles.FirstOrDefault(x => x.UserName == model.UserName);
+            usuarioAlteracao.barragemId = model.barragemId;
+            usuarioAlteracao.classeId = model.classeId;
+            usuarioAlteracao.naturalidade = model.naturalidade;
+            usuarioAlteracao.bairro = model.bairro;
+            usuarioAlteracao.situacao = Tipos.Situacao.pendente.ToString();
+
+            db.Entry(usuarioAlteracao).State = EntityState.Modified;
+            db.SaveChanges();
+
+            try
+            {
+                notificarJogador(model.nome, model.email, model.barragemId);
+                notificarOrganizadorCadastro(model.nome, model.barragemId, model.telefoneCelular);
+            }
+            catch { }
+            return RedirectToAction("Index", "Home");
+        }
+
+        private string ValidarCamposObrigatoriosFinalizacaoCadastroBarragem(RegisterModel model)
+        {
+            if (string.IsNullOrEmpty(model.bairro))
+            {
+                return "O campo Bairro é obrigatório";
+            }
+            if (model.classeId <= 0)
+            {
+                return "O campo Classe é obrigatório";
+            }
+            return string.Empty;
         }
 
         [AllowAnonymous]
@@ -316,32 +379,52 @@ namespace Barragem.Controllers
             {
                 var registers = db.UserProfiles.Where(u => (u.email.Equals(model.email) || u.UserName.ToLower() == model.email.ToLower())).ToList();
 
-                //TODO: IMPLEMENTAR REGRAS AQUI
-
-                if (registers.Count() > 1)
+                if (model.returnUrl == "cadastro_barragem")
                 {
-                    return RedirectToAction("ListaLogins", "Account", model);
-                }
-                else if (registers.Count() > 0)
-                {
-                    var usuario = registers[0];
-                    return RedirectToAction("LoginPassword", new
+                    //TODO: IMPLEMENTAR REGRAS AQUI    
+                    if (registers.Any(x => string.Equals(x.situacao, "torneio", StringComparison.OrdinalIgnoreCase)))
                     {
-                        returnUrl = model.returnUrl,
-                        userName = usuario.UserName,
-                        Msg = "Olá, " + usuario.nome + " seu login foi localizado no ranking: " + usuario.barragem.nome + " entre com a sua senha.",
-                        torneioId = model.torneioId
-                    });
-                }
-                else if (!String.IsNullOrEmpty(model.returnUrl) && model.returnUrl.Equals("torneio"))
-                {
-                    return RedirectToAction("RegisterTorneio", new { email = model.email, torneioId = model.torneioId });
+                        var usuarioTorneioMaisRecente = registers.OrderByDescending(o => o.dataInicioRancking).FirstOrDefault(x => x.situacao == "torneio");
+                        //Objetivo: Solicitar Login, após logar redirecionar para tela de finalização de cadastro de barragem. (NOVA TELA)
+                        return RedirectToAction("LoginPassword", new
+                        {
+                            returnUrl = model.returnUrl,
+                            userName = usuarioTorneioMaisRecente.UserName,
+                            Msg = "Olá, " + usuarioTorneioMaisRecente.nome + " entre com a sua senha para completar o cadastro na barragem.",
+                            barragemId = Request.ObterIdBarragem()
+                        });
+                    }
+                    else
+                    {
+                        return RedirectToAction("Register", new { email = model.email, barragemId = Request.ObterIdBarragem() });
+                    }
                 }
                 else
                 {
-                    return RedirectToAction("Login", new { returnUrl = model.returnUrl, Msg = "Olá, Não encontramos nenhum cadastro com esse email ou usuário.", torneioId = model.torneioId });
+                    if (registers.Count() > 1)
+                    {
+                        return RedirectToAction("ListaLogins", "Account", model);
+                    }
+                    else if (registers.Count() > 0)
+                    {
+                        var usuario = registers[0];
+                        return RedirectToAction("LoginPassword", new
+                        {
+                            returnUrl = model.returnUrl,
+                            userName = usuario.UserName,
+                            Msg = "Olá, " + usuario.nome + " seu login foi localizado no ranking: " + usuario.barragem.nome + " entre com a sua senha.",
+                            torneioId = model.torneioId
+                        });
+                    }
+                    else if (!String.IsNullOrEmpty(model.returnUrl) && model.returnUrl.Equals("torneio"))
+                    {
+                        return RedirectToAction("RegisterTorneio", new { email = model.email, torneioId = model.torneioId });
+                    }
+                    else
+                    {
+                        return RedirectToAction("Login", new { returnUrl = model.returnUrl, Msg = "Olá, Não encontramos nenhum cadastro com esse email ou usuário.", torneioId = model.torneioId });
+                    }
                 }
-
             }
             return View(model);
         }
