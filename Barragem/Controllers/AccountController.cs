@@ -66,7 +66,7 @@ namespace Barragem.Controllers
         {
             if (ModelState.IsValid && WebSecurity.Login(model.UserName, model.Password, persistCookie: model.RememberMe))
             {
-                if (returnUrl == "cadastro_barragem")
+                if (returnUrl == "cadastro_usuario_barragem")
                 {
                     return RedirectToAction("RegisterUserBarragem", "Account", new { barragemId = Request.ObterIdBarragem(), userName = model.UserName });
                 }
@@ -202,6 +202,7 @@ namespace Barragem.Controllers
             usuarioAlteracao.barragemId = model.barragemId;
             usuarioAlteracao.classeId = model.classeId;
             usuarioAlteracao.naturalidade = model.naturalidade;
+            usuarioAlteracao.matriculaClube = model.matriculaClube;
             usuarioAlteracao.bairro = model.bairro;
             usuarioAlteracao.situacao = Tipos.Situacao.pendente.ToString();
 
@@ -223,7 +224,7 @@ namespace Barragem.Controllers
             {
                 return "O campo Bairro é obrigatório";
             }
-            if (model.classeId <= 0)
+            if (model.classeId == null || model.classeId <= 0)
             {
                 return "O campo Classe é obrigatório";
             }
@@ -379,13 +380,11 @@ namespace Barragem.Controllers
             {
                 var registers = db.UserProfiles.Where(u => (u.email.Equals(model.email) || u.UserName.ToLower() == model.email.ToLower())).ToList();
 
-                if (model.returnUrl == "cadastro_barragem")
+                if (model.returnUrl == "cadastro_usuario_barragem")
                 {
-                    //TODO: IMPLEMENTAR REGRAS AQUI    
                     if (registers.Any(x => string.Equals(x.situacao, "torneio", StringComparison.OrdinalIgnoreCase)))
                     {
                         var usuarioTorneioMaisRecente = registers.OrderByDescending(o => o.dataInicioRancking).FirstOrDefault(x => x.situacao == "torneio");
-                        //Objetivo: Solicitar Login, após logar redirecionar para tela de finalização de cadastro de barragem. (NOVA TELA)
                         return RedirectToAction("LoginPassword", new
                         {
                             returnUrl = model.returnUrl,
@@ -712,7 +711,8 @@ namespace Barragem.Controllers
                             lateralidade = model.lateralidade,
                             nivelDeJogo = model.nivelDeJogo,
                             barragemId = model.barragemId,
-                            classeId = model.classeId
+                            classeId = model.classeId,
+                            matriculaClube = model.matriculaClube
                         });
 
                         if (model.organizador)

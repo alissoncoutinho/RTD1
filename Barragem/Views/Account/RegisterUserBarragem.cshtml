@@ -6,7 +6,6 @@
 @using (Html.BeginForm("RegisterUserBarragem", "Account", FormMethod.Post, new { @enctype = "multipart/form-data" }))
 {
     @Html.AntiForgeryToken()
-    @Html.ValidationSummary()
     
     @Html.HiddenFor(model => model.UserName)
     @Html.HiddenFor(model => model.barragemId)
