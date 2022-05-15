@@ -146,7 +146,11 @@ namespace Barragem.Controllers
                             meuJogo.naoPodelancarResultado = torneio.jogadorNaoLancaResult;
                             jogosTorneio.Add(meuJogo);
                         }
-                        catch (Exception e) { }
+                        catch (Exception ex) 
+                        {
+                            var msgErro = $"JogoAPI_JogoTorneio - {DateTimeHelper.GetDateTimeBrasilia()} - Id Torneio: {torneioId} UserId: {userId} Mensagem: {ex.Message} StackTrace: {ex.StackTrace}";
+                            GravarLogErro(msgErro);
+                        }
                     }
                 }
                 return jogosTorneio;
