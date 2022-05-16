@@ -293,6 +293,7 @@
     <Compile Include="Models\CalculadoraDePontos.cs" />
     <Compile Include="Models\CalendarioTorneio.cs" />
     <Compile Include="Models\Categoria.cs" />
+    <Compile Include="Models\CategoriaAutoComplete.cs" />
     <Compile Include="Models\Cidade.cs" />
     <Compile Include="Models\Classe.cs" />
     <Compile Include="Models\ClasseLiga.cs" />

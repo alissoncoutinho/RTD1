@@ -3453,28 +3453,15 @@ namespace Barragem.Controllers
         {
             try
             {
-                var userId = WebSecurity.GetUserId(User.Identity.Name);
-                var barragemId = (from up in db.UserProfiles where up.UserId == userId select up.barragemId).Single();
-                Liga circuito = null;
-                try
-                {
-                    circuito = db.Liga.Where(l => l.barragemId == barragemId).OrderByDescending(l => l.Id).Take(1).Single();
-                }
-                catch (Exception ex)
+                var circuito = ObterUltimaLigaBarragem();
+                if (circuito == null)
                 {
                     return Json(new { erro = "Você ainda não possui um circuito próprio.", retorno = 1 }, "application/json", JsonRequestBehavior.AllowGet);
                 }
-                var categoria = db.Categoria.Find(categoriaId);
-                if (!db.ClasseLiga.Where(c => c.CategoriaId == categoriaId && c.LigaId == circuito.Id).Any())
+
+                if (!ValidarCategoriaExistenteLiga(categoriaId, circuito.Id))
                 {
-                    var classeLiga = new ClasseLiga
-                    {
-                        Nome = categoria.Nome,
-                        CategoriaId = categoriaId,
-                        LigaId = circuito.Id
-                    };
-                    db.ClasseLiga.Add(classeLiga);
-                    db.SaveChanges();
+                    SalvarClasseLiga(categoriaId, circuito.Id);
                 }
                 return Json(new { erro = "", retorno = 1 }, "application/json", JsonRequestBehavior.AllowGet);
             }
@@ -3482,8 +3469,6 @@ namespace Barragem.Controllers
             {
                 return Json(new { erro = "Falha ao incluir classe no circuito:" + ex.Message, retorno = 0 }, "application/json", JsonRequestBehavior.AllowGet);
             }
-
-
         }
 
         [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
@@ -3850,5 +3835,92 @@ namespace Barragem.Controllers
             }
         }
 
+        public ActionResult ObterCategorias(string filtro)
+        {
+            var barragemId = ObterIdBarragemUsuario();
+            var categorias = db.Categoria.Where(x => (x.rankingId == 0 || x.rankingId == barragemId) && x.Nome.ToUpper().StartsWith(filtro.ToUpper())).OrderBy(o => o.ordemExibicao).ThenBy(o => o.isDupla).ThenBy(o => o.Nome).Select(s => new CategoriaAutoComplete { id = s.Id, label = s.Nome, value = s.Nome }).ToList();
+            if (categorias == null)
+                categorias = new List<CategoriaAutoComplete>();
+
+            return Json(categorias.ToArray(), JsonRequestBehavior.AllowGet);
+        }
+
+        [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis")]
+        public ActionResult VincularCategoriaCircuito(int torneioId, int categoriaId, string nomeCategoria, bool isDupla)
+        {
+            try
+            {
+                var ligasTorneio = ObterLigasTorneio(torneioId);
+
+                if (categoriaId == 0 && !string.IsNullOrEmpty(nomeCategoria))
+                {
+                    categoriaId = SalvarCategoria(nomeCategoria, ObterIdBarragemUsuario(), isDupla);
+                }
+
+                foreach (var ligaTorneio in ligasTorneio)
+                {
+                    if (categoriaId > 0 && !ValidarCategoriaExistenteLiga(categoriaId, ligaTorneio.LigaId))
+                    {
+                        SalvarClasseLiga(categoriaId, ligaTorneio.LigaId);
+                    }
+                }
+
+                return Json(new { erro = "", retorno = 1, categoria = new { id = categoriaId, nome = nomeCategoria } }, "application/json", JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { erro = "Falha ao incluir classe no circuito:" + ex.Message, retorno = 0 }, "application/json", JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        public int ObterIdBarragemUsuario()
+        {
+            var userId = WebSecurity.GetUserId(User.Identity.Name);
+            return (from up in db.UserProfiles where up.UserId == userId select up.barragemId).Single();
+        }
+
+        public Liga ObterUltimaLigaBarragem()
+        {
+            var barragemId = ObterIdBarragemUsuario();
+            return db.Liga.Where(l => l.barragemId == barragemId).OrderByDescending(l => l.Id).FirstOrDefault();
+        }
+
+        public List<TorneioLiga> ObterLigasTorneio(int torneioId)
+        {
+            var barragemId = ObterIdBarragemUsuario();
+            return db.TorneioLiga.Where(l => l.TorneioId == torneioId).ToList();
+        }
+
+        public bool ValidarCategoriaExistenteLiga(int categoriaId, int circuitoId)
+        {
+            return db.ClasseLiga.Any(c => c.CategoriaId == categoriaId && c.LigaId == circuitoId);
+        }
+
+        public bool SalvarClasseLiga(int categoriaId, int circuitoId)
+        {
+            var categoria = db.Categoria.Find(categoriaId);
+            var classeLiga = new ClasseLiga
+            {
+                Nome = categoria.Nome,
+                CategoriaId = categoriaId,
+                LigaId = circuitoId
+            };
+            db.ClasseLiga.Add(classeLiga);
+            return db.SaveChanges() > 0;
+        }
+
+        public int SalvarCategoria(string nomeCategoria, int barragemId, bool isDupla)
+        {
+            var categoria = new Categoria
+            {
+                Nome = nomeCategoria,
+                isDupla = isDupla,
+                rankingId = barragemId,
+                ordemExibicao = 0
+            };
+            db.Categoria.Add(categoria);
+            db.SaveChanges();
+            return categoria.Id;
+        }
     }
 }
