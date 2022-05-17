@@ -51,12 +51,6 @@
                     </select>
 
                 </div>
-                @*<div class="col-sm-3">
-                    <button type="button" id="btnBuscarCategoriaExistentes" class="btn btn-info"
-                            data-toggle="modal" data-target="#modalBuscarCategoriaExistentes" onclick="abrirModalBuscarCategoriaExistentes()">
-                        <span class="glyphicon glyphicon-plus"> ADICIONAR</span>
-                    </button>
-                </div>*@
             </div>
         </div>
     }
@@ -204,11 +198,9 @@
         function ocultarBotaoInclusaoCategoria(podeOcultar) {
             if (podeOcultar) {
                 $("#modalBuscarCategoriaExistentes").modal('hide');
-                //document.getElementById("btnBuscarCategoriaExistentes").style.display = 'none';
             }
             else {
                 $("#modalBuscarCategoriaExistentes").modal('show');
-                //document.getElementById("btnBuscarCategoriaExistentes").style.display = 'block';
             }
         }
 
