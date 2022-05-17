@@ -389,7 +389,7 @@ namespace Barragem.Controllers
                         {
                             returnUrl = model.returnUrl,
                             userName = usuarioTorneioMaisRecente.UserName,
-                            Msg = $"Olá, {usuarioTorneioMaisRecente.nome} você já possui cadastro, faça o login para finalizá-lo.",
+                            Msg = $"Olá, {usuarioTorneioMaisRecente.nome} já encontramos um usuário para este e-mail. Faça o login para completar seu cadastro no {usuarioTorneioMaisRecente.barragem.nome}.",
                             barragemId = Request.ObterIdBarragem()
                         });
                     }
