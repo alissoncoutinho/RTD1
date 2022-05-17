@@ -1338,16 +1338,22 @@ namespace Barragem.Controllers
             ViewBag.qtddClasses = qtddClasses + 1;
             ///ViewBag.Categorias
             List<Categoria> categorias = new List<Categoria>();
-            categorias.Add(new Categoria() { Id = 0, Nome = "Criar classe que não contará pontos para a liga" });
+            categorias.Add(new Categoria() { Id = 0, Nome = "Não contará pontos" });
             List<TorneioLiga> ligasDotorneio = db.TorneioLiga.Where(tl => tl.TorneioId == torneioId).ToList();
             List<int> ligas = new List<int>();
             foreach (TorneioLiga tl in ligasDotorneio)
             {
                 ligas.Add(tl.LigaId);
             }
+
+            var categoriasJaVinculadas = ObterClassesTorneio(torneioId);
+
             foreach (ClasseLiga cl in db.ClasseLiga.Where(classeLiga => ligas.Contains(classeLiga.LigaId)).GroupBy(cl => cl.CategoriaId).Select(c => c.FirstOrDefault()).ToList())
             {
-                categorias.Add(db.Categoria.Find(cl.CategoriaId));
+                if (!categoriasJaVinculadas.Any(x => x.categoriaId == cl.CategoriaId))
+                {
+                    categorias.Add(db.Categoria.Find(cl.CategoriaId));
+                }
             }
             ViewBag.Categorias = categorias;
 
@@ -3835,7 +3841,7 @@ namespace Barragem.Controllers
             }
         }
 
-        public ActionResult ObterCategorias(string filtro)
+        public ActionResult ObterCategorias(int torneioId, string filtro)
         {
             var barragemId = ObterIdBarragemUsuario();
             var categorias = db.Categoria
@@ -3845,10 +3851,15 @@ namespace Barragem.Controllers
                                 .ThenBy(o => o.Nome)
                                 .Select(s => new CategoriaAutoComplete { id = s.Id, label = s.Nome, value = s.Nome })
                                 .ToList();
-            if (categorias == null)
-                categorias = new List<CategoriaAutoComplete>();
 
-            return Json(categorias.ToArray(), JsonRequestBehavior.AllowGet);
+            var categoriasJaVinculadas = ObterClassesTorneio(torneioId);
+
+            var categoriasDisponiveis = categorias.Where(x => !categoriasJaVinculadas.Any(y => y.categoriaId == x.id));
+
+            if (categoriasDisponiveis == null)
+                categoriasDisponiveis = new List<CategoriaAutoComplete>();
+
+            return Json(categoriasDisponiveis.ToArray(), JsonRequestBehavior.AllowGet);
         }
 
         [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis")]
@@ -3927,5 +3938,11 @@ namespace Barragem.Controllers
             db.SaveChanges();
             return categoria.Id;
         }
+
+        public IEnumerable<ClasseTorneio> ObterClassesTorneio(int torneioId) 
+        {
+            return db.ClasseTorneio.Where(x => x.torneioId == torneioId && x.categoriaId != null);
+        }
+
     }
 }

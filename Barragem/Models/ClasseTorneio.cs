@@ -13,6 +13,8 @@ namespace Barragem.Models
     {
         [Key]
         public int Id { get; set; }
+
+        [Display(Name = "Nome")]
         public string nome { get; set; }
         public int nivel { get; set; }
         public int torneioId { get; set; }
