@@ -3838,7 +3838,13 @@ namespace Barragem.Controllers
         public ActionResult ObterCategorias(string filtro)
         {
             var barragemId = ObterIdBarragemUsuario();
-            var categorias = db.Categoria.Where(x => (x.rankingId == 0 || x.rankingId == barragemId) && x.Nome.ToUpper().StartsWith(filtro.ToUpper())).OrderBy(o => o.ordemExibicao).ThenBy(o => o.isDupla).ThenBy(o => o.Nome).Select(s => new CategoriaAutoComplete { id = s.Id, label = s.Nome, value = s.Nome }).ToList();
+            var categorias = db.Categoria
+                                .Where(x => (x.rankingId == 0 || x.rankingId == barragemId) && x.Nome.ToUpper().StartsWith(filtro.ToUpper()))
+                                .OrderBy(o => o.ordemExibicao)
+                                .ThenBy(o => o.isDupla)
+                                .ThenBy(o => o.Nome)
+                                .Select(s => new CategoriaAutoComplete { id = s.Id, label = s.Nome, value = s.Nome })
+                                .ToList();
             if (categorias == null)
                 categorias = new List<CategoriaAutoComplete>();
 
@@ -3887,7 +3893,6 @@ namespace Barragem.Controllers
 
         public List<TorneioLiga> ObterLigasTorneio(int torneioId)
         {
-            var barragemId = ObterIdBarragemUsuario();
             return db.TorneioLiga.Where(l => l.TorneioId == torneioId).ToList();
         }
 
