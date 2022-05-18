@@ -2104,6 +2104,7 @@ namespace Barragem.Controllers
 
                     }
                 }
+                ValidarLimitadorInscricoesTorneio(torneio.temLimiteDeInscricao == true, torneio.Id);
                 ViewBag.tokenPagSeguro = db.BarragemView.Find(torneio.barragemId).tokenPagSeguro;
                 db.Entry(torneio).State = EntityState.Modified;
                 db.SaveChanges();
@@ -3939,9 +3940,26 @@ namespace Barragem.Controllers
             return categoria.Id;
         }
 
-        public IEnumerable<ClasseTorneio> ObterClassesTorneio(int torneioId) 
+        public IEnumerable<ClasseTorneio> ObterClassesTorneio(int torneioId)
         {
             return db.ClasseTorneio.Where(x => x.torneioId == torneioId && x.categoriaId != null);
+        }
+
+        public void ValidarLimitadorInscricoesTorneio(bool qtdeInscricoesLimitada, int torneioId)
+        {
+            if (!qtdeInscricoesLimitada)
+            {
+                var classesTorneio = db.ClasseTorneio.Where(x => x.torneioId == torneioId && x.maximoInscritos > 0);
+                if (classesTorneio.Any())
+                {
+                    foreach (var item in classesTorneio)
+                    {
+                        item.maximoInscritos = 0;
+                        db.Entry(item).State = EntityState.Modified;
+                    }
+                    db.SaveChanges();
+                }
+            }
         }
 
     }
