@@ -3845,8 +3845,16 @@ namespace Barragem.Controllers
         public ActionResult ObterCategorias(int torneioId, string filtro)
         {
             var barragemId = ObterIdBarragemUsuario();
+            string perfil = Roles.GetRolesForUser(User.Identity.Name)[0];
+            bool ehAdminTorneio = false;
+
+            if (perfil.Equals("adminTorneio"))
+            {
+                ehAdminTorneio = true;
+            }
+
             var categorias = db.Categoria
-                                .Where(x => (x.rankingId == 0 || x.rankingId == barragemId) && x.Nome.ToUpper().StartsWith(filtro.ToUpper()))
+                                .Where(x => (x.rankingId == 0 || x.rankingId == barragemId) && ((ehAdminTorneio && x.isDupla) || !ehAdminTorneio) && x.Nome.ToUpper().StartsWith(filtro.ToUpper()))
                                 .OrderBy(o => o.ordemExibicao)
                                 .ThenBy(o => o.isDupla)
                                 .ThenBy(o => o.Nome)

@@ -41,15 +41,18 @@
         <div class="row">
             <div class="col-sm-12" style="padding-bottom:15px">
                 <label>Categoria no circuito</label>
-                <div class="input-group col-sm-6">
+                <div class="input-group col-sm-6" style="display:flex">
                     <select id="CategoriaId" name="CategoriaId" class="form-control" onchange="selectedCategoria(this)">
                         @foreach (var categoria in ViewBag.Categorias)
                         {
                             <option value="@categoria.Id">@categoria.Nome</option>
                         }
-                        <option value="-99"><b>NENHUMA DAS CATEGORIAS ACIMA</b></option>
+                        <option value="-99">NENHUMA DAS CATEGORIAS ACIMA</option>
                     </select>
-
+                    <button type="button" id="btnBuscarCategoriaExistentes" class="btn btn-info" style="margin-left:5px"
+                            data-toggle="modal" data-target="#modalBuscarCategoriaExistentes" onclick="abrirModalBuscarCategoriaExistentes()">
+                        <span class="glyphicon glyphicon-plus"> ADICIONAR</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -127,7 +130,7 @@
         $(document).ready(function () {
             $("#txtCategoria").autocomplete({
                 source: function (request, response) {
-        
+
                     $.ajax({
                         url: "/Torneio/ObterCategorias",
                         dataType: "json",
@@ -192,15 +195,18 @@
         });
 
         function selectedCategoria(element) {
+            abrirModalBuscarCategoriaExistentes();
             ocultarBotaoInclusaoCategoria(element.value != '-99');
         }
 
         function ocultarBotaoInclusaoCategoria(podeOcultar) {
             if (podeOcultar) {
                 $("#modalBuscarCategoriaExistentes").modal('hide');
+                document.getElementById("btnBuscarCategoriaExistentes").style.display = 'none';
             }
             else {
                 $("#modalBuscarCategoriaExistentes").modal('show');
+                document.getElementById("btnBuscarCategoriaExistentes").style.display = 'block';
             }
         }
 
