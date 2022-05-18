@@ -221,7 +221,7 @@
             var opt = document.createElement('option');
             opt.value = categoria.id;
             opt.innerHTML = categoria.nome;
-            selectCircuito.appendChild(opt);
+            selectCircuito.insertBefore(opt, selectCircuito.lastElementChild);
             $("#CategoriaId").val(categoria.id);
             $("#CategoriaId").change();
         }
