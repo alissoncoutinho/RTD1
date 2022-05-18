@@ -1310,6 +1310,16 @@ namespace Barragem.Controllers
             db.Entry(classeTorneio).State = EntityState.Modified;
             db.SaveChanges();
 
+            var ligasTorneio = ObterLigasTorneio(idTorneio);
+
+            foreach (var ligaTorneio in ligasTorneio)
+            {
+                if (idCategoria > 0 && !ValidarCategoriaExistenteLiga(idCategoria, ligaTorneio.LigaId))
+                {
+                    SalvarClasseLiga(idCategoria, ligaTorneio.LigaId);
+                }
+            }
+
             return Json(new { redirectToUrl = Url.Action("EditClasse", "Torneio", new { torneioId = idTorneio }) });
         }
 
