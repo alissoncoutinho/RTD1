@@ -1145,6 +1145,7 @@
     <Content Include="Views\Torneio\_PartialJogoImprimirFaseGrupo.cshtml" />
     <Content Include="Views\Account\UsuariosDuplicado.cshtml" />
     <Content Include="Views\Account\RegisterUserBarragem.cshtml" />
+    <Content Include="Views\Torneio\EditCabecaChave.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

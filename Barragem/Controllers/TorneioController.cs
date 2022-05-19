@@ -3970,5 +3970,38 @@ namespace Barragem.Controllers
             }
         }
 
+
+        [Authorize(Roles = "admin")]
+        public ActionResult EditCabecaChave(int torneioId, int filtroClasse = 0, string filtroJogador = "", string Msg = "")
+        {
+
+            List<InscricaoTorneio> inscricao = db.InscricaoTorneio.Where(i => i.torneioId == torneioId).ToList();
+            var torneio = db.Torneio.Find(torneioId);
+
+            var listaClasses = db.ClasseTorneio.Where(c => c.torneioId == torneioId).ToList();
+            ViewBag.filtroClasse = filtroClasse;
+
+            if (filtroClasse == 0)
+            {
+                var primeiraClasse = listaClasses.FirstOrDefault();
+                filtroClasse = primeiraClasse.Id;
+            }
+
+            inscricao = inscricao.Where(i => i.classe == filtroClasse).ToList();
+            ViewBag.CabecasDeChave = getOpcoesCabecaDeChave(filtroClasse);
+
+            if (filtroJogador != "")
+            {
+                inscricao = inscricao.Where(i => i.participante.nome.ToUpper().Contains(filtroJogador.ToUpper())).ToList();
+            }
+
+            ViewBag.Classes = listaClasses;
+            ViewBag.filtroClasse = filtroClasse;
+            ViewBag.TorneioId = torneioId;
+            ViewBag.flag = "cabecachave";
+            mensagem(Msg);
+            return View(inscricao);
+        }
+
     }
 }
