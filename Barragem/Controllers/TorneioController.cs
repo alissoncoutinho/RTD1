@@ -3756,9 +3756,7 @@ namespace Barragem.Controllers
 
         private void CarregarComboCategoriasCircuito(int torneioId)
         {
-            List<Categoria> categorias = new List<Categoria>();
-            categorias.Add(new Categoria() { Id = 0, Nome = "SELECIONE" });
-
+            List<Categoria> categoriasLiga = new List<Categoria>();
             List<TorneioLiga> ligasDotorneio = db.TorneioLiga.Where(tl => tl.TorneioId == torneioId).ToList();
 
             if (ligasDotorneio != null)
@@ -3770,11 +3768,18 @@ namespace Barragem.Controllers
                 }
                 foreach (ClasseLiga cl in db.ClasseLiga.Where(classeLiga => ligas.Contains(classeLiga.LigaId)).GroupBy(cl => cl.CategoriaId).Select(c => c.FirstOrDefault()).ToList())
                 {
-                    categorias.Add(db.Categoria.Find(cl.CategoriaId));
+                    categoriasLiga.Add(db.Categoria.Find(cl.CategoriaId));
                 }
             }
 
-            ViewBag.Categorias = categorias;
+            var categoriasPadrao = ObterCategoriasPadraoSistema(string.Empty);
+
+            var todasCategorias = categoriasPadrao;
+            todasCategorias.AddRange(categoriasLiga.Select(s => new CategoriaAutoComplete { id = s.Id, label = s.Nome, value = s.Nome }));
+            todasCategorias = todasCategorias.GroupBy(x=>x.id).Select(s=>s.FirstOrDefault()).OrderBy(x => x.label).ToList();
+            var categoriasDisponiveis = ValidarCategoriasDisponiveis(torneioId, todasCategorias);
+
+            ViewBag.Categorias = categoriasDisponiveis;
         }
 
         [HttpGet]
@@ -3854,6 +3859,24 @@ namespace Barragem.Controllers
 
         public ActionResult ObterCategorias(int torneioId, string filtro)
         {
+            var categorias = ObterCategoriasPadraoSistema(filtro);
+            var categoriasDisponiveis = ValidarCategoriasDisponiveis(torneioId, categorias);
+            return Json(categoriasDisponiveis.ToArray(), JsonRequestBehavior.AllowGet);
+        }
+
+        private IEnumerable<CategoriaAutoComplete> ValidarCategoriasDisponiveis(int torneioId, List<CategoriaAutoComplete> categorias)
+        {
+            var categoriasJaVinculadas = ObterClassesTorneio(torneioId);
+            var categoriasDisponiveis = categorias.Where(x => !categoriasJaVinculadas.Any(y => y.categoriaId == x.id));
+
+            if (categoriasDisponiveis == null)
+                categoriasDisponiveis = new List<CategoriaAutoComplete>();
+
+            return categoriasDisponiveis;
+        }
+
+        private List<CategoriaAutoComplete> ObterCategoriasPadraoSistema(string filtro)
+        {
             var barragemId = ObterIdBarragemUsuario();
             string perfil = Roles.GetRolesForUser(User.Identity.Name)[0];
             bool ehAdminTorneio = false;
@@ -3863,23 +3886,15 @@ namespace Barragem.Controllers
                 ehAdminTorneio = true;
             }
 
-            var categorias = db.Categoria
-                                .Where(x => (x.rankingId == 0 || x.rankingId == barragemId) && ((ehAdminTorneio && x.isDupla) || !ehAdminTorneio) && x.Nome.ToUpper().StartsWith(filtro.ToUpper()))
-                                .OrderBy(o => o.ordemExibicao)
-                                .ThenBy(o => o.isDupla)
-                                .ThenBy(o => o.Nome)
-                                .Select(s => new CategoriaAutoComplete { id = s.Id, label = s.Nome, value = s.Nome })
-                                .ToList();
-
-            var categoriasJaVinculadas = ObterClassesTorneio(torneioId);
-
-            var categoriasDisponiveis = categorias.Where(x => !categoriasJaVinculadas.Any(y => y.categoriaId == x.id));
-
-            if (categoriasDisponiveis == null)
-                categoriasDisponiveis = new List<CategoriaAutoComplete>();
-
-            return Json(categoriasDisponiveis.ToArray(), JsonRequestBehavior.AllowGet);
+            return db.Categoria
+                    .Where(x => (x.rankingId == 0 || x.rankingId == barragemId) && ((ehAdminTorneio && x.isDupla) || !ehAdminTorneio) && ((x.Nome.ToUpper().StartsWith(filtro.ToUpper()) && !string.IsNullOrEmpty(filtro)) || string.IsNullOrEmpty(filtro)))
+                    .OrderBy(o => o.ordemExibicao)
+                    .ThenBy(o => o.isDupla)
+                    .ThenBy(o => o.Nome)
+                    .Select(s => new CategoriaAutoComplete { id = s.Id, label = s.Nome, value = s.Nome })
+                    .ToList();
         }
+
 
         [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis")]
         public ActionResult VincularCategoriaCircuito(int torneioId, int categoriaId, string nomeCategoria, bool isDupla)
