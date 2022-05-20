@@ -1310,6 +1310,16 @@ namespace Barragem.Controllers
             db.Entry(classeTorneio).State = EntityState.Modified;
             db.SaveChanges();
 
+            var ligasTorneio = ObterLigasTorneio(idTorneio);
+
+            foreach (var ligaTorneio in ligasTorneio)
+            {
+                if (idCategoria > 0 && !ValidarCategoriaExistenteLiga(idCategoria, ligaTorneio.LigaId))
+                {
+                    SalvarClasseLiga(idCategoria, ligaTorneio.LigaId);
+                }
+            }
+
             return Json(new { redirectToUrl = Url.Action("EditClasse", "Torneio", new { torneioId = idTorneio }) });
         }
 
@@ -1385,6 +1395,8 @@ namespace Barragem.Controllers
         {
             try
             {
+                List<string> classesPagtoOk = new List<string>();
+
                 var inscricao = db.InscricaoTorneio.Find(Id);
                 if (inscricao.classeTorneio.faseGrupo)
                 {
@@ -1413,14 +1425,39 @@ namespace Barragem.Controllers
                     inscricao.valor = inscricao.valor + inscricao.valorPendente;
                     inscricao.valorPendente = 0;
                 }
+
+                if (isAtivo) 
+                {
+                    classesPagtoOk.Add(inscricao.classeTorneio.nome);
+                }
+
                 db.Entry(inscricao).State = EntityState.Modified;
                 db.SaveChanges();
+
+                NotificarUsuarioPagamentoRealizado(classesPagtoOk, inscricao.torneio.nome, inscricao.userId, inscricao.torneioId);
+
                 return Json(new { erro = "", retorno = 1, statusPagamento = inscricao.descricaoStatusPag }, "text/plain", JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {
                 return Json(new { erro = ex.Message, retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
             }
+        }
+
+        private void NotificarUsuarioPagamentoRealizado(List<string> classes, string nomeTorneio, int userId, int torneioId)
+        {
+            if (classes.Count == 0)
+                return;
+
+            var msgConfirmacao = $"O pagamento da inscrição na(s) categoria(s) {string.Join(", ", classes.Distinct())} do torneio {nomeTorneio} foi confirmado.";
+            var titulo = "Pagamento da inscrição confirmado.";
+
+            var userFb = db.UsuarioFirebase.FirstOrDefault(x => x.UserId == userId);
+            if (userFb == null)
+                return;
+
+            var dadosMensagemUsuario = new FirebaseNotificationModel() { to = userFb.Token, notification = new NotificationModel() { title = titulo, body = msgConfirmacao }, data = new DataModel() { torneioId = torneioId } };
+            new FirebaseNotification().SendNotification(dadosMensagemUsuario);
         }
 
         [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
@@ -3746,9 +3783,7 @@ namespace Barragem.Controllers
 
         private void CarregarComboCategoriasCircuito(int torneioId)
         {
-            List<Categoria> categorias = new List<Categoria>();
-            categorias.Add(new Categoria() { Id = 0, Nome = "SELECIONE" });
-
+            List<Categoria> categoriasLiga = new List<Categoria>();
             List<TorneioLiga> ligasDotorneio = db.TorneioLiga.Where(tl => tl.TorneioId == torneioId).ToList();
 
             if (ligasDotorneio != null)
@@ -3760,11 +3795,18 @@ namespace Barragem.Controllers
                 }
                 foreach (ClasseLiga cl in db.ClasseLiga.Where(classeLiga => ligas.Contains(classeLiga.LigaId)).GroupBy(cl => cl.CategoriaId).Select(c => c.FirstOrDefault()).ToList())
                 {
-                    categorias.Add(db.Categoria.Find(cl.CategoriaId));
+                    categoriasLiga.Add(db.Categoria.Find(cl.CategoriaId));
                 }
             }
 
-            ViewBag.Categorias = categorias;
+            var categoriasPadrao = ObterCategoriasPadraoSistema(string.Empty);
+
+            var todasCategorias = categoriasPadrao;
+            todasCategorias.AddRange(categoriasLiga.Select(s => new CategoriaAutoComplete { id = s.Id, label = s.Nome, value = s.Nome }));
+            todasCategorias = todasCategorias.GroupBy(x=>x.id).Select(s=>s.FirstOrDefault()).OrderBy(x => x.label).ToList();
+            var categoriasDisponiveis = ValidarCategoriasDisponiveis(torneioId, todasCategorias);
+
+            ViewBag.Categorias = categoriasDisponiveis;
         }
 
         [HttpGet]
@@ -3844,6 +3886,24 @@ namespace Barragem.Controllers
 
         public ActionResult ObterCategorias(int torneioId, string filtro)
         {
+            var categorias = ObterCategoriasPadraoSistema(filtro);
+            var categoriasDisponiveis = ValidarCategoriasDisponiveis(torneioId, categorias);
+            return Json(categoriasDisponiveis.ToArray(), JsonRequestBehavior.AllowGet);
+        }
+
+        private IEnumerable<CategoriaAutoComplete> ValidarCategoriasDisponiveis(int torneioId, List<CategoriaAutoComplete> categorias)
+        {
+            var categoriasJaVinculadas = ObterClassesTorneio(torneioId);
+            var categoriasDisponiveis = categorias.Where(x => !categoriasJaVinculadas.Any(y => y.categoriaId == x.id));
+
+            if (categoriasDisponiveis == null)
+                categoriasDisponiveis = new List<CategoriaAutoComplete>();
+
+            return categoriasDisponiveis;
+        }
+
+        private List<CategoriaAutoComplete> ObterCategoriasPadraoSistema(string filtro)
+        {
             var barragemId = ObterIdBarragemUsuario();
             string perfil = Roles.GetRolesForUser(User.Identity.Name)[0];
             bool ehAdminTorneio = false;
@@ -3853,23 +3913,15 @@ namespace Barragem.Controllers
                 ehAdminTorneio = true;
             }
 
-            var categorias = db.Categoria
-                                .Where(x => (x.rankingId == 0 || x.rankingId == barragemId) && ((ehAdminTorneio && x.isDupla) || !ehAdminTorneio) && x.Nome.ToUpper().StartsWith(filtro.ToUpper()))
-                                .OrderBy(o => o.ordemExibicao)
-                                .ThenBy(o => o.isDupla)
-                                .ThenBy(o => o.Nome)
-                                .Select(s => new CategoriaAutoComplete { id = s.Id, label = s.Nome, value = s.Nome })
-                                .ToList();
-
-            var categoriasJaVinculadas = ObterClassesTorneio(torneioId);
-
-            var categoriasDisponiveis = categorias.Where(x => !categoriasJaVinculadas.Any(y => y.categoriaId == x.id));
-
-            if (categoriasDisponiveis == null)
-                categoriasDisponiveis = new List<CategoriaAutoComplete>();
-
-            return Json(categoriasDisponiveis.ToArray(), JsonRequestBehavior.AllowGet);
+            return db.Categoria
+                    .Where(x => (x.rankingId == 0 || x.rankingId == barragemId) && ((ehAdminTorneio && x.isDupla) || !ehAdminTorneio) && ((x.Nome.ToUpper().StartsWith(filtro.ToUpper()) && !string.IsNullOrEmpty(filtro)) || string.IsNullOrEmpty(filtro)))
+                    .OrderBy(o => o.ordemExibicao)
+                    .ThenBy(o => o.isDupla)
+                    .ThenBy(o => o.Nome)
+                    .Select(s => new CategoriaAutoComplete { id = s.Id, label = s.Nome, value = s.Nome })
+                    .ToList();
         }
+
 
         [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis")]
         public ActionResult VincularCategoriaCircuito(int torneioId, int categoriaId, string nomeCategoria, bool isDupla)

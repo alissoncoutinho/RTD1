@@ -28,7 +28,7 @@ namespace Barragem.Controllers
         // GET: api/InscricaoAPI
         [HttpGet]
         [Route("api/InscricaoAPI/PrepararInscricao/{torneioId}")]
-        public IHttpActionResult GetPrepararInscricao(int torneioId, int userId=0)
+        public IHttpActionResult GetPrepararInscricao(int torneioId, int userId = 0)
         {
             if (userId > 0)
             {
@@ -55,7 +55,8 @@ namespace Barragem.Controllers
             return Ok(torneioClassesApp);
         }
 
-        private Torneio montaTorneio(Torneio torneio) {
+        private Torneio montaTorneio(Torneio torneio)
+        {
             var torneioDadosReduzidos = new Torneio();
             torneioDadosReduzidos.Id = torneio.Id;
             torneioDadosReduzidos.cidade = torneio.cidade;
@@ -74,7 +75,7 @@ namespace Barragem.Controllers
             torneioDadosReduzidos.premiacao = torneio.premiacao;
             torneioDadosReduzidos.qtddCategoriasPorJogador = torneio.qtddCategoriasPorJogador;
             torneioDadosReduzidos.valor = torneio.valor;
-            if(torneio.qtddCategoriasPorJogador>1) torneioDadosReduzidos.valor2 = torneio.valor2;
+            if (torneio.qtddCategoriasPorJogador > 1) torneioDadosReduzidos.valor2 = torneio.valor2;
             if (torneio.qtddCategoriasPorJogador > 2) torneioDadosReduzidos.valor3 = torneio.valor3;
             if (torneio.qtddCategoriasPorJogador > 3) torneioDadosReduzidos.valor4 = torneio.valor4;
             torneioDadosReduzidos.valorDescontoFederado = torneio.valorDescontoFederado;
@@ -92,41 +93,50 @@ namespace Barragem.Controllers
 
         [HttpGet]
         [Route("api/InscricaoAPI")]
-        public IList<Inscrito> GetInscricao(int torneioId=0, int classeId=0, bool semParceiroDupla=false, int userId=0, bool proximaClasse=false){
+        public IList<Inscrito> GetInscricao(int torneioId = 0, int classeId = 0, bool semParceiroDupla = false, int userId = 0, bool proximaClasse = false)
+        {
             var inscricoesTorneio = db.InscricaoTorneio.Where(i => i.torneioId == torneioId);
             var listInscricaoTorneio = new List<InscricaoTorneio>();
-            if (classeId != 0 && !proximaClasse){
+            if (classeId != 0 && !proximaClasse)
+            {
                 inscricoesTorneio = inscricoesTorneio.Where(i => i.classe == classeId);
             }
-            if (semParceiroDupla){
+            if (semParceiroDupla)
+            {
                 if (userId != 0)
                 {
                     var inscricoesUsuario = new List<InscricaoTorneio>();
-                    if(classeId!=0 && proximaClasse)
+                    if (classeId != 0 && proximaClasse)
                     {
-                        inscricoesUsuario = inscricoesTorneio.Where(i => i.userId == userId && i.classeTorneio.isDupla && i.parceiroDuplaId == null && i.classe>classeId).OrderBy(i => i.classe).ToList();
+                        inscricoesUsuario = inscricoesTorneio.Where(i => i.userId == userId && i.classeTorneio.isDupla && i.parceiroDuplaId == null && i.classe > classeId).OrderBy(i => i.classe).ToList();
                     }
                     else
                     {
                         inscricoesUsuario = inscricoesTorneio.Where(i => i.userId == userId && i.classeTorneio.isDupla && i.parceiroDuplaId == null).OrderBy(i => i.classe).ToList();
                     }
-                    
+
                     var inscricoesUsuAtualizada = new List<InscricaoTorneio>();
-                    foreach (var item in inscricoesUsuario) {
+                    foreach (var item in inscricoesUsuario)
+                    {
                         var jaEstouEmAlgumaDupla = inscricoesTorneio.Where(i => i.classe == item.classe && i.parceiroDuplaId == item.userId).Any();
-                        if (!jaEstouEmAlgumaDupla){
+                        if (!jaEstouEmAlgumaDupla)
+                        {
                             inscricoesUsuAtualizada.Add(item);
                         }
                     }
                     if (inscricoesUsuAtualizada.Count() > 0)
                     {
                         classeId = inscricoesUsuAtualizada[0].classe;
-                    } else {
+                    }
+                    else
+                    {
                         classeId = 0;
                     }
                 }
                 listInscricaoTorneio = tn.getInscricoesSemDuplas(classeId);
-            } else {
+            }
+            else
+            {
                 listInscricaoTorneio = inscricoesTorneio.ToList();
             }
             return montarListaInscritos(listInscricaoTorneio);
@@ -150,7 +160,8 @@ namespace Barragem.Controllers
         }
 
         [Route("api/InscricaoAPI/Inscritos/{torneioId}")]
-        public IList<Inscrito> GetListarInscritos(int torneioId, int userId=0){
+        public IList<Inscrito> GetListarInscritos(int torneioId, int userId = 0)
+        {
             var torneio = db.Torneio.Find(torneioId);
             var liberarTabelaInscricao = torneio.liberaTabelaInscricao;
             if (!liberarTabelaInscricao)
@@ -187,14 +198,17 @@ namespace Barragem.Controllers
             if (inscritos.Count > 0)
             {
                 var usuarioLogado = 0;
-                if (userId != 0) {
+                if (userId != 0)
+                {
                     usuarioLogado = userId;
-                } else {
+                }
+                else
+                {
                     usuarioLogado = getUsuarioLogado();
                 }
-                var inscricoesTorneio = db.InscricaoTorneio.Where(r => r.torneioId == torneioId && r.classeTorneio.isDupla == true && r.userId == usuarioLogado && r.parceiroDuplaId==null).ToList();
+                var inscricoesTorneio = db.InscricaoTorneio.Where(r => r.torneioId == torneioId && r.classeTorneio.isDupla == true && r.userId == usuarioLogado && r.parceiroDuplaId == null).ToList();
                 var exibeBotaoFormarDupla = false;
-                if (inscricoesTorneio.Count()>0)
+                if (inscricoesTorneio.Count() > 0)
                 {
                     foreach (var item in inscricoesTorneio)
                     {
@@ -204,13 +218,15 @@ namespace Barragem.Controllers
                             exibeBotaoFormarDupla = true;
                         }
                     }
-                } else {
+                }
+                else
+                {
                     exibeBotaoFormarDupla = false;
                 }
                 inscritos[0].exibeBotaoFormarDupla = exibeBotaoFormarDupla;
             }
             return inscritos;
-            
+
         }
 
         [HttpGet]
@@ -220,8 +236,9 @@ namespace Barragem.Controllers
             var inscritos = new List<InscricaoTorneio>();
             DateTime hoje = DateTime.Now.Date;
             var inscricoes = db.InscricaoTorneio.Where(i => i.classeTorneio.isDupla && i.parceiroDuplaId == null && i.userId == usuarioLogado && i.torneio.dataFim > hoje).ToList();
-            foreach (var item in inscricoes){
-                var jaSouParceidoDeDupla = db.InscricaoTorneio.Include(t=>t.torneio).Where(i => i.parceiroDuplaId == usuarioLogado && i.classe == item.classe).Any();
+            foreach (var item in inscricoes)
+            {
+                var jaSouParceidoDeDupla = db.InscricaoTorneio.Include(t => t.torneio).Where(i => i.parceiroDuplaId == usuarioLogado && i.classe == item.classe).Any();
                 if (!jaSouParceidoDeDupla)
                 {
                     inscritos.Add(item);
@@ -258,13 +275,13 @@ namespace Barragem.Controllers
                     torneio.nomeLiga = torneioLiga.Liga.Nome;
                 }
                 catch (Exception e) { }
-               torneios.Add(torneio);
+                torneios.Add(torneio);
             }
             return torneios;
         }
-        
 
-            private int getUsuarioLogado()
+
+        private int getUsuarioLogado()
         {
             var claimsIdentity = User.Identity as ClaimsIdentity;
             var userId = 0; //9058;
@@ -278,17 +295,21 @@ namespace Barragem.Controllers
         [ResponseType(typeof(void))]
         [HttpPatch]
         [Route("api/InscricaoAPI/{Id}")]
-        public IHttpActionResult PatchInscricao(int Id, int parceiroDuplaId, int userId, int classeId=0)
+        public IHttpActionResult PatchInscricao(int Id, int parceiroDuplaId, int userId, int classeId = 0)
         {
             var inscricaoTorneio = new InscricaoTorneio();
-            if (Id != 0){
+            if (Id != 0)
+            {
                 inscricaoTorneio = db.InscricaoTorneio.Find(Id);
-            } else {
-                
-                inscricaoTorneio = db.InscricaoTorneio.Where(i=> i.classe==classeId && i.userId== userId).FirstOrDefault();
+            }
+            else
+            {
+
+                inscricaoTorneio = db.InscricaoTorneio.Where(i => i.classe == classeId && i.userId == userId).FirstOrDefault();
             }
             var jaEstouEmOutraDupla = db.InscricaoTorneio.Where(i => i.classe == inscricaoTorneio.classe && (i.parceiroDuplaId == inscricaoTorneio.userId)).Any();
-            if ((jaEstouEmOutraDupla)||(inscricaoTorneio.parceiroDuplaId != null && inscricaoTorneio.parceiroDuplaId != 0)){
+            if ((jaEstouEmOutraDupla) || (inscricaoTorneio.parceiroDuplaId != null && inscricaoTorneio.parceiroDuplaId != 0))
+            {
                 return BadRequest("Você já possui uma dupla. Para trocar de dupla, favor entrar em contato com o organizador do torneio.");
             }
 
@@ -297,12 +318,12 @@ namespace Barragem.Controllers
             {
                 return BadRequest("Seu parceiro já possui uma dupla. Para trocar de dupla, favor entrar em contato com o organizador do torneio.");
             }
-            
+
             inscricaoTorneio.parceiroDuplaId = parceiroDuplaId;
 
             db.Entry(inscricaoTorneio).State = EntityState.Modified;
             db.SaveChanges();
-            
+
             return StatusCode(HttpStatusCode.Created);
         }
 
@@ -328,7 +349,7 @@ namespace Barragem.Controllers
             order.items.Add(item);
             var qr_code = new QrCode();
             var amount = new Amount();
-            amount.value = Convert.ToInt32(valor)*100;
+            amount.value = Convert.ToInt32(valor) * 100;
             qr_code.amount = amount;
             order.qr_codes = new List<QrCode>();
             order.qr_codes.Add(qr_code);
@@ -350,10 +371,11 @@ namespace Barragem.Controllers
 
                 var inscricaoTorneio = db.InscricaoTorneio.Find(Id);
                 var order = montarPedidoPIX(inscricaoTorneio);
-                var cobrancaPix = new PIXPagSeguro().CriarPedido(order, inscricaoTorneio.torneio.barragem.tokenPagSeguro); 
+                var cobrancaPix = new PIXPagSeguro().CriarPedido(order, inscricaoTorneio.torneio.barragem.tokenPagSeguro);
                 return Ok(cobrancaPix.qr_codes[0].text);
             }
-            catch(Exception e){
+            catch (Exception e)
+            {
                 return BadRequest(e.Message);
             }
             //return Ok("00020126830014br.gov.bcb.pix2561api.pagseguro.com/pix/v2/210387E0-A6BF-45D1-80B5-CFEB9BBCEE2F5204899953039865802BR5921Pagseguro Internet SA6009SAO PAULO62070503***63047E6D");
@@ -367,7 +389,7 @@ namespace Barragem.Controllers
             try
             {
                 //return BadRequest("token inválido");
-                
+
                 var qrcode = new QrCodeCobrancaTorneio();
                 //qrcode.text = "00020126830014br.gov.bcb.pix2561api.pagseguro.com/pix/v2/210387E0-A6BF-45D1-80B5-CFEB9BBCEE2F5204899953039865802BR5921Pagseguro Internet SA6009SAO PAULO62070503***63047E6D";
                 //qrcode.link = "/Content/image/QRCode.png";
@@ -395,11 +417,12 @@ namespace Barragem.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("api/InscricaoAPI")]
-        public IHttpActionResult PostInscricao(int userId, int torneioId, int classe1, int classe2, int classe3, int classe4, string observacao = "", bool isSocio = false, bool isFederado=false)
+        public IHttpActionResult PostInscricao(int userId, int torneioId, int classe1, int classe2, int classe3, int classe4, string observacao = "", bool isSocio = false, bool isFederado = false)
         {
             // validar se já houve inscrição:
             var temInscricao = db.InscricaoTorneio.Where(i => i.userId == userId && i.torneioId == torneioId).Count();
-            if (temInscricao>0) {
+            if (temInscricao > 0)
+            {
                 return BadRequest("001-Você já possui uma inscrição neste torneio.");
             }
             var mensagemRetorno = new TorneioController().InscricaoNegocio(torneioId, classe1, "", classe2, classe3, classe4, observacao, isSocio, false, userId, isFederado);
@@ -418,7 +441,10 @@ namespace Barragem.Controllers
         [HttpPost]
         [AllowAnonymous]
         [Route("api/InscricaoAPI/ReceberNotificacao")]
-        public IHttpActionResult PostReceberNotificacao(Cobranca cobranca) {
+        public IHttpActionResult PostReceberNotificacao(Cobranca cobranca)
+        {
+            List<string> classesPagtoOk = new List<string>();
+
             var req = Request.Headers.Authorization;
             //if(req.Parameter != "<<token>>")
             //{
@@ -429,6 +455,7 @@ namespace Barragem.Controllers
             { // se for torneio
                 int idInscricao = Convert.ToInt32(refs[1]);
                 var inscricao = db.InscricaoTorneio.Find(idInscricao);
+
                 if (cobranca.charges[0].status == "PAID")
                 {
                     inscricao.isAtivo = true;
@@ -437,6 +464,7 @@ namespace Barragem.Controllers
                         inscricao.valor = inscricao.valor + inscricao.valorPendente;
                         inscricao.valorPendente = 0;
                     }
+                    classesPagtoOk.Add(inscricao.classeTorneio.nome);
                 }
                 inscricao.statusPagamento = cobranca.charges[0].status + "";
                 inscricao.formaPagamento = "PIX";
@@ -460,6 +488,7 @@ namespace Barragem.Controllers
                             item.valor = item.valor + item.valorPendente ?? 0;
                             item.valorPendente = 0;
                         }
+                        classesPagtoOk.Add(item.classeTorneio.nome);
                     }
                     item.statusPagamento = cobranca.charges[0].status + "";
                     item.formaPagamento = "PIX";
@@ -468,6 +497,8 @@ namespace Barragem.Controllers
                     db.SaveChanges();
 
                 }
+
+                NotificarUsuarioPagamentoRealizado(classesPagtoOk, inscricao.torneio.nome, inscricao.userId, inscricao.torneioId);
             }
 
             return Ok();
@@ -480,7 +511,7 @@ namespace Barragem.Controllers
         {
             try
             {
-                var log = db.Log.Where(d=>d.descricao.Contains("token")).ToList();
+                var log = db.Log.Where(d => d.descricao.Contains("token")).ToList();
                 return Ok(log);
             }
             catch (Exception e)
@@ -488,6 +519,22 @@ namespace Barragem.Controllers
                 return BadRequest(e.Message);
             }
             //return Ok("00020126830014br.gov.bcb.pix2561api.pagseguro.com/pix/v2/210387E0-A6BF-45D1-80B5-CFEB9BBCEE2F5204899953039865802BR5921Pagseguro Internet SA6009SAO PAULO62070503***63047E6D");
+        }
+
+        private void NotificarUsuarioPagamentoRealizado(List<string> classes, string nomeTorneio, int userId, int torneioId)
+        {
+            if (classes.Count == 0)
+                return;
+
+            var msgConfirmacao = $"O pagamento da inscrição na(s) categoria(s) {string.Join(", ", classes.Distinct())} do torneio {nomeTorneio} foi confirmado.";
+            var titulo = "Pagamento da inscrição confirmado.";
+
+            var userFb = db.UsuarioFirebase.FirstOrDefault(x => x.UserId == userId);
+            if (userFb == null)
+                return;
+
+            var dadosMensagemUsuario = new FirebaseNotificationModel() { to = userFb.Token, notification = new NotificationModel() { title = titulo, body = msgConfirmacao }, data = new DataModel() { torneioId = torneioId } };
+            new FirebaseNotification().SendNotification(dadosMensagemUsuario);
         }
     }
 }

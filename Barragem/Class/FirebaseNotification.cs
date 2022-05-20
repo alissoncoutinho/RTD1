@@ -105,7 +105,8 @@ public class DataModel
     [JsonProperty(PropertyName = "idRanking")]
     public int idRanking { get; set; }
 
-
+    [JsonProperty(PropertyName = "torneioId")]
+    public int torneioId { get; set; }
 }
 
 
