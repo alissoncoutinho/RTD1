@@ -14,7 +14,7 @@ using Barragem.Class;
 
 namespace Barragem.Controllers
 {
-    
+
     public class RankingAPIController : ApiController
     {
         private BarragemDbContext db = new BarragemDbContext();
@@ -24,8 +24,9 @@ namespace Barragem.Controllers
         public IList<LoginRankingModel> GetRankingsByUserEmail(string email)
         {
             List<LoginRankingModel> loginRankings = new List<LoginRankingModel>();
-            var users = db.UserProfiles.Where(u => u.email.ToLower() == email.Trim().ToLower() && u.situacao!="inativo" && u.situacao != "desativado").OrderBy(r=> r.situacao).ToList();
-            if (users.Count() == 0){
+            var users = db.UserProfiles.Where(u => u.email.ToLower() == email.Trim().ToLower() && u.situacao != "inativo" && u.situacao != "desativado").OrderBy(r => r.situacao).ToList();
+            if (users.Count() == 0)
+            {
                 return loginRankings;
                 //throw (new Exception("Não foi encontrado ranking com este email."));
             }
@@ -37,7 +38,9 @@ namespace Barragem.Controllers
                 if (qtdd > 1)
                 {
                     ranking.nomeRanking = item.barragem.nome + " - " + item.UserName;
-                } else {
+                }
+                else
+                {
                     ranking.nomeRanking = item.barragem.nome;
                 }
                 var cidade = obterCidade(item);
@@ -49,28 +52,33 @@ namespace Barragem.Controllers
             }
             return loginRankings;
         }
-        
+
         private string obterCidade(UserProfile user)
         {
             if (user.barragemId == 1157)
             {
                 return user.naturalidade.Split('-')[0];
-            } else {
+            }
+            else
+            {
                 return user.barragem.cidade.Split('-')[0];
             }
-            
+
         }
 
         // GET: api/RankingAPI/
         [Route("api/RankingAPI/{classeId}")]
-        public IList<Classificacao> GetRanking(int classeId){
+        public IList<Classificacao> GetRanking(int classeId)
+        {
             //List<RanckingView> rancking;
             var classe = db.Classe.Find(classeId);
             int barragemId = classe.barragemId;
             var idRodada = 0;
-            try {
+            try
+            {
                 idRodada = db.Rancking.Where(r => r.rodada.isAberta == false && r.rodada.isRodadaCarga == false && r.rodada.barragemId == barragemId).Max(r => r.rodada_id);
-            } catch (InvalidOperationException){}
+            }
+            catch (InvalidOperationException) { }
 
             var rancking = db.Rancking.Include(r => r.userProfile).Include(r => r.rodada).
                 Where(r => r.rodada_id == idRodada && r.posicao > 0 && r.posicaoClasse != null && r.userProfile.situacao != "desativado" && r.userProfile.situacao != "inativo" && r.classe.Id == classeId).
@@ -82,12 +90,13 @@ namespace Barragem.Controllers
                     pontuacao = rk.totalAcumulado,
                     foto = rk.userProfile.fotoURL
                 }).ToList<Classificacao>();
-            
+
             return rancking;
         }
 
         [Route("api/RankingAPI/cabecalho/{userId}")]
-        public Cabecalho GetCabecalho(int userId){
+        public Cabecalho GetCabecalho(int userId)
+        {
             var user = db.UserProfiles.Find(userId);
             int barragemId = user.barragemId;
             var qtddRodada = 0;
@@ -99,11 +108,14 @@ namespace Barragem.Controllers
             {
                 idRodada = db.Rodada.Where(r => r.isAberta == false && r.isRodadaCarga == false && r.barragemId == barragemId).Max(r => r.Id);
                 rodada = db.Rodada.Find(idRodada);
-            } catch(Exception e) { }
-            var classes = db.Classe.Where(c => c.barragemId == barragemId && c.ativa).OrderBy(c => c.nivel).ToList<Classe>(); 
-            if (rodada != null) {
+            }
+            catch (Exception e) { }
+            var classes = db.Classe.Where(c => c.barragemId == barragemId && c.ativa).OrderBy(c => c.nivel).ToList<Classe>();
+            if (rodada != null)
+            {
                 rankingCabecalho.rodada = "Rodada " + rodada.codigoSeq;
-                if (rodada.temporadaId != null){
+                if (rodada.temporadaId != null)
+                {
                     qtddRodada = db.Rodada.Where(rd => rd.temporadaId == rodada.temporadaId && rd.Id <= rodada.Id
                     && rd.barragemId == rodada.barragemId).Count();
                     nomeTemporada = rodada.temporada.nome;
@@ -127,9 +139,10 @@ namespace Barragem.Controllers
             {
                 temporada = db.Rancking.Where(r => r.userProfile_id == userId).
                     OrderByDescending(r => r.rodada_id).Take(1).Single().rodada.temporada;
-            }catch(Exception e) { }
+            }
+            catch (Exception e) { }
 
-            if(temporada != null && temporada.iniciarZerada)
+            if (temporada != null && temporada.iniciarZerada)
             {
                 classificacao = db.Rancking.Where(r => r.userProfile_id == userId && r.rodada.temporada.Id == temporada.Id).
                 OrderByDescending(r => r.rodada_id).Take(10).Select(rk => new Classificacao()
@@ -142,7 +155,9 @@ namespace Barragem.Controllers
                     dataRodada = rk.rodada.dataFim,
                     rodadaId = rk.rodada_id
                 }).ToList();
-            } else {
+            }
+            else
+            {
                 classificacao = db.Rancking.Where(r => r.userProfile_id == userId).
                 OrderByDescending(r => r.rodada_id).Take(10).Select(rk => new Classificacao()
                 {
@@ -157,12 +172,13 @@ namespace Barragem.Controllers
             }
 
             minhaPontuacao.classificacao = classificacao;
-            if (classificacao.Count() > 0){
+            if (classificacao.Count() > 0)
+            {
                 minhaPontuacao.nomeUser = classificacao[0].nomeUser;
                 minhaPontuacao.pontuacaoAtual = classificacao[0].totalAcumulado;
                 minhaPontuacao.posicao = classificacao[0].posicaoUser;
                 var dataUltimaRodada = classificacao[0].dataRodada;
-                foreach(var classific in classificacao)
+                foreach (var classific in classificacao)
                 {
                     try
                     {
@@ -187,18 +203,21 @@ namespace Barragem.Controllers
                         {
                             classific.jogoAtrasado = "N";
                         }
-                    }catch(Exception e) {
-                        if(classific.pontuacao == 0)
+                    }
+                    catch (Exception e)
+                    {
+                        if (classific.pontuacao == 0)
                         {
                             classific.situacao = "suspenso";
-                        }else if(classific.pontuacao == 3)
+                        }
+                        else if (classific.pontuacao == 3)
                         {
                             classific.situacao = "licenciado";
                         }
                     }
                 }
             }
-            
+
             return minhaPontuacao;
         }
 
@@ -220,6 +239,35 @@ namespace Barragem.Controllers
             dadosSobre.contato = barragem.contato;
 
             return Ok(dadosSobre);
+        }
+
+        [HttpGet]
+        [Route("api/RankingAPI/ObterBarragensCidade")]
+        // GET: api/RankingAPI/ObterBarragensCidade
+        public IHttpActionResult ObterBarragensCidade(string nome)
+        {
+            var dadosResposta = new List<BarragemCidadeModel>();
+
+            var barragens = db.Barragens.Where(x => x.isAtiva && x.soTorneio == false && x.cidade.ToLower() == nome.ToLower()).ToList();
+
+            if (barragens != null)
+            {
+                foreach (var barragem in barragens)
+                {
+                    var item = new BarragemCidadeModel();
+                    item.IdBarragem = barragem.Id;
+                    item.NomeBarragem = barragem.nome;
+
+                    var classesBarragem = db.Classe.Where(x => x.barragemId == barragem.Id && x.ativa).OrderBy(o => o.nivel);
+                    item.Classes = new List<Classe>();
+                    if (classesBarragem != null)
+                    {
+                        item.Classes.AddRange(classesBarragem);
+                    }
+                    dadosResposta.Add(item);
+                }
+            }
+            return Ok(dadosResposta);
         }
 
         [Route("api/RankingAPI/RegrasPontuacao")]
@@ -249,8 +297,9 @@ namespace Barragem.Controllers
         public IList<string> GetBuscaCidades(string nome)
         {
             List<string> cidades = new List<string>();
-            if (nome.Length > 2) { 
-                cidades = db.BarragemView.Where(j => j.cidade.StartsWith(nome) && j.isAtiva==true).OrderBy(j => j.cidade).Select(j=>j.cidade).ToList<string>();
+            if (nome.Length > 2)
+            {
+                cidades = db.BarragemView.Where(j => j.cidade.StartsWith(nome) && j.isAtiva == true).OrderBy(j => j.cidade).Select(j => j.cidade).ToList<string>();
             }
             return cidades;
         }
@@ -260,7 +309,7 @@ namespace Barragem.Controllers
         // GET: api/RankingAPI/cidade
         public IList<LoginRankingModel> GetRankingsByCidade(string nome)
         {
-            var rankings = db.BarragemView.Where(b => b.isAtiva==true && b.cidade.ToLower() == nome.ToLower()).Select(rk => new LoginRankingModel()
+            var rankings = db.BarragemView.Where(b => b.isAtiva == true && b.cidade.ToLower() == nome.ToLower()).Select(rk => new LoginRankingModel()
             {
                 idRanking = rk.Id,
                 nomeRanking = rk.nome
@@ -282,14 +331,14 @@ namespace Barragem.Controllers
 
                 var fbmodel = new FirebaseNotificationModel() { to = "/topics/ranking8", notification = new NotificationModel() { title = titulo, body = conteudo }, data = new DataModel() { title = titulo, body = conteudo, type = "nova_rodada_aberta", idRanking = 8 } };
                 new FirebaseNotification().SendNotification(fbmodel);
-                                
+
             }
             catch (Exception e)
             {
                 return InternalServerError(new Exception("Erro: " + e.Message));
             }
             return Ok("Teste");
-            
+
         }
 
 
@@ -299,44 +348,47 @@ namespace Barragem.Controllers
         public IList<LoginRankingModel> GetRankingsLigas(int userId)
         {
             var ligas = (from liga in db.Liga
-                     join tl in db.TorneioLiga on liga.Id equals tl.LigaId
-                     join t in db.Torneio on tl.TorneioId equals t.Id
-                     join it in db.InscricaoTorneio on t.Id equals it.torneioId
-                     where it.userId == userId && it.isAtivo
-                     select new LoginRankingModel
-                     {
-                         idRanking = liga.Id,
-                         nomeRanking = liga.Nome,
-                         userId = userId
-                     }).Distinct<LoginRankingModel>().ToList();
+                         join tl in db.TorneioLiga on liga.Id equals tl.LigaId
+                         join t in db.Torneio on tl.TorneioId equals t.Id
+                         join it in db.InscricaoTorneio on t.Id equals it.torneioId
+                         where it.userId == userId && it.isAtivo
+                         select new LoginRankingModel
+                         {
+                             idRanking = liga.Id,
+                             nomeRanking = liga.Nome,
+                             userId = userId
+                         }).Distinct<LoginRankingModel>().ToList();
 
             foreach (var item in ligas)
             {
                 var barragens = db.BarragemLiga.Where(b => b.LigaId == item.idRanking).ToList();
-                if (barragens.Count() == 1) {
+                if (barragens.Count() == 1)
+                {
                     item.logoId = barragens[0].BarragemId;
-                } else {
+                }
+                else
+                {
                     item.logoId = 10;
                 }
             }
 
-            return ligas.OrderByDescending(l=>l.idRanking).ToList();
+            return ligas.OrderByDescending(l => l.idRanking).ToList();
         }
 
         [Route("api/RankingAPI/Liga/cabecalho/{ligaId}")]
         public Cabecalho GetCabecalhoLiga(int ligaId, int userId)
         {
             var ultsnapshot = db.Snapshot.Where(snap => snap.LigaId == ligaId).Max(s => s.Id);
-            var snapshot = db.Snapshot.Find(ultsnapshot); 
+            var snapshot = db.Snapshot.Find(ultsnapshot);
             var categorias = db.SnapshotRanking.Where(sr => sr.SnapshotId == ultsnapshot)
-            .Include(sr => sr.Categoria).Select(sr => sr.Categoria).OrderBy(sr=> sr.ordemExibicao).Distinct().ToList();
+            .Include(sr => sr.Categoria).Select(sr => sr.Categoria).OrderBy(sr => sr.ordemExibicao).Distinct().ToList();
 
             var classeLiga = (from tl in db.TorneioLiga
-                               join it in db.InscricaoTorneio on tl.TorneioId equals it.torneioId
-                               join cl in db.ClasseLiga on tl.LigaId equals cl.LigaId
-                               join ct in db.ClasseTorneio on cl.Id equals ct.categoriaId
-                               where it.userId == userId && it.isAtivo
-                               select cl).ToList();
+                              join it in db.InscricaoTorneio on tl.TorneioId equals it.torneioId
+                              join cl in db.ClasseLiga on tl.LigaId equals cl.LigaId
+                              join ct in db.ClasseTorneio on cl.Id equals ct.categoriaId
+                              where it.userId == userId && it.isAtivo
+                              select cl).ToList();
 
 
             var liga = db.Liga.Find(ligaId).Nome;
@@ -350,9 +402,12 @@ namespace Barragem.Controllers
             {
                 classe = new Classe();
                 classe.Id = cat.Id;
-                try{
+                try
+                {
                     classe.nome = classesLg.Where(c => c.CategoriaId == cat.Id).SingleOrDefault().Nome; //cat.Nome;
-                }catch(Exception e){
+                }
+                catch (Exception e)
+                {
                     classe.nome = cat.Nome;
                 }
                 classes.Add(classe);
@@ -366,7 +421,7 @@ namespace Barragem.Controllers
         [HttpGet]
         [Route("api/RankingAPI/ClassificacaoLiga/{ligaId}")]
         // GET: api/RankingAPI/ClassificacaoLiga/
-        public IList<Classificacao> GetRankingLigas(int ligaId, int categoriaId=0)
+        public IList<Classificacao> GetRankingLigas(int ligaId, int categoriaId = 0)
         {
             var ultsnapshot = db.Snapshot.Where(snap => snap.LigaId == ligaId).Max(s => s.Id);
             List<Classificacao> ranking = new List<Classificacao>();
@@ -388,7 +443,7 @@ namespace Barragem.Controllers
             return ranking;
         }
 
-        
+
 
 
     }

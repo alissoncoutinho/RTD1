@@ -288,6 +288,7 @@
     <Compile Include="Helper\StringHelper.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountModels.cs" />
+    <Compile Include="Models\BarragemCidadeModel.cs" />
     <Compile Include="Models\BarragemLiga.cs" />
     <Compile Include="Models\Barragens.cs" />
     <Compile Include="Models\CalculadoraDePontos.cs" />
@@ -300,6 +301,7 @@
     <Compile Include="Models\ClasseTorneio.cs" />
     <Compile Include="Models\ClassificacaoFaseGrupo.cs" />
     <Compile Include="Models\Configuracao.cs" />
+    <Compile Include="Models\ContatoOrganizador.cs" />
     <Compile Include="Models\DadosBarragemSobreModel.cs" />
     <Compile Include="Models\Email.cs" />
     <Compile Include="Models\ImpressaoInscritosModel.cs" />

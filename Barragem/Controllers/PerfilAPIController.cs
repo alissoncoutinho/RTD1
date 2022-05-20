@@ -17,6 +17,7 @@ using System.Drawing;
 using System.Web.Hosting;
 using System.Web.Security;
 using Barragem.Helper;
+using System.Configuration;
 
 namespace Barragem.Controllers
 {
@@ -625,6 +626,17 @@ namespace Barragem.Controllers
         public IHttpActionResult ValidarUsuarioExistente(string nomeUsuario)
         {
             return Ok(db.UserProfiles.Any(x => x.UserName.ToLower() == nomeUsuario.ToLower()));
+        }
+
+        [ResponseType(typeof(List<ContatoOrganizador>))]
+        [HttpGet]
+        [Route("api/PerfilAPI/ObterContatoOrganizadores")]
+        public IHttpActionResult ObterContatoOrganizadores()
+        {
+            var listaContatos = new List<ContatoOrganizador>();
+            listaContatos.Add(new ContatoOrganizador("ORGANIZADOR_BEACH_TENNIS", ConfigurationManager.AppSettings["TELEFONE_CONTATO_ORGANIZADOR_BEACH_TENNIS"]));
+            listaContatos.Add(new ContatoOrganizador("ORGANIZADOR_TENIS", ConfigurationManager.AppSettings["TELEFONE_CONTATO_ORGANIZADOR_TENIS"]));
+            return Ok(listaContatos);
         }
     }
 }
