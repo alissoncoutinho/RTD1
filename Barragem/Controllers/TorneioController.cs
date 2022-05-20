@@ -1199,6 +1199,7 @@ namespace Barragem.Controllers
             mensagem(msg);
             ViewBag.torneioId = torneioId;
             var patrocinadores = db.Patrocinador.Where(p => p.torneioId == torneioId).ToList();
+            ViewBag.flag = "patrocinio";
             return View(patrocinadores);
         }
 
@@ -4053,6 +4054,26 @@ namespace Barragem.Controllers
             ViewBag.flag = "cabecachave";
             mensagem(Msg);
             return View(inscricao);
+        }
+
+        [HttpPost]
+        public ActionResult EditCabecaChave(int Id, int cabecaChave)
+        {
+            try
+            {
+                List<string> classesPagtoOk = new List<string>();
+                var inscricao = db.InscricaoTorneio.Find(Id);
+                inscricao.cabecaChave = cabecaChave;
+                
+                db.Entry(inscricao).State = EntityState.Modified;
+                db.SaveChanges();
+
+                return Json(new { erro = "", retorno = 1 }, "text/plain", JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { erro = ex.Message, retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
+            }
         }
 
     }
