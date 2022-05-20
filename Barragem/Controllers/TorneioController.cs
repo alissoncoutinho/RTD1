@@ -1418,7 +1418,7 @@ namespace Barragem.Controllers
                 db.Entry(inscricao).State = EntityState.Modified;
                 db.SaveChanges();
 
-                NotificarUsuarioPagamentoRealizado(classesPagtoOk, inscricao.torneio.nome, inscricao.userId);
+                NotificarUsuarioPagamentoRealizado(classesPagtoOk, inscricao.torneio.nome, inscricao.userId, inscricao.torneioId);
 
                 return Json(new { erro = "", retorno = 1, statusPagamento = inscricao.descricaoStatusPag }, "text/plain", JsonRequestBehavior.AllowGet);
             }
@@ -1428,7 +1428,7 @@ namespace Barragem.Controllers
             }
         }
 
-        private void NotificarUsuarioPagamentoRealizado(List<string> classes, string nomeTorneio, int userId)
+        private void NotificarUsuarioPagamentoRealizado(List<string> classes, string nomeTorneio, int userId, int torneioId)
         {
             if (classes.Count == 0)
                 return;
@@ -1440,7 +1440,7 @@ namespace Barragem.Controllers
             if (userFb == null)
                 return;
 
-            var dadosMensagemUsuario = new FirebaseNotificationModel() { to = userFb.Token, notification = new NotificationModel() { title = titulo, body = msgConfirmacao } };
+            var dadosMensagemUsuario = new FirebaseNotificationModel() { to = userFb.Token, notification = new NotificationModel() { title = titulo, body = msgConfirmacao }, data = new DataModel() { torneioId = torneioId } };
             new FirebaseNotification().SendNotification(dadosMensagemUsuario);
         }
 

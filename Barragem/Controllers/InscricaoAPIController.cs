@@ -498,7 +498,7 @@ namespace Barragem.Controllers
 
                 }
 
-                NotificarUsuarioPagamentoRealizado(classesPagtoOk, inscricao.torneio.nome, inscricao.userId);
+                NotificarUsuarioPagamentoRealizado(classesPagtoOk, inscricao.torneio.nome, inscricao.userId, inscricao.torneioId);
             }
 
             return Ok();
@@ -521,7 +521,7 @@ namespace Barragem.Controllers
             //return Ok("00020126830014br.gov.bcb.pix2561api.pagseguro.com/pix/v2/210387E0-A6BF-45D1-80B5-CFEB9BBCEE2F5204899953039865802BR5921Pagseguro Internet SA6009SAO PAULO62070503***63047E6D");
         }
 
-        private void NotificarUsuarioPagamentoRealizado(List<string> classes, string nomeTorneio, int userId)
+        private void NotificarUsuarioPagamentoRealizado(List<string> classes, string nomeTorneio, int userId, int torneioId)
         {
             if (classes.Count == 0)
                 return;
@@ -533,7 +533,7 @@ namespace Barragem.Controllers
             if (userFb == null)
                 return;
 
-            var dadosMensagemUsuario = new FirebaseNotificationModel() { to = userFb.Token, notification = new NotificationModel() { title = titulo, body = msgConfirmacao } };
+            var dadosMensagemUsuario = new FirebaseNotificationModel() { to = userFb.Token, notification = new NotificationModel() { title = titulo, body = msgConfirmacao }, data = new DataModel() { torneioId = torneioId } };
             new FirebaseNotification().SendNotification(dadosMensagemUsuario);
         }
     }
