@@ -392,7 +392,7 @@ namespace Barragem.Controllers
             }
             catch (Exception ex)
             {
-                var msgErro = $"TORNEIOAPI_V2 - {DateTime.Now} - Id Torneio: {torneioId} UserId: {userId} Mensagem: {ex.Message} StackTrace: {ex.StackTrace}";
+                var msgErro = $"TORNEIOAPI_V2 - {DateTimeHelper.GetDateTimeBrasilia()} - Id Torneio: {torneioId} UserId: {userId} Mensagem: {ex.Message} StackTrace: {ex.StackTrace}";
                 GravarLogErro(msgErro);
                 return BadRequest(ex.Message);
             }
@@ -411,7 +411,7 @@ namespace Barragem.Controllers
             }
             catch (Exception ex)
             {
-                var msgErro = $"TORNEIOAPI_V1 - {DateTime.Now} - Id Torneio: {torneioId} UserId: {userId} Mensagem: {ex.Message} StackTrace: {ex.StackTrace}";
+                var msgErro = $"TORNEIOAPI_V1 - {DateTimeHelper.GetDateTimeBrasilia()} - Id Torneio: {torneioId} UserId: {userId} Mensagem: {ex.Message} StackTrace: {ex.StackTrace}";
                 GravarLogErro(msgErro);
                 return BadRequest(ex.Message);
             }

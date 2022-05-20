@@ -17,7 +17,7 @@ using System.Web.Routing;
 using System.Web.Security;
 using WebMatrix.WebData;
 using System.Data.Entity;
-
+using Barragem.Helper;
 
 namespace Barragem.Controllers
 {
@@ -66,7 +66,11 @@ namespace Barragem.Controllers
         {
             if (ModelState.IsValid && WebSecurity.Login(model.UserName, model.Password, persistCookie: model.RememberMe))
             {
-                if ((!returnUrl.Equals("torneio")) && (!returnUrl.Contains("/Torneio/LancarResultado")))
+                if (returnUrl == "cadastro_usuario_barragem")
+                {
+                    return RedirectToAction("RegisterUserBarragem", "Account", new { barragemId = Request.ObterIdBarragem(), userName = model.UserName });
+                }
+                else if ((!returnUrl.Equals("torneio")) && (!returnUrl.Contains("/Torneio/LancarResultado")))
                 {
                     var usuario = db.UserProfiles.Find(WebSecurity.GetUserId(model.UserName));
                     Funcoes.CriarCookieBarragem(Response, Server, usuario.barragemId, usuario.barragem.nome);
@@ -155,16 +159,76 @@ namespace Barragem.Controllers
         // GET: /Account/Register
 
         [AllowAnonymous]
-        public ActionResult Register(int barragemId = 0)
+        public ActionResult Register(int barragemId = 0, string email = "")
         {
-            HttpCookie cookie = Request.Cookies["_barragemId"];
-            if ((barragemId == 0) && (cookie != null))
+            if (barragemId == 0)
             {
-                barragemId = Convert.ToInt32(cookie.Value.ToString());
+                barragemId = Request.ObterIdBarragem();
             }
             ViewBag.barragemId = barragemId;
             ViewBag.classeId = new SelectList(db.Classe.Where(c => c.barragemId == barragemId && c.ativa == true).ToList(), "Id", "nome");
-            return View();
+            if (!string.IsNullOrEmpty(email))
+            {
+                return View(new RegisterModel() { email = email });
+            }
+            else
+            {
+                return View();
+            }
+        }
+
+        [AllowAnonymous]
+        public ActionResult RegisterUserBarragem(int barragemId, string userName)
+        {
+            ViewBag.classeId = new SelectList(db.Classe.Where(c => c.barragemId == barragemId && c.ativa).ToList(), "Id", "nome");
+            return View(new RegisterModel() { UserName = userName, barragemId = barragemId });
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public ActionResult RegisterUserBarragem(RegisterModel model)
+        {
+            var mensagemErro = ValidarCamposObrigatoriosFinalizacaoCadastroBarragem(model);
+            if (!string.IsNullOrEmpty(mensagemErro))
+            {
+                ViewBag.barragemId = model.barragemId;
+                ViewBag.classeId = new SelectList(db.Classe.Where(c => c.barragemId == model.barragemId && c.ativa == true).ToList(), "Id", "nome");
+                ViewBag.MsgErro = mensagemErro;
+                return View(model);
+            }
+
+            var usuarioAlteracao = db.UserProfiles.FirstOrDefault(x => x.UserName == model.UserName);
+            usuarioAlteracao.barragemId = model.barragemId;
+            usuarioAlteracao.classeId = model.classeId;
+            usuarioAlteracao.naturalidade = model.naturalidade;
+            usuarioAlteracao.matriculaClube = model.matriculaClube;
+            usuarioAlteracao.bairro = model.bairro;
+            usuarioAlteracao.situacao = Tipos.Situacao.pendente.ToString();
+
+            db.Entry(usuarioAlteracao).State = EntityState.Modified;
+            db.SaveChanges();
+
+            try
+            {
+                notificarJogador(model.nome, model.email, model.barragemId);
+                notificarOrganizadorCadastro(model.nome, model.barragemId, model.telefoneCelular);
+            }
+            catch { }
+            return RedirectToAction("Index", "Home");
+        }
+
+        private string ValidarCamposObrigatoriosFinalizacaoCadastroBarragem(RegisterModel model)
+        {
+            if (string.IsNullOrEmpty(model.bairro))
+            {
+                return "O campo Bairro é obrigatório";
+            }
+            if (model.classeId == null || model.classeId <= 0)
+            {
+                return "O campo Classe é obrigatório";
+            }
+            return string.Empty;
         }
 
         [AllowAnonymous]
@@ -315,30 +379,51 @@ namespace Barragem.Controllers
             if (ModelState.IsValid)
             {
                 var registers = db.UserProfiles.Where(u => (u.email.Equals(model.email) || u.UserName.ToLower() == model.email.ToLower())).ToList();
-                if (registers.Count() > 1)
+
+                if (model.returnUrl == "cadastro_usuario_barragem")
                 {
-                    return RedirectToAction("ListaLogins", "Account", model);
-                }
-                else if (registers.Count() > 0)
-                {
-                    var usuario = registers[0];
-                    return RedirectToAction("LoginPassword", new
+                    if (registers.Any(x => string.Equals(x.situacao, "torneio", StringComparison.OrdinalIgnoreCase)))
                     {
-                        returnUrl = model.returnUrl,
-                        userName = usuario.UserName,
-                        Msg = "Olá, " + usuario.nome + " seu login foi localizado no ranking: " + usuario.barragem.nome + " entre com a sua senha.",
-                        torneioId = model.torneioId
-                    });
-                }
-                else if (!String.IsNullOrEmpty(model.returnUrl) && model.returnUrl.Equals("torneio"))
-                {
-                    return RedirectToAction("RegisterTorneio", new { email = model.email, torneioId = model.torneioId });
+                        var usuarioTorneioMaisRecente = registers.OrderByDescending(o => o.dataInicioRancking).FirstOrDefault(x => x.situacao == "torneio");
+                        return RedirectToAction("LoginPassword", new
+                        {
+                            returnUrl = model.returnUrl,
+                            userName = usuarioTorneioMaisRecente.UserName,
+                            Msg = $"Olá, {usuarioTorneioMaisRecente.nome} já encontramos um usuário para este e-mail. Faça o login para completar seu cadastro no {usuarioTorneioMaisRecente.barragem.nome}.",
+                            barragemId = Request.ObterIdBarragem()
+                        });
+                    }
+                    else
+                    {
+                        return RedirectToAction("Register", new { email = model.email, barragemId = Request.ObterIdBarragem() });
+                    }
                 }
                 else
                 {
-                    return RedirectToAction("Login", new { returnUrl = model.returnUrl, Msg = "Olá, Não encontramos nenhum cadastro com esse email ou usuário.", torneioId = model.torneioId });
+                    if (registers.Count() > 1)
+                    {
+                        return RedirectToAction("ListaLogins", "Account", model);
+                    }
+                    else if (registers.Count() > 0)
+                    {
+                        var usuario = registers[0];
+                        return RedirectToAction("LoginPassword", new
+                        {
+                            returnUrl = model.returnUrl,
+                            userName = usuario.UserName,
+                            Msg = "Olá, " + usuario.nome + " seu login foi localizado no ranking: " + usuario.barragem.nome + " entre com a sua senha.",
+                            torneioId = model.torneioId
+                        });
+                    }
+                    else if (!String.IsNullOrEmpty(model.returnUrl) && model.returnUrl.Equals("torneio"))
+                    {
+                        return RedirectToAction("RegisterTorneio", new { email = model.email, torneioId = model.torneioId });
+                    }
+                    else
+                    {
+                        return RedirectToAction("Login", new { returnUrl = model.returnUrl, Msg = "Olá, Não encontramos nenhum cadastro com esse email ou usuário.", torneioId = model.torneioId });
+                    }
                 }
-
             }
             return View(model);
         }
@@ -626,7 +711,8 @@ namespace Barragem.Controllers
                             lateralidade = model.lateralidade,
                             nivelDeJogo = model.nivelDeJogo,
                             barragemId = model.barragemId,
-                            classeId = model.classeId
+                            classeId = model.classeId,
+                            matriculaClube = model.matriculaClube
                         });
 
                         if (model.organizador)
@@ -1156,13 +1242,63 @@ namespace Barragem.Controllers
         [Authorize(Roles = "admin")]
         public ActionResult UnificarConta(int userIdOrigem, int userIdDestino, string UserName)
         {
+            EfetuarUnificacaoContas(userIdOrigem, userIdDestino);
+            return RedirectToAction("EditaUsuario", "Account", new { UserName = UserName, isAlterarFoto = false, ConfirmaSenha = "", ConfirmaUnificacaoConta = "ok" });
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "admin")]
+        public ActionResult UnificarContaUsuario(int userIdOrigem, int userIdDestino)
+        {
+            EfetuarUnificacaoContas(userIdOrigem, userIdDestino);
+            return RedirectToAction("UsuariosDuplicado");
+        }
+
+        private void EfetuarUnificacaoContas(int userIdOrigem, int userIdDestino)
+        {
             db.Database.ExecuteSqlCommand("update userprofile set situacao = 'inativo' where userId =" + userIdOrigem);
             db.Database.ExecuteSqlCommand("update jogo set desafiante_id =" + userIdDestino + " where desafiante_id =" + userIdOrigem);
             db.Database.ExecuteSqlCommand("update jogo set desafiado_id =" + userIdDestino + " where desafiado_id =" + userIdOrigem);
             db.Database.ExecuteSqlCommand("update inscricaotorneio set userId =" + userIdDestino + " where userId =" + userIdOrigem);
             db.Database.ExecuteSqlCommand("update snapshotranking set userid =" + userIdDestino + " where userid =" + userIdOrigem);
 
-            return RedirectToAction("EditaUsuario", "Account", new { UserName = UserName, isAlterarFoto = false, ConfirmaSenha = "", ConfirmaUnificacaoConta = "ok" });
+            var rankingsUsuario = db.SnapshotRanking
+                .Where(x => x.UserId == userIdDestino)
+                .GroupBy(g => new { g.UserId, g.CategoriaId, g.SnapshotId, g.LigaId })
+                .Select(s => new { UserId = s.Key.UserId, CategoriaId = s.Key.CategoriaId, SnapshotId = s.Key.SnapshotId, LigaId = s.Key.LigaId, QtdeRegistros = s.Count() })
+                .ToList();
+
+            foreach (var ranking in rankingsUsuario.Where(x => x.QtdeRegistros > 1))
+            {
+                //Soma pontuação do usuário e mantém somente 1 registro com a pontuação total
+                var snapshots = db.SnapshotRanking
+                    .Where(x => x.UserId == ranking.UserId && x.CategoriaId == ranking.CategoriaId && x.SnapshotId == ranking.SnapshotId && x.LigaId == ranking.LigaId)
+                    .ToList();
+
+                var itemAtualizacao = snapshots.First();
+                itemAtualizacao.Pontuacao = snapshots.Sum(x => x.Pontuacao);
+                db.Entry(itemAtualizacao).State = EntityState.Modified;
+                db.SaveChanges();
+
+                foreach (var itemExcluir in snapshots.Where(x => x.Id != itemAtualizacao.Id))
+                {
+                    db.SnapshotRanking.Remove(itemExcluir);
+                    db.SaveChanges();
+                }
+
+                //Refaz a posição dos usuários no ranking
+                List<SnapshotRanking> rankingAtual = db.SnapshotRanking
+                    .Where(sr => sr.LigaId == itemAtualizacao.LigaId && sr.CategoriaId == itemAtualizacao.CategoriaId && sr.SnapshotId == itemAtualizacao.SnapshotId)
+                    .OrderByDescending(sr => sr.Pontuacao)
+                    .ToList();
+
+                SnapshotRankingUtil.GerarPosicoesRanking(rankingAtual);
+                foreach (SnapshotRanking rankingPosicao in rankingAtual)
+                {
+                    db.Entry(rankingPosicao).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+            }
         }
 
         [Authorize(Roles = "admin")]
@@ -1605,6 +1741,38 @@ namespace Barragem.Controllers
             return File("/Content/image/sem-foto.png", "image/png");
 
 
+        }
+
+        [Authorize(Roles = "admin")]
+        public ActionResult UsuariosDuplicado()
+        {
+            var situacoesExcecao = new List<string>();
+            situacoesExcecao.Add("torneio");
+            situacoesExcecao.Add("inativo");
+
+            var dadosListagem =
+                from usuario in db.UserProfiles
+                join usuarioTorneio in (from usuario in db.UserProfiles where usuario.situacao == "torneio" select usuario)
+                on usuario.email equals usuarioTorneio.email
+                join barragem in db.Barragens
+                on usuario.barragemId equals barragem.Id
+                join barragemTorneio in db.Barragens
+                on usuarioTorneio.barragemId equals barragemTorneio.Id
+                where !situacoesExcecao.Contains(usuario.situacao)
+                orderby usuario.dataInicioRancking descending
+                select new UsuarioDuplicadoModel
+                {
+                    DataInicioRanking = usuario.dataInicioRancking,
+                    Email = usuario.email,
+                    NomeUsuarioBarragem = usuario.UserName,
+                    NomeUsuarioTorneio = usuarioTorneio.UserName,
+                    UsuarioBarragemId = usuario.UserId,
+                    UsuarioTorneioId = usuarioTorneio.UserId,
+                    NomeBarragemUsuarioBarragem = barragem.nome,
+                    NomeBarragemUsuarioTorneio = barragemTorneio.nome
+                };
+
+            return View(dadosListagem);
         }
 
         public ActionResult ListarUsuarios(String filtroSituacao = "", int filtroBarragem = 0, string msg = "")

@@ -149,29 +149,17 @@ namespace Barragem.Models
                             db.SaveChanges();
                         }
                     }
+                    
                     //coloca as posicoes do ranking
                     List<SnapshotRanking> rankingAtual = db.SnapshotRanking.Where(sr => sr.LigaId == liga.Id
                         && sr.CategoriaId == categoriaDaLiga.Id
                         && sr.SnapshotId == novoSnap.Id).OrderByDescending(sr => sr.Pontuacao).ToList();
-                    int i = 1;
-                    int pontuacaoAnterior = 0;
-                    int posicaoAnterior = 0;
-                    bool isPrimeiraVez = true;
+
+                    SnapshotRankingUtil.GerarPosicoesRanking(rankingAtual);
                     foreach (SnapshotRanking ranking in rankingAtual)
                     {
-                        if ((ranking.Pontuacao == pontuacaoAnterior)&&(!isPrimeiraVez)) {
-                            ranking.Posicao = posicaoAnterior;
-                        } else {
-                            ranking.Posicao = i;
-                            posicaoAnterior = i;
-                        }
+                        db.Entry(ranking).State = EntityState.Modified;
                         db.SaveChanges();
-                        pontuacaoAnterior = ranking.Pontuacao;
-                        if (isPrimeiraVez){
-                            posicaoAnterior = i;
-                            isPrimeiraVez = false;
-                        }
-                        i++;
                     }
                 }
             }

@@ -166,9 +166,10 @@
                         </div>
 
                         <select id="CategoriaId" name="CategoriaId" class="form-control">
+                            <option value="0">SELECIONE</option>
                             @foreach (var categoria in ViewBag.Categorias)
                             {
-                                <option value="@categoria.Id">@categoria.Nome</option>
+                                <option value="@categoria.id">@categoria.label</option>
                             }
                         </select>
 

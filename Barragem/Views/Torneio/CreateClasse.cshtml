@@ -1,20 +1,36 @@
 ﻿@model Barragem.Models.ClasseTorneio
 
 @{
-    ViewBag.Title = "Create";
+    ViewBag.Title = "Criar Categoria";
 }
+
+<link href="@Url.Content("/Content/css/jquery-ui-1.10.4.min.css")" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<style>
+    .ui-autocomplete {
+        z-index: 1050;
+        max-height: 200px;
+        overflow-y: scroll;
+        overflow-x: hidden;
+    }
+
+    .inputAutoComplete {
+        padding-right: 0;
+        padding-left: 0;
+    }
+</style>
 
 @using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
     @Html.ValidationSummary(true)
 
-    <legend>Criar Classe</legend>
+    <legend>Criar Categoria</legend>
 
     <div class="row">
-        <div class="col-sm-4" style="padding:15px">
+        <div class="col-sm-12" style="padding:15px">
             @Html.LabelFor(model => model.nome)
-            <div class="input-group">
+            <div class="input-group col-sm-6">
                 @Html.TextBoxFor(model => model.nome, new { @class = "form-control" })
             </div>
             @Html.ValidationMessageFor(model => model.nome)
@@ -23,55 +39,192 @@
     if (ViewBag.Categorias.Count > 1)
     {
         <div class="row">
-            <div class="col-sm-5">
-                <div class="input-group">
-                    <select id="CategoriaId" name="CategoriaId" class="form-control">
+            <div class="col-sm-12" style="padding-bottom:15px">
+                <label>Categoria no circuito</label>
+                <div class="input-group col-sm-6" style="display:flex">
+                    <select id="CategoriaId" name="CategoriaId" class="form-control" onchange="selectedCategoria(this)">
                         @foreach (var categoria in ViewBag.Categorias)
                         {
                             <option value="@categoria.Id">@categoria.Nome</option>
                         }
+                        <option value="-99">NENHUMA DAS CATEGORIAS ACIMA</option>
                     </select>
+                    <button type="button" id="btnBuscarCategoriaExistentes" class="btn btn-info" style="margin-left:5px"
+                            data-toggle="modal" data-target="#modalBuscarCategoriaExistentes" onclick="abrirModalBuscarCategoriaExistentes()">
+                        <span class="glyphicon glyphicon-plus"> ADICIONAR</span>
+                    </button>
                 </div>
             </div>
         </div>
-    } else {
+    }
+    else
+    {
         <input type="hidden" id="CategoriaId" name="CategoriaId" value="0">
     }
-        <div class="row">
-            <div class="col-xs-2">
-                <label>
-                    @Html.CheckBoxFor(model => model.isDupla) Dupla
-                </label>
-            </div>
+    <div class="row">
+        <div class="col-xs-12">
+            <label>
+                @Html.CheckBoxFor(model => model.isDupla) Dupla
+            </label>
         </div>
-        <div class="row">
-            <div class="col-xs-2">
-                <label>
-                    @Html.CheckBoxFor(model => model.faseGrupo) Tem Fase de grupo
-                </label>
-            </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
+            <label>
+                @Html.CheckBoxFor(model => model.faseGrupo) Tem Fase de grupo
+            </label>
         </div>
-        <div class="row">
-            <div class="col-xs-2">
-                <label>
-                    @Html.CheckBoxFor(model => model.faseMataMata) Tem Mata-mata
-                </label>
-            </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
+            <label>
+                @Html.CheckBoxFor(model => model.faseMataMata) Tem Mata-mata
+            </label>
         </div>
+    </div>
 
-        <br />
-        <div class="row">
-            <div class="col-xs-2">
-                <input type="hidden" name="nivel" value="@ViewBag.qtddClasses">
-                <input type="hidden" name="torneioId" value="@ViewBag.torneioId">
-                <input type="submit" class="btn btn-primary" value="Criar" />
-            </div>
+    <br />
+    <div class="row">
+        <div class="col-xs-12">
+            <input type="hidden" name="nivel" value="@ViewBag.qtddClasses">
+            <input type="hidden" name="torneioId" value="@ViewBag.torneioId">
+            <input type="submit" class="btn btn-primary" value="Criar" />
         </div>
- }
+    </div>
+}
 
+<div id="modalBuscarCategoriaExistentes" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header" style="padding:5px">
+                <a class="close" data-dismiss="modal">×</a>
+                <h3>Selecione a Categoria</h3>
+            </div>
+            <form id="formBuscarCategoriaExistentes" role="form" method="post">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <input type="hidden" id="nomeCategoriaDigitada" class="form-control">
+                        <input type="hidden" id="nomeCategoriaSelecionada" class="form-control">
+                        <input type="hidden" id="idCategoriaSelecionada" class="form-control">
+                        <input type="hidden" id="hiddenisDupla" class="form-control">
+                        <input type="hidden" id="hiddenTorneioId" class="form-control">
+                    </div>
 
-            @section Scripts {
+                    <input type="text" id="txtCategoria" class="form-control" placeholder="Digite o nome" required>
 
+                </div>
+                <div class="modal-footer">
 
+                    <div style="display: inline-block; float: right;" class="col-md-6">
+                        <button type="button" class="btn btn-default" data-dismiss="modal"><span class="spinner-border spinner-border-sm"></span>Cancelar</button>
+                        <input type="button" value="Salvar" class="btn btn-primary" id="btnVincularCategoriaCircuito" />
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#txtCategoria").autocomplete({
+                source: function (request, response) {
+
+                    $.ajax({
+                        url: "/Torneio/ObterCategorias",
+                        dataType: "json",
+                        data: {
+                            torneioId: $("#hiddenTorneioId").val(),
+                            filtro: request.term
+                        },
+                        success: function (data) {
+                            response(data);
+                        }
+                    });
+                },
+                select: function (event, ui) {
+                    $("#idCategoriaSelecionada").val(ui.item.id);
+                    $("#nomeCategoriaSelecionada").val(ui.item.label);
+                },
+                minLength: 3
+            });
+
+            $("#btnVincularCategoriaCircuito").click(function (event) {
+                event.preventDefault();
+
+                var nomeCategoriaDigitada = $("#txtCategoria").val();
+                var categoriaId = $("#idCategoriaSelecionada").val();
+                var nomeCategoriaSelecionada = $("#nomeCategoriaSelecionada").val();
+                var nomeCategoria = "";
+                if (nomeCategoriaDigitada != nomeCategoriaSelecionada) {
+                    categoriaId = 0;
+                    nomeCategoria = nomeCategoriaDigitada;
+                }
+                else {
+                    nomeCategoria = nomeCategoriaSelecionada;
+                }
+
+                $.ajax({
+                    type: "POST",
+                    url: "/Torneio/VincularCategoriaCircuito",
+                    cache: false,
+                    dataType: "json",
+                    data: {
+                        torneioId: $("#hiddenTorneioId").val(),
+                        categoriaId: categoriaId,
+                        nomeCategoria: nomeCategoria,
+                        isDupla: $("#hiddenisDupla").val()
+                    },
+                    success: function (response) {
+                        if (response.retorno == 0) {
+                            toastr.error(response.erro, "Aviso");
+                        }
+                        else {
+                            toastr.success("Categoria vinculada ao circuito com sucesso.", "Aviso");
+                            adicionarCircuitoCombo(response.categoria);
+                        }
+                        $("#modalBuscarCategoriaExistentes").modal('hide');
+                    }
+                });
+
+            });
+
+            $('#txtCategoria').attr('autocomplete', 'off');
+
+        });
+
+        function selectedCategoria(element) {
+            abrirModalBuscarCategoriaExistentes();
+            ocultarBotaoInclusaoCategoria(element.value != '-99');
+        }
+
+        function ocultarBotaoInclusaoCategoria(podeOcultar) {
+            if (podeOcultar) {
+                $("#modalBuscarCategoriaExistentes").modal('hide');
+                document.getElementById("btnBuscarCategoriaExistentes").style.display = 'none';
             }
+            else {
+                $("#modalBuscarCategoriaExistentes").modal('show');
+                document.getElementById("btnBuscarCategoriaExistentes").style.display = 'block';
+            }
+        }
 
+        function abrirModalBuscarCategoriaExistentes() {
+            $('#txtCategoria').val("");
+            $('#hiddenisDupla').val(document.getElementById("isDupla").checked);
+            $('#hiddenTorneioId').val(document.getElementsByName("torneioId")[0].value);
+        }
+
+        function adicionarCircuitoCombo(categoria) {
+            var selectCircuito = document.getElementById('CategoriaId');
+            var opt = document.createElement('option');
+            opt.value = categoria.id;
+            opt.innerHTML = categoria.nome;
+            selectCircuito.insertBefore(opt, selectCircuito.lastElementChild);
+            $("#CategoriaId").val(categoria.id);
+            $("#CategoriaId").change();
+        }
+        ocultarBotaoInclusaoCategoria(true);
+    </script>
+}

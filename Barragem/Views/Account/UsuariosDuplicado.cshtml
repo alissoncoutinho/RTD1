@@ -1,0 +1,48 @@
+﻿@model IEnumerable<Barragem.Models.UsuarioDuplicadoModel>
+
+    @{
+        ViewBag.Title = "Usuários Duplicados";
+    }
+    <legend>Usuários Duplicados</legend>
+
+    <div class="form-horizontal">
+        <table class="table">
+            <tr>
+                <th>
+                    Data
+                </th>
+                <th>
+                    Email
+                </th>
+                <th>
+                    Usuário de Torneio
+                </th>
+                <th>
+                    Usuário de Barragem
+                </th>
+                <th style="text-align:center;width:80px">Ação</th>
+            </tr>
+
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Data)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Email)
+                    </td>
+                    <td>
+                        @Html.ActionLink(item.NomeUsuarioTorneio, "Detalhes", "Account", new { userId = item.UsuarioTorneioId }, null) (@Html.DisplayFor(modelItem => item.NomeBarragemUsuarioTorneio))
+                    </td>
+                    <td>
+                        @Html.ActionLink(item.NomeUsuarioBarragem, "Detalhes", "Account", new { userId = item.UsuarioBarragemId }, null) (@Html.DisplayFor(modelItem => item.NomeBarragemUsuarioBarragem))
+                    </td>
+                    <td align="right">
+                        @Html.ActionLink("Unificar", "UnificarContaUsuario", new { userIdOrigem = item.UsuarioTorneioId, userIdDestino = item.UsuarioBarragemId }, new { @class = "btn btn-info btn-xs" })
+                    </td>
+                </tr>
+            }
+
+        </table>
+    </div>

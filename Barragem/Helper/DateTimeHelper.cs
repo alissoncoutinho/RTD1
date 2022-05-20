@@ -12,5 +12,13 @@ namespace Barragem.Helper
 
             return culture.TextInfo.ToTitleCase(dtfi.GetMonthName(date.Month));
         }
+
+        public static DateTime GetDateTimeBrasilia() 
+        {
+            DateTime dateTime = DateTime.UtcNow;
+            TimeZoneInfo horaBrasilia = TimeZoneInfo.FindSystemTimeZoneById("E. South America Standard Time");
+            return TimeZoneInfo.ConvertTimeFromUtc(dateTime, horaBrasilia);
+        }
+
     }
 }
