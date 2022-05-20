@@ -303,6 +303,7 @@
     <Compile Include="Models\Configuracao.cs" />
     <Compile Include="Models\ContatoOrganizador.cs" />
     <Compile Include="Models\DadosBarragemSobreModel.cs" />
+    <Compile Include="Models\DadosMigracaoUsuarioBarragemModel.cs" />
     <Compile Include="Models\Email.cs" />
     <Compile Include="Models\ImpressaoInscritosModel.cs" />
     <Compile Include="Models\ImpressaoJogoFaseGrupoModel.cs" />

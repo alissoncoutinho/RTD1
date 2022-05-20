@@ -621,6 +621,63 @@ namespace Barragem.Controllers
         }
 
         [ResponseType(typeof(bool))]
+        [HttpPost]
+        [Route("api/PerfilAPI/MigrarUsuarioBarragem")]
+        public IHttpActionResult MigrarUsuarioBarragem(DadosMigracaoUsuarioBarragemModel dadosMigracao)
+        {
+            var mensagemErro = ValidarCamposObrigatoriosMigracaoCadastroBarragem(dadosMigracao);
+            if (!string.IsNullOrEmpty(mensagemErro))
+            {
+                return BadRequest(mensagemErro);
+            }
+
+            if (!db.Barragens.Any(x => x.Id == dadosMigracao.IdBarragem))
+            {
+                return BadRequest("Barragem inválida");
+            }
+
+            var usuarioAlteracao = db.UserProfiles.FirstOrDefault(x => x.UserName.ToLower() == dadosMigracao.UserName.ToLower());
+            if (usuarioAlteracao == null)
+            {
+                return BadRequest("Usuário inválido");
+            }
+
+            usuarioAlteracao.barragemId = dadosMigracao.IdBarragem;
+            usuarioAlteracao.classeId = dadosMigracao.IdClasse;
+            usuarioAlteracao.matriculaClube = dadosMigracao.MatriculaClube;
+            usuarioAlteracao.bairro = dadosMigracao.Bairro;
+            usuarioAlteracao.situacao = Tipos.Situacao.pendente.ToString();
+            db.Entry(usuarioAlteracao).State = EntityState.Modified;
+            db.SaveChanges();
+
+            return Ok(true);
+        }
+
+        private string ValidarCamposObrigatoriosMigracaoCadastroBarragem(DadosMigracaoUsuarioBarragemModel model)
+        {
+            if (string.IsNullOrEmpty(model.UserName))
+            {
+                return "O Usuário é obrigatório";
+            }
+
+            if (model.IdBarragem <= 0)
+            {
+                return "A Barragem é obrigatória";
+            }
+
+            if (string.IsNullOrEmpty(model.Bairro))
+            {
+                return "O Bairro é obrigatório";
+            }
+            if (model.IdClasse <= 0)
+            {
+                return "A Classe é obrigatória";
+            }
+            return string.Empty;
+        }
+
+
+        [ResponseType(typeof(bool))]
         [HttpGet]
         [Route("api/PerfilAPI/ValidarUsuarioExistente")]
         public IHttpActionResult ValidarUsuarioExistente(string nomeUsuario)
