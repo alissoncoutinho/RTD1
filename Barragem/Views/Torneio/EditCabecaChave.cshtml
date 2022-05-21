@@ -79,9 +79,10 @@
 
                             </td>
                             <td>
+                                <input type="hidden" id="@Html.Raw("idInscricao" + i)" value="@item.IdInscricao">
+                                <input type="hidden" value="100" id="@Html.Raw("oldCabecaChave" + i)">
                                 @if (item.TodaInscricaoPaga == false)
-                                {
-                                    <input type="hidden" value="100" id="@Html.Raw("oldCabecaChave" + i)">
+                                {                                    
                                     <select name="@Html.Raw("cabecaChave" + i)" id="@Html.Raw("cabecaChave" + i)" class="form-control" disabled>
                                         <option value="100" @if (item.CabecaChave == 100) { @Html.Raw("selected") }>não</option>
                                         @for (int j = 1; j <= ViewBag.CabecasDeChave; j++)
@@ -91,8 +92,7 @@
                                     </select>
                                 }
                                 else
-                                {
-                                    <input type="hidden" value="100" id="@Html.Raw("oldCabecaChave" + i)">
+                                {   
                                     <select name="@Html.Raw("cabecaChave" + i)" id="@Html.Raw("cabecaChave" + i)" class="form-control validarCabecaChave" onchange="validarCabecaChave(this)">
                                         <option value="100" @if (item.CabecaChave == 100) { @Html.Raw("selected") }>não</option>
                                         @for (int j = 1; j <= ViewBag.CabecasDeChave; j++)
@@ -185,6 +185,34 @@
                     }
                 }
                 $("#" + nomeItemAnteriorSelecionado).val(element.value);
+
+                EfetivarAlteracaoCabecaChave(ObterIdInscricao(nomeComboAtualSelecionado), valorAtualSelecionado);
+
+            }
+
+            function EfetivarAlteracaoCabecaChave(id, cabecaChave) {
+                $.ajax({
+                        type: "POST",
+                        url: "/Torneio/EditCabecaChave",
+                        dataType: "json",
+                        data: "{'Id':'" + id + "', 'cabecaChave':'" + cabecaChave + "'}",
+                        contentType: "application/json; charset=utf-8",
+                        success: function (response) {
+                            if (typeof response == "object") {
+                                toastr.options = {
+                                    "positionClass": "toast-top-center"
+                                }
+                                if (response.retorno === 0) {
+                                    toastr.error(response.erro, "Erro");
+                                } else {
+                                    toastr.success("Atualização realizada com sucesso.", "Aviso");
+                                }
+                            }
+                        },
+                        error: function (jqXHR, textStatus, errorThrown) {
+                            location.reload(true);
+                        }
+                    });
             }
 
             function ObterNomeItemAnteriorSelecionado(nomeComboAtualSelecionado) {
@@ -197,6 +225,18 @@
                     }
                 }
                 return nome;
+            }
+
+            function ObterIdInscricao(nomeComboAtualSelecionado) {
+                var qtdeRegistros = parseInt($("#qtdeRegistros").val());
+                var nome = "";
+                for (var i = 1; i <= qtdeRegistros; i++) {
+                    var nomeComboValidacao = "cabecaChave" + i;
+                    if (nomeComboAtualSelecionado == nomeComboValidacao) {
+                        nome = "idInscricao" + i;
+                    }
+                }
+                return parseInt($("#" + nome).val());
             }
 
             function CarregarValoresIniciaisSelecionados() {
