@@ -292,6 +292,7 @@
     <Compile Include="Models\BarragemCidadeModel.cs" />
     <Compile Include="Models\BarragemLiga.cs" />
     <Compile Include="Models\Barragens.cs" />
+    <Compile Include="Models\CabecaChaveModel.cs" />
     <Compile Include="Models\CalculadoraDePontos.cs" />
     <Compile Include="Models\CalendarioTorneio.cs" />
     <Compile Include="Models\Categoria.cs" />
