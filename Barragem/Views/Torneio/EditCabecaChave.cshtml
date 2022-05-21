@@ -63,7 +63,6 @@
                                 <a href="@Url.Action("../Account/EditaUsuario", new { UserName = item.participante.UserName })" title="Editar" target="_blank">
                                     @Html.DisplayFor(modelItem => item.participante.nome)
                                 </a>
-                                <a href="@item.participante.linkwhatsappSemMsg" target="_blank"><img width="25" height="25" src="/Content/image/whatsapp.png"></a>
 
                                 @if (item.parceiroDupla != null && !string.IsNullOrEmpty(item.parceiroDupla.nome))
                                 {
@@ -71,7 +70,6 @@
                                     <a href="@Url.Action("../Account/EditaUsuario", new { UserName = item.parceiroDupla.UserName })" title="Editar" target="_blank">
                                         @Html.DisplayFor(modelItem => item.parceiroDupla.nome)
                                     </a>
-                                    <a href="@item.parceiroDupla.linkwhatsappSemMsg" target="_blank"><img width="25" height="25" src="/Content/image/whatsapp.png"></a>
                                 }
 
                             </td>
