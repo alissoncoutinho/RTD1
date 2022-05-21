@@ -1016,7 +1016,6 @@ namespace Barragem.Controllers
             if (filtroClasse != 0)
             {
                 inscricao = inscricao.Where(i => i.classe == filtroClasse).ToList();
-                ViewBag.CabecasDeChave = getOpcoesCabecaDeChave(filtroClasse);
             }
             if (filtroJogador != "")
             {
@@ -1392,20 +1391,15 @@ namespace Barragem.Controllers
         }
 
         [HttpPost]
-        public ActionResult EditInscritos(int Id, int classe, int cabecaChave, bool isAtivo)
+        public ActionResult EditInscritos(int Id, int classe, bool isAtivo)
         {
             try
             {
                 List<string> classesPagtoOk = new List<string>();
 
                 var inscricao = db.InscricaoTorneio.Find(Id);
-                if (inscricao.classeTorneio.faseGrupo)
-                {
-                    inscricao.grupo = cabecaChave;
-                }
                 inscricao.classe = classe;
                 inscricao.isAtivo = isAtivo;
-                inscricao.cabecaChave = cabecaChave;
                 if ((isAtivo) && (inscricao.statusPagamento != "3") && (inscricao.statusPagamento != "4"))
                 {
                     inscricao.statusPagamento = "0";
@@ -4063,6 +4057,10 @@ namespace Barragem.Controllers
             {
                 List<string> classesPagtoOk = new List<string>();
                 var inscricao = db.InscricaoTorneio.Find(Id);
+                if (inscricao.classeTorneio.faseGrupo)
+                {
+                    inscricao.grupo = cabecaChave;
+                }
                 inscricao.cabecaChave = cabecaChave;
                 
                 db.Entry(inscricao).State = EntityState.Modified;

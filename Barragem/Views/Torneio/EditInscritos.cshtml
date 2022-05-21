@@ -12,7 +12,6 @@
     <div class="tab-content">
         <div class="tab-pane fade" id="tabCadastro"></div>
         <div class="tab-pane fade" id="tabClasses"></div>
-        <div class="tab-pane fade" id="tabCabecaChave"></div>
         <div class="tab-pane fade" id="tabJogos"></div>
         <div class="tab-pane fade" id="tabDuplas"></div>
         <div class="tab-pane fade " id="tabObs"></div>
@@ -93,14 +92,6 @@
                             classe <span style="color:#f9f9f9">____________________</span>
                         </th>
                         <th>
-                            @Html.DisplayName("cabeça de chave")
-                            @if (ViewBag.CabecasDeChave == null)
-                            {
-                                <br>
-                                <span style="font-size:10px; font-weight:normal">* Filtre por classe para editar esta coluna</span>
-                            }
-                        </th>
-                        <th>
                             @Html.DisplayName("pago")
                         </th>
                         <th>
@@ -131,26 +122,6 @@
                                         <option value="@item2.Id" @if (item.classe == item2.Id) { @Html.Raw("selected") }>@item2.nome</option>
                                     }
                                 </select>
-                            </td>
-                            <td>
-                                @if (ViewBag.CabecasDeChave != null)
-                                {
-                                    <select name="@Html.Raw("cabecaChave" + i)" id="@Html.Raw("cabecaChave" + i)" class="form-control validarCabecaChave">
-                                        <option value="100" @if (item.cabecaChave == 100) { @Html.Raw("selected") }>não</option>
-                                        @for (int j = 1; j <= ViewBag.CabecasDeChave; j++)
-                                        {
-                                            <option value="@j" @if (item.cabecaChave == j) { @Html.Raw("selected") }>@j</option>
-                                        }
-                                    </select>
-                                }
-                                else
-                                {
-                                    <input type="hidden" name="@Html.Raw("cabecaChave" + i)" id="@Html.Raw("cabecaChave" + i)" value=@item.cabecaChave />
-                                    if (item.cabecaChave == 100)
-                                    { @Html.Raw("não") }
-                                else
-                                { @Html.Raw(item.cabecaChave)}
-                        }
                             </td>
                             <td>
                                 @if (item.isAtivo)
@@ -216,7 +187,6 @@
                     var Id = $("#form" + i).find("input[name=Id]").val();
                     var classe = document.getElementById("classe" + i).value;
                     var isAtivo = document.getElementById("isAtivo" + i).checked;
-                    var cabecaChave = document.getElementById("cabecaChave" + i).value;
                     event.preventDefault();
                     //var data1 = $(this).closest('.form');
                     //console.log(data1);
@@ -224,7 +194,7 @@
                         type: "POST",
                         url: "/Torneio/EditInscritos",
                         dataType: "json",
-                        data: "{'Id':'" + Id + "', 'classe':'" + classe + "', 'cabecaChave':'" + cabecaChave + "', 'isAtivo':'" + isAtivo + "'}",
+                        data: "{'Id':'" + Id + "', 'classe':'" + classe + "', 'isAtivo':'" + isAtivo + "'}",
                         contentType: "application/json; charset=utf-8",
                         success: function (response) {
                             if (typeof response == "object") {
@@ -267,27 +237,6 @@
                     var arr = $(this).data("valor").split("|");
                     window.location.href = "/Torneio/Detalhes?Id=" + arr[0] + "&Msg=&userId=" + arr[1];
                 });
-
-                $(".validarCabecaChave").change(function (event) {
-                    //event.preventDefault();
-                    try {
-                        for (var i = 1; i <= 120; i++) {
-                            //alert("item:" + i)
-                            if (document.getElementById("cabecaChave" + i).value == $(this).get(0).value && $(this).get(0).getAttribute("name") != "cabecaChave" + i) {
-                                toastr.options = {
-                                    "positionClass": "toast-top-center"
-                                }
-                                toastr.error("Já existe um cabeça de chave nº: " + $(this).get(0).value, "Erro")
-                                document.getElementById($(this).get(0).getAttribute("name")).selectedIndex = 0;
-                                return;
-                            }
-                        }
-                    } catch (err) {
-                        // alert(err)
-                    }
-                    //isDupla2 = $(this).children(':selected').data("isdupla") == "True";
-                });
-
             });
 
             function Selecionar() {
