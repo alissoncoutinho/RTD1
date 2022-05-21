@@ -4017,8 +4017,6 @@ namespace Barragem.Controllers
             }
         }
 
-
-        [Authorize(Roles = "admin")]
         public ActionResult EditCabecaChave(int torneioId, int filtroClasse = 0, string filtroJogador = "", string Msg = "")
         {
 
