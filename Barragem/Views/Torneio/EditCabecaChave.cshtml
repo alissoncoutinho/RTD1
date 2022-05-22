@@ -55,22 +55,30 @@
                                 @i
                             </td>
                             <td>
-                                <a href="@Url.Action("../Account/EditaUsuario", new { UserName = item.UserNameParticipante })" title="Editar" target="_blank">
+                                <a href="@Url.Action("../Account/EditaUsuario", new { UserName = item.UserNameParticipante })" title="Editar" target="_blank" style="vertical-align: sub">
                                     @Html.DisplayFor(modelItem => item.NomeParticipante)
                                 </a>
                                 @if (item.InscricaoParticipantePaga)
                                 {
-                                    @Html.Raw("<b> (Pago)</b>")
+                                    <a style="text-decoration: none; color: white; background-color: #28a745; font-size: 9px; padding: 2px">PAGO</a>
+                                }
+                                else
+                                {
+                                    <a style="text-decoration: none; color: white; background-color: #dc3545; font-size: 9px; padding: 2px ">NÃO PAGO</a>
                                 }
                                 @if (item.EhDupla)
                                 {
                                     @Html.Raw("/")
-                                    <a href="@Url.Action("../Account/EditaUsuario", new { UserName = item.UserNameParceiroDupla })" title="Editar" target="_blank">
+                                    <a href="@Url.Action("../Account/EditaUsuario", new { UserName = item.UserNameParceiroDupla })" title="Editar" target="_blank" style="vertical-align: sub">
                                         @Html.DisplayFor(modelItem => item.NomeParceiroDupla)
                                     </a>
                                     if (item.InscricaoParceiroDuplaPaga)
                                     {
-                                        @Html.Raw("<b> (Pago)</b>")
+                                        <a style="text-decoration: none; color: white; background-color: #28a745; font-size: 9px; padding: 2px">PAGO</a>
+                                    }
+                                    else
+                                    {
+                                        <a style="text-decoration: none; color: white; background-color: #dc3545; font-size: 9px; padding: 2px ">NÃO PAGO</a>
                                     }
                                 }
 

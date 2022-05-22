@@ -4079,7 +4079,7 @@ namespace Barragem.Controllers
                         duplasNaoFormadas.Remove(usuarioParceiroDupla);
                 }
 
-                var dadosInscricaoDupla = duplasFormadas.Union(duplasNaoFormadas).ToList();
+                var dadosInscricaoDupla = duplasFormadas.ToList();
 
                 dadosTela = PopularDadosCabecaChave(dadosInscricaoDupla, inscricao, true);
             }
