@@ -48,7 +48,13 @@
                                 </a>
                                 <a href="@Url.Action("../Account/Detalhes", new { userId = @item.participante.UserId })" title="Detalhes do jogador">@item.participante.nome</a>
                                 @if (item.isAtivo)
-                                {@Html.Raw("<b> (Pago)</b>")}
+                                {
+                                    <a style="text-decoration: none; color: white; background-color: #28a745; font-size: 9px; padding: 2px">PAGO</a>
+                                }
+                                else
+                                {
+                                    <a style="text-decoration: none; color: white; background-color: #dc3545; font-size: 9px; padding: 2px ">NÃO PAGO</a>
+                                }
                             </td>
                         </tr>
                     }
@@ -97,19 +103,26 @@
                                 @if (isDupla)
                                 {
                                     <input type="hidden" value="@idParticipante" name="@Html.Raw("jogador1_" + i)" id="@Html.Raw("jogador1_" + i)">
-                                    @Html.Raw(nomeParticipante) if (isAtivo)
-                                    { @Html.Raw("<b> (Pago)</b>") }
-                            }
-                            else
-                            {
-                                <select name="@Html.Raw("jogador1_" + i)" id="@Html.Raw("jogador1_" + i)" class="form-control">
-                                    <option value="0"></option>
-                                    @foreach (var item2 in ViewBag.InscricaoSemDupla)
+                                    @Html.Raw(nomeParticipante)
+                                    if (isAtivo)
                                     {
-                                        <option value="@item2.Id" @if (item.userId == item2.userId && item.parceiroDuplaId != null) { @Html.Raw("selected") }>@item2.participante.nome</option>
+                                        <a style="text-decoration: none; color: white; background-color: #28a745; font-size: 9px; padding: 2px">PAGO</a>
                                     }
-                                </select>
-                            }
+                                    else
+                                    {
+                                        <a style="text-decoration: none; color: white; background-color: #dc3545; font-size: 9px; padding: 2px ">NÃO PAGO</a>
+                                    }
+                                }
+                                else
+                                {
+                                    <select name="@Html.Raw("jogador1_" + i)" id="@Html.Raw("jogador1_" + i)" class="form-control">
+                                        <option value="0"></option>
+                                        @foreach (var item2 in ViewBag.InscricaoSemDupla)
+                                        {
+                                            <option value="@item2.Id" @if (item.userId == item2.userId && item.parceiroDuplaId != null) { @Html.Raw("selected") }>@item2.participante.nome</option>
+                                        }
+                                    </select>
+                                }
                             </td>
                             <td>
                                 @if (isDupla)
@@ -120,7 +133,7 @@
                                         {
                                             <option value="@item2.userId" @if (item.parceiroDuplaId == item2.userId) { @Html.Raw("selected") }>
                                                 @item2.participante.nome @if (item2.isAtivo)
-                                            {@Html.Raw("<b> (Pago)</b>")}
+                                                {@Html.Raw("<b> (Pago)</b>")}
                                             </option>
                                         }
                                     </select>
@@ -131,8 +144,10 @@
                                         <option value="null"></option>
                                         @foreach (var item2 in ViewBag.InscricaoSemDupla)
                                         {
-                                            <option value="@item2.userId" @if (item.parceiroDuplaId == item2.userId) { @Html.Raw("selected") }>@item2.participante.nome @if (item2.isAtivo)
-                                            {@Html.Raw(" (Pago)")}</option>
+                                            <option value="@item2.userId" @if (item.parceiroDuplaId == item2.userId) { @Html.Raw("selected") }>
+                                                @item2.participante.nome @if (item2.isAtivo)
+                                            {@Html.Raw(" (Pago)")}
+                                            </option>
                                         }
                                     </select>
                                 }
