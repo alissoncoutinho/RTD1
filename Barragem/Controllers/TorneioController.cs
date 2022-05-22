@@ -1421,7 +1421,7 @@ namespace Barragem.Controllers
                     inscricao.valorPendente = 0;
                 }
 
-                if (isAtivo) 
+                if (isAtivo)
                 {
                     classesPagtoOk.Add(inscricao.classeTorneio.nome);
                 }
@@ -3563,8 +3563,14 @@ namespace Barragem.Controllers
                 }
                 categoriasDeLiga.Add(categoriaDeLiga);
             }
+            ViewBag.UnicoCircuitoBeachTennis = ValidarRegraUnicoCircuitoBeachTennis(barragem.isBeachTenis, ligasId.Count, qtddTorneios);
             ViewBag.Categorias = categoriasDeLiga;
             return View();
+        }
+
+        private bool ValidarRegraUnicoCircuitoBeachTennis(bool isBeachTennis, int qtdeCircuitos, int qtdeTorneios)
+        {
+            return isBeachTennis && qtdeCircuitos == 1 && qtdeTorneios == 0;
         }
 
         [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
@@ -3798,7 +3804,7 @@ namespace Barragem.Controllers
 
             var todasCategorias = categoriasPadrao;
             todasCategorias.AddRange(categoriasLiga.Select(s => new CategoriaAutoComplete { id = s.Id, label = s.Nome, value = s.Nome }));
-            todasCategorias = todasCategorias.GroupBy(x=>x.id).Select(s=>s.FirstOrDefault()).OrderBy(x => x.label).ToList();
+            todasCategorias = todasCategorias.GroupBy(x => x.id).Select(s => s.FirstOrDefault()).OrderBy(x => x.label).ToList();
             var categoriasDisponiveis = ValidarCategoriasDisponiveis(torneioId, todasCategorias);
 
             ViewBag.Categorias = categoriasDisponiveis;
@@ -4060,7 +4066,7 @@ namespace Barragem.Controllers
                     inscricao.grupo = cabecaChave;
                 }
                 inscricao.cabecaChave = cabecaChave;
-                
+
                 db.Entry(inscricao).State = EntityState.Modified;
                 db.SaveChanges();
 
