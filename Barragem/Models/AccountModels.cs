@@ -21,36 +21,36 @@ namespace Barragem.Models
         [DatabaseGeneratedAttribute(DatabaseGeneratedOption.Identity)]
         public int UserId { get; set; }
 
-        [Display(Name = "login")]
+        [Display(Name = "Login")]
         public string UserName { get; set; }
 
-        [Display(Name = "nome (ou apelido)")]
+        [Display(Name = "Nome (ou apelido)")]
         [Required(ErrorMessage = "O campo nome é obrigatório")]
         public string nome { get; set; }
 
-        [Display(Name = "data nascimento")]
+        [Display(Name = "Data nascimento")]
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}")]
         [DataType(DataType.Date)]
         [Required(ErrorMessage = "Campo data é obrigatório")]
         public DateTime dataNascimento { get; set; }
 
-        [Display(Name = "naturalidade")]
+        [Display(Name = "Naturalidade")]
         public string naturalidade { get; set; }
 
         public int? altura { get; set; }
 
-        [Display(Name = "altura")]
+        [Display(Name = "Altura")]
         [Required(ErrorMessage = "Campo altura é obrigatório")]
         public string altura2 { get; set; }
 
-        [Display(Name = "lateralidade")]
+        [Display(Name = "Lateralidade")]
         public string lateralidade { get; set; }
 
-        [Display(Name = "telefone")]
+        [Display(Name = "Telefone")]
         public string telefoneFixo { get; set; }
 
         [Required(ErrorMessage = "O campo celular é obrigatório")]
-        [Display(Name = "celular/whatsapp")]
+        [Display(Name = "Celular/whatsapp")]
         public string telefoneCelular { get; set; }
 
         public virtual string linkwhatsapp
@@ -122,10 +122,11 @@ namespace Barragem.Models
             }
         }
 
-        [Display(Name = "celular2")]
+        [Display(Name = "Celular2")]
         public string telefoneCelular2 { get; set; }
 
         [Required(ErrorMessage = "O campo bairro é obrigatório")]
+        [Display(Name = "Bairro")]
         public string bairro { get; set; }
 
         [Display(Name = "Matrícula (apenas para clubes)")]
@@ -136,6 +137,7 @@ namespace Barragem.Models
 
         [Required(ErrorMessage = "O campo email é obrigatório")]
         [DataType(DataType.EmailAddress)]
+        [Display(Name = "Email")]
         public string email { get; set; }
         [Display(Name = "Foto")]
         public byte[] foto { get; set; }
@@ -285,6 +287,7 @@ namespace Barragem.Models
         public string telefoneCelular2 { get; set; }
 
         [Required(ErrorMessage = "O campo bairro é obrigatório")]
+        [Display(Name = "Bairro")]
         public string bairro { get; set; }
 
         [Display(Name = "Matrícula (apenas para clubes)")]
