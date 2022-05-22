@@ -61,5 +61,18 @@ namespace Barragem.Controllers
             return Ok(gravacaoOk);
         }
 
+        [HttpDelete]
+        [ResponseType(typeof(bool))]
+        [Route("api/UsuarioFirebase/ExcluirTokenUsuarioFirebase")]
+        public IHttpActionResult ExcluirTokenUsuarioFirebase(int userId) 
+        {
+            var registroExclusao = db.UsuarioFirebase.FirstOrDefault(x => x.UserId == userId);
+            if (registroExclusao != null)
+            {
+                db.UsuarioFirebase.Remove(registroExclusao);
+                db.SaveChanges();
+            }
+            return Ok(true);
+        }
     }
 }

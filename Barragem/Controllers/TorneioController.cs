@@ -674,6 +674,7 @@ namespace Barragem.Controllers
                 grupo = 1;
                 var classificacaoGrupo = tn.ordenarClassificacaoFaseGrupo(classe, grupo);
                 ViewBag.classificacaoGrupo = classificacaoGrupo;
+                ViewBag.InscritosWO = ObterInscritosComWO(classe);
                 var qtddJogosPorRodada = (classificacaoGrupo.Count() > 0) ? (int)classificacaoGrupo.Count() / 2 : 2;
                 qtddJogosPorRodada = (qtddJogosPorRodada % 2 != 0) ? qtddJogosPorRodada + 1 : qtddJogosPorRodada;
 
@@ -704,6 +705,7 @@ namespace Barragem.Controllers
                     }
                     var classificacaoGrupo = tn.ordenarClassificacaoFaseGrupo(classe, grupo);
                     ViewBag.classificacaoGrupo = classificacaoGrupo;
+                    ViewBag.InscritosWO = ObterInscritosComWO(classe);
                     var qtddJogosPorRodada = (classificacaoGrupo.Count() > 0) ? (int)classificacaoGrupo.Count() / 2 : 2;
                     qtddJogosPorRodada = (qtddJogosPorRodada % 2 != 0) ? qtddJogosPorRodada + 1 : qtddJogosPorRodada;
                     ViewBag.grupo = grupo;
@@ -731,11 +733,29 @@ namespace Barragem.Controllers
             ViewBag.torneioId = torneioId;
             ViewBag.nomeTorneio = torneio.nome;
             ViewBag.filtroClasse = filtroClasse;
-
+            
             extrairPrimeiroNomeJogosDupla(jogos);
 
             mensagem(Msg);
             return View(jogos);
+        }
+
+        private List<ClassificacaoFaseGrupo> ObterInscritosComWO(ClasseTorneio classe)
+        {
+            if (classe.isDupla)
+            {
+                return db.InscricaoTorneio
+                    .Where(it => it.classe == classe.Id && it.isAtivo && it.parceiroDuplaId != null && it.parceiroDuplaId != 0 && it.pontuacaoFaseGrupo == -100)
+                    .Select(s => new ClassificacaoFaseGrupo() { userId = s.userId, inscricao = s, nome = s.participante.nome, nomeDupla = s.parceiroDupla != null ? s.parceiroDupla.nome : "", averageGames = 0, averageSets = 0, confrontoDireto = 0, saldoGames = 0, saldoSets = 0 })
+                    .ToList();
+            }
+            else
+            {
+                return db.InscricaoTorneio
+                        .Where(it => it.classe == classe.Id && it.isAtivo && it.pontuacaoFaseGrupo == -100)
+                        .Select(s => new ClassificacaoFaseGrupo() { userId = s.userId, inscricao = s, nome = s.participante.nome, nomeDupla = s.parceiroDupla != null ? s.parceiroDupla.nome : "", averageGames = 0, averageSets = 0, confrontoDireto = 0, saldoGames = 0, saldoSets = 0 })
+                        .ToList();
+            }
         }
 
         private void extrairPrimeiroNomeJogosDupla(List<Jogo> jogos)
@@ -4025,7 +4045,7 @@ namespace Barragem.Controllers
 
         public ActionResult EditCabecaChave(int torneioId, int filtroClasse = 0, string filtroJogador = "", string Msg = "")
         {
-
+            List<CabecaChaveModel> dadosTela = new List<CabecaChaveModel>();
             List<InscricaoTorneio> inscricao = db.InscricaoTorneio.Where(i => i.torneioId == torneioId).ToList();
             var torneio = db.Torneio.Find(torneioId);
 
@@ -4046,12 +4066,80 @@ namespace Barragem.Controllers
                 inscricao = inscricao.Where(i => i.participante.nome.ToUpper().Contains(filtroJogador.ToUpper())).ToList();
             }
 
+            var classe = listaClasses.FirstOrDefault(x => x.Id == filtroClasse);
+            if (classe.isDupla)
+            {
+                var duplasFormadas = inscricao.Where(d => d.parceiroDuplaId != null).ToList();
+                var duplasNaoFormadas = inscricao.Where(d => d.parceiroDuplaId == null).ToList();
+
+                foreach (var ins in duplasFormadas)
+                {
+                    var usuarioParceiroDupla = duplasNaoFormadas.Where(i => i.userId == ins.parceiroDuplaId).FirstOrDefault();
+                    if (usuarioParceiroDupla != null)
+                        duplasNaoFormadas.Remove(usuarioParceiroDupla);
+                }
+
+                var dadosInscricaoDupla = duplasFormadas.Union(duplasNaoFormadas).ToList();
+
+                dadosTela = PopularDadosCabecaChave(dadosInscricaoDupla, inscricao, true);
+            }
+            else
+            {
+                dadosTela = PopularDadosCabecaChave(inscricao, inscricao, false);
+            }
+
             ViewBag.Classes = listaClasses;
             ViewBag.filtroClasse = filtroClasse;
             ViewBag.TorneioId = torneioId;
             ViewBag.flag = "cabecachave";
             mensagem(Msg);
-            return View(inscricao);
+            return View(dadosTela);
+        }
+
+        private List<CabecaChaveModel> PopularDadosCabecaChave(List<InscricaoTorneio> inscricoes, List<InscricaoTorneio> todasIncricoes, bool classeDupla)
+        {
+            List<CabecaChaveModel> dadosTela = new List<CabecaChaveModel>();
+
+
+            foreach (var item in inscricoes)
+            {
+                var itemCabecaChave = new CabecaChaveModel();
+                itemCabecaChave.IdTorneio = item.torneioId;
+                itemCabecaChave.IdInscricao = item.Id;
+                itemCabecaChave.IdClasse = item.classe;
+                itemCabecaChave.CabecaChave = item.cabecaChave;
+                itemCabecaChave.EhDupla = classeDupla;
+                itemCabecaChave.IdParticipante = item.userId;
+                itemCabecaChave.NomeParticipante = item.participante.nome;
+                itemCabecaChave.UserNameParticipante = item.participante.UserName;
+                itemCabecaChave.InscricaoParticipantePaga = item.isAtivo;
+
+                if (classeDupla)
+                {
+                    if (item.parceiroDupla != null)
+                    {
+                        itemCabecaChave.IdParceiroDupla = item.parceiroDuplaId.Value;
+                        itemCabecaChave.NomeParceiroDupla = item.parceiroDupla.nome;
+                        itemCabecaChave.UserNameParceiroDupla = item.parceiroDupla.UserName;
+
+                        bool iscricaoParceiroPaga = todasIncricoes.Count(x => x.userId == itemCabecaChave.IdParceiroDupla && x.isAtivo) == 1;
+                        itemCabecaChave.InscricaoParceiroDuplaPaga = iscricaoParceiroPaga;
+
+                        itemCabecaChave.TodaInscricaoPaga = itemCabecaChave.InscricaoParceiroDuplaPaga && itemCabecaChave.InscricaoParticipantePaga;
+                    }
+                    else
+                    {
+                        itemCabecaChave.EhDupla = false;
+                        itemCabecaChave.TodaInscricaoPaga = itemCabecaChave.InscricaoParticipantePaga;
+                    }
+                }
+                else 
+                {
+                    itemCabecaChave.TodaInscricaoPaga = itemCabecaChave.InscricaoParticipantePaga;
+                }
+                dadosTela.Add(itemCabecaChave);
+            }
+            return dadosTela;
         }
 
         [HttpPost]

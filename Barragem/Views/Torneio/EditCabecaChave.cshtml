@@ -1,7 +1,7 @@
 ﻿@{
     int i = 0;
 }
-@model IEnumerable<Barragem.Models.InscricaoTorneio>
+@model IEnumerable<Barragem.Models.CabecaChaveModel>
     @Html.Partial("_PartialTabs")
 
     <div class="tab-content">
@@ -27,6 +27,11 @@
                     <input type="button" value="Filtrar" class="btn btn-primary" onclick="Selecionar()">
                 </div>
             </div>
+            <div class="form-row">
+                <div class="form-group col-sm-12">
+                    <h5>Só é possível selecionar cabeça de chave para jogadores com pagamento da inscrição confirmado.</h5>
+                </div>
+            </div>
             <div class="box-body table-responsive no-padding">
                 <input type="hidden" value="@Model.Count()" id="qtdeRegistros">
                 <table class="table table-striped table-condensed table-bordered">
@@ -35,15 +40,12 @@
                             <b>#</b>
                         </th>
                         <th>
-                            @Html.DisplayName("nome")
+                            Nome
                         </th>
-                        <th>
-                            @Html.DisplayName("cabeça de chave")
+                        <th width="200px">
+                            Cabeça de chave
                         </th>
-                        <th>
-                            @Html.DisplayName("pago")
-                        </th>
-                        <th></th>
+                        
                     </tr>
                     @foreach (var item in Model)
                     {
@@ -53,41 +55,51 @@
                                 @i
                             </td>
                             <td>
-                                <a href="@Url.Action("../Account/EditaUsuario", new { UserName = item.participante.UserName })" title="Editar" target="_blank">
-                                    @Html.DisplayFor(modelItem => item.participante.nome)
+                                <a href="@Url.Action("../Account/EditaUsuario", new { UserName = item.UserNameParticipante })" title="Editar" target="_blank">
+                                    @Html.DisplayFor(modelItem => item.NomeParticipante)
                                 </a>
-
-                                @if (item.parceiroDupla != null && !string.IsNullOrEmpty(item.parceiroDupla.nome))
+                                @if (item.InscricaoParticipantePaga)
+                                {
+                                    @Html.Raw("<b> (Pago)</b>")
+                                }
+                                @if (item.EhDupla)
                                 {
                                     @Html.Raw("/")
-                                    <a href="@Url.Action("../Account/EditaUsuario", new { UserName = item.parceiroDupla.UserName })" title="Editar" target="_blank">
-                                        @Html.DisplayFor(modelItem => item.parceiroDupla.nome)
+                                    <a href="@Url.Action("../Account/EditaUsuario", new { UserName = item.UserNameParceiroDupla })" title="Editar" target="_blank">
+                                        @Html.DisplayFor(modelItem => item.NomeParceiroDupla)
                                     </a>
+                                    if (item.InscricaoParceiroDuplaPaga)
+                                    {
+                                        @Html.Raw("<b> (Pago)</b>")
+                                    }
                                 }
 
                             </td>
                             <td>
+                                <input type="hidden" id="@Html.Raw("idInscricao" + i)" value="@item.IdInscricao">
                                 <input type="hidden" value="100" id="@Html.Raw("oldCabecaChave" + i)">
-                                <select name="@Html.Raw("cabecaChave" + i)" id="@Html.Raw("cabecaChave" + i)" class="form-control validarCabecaChave" onchange="validarCabecaChave(this)">
-                                    <option value="100" @if (item.cabecaChave == 100) { @Html.Raw("selected") }>não</option>
-                                    @for (int j = 1; j <= ViewBag.CabecasDeChave; j++)
-                                    {
-                                        <option value="@j" @if (item.cabecaChave == j) { @Html.Raw("selected") }>@j</option>
-                                    }
-                                </select>
-                            </td>
-                            <td>
-                                @Html.Raw(item.isAtivo ? "Sim" : "Não")
+                                @if (item.TodaInscricaoPaga == false)
+                                {                                    
+                                    <select name="@Html.Raw("cabecaChave" + i)" id="@Html.Raw("cabecaChave" + i)" class="form-control" disabled>
+                                        <option value="100" @if (item.CabecaChave == 100) { @Html.Raw("selected") }>não</option>
+                                        @for (int j = 1; j <= ViewBag.CabecasDeChave; j++)
+                                        {
+                                            <option value="@j" @if (item.CabecaChave == j) { @Html.Raw("selected") }>@j</option>
+                                        }
+                                    </select>
+                                }
+                                else
+                                {   
+                                    <select name="@Html.Raw("cabecaChave" + i)" id="@Html.Raw("cabecaChave" + i)" class="form-control validarCabecaChave" onchange="validarCabecaChave(this)">
+                                        <option value="100" @if (item.CabecaChave == 100) { @Html.Raw("selected") }>não</option>
+                                        @for (int j = 1; j <= ViewBag.CabecasDeChave; j++)
+                                        {
+                                            <option value="@j" @if (item.CabecaChave == j) { @Html.Raw("selected") }>@j</option>
+                                        }
+                                    </select>
+                                }
                             </td>
 
-                            <td align="center">
-                                <form method="post" enctype="multipart/form-data" action="#" name="@Html.Raw("form"+i)" id="@Html.Raw("form"+i)" class="form">
-                                    <input type="hidden" name="Id" id="Id" value="@item.Id">
-                                    <button title="salvar" data-valor="@Html.Raw(i)" name="@Html.Raw("button"+i)" id="@Html.Raw("button"+i)" class="btn btn-default btn-xs inscricaoButton">
-                                        Salvar
-                                    </button>
-                                </form>
-                            </td>
                         </tr>
                     }
                 </table>
@@ -104,38 +116,7 @@
 
     @section Scripts {
         <script type="text/javascript">
-            $(document).ready(function () {
-                $(".inscricaoButton").click(function (event) {
-                    var i = $(this).data("valor");
-                    var Id = $("#form" + i).find("input[name=Id]").val();
-                    var cabecaChave = document.getElementById("cabecaChave" + i).value;
-
-                    event.preventDefault();
-                    $.ajax({
-                        type: "POST",
-                        url: "/Torneio/EditCabecaChave",
-                        dataType: "json",
-                        data: "{'Id':'" + Id + "', 'cabecaChave':'" + cabecaChave + "'}",
-                        contentType: "application/json; charset=utf-8",
-                        success: function (response) {
-                            if (typeof response == "object") {
-                                toastr.options = {
-                                    "positionClass": "toast-top-center"
-                                }
-                                if (response.retorno === 0) {
-                                    toastr.error(response.erro, "Erro");
-                                } else {
-                                    toastr.success("Atualização realizada com sucesso.", "Aviso");
-                                }
-                            }
-                        },
-                        error: function (jqXHR, textStatus, errorThrown) {
-                            location.reload(true);
-                        }
-                    });
-                });
-            });
-
+            
             function validarCabecaChave(element) {
                 var qtdeRegistros = parseInt($("#qtdeRegistros").val());
 
@@ -162,6 +143,34 @@
                     }
                 }
                 $("#" + nomeItemAnteriorSelecionado).val(element.value);
+
+                EfetivarAlteracaoCabecaChave(ObterIdInscricao(nomeComboAtualSelecionado), valorAtualSelecionado);
+
+            }
+
+            function EfetivarAlteracaoCabecaChave(id, cabecaChave) {
+                $.ajax({
+                        type: "POST",
+                        url: "/Torneio/EditCabecaChave",
+                        dataType: "json",
+                        data: "{'Id':'" + id + "', 'cabecaChave':'" + cabecaChave + "'}",
+                        contentType: "application/json; charset=utf-8",
+                        success: function (response) {
+                            if (typeof response == "object") {
+                                toastr.options = {
+                                    "positionClass": "toast-top-center"
+                                }
+                                if (response.retorno === 0) {
+                                    toastr.error(response.erro, "Erro");
+                                } else {
+                                    toastr.success("Atualização realizada com sucesso.", "Aviso");
+                                }
+                            }
+                        },
+                        error: function (jqXHR, textStatus, errorThrown) {
+                            location.reload(true);
+                        }
+                    });
             }
 
             function ObterNomeItemAnteriorSelecionado(nomeComboAtualSelecionado) {
@@ -174,6 +183,18 @@
                     }
                 }
                 return nome;
+            }
+
+            function ObterIdInscricao(nomeComboAtualSelecionado) {
+                var qtdeRegistros = parseInt($("#qtdeRegistros").val());
+                var nome = "";
+                for (var i = 1; i <= qtdeRegistros; i++) {
+                    var nomeComboValidacao = "cabecaChave" + i;
+                    if (nomeComboAtualSelecionado == nomeComboValidacao) {
+                        nome = "idInscricao" + i;
+                    }
+                }
+                return parseInt($("#" + nome).val());
             }
 
             function CarregarValoresIniciaisSelecionados() {
