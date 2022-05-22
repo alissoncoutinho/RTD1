@@ -163,6 +163,22 @@
 
                                     </tr>
                                 }
+
+                                foreach (var item in ViewBag.InscritosWO)
+                                {
+                                    posicao++;
+                                    <tr>
+                                        <td> @posicao º</td>
+                                        <td>
+                                            @item.nome
+                                            @if (item.inscricao.parceiroDupla != null)
+                                            {
+                                                @Html.Raw("/ " + item.inscricao.parceiroDupla.nome)
+                                            }
+                                        </td>
+                                        <td colspan="4">Eliminado por WO</td>
+                                    </tr>
+                                }
                             }
                         </table>
                     </div>
