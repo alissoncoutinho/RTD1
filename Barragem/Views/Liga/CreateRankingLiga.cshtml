@@ -1,6 +1,15 @@
 ﻿@{
     Layout = "~/Views/Shared/_LayoutCadastroBT.cshtml";
 
+
+    var listaCircuitos = new List<string>();
+    listaCircuitos.Add("Circuito de Beach Tennis");
+    listaCircuitos.Add("Circuito Interno de Torneios");
+    listaCircuitos.Add("Circuito de Torneios Beach Tennis");
+    listaCircuitos.Add("Liga de Beach Tennis");
+    listaCircuitos.Add("Liga Interna de Beach Tennis");
+    listaCircuitos.Add("Temporada de Torneios 2022");
+    listaCircuitos.Add("Temporada 2022");
 }
 
 @section Css_Cadastro{
@@ -22,10 +31,19 @@
                 <label for="">Nome da Agremiação *</label>
                 <input type="text" name="nomeBarragem" class="form-control" placeholder="Ex: Clube Pinheiros, Ranking dos Amigos" required>
             </div>
+
             <div class="mt-3 form-input">
                 <label for="">Nome do Circuito *</label>
-                <input type="text" name="nomeLiga" class="form-control" placeholder="Ex: Circuito de Torneio 2022" required>
+                <br />
+                <label style="color:red; font-size:smaller">Você poderá alterar esse nome depois</label>
+                <select class="form-select" name="nomeLiga">
+                    @foreach (var item in listaCircuitos)
+                    {
+                        <option value="@item">@item</option>
+                    }
+                </select>
             </div>
+
             <div class="mt-3 form-input">
                 <label for="">Cidade *</label>
                 <input type="text" id="cidade" name="cidade" class="form-control" placeholder="Digite o nome" required>
@@ -44,14 +62,14 @@
                     <span class="text-white">
                         <img src="/Content/img/alert.svg" alt="" srcset=""> Regras da federação:
                     </span>
-                    seguimos fielmente as Regras da Confederação Brasileira de Tênis (CBT) para o Tênis e o Beach Tennis, 
+                    seguimos fielmente as Regras da Confederação Brasileira de Tênis (CBT) para o Tênis e o Beach Tennis,
                     assim você não precisa se preocupar com cada detalhe do regulamento.
                 </div>
                 <div class="alert alert-default todos" role="alert">
                     <span class="text-white">
                         <img src="/Content/img/alert.svg" alt="" srcset=""> Todos contra todos:
                     </span>
-                    neste formato, o sistema irá fazer um sorteio de forma que todos participantes joguem contra todos dentro da categoria. 
+                    neste formato, o sistema irá fazer um sorteio de forma que todos participantes joguem contra todos dentro da categoria.
                     Será campeão aquele que tiver mais vitórias.
                 </div>
             </div>
