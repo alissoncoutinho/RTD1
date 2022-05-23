@@ -429,7 +429,7 @@ namespace Barragem.Controllers
             var torneio = db.Torneio.Find(torneioId);
             if (!torneio.liberarTabela)
             {
-                throw new Exception(message: "Tabela ainda não liberada.");
+                throw new Exception(message: "Tabela do torneio ainda não liberada pelo organizador.");
             }
             var tabelaApp = new TabelaApp();
 
@@ -437,11 +437,11 @@ namespace Barragem.Controllers
 
             if (inscricaoUser == null || inscricaoUser.Count == 0)
             {
-                throw new Exception(message: "Usuário não possui inscrição no torneio");
+                throw new Exception(message: "Não é possível carregar tabela. Você não possui inscrição no torneio.");
             }
             else if (inscricaoUser.Any(x => x.isAtivo == false))
             {
-                throw new Exception(message: "O pagamento da inscrição esta pendente");
+                throw new Exception(message: "Não é possível carregar tabela. O pagamento da inscrição esta pendente.");
             }
 
             inscricaoUser = inscricaoUser.Where(x => x.isAtivo).ToList();
