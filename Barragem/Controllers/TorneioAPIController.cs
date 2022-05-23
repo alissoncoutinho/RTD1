@@ -433,12 +433,18 @@ namespace Barragem.Controllers
             }
             var tabelaApp = new TabelaApp();
 
-            var inscricaoUser = db.InscricaoTorneio.Where(c => c.torneioId == torneioId && c.isAtivo && c.userId == userId).ToList();
+            var inscricaoUser = db.InscricaoTorneio.Where(c => c.torneioId == torneioId && c.userId == userId).ToList();
 
             if (inscricaoUser == null || inscricaoUser.Count == 0)
             {
                 throw new Exception(message: "Usuário não possui inscrição no torneio");
             }
+            else if (inscricaoUser.Any(x => x.isAtivo == false))
+            {
+                throw new Exception(message: "O pagamento da inscrição esta pendente");
+            }
+
+            inscricaoUser = inscricaoUser.Where(x => x.isAtivo).ToList();
 
             var classeUser = inscricaoUser[0].classe;
             var grupoUser = inscricaoUser[0].grupo;
