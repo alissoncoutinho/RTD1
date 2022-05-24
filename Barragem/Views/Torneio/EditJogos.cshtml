@@ -251,10 +251,10 @@
                         <th>
                             @Html.DisplayName("Status")
                         </th>
-                        <th>
+                        <th width="185px">
                             @Html.DisplayName("Data")
                         </th>
-                        <th>
+                        <th width="85px">
                             @Html.DisplayName("Horário")
                         </th>
                         <th>
@@ -308,6 +308,17 @@
                                         <a href="@item.desafiante.linkwhatsapp">
                                             <img width="25" height="25" src="/Content/image/whatsapp.png">
                                         </a>
+                                        if (item.desafiante2 != null)
+                                        {
+                                            <br />
+                                            <input type="hidden" name="@Html.Raw("jogador1DuplaNome_" + i)" id="@Html.Raw("jogador1DuplaNome_" + i)" value="@item.desafiante2.nome">
+                                            <a href="@Url.Action("../Account/Detalhes", new { userId = item.desafiante2_id, mostrarClasse = false })" title="Detalhes do jogador">
+                                                @item.desafiante2.nome
+                                            </a>
+                                            <a href="@item.desafiante2.linkwhatsapp">
+                                                <img width="25" height="25" src="/Content/image/whatsapp.png">
+                                            </a>
+                                        }
                                     }
                                 }
                             </td>
@@ -350,6 +361,17 @@
                                         <a href="@item.desafiado.linkwhatsapp">
                                             <img width="25" height="25" src="/Content/image/whatsapp.png">
                                         </a>
+                                        if (item.desafiado2 != null)
+                                        {
+                                            <br />
+                                            <input type="hidden" name="@Html.Raw("jogador2DuplaNome_" + i)" id="@Html.Raw("jogador2DuplaNome_" + i)" value="@item.desafiado2.nome">
+                                            <a href="@Url.Action("../Account/Detalhes", new { userId = item.desafiado2_id, mostrarClasse = false })" title="Detalhes do jogador">
+                                                @item.desafiado2.nome
+                                            </a>
+                                            <a href="@item.desafiado2.linkwhatsapp">
+                                                <img width="25" height="25" src="/Content/image/whatsapp.png">
+                                            </a>
+                                        }
                                     }
                                 }
                             </td>
@@ -630,7 +652,7 @@
                     }
                 });
             }
-           
+
             function ExibirMsgConfirmaExclusaoJogos(conteudoMensagem) {
 
                 var textoInicial = "<p>Você selecionou categorias que já tem jogos concluídos ou horários marcados. <b>Deseja substituir as tabelas já existentes? </b></p>Categorias cujas tabelas serão zeradas:</br>";
