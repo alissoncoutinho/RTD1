@@ -397,8 +397,8 @@
                             <td>
 
                                 <div class="input-group date" data-date-format="dd/mm/yyyy">
-                                    <input id="@Html.Raw("dataJogo" + i)" name="@Html.Raw("dataJogo" + i)" value="@Html.Raw(String.Format("{0:dd/MM/yyyy}", item.dataJogo))" placeholder="dd/mm/yyyy" type="text" class="form-control col-md-5" />
-                                    <span class="input-group-addon">
+                                    <input id="@Html.Raw("dataJogo" + i)" name="@Html.Raw("dataJogo" + i)" value="@Html.Raw(String.Format("{0:dd/MM/yyyy}", item.dataJogo))" placeholder="dd/mm/yyyy" type="text" class="form-control col-md-5" @if (item.desafiante_id == 10 || item.desafiado_id == 10) { @Html.Raw("disabled") } />
+                                    <span class="input-group-addon @if (item.desafiante_id == 10 || item.desafiado_id == 10) { @Html.Raw("desabilitaCampo") }">
                                         <span class="glyphicon glyphicon-calendar">
                                         </span>
                                     </span>
@@ -407,12 +407,12 @@
                             <td>
                                 <div class="input-group">
                                     <div class="form-group">
-                                        <input id="@Html.Raw("horaJogo" + i)" name="@Html.Raw("horaJogo" + i)" value="@Html.Raw(item.horaJogo)" placeholder="hh:mm" type="text" class="form-control col-sm-4 hora" />
+                                        <input id="@Html.Raw("horaJogo" + i)" name="@Html.Raw("horaJogo" + i)" value="@Html.Raw(item.horaJogo)" placeholder="hh:mm" type="text" class="form-control col-sm-4 hora" @if (item.desafiante_id == 10 || item.desafiado_id == 10) { @Html.Raw("disabled") }/>
                                     </div>
                                 </div>
                             </td>
                             <td>
-                                <select name="@Html.Raw("quadra" + i)" id="@Html.Raw("quadra" + i)" class="form-control">
+                                <select name="@Html.Raw("quadra" + i)" id="@Html.Raw("quadra" + i)" class="form-control"  @if (item.desafiante_id == 10 || item.desafiado_id == 10) { @Html.Raw("disabled") }>
                                     <option value="100" @if (item.quadra == "100") { @Html.Raw("selected") }></option>
                                     <option value="1" @if (item.quadra == "1") { @Html.Raw("selected") }>quadra 1</option>
                                     <option value="2" @if (item.quadra == "2") { @Html.Raw("selected") }>quadra 2</option>
@@ -459,6 +459,13 @@
 
     </div>
     <style>
+
+        .desabilitaCampo {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+
         .exibir-escolhaDeClasses {
             overflow: hidden;
             max-height: 0px;
