@@ -733,7 +733,7 @@ namespace Barragem.Controllers
             ViewBag.torneioId = torneioId;
             ViewBag.nomeTorneio = torneio.nome;
             ViewBag.filtroClasse = filtroClasse;
-            
+
             extrairPrimeiroNomeJogosDupla(jogos);
 
             mensagem(Msg);
@@ -4133,7 +4133,7 @@ namespace Barragem.Controllers
                         itemCabecaChave.TodaInscricaoPaga = itemCabecaChave.InscricaoParticipantePaga;
                     }
                 }
-                else 
+                else
                 {
                     itemCabecaChave.TodaInscricaoPaga = itemCabecaChave.InscricaoParticipantePaga;
                 }
@@ -4149,6 +4149,7 @@ namespace Barragem.Controllers
             {
                 List<string> classesPagtoOk = new List<string>();
                 var inscricao = db.InscricaoTorneio.Find(Id);
+                var cabecaChaveAnterior = inscricao.cabecaChave;
                 if (inscricao.classeTorneio.faseGrupo)
                 {
                     inscricao.grupo = cabecaChave;
@@ -4158,12 +4159,26 @@ namespace Barragem.Controllers
                 db.Entry(inscricao).State = EntityState.Modified;
                 db.SaveChanges();
 
+                if (db.Jogo.Any(x => x.torneioId == inscricao.torneioId && x.classeTorneio == inscricao.classe))
+                {
+                    //Se já tinha jogos para a classe grava no log
+                    var msg = $"ALTERACAO_CABECA_CHAVE_JOGOS_JA_EXISTENTES - Id Inscrição: {inscricao.Id} Id User: {inscricao.userId}. CABECA CHAVE ANTERIOR: {cabecaChaveAnterior} CABECA CHAVE ATUAL: {inscricao.cabecaChave}";
+                    GravarLogErro(msg);
+                }
+
                 return Json(new { erro = "", retorno = 1 }, "text/plain", JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {
                 return Json(new { erro = ex.Message, retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
             }
+        }
+
+        private void GravarLogErro(string msgErro)
+        {
+            if (msgErro.Length > 500) msgErro = msgErro.Substring(0, 500);
+            db.Log.Add(new Log() { descricao = msgErro });
+            db.SaveChanges();
         }
 
     }
