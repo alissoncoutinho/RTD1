@@ -1,0 +1,130 @@
+﻿@{
+    int i = 0;
+}
+@model IEnumerable<Barragem.Models.CabecaChaveModel>
+    @Html.Partial("_PartialTabs")
+
+    <div class="tab-content">
+        <div class="tab-pane fade in active" id="tabPainel">
+            <br>
+            
+        </div>
+    </div>
+
+    <style>
+        select option:disabled {
+            color: #ff0000;
+            font-weight: bold;
+        }
+    </style>
+
+    @section Scripts {
+        <script type="text/javascript">
+
+            function validarCabecaChave(element) {
+                var qtdeRegistros = parseInt($("#qtdeRegistros").val());
+
+                var nomeComboAtualSelecionado = element.getAttribute("name");
+                var valorAtualSelecionado = element.value;
+
+                var nomeItemAnteriorSelecionado = ObterNomeItemAnteriorSelecionado(nomeComboAtualSelecionado);
+                var valorAnteriorSelecionado = parseInt($("#" + nomeItemAnteriorSelecionado).val());
+
+                for (var i = 1; i <= qtdeRegistros; i++) {
+                    var nomeComboValidacao = "cabecaChave" + i;
+
+                    if (nomeComboAtualSelecionado != nomeComboValidacao) {
+
+                        if (valorAtualSelecionado != 100) {
+                            //Desabilita em outros combos da lista a opção selecionada
+                            $("#" + nomeComboValidacao + " option[value='" + valorAtualSelecionado + "']").prop("disabled", true);
+                        }
+
+                        if (valorAnteriorSelecionado != 100) {
+                            //Habilita em outros combos da lista a opçao anterior que estava bloqueada
+                            $("#" + nomeComboValidacao + " option[value='" + valorAnteriorSelecionado + "']").prop("disabled", false);
+                        }
+                    }
+                }
+                $("#" + nomeItemAnteriorSelecionado).val(element.value);
+
+                EfetivarAlteracaoCabecaChave(ObterIdInscricao(nomeComboAtualSelecionado), valorAtualSelecionado);
+
+            }
+
+            function EfetivarAlteracaoCabecaChave(id, cabecaChave) {
+                $.ajax({
+                        type: "POST",
+                        url: "/Torneio/EditCabecaChave",
+                        dataType: "json",
+                        data: "{'Id':'" + id + "', 'cabecaChave':'" + cabecaChave + "'}",
+                        contentType: "application/json; charset=utf-8",
+                        success: function (response) {
+                            if (typeof response == "object") {
+                                toastr.options = {
+                                    "positionClass": "toast-top-center"
+                                }
+                                if (response.retorno === 0) {
+                                    toastr.error(response.erro, "Erro");
+                                } else {
+                                    toastr.success("Atualização realizada com sucesso.", "Aviso");
+                                }
+                            }
+                        },
+                        error: function (jqXHR, textStatus, errorThrown) {
+                            location.reload(true);
+                        }
+                    });
+            }
+
+            function ObterNomeItemAnteriorSelecionado(nomeComboAtualSelecionado) {
+                var qtdeRegistros = parseInt($("#qtdeRegistros").val());
+                var nome = "";
+                for (var i = 1; i <= qtdeRegistros; i++) {
+                    var nomeComboValidacao = "cabecaChave" + i;
+                    if (nomeComboAtualSelecionado == nomeComboValidacao) {
+                        nome = "oldCabecaChave" + i;
+                    }
+                }
+                return nome;
+            }
+
+            function ObterIdInscricao(nomeComboAtualSelecionado) {
+                var qtdeRegistros = parseInt($("#qtdeRegistros").val());
+                var nome = "";
+                for (var i = 1; i <= qtdeRegistros; i++) {
+                    var nomeComboValidacao = "cabecaChave" + i;
+                    if (nomeComboAtualSelecionado == nomeComboValidacao) {
+                        nome = "idInscricao" + i;
+                    }
+                }
+                return parseInt($("#" + nome).val());
+            }
+
+            function CarregarValoresIniciaisSelecionados() {
+                var qtdeRegistros = parseInt($("#qtdeRegistros").val());
+                for (var i = 1; i <= qtdeRegistros; i++) {
+                    var nomeComboValidacao = "cabecaChave" + i;
+                    var valorComboValidacao = document.getElementById(nomeComboValidacao).value;
+                    $("#oldCabecaChave" + i).val(valorComboValidacao);
+
+                    for (var j = 1; j <= qtdeRegistros; j++) {
+                        var nomeComboDesabilitaOpt = "cabecaChave" + j;
+                        if (nomeComboValidacao != nomeComboDesabilitaOpt && valorComboValidacao != 100) {
+                            $("#" + nomeComboDesabilitaOpt + " option[value='" + valorComboValidacao + "']").prop("disabled", true);
+                        }
+                    }
+                }
+            }
+
+            function Selecionar() {
+                var torneioId = document.getElementById('torneioId').value;
+                var classeId = document.getElementById('filtroClasse').value;
+                var filtroJogador = document.getElementById('filtroJogador').value;
+                window.location = "EditCabecaChave?torneioId=" + torneioId + "&filtroClasse=" + classeId + "&filtroJogador=" + filtroJogador;
+            }
+
+            CarregarValoresIniciaisSelecionados();
+
+        </script>
+    }

@@ -235,7 +235,7 @@ namespace Barragem.Controllers
             List<InscricaoTorneio> selectInscricoesDisp = null;
             List<InscricaoTorneio> inscricoesDuplas = null;
             ViewBag.isDisponivel = false;
-            ViewBag.torneioId = torneioId;
+            ViewBag.TorneioId = torneioId;
             ViewBag.userId = userId;
             if (inscricao.Count() > 0)
             {
@@ -730,7 +730,7 @@ namespace Barragem.Controllers
             }
 
             ViewBag.Classes = db.ClasseTorneio.Where(c => c.torneioId == torneioId).OrderBy(c => c.nivel).ToList();
-            ViewBag.torneioId = torneioId;
+            ViewBag.TorneioId = torneioId;
             ViewBag.nomeTorneio = torneio.nome;
             ViewBag.filtroClasse = filtroClasse;
 
@@ -1058,8 +1058,6 @@ namespace Barragem.Controllers
             ViewBag.Classes = db.ClasseTorneio.Where(c => c.torneioId == torneioId).ToList();
             ViewBag.filtroClasse = filtroClasse;
             ViewBag.FiltroStatusPagamento = filtroStatusPagamento;
-            ViewBag.TorneioId = torneioId;
-            ViewBag.flag = "inscritos";
             ViewBag.InscIndividuais = db.InscricaoTorneio.Where(i => i.torneioId == torneioId).Select(i => (int)i.userId).Distinct().Count();
             ViewBag.InscIndividuaisSocios = db.InscricaoTorneio.Where(i => i.torneioId == torneioId && i.isSocio == true).Select(i => (int)i.userId).Distinct().Count();
             ViewBag.InscIndividuaisFederados = db.InscricaoTorneio.Where(i => i.torneioId == torneioId && i.isFederado == true).Select(i => (int)i.userId).Distinct().Count();
@@ -1068,6 +1066,8 @@ namespace Barragem.Controllers
             ViewBag.PagoNoCartao = db.InscricaoTorneio.Where(i => i.torneioId == torneioId && i.isAtivo == true && (i.statusPagamento == "3" || i.statusPagamento == "4")).
                 Select(i => (int)i.userId).Distinct().Count();
             mensagem(Msg);
+
+            CarregarDadosEssenciais(torneioId, "inscritos");
             return View(inscricao);
         }
 
@@ -1107,8 +1107,8 @@ namespace Barragem.Controllers
         public ActionResult EditObs(int torneioId)
         {
             List<InscricaoTorneio> inscricao = db.InscricaoTorneio.Where(i => i.torneioId == torneioId && i.observacao != null && i.observacao != "").ToList();
-            ViewBag.flag = "obs";
-            ViewBag.TorneioId = torneioId;
+            
+            CarregarDadosEssenciais(torneioId, "obs");
             return View(inscricao);
         }
 
@@ -1116,9 +1116,8 @@ namespace Barragem.Controllers
         public ActionResult EditTeste(int torneioId, string msg = "")
         {
             var classes = db.ClasseTorneio.Where(c => c.torneioId == torneioId).ToList();
-            ViewBag.flag = "teste";
-            ViewBag.torneioId = torneioId;
             mensagem(msg);
+            CarregarDadosEssenciais(torneioId, "teste");
             return View(classes);
         }
 
@@ -1183,8 +1182,6 @@ namespace Barragem.Controllers
         {
             var classes = db.ClasseTorneio.Where(c => c.torneioId == torneioId).OrderBy(c => c.nivel).ToList();
             ViewBag.isLiga = db.TorneioLiga.Where(tl => tl.TorneioId == torneioId).ToList().Count > 0;
-            ViewBag.flag = "classes";
-            ViewBag.torneioId = torneioId;
             var torneio = db.Torneio.Find(torneioId);
             ViewBag.isModeloTodosContraTodos = torneio.barragem.isModeloTodosContraTodos;
             ViewBag.temLimiteDeInscricao = torneio.temLimiteDeInscricao;
@@ -1209,6 +1206,7 @@ namespace Barragem.Controllers
             }
 
             CarregarComboCategoriasCircuito(torneioId);
+            CarregarDadosEssenciais(torneioId, "classes");
             return View(classes);
         }
 
@@ -1216,9 +1214,9 @@ namespace Barragem.Controllers
         public ActionResult EditPatrocinadores(int torneioId, string msg = "")
         {
             mensagem(msg);
-            ViewBag.torneioId = torneioId;
             var patrocinadores = db.Patrocinador.Where(p => p.torneioId == torneioId).ToList();
-            ViewBag.flag = "patrocinio";
+            
+            CarregarDadosEssenciais(torneioId, "patrocinio");
             return View(patrocinadores);
         }
 
@@ -1364,7 +1362,7 @@ namespace Barragem.Controllers
         [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
         public ActionResult CreateClasse(int torneioId, int qtddClasses)
         {
-            ViewBag.torneioId = torneioId;
+            ViewBag.TorneioId = torneioId;
             ViewBag.qtddClasses = qtddClasses + 1;
             ///ViewBag.Categorias
             List<Categoria> categorias = new List<Categoria>();
@@ -1405,8 +1403,9 @@ namespace Barragem.Controllers
             }
             else
             {
-                ViewBag.torneioId = classe.torneioId;
+                ViewBag.TorneioId = classe.torneioId;
             }
+
             return View(classe);
         }
 
@@ -1478,7 +1477,6 @@ namespace Barragem.Controllers
         [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
         public ActionResult EditTorneio(int id = 0)
         {
-            ViewBag.flag = "edit";
             Torneio torneio = db.Torneio.Find(id);
             var userId = WebSecurity.GetUserId(User.Identity.Name);
             string perfil = Roles.GetRolesForUser(User.Identity.Name)[0];
@@ -1496,7 +1494,6 @@ namespace Barragem.Controllers
             ViewBag.tokenPagSeguro = barragem.tokenPagSeguro;
             ViewBag.barraId = barragemId;
             ViewBag.barragemId = new SelectList(db.BarragemView, "Id", "nome", barragemId);
-            ViewBag.TorneioId = id;
             ViewBag.JogadoresClasses = db.InscricaoTorneio.Where(i => i.torneioId == id && i.isAtivo == true).OrderBy(i => i.classe).ThenBy(i => i.participante.nome).ToList();
             ViewBag.CobrancaTorneio = getDadosDeCobrancaTorneio(id);
             List<BarragemLiga> ligasDoRanking = db.BarragemLiga.Include(l => l.Liga).Where(bl => bl.BarragemId == barragemId && bl.Liga.isAtivo).ToList();
@@ -1514,6 +1511,8 @@ namespace Barragem.Controllers
                 return HttpNotFound();
             }
             ViewBag.LinkParaCopia = "https://" + HttpContext.Request.Url.Host + "/torneio-" + torneio.Id;
+            
+            CarregarDadosEssenciais(id, "edit");
             return View(torneio);
         }
 
@@ -2190,10 +2189,10 @@ namespace Barragem.Controllers
             ViewBag.LigasDoTorneio = ligasDoTorneio;
             torneio.barragem = db.BarragemView.Find(torneio.barragemId);
             ViewBag.isModeloTodosContraTodos = torneio.barragem.isModeloTodosContraTodos;
-            ViewBag.TorneioId = torneio.Id;
             ViewBag.CobrancaTorneio = getDadosDeCobrancaTorneio(torneio.Id);
-            ViewBag.flag = "edit";
             ViewBag.LinkParaCopia = "https://" + HttpContext.Request.Url.Host + "/torneio-" + torneio.Id;
+            
+            CarregarDadosEssenciais(torneio.Id, "edit");
             return View(torneio);
         }
 
@@ -2466,8 +2465,7 @@ namespace Barragem.Controllers
 
             }
 
-            ViewBag.TorneioId = torneioId;
-            ViewBag.flag = "jogos";
+            CarregarDadosEssenciais(torneioId, "jogos");
             return View(listaJogos);
         }
 
@@ -2775,8 +2773,6 @@ namespace Barragem.Controllers
             List<InscricaoTorneio> duplas = null;
             var classes = db.ClasseTorneio.Where(i => i.torneioId == torneioId && i.isDupla).OrderBy(c => c.Id).ToList();
             ViewBag.Classes = classes;
-            ViewBag.TorneioId = torneioId;
-            ViewBag.flag = "duplas";
             if (classes.Count == 0)
             {
                 return View(duplas);
@@ -2811,6 +2807,8 @@ namespace Barragem.Controllers
             ViewBag.InscricaoSemDupla = duplasNaoFormadas;
             ////////////////////////////////
             ViewBag.Inscritos = db.InscricaoTorneio.Where(c => c.torneioId == torneioId && c.classe == filtroClasse).ToList();
+
+            CarregarDadosEssenciais(torneioId, "duplas");
             return View(duplas);
         }
 
@@ -2820,8 +2818,6 @@ namespace Barragem.Controllers
             List<InscricaoTorneio> inscritos = null;
             var classes = db.ClasseTorneio.Where(i => i.torneioId == torneioId && i.faseGrupo).OrderBy(c => c.nome).ToList();
             ViewBag.Classes = classes;
-            ViewBag.TorneioId = torneioId;
-            ViewBag.flag = "fasegrupo";
             if (classes.Count == 0)
             {
                 return View(inscritos);
@@ -2840,6 +2836,7 @@ namespace Barragem.Controllers
             {
                 ViewBag.Classificados = tn.getClassificadosEmCadaGrupo(classe);
             }
+            CarregarDadosEssenciais(torneioId, "fasegrupo");
             return View(inscritos);
         }
 
@@ -3278,8 +3275,7 @@ namespace Barragem.Controllers
         public ActionResult EditNotificacao(int torneioId, string msg = "")
         {
             ViewBag.retorno = msg;
-            ViewBag.flag = "notificacao";
-            ViewBag.TorneioId = torneioId;
+            CarregarDadosEssenciais(torneioId, "notificacao");
             return View();
         }
 
@@ -4090,10 +4086,16 @@ namespace Barragem.Controllers
 
             ViewBag.Classes = listaClasses;
             ViewBag.filtroClasse = filtroClasse;
-            ViewBag.TorneioId = torneioId;
-            ViewBag.flag = "cabecachave";
+            CarregarDadosEssenciais(torneioId, "cabecachave");
             mensagem(Msg);
             return View(dadosTela);
+        }
+
+        public ActionResult PainelTorneio(int torneioId)
+        {
+            ViewBag.TorneioId = torneioId;
+            ViewBag.flag = "cabecachave";
+            return View(new { });
         }
 
         private List<CabecaChaveModel> PopularDadosCabecaChave(List<InscricaoTorneio> inscricoes, List<InscricaoTorneio> todasIncricoes, bool classeDupla)
@@ -4179,6 +4181,15 @@ namespace Barragem.Controllers
             if (msgErro.Length > 500) msgErro = msgErro.Substring(0, 500);
             db.Log.Add(new Log() { descricao = msgErro });
             db.SaveChanges();
+        }
+
+        private void CarregarDadosEssenciais(int torneioId, string abaSelecionada)
+        {
+            var torneio = db.Torneio.Find(torneioId);
+
+            ViewBag.flag = abaSelecionada;
+            ViewBag.TorneioId = torneioId;
+            ViewBag.NomeTorneio = torneio.nome;
         }
 
     }
