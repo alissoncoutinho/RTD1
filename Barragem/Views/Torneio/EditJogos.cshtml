@@ -52,7 +52,7 @@
                         <div class="row clearfix">
                             <div id="nomeDesafiante" class="form-group col-md-3 col-xs-5" style="color:#40898e"></div>
                             <div class="form-group col-md-1 col-xs-1"></div>
-                            <div id="nomeDesafiado" class="form-group col-md-4 col-xs-5" style="color:#ff6a00"></div>
+                            <div id="nomeDesafiado" class="form-group col-md-3 col-xs-5" style="color:#ff6a00"></div>
                         </div>
                         <div class="row clearfix">
                             <div class="form-group col-md-3 col-xs-5">
@@ -528,7 +528,19 @@
                 var desafiado = document.querySelector("#jogador2_" + indice);
                 if (typeof desafiante.options === "undefined") {
                     var nomeDesafiante = document.getElementById("jogador1Nome_" + indice).value;
+
+                    var lblNomeDuplaDesafiante = document.getElementById("jogador1DuplaNome_" + indice);
+                    if (lblNomeDuplaDesafiante != null) { 
+                        var nomeDesafiante2 = lblNomeDuplaDesafiante.value;
+                    }
                     var nomeDesafiado = document.getElementById("jogador2Nome_" + indice).value;
+
+                    var lblNomeDuplaDesafiado = document.getElementById("jogador2DuplaNome_" + indice);
+                    if (lblNomeDuplaDesafiado != null) {
+                        var nomeDesafiado2 = lblNomeDuplaDesafiado.value;
+                    }
+
+                    
                 } else {
                     var nomeDesafiante = desafiante.options[desafiante.selectedIndex].text;
                     var nomeDesafiado = desafiado.options[desafiado.selectedIndex].text;
@@ -560,8 +572,19 @@
 
                 $("select#situacao_id").val(situacao);
                 exibirOpcaoVencedores()
-                $(".modal-body #nomeDesafiante").html(nomeDesafiante);
-                $(".modal-body #nomeDesafiado").html(nomeDesafiado);
+                if (nomeDesafiante2 != undefined) {
+                    $(".modal-body #nomeDesafiante").html(nomeDesafiante + ' / ' + nomeDesafiante2);
+                }
+                else { 
+                    $(".modal-body #nomeDesafiante").html(nomeDesafiante);
+                }
+
+                if (nomeDesafiado2 != undefined) {
+                    $(".modal-body #nomeDesafiado").html(nomeDesafiado + ' / ' + nomeDesafiado2);
+                }
+                else {
+                    $(".modal-body #nomeDesafiado").html(nomeDesafiado);
+                }
                 $(".modal-body #vencedorDesafiadoNome").html(nomeDesafiado);
                 $(".modal-body #vencedorDesafianteNome").html(nomeDesafiante);
             });
