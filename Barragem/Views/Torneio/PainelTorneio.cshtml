@@ -104,7 +104,15 @@
         function liberarVisualizacaoInscritos(el) {
 
         }
-        
+
+        function selectedStatusInscricao(el) {
+            AtualizarStatusInscricao(el.value);
+        }
+
+        function selectedOpcaoDivulgacao(el) {
+            AtualizarLabelOpcaoDivulgacao(el.value);
+        }
+
         function copiarLinkTorneio() {
             event.preventDefault();
             navigator.clipboard.writeText('@Model.LinkParaCopia');
@@ -133,14 +141,6 @@
                     }
                 }
             );
-        }
-
-        function selectedStatusInscricao(el) {
-            AtualizarStatusInscricao(el.value);
-        }
-
-        function selectedOpcaoDivulgacao(el) {
-            AtualizarLabelOpcaoDivulgacao(el.value);
         }
 
         function AtualizarLabelOpcaoDivulgacao(valorSelecionado)
