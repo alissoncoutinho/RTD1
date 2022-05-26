@@ -745,14 +745,14 @@ namespace Barragem.Controllers
             if (classe.isDupla)
             {
                 return db.InscricaoTorneio
-                    .Where(it => it.classe == classe.Id && it.grupo == grupo && it.isAtivo && it.parceiroDuplaId != null && it.parceiroDuplaId != 0 && it.pontuacaoFaseGrupo == -100)
+                    .Where(it => it.torneioId == classe.torneioId && it.classe == classe.Id && it.grupo == grupo && it.isAtivo && it.parceiroDuplaId != null && it.parceiroDuplaId != 0 && it.pontuacaoFaseGrupo == -100)
                     .Select(s => new ClassificacaoFaseGrupo() { userId = s.userId, inscricao = s, nome = s.participante.nome, nomeDupla = s.parceiroDupla != null ? s.parceiroDupla.nome : "", averageGames = 0, averageSets = 0, confrontoDireto = 0, saldoGames = 0, saldoSets = 0 })
                     .ToList();
             }
             else
             {
                 return db.InscricaoTorneio
-                        .Where(it => it.classe == classe.Id && it.grupo == grupo && it.isAtivo && it.pontuacaoFaseGrupo == -100)
+                        .Where(it => it.torneioId == classe.torneioId && it.classe == classe.Id && it.grupo == grupo && it.isAtivo && it.pontuacaoFaseGrupo == -100)
                         .Select(s => new ClassificacaoFaseGrupo() { userId = s.userId, inscricao = s, nome = s.participante.nome, nomeDupla = s.parceiroDupla != null ? s.parceiroDupla.nome : "", averageGames = 0, averageSets = 0, confrontoDireto = 0, saldoGames = 0, saldoSets = 0 })
                         .ToList();
             }
