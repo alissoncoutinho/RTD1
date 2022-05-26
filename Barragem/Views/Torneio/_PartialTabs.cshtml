@@ -9,7 +9,7 @@
 </div>
 
 <ul class="nav nav-tabs" id="myTab">
-    <li @if (@ViewBag.flag == "painel") { @Html.Raw("class='active'") }><a href="@Url.Action("PainelTorneio", new { id = @ViewBag.TorneioId })"><b>Painel</b></a></li>
+    <li @if (@ViewBag.flag == "painelTorneio") { @Html.Raw("class='active'") }><a href="@Url.Action("PainelTorneio", new { torneioId = @ViewBag.TorneioId })"><b>Painel</b></a></li>
     <li @if (@ViewBag.flag == "edit") { @Html.Raw("class='active'") }><a href="@Url.Action("EditTorneio", new { id = @ViewBag.TorneioId })"><b>Informações</b></a></li>
     <li @if (@ViewBag.flag == "classes") { @Html.Raw("class='active'") }><a href="@Url.Action("EditClasse", new { torneioId = @ViewBag.TorneioId })"><b>Classes</b></a></li>
     <li @if (@ViewBag.flag == "inscritos") { @Html.Raw("class='active'") }><a href="@Url.Action("EditInscritos", new { torneioId = @ViewBag.TorneioId })"><b>Inscritos</b></a></li>

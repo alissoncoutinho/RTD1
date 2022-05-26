@@ -1107,7 +1107,7 @@ namespace Barragem.Controllers
         public ActionResult EditObs(int torneioId)
         {
             List<InscricaoTorneio> inscricao = db.InscricaoTorneio.Where(i => i.torneioId == torneioId && i.observacao != null && i.observacao != "").ToList();
-            
+
             CarregarDadosEssenciais(torneioId, "obs");
             return View(inscricao);
         }
@@ -1215,7 +1215,7 @@ namespace Barragem.Controllers
         {
             mensagem(msg);
             var patrocinadores = db.Patrocinador.Where(p => p.torneioId == torneioId).ToList();
-            
+
             CarregarDadosEssenciais(torneioId, "patrocinio");
             return View(patrocinadores);
         }
@@ -1511,7 +1511,7 @@ namespace Barragem.Controllers
                 return HttpNotFound();
             }
             ViewBag.LinkParaCopia = "https://" + HttpContext.Request.Url.Host + "/torneio-" + torneio.Id;
-            
+
             CarregarDadosEssenciais(id, "edit");
             return View(torneio);
         }
@@ -2191,7 +2191,7 @@ namespace Barragem.Controllers
             ViewBag.isModeloTodosContraTodos = torneio.barragem.isModeloTodosContraTodos;
             ViewBag.CobrancaTorneio = getDadosDeCobrancaTorneio(torneio.Id);
             ViewBag.LinkParaCopia = "https://" + HttpContext.Request.Url.Host + "/torneio-" + torneio.Id;
-            
+
             CarregarDadosEssenciais(torneio.Id, "edit");
             return View(torneio);
         }
@@ -4093,9 +4093,35 @@ namespace Barragem.Controllers
 
         public ActionResult PainelTorneio(int torneioId)
         {
-            ViewBag.TorneioId = torneioId;
-            ViewBag.flag = "cabecachave";
-            return View(new { });
+            var dadosPagina = new PainelTorneioModel();
+
+            var torneio = db.Torneio.Find(torneioId);
+
+            List<SelectListItem> opcoesStatusInscricao = new List<SelectListItem>()
+            {
+                { new SelectListItem() { Text = "Recebendo inscrições", Value = ((int)StatusInscricaoPainelTorneio.ABERTA).ToString() } },
+                { new SelectListItem() { Text = "Não receber inscrições", Value = ((int)StatusInscricaoPainelTorneio.PAUSADA).ToString() } },
+                { new SelectListItem() { Text = "Receber inscrições só até:", Value = ((int)StatusInscricaoPainelTorneio.LIBERADA_ATE).ToString() } }
+            };
+
+            List<SelectListItem> opcoesDivulgacao = new List<SelectListItem>()
+            {
+                { new SelectListItem() { Text = "Não divulgar por enquanto", Value = "nao divulgar" } },
+                { new SelectListItem() { Text = "No meu ranking", Value = "ranking" } },
+                { new SelectListItem() { Text = "Na minha cidade", Value = "cidade" } }
+            };
+
+            dadosPagina.TorneioId = torneioId;
+            dadosPagina.DataFimInscricoes = torneio.dataFimInscricoes;
+            dadosPagina.IsAtivo = torneio.isAtivo;
+            dadosPagina.LiberaVisualizacaoTabela = torneio.liberarTabela;
+            dadosPagina.LiberaVisualizacaoInscritos = torneio.liberaTabelaInscricao;
+            dadosPagina.LinkParaCopia = "https://" + HttpContext.Request.Url.Host + "/torneio-" + torneio.Id;
+            dadosPagina.ListaOpcoesStatusInscricao = new SelectList(opcoesStatusInscricao, "Value", "Text", (int)StatusInscricaoPainelTorneio.LIBERADA_ATE);
+            dadosPagina.ListaOpcoesDivulgacao = new SelectList(opcoesDivulgacao, "Value", "Text", "ranking");
+            
+            CarregarDadosEssenciais(torneioId, "painelTorneio");
+            return View(dadosPagina);
         }
 
         private List<CabecaChaveModel> PopularDadosCabecaChave(List<InscricaoTorneio> inscricoes, List<InscricaoTorneio> todasIncricoes, bool classeDupla)

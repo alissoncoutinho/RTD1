@@ -235,4 +235,11 @@ namespace Barragem.Models
         public string link { get; set; }
         public string erroGerarQrCode { get; set; }
     }
+
+    public enum StatusInscricaoPainelTorneio
+    {
+        ABERTA = 1,
+        PAUSADA = 2,
+        LIBERADA_ATE = 3
+    }
 }

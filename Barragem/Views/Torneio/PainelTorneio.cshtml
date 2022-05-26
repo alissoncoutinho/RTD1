@@ -1,130 +1,187 @@
 ﻿@{
-    int i = 0;
-}
-@model IEnumerable<Barragem.Models.CabecaChaveModel>
-    @Html.Partial("_PartialTabs")
 
-    <div class="tab-content">
-        <div class="tab-pane fade in active" id="tabPainel">
-            <br>
-            
+}
+@model Barragem.Models.PainelTorneioModel
+
+<!--CSS INICIO-->
+<link rel="stylesheet" href="/Content/css/toogleButton.css">
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<style>
+    .labelInformacao {
+        font-size: small;
+        color: red;
+    }
+</style>
+<!--CSS FIM-->
+
+@Html.Partial("_PartialTabs")
+
+<div class="tab-content">
+    <div class="tab-pane fade in active" id="tabPainelTorneio">
+
+        <div class="box box-primary">
+
+            <div class="box-body" style="margin:30px">
+                <div class="row form-group">
+                    @Html.Label("Status da Inscrição", new { @class = "col-sm-2 control-label" })
+
+                    <div class="col-md-3 input-group" style="float:left !important">
+                        @Html.DropDownList("StatusInscricao", Model.ListaOpcoesStatusInscricao, new { @id = "ddlStatusInscricao", @class = "col-md-1 form-control", onchange = "selectedStatusInscricao(this)" })
+                    </div>
+                    <div class="col-md-3 input-group date" id="dataFimInscricoes" data-date-format="dd/mm/yyyy" style="padding-left:20px">
+                        <input type="text" name="dataFimInscricoes" id="dataFimInscricoes" value="@Model.DataFimInscricoes.ToShortDateString()" class="form-control" readonly="readonly" />
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar">
+                            </span>
+                        </span>
+                    </div>
+
+                </div>
+
+                <div class="row form-group">
+
+                    <div>
+                        @Html.Label("Onde gostaria de divulgar o torneio?", new { @class = "col-sm-2 control-label" })
+                        <div class="col-md-3 input-group">
+                            @Html.DropDownList("OpcoesDivulgacao", Model.ListaOpcoesDivulgacao, new { @id = "ddlOpcoesDivulgacao", @class = "col-md-1 form-control", onchange = "selectedOpcaoDivulgacao(this)" })
+                        </div>
+                    </div>
+                    <label id="lblDescDivulgacao" class="col-sm-12 control-label labelInformacao"></label>
+                </div>
+                @if (Model.IsAtivo)
+                {
+                    <div id="divLink" class="row form-group" style="margin-top:10px">
+                        @Html.Label("Copiar link do torneio", new { @class = "col-sm-2 control-label" })
+                        <div class="col-md-3 input-group">
+                            <button id="btnCopiarLink"> <span class="glyphicon glyphicon-share" onclick="copiarLinkTorneio()" /></button>
+                        </div>
+                        <label id="lblDescDivulgacao" class="col-sm-12 control-label labelInformacao">Divulgue esse link para jogadores fazerem a inscrição.</label>
+                    </div>
+
+                    <div id="divNotificarApp" class="row form-group" style="margin-top:10px">
+                        @Html.Label("Divulgar no app", new { @class = "col-sm-2 control-label" })
+                        <div class="col-md-3 input-group">
+                            <button id="btnNotificarApp" class="btn btn-default" onclick="divulgarTorneioApp(@Model.TorneioId)">Enviar Notificação</button>
+                        </div>
+                    </div>
+                }
+
+                <div class="row form-group">
+                    <label class="switch" style="vertical-align: middle;">
+                        <input type="checkbox" id="chkLiberaVisualizacaoTabela" @if (Model.LiberaVisualizacaoTabela) { @Html.Raw("checked")} onclick="liberarVisualizacaoTabela(this)">
+                        <span class="slider round"></span>
+                    </label>
+                    <label> Liberar visualização da tabela do torneio</label>
+                </div>
+                <div class="row form-group">
+                    <label class="switch" style="vertical-align: middle;">
+                        <input type="checkbox" id="chkLiberaVisualizacaoInscritos" @if (Model.LiberaVisualizacaoInscritos) { @Html.Raw("checked")} onclick="liberarVisualizacaoInscritos(this)"> 
+                        <span class="slider round"></span>
+                    </label>
+                    <label> Liberar visualização dos inscritos do torneio</label>
+                </div>
+            </div>
         </div>
     </div>
+</div>
 
-    <style>
-        select option:disabled {
-            color: #ff0000;
-            font-weight: bold;
+
+
+@section Scripts {
+    
+    <script type="text/javascript">
+        $("#dataFimInscricoes").datepicker({
+            language: 'pt-BR',
+            pickTime: false,
+            locale: 'pt-br',
+            dateFormat: 'dd/mm/yy',
+        });
+
+        function liberarVisualizacaoTabela(el) {
+
         }
-    </style>
 
-    @section Scripts {
-        <script type="text/javascript">
+        function liberarVisualizacaoInscritos(el) {
 
-            function validarCabecaChave(element) {
-                var qtdeRegistros = parseInt($("#qtdeRegistros").val());
+        }
+        
+        function copiarLinkTorneio() {
+            event.preventDefault();
+            navigator.clipboard.writeText('@Model.LinkParaCopia');
+            toastr.success("Link copiado com sucesso.", "Aviso");
+        }
 
-                var nomeComboAtualSelecionado = element.getAttribute("name");
-                var valorAtualSelecionado = element.value;
-
-                var nomeItemAnteriorSelecionado = ObterNomeItemAnteriorSelecionado(nomeComboAtualSelecionado);
-                var valorAnteriorSelecionado = parseInt($("#" + nomeItemAnteriorSelecionado).val());
-
-                for (var i = 1; i <= qtdeRegistros; i++) {
-                    var nomeComboValidacao = "cabecaChave" + i;
-
-                    if (nomeComboAtualSelecionado != nomeComboValidacao) {
-
-                        if (valorAtualSelecionado != 100) {
-                            //Desabilita em outros combos da lista a opção selecionada
-                            $("#" + nomeComboValidacao + " option[value='" + valorAtualSelecionado + "']").prop("disabled", true);
-                        }
-
-                        if (valorAnteriorSelecionado != 100) {
-                            //Habilita em outros combos da lista a opçao anterior que estava bloqueada
-                            $("#" + nomeComboValidacao + " option[value='" + valorAnteriorSelecionado + "']").prop("disabled", false);
-                        }
-                    }
-                }
-                $("#" + nomeItemAnteriorSelecionado).val(element.value);
-
-                EfetivarAlteracaoCabecaChave(ObterIdInscricao(nomeComboAtualSelecionado), valorAtualSelecionado);
-
-            }
-
-            function EfetivarAlteracaoCabecaChave(id, cabecaChave) {
-                $.ajax({
-                        type: "POST",
-                        url: "/Torneio/EditCabecaChave",
-                        dataType: "json",
-                        data: "{'Id':'" + id + "', 'cabecaChave':'" + cabecaChave + "'}",
-                        contentType: "application/json; charset=utf-8",
-                        success: function (response) {
-                            if (typeof response == "object") {
-                                toastr.options = {
-                                    "positionClass": "toast-top-center"
-                                }
-                                if (response.retorno === 0) {
-                                    toastr.error(response.erro, "Erro");
-                                } else {
-                                    toastr.success("Atualização realizada com sucesso.", "Aviso");
-                                }
+        function divulgarTorneioApp(torneioId) {
+            event.preventDefault();
+            $.ajax(
+                {
+                    type: 'GET',
+                    url: '/Torneio/NotificarViaApp',
+                    data: "torneioId=" + torneioId,
+                    contentType: "application/json; charset=utf-8",
+                    success: function (response) {
+                        if (typeof response == "object") {
+                            if (response.retorno === 1) {
+                                toastr.success("Notificação enviada com sucesso: " + response.segmento, "Aviso");
+                            } else {
+                                toastr.error("Erro ao enviar notificação via APP.", "Erro");
                             }
-                        },
-                        error: function (jqXHR, textStatus, errorThrown) {
-                            location.reload(true);
                         }
-                    });
-            }
-
-            function ObterNomeItemAnteriorSelecionado(nomeComboAtualSelecionado) {
-                var qtdeRegistros = parseInt($("#qtdeRegistros").val());
-                var nome = "";
-                for (var i = 1; i <= qtdeRegistros; i++) {
-                    var nomeComboValidacao = "cabecaChave" + i;
-                    if (nomeComboAtualSelecionado == nomeComboValidacao) {
-                        nome = "oldCabecaChave" + i;
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        toastr.error("Erro ao enviar notificação via APP.", "Erro");
                     }
                 }
-                return nome;
+            );
+        }
+
+        function selectedStatusInscricao(el) {
+            AtualizarStatusInscricao(el.value);
+        }
+
+        function selectedOpcaoDivulgacao(el) {
+            AtualizarLabelOpcaoDivulgacao(el.value);
+        }
+
+        function AtualizarLabelOpcaoDivulgacao(valorSelecionado)
+        {
+            var label = $("#lblDescDivulgacao");
+
+            if (valorSelecionado == "ranking") {
+                MostrarCamposDivulgacao(true);
+                label.text("Apenas pessoas cadastradas no seu ranking conseguem ver o torneio no app.");
             }
-
-            function ObterIdInscricao(nomeComboAtualSelecionado) {
-                var qtdeRegistros = parseInt($("#qtdeRegistros").val());
-                var nome = "";
-                for (var i = 1; i <= qtdeRegistros; i++) {
-                    var nomeComboValidacao = "cabecaChave" + i;
-                    if (nomeComboAtualSelecionado == nomeComboValidacao) {
-                        nome = "idInscricao" + i;
-                    }
-                }
-                return parseInt($("#" + nome).val());
+            else if (valorSelecionado == "cidade") {
+                MostrarCamposDivulgacao(true);
+                label.text("Todos jogadores da sua cidade conseguem ver seu torneio no app.");
             }
-
-            function CarregarValoresIniciaisSelecionados() {
-                var qtdeRegistros = parseInt($("#qtdeRegistros").val());
-                for (var i = 1; i <= qtdeRegistros; i++) {
-                    var nomeComboValidacao = "cabecaChave" + i;
-                    var valorComboValidacao = document.getElementById(nomeComboValidacao).value;
-                    $("#oldCabecaChave" + i).val(valorComboValidacao);
-
-                    for (var j = 1; j <= qtdeRegistros; j++) {
-                        var nomeComboDesabilitaOpt = "cabecaChave" + j;
-                        if (nomeComboValidacao != nomeComboDesabilitaOpt && valorComboValidacao != 100) {
-                            $("#" + nomeComboDesabilitaOpt + " option[value='" + valorComboValidacao + "']").prop("disabled", true);
-                        }
-                    }
-                }
+            else {
+                MostrarCamposDivulgacao(false);
+                label.text("Seu torneio não está sendo divulgado.");
             }
+        }
 
-            function Selecionar() {
-                var torneioId = document.getElementById('torneioId').value;
-                var classeId = document.getElementById('filtroClasse').value;
-                var filtroJogador = document.getElementById('filtroJogador').value;
-                window.location = "EditCabecaChave?torneioId=" + torneioId + "&filtroClasse=" + classeId + "&filtroJogador=" + filtroJogador;
+        function MostrarCamposDivulgacao(podeMostrar) {
+            if (podeMostrar) {
+                document.getElementById("divLink").style.display = 'block';
+                document.getElementById("divNotificarApp").style.display = 'block';
             }
+            else {
+                document.getElementById("divLink").style.display = 'none';
+                document.getElementById("divNotificarApp").style.display = 'none';
+            }
+        }
 
-            CarregarValoresIniciaisSelecionados();
+        function AtualizarStatusInscricao(valorSelecionado) {
+            if (valorSelecionado == "3") {
+                document.getElementById("dataFimInscricoes").style.display = 'table';
+            }
+            else {
+                document.getElementById("dataFimInscricoes").style.display = 'none';
+            }
+        }
 
-        </script>
-    }
+        AtualizarLabelOpcaoDivulgacao($("#ddlOpcoesDivulgacao").val());
+        AtualizarStatusInscricao($("#ddlStatusInscricao").val());
+    </script>
+}
