@@ -1,11 +1,11 @@
 ﻿
 <div class="box-header with-border">
-    <h4>
+    <h3 class="dashboard">
         <a href="/Torneio/Index" class="voltar">
             <img src="/Content/img/back.svg" alt="icone">
             Voltar
         </a> | @ViewBag.NomeTorneio
-    </h4>
+    </h3>
 </div>
 
 <ul class="nav nav-tabs" id="myTab">
@@ -30,5 +30,27 @@
     .nav-tabs {
         flex-wrap: wrap;
         display: initial;
+        margin-bottom:2px;
     }
+
+    .voltar {
+        font-weight: bold;
+        font-size: 18px;
+        line-height: 23px;
+        color: #989898;
+        text-decoration: none;
+        margin-right: 10px;
+    }
+        .voltar:hover {
+            color: #989898;
+            opacity: 0.6;
+            text-decoration:none;
+        }
+    .dashboard {
+        font-style: normal;
+        font-weight: bold;
+        font-size: 20px;
+        color: #014626;
+    }
+
 </style>
