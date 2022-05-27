@@ -1443,7 +1443,8 @@ namespace Barragem.Controllers
 
                 if (isAtivo)
                 {
-                    classesPagtoOk.Add(inscricao.classeTorneio.nome);
+                    var classeT = db.ClasseTorneio.Find(classe);
+                    classesPagtoOk.Add(classeT.nome);
                 }
 
                 db.Entry(inscricao).State = EntityState.Modified;
