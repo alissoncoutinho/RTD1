@@ -4118,9 +4118,9 @@ namespace Barragem.Controllers
             dadosPagina.LiberaVisualizacaoTabela = torneio.liberarTabela;
             dadosPagina.LiberaVisualizacaoInscritos = torneio.liberaTabelaInscricao;
             dadosPagina.LinkParaCopia = "https://" + HttpContext.Request.Url.Host + "/torneio-" + torneio.Id;
-            dadosPagina.ListaOpcoesStatusInscricao = new SelectList(opcoesStatusInscricao, "Value", "Text", (int)StatusInscricaoPainelTorneio.LIBERADA_ATE);
-            dadosPagina.ListaOpcoesDivulgacao = new SelectList(opcoesDivulgacao, "Value", "Text", "ranking");
-            
+            dadosPagina.ListaOpcoesStatusInscricao = new SelectList(opcoesStatusInscricao, "Value", "Text", torneio.StatusInscricao);
+            dadosPagina.ListaOpcoesDivulgacao = new SelectList(opcoesDivulgacao, "Value", "Text", torneio.divulgacao);
+
             CarregarDadosEssenciais(torneioId, "painelTorneio");
             return View(dadosPagina);
         }
@@ -4196,6 +4196,103 @@ namespace Barragem.Controllers
                 }
 
                 return Json(new { erro = "", retorno = 1 }, "text/plain", JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { erro = ex.Message, retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpPost]
+        public ActionResult LiberarVisualizacaoTabela(int torneioId, bool liberar)
+        {
+            try
+            {
+                var torneio = db.Torneio.Find(torneioId);
+                torneio.liberarTabela = liberar;
+                db.Entry(torneio).State = EntityState.Modified;
+                db.SaveChanges();
+
+                return Json(new { erro = "", retorno = 1 }, "text/plain", JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { erro = ex.Message, retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpPost]
+        public ActionResult LiberarVisualizacaoInscritos(int torneioId, bool liberar)
+        {
+            try
+            {
+                var torneio = db.Torneio.Find(torneioId);
+                torneio.liberaTabelaInscricao = liberar;
+                db.Entry(torneio).State = EntityState.Modified;
+                db.SaveChanges();
+
+                return Json(new { erro = "", retorno = 1 }, "text/plain", JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { erro = ex.Message, retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpPost]
+        public ActionResult AtualizarStatusInscricao(int torneioId, StatusInscricaoPainelTorneio statusInscricao, string dataFimInscricao)
+        {
+            try
+            {
+                var torneio = db.Torneio.Find(torneioId);
+
+                if (statusInscricao == StatusInscricaoPainelTorneio.LIBERADA_ATE)
+                {
+                    torneio.dataFimInscricoes = DateTime.ParseExact(dataFimInscricao, "dd/MM/yyyy", null);
+                }
+                torneio.StatusInscricao = (int)statusInscricao;
+
+                db.Entry(torneio).State = EntityState.Modified;
+                db.SaveChanges();
+
+                return Json(new { erro = "", retorno = 1 }, "text/plain", JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { erro = ex.Message, retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpPost]
+        public ActionResult AtualizarDivulgacaoTorneio(int torneioId, string opcaoSelecionada)
+        {
+            try
+            {
+                var torneio = db.Torneio.Find(torneioId);
+
+                torneio.isAtivo = true;
+                torneio.divulgaCidade = false;
+                torneio.isOpen = false;
+
+                if (opcaoSelecionada == "nao divulgar")
+                {
+                    torneio.isAtivo = false;
+                }
+                if (opcaoSelecionada == "cidade")
+                {
+                    torneio.divulgaCidade = true;
+                }
+                if (opcaoSelecionada == "brasil")
+                {
+                    torneio.isOpen = true;
+                }
+
+                torneio.divulgacao = opcaoSelecionada;
+
+                db.Entry(torneio).State = EntityState.Modified;
+                db.SaveChanges();
+
+                return Json(new { erro = "", retorno = 1, isAtivo = torneio.isAtivo }, "text/plain", JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {

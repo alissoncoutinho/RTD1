@@ -149,8 +149,7 @@ namespace Barragem.Models
 
         public bool? inscricaoSoPeloSite { get; set; }
 
-
-
+        public int StatusInscricao { get; set; }
     }
 
 
