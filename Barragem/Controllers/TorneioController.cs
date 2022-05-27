@@ -674,7 +674,7 @@ namespace Barragem.Controllers
                 grupo = 1;
                 var classificacaoGrupo = tn.ordenarClassificacaoFaseGrupo(classe, grupo);
                 ViewBag.classificacaoGrupo = classificacaoGrupo;
-                ViewBag.InscritosWO = ObterInscritosComWO(classe);
+                ViewBag.InscritosWO = ObterInscritosComWO(classe, grupo);
                 var qtddJogosPorRodada = (classificacaoGrupo.Count() > 0) ? (int)classificacaoGrupo.Count() / 2 : 2;
                 qtddJogosPorRodada = (qtddJogosPorRodada % 2 != 0) ? qtddJogosPorRodada + 1 : qtddJogosPorRodada;
 
@@ -705,7 +705,7 @@ namespace Barragem.Controllers
                     }
                     var classificacaoGrupo = tn.ordenarClassificacaoFaseGrupo(classe, grupo);
                     ViewBag.classificacaoGrupo = classificacaoGrupo;
-                    ViewBag.InscritosWO = ObterInscritosComWO(classe);
+                    ViewBag.InscritosWO = ObterInscritosComWO(classe, grupo);
                     var qtddJogosPorRodada = (classificacaoGrupo.Count() > 0) ? (int)classificacaoGrupo.Count() / 2 : 2;
                     qtddJogosPorRodada = (qtddJogosPorRodada % 2 != 0) ? qtddJogosPorRodada + 1 : qtddJogosPorRodada;
                     ViewBag.grupo = grupo;
@@ -740,19 +740,19 @@ namespace Barragem.Controllers
             return View(jogos);
         }
 
-        private List<ClassificacaoFaseGrupo> ObterInscritosComWO(ClasseTorneio classe)
+        private List<ClassificacaoFaseGrupo> ObterInscritosComWO(ClasseTorneio classe, int grupo)
         {
             if (classe.isDupla)
             {
                 return db.InscricaoTorneio
-                    .Where(it => it.classe == classe.Id && it.isAtivo && it.parceiroDuplaId != null && it.parceiroDuplaId != 0 && it.pontuacaoFaseGrupo == -100)
+                    .Where(it => it.torneioId == classe.torneioId && it.classe == classe.Id && it.grupo == grupo && it.isAtivo && it.parceiroDuplaId != null && it.parceiroDuplaId != 0 && it.pontuacaoFaseGrupo == -100)
                     .Select(s => new ClassificacaoFaseGrupo() { userId = s.userId, inscricao = s, nome = s.participante.nome, nomeDupla = s.parceiroDupla != null ? s.parceiroDupla.nome : "", averageGames = 0, averageSets = 0, confrontoDireto = 0, saldoGames = 0, saldoSets = 0 })
                     .ToList();
             }
             else
             {
                 return db.InscricaoTorneio
-                        .Where(it => it.classe == classe.Id && it.isAtivo && it.pontuacaoFaseGrupo == -100)
+                        .Where(it => it.torneioId == classe.torneioId && it.classe == classe.Id && it.grupo == grupo && it.isAtivo && it.pontuacaoFaseGrupo == -100)
                         .Select(s => new ClassificacaoFaseGrupo() { userId = s.userId, inscricao = s, nome = s.participante.nome, nomeDupla = s.parceiroDupla != null ? s.parceiroDupla.nome : "", averageGames = 0, averageSets = 0, confrontoDireto = 0, saldoGames = 0, saldoSets = 0 })
                         .ToList();
             }
@@ -1442,7 +1442,8 @@ namespace Barragem.Controllers
 
                 if (isAtivo)
                 {
-                    classesPagtoOk.Add(inscricao.classeTorneio.nome);
+                    var classeT = db.ClasseTorneio.Find(classe);
+                    classesPagtoOk.Add(classeT.nome);
                 }
 
                 db.Entry(inscricao).State = EntityState.Modified;

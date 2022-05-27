@@ -52,7 +52,7 @@
                         <div class="row clearfix">
                             <div id="nomeDesafiante" class="form-group col-md-3 col-xs-5" style="color:#40898e"></div>
                             <div class="form-group col-md-1 col-xs-1"></div>
-                            <div id="nomeDesafiado" class="form-group col-md-4 col-xs-5" style="color:#ff6a00"></div>
+                            <div id="nomeDesafiado" class="form-group col-md-3 col-xs-5" style="color:#ff6a00"></div>
                         </div>
                         <div class="row clearfix">
                             <div class="form-group col-md-3 col-xs-5">
@@ -251,10 +251,10 @@
                         <th>
                             @Html.DisplayName("Status")
                         </th>
-                        <th>
+                        <th width="185px">
                             @Html.DisplayName("Data")
                         </th>
-                        <th>
+                        <th width="85px">
                             @Html.DisplayName("Horário")
                         </th>
                         <th>
@@ -308,6 +308,17 @@
                                         <a href="@item.desafiante.linkwhatsapp">
                                             <img width="25" height="25" src="/Content/image/whatsapp.png">
                                         </a>
+                                        if (item.desafiante2 != null)
+                                        {
+                                            <br />
+                                            <input type="hidden" name="@Html.Raw("jogador1DuplaNome_" + i)" id="@Html.Raw("jogador1DuplaNome_" + i)" value="@item.desafiante2.nome">
+                                            <a href="@Url.Action("../Account/Detalhes", new { userId = item.desafiante2_id, mostrarClasse = false })" title="Detalhes do jogador">
+                                                @item.desafiante2.nome
+                                            </a>
+                                            <a href="@item.desafiante2.linkwhatsapp">
+                                                <img width="25" height="25" src="/Content/image/whatsapp.png">
+                                            </a>
+                                        }
                                     }
                                 }
                             </td>
@@ -350,6 +361,17 @@
                                         <a href="@item.desafiado.linkwhatsapp">
                                             <img width="25" height="25" src="/Content/image/whatsapp.png">
                                         </a>
+                                        if (item.desafiado2 != null)
+                                        {
+                                            <br />
+                                            <input type="hidden" name="@Html.Raw("jogador2DuplaNome_" + i)" id="@Html.Raw("jogador2DuplaNome_" + i)" value="@item.desafiado2.nome">
+                                            <a href="@Url.Action("../Account/Detalhes", new { userId = item.desafiado2_id, mostrarClasse = false })" title="Detalhes do jogador">
+                                                @item.desafiado2.nome
+                                            </a>
+                                            <a href="@item.desafiado2.linkwhatsapp">
+                                                <img width="25" height="25" src="/Content/image/whatsapp.png">
+                                            </a>
+                                        }
                                     }
                                 }
                             </td>
@@ -375,8 +397,8 @@
                             <td>
 
                                 <div class="input-group date" data-date-format="dd/mm/yyyy">
-                                    <input id="@Html.Raw("dataJogo" + i)" name="@Html.Raw("dataJogo" + i)" value="@Html.Raw(String.Format("{0:dd/MM/yyyy}", item.dataJogo))" placeholder="dd/mm/yyyy" type="text" class="form-control col-md-5" />
-                                    <span class="input-group-addon">
+                                    <input id="@Html.Raw("dataJogo" + i)" name="@Html.Raw("dataJogo" + i)" value="@Html.Raw(String.Format("{0:dd/MM/yyyy}", item.dataJogo))" placeholder="dd/mm/yyyy" type="text" class="form-control col-md-5" @if (item.desafiante_id == 10 || item.desafiado_id == 10) { @Html.Raw("disabled") } />
+                                    <span class="input-group-addon @if (item.desafiante_id == 10 || item.desafiado_id == 10) { @Html.Raw("desabilitaCampo") }">
                                         <span class="glyphicon glyphicon-calendar">
                                         </span>
                                     </span>
@@ -385,12 +407,12 @@
                             <td>
                                 <div class="input-group">
                                     <div class="form-group">
-                                        <input id="@Html.Raw("horaJogo" + i)" name="@Html.Raw("horaJogo" + i)" value="@Html.Raw(item.horaJogo)" placeholder="hh:mm" type="text" class="form-control col-sm-4 hora" />
+                                        <input id="@Html.Raw("horaJogo" + i)" name="@Html.Raw("horaJogo" + i)" value="@Html.Raw(item.horaJogo)" placeholder="hh:mm" type="text" class="form-control col-sm-4 hora" @if (item.desafiante_id == 10 || item.desafiado_id == 10) { @Html.Raw("disabled") }/>
                                     </div>
                                 </div>
                             </td>
                             <td>
-                                <select name="@Html.Raw("quadra" + i)" id="@Html.Raw("quadra" + i)" class="form-control">
+                                <select name="@Html.Raw("quadra" + i)" id="@Html.Raw("quadra" + i)" class="form-control"  @if (item.desafiante_id == 10 || item.desafiado_id == 10) { @Html.Raw("disabled") }>
                                     <option value="100" @if (item.quadra == "100") { @Html.Raw("selected") }></option>
                                     <option value="1" @if (item.quadra == "1") { @Html.Raw("selected") }>quadra 1</option>
                                     <option value="2" @if (item.quadra == "2") { @Html.Raw("selected") }>quadra 2</option>
@@ -437,6 +459,13 @@
 
     </div>
     <style>
+
+        .desabilitaCampo {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+
         .exibir-escolhaDeClasses {
             overflow: hidden;
             max-height: 0px;
@@ -499,7 +528,19 @@
                 var desafiado = document.querySelector("#jogador2_" + indice);
                 if (typeof desafiante.options === "undefined") {
                     var nomeDesafiante = document.getElementById("jogador1Nome_" + indice).value;
+
+                    var lblNomeDuplaDesafiante = document.getElementById("jogador1DuplaNome_" + indice);
+                    if (lblNomeDuplaDesafiante != null) { 
+                        var nomeDesafiante2 = lblNomeDuplaDesafiante.value;
+                    }
                     var nomeDesafiado = document.getElementById("jogador2Nome_" + indice).value;
+
+                    var lblNomeDuplaDesafiado = document.getElementById("jogador2DuplaNome_" + indice);
+                    if (lblNomeDuplaDesafiado != null) {
+                        var nomeDesafiado2 = lblNomeDuplaDesafiado.value;
+                    }
+
+                    
                 } else {
                     var nomeDesafiante = desafiante.options[desafiante.selectedIndex].text;
                     var nomeDesafiado = desafiado.options[desafiado.selectedIndex].text;
@@ -531,8 +572,19 @@
 
                 $("select#situacao_id").val(situacao);
                 exibirOpcaoVencedores()
-                $(".modal-body #nomeDesafiante").html(nomeDesafiante);
-                $(".modal-body #nomeDesafiado").html(nomeDesafiado);
+                if (nomeDesafiante2 != undefined) {
+                    $(".modal-body #nomeDesafiante").html(nomeDesafiante + ' / ' + nomeDesafiante2);
+                }
+                else { 
+                    $(".modal-body #nomeDesafiante").html(nomeDesafiante);
+                }
+
+                if (nomeDesafiado2 != undefined) {
+                    $(".modal-body #nomeDesafiado").html(nomeDesafiado + ' / ' + nomeDesafiado2);
+                }
+                else {
+                    $(".modal-body #nomeDesafiado").html(nomeDesafiado);
+                }
                 $(".modal-body #vencedorDesafiadoNome").html(nomeDesafiado);
                 $(".modal-body #vencedorDesafianteNome").html(nomeDesafiante);
             });
@@ -630,7 +682,7 @@
                     }
                 });
             }
-           
+
             function ExibirMsgConfirmaExclusaoJogos(conteudoMensagem) {
 
                 var textoInicial = "<p>Você selecionou categorias que já tem jogos concluídos ou horários marcados. <b>Deseja substituir as tabelas já existentes? </b></p>Categorias cujas tabelas serão zeradas:</br>";
