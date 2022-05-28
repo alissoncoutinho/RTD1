@@ -1096,6 +1096,10 @@ namespace Barragem.Controllers
             {
                 qtddCabecaChave = tn.getQtddGruposFaseGrupos(tn.getInscritosPorClasse(classe, true).Count());
             }
+            else if (classe.faseMataMata && !classe.faseGrupo)
+            {
+                qtddCabecaChave = tn.ObterQtdeCabecasChaveMataMata(tn.getInscritosPorClasse(classe, true).Count());
+            }
             else
             {
                 qtddCabecaChave = 16;
