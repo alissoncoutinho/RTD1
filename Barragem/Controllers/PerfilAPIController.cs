@@ -650,6 +650,14 @@ namespace Barragem.Controllers
             db.Entry(usuarioAlteracao).State = EntityState.Modified;
             db.SaveChanges();
 
+            try
+            {
+                var accController = new AccountController();
+                accController.notificarJogador(usuarioAlteracao.nome, usuarioAlteracao.email, usuarioAlteracao.barragemId);
+                accController.notificarOrganizadorCadastro(usuarioAlteracao.nome, usuarioAlteracao.barragemId, usuarioAlteracao.telefoneCelular);
+            }
+            catch { }
+
             return Ok(true);
         }
 
