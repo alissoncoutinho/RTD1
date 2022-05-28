@@ -1,4 +1,5 @@
-﻿@model Barragem.Models.Torneio
+﻿@using Barragem.Models;
+@model Barragem.Models.Torneio
 @{
     ViewBag.Title = "Torneio de Tênis";
     Layout = "~/Views/Shared/_LayoutTorneio.cshtml";
@@ -14,29 +15,38 @@
     <div class="container text-center">
         @if (ViewBag.patrocinadores.Count > 0)
         {
-        <p>
-            Patrocinadores<br>
-            @foreach (var p in ViewBag.patrocinadores)
-            {
-                <a href="@p.urllink" target="_blank">
-                    <span style="padding:20px">
-                        <img width="120" src="@p.urlImagem">
-                    </span>
-                </a>
-            }
-        </p>
-        } else {
+            <p>
+                Patrocinadores<br>
+                @foreach (var p in ViewBag.patrocinadores)
+                {
+                    <a href="@p.urllink" target="_blank">
+                        <span style="padding:20px">
+                            <img width="120" src="@p.urlImagem">
+                        </span>
+                    </a>
+                }
+            </p>
+        }
+        else
+        {
             <br><br>
         }
         <h2 class="title">@Html.Raw(Model.nome)</h2>
-<p style="text-shadow:0px 2px 2px rgba(0,0,0,0.5)">De @Html.Raw(String.Format("{0:dd/MM/yyyy}", Model.dataInicio)) até @Html.Raw(String.Format("{0:dd/MM/yyyy}", Model.dataFim))
-        <br>Local: @Html.Raw(Model.local) - @Html.Raw(Model.cidade)</p>
-        @if (Model.dataFimInscricoes.AddDays(1)>DateTime.Now){
+        <p style="text-shadow:0px 2px 2px rgba(0,0,0,0.5)">
+            De @Html.Raw(String.Format("{0:dd/MM/yyyy}", Model.dataInicio)) até @Html.Raw(String.Format("{0:dd/MM/yyyy}", Model.dataFim))
+            <br>Local: @Html.Raw(Model.local) - @Html.Raw(Model.cidade)
+        </p>
+        @if ((Model.StatusInscricao == (int)StatusInscricaoPainelTorneio.LIBERADA_ATE && Model.dataFimInscricoes.Date >= DateTime.Now.Date)|| (Model.StatusInscricao == (int)StatusInscricaoPainelTorneio.ABERTA && Model.dataInicio.Date > DateTime.Now.Date))
+        {
             <p><a class="btn btn-cta btn-cta-primary" href="@Url.Action("Login", "Account", new { returnUrl = "torneio", torneioId = Model.Id })">Inscreva-se</a> <a class="btn btn-cta btn-cta-secondary" href="#informacao">Informações</a></p>
-        }else{
+        }
+        else
+        {
             <h3 class="title">Inscrições Encerradas</h3>
-            <p><a class="btn btn-cta btn-cta-secondary" href="../Torneio/Tabela?url=torneio&barra=@Model.barragemId">Ver Tabela</a>
-            <a class="btn btn-cta btn-cta-primary" href="@Url.Action("Login", "Account", new { returnUrl = "torneio", torneioId = Model.Id })">Minha inscrição</a></p>
+            <p>
+                <a class="btn btn-cta btn-cta-secondary" href="../Torneio/Tabela?url=torneio&barra=@Model.barragemId">Ver Tabela</a>
+                <a class="btn btn-cta btn-cta-primary" href="@Url.Action("Login", "Account", new { returnUrl = "torneio", torneioId = Model.Id })">Minha inscrição</a>
+            </p>
         }
     </div>
 </section>
@@ -47,22 +57,34 @@
                 <div class="step text-center col-xs-12 col-sm-4">
                     <h3 class="title"><span class="number"><span class="glyphicon glyphicon-list"></span></span><br><span class="text">Inscrições</span></h3>
                     <p>
-                        @if(Model.valor==0){ 
-                            @Html.Raw("Inscrições Gratuitas.")<br> 
-                        }else{ 
+                        @if (Model.valor == 0)
+                        {
+                            @Html.Raw("Inscrições Gratuitas.")<br>
+                        }
+                        else
+                        {
                             @Html.Raw("Valor da inscrição: R$ " + Model.valor + ",00")<br>
                         }
-                        @if (Model.isDesconto != null && (bool)Model.isDesconto) { 
+                        @if (Model.isDesconto != null && (bool)Model.isDesconto)
+                        {
                             @Html.Raw("Desconto para " + Model.descontoPara + ": R$ " + Model.valorSocio + ",00") <br>
                         }
-                        @if (Model.isMaisUmaClasse){
+                        @if (Model.isMaisUmaClasse)
+                        {
                             @Html.Raw("Valor para 2 classes: R$ " + Model.valorMaisClasses + ",00") <br>
-                            if (Model.isDesconto != null && (bool)Model.isDesconto){
+                            if (Model.isDesconto != null && (bool)Model.isDesconto)
+                            {
                                 @Html.Raw("Valor para 2 classes " + Model.descontoPara + ": R$ " + Model.valorMaisClassesSocio + ",00") <br>
                             }
                         }
-
-                        As inscrições do Torneio vão até o dia @Html.Raw(String.Format("{0:dd/MM/yyyy}", Model.dataFimInscricoes)).
+                        @if (Model.StatusInscricao == (int)StatusInscricaoPainelTorneio.LIBERADA_ATE)
+                        {
+                            @Html.Raw("As inscrições do Torneio vão até o dia ") @Html.Raw(String.Format("{0:dd/MM/yyyy}", Model.dataFimInscricoes) + ".")
+                        }
+                        else if (Model.StatusInscricao == (int)StatusInscricaoPainelTorneio.ABERTA)
+                        {
+                            @Html.Raw("As inscrições do Torneio vão até o dia ") @Html.Raw(String.Format("{0:dd/MM/yyyy}", Model.dataInicio) + ".")
+                        }
                     </p>
                 </div><!--//step-->
                 <div class="step text-center col-xs-12 col-sm-4">
@@ -74,9 +96,10 @@
                     <p>@Html.Raw(Model.contato)</p>
                 </div><!--//step-->
             </div><!--//row-->
-        @if (Model.dataFimInscricoes>DateTime.Now){
-            <div class="text-center"><p><a class="btn btn-cta btn-cta-primary" href="@Url.Action("Login", "Account", new { returnUrl = "torneio", torneioId = Model.Id })">Inscreva-se</a></div>
-        }
+            @if ((Model.StatusInscricao == (int)StatusInscricaoPainelTorneio.LIBERADA_ATE && Model.dataFimInscricoes.Date >= DateTime.Now.Date) || (Model.StatusInscricao == (int)StatusInscricaoPainelTorneio.ABERTA && Model.dataInicio.Date > DateTime.Now.Date))
+            {
+                <div class="text-center"><p><a class="btn btn-cta btn-cta-primary" href="@Url.Action("Login", "Account", new { returnUrl = "torneio", torneioId = Model.Id })">Inscreva-se</a></div>
+            }
         </div><!--//container-->
     </section>
 </div>
