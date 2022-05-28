@@ -122,17 +122,16 @@
     <div class="tab-content">
         <div class="tab-pane fade in active" id="tabJogos">
             <div class="box box-primary">
-                <div class="box-header with-border">
+                <div class="box-header">
                     <h4 class="box-title">Ações da Tabela</h4>
                 </div>
-                <br>
-                <p>
+                <p style="margin-top:10px">
                     <button class="btn btn-primary btn-small exibirClasses"><span class="glyphicon glyphicon-plus"></span> Gerar</button>
-                    <a href="@Url.Action("Tabela", new { torneioId = ViewBag.torneioId })" target="_blank" class="btn btn-success btn-small">Visualizar</a>
-                    <input type="button" value="Imprimir" class="btn btn-warning" onclick="Imprimir()">
+                    <a href="@Url.Action("Tabela", new { torneioId = ViewBag.torneioId })" target="_blank" class="btn btn-success btn-small"><span class="glyphicon glyphicon-list-alt"></span> Visualizar</a>
+                    <button class="btn btn-warning" onclick="Imprimir()"><span class="glyphicon glyphicon-print"></span> Imprimir</button>
                 </p>
 
-                <div class="form-row exibir-escolhaDeClasses" id="classes" style="margin-top:10px">
+                <div class="form-row exibir-escolhaDeClasses" id="classes" style="margin-top:25px">
                     <div class="box box-warning">
                         <div class="box-header with-border">
                             <h3 class="box-title">Selecione as classes para a geração de tabela</h3>
@@ -177,7 +176,7 @@
                 </div>
 
                 <div class="box box-primary">
-                    <div class="box-header with-border">
+                    <div class="box-header">
                         <h4 class="box-title">Filtro de Jogos</h4>
                     </div>
 
@@ -748,7 +747,7 @@
                 var nomeJogador = document.getElementById('fNomeJogador').value;
                 var grupo = document.getElementById('fGrupo').value;
                 var fase = document.getElementById('fase').value;
-                window.location = "ImprimirJogos?torneioId=" + torneioId + "&fClasse=" + classeId + "&fData=" + data + "&fNomeJogador=" + nomeJogador + "&fGrupo=" + grupo + "&fase=" + fase;
+                window.open("ImprimirJogos?torneioId=" + torneioId + "&fClasse=" + classeId + "&fData=" + data + "&fNomeJogador=" + nomeJogador + "&fGrupo=" + grupo + "&fase=" + fase, '_blank');
             }
 
             document.getElementById("IndicadorVencedor").classList.remove("show");
