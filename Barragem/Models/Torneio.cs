@@ -150,6 +150,36 @@ namespace Barragem.Models
         public bool? inscricaoSoPeloSite { get; set; }
 
         public int StatusInscricao { get; set; }
+
+        [NotMapped]
+        public DateTime DataFinalInscricoes 
+        { 
+            get {
+                if (StatusInscricao == (int)StatusInscricaoPainelTorneio.ABERTA)
+                {
+                    //Inscricao Aberta permite sempre novas inscrições
+                    return DateTime.Now.AddDays(7).Date;
+                }
+                else if (StatusInscricao == (int)StatusInscricaoPainelTorneio.LIBERADA_ATE)
+                {
+                    return dataFimInscricoes.Date;
+                }
+                else 
+                {
+                    //Inscrições encerradas
+                    return DateTime.Now.AddDays(-1).Date;
+                }
+            }
+        }
+
+        [NotMapped]
+        public bool PermitirInscricoes
+        {
+            get
+            {
+                return DateTime.Now.Date <= DataFinalInscricoes.Date;
+            }
+        }
     }
 
 
@@ -173,6 +203,31 @@ namespace Barragem.Models
         public bool? inscricaoSoPeloSite { get; set; }
         public bool? isBeachTennis { get; set; }
         public bool? temPIX { get; set; }
+        
+        [NotMapped]
+        public int StatusInscricao { get; set; }
+        
+        [NotMapped]
+        public DateTime DataFinalInscricoes
+        {
+            get
+            {
+                if (StatusInscricao == (int)StatusInscricaoPainelTorneio.ABERTA)
+                {
+                    //Inscricao Aberta permite sempre novas inscrições
+                    return DateTime.Now.AddDays(7).Date;
+                }
+                else if (StatusInscricao == (int)StatusInscricaoPainelTorneio.LIBERADA_ATE)
+                {
+                    return dataFimInscricoes.Date;
+                }
+                else
+                {
+                    //Inscrições encerradas
+                    return DateTime.Now.AddDays(-1).Date;
+                }
+            }
+        }
     }
 
     public class Patrocinador

@@ -200,7 +200,7 @@
                         <div class="row">
                             @Html.Label("Inscrições até", new { @class = "col-sm-5" })
                             <div class="col-sm-7 info-box-text">
-                                @Html.Raw(torneio.dataFimInscricoes.ToShortDateString())
+                                @Html.Raw(torneio.DataFinalInscricoes.ToShortDateString())
                             </div>
                         </div>
                         @if (torneio.isDesconto!=null && (bool)torneio.isDesconto)
@@ -408,7 +408,7 @@
                             </div>
                     <!-- /.box-body -->
                     <div class="box-footer">
-                        @if (torneio.dataFimInscricoes.AddDays(1) >= DateTime.Now)
+                        @if (torneio.PermitirInscricoes)
                         {
                             if (!String.IsNullOrEmpty(ViewBag.statusPagamento))
                             {

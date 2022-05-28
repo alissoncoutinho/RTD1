@@ -217,7 +217,7 @@
                             <div class="row">
                                 @Html.Label("Inscrições até", new { @class = "col-sm-5" })
                                 <div class="col-sm-7 info-box-text">
-                                    @Html.Raw(Model.dataFimInscricoes.ToShortDateString())
+                                    @Html.Raw(Model.DataFinalInscricoes.ToShortDateString())
                                 </div>
                             </div>
                             if (Model.isDesconto!=null && (bool)Model.isDesconto)
@@ -597,7 +597,7 @@
                     </div>
                     <!-- /.box-body -->
                     <div class="box-footer">
-                        @if (Model.dataFimInscricoes.AddDays(1) >= DateTime.Now)
+                        @if (Model.PermitirInscricoes)
                         {
                             if (inscricao != null)
                             {

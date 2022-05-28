@@ -2961,11 +2961,11 @@ namespace Barragem.Controllers
 
                     if (barragemId > 0)
                     {
-                        inscricao = db.InscricaoTorneio.Where(i => i.participante.UserId == usuario.UserId && i.isAtivo && i.torneio.dataFimInscricoes < agora && i.torneio.barragemId == barragemId).OrderByDescending(i => i.Id).Take(1).Single();
+                        inscricao = db.InscricaoTorneio.Where(i => i.participante.UserId == usuario.UserId && i.isAtivo && (i.torneio.StatusInscricao == (int)StatusInscricaoPainelTorneio.ABERTA || (i.torneio.StatusInscricao == (int)StatusInscricaoPainelTorneio.LIBERADA_ATE && i.torneio.dataFimInscricoes >= DateTime.Now.Date)) && i.torneio.barragemId == barragemId).OrderByDescending(i => i.Id).Take(1).Single();
                     }
                     else
                     {
-                        inscricao = db.InscricaoTorneio.Where(i => i.participante.UserId == usuario.UserId && i.isAtivo && i.torneio.dataFimInscricoes < agora).OrderByDescending(i => i.Id).Take(1).Single();
+                        inscricao = db.InscricaoTorneio.Where(i => i.participante.UserId == usuario.UserId && i.isAtivo && (i.torneio.StatusInscricao == (int)StatusInscricaoPainelTorneio.ABERTA || (i.torneio.StatusInscricao == (int)StatusInscricaoPainelTorneio.LIBERADA_ATE && i.torneio.dataFimInscricoes >= DateTime.Now.Date))).OrderByDescending(i => i.Id).Take(1).Single();
                     }
                     ViewBag.NomeTorneio = inscricao.torneio.nome;
                     jogo = db.Jogo.Where(u => (u.desafiado_id == usuario.UserId || u.desafiante_id == usuario.UserId) && u.torneioId == inscricao.torneioId)
@@ -3601,13 +3601,14 @@ namespace Barragem.Controllers
                 var titulo = "Inscrições do " + torneio.nome + " abertas.";
                 var dataHoje = DateTime.Now;
                 var conteudo = "";
-                if (dataHoje.DayOfYear == torneio.dataFimInscricoes.DayOfYear)
+
+                if (dataHoje.DayOfYear == torneio.DataFinalInscricoes.DayOfYear)
                 {
                     conteudo = "Último dia para fazer sua inscrição";
                 }
                 else
                 {
-                    conteudo = "Faça sua inscrição até o dia " + torneio.dataFimInscricoes;
+                    conteudo = "Faça sua inscrição até o dia " + torneio.DataFinalInscricoes;
                 }
 
 
@@ -4092,6 +4093,7 @@ namespace Barragem.Controllers
             return View(dadosTela);
         }
 
+        [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
         public ActionResult PainelTorneio(int torneioId)
         {
             var dadosPagina = new PainelTorneioModel();
@@ -4281,10 +4283,6 @@ namespace Barragem.Controllers
                 if (opcaoSelecionada == "cidade")
                 {
                     torneio.divulgaCidade = true;
-                }
-                if (opcaoSelecionada == "brasil")
-                {
-                    torneio.isOpen = true;
                 }
 
                 torneio.divulgacao = opcaoSelecionada;
