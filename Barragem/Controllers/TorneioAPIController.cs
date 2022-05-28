@@ -452,7 +452,7 @@ namespace Barragem.Controllers
             {
                 throw new BusinessException(message: "Não é possível carregar tabela. Você não possui inscrição no torneio.");
             }
-            else if (inscricaoUser.Any(x => x.isAtivo == false))
+            else if (inscricaoUser.Count(x => x.isAtivo == false) == inscricaoUser.Count)
             {
                 throw new BusinessException(message: "Não é possível carregar tabela. O pagamento da inscrição esta pendente.");
             }
