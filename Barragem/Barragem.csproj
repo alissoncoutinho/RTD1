@@ -283,6 +283,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helper\CustomExceptions\BusinessException.cs" />
     <Compile Include="Helper\HtmlHelpers.cs" />
     <Compile Include="Helper\DateTimeHelper.cs" />
     <Compile Include="Helper\SessionHelper.cs" />

@@ -1,6 +1,7 @@
 ﻿using Barragem.Class;
 using Barragem.Context;
 using Barragem.Helper;
+using Barragem.Helper.CustomExceptions;
 using Barragem.Models;
 using System;
 using System.Collections.Generic;
@@ -390,11 +391,17 @@ namespace Barragem.Controllers
             {
                 return Ok(ObterTabela(userId, torneioId));
             }
+            catch (BusinessException bEx)
+            {
+                var msgErro = $"TORNEIOAPI_V2 - {DateTimeHelper.GetDateTimeBrasilia()} - Id Torneio: {torneioId} UserId: {userId} [BusinessException] Mensagem: {bEx.Message} StackTrace: {bEx.StackTrace}";
+                GravarLogErro(msgErro);
+                return BadRequest(bEx.Message);
+            }
             catch (Exception ex)
             {
-                var msgErro = $"TORNEIOAPI_V2 - {DateTimeHelper.GetDateTimeBrasilia()} - Id Torneio: {torneioId} UserId: {userId} Mensagem: {ex.Message} StackTrace: {ex.StackTrace}";
+                var msgErro = $"TORNEIOAPI_V2 - {DateTimeHelper.GetDateTimeBrasilia()} - Id Torneio: {torneioId} UserId: {userId} [Exception] Mensagem: {ex.Message} StackTrace: {ex.StackTrace}";
                 GravarLogErro(msgErro);
-                return BadRequest(ex.Message);
+                return BadRequest("Ocorreu um problema ao obter os dados. Contate o organizador do torneio.");
             }
         }
 
@@ -409,11 +416,17 @@ namespace Barragem.Controllers
                 return Ok(ObterTabela(userId, torneioId));
 
             }
+            catch (BusinessException bEx)
+            {
+                var msgErro = $"TORNEIOAPI_V1 - {DateTimeHelper.GetDateTimeBrasilia()} - Id Torneio: {torneioId} UserId: {userId} Mensagem: {bEx.Message} StackTrace: {bEx.StackTrace}";
+                GravarLogErro(msgErro);
+                return BadRequest(bEx.Message);
+            }
             catch (Exception ex)
             {
                 var msgErro = $"TORNEIOAPI_V1 - {DateTimeHelper.GetDateTimeBrasilia()} - Id Torneio: {torneioId} UserId: {userId} Mensagem: {ex.Message} StackTrace: {ex.StackTrace}";
                 GravarLogErro(msgErro);
-                return BadRequest(ex.Message);
+                return BadRequest("Ocorreu um problema ao obter os dados. Contate o organizador do torneio.");
             }
         }
 
@@ -429,7 +442,7 @@ namespace Barragem.Controllers
             var torneio = db.Torneio.Find(torneioId);
             if (!torneio.liberarTabela)
             {
-                throw new Exception(message: "Tabela do torneio ainda não liberada pelo organizador.");
+                throw new BusinessException(message: "Tabela do torneio ainda não liberada pelo organizador.");
             }
             var tabelaApp = new TabelaApp();
 
@@ -437,11 +450,11 @@ namespace Barragem.Controllers
 
             if (inscricaoUser == null || inscricaoUser.Count == 0)
             {
-                throw new Exception(message: "Não é possível carregar tabela. Você não possui inscrição no torneio.");
+                throw new BusinessException(message: "Não é possível carregar tabela. Você não possui inscrição no torneio.");
             }
-            else if (inscricaoUser.Any(x => x.isAtivo == false))
+            else if (inscricaoUser.Count(x => x.isAtivo == false) == inscricaoUser.Count)
             {
-                throw new Exception(message: "Não é possível carregar tabela. O pagamento da inscrição esta pendente.");
+                throw new BusinessException(message: "Não é possível carregar tabela. O pagamento da inscrição esta pendente.");
             }
 
             inscricaoUser = inscricaoUser.Where(x => x.isAtivo).ToList();
