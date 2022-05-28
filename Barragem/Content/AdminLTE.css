@@ -1549,6 +1549,7 @@ a:focus {
 }
 .box.box-primary {
   border-top-color: #3c8dbc;
+  margin-top: 2px;
 }
 .box.box-info {
   border-top-color: #00c0ef;
