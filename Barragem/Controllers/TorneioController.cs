@@ -4101,6 +4101,22 @@ namespace Barragem.Controllers
             return View(dadosTela);
         }
 
+        private void ObterCircuitosImportacaoCabecaChave(int torneioId,int filtroClasse) 
+        {
+            //from ligaTorneio in db.TorneioLiga
+            //join snapshot in db.Snapshot
+            //on ligaTorneio.snapshotId equals snapshot.Id
+            //join snapshotRanking in db.SnapshotRanking
+            //on snapshot.Id equals snapshotRanking.SnapshotId
+            //join classe in db.ClasseTorneio
+            //on ligaTorneio.LigaId equals classe.categoriaId
+            //where ligaTorneio.TorneioId == torneioId
+            //where classe.Id == filtroClasse;
+
+
+
+        }
+
         private List<CabecaChaveModel> PopularDadosCabecaChave(List<InscricaoTorneio> inscricoes, List<InscricaoTorneio> todasIncricoes, bool classeDupla)
         {
             List<CabecaChaveModel> dadosTela = new List<CabecaChaveModel>();
