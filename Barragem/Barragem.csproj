@@ -321,6 +321,7 @@
     <Compile Include="Models\PagamentoBarragem.cs" />
     <Compile Include="Models\PaginaEspecial.cs" />
     <Compile Include="Models\PaginaEspecialModel.cs" />
+    <Compile Include="Models\PainelTorneioModel.cs" />
     <Compile Include="Models\Patrocinio.cs" />
     <Compile Include="Models\Rancking.cs" />
     <Compile Include="Models\RankingView.cs" />
@@ -391,6 +392,7 @@
     <Content Include="Content\css\hamburgers.min.css" />
     <Content Include="Content\css\integracao-pagseguro.css" />
     <Content Include="Content\css\jquery-ui-1.10.4.min.css" />
+    <Content Include="Content\css\toogleButton.css" />
     <Content Include="Content\paginaespecial\css\hamburgers.min.css" />
     <Content Include="Content\paginaespecial\css\style.css" />
     <Content Include="Content\css\login.css" />
@@ -1154,6 +1156,7 @@
     <Content Include="Views\Account\UsuariosDuplicado.cshtml" />
     <Content Include="Views\Account\RegisterUserBarragem.cshtml" />
     <Content Include="Views\Torneio\EditCabecaChave.cshtml" />
+    <Content Include="Views\Torneio\PainelTorneio.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

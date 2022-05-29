@@ -76,7 +76,7 @@
                                             @Html.Raw("não pontua para circuito")
 
                                             <button type="button" id="@Html.Raw("btnEditCatCircuito"+ item.Id)" class="btn btn-info btn-xs"
-                                                    data-toggle="modal" data-target="#modalEditCatCircuito" onclick="abrirModalEditCatCircuito(@item.Id, @ViewBag.torneioId)">
+                                                    data-toggle="modal" data-target="#modalEditCatCircuito" onclick="abrirModalEditCatCircuito(@item.Id, @ViewBag.TorneioId)">
                                                 <span class="glyphicon glyphicon-edit"></span>
                                             </button>
                                         }
@@ -144,7 +144,7 @@
                     </table>
                 </div>
                 <p>
-                    <input type="hidden" name="torneioId" value="@ViewBag.torneioId" />
+                    <input type="hidden" name="torneioId" value="@ViewBag.TorneioId" />
                     <button class="btn btn-cta-secondary btn-small" type="submit">Salvar ordem de exibição</button>
                 </p>
             }

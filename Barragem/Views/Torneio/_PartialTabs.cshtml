@@ -1,4 +1,15 @@
-﻿<ul class="nav nav-tabs" id="myTab">
+﻿
+<div class="box-header with-border">
+    <h3 class="dashboard">
+        <a href="/Torneio/PainelControle" class="voltar">
+            <img src="/Content/img/back.svg" alt="icone">
+            Voltar
+        </a> | @ViewBag.NomeTorneio
+    </h3>
+</div>
+
+<ul class="nav nav-tabs" id="myTab">
+    <li @if (@ViewBag.flag == "painelTorneio") { @Html.Raw("class='active'") }><a href="@Url.Action("PainelTorneio", new { torneioId = @ViewBag.TorneioId })"><b>Painel</b></a></li>
     <li @if (@ViewBag.flag == "edit") { @Html.Raw("class='active'") }><a href="@Url.Action("EditTorneio", new { id = @ViewBag.TorneioId })"><b>Informações</b></a></li>
     <li @if (@ViewBag.flag == "classes") { @Html.Raw("class='active'") }><a href="@Url.Action("EditClasse", new { torneioId = @ViewBag.TorneioId })"><b>Classes</b></a></li>
     <li @if (@ViewBag.flag == "inscritos") { @Html.Raw("class='active'") }><a href="@Url.Action("EditInscritos", new { torneioId = @ViewBag.TorneioId })"><b>Inscritos</b></a></li>
@@ -13,10 +24,33 @@
         <li @if (@ViewBag.flag == "teste") { @Html.Raw("class='active' ") }><a href="@Url.Action("EditTeste", new { torneioId=@ViewBag.TorneioId })"><b>Testes</b></a></li>
     }
 
-    </ul>
-    <style>
-        .nav-tabs {
-            flex-wrap: wrap;
-            display: initial;
+</ul>
+
+<style>
+    .nav-tabs {
+        flex-wrap: wrap;
+        display: initial;
+        margin-bottom:2px;
+    }
+
+    .voltar {
+        font-weight: bold;
+        font-size: 18px;
+        line-height: 23px;
+        color: #989898;
+        text-decoration: none;
+        margin-right: 10px;
+    }
+        .voltar:hover {
+            color: #989898;
+            opacity: 0.6;
+            text-decoration:none;
         }
-    </style>
+    .dashboard {
+        font-style: normal;
+        font-weight: bold;
+        font-size: 20px;
+        color: #014626;
+    }
+
+</style>

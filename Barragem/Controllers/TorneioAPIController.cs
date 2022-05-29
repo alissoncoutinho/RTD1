@@ -37,6 +37,7 @@ namespace Barragem.Controllers
                                 dataInicio = inscricao.torneio.dataInicio,
                                 dataFim = inscricao.torneio.dataFim,
                                 dataFimInscricoes = inscricao.torneio.dataFimInscricoes,
+                                StatusInscricao = inscricao.torneio.StatusInscricao,
                                 cidade = inscricao.torneio.cidade,
                                 premiacao = inscricao.torneio.premiacao,
                                 contato = "",
@@ -45,6 +46,9 @@ namespace Barragem.Controllers
                                 isBeachTennis = inscricao.torneio.barragem.isBeachTenis,
                                 temPIX = !String.IsNullOrEmpty(inscricao.torneio.barragem.tokenPagSeguro) ? true : false
                             }).Distinct<TorneioApp>().ToList();
+
+            //Aplica data correta de fim das inscrições
+            Torneios.ForEach(f => f.dataFimInscricoes = f.DataFinalInscricoes);
 
             foreach (var item in Torneios)
             {
@@ -900,8 +904,7 @@ namespace Barragem.Controllers
         [Route("api/TorneioAPI/Disponivel/{rankingId}")]
         public IList<TorneioApp> GetTorneioDisponivel(int rankingId, int userId = 0)
         {
-
-            var dataHoje = DateTime.Now.AddDays(-1);
+            var dataAtual = DateTime.Now.Date;
             var cidade = "";
             if (rankingId == 1157)
             {
@@ -914,7 +917,7 @@ namespace Barragem.Controllers
 
             List<Patrocinador> patrocinadores = null;
             var torneio = (from t in db.Torneio
-                           where t.dataFimInscricoes >= dataHoje && t.isAtivo && t.isOpen
+                           where (t.StatusInscricao == (int)StatusInscricaoPainelTorneio.ABERTA || (t.StatusInscricao == (int)StatusInscricaoPainelTorneio.LIBERADA_ATE && t.dataFimInscricoes >= dataAtual)) && t.isAtivo && t.isOpen
                            select new TorneioApp
                            {
                                Id = t.Id,
@@ -924,6 +927,7 @@ namespace Barragem.Controllers
                                valor = t.valor,
                                valorSocio = t.valorSocio,
                                dataFim = t.dataFim,
+                               StatusInscricao = t.StatusInscricao,
                                dataFimInscricoes = t.dataFimInscricoes,
                                cidade = t.cidade,
                                premiacao = t.premiacao,
@@ -934,7 +938,7 @@ namespace Barragem.Controllers
                                temPIX = !String.IsNullOrEmpty(t.barragem.tokenPagSeguro) ? true : false
                            }).Union(
                             from t in db.Torneio
-                            where t.dataFimInscricoes >= dataHoje && t.isAtivo && t.divulgaCidade
+                            where (t.StatusInscricao == (int)StatusInscricaoPainelTorneio.ABERTA || (t.StatusInscricao == (int)StatusInscricaoPainelTorneio.LIBERADA_ATE && t.dataFimInscricoes >= dataAtual)) && t.isAtivo && t.divulgaCidade
                             && t.cidade.ToUpper() == cidade.ToUpper()
                             select new TorneioApp
                             {
@@ -945,6 +949,7 @@ namespace Barragem.Controllers
                                 valor = t.valor,
                                 valorSocio = t.valorSocio,
                                 dataFim = t.dataFim,
+                                StatusInscricao = t.StatusInscricao,
                                 dataFimInscricoes = t.dataFimInscricoes,
                                 cidade = t.cidade,
                                 premiacao = t.premiacao,
@@ -955,7 +960,7 @@ namespace Barragem.Controllers
                                 temPIX = !String.IsNullOrEmpty(t.barragem.tokenPagSeguro) ? true : false
                             }).Union(
                             from t in db.Torneio
-                            where t.dataFimInscricoes >= dataHoje && t.isAtivo && t.barragemId == rankingId
+                            where (t.StatusInscricao == (int)StatusInscricaoPainelTorneio.ABERTA || (t.StatusInscricao == (int)StatusInscricaoPainelTorneio.LIBERADA_ATE && t.dataFimInscricoes >= dataAtual)) && t.isAtivo && t.barragemId == rankingId
                             select new TorneioApp
                             {
                                 Id = t.Id,
@@ -965,6 +970,7 @@ namespace Barragem.Controllers
                                 valor = t.valor,
                                 valorSocio = t.valorSocio,
                                 dataFim = t.dataFim,
+                                StatusInscricao=t.StatusInscricao,
                                 dataFimInscricoes = t.dataFimInscricoes,
                                 cidade = t.cidade,
                                 premiacao = t.premiacao,
@@ -974,6 +980,9 @@ namespace Barragem.Controllers
                                 isBeachTennis = t.barragem.isBeachTenis,
                                 temPIX = !String.IsNullOrEmpty(t.barragem.tokenPagSeguro) ? true : false
                             }).Distinct<TorneioApp>().ToList();
+
+            //Aplica regra de data final inscrições
+            torneio.ForEach(f => f.dataFimInscricoes = f.DataFinalInscricoes);
 
             foreach (var item in torneio)
             {
