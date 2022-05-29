@@ -717,7 +717,15 @@ namespace Barragem.Controllers
 
                         if (model.organizador)
                         {
-                            Roles.AddUserToRole(model.UserName, "organizador");
+                            var barragem = db.Barragens.Find(model.barragemId);
+                            if (barragem != null && barragem.soTorneio == true)
+                            {
+                                Roles.AddUserToRole(model.UserName, "adminTorneioTenis");
+                            }
+                            else
+                            {
+                                Roles.AddUserToRole(model.UserName, "organizador");
+                            }
                         }
                         else
                         {
