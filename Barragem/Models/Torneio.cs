@@ -291,7 +291,7 @@ namespace Barragem.Models
     public enum StatusInscricaoPainelTorneio
     {
         ABERTA = 1,
-        PAUSADA = 2,
+        ENCERRADA = 2,
         LIBERADA_ATE = 3
     }
 }

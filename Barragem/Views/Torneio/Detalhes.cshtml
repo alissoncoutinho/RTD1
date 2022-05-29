@@ -223,6 +223,10 @@
                                 {
                                     @Html.Label("Inscrições abertas", new { @class = "col-sm-5" })
                                 }
+                                else if (Model.StatusInscricao == (int)StatusInscricaoPainelTorneio.ENCERRADA)
+                                {
+                                    @Html.Label("Inscrições encerradas", new { @class = "col-sm-5" })
+                                }
                                 else
                                 {
                                     @Html.Label("Inscrições até", new { @class = "col-sm-5" })

@@ -2109,6 +2109,7 @@ namespace Barragem.Controllers
             torneio.divulgaCidade = false;
             torneio.isOpen = false;
             torneio.TipoTorneio = pontuacaoCircuito;
+
             if (transferencia == false)
             {
                 torneio.dadosBancarios = "";
@@ -4113,7 +4114,7 @@ namespace Barragem.Controllers
             List<SelectListItem> opcoesStatusInscricao = new List<SelectListItem>()
             {
                 { new SelectListItem() { Text = "Recebendo inscrições", Value = ((int)StatusInscricaoPainelTorneio.ABERTA).ToString() } },
-                { new SelectListItem() { Text = "Não receber inscrições", Value = ((int)StatusInscricaoPainelTorneio.PAUSADA).ToString() } },
+                { new SelectListItem() { Text = "Não receber inscrições", Value = ((int)StatusInscricaoPainelTorneio.ENCERRADA).ToString() } },
                 { new SelectListItem() { Text = "Receber inscrições só até:", Value = ((int)StatusInscricaoPainelTorneio.LIBERADA_ATE).ToString() } }
             };
 

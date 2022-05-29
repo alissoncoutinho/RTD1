@@ -81,6 +81,10 @@
                         {
                             @Html.Raw("Inscrições abertas.")
                         }
+                        else if (Model.StatusInscricao == (int)StatusInscricaoPainelTorneio.ENCERRADA)
+                        {
+                            @Html.Raw("Inscrições encerradas.")
+                        }
                         else
                         {
                             @Html.Raw("As inscrições do Torneio vão até o dia ") @Html.Raw(String.Format("{0:dd/MM/yyyy}", Model.DataFinalInscricoes) + ".")
