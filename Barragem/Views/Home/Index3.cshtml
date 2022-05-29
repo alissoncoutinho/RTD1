@@ -1,4 +1,5 @@
-﻿@model Barragem.Models.Jogo
+﻿@using Barragem.Models;
+@model Barragem.Models.Jogo
 @{
     ViewBag.Title = "Controlar Jogo";
 
@@ -10,7 +11,7 @@
             <div class="row">
                 <div class="col-sm-12">
                     Baixe o APP para ter mais facilidade e rapidez. <br>
-                    <a class='btn' href='https://play.google.com/store/apps/details?id=com.rankingtennis&hl=pt_BR' ><img src="/Content/image/googlePlay.png" alt="google play" height="30" width="91"></a>
+                    <a class='btn' href='https://play.google.com/store/apps/details?id=com.rankingtennis&hl=pt_BR'><img src="/Content/image/googlePlay.png" alt="google play" height="30" width="91"></a>
                     <a class='btn' href='https://apps.apple.com/br/app/meu-ranking/id1483076354'><img src="/Content/image/appStore.png" alt="google play" height="30" width="91"></a>
                 </div>
             </div>
@@ -26,8 +27,9 @@
                 <div class="row">
                     <div class="col-sm-12">
                         @ViewBag.cobranca
-                        @if (!String.IsNullOrEmpty(ViewBag.boleto)) {
-                            @Html.Raw("<a class='btn btn-primary' href="+ ViewBag.boleto +" target='_blank'>Link do Boleto</a> <br>Número do código de barras:" + ViewBag.numeroCodigoBarras)
+                        @if (!String.IsNullOrEmpty(ViewBag.boleto))
+                        {
+                            @Html.Raw("<a class='btn btn-primary' href=" + ViewBag.boleto + " target='_blank'>Link do Boleto</a> <br>Número do código de barras:" + ViewBag.numeroCodigoBarras)
                         }
                     </div>
                 </div>
@@ -49,7 +51,14 @@
                 </div>
                 <div class="row">
                     <div class="col-sm-8 info-box-text">
-                        @Html.Raw("Local: " + torneio.local + " - " + torneio.cidade) Inscrição até @Html.Raw(torneio.DataFinalInscricoes.ToShortDateString())
+                        @if (torneio.StatusInscricao == (int)StatusInscricaoPainelTorneio.ABERTA)
+                        {
+                            @Html.Raw("Local: " + torneio.local + " - " + torneio.cidade + " - Inscrição abertas")
+                        }
+                        else
+                        {
+                            @Html.Raw("Local: " + torneio.local + " - " + torneio.cidade + " - Inscrição até " + torneio.DataFinalInscricoes.ToShortDateString())
+                        }
                     </div>
                 </div>
             </div>
@@ -65,20 +74,23 @@
 }
 
 
-@if ((Model != null && !(ViewBag.situacaoJogador=="desativado" || ViewBag.situacaoJogador == "pendente" || ViewBag.situacaoJogador == "torneio")) 
+@if ((Model != null && !(ViewBag.situacaoJogador == "desativado" || ViewBag.situacaoJogador == "pendente" || ViewBag.situacaoJogador == "torneio"))
     || (ViewBag.ViewOrganizador))
 {
 
     <div class="container-dashboard">
-        @if (ViewBag.isRodadaAtual){
+        @if (ViewBag.isRodadaAtual)
+        {
             <h4><b>Rodada Atual</b></h4>
         }
 
         <div class="row" align="left">
-            @if (Model.rodada != null){
-                if (Model.rodada.temporadaId != null){
+            @if (Model.rodada != null)
+            {
+                if (Model.rodada.temporadaId != null)
+                {
                     <div class="col-md-12 col-xs-12" align="left">
-                        @Html.Raw(ViewBag.Temporada+": "+ ViewBag.NumeroRodada)
+                        @Html.Raw(ViewBag.Temporada + ": " + ViewBag.NumeroRodada)
                     </div>
                     <div class="col-md-2 col-xs-12" align="left">
                         @Html.Raw("Até " + Model.rodada.dataFim.ToShortDateString())
@@ -101,7 +113,7 @@
         <h5>
             <label>Situação do jogo:</label> @Html.Raw(Model.situacao.descricao + " " + String.Format("{0:dd/MM/yyyy}", Model.dataJogo) + " " + Model.horaJogo + " " + Model.localJogo + ViewBag.Placar)
         </h5>
-        
+
         <div class="container-dashboard formato-desktop">
             <div class="row clearfix formato-desktop">
                 <div class="col-md-2 col-xs-2">
@@ -284,7 +296,7 @@
                     }
                 </div>
                 <div class="col-sm-3">
-                    <button class="btn btn-success btn-block" id="botaolancarWO"@if (Model.situacao_Id == 4) {@Html.Raw("disabled") } onclick="mostrarLancarWO()">Lançar WO</button>
+                    <button class="btn btn-success btn-block" id="botaolancarWO" @if (Model.situacao_Id == 4) { @Html.Raw("disabled") } onclick="mostrarLancarWO()">Lançar WO</button>
                 </div>
                 <div class="col-sm-3">
                     <button class="btn btn-success btn-block" id="botaolancarWO" onclick="mostrarHead2Head()">Head 2 Head</button>
@@ -293,7 +305,7 @@
         </div>
 
         @using (Html.BeginForm("MarcarJogo", "Jogo", FormMethod.Post, new { @enctype = "multipart/form-data" }))
-                {
+        {
             @Html.AntiForgeryToken()
             @Html.ValidationSummary(true)
             @Html.HiddenFor(model => model.Id)
@@ -344,7 +356,7 @@
                             <input type="submit" class="btn btn-primary" id="button_marcarJogo" value="Salvar" />
                             @if (Model.situacao_Id == 2)
                             {
-                                <input type="hidden" value="false" name="desmarcar" id="desmarcar"/>
+                                <input type="hidden" value="false" name="desmarcar" id="desmarcar" />
                                 <input type="submit" class="btn btn-danger btn-small" id="desmarcar" value="Desmarcar horário" onclick="desmarcarHorario()" />
                             }
                         </center>
@@ -357,7 +369,7 @@
         }
 
         @using (Html.BeginForm("InserirResultado", "Jogo", FormMethod.Post, new { @enctype = "multipart/form-data" }))
-                {
+        {
             @Html.AntiForgeryToken()
             @Html.ValidationSummary(true)
             @Html.HiddenFor(model => model.Id)
@@ -440,17 +452,22 @@
                             </center>
                             <p>
                                 <center>
-                                @if ((Model.desafiante_id != 0) && (Model.desafiado_id != 0)){
-                                    if ((ViewBag.Editar == null) || (ViewBag.Editar)){
-                                        <input type="submit" class="btn btn-primary btn-small" id="submeter" value="Salvar" />
-                                    }else{
-                                        @Html.Raw("<b>Rodada Já Encerrada.</b>")
+                                    @if ((Model.desafiante_id != 0) && (Model.desafiado_id != 0))
+                                    {
+                                        if ((ViewBag.Editar == null) || (ViewBag.Editar))
+                                        {
+                                            <input type="submit" class="btn btn-primary btn-small" id="submeter" value="Salvar" />
+                                        }
+                                        else
+                                        {
+                                            @Html.Raw("<b>Rodada Já Encerrada.</b>")
+                                        }
+                                        if ((ViewBag.VoltarPendente != null) && (ViewBag.VoltarPendente))
+                                        {
+                                            <input type="hidden" value="1" name="situacao_id" />
+                                            <input type="submit" class="btn btn-danger btn-small" id="submeter" value="Voltar para pendente" />
+                                        }
                                     }
-                                    if ((ViewBag.VoltarPendente != null) && (ViewBag.VoltarPendente)){
-                                        <input type="hidden" value="1" name="situacao_id" />
-                                        <input type="submit" class="btn btn-danger btn-small" id="submeter" value="Voltar para pendente" />
-                                    }
-                                }
                                 </center>
                             </p>
                         </div>
@@ -461,7 +478,7 @@
         }
 
         @using (Html.BeginForm("LancarWO", "Jogo", FormMethod.Post, new { @enctype = "multipart/form-data" }))
-                {
+        {
             @Html.AntiForgeryToken()
             @Html.ValidationSummary(true)
             @Html.HiddenFor(model => model.Id)
@@ -487,9 +504,10 @@
                                 <input type="radio" name="vencedorWO" value=@Html.Raw(Model.desafiante_id)@if (Model.idDoVencedor==Model.desafiante_id) { @Html.Raw(" checked") }> @Html.Raw(Model.desafiante.nome)<br>
                             </div>
                             <div class="col-md-2 col-xs-12">
-                                @if ((ViewBag.Editar == null) || (ViewBag.Editar)){
+                                @if ((ViewBag.Editar == null) || (ViewBag.Editar))
+                                {
                                     <input type="submit" class="btn btn-primary btn-small" id="button_lancarWO" value="Salvar" />
-                                 }
+                                }
                             </div>
                         </div>
                     </div>
@@ -571,34 +589,35 @@
                 <h3 class="box-title">@Html.Raw("Meu status atual: " + ViewBag.situacaoJogador)</h3>
             </div>
             <div class="box-body">
-    @if (ViewBag.situacaoJogador == "ativo" || ViewBag.situacaoJogador == "licenciado"){
-        <div class="form-group">
-            <label class="col-md-2 col-xs-7" for="situacao">Alterar para: </label>
-            <div class="col-md-2 col-xs-8">
-                <select id="situacao" name="situacao" class="form-control">
-                    <option value="ativo" @if (ViewBag.situacaoJogador.Equals("ativo")) { @Html.Raw("selected")       }>
-                        ativo
-                    </option>
-                    <option value="licenciado" @if (ViewBag.situacaoJogador.Equals("licenciado")) { @Html.Raw("selected")       }>
-                        licenciado
-                    </option>
-                </select>
-                <input type="hidden" name="userId" value="@Html.Raw(ViewBag.userId)">
-            </div>
-            <div class="col-md-3 col-xs-4">
-                <input type="submit" class="btn btn-primary btn-small" id="submeter" value="Salvar" />
-            </div>
-        </div>
-    }
+                @if (ViewBag.situacaoJogador == "ativo" || ViewBag.situacaoJogador == "licenciado")
+                {
+                    <div class="form-group">
+                        <label class="col-md-2 col-xs-7" for="situacao">Alterar para: </label>
+                        <div class="col-md-2 col-xs-8">
+                            <select id="situacao" name="situacao" class="form-control">
+                                <option value="ativo" @if (ViewBag.situacaoJogador.Equals("ativo")) { @Html.Raw("selected") }>
+                                    ativo
+                                </option>
+                                <option value="licenciado" @if (ViewBag.situacaoJogador.Equals("licenciado")) { @Html.Raw("selected") }>
+                                    licenciado
+                                </option>
+                            </select>
+                            <input type="hidden" name="userId" value="@Html.Raw(ViewBag.userId)">
+                        </div>
+                        <div class="col-md-3 col-xs-4">
+                            <input type="submit" class="btn btn-primary btn-small" id="submeter" value="Salvar" />
+                        </div>
+                    </div>
+                }
 
 
             </div>
         </div>
-        </div>
-    }
+    </div>
+}
 
 @if (ViewBag.JogosPendentes != null && !(ViewBag.situacaoJogador == "desativado" || ViewBag.situacaoJogador == "pendente" || ViewBag.situacaoJogador == "torneio"))
-    
+
 {
     <div class="container-dashboard">
         <div class="container-fluid">
@@ -647,7 +666,7 @@
                 <canvas id="canvasdunot" height="200" width="200"></canvas>
             </div>
         </div>
-     </div>
+    </div>
 </div>
 
 
@@ -657,7 +676,7 @@
     @Scripts.Render("~/bundles/jqueryval")
     @Scripts.Render("~/bundles/jqueryform")
     @Scripts.Render("~/bundles/Chart")
-    
+
     <script type="text/javascript">
         var chartCtx = $("#canvas").get(0).getContext("2d");
         var config = {
@@ -805,6 +824,6 @@
             pickTime: false
         });
         $("#horaJogo").mask("99:99");
-        
+
     </script>
 }

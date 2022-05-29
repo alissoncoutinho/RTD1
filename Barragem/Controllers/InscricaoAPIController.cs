@@ -62,6 +62,7 @@ namespace Barragem.Controllers
             torneioDadosReduzidos.cidade = torneio.cidade;
             torneioDadosReduzidos.dadosBancarios = torneio.dadosBancarios;
             torneioDadosReduzidos.dataFim = torneio.dataFim;
+            torneioDadosReduzidos.StatusInscricao = torneio.StatusInscricao;
             torneioDadosReduzidos.dataFimInscricoes = torneio.DataFinalInscricoes;
             torneioDadosReduzidos.dataInicio = torneio.dataInicio;
             torneioDadosReduzidos.descontoPara = torneio.descontoPara;
@@ -256,6 +257,7 @@ namespace Barragem.Controllers
                 torneio.valor = item.torneio.valor;
                 torneio.valorSocio = item.torneio.valorSocio;
                 torneio.dataFim = item.torneio.dataFim;
+                torneio.StatusInscricao = item.torneio.StatusInscricao;
                 torneio.dataFimInscricoes = item.torneio.DataFinalInscricoes;
                 torneio.cidade = item.torneio.cidade;
                 torneio.premiacao = item.torneio.premiacao;

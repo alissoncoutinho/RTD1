@@ -77,7 +77,14 @@
                                 @Html.Raw("Valor para 2 classes " + Model.descontoPara + ": R$ " + Model.valorMaisClassesSocio + ",00") <br>
                             }
                         }
-                        As inscrições do Torneio vão até o dia @Html.Raw(String.Format("{0:dd/MM/yyyy}", Model.DataFinalInscricoes)).
+                        @if (Model.StatusInscricao == (int)StatusInscricaoPainelTorneio.ABERTA)
+                        {
+                            @Html.Raw("Inscrições abertas.")
+                        }
+                        else
+                        {
+                            @Html.Raw("As inscrições do Torneio vão até o dia ") @Html.Raw(String.Format("{0:dd/MM/yyyy}", Model.DataFinalInscricoes) + ".")
+                        }
                     </p>
                 </div><!--//step-->
                 <div class="step text-center col-xs-12 col-sm-4">

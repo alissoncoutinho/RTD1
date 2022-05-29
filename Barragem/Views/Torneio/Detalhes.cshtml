@@ -1,4 +1,5 @@
-﻿@model Barragem.Models.Torneio
+﻿@using Barragem.Models;
+@model Barragem.Models.Torneio
 @{
     Layout = "~/Views/Shared/_LayoutTorneio2.cshtml";
     Barragem.Models.InscricaoTorneio inscricao = null;
@@ -42,9 +43,9 @@
                         @Html.Label("Repescagem", new { @class = "col-sm-3" })
                         <div class="col-sm-8 info-box-text">
                             @if (Model.temRepescagem)
-                            { @Html.Raw("Sim") }
-                            else
-                            { @Html.Raw("Não")}
+                            {@Html.Raw("Sim") }
+                        else
+                        { @Html.Raw("Não")}
                         </div>
                     </div>
                     <div class="row">
@@ -74,42 +75,45 @@
                     @Html.Hidden("operacao", "inscricao")
                     @Html.Hidden("torneioId", Model.Id)
                     @Html.Hidden("vrInscricao", Model.valor);
-                    @Html.Hidden("userId", inscricao==null? 0 : inscricao.userId);
+                    @Html.Hidden("userId", inscricao == null ? 0 : inscricao.userId);
                     @Html.Hidden("isClasseDupla", false);
                     <div class="box-body">
                         <div class="row">
-                                @if (inscricao == null)
-                                {
-                                    @Html.Label("Uma categoria", new { @class = "col-sm-5" })
-                                    <div class="col-sm-7 info-box-text">
-                                        @if ((Model.valor == 0) || (ViewBag.isGratuito)){
-                                            @Html.Raw("gratuito")
-                                        }else{
-                                            @Html.Raw("R$ " + Model.valor + ",00")
-                                        }
-                                    </div>
-                                }
-                                else
-                                {
-                                    @Html.Label("Valor Inscrição", new { @class = "col-sm-5" })
-                                    <div class="col-sm-7 info-box-text">
-                                        @if ((Model.valor != 0) && (!ViewBag.isGratuito))
+                            @if (inscricao == null)
+                            {
+                                @Html.Label("Uma categoria", new { @class = "col-sm-5" })
+                                <div class="col-sm-7 info-box-text">
+                                    @if ((Model.valor == 0) || (ViewBag.isGratuito))
+                                    {
+                                        @Html.Raw("gratuito")
+                                    }
+                                    else
+                                    {
+                                        @Html.Raw("R$ " + Model.valor + ",00")
+                                    }
+                                </div>
+                            }
+                            else
+                            {
+                                @Html.Label("Valor Inscrição", new { @class = "col-sm-5" })
+                                <div class="col-sm-7 info-box-text">
+                                    @if ((Model.valor != 0) && (!ViewBag.isGratuito))
+                                    {
+                                        if ((inscricao.valorPendente != null) && (inscricao.valorPendente != 0))
                                         {
-                                            if ((inscricao.valorPendente != null) && (inscricao.valorPendente != 0))
-                                            {
-                                                @Html.Raw("R$ " + (inscricao.valor + inscricao.valorPendente) + ",00")
-                                            }
-                                            else
-                                            {
-                                                @Html.Raw("R$ " + inscricao.valor + ",00")
-                                            }
+                                            @Html.Raw("R$ " + (inscricao.valor + inscricao.valorPendente) + ",00")
                                         }
                                         else
                                         {
-                                            @Html.Raw("gratuito")
+                                            @Html.Raw("R$ " + inscricao.valor + ",00")
                                         }
-                                    </div>
-                                }
+                                    }
+                                    else
+                                    {
+                                        @Html.Raw("gratuito")
+                                    }
+                                </div>
+                            }
                         </div>
                         @if (inscricao != null)
                         {
@@ -118,7 +122,7 @@
                                 <div class="col-sm-7 info-box-text">
                                     @if ((Model.valor != 0) && (!ViewBag.isGratuito))
                                     {
-                                        if ((inscricao.isAtivo)&&((inscricao.valorPendente==null)||(inscricao.valorPendente == 0)))
+                                        if ((inscricao.isAtivo) && ((inscricao.valorPendente == null) || (inscricao.valorPendente == 0)))
                                         {
                                             @Html.Raw(" Ativa")
                                         }
@@ -148,7 +152,7 @@
                         }
                         @if (inscricao == null)
                         {
-                            if (Model.qtddCategoriasPorJogador>1)
+                            if (Model.qtddCategoriasPorJogador > 1)
                             {
                                 <div class="row">
                                     @Html.Label("Duas Categorias", new { @class = "col-sm-5" })
@@ -215,12 +219,19 @@
                                 </div>
                             }
                             <div class="row">
-                                @Html.Label("Inscrições até", new { @class = "col-sm-5" })
-                                <div class="col-sm-7 info-box-text">
-                                    @Html.Raw(Model.DataFinalInscricoes.ToShortDateString())
-                                </div>
+                                @if (Model.StatusInscricao == (int)StatusInscricaoPainelTorneio.ABERTA)
+                                {
+                                    @Html.Label("Inscrições abertas", new { @class = "col-sm-5" })
+                                }
+                                else
+                                {
+                                    @Html.Label("Inscrições até", new { @class = "col-sm-5" })
+                                    <div class="col-sm-7 info-box-text">
+                                        @Html.Raw(Model.DataFinalInscricoes.ToShortDateString())
+                                    </div>
+                                }
                             </div>
-                            if (Model.isDesconto!=null && (bool)Model.isDesconto)
+                            if (Model.isDesconto != null && (bool)Model.isDesconto)
                             {
                                 <div class="row">
                                     <label id="labelIsSocio" class="col-sm-5">
@@ -258,23 +269,23 @@
                                                 try { qtddInscritosClasse = listQtddInscritos.Where(i => i.Id == item.Id).First().qtddInscritos; } catch (Exception e) { }
                                                 if (qtddInscritosClasse >= item.maximoInscritos)
                                                 {
-                                                    <option style="color:red" value="@item.Id" data-isDupla="@item.isDupla" @if (ViewBag.ClasseInscricao == item.Id) { @Html.Raw("selected")    }>Esgotado - @item.nome</option>
+                                                    <option style="color:red" value="@item.Id" data-isDupla="@item.isDupla" @if (ViewBag.ClasseInscricao == item.Id) { @Html.Raw("selected") }>Esgotado - @item.nome</option>
                                                 }
                                                 else
                                                 {
-                                                    <option value="@item.Id" data-isDupla="@item.isDupla" @if (ViewBag.ClasseInscricao == item.Id) { @Html.Raw("selected")     }>@item.nome</option>
+                                                    <option value="@item.Id" data-isDupla="@item.isDupla" @if (ViewBag.ClasseInscricao == item.Id) { @Html.Raw("selected") }>@item.nome</option>
                                                 }
                                             }
                                             else
                                             {
-                                                <option value="@item.Id" data-isDupla="@item.isDupla" @if (ViewBag.ClasseInscricao == item.Id) { @Html.Raw("selected")    }>@item.nome</option>
+                                                <option value="@item.Id" data-isDupla="@item.isDupla" @if (ViewBag.ClasseInscricao == item.Id) { @Html.Raw("selected") }>@item.nome</option>
                                             }
 
                                         }
                                     </select>
                                 </div>
                             </div>
-                            if (Model.qtddCategoriasPorJogador>1)
+                            if (Model.qtddCategoriasPorJogador > 1)
                             {
                                 <div id="checkSegundaOpcaoClasse" class="form-group">
                                     <div class="col-sm-8">
@@ -299,16 +310,16 @@
                                                     try { qtddInscritosClasse = listQtddInscritos.Where(i => i.Id == item.Id).First().qtddInscritos; } catch (Exception e) { }
                                                     if (qtddInscritosClasse >= item.maximoInscritos)
                                                     {
-                                                        <option style="color:red" value="@item.Id" data-isDupla="@item.isDupla" @if ((ViewBag.ClasseInscricao2 != null) && (ViewBag.ClasseInscricao2 == item.Id)) { @Html.Raw("selected")    }>Esgotado - @item.nome</option>
+                                                        <option style="color:red" value="@item.Id" data-isDupla="@item.isDupla" @if ((ViewBag.ClasseInscricao2 != null) && (ViewBag.ClasseInscricao2 == item.Id)) { @Html.Raw("selected") }>Esgotado - @item.nome</option>
                                                     }
                                                     else
                                                     {
-                                                        <option value="@item.Id" data-isDupla="@item.isDupla" @if ((ViewBag.ClasseInscricao2 != null) && (ViewBag.ClasseInscricao2 == item.Id)) { @Html.Raw("selected")    }>@item.nome</option>
+                                                        <option value="@item.Id" data-isDupla="@item.isDupla" @if ((ViewBag.ClasseInscricao2 != null) && (ViewBag.ClasseInscricao2 == item.Id)) { @Html.Raw("selected") }>@item.nome</option>
                                                     }
                                                 }
                                                 else
                                                 {
-                                                    <option value="@item.Id" data-isDupla="@item.isDupla" @if ((ViewBag.ClasseInscricao2 != null) && (ViewBag.ClasseInscricao2 == item.Id)) { @Html.Raw("selected")    }>@item.nome</option>
+                                                    <option value="@item.Id" data-isDupla="@item.isDupla" @if ((ViewBag.ClasseInscricao2 != null) && (ViewBag.ClasseInscricao2 == item.Id)) { @Html.Raw("selected") }>@item.nome</option>
                                                 }
 
                                             }
@@ -342,16 +353,16 @@
                                                     try { qtddInscritosClasse = listQtddInscritos.Where(i => i.Id == item.Id).First().qtddInscritos; } catch (Exception e) { };
                                                     if (qtddInscritosClasse >= item.maximoInscritos)
                                                     {
-                                                        <option style="color:red" value="@item.Id" data-isDupla="@item.isDupla" @if ((ViewBag.ClasseInscricao3 != null) && (ViewBag.ClasseInscricao3 == item.Id)) { @Html.Raw("selected")     }>Esgotado - @item.nome</option>
+                                                        <option style="color:red" value="@item.Id" data-isDupla="@item.isDupla" @if ((ViewBag.ClasseInscricao3 != null) && (ViewBag.ClasseInscricao3 == item.Id)) { @Html.Raw("selected") }>Esgotado - @item.nome</option>
                                                     }
                                                     else
                                                     {
-                                                        <option value="@item.Id" data-isDupla="@item.isDupla" @if ((ViewBag.ClasseInscricao3 != null) && (ViewBag.ClasseInscricao3 == item.Id)) { @Html.Raw("selected")     }>@item.nome</option>
+                                                        <option value="@item.Id" data-isDupla="@item.isDupla" @if ((ViewBag.ClasseInscricao3 != null) && (ViewBag.ClasseInscricao3 == item.Id)) { @Html.Raw("selected") }>@item.nome</option>
                                                     }
                                                 }
                                                 else
                                                 {
-                                                    <option value="@item.Id" data-isDupla="@item.isDupla" @if ((ViewBag.ClasseInscricao3 != null) && (ViewBag.ClasseInscricao3 == item.Id)) { @Html.Raw("selected")     }>@item.nome</option>
+                                                    <option value="@item.Id" data-isDupla="@item.isDupla" @if ((ViewBag.ClasseInscricao3 != null) && (ViewBag.ClasseInscricao3 == item.Id)) { @Html.Raw("selected") }>@item.nome</option>
                                                 }
                                             }
                                         </select>
@@ -384,16 +395,16 @@
                                                     try { qtddInscritosClasse = listQtddInscritos.Where(i => i.Id == item.Id).First().qtddInscritos; } catch (Exception e) { };
                                                     if (qtddInscritosClasse >= item.maximoInscritos)
                                                     {
-                                                        <option style="color:red" value="@item.Id" data-isDupla="@item.isDupla" @if ((ViewBag.ClasseInscricao4 != null) && (ViewBag.ClasseInscricao4 == item.Id)) { @Html.Raw("selected")     }>Esgotado - @item.nome</option>
+                                                        <option style="color:red" value="@item.Id" data-isDupla="@item.isDupla" @if ((ViewBag.ClasseInscricao4 != null) && (ViewBag.ClasseInscricao4 == item.Id)) { @Html.Raw("selected") }>Esgotado - @item.nome</option>
                                                     }
                                                     else
                                                     {
-                                                        <option value="@item.Id" data-isDupla="@item.isDupla" @if ((ViewBag.ClasseInscricao4 != null) && (ViewBag.ClasseInscricao4 == item.Id)) { @Html.Raw("selected")     }>@item.nome</option>
+                                                        <option value="@item.Id" data-isDupla="@item.isDupla" @if ((ViewBag.ClasseInscricao4 != null) && (ViewBag.ClasseInscricao4 == item.Id)) { @Html.Raw("selected") }>@item.nome</option>
                                                     }
                                                 }
                                                 else
                                                 {
-                                                    <option value="@item.Id" data-isDupla="@item.isDupla" @if ((ViewBag.ClasseInscricao4 != null) && (ViewBag.ClasseInscricao4 == item.Id)) { @Html.Raw("selected")     }>@item.nome</option>
+                                                    <option value="@item.Id" data-isDupla="@item.isDupla" @if ((ViewBag.ClasseInscricao4 != null) && (ViewBag.ClasseInscricao4 == item.Id)) { @Html.Raw("selected") }>@item.nome</option>
                                                 }
                                             }
                                         </select>
@@ -404,7 +415,7 @@
                         }
                         else
                         {
-                        <!--INSCRIÇÃO REALIZADA-->
+                            <!--INSCRIÇÃO REALIZADA-->
                             <div class="row">
                                 @Html.Label("Categoria", new { @class = "col-sm-4" })
                                 <div class="col-sm-8 info-box-text">
@@ -419,18 +430,18 @@
                                                 try { qtddInscritosClasse = listQtddInscritos.Where(i => i.Id == item.Id).First().qtddInscritos; } catch (Exception e) { }
                                                 if (qtddInscritosClasse >= item.maximoInscritos)
                                                 {
-                                                    <option style="color:red" value="@item.Id" data-isDupla="@item.isDupla" @if (ViewBag.ClasseInscricao == item.Id) { @Html.Raw("selected")     }>Esgotado - @item.nome</option>
+                                                    <option style="color:red" value="@item.Id" data-isDupla="@item.isDupla" @if (ViewBag.ClasseInscricao == item.Id) { @Html.Raw("selected") }>Esgotado - @item.nome</option>
                                                 }
                                                 else
                                                 {
-                                                    <option value="@item.Id" data-isDupla="@item.isDupla" @if (ViewBag.ClasseInscricao == item.Id) { @Html.Raw("selected")      }>@item.nome</option>
+                                                    <option value="@item.Id" data-isDupla="@item.isDupla" @if (ViewBag.ClasseInscricao == item.Id) { @Html.Raw("selected") }>@item.nome</option>
                                                 }
                                             }
                                             else
                                             {
-                                                <option value="@item.Id" data-isDupla="@item.isDupla" @if (ViewBag.ClasseInscricao == item.Id) { @Html.Raw("selected")     }>@item.nome</option>
+                                                <option value="@item.Id" data-isDupla="@item.isDupla" @if (ViewBag.ClasseInscricao == item.Id) { @Html.Raw("selected") }>@item.nome</option>
                                             }
-                                            
+
                                         }
                                     </select>
                                 </div>
@@ -443,18 +454,18 @@
                                     <div class="col-sm-8">
                                         <div class="checkbox">
                                             <label>
-                                                <input type="checkbox" value="true" name="isSegundaOpcaoClasse" id="isSegundaOpcaoClasse" onclick="segundaOpcaoDeClasse()" 
-                                                       @if (ViewBag.ClasseInscricao2 != null){ @Html.Raw("checked") } />
-                                                            @Html.Raw("Quero escolher mais uma categoria")
-                                                        </label>
-            
-                                                    </div>
-            
-                                                </div>
-            
-                                            </div>
-            
-                                  <div id="segundaOpcaoClasse" class="row">
+                                                <input type="checkbox" value="true" name="isSegundaOpcaoClasse" id="isSegundaOpcaoClasse" onclick="segundaOpcaoDeClasse()"
+                                                       @if (ViewBag.ClasseInscricao2 != null) { @Html.Raw("checked") } />
+                                                @Html.Raw("Quero escolher mais uma categoria")
+                                            </label>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                                <div id="segundaOpcaoClasse" class="row">
                                     @Html.Label("2ª Opção", new { @class = "col-sm-4" })
                                     <div class="col-sm-8 info-box-text">
                                         <select id="classeInscricao2" name="classeInscricao2" class="form-control segundaOpcaoClasse escolherTerceiraOpcaoClasse" data-classe3="@(Model.qtddCategoriasPorJogador>2)">
@@ -468,16 +479,16 @@
                                                     try { qtddInscritosClasse = listQtddInscritos.Where(i => i.Id == item.Id).First().qtddInscritos; } catch (Exception e) { }
                                                     if (qtddInscritosClasse >= item.maximoInscritos)
                                                     {
-                                                        <option style="color:red" value="@item.Id" data-isDupla="@item.isDupla" @if ((ViewBag.ClasseInscricao2 != null) && (ViewBag.ClasseInscricao2 == item.Id)) { @Html.Raw("selected")     }>Esgotado - @item.nome</option>
+                                                        <option style="color:red" value="@item.Id" data-isDupla="@item.isDupla" @if ((ViewBag.ClasseInscricao2 != null) && (ViewBag.ClasseInscricao2 == item.Id)) { @Html.Raw("selected") }>Esgotado - @item.nome</option>
                                                     }
                                                     else
                                                     {
-                                                        <option value="@item.Id" data-isDupla="@item.isDupla" @if ((ViewBag.ClasseInscricao2 != null) && (ViewBag.ClasseInscricao2 == item.Id)) { @Html.Raw("selected")     }>@item.nome</option>
+                                                        <option value="@item.Id" data-isDupla="@item.isDupla" @if ((ViewBag.ClasseInscricao2 != null) && (ViewBag.ClasseInscricao2 == item.Id)) { @Html.Raw("selected") }>@item.nome</option>
                                                     }
                                                 }
                                                 else
                                                 {
-                                                    <option value="@item.Id" data-isDupla="@item.isDupla" @if ((ViewBag.ClasseInscricao2 != null) && (ViewBag.ClasseInscricao2 == item.Id)) { @Html.Raw("selected")     }>@item.nome</option>
+                                                    <option value="@item.Id" data-isDupla="@item.isDupla" @if ((ViewBag.ClasseInscricao2 != null) && (ViewBag.ClasseInscricao2 == item.Id)) { @Html.Raw("selected") }>@item.nome</option>
                                                 }
                                             }
                                         </select>
@@ -492,7 +503,7 @@
                                         <div class="checkbox">
                                             <label>
                                                 <input type="checkbox" value="true" name="isTerceiraOpcaoClasse" id="isTerceiraOpcaoClasse" onclick="terceiraOpcaoDeClasse()"
-                                                       @if (ViewBag.ClasseInscricao3!=null) { @Html.Raw("checked")  } />
+                                                       @if (ViewBag.ClasseInscricao3 != null) { @Html.Raw("checked") } />
                                                 @Html.Raw("Quero escolher mais uma categoria")
                                             </label>
 
@@ -504,7 +515,7 @@
                                 <div id="terceiraOpcaoClasse" class="row">
                                     @Html.Label("3ª Opção", new { @class = "col-sm-4" })
                                     <div class="col-sm-8 info-box-text">
-                                        <select name="classeInscricao3"  id="classeInscricao3" class="form-control terceiraOpcaoClasse escolherQuartaOpcaoClasse" data-classe3="@(Model.qtddCategoriasPorJogador>3)">
+                                        <select name="classeInscricao3" id="classeInscricao3" class="form-control terceiraOpcaoClasse escolherQuartaOpcaoClasse" data-classe3="@(Model.qtddCategoriasPorJogador>3)">
                                             <option value="0">Selecione uma classe...</option>
                                             @foreach (var item in ViewBag.Classes2)
                                             {
@@ -515,16 +526,16 @@
                                                     try { qtddInscritosClasse = listQtddInscritos.Where(i => i.Id == item.Id).First().qtddInscritos; } catch (Exception e) { }
                                                     if (qtddInscritosClasse >= item.maximoInscritos)
                                                     {
-                                                        <option style="color:red" value="@item.Id" data-isDupla="@item.isDupla" @if ((ViewBag.ClasseInscricao3 !=null) && (ViewBag.ClasseInscricao3 == item.Id)) { @Html.Raw("selected")     }>Esgotado - @item.nome</option>
+                                                        <option style="color:red" value="@item.Id" data-isDupla="@item.isDupla" @if ((ViewBag.ClasseInscricao3 != null) && (ViewBag.ClasseInscricao3 == item.Id)) { @Html.Raw("selected") }>Esgotado - @item.nome</option>
                                                     }
                                                     else
                                                     {
-                                                        <option value="@item.Id" data-isDupla="@item.isDupla" @if ((ViewBag.ClasseInscricao3 != null) && (ViewBag.ClasseInscricao3 == item.Id)) { @Html.Raw("selected")     }>@item.nome</option>
+                                                        <option value="@item.Id" data-isDupla="@item.isDupla" @if ((ViewBag.ClasseInscricao3 != null) && (ViewBag.ClasseInscricao3 == item.Id)) { @Html.Raw("selected") }>@item.nome</option>
                                                     }
                                                 }
                                                 else
                                                 {
-                                                    <option value="@item.Id" data-isDupla="@item.isDupla" @if ((ViewBag.ClasseInscricao3 != null) && (ViewBag.ClasseInscricao3 == item.Id)) { @Html.Raw("selected")     }>@item.nome</option>
+                                                    <option value="@item.Id" data-isDupla="@item.isDupla" @if ((ViewBag.ClasseInscricao3 != null) && (ViewBag.ClasseInscricao3 == item.Id)) { @Html.Raw("selected") }>@item.nome</option>
                                                 }
                                             }
                                         </select>
@@ -538,7 +549,7 @@
                                         <div class="checkbox">
                                             <label>
                                                 <input type="checkbox" value="true" name="isQuartaOpcaoClasse" id="isQuartaOpcaoClasse" onclick="quartaOpcaoDeClasse()"
-                                                       @if (ViewBag.ClasseInscricao4 != null) { @Html.Raw("checked")   } />
+                                                       @if (ViewBag.ClasseInscricao4 != null) { @Html.Raw("checked") } />
                                                 @Html.Raw("Quero escolher mais uma categoria")
                                             </label>
                                         </div>
@@ -558,16 +569,16 @@
                                                     try { qtddInscritosClasse = listQtddInscritos.Where(i => i.Id == item.Id).First().qtddInscritos; } catch (Exception e) { }
                                                     if (qtddInscritosClasse >= item.maximoInscritos)
                                                     {
-                                                        <option style="color:red" value="@item.Id" data-isDupla="@item.isDupla" @if ((ViewBag.ClasseInscricao4 != null) && (ViewBag.ClasseInscricao4 == item.Id)) { @Html.Raw("selected")     }>Esgotado - @item.nome</option>
+                                                        <option style="color:red" value="@item.Id" data-isDupla="@item.isDupla" @if ((ViewBag.ClasseInscricao4 != null) && (ViewBag.ClasseInscricao4 == item.Id)) { @Html.Raw("selected") }>Esgotado - @item.nome</option>
                                                     }
                                                     else
                                                     {
-                                                        <option value="@item.Id" data-isDupla="@item.isDupla" @if ((ViewBag.ClasseInscricao4 != null) && (ViewBag.ClasseInscricao4 == item.Id)) { @Html.Raw("selected")     }>@item.nome</option>
+                                                        <option value="@item.Id" data-isDupla="@item.isDupla" @if ((ViewBag.ClasseInscricao4 != null) && (ViewBag.ClasseInscricao4 == item.Id)) { @Html.Raw("selected") }>@item.nome</option>
                                                     }
                                                 }
                                                 else
                                                 {
-                                                    <option value="@item.Id" data-isDupla="@item.isDupla" @if ((ViewBag.ClasseInscricao4 != null) && (ViewBag.ClasseInscricao4 == item.Id)) { @Html.Raw("selected")     }>@item.nome</option>
+                                                    <option value="@item.Id" data-isDupla="@item.isDupla" @if ((ViewBag.ClasseInscricao4 != null) && (ViewBag.ClasseInscricao4 == item.Id)) { @Html.Raw("selected") }>@item.nome</option>
                                                 }
                                             }
                                         </select>
@@ -602,7 +613,7 @@
                             if (inscricao != null)
                             {
                                 <div class="btn-group-vertical col-xs-12 col-sm-6">
-                                    @if ((inscricao.valorPendente!=null && inscricao.valorPendente!=0)||(((String.IsNullOrEmpty(inscricao.statusPagamento) || (inscricao.statusPagamento != "3" && inscricao.statusPagamento != "4")) && !inscricao.isAtivo) && Model.valor != 0 && (!ViewBag.isGratuito)))
+                                    @if ((inscricao.valorPendente != null && inscricao.valorPendente != 0) || (((String.IsNullOrEmpty(inscricao.statusPagamento) || (inscricao.statusPagamento != "3" && inscricao.statusPagamento != "4")) && !inscricao.isAtivo) && Model.valor != 0 && (!ViewBag.isGratuito)))
                                     {
                                         if (ViewBag.isAceitaCartao)
                                         {
@@ -644,7 +655,7 @@
                                         }
                                     }
                                 </div>
-                             
+
                             }
                             @Html.Raw("<span style='color:red'>Inscrições Encerradas.</span>")
                         }
@@ -667,7 +678,7 @@
                 {
                     if (inscricao.valorPendente == null || inscricao.valorPendente == 0)
                     {
-                    <p><b>Valor:</b> R$ @inscricao.valor ,00</p>
+                        <p><b>Valor:</b> R$ @inscricao.valor ,00</p>
                     }
                     else
                     {
@@ -884,7 +895,7 @@
                 document.getElementById('classeInscricao2').selectedIndex = 0;
                 document.getElementById('segundaOpcaoClasse').style.opacity = "0 !important";
                 document.getElementById('segundaOpcaoClasse').style.display = "none";
-                
+
                 isDupla2 = false;
                 if ((isDupla) || (isDupla2)) {
                    // $("#btnIncricao").text("Escolher Parceiro");

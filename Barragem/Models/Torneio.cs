@@ -203,8 +203,6 @@ namespace Barragem.Models
         public bool? inscricaoSoPeloSite { get; set; }
         public bool? isBeachTennis { get; set; }
         public bool? temPIX { get; set; }
-        
-        [NotMapped]
         public int StatusInscricao { get; set; }
         
         [NotMapped]

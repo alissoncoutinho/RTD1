@@ -2776,6 +2776,7 @@ namespace Barragem.Controllers
             ViewBag.Classes = classes;
             if (classes.Count == 0)
             {
+                CarregarDadosEssenciais(torneioId, "duplas");
                 return View(duplas);
             }
             ViewBag.filtroClasse = filtroClasse;
@@ -2821,6 +2822,7 @@ namespace Barragem.Controllers
             ViewBag.Classes = classes;
             if (classes.Count == 0)
             {
+                CarregarDadosEssenciais(torneioId, "fasegrupo");
                 return View(inscritos);
             }
             ViewBag.filtroClasse = filtroClasse;
@@ -3370,6 +3372,7 @@ namespace Barragem.Controllers
             {
                 torneio.dadosBancarios = "";
             }
+            torneio.StatusInscricao = (int)StatusInscricaoPainelTorneio.LIBERADA_ATE;
             torneio.isAtivo = true;
             torneio.liberarEscolhaDuplas = true;
             torneio.divulgaCidade = false;
@@ -3608,7 +3611,14 @@ namespace Barragem.Controllers
                 }
                 else
                 {
-                    conteudo = "Faça sua inscrição até o dia " + torneio.DataFinalInscricoes;
+                    if (torneio.StatusInscricao == (int)StatusInscricaoPainelTorneio.ABERTA)
+                    {
+                        conteudo = "Inscrições abertas";
+                    }
+                    else
+                    {
+                        conteudo = "Faça sua inscrição até o dia " + torneio.DataFinalInscricoes;
+                    }
                 }
 
 
