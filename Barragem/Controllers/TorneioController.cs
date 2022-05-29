@@ -4064,7 +4064,6 @@ namespace Barragem.Controllers
             }
 
             inscricao = inscricao.Where(i => i.classe == filtroClasse).ToList();
-            ViewBag.CabecasDeChave = getOpcoesCabecaDeChave(filtroClasse);
 
             if (filtroJogador != "")
             {
@@ -4093,6 +4092,8 @@ namespace Barragem.Controllers
                 dadosTela = PopularDadosCabecaChave(inscricao, inscricao, false);
             }
 
+            ViewBag.CabecasDeChave = getOpcoesCabecaDeChave(filtroClasse);
+            ViewBag.CircuitosImpCabecaChave = ObterCircuitosImportacaoCabecaChave(torneioId, filtroClasse);
             ViewBag.Classes = listaClasses;
             ViewBag.filtroClasse = filtroClasse;
             ViewBag.TorneioId = torneioId;
@@ -4101,21 +4102,121 @@ namespace Barragem.Controllers
             return View(dadosTela);
         }
 
-        private void ObterCircuitosImportacaoCabecaChave(int torneioId,int filtroClasse) 
+        [HttpPost]
+        public ActionResult ImportarCabecasChave(int torneioId, int ligaId, int filtroClasse)
         {
-            //from ligaTorneio in db.TorneioLiga
-            //join snapshot in db.Snapshot
-            //on ligaTorneio.snapshotId equals snapshot.Id
-            //join snapshotRanking in db.SnapshotRanking
-            //on snapshot.Id equals snapshotRanking.SnapshotId
-            //join classe in db.ClasseTorneio
-            //on ligaTorneio.LigaId equals classe.categoriaId
-            //where ligaTorneio.TorneioId == torneioId
-            //where classe.Id == filtroClasse;
+            try
+            {
+                var importacaoCabecas = new List<ImportacaoCabecaChaveModel>();
+                var qtdeCabecasChave = getOpcoesCabecaDeChave(filtroClasse);
+                var snapshotsDaLiga = db.Snapshot.Where(snap => snap.LigaId == ligaId).OrderByDescending(s => s.Id).FirstOrDefault();
 
+                var ranking = ObterDadosRankingTorneioClasse(torneioId, snapshotsDaLiga.Id, filtroClasse);
 
+                var classeTorneio = db.ClasseTorneio.Find(filtroClasse);
 
+                List<InscricaoTorneio> inscricao = db.InscricaoTorneio.Where(i => i.torneioId == torneioId && i.classe == filtroClasse).ToList();
+
+                if (classeTorneio.isDupla)
+                {
+                    var duplasFormadas = inscricao.Where(d => d.parceiroDuplaId != null).ToList();
+
+                    foreach (var inscricaoDupla in duplasFormadas)
+                    {
+                        var item = new ImportacaoCabecaChaveModel()
+                        {
+                            IdInscricao = inscricaoDupla.Id,
+                            TotalPontuacao = ranking.Where(x => x.UserId == inscricaoDupla.userId || x.UserId == inscricaoDupla.parceiroDuplaId).Sum(s => s.Pontuacao)
+                        };
+                        importacaoCabecas.Add(item);
+                    }
+                }
+                else
+                {
+                    foreach (var inscricaoJogador in inscricao)
+                    {
+                        var item = new ImportacaoCabecaChaveModel()
+                        {
+                            IdInscricao = inscricaoJogador.Id,
+                            TotalPontuacao = ranking.Where(x => x.UserId == inscricaoJogador.userId).Sum(s => s.Pontuacao)
+                        };
+                        importacaoCabecas.Add(item);
+                    }
+                }
+
+                var rankingPontuacao = importacaoCabecas
+                    .OrderByDescending(o => o.TotalPontuacao)
+                    .Take(qtdeCabecasChave);
+
+                int cabecaChave = 1;
+                foreach (var item in rankingPontuacao)
+                {
+                    var inscricaoCabecaChave = inscricao.FirstOrDefault(x => x.Id == item.IdInscricao);
+                    AtualizarCabecaChave(inscricaoCabecaChave, cabecaChave);
+                    cabecaChave++;
+                }
+
+                return Json(new { erro = "", retorno = 1 }, "text/plain", JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { erro = ex.Message, retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
+            }
         }
+
+        private List<SnapshotRanking> ObterDadosRankingTorneioClasse(int torneioId, int snapshotId, int filtroClasse)
+        {
+            var rankingJogadores = from torneio in db.Torneio
+                                   join ligaTorneio in db.TorneioLiga
+                                       on torneio.Id equals ligaTorneio.TorneioId
+                                   join snapshot in db.Snapshot
+                                       on ligaTorneio.snapshotId equals snapshot.Id
+                                   join classeTorneio in db.ClasseTorneio
+                                       on torneio.Id equals classeTorneio.torneioId
+                                   join classeLiga in db.ClasseLiga
+                                       on new { categoriaId = (int)classeTorneio.categoriaId, ligaId = snapshot.LigaId } equals new { categoriaId = classeLiga.CategoriaId, ligaId = classeLiga.LigaId }
+                                   join snapshotRanking in db.SnapshotRanking
+                                       on new { snapshotId = snapshot.Id, categoriaId = classeLiga.CategoriaId } equals new { snapshotId = snapshotRanking.SnapshotId, categoriaId = snapshotRanking.CategoriaId }
+                                   where ligaTorneio.TorneioId == torneioId
+                                   where classeTorneio.Id == filtroClasse
+                                   where snapshot.Id == snapshotId
+                                   orderby snapshotRanking.Posicao
+                                   select snapshotRanking;
+
+            if (rankingJogadores == null)
+                return new List<SnapshotRanking>();
+
+            return rankingJogadores.ToList();
+        }
+
+        private List<SelectListItem> ObterCircuitosImportacaoCabecaChave(int torneioId, int filtroClasse)
+        {
+            var circuitos = from torneio in db.Torneio
+                            join ligaTorneio in db.TorneioLiga
+                                on torneio.Id equals ligaTorneio.TorneioId
+                            join snapshot in db.Snapshot
+                                on ligaTorneio.snapshotId equals snapshot.Id
+                            join classeTorneio in db.ClasseTorneio
+                                on torneio.Id equals classeTorneio.torneioId
+                            join classeLiga in db.ClasseLiga
+                                on new { categoriaId = (int)classeTorneio.categoriaId, ligaId = snapshot.LigaId } equals new { categoriaId = classeLiga.CategoriaId, ligaId = classeLiga.LigaId }
+                            join liga in db.Liga
+                                on snapshot.LigaId equals liga.Id
+                            join snapshotRanking in db.SnapshotRanking
+                                on new { snapshotId = snapshot.Id, categoriaId = classeLiga.CategoriaId } equals new { snapshotId = snapshotRanking.SnapshotId, categoriaId = snapshotRanking.CategoriaId }
+                            where ligaTorneio.TorneioId == torneioId
+                            where classeTorneio.Id == filtroClasse
+                            orderby liga.Nome
+                            group liga by new { Id = liga.Id, Nome = liga.Nome } into gLiga
+                            select new SelectListItem { Text = gLiga.Key.Nome, Value = gLiga.Key.Id.ToString() };
+
+            if (circuitos == null)
+                return new List<SelectListItem>();
+
+            return circuitos.ToList();
+        }
+
+
 
         private List<CabecaChaveModel> PopularDadosCabecaChave(List<InscricaoTorneio> inscricoes, List<InscricaoTorneio> todasIncricoes, bool classeDupla)
         {
@@ -4171,15 +4272,7 @@ namespace Barragem.Controllers
                 List<string> classesPagtoOk = new List<string>();
                 var inscricao = db.InscricaoTorneio.Find(Id);
                 var cabecaChaveAnterior = inscricao.cabecaChave;
-                if (inscricao.classeTorneio.faseGrupo)
-                {
-                    inscricao.grupo = cabecaChave;
-                }
-                inscricao.cabecaChave = cabecaChave;
-
-                db.Entry(inscricao).State = EntityState.Modified;
-                db.SaveChanges();
-
+                AtualizarCabecaChave(inscricao, cabecaChave);
                 if (db.Jogo.Any(x => x.torneioId == inscricao.torneioId && x.classeTorneio == inscricao.classe))
                 {
                     //Se já tinha jogos para a classe grava no log
@@ -4193,6 +4286,18 @@ namespace Barragem.Controllers
             {
                 return Json(new { erro = ex.Message, retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
             }
+        }
+
+        private void AtualizarCabecaChave(InscricaoTorneio inscricao, int cabecaChave)
+        {
+            if (inscricao.classeTorneio.faseGrupo)
+            {
+                inscricao.grupo = cabecaChave;
+            }
+            inscricao.cabecaChave = cabecaChave;
+
+            db.Entry(inscricao).State = EntityState.Modified;
+            db.SaveChanges();
         }
 
         private void GravarLogErro(string msgErro)
