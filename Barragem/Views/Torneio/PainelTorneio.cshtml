@@ -1,0 +1,297 @@
+﻿@{
+
+}
+@model Barragem.Models.PainelTorneioModel
+
+<!--CSS INICIO-->
+<link rel="stylesheet" href="/Content/css/toogleButton.css">
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<style>
+    .labelInformacao {
+        font-size: small;
+        color: #3c8dbc;
+    }
+</style>
+<!--CSS FIM-->
+
+@Html.Partial("_PartialTabs")
+
+<div class="tab-content" style="margin-top:20px">
+    <div class="tab-pane fade in active" id="tabPainelTorneio">
+
+        <div class="box box-primary">
+            <div class="box-header with-border">
+                <h4 class="box-title">Divulgação das inscrições</h4>
+            </div>
+            <div class="box-body" style="margin-left:30px">
+                <div class="row form-group">
+                    @Html.Label("Status da Inscrição", new { @class = "col-sm-2 control-label" })
+
+                    <div class="col-md-3 input-group" style="float:left !important">
+                        @Html.DropDownList("StatusInscricao", Model.ListaOpcoesStatusInscricao, new { @id = "ddlStatusInscricao", @class = "col-md-1 form-control", onchange = "selectedStatusInscricao(this)" })
+                    </div>
+                    <div class="col-md-3 input-group date" id="dataFimInscricoes" data-date-format="dd/mm/yyyy" style="padding-left:20px">
+                        <input type="text" name="txtdataFimInscricoes" id="txtdataFimInscricoes" value="@Model.DataFimInscricoes.ToShortDateString()" class="form-control" readonly="readonly" onchange="selectedStatusInscricao(document.getElementById('ddlStatusInscricao'))" />
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-calendar">
+                            </span>
+                        </span>
+                    </div>
+
+                </div>
+
+                <div class="row form-group">
+
+                    <div>
+                        @Html.Label("Onde gostaria de divulgar o torneio?", new { @class = "col-sm-2 control-label" })
+                        <div class="col-md-3 input-group">
+                            @Html.DropDownList("OpcoesDivulgacao", Model.ListaOpcoesDivulgacao, new { @id = "ddlOpcoesDivulgacao", @class = "col-md-1 form-control", onchange = "selectedOpcaoDivulgacao(this)" })
+                        </div>
+                    </div>
+                    <label id="lblDescDivulgacao" class="col-sm-12 control-label labelInformacao"></label>
+                </div>
+
+                <div id="divLink" class="row form-group" style="margin-top:10px">
+                    @Html.Label("Copiar link do torneio", new { @class = "col-sm-2 control-label" })
+                    <div class="col-md-3 input-group">
+                        <button id="btnCopiarLink"> <span class="glyphicon glyphicon-share" onclick="copiarLinkTorneio()" /></button>
+                    </div>
+                    <label id="lblDescDivulgacao" class="col-sm-12 control-label labelInformacao">Divulgue esse link para jogadores fazerem a inscrição.</label>
+                </div>
+
+                <div id="divNotificarApp" class="row form-group" style="margin-top:10px;">
+                    @Html.Label("Divulgar no app", new { @class = "col-sm-2 control-label" })
+                    <div class="col-md-3 input-group">
+                        <button id="btnNotificarApp" class="btn btn-default" onclick="divulgarTorneioApp(@Model.TorneioId)">Enviar Notificação</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="box box-primary" style="margin-top:-20px">
+            <div class="box-header with-border">
+                <h4 class="box-title">Liberação de informações</h4>
+            </div>
+            <div class="box-body" style="margin-left:40px">
+                <div class="row form-group">
+                    <label class="switch" style="vertical-align: middle;">
+                        <input type="checkbox" id="chkLiberaVisualizacaoTabela" @if (Model.LiberaVisualizacaoTabela) { @Html.Raw("checked") } onclick="liberarVisualizacaoTabela(this)">
+                        <span class="slider round"></span>
+                    </label>
+                    <label> Liberar visualização da tabela do torneio</label>
+                </div>
+                <div class="row form-group">
+                    <label class="switch" style="vertical-align: middle;">
+                        <input type="checkbox" id="chkLiberaVisualizacaoInscritos" @if (Model.LiberaVisualizacaoInscritos) { @Html.Raw("checked") } onclick="liberarVisualizacaoInscritos(this)">
+                        <span class="slider round"></span>
+                    </label>
+                    <label> Liberar visualização dos inscritos do torneio</label>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+
+
+@section Scripts {
+
+    <script type="text/javascript">
+
+        var torneioId = @Model.TorneioId;
+        var isAtivo = @Model.IsAtivo.ToString().ToLower();
+
+        $("#dataFimInscricoes").datepicker({
+            language: 'pt-BR',
+            pickTime: false,
+            locale: 'pt-br',
+            dateFormat: 'dd/mm/yy',
+        });
+
+        function liberarVisualizacaoTabela(el) {
+            $.ajax({
+                type: "POST",
+                url: "/Torneio/LiberarVisualizacaoTabela",
+                dataType: "json",
+                data: "{'torneioId':'" + torneioId + "', 'liberar':'" + el.checked + "'}",
+                contentType: "application/json; charset=utf-8",
+                success: function (response) {
+                    if (typeof response == "object") {
+                        toastr.options = {
+                            "positionClass": "toast-top-center"
+                        }
+                        if (response.retorno === 0) {
+                            toastr.error(response.erro, "Erro");
+                        } else {
+                            toastr.success("Atualização realizada com sucesso.", "Aviso");
+                        }
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    location.reload(true);
+                }
+            });
+        }
+
+        function liberarVisualizacaoInscritos(el) {
+            $.ajax({
+                type: "POST",
+                url: "/Torneio/LiberarVisualizacaoInscritos",
+                dataType: "json",
+                data: "{'torneioId':'" + torneioId + "', 'liberar':'" + el.checked + "'}",
+                contentType: "application/json; charset=utf-8",
+                success: function (response) {
+                    if (typeof response == "object") {
+                        toastr.options = {
+                            "positionClass": "toast-top-center"
+                        }
+                        if (response.retorno === 0) {
+                            toastr.error(response.erro, "Erro");
+                        } else {
+                            toastr.success("Atualização realizada com sucesso.", "Aviso");
+                        }
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    location.reload(true);
+                }
+            });
+        }
+
+        function selectedStatusInscricao(el) {
+            $('.datepicker').css("display", "none");
+            $.ajax({
+                type: "POST",
+                url: "/Torneio/AtualizarStatusInscricao",
+                dataType: "json",
+                data: "{'torneioId':'" + torneioId + "', 'statusInscricao':'" + el.value + "', 'dataFimInscricao':'" + $("#txtdataFimInscricoes").val() + "'}",
+                contentType: "application/json; charset=utf-8",
+                success: function (response) {
+                    if (typeof response == "object") {
+                        toastr.options = {
+                            "positionClass": "toast-top-center"
+                        }
+                        if (response.retorno === 0) {
+                            toastr.error(response.erro, "Erro");
+                        } else {
+                            AtualizarStatusInscricao(el.value);
+                            toastr.success("Atualização realizada com sucesso.", "Aviso");
+                        }
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    location.reload(true);
+                }
+            });
+        }
+
+        function selectedOpcaoDivulgacao(el) {
+
+            $.ajax({
+                type: "POST",
+                url: "/Torneio/AtualizarDivulgacaoTorneio",
+                dataType: "json",
+                data: "{'torneioId':'" + torneioId + "', 'opcaoSelecionada':'" + el.value + "'}",
+                contentType: "application/json; charset=utf-8",
+                success: function (response) {
+                    if (typeof response == "object") {
+                        toastr.options = {
+                            "positionClass": "toast-top-center"
+                        }
+                        if (response.retorno === 0) {
+                            toastr.error(response.erro, "Erro");
+                        } else {
+                            isAtivo = response.isAtivo;
+                            AtualizarLabelOpcaoDivulgacao(el.value);
+                            toastr.success("Atualização realizada com sucesso.", "Aviso");
+                        }
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    location.reload(true);
+                }
+            });
+        }
+
+        function copiarLinkTorneio() {
+            event.preventDefault();
+            navigator.clipboard.writeText('@Model.LinkParaCopia');
+            toastr.success("Link copiado com sucesso.", "Aviso");
+        }
+
+        function divulgarTorneioApp(torneioId) {
+            event.preventDefault();
+            $.ajax(
+                {
+                    type: 'GET',
+                    url: '/Torneio/NotificarViaApp',
+                    data: "torneioId=" + torneioId,
+                    contentType: "application/json; charset=utf-8",
+                    success: function (response) {
+                        if (typeof response == "object") {
+                            if (response.retorno === 1) {
+                                toastr.success("Notificação enviada com sucesso: " + response.segmento, "Aviso");
+                            } else {
+                                toastr.error("Erro ao enviar notificação via APP.", "Erro");
+                            }
+                        }
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        toastr.error("Erro ao enviar notificação via APP.", "Erro");
+                    }
+                }
+            );
+        }
+
+        function AtualizarLabelOpcaoDivulgacao(valorSelecionado)
+        {
+            var label = $("#lblDescDivulgacao");
+
+            if (valorSelecionado == "ranking") {
+                MostrarCamposDivulgacao(true);
+                label.text("Apenas pessoas cadastradas no seu ranking conseguem ver o torneio no app.");
+            }
+            else if (valorSelecionado == "cidade") {
+                MostrarCamposDivulgacao(true);
+                label.text("Todos jogadores da sua cidade conseguem ver seu torneio no app.");
+            }
+            else {
+                MostrarCamposDivulgacao(false);
+                label.text("Seu torneio não está sendo divulgado.");
+            }
+        }
+
+        function MostrarCamposDivulgacao(podeMostrar) {
+            if (isAtivo == true) {
+                if (podeMostrar) {
+                    document.getElementById("divLink").style.display = 'block';
+                    document.getElementById("divNotificarApp").style.display = 'block';
+                }
+                else {
+                    document.getElementById("divLink").style.display = 'none';
+                    document.getElementById("divNotificarApp").style.display = 'none';
+                }
+            }
+            else
+            {
+                document.getElementById("divLink").style.display = 'none';
+                document.getElementById("divNotificarApp").style.display = 'none';
+            }
+        }
+
+        function AtualizarStatusInscricao(valorSelecionado) {
+            if (valorSelecionado == "3") {
+                document.getElementById("dataFimInscricoes").style.display = 'table';
+            }
+            else {
+                document.getElementById("dataFimInscricoes").style.display = 'none';
+            }
+        }
+
+        AtualizarLabelOpcaoDivulgacao($("#ddlOpcoesDivulgacao").val());
+        AtualizarStatusInscricao($("#ddlStatusInscricao").val());
+    </script>
+}

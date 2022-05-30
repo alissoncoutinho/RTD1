@@ -18,7 +18,7 @@
                 <div class="form-group">
                     <label class="control-label col-sm-4">Classes</label>
                     <div class="col-sm-5">
-                        <input type="hidden" name="torneioId" value="@ViewBag.torneioId">
+                        <input type="hidden" name="torneioId" value="@ViewBag.TorneioId">
                         <select name="classe" class="form-control input-sm" onchange="this.form.submit()">
                             <option value="1" @if (ViewBag.Classe == "1") { @Html.Raw("selected")     }>classe 1</option>
                             <option value="2" @if (ViewBag.Classe == "2") { @Html.Raw("selected")     }>classe 2</option>

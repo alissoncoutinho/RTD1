@@ -13,41 +13,18 @@
             @Html.AntiForgeryToken()
             @Html.ValidationSummary(true)
             <br>
+
+            @Html.HiddenFor(model => model.dataFimInscricoes)
+            @Html.HiddenFor(model => model.liberaTabelaInscricao)
+            @Html.HiddenFor(model => model.liberarTabela)
+            @Html.HiddenFor(model => model.divulgacao)
+            @Html.HiddenFor(model => model.StatusInscricao)
+
             <div class="box box-primary">
                 <div class="box-header with-border">
                     <h4 class="box-title">Informações Básicas</h4>
                 </div>
                 <div class="box-body">
-                    <div class="form-group">
-                        @Html.Label("Onde gostaria de divulgar o torneio?", new { @class = "col-sm-2 control-label" })
-                        <div class="col-xs-8 col-md-3 input-group">
-                            <select name="divulgacao" id="divulgacao" class="form-control">
-                                <option value="nao divulgar" @if (Model.divulgacao == "nao divulgar") { @Html.Raw(" selected ") }>Não divulgar por enquanto</option>
-                                <option value="ranking" @if (Model.divulgacao == "ranking") { @Html.Raw(" selected ") }>no meu ranking</option>
-                                <option value="cidade" @if (Model.divulgacao == "cidade") { @Html.Raw(" selected ") }>na minha cidade</option>
-                            </select>
-                        </div>
-                    </div>
-                    @if (Model.isAtivo)
-                    {
-                        <div class="form-group">
-                            @Html.Label("Copiar link do Torneio", new { @class = "col-xs-6 col-sm-2 control-label" })
-                            <div class="col-sm-8 input-group">
-                                <!--a href="/torneio-Model.barragem.dominio" title="Link do torneio" class="btn btn-default btn-xs">
-                                    <span class="glyphicon glyphicon-link"></span>
-                                </a-->
-                                <button id="btnCopiarLink" data-link='www.teste.com'> <span class="glyphicon glyphicon-share" /></button>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            @Html.Label("Divulgar no APP", new { @class = "col-xs-6 col-sm-2 control-label" })
-                            <div class="col-sm-8 input-group">
-                                <button id="btnNotificarApp" data-torneioid="@Model.Id" class="btn btn-default">Enviar Notificação</button>
-                            </div>
-                        </div>
-
-                    }
                     <div class="form-group">
                         @Html.LabelFor(model => model.nome, new { @class = "col-sm-2 control-label" })
                         <div class="col-xs-12 col-sm-8 input-group">
@@ -132,17 +109,6 @@
                     <h4 class="box-title">Inscrição</h4>
                 </div>
                 <div class="box-body">
-                    <div class="form-group">
-                        @Html.LabelFor(model => model.dataFimInscricoes, new { @class = "col-sm-2 control-label" })
-                        <div class="col-sm-4 input-group date" id="dataFimInscricoes" data-date-format="dd/mm/yyyy">
-                            <input type="text" name="dataFimInscricoes" id="dataFimInscricoes" value="@Model.dataFimInscricoes.ToShortDateString()" class="form-control" readonly="readonly" />
-                            <span class="input-group-addon">
-                                <span class="glyphicon glyphicon-calendar">
-                                </span>
-                            </span>
-                        </div>
-                        @Html.ValidationMessageFor(model => model.dataFimInscricoes)
-                    </div>
                     <div class="form-group">
                         @Html.Label("Em quantas categorias o jogador poderá se inscrever?", new { @class = "col-sm-2 control-label" })
                         <div class="col-sm-6 input-group">
@@ -350,20 +316,6 @@
                     <h4 class="box-title">Liberar</h4>
                 </div>
                 <div class="box-body">
-                    <div class="col-sm-4">
-                        <div class="checkbox">
-                            <label>
-                                @Html.CheckBoxFor(model => model.liberarTabela) Liberar visualização da tabela do torneio
-                            </label>
-                        </div>
-                    </div>
-                    <div class="col-sm-3">
-                        <div class="checkbox">
-                            <label>
-                                @Html.CheckBoxFor(model => model.liberaTabelaInscricao) Liberar lista de inscritos
-                            </label>
-                        </div>
-                    </div>
                     @if (Roles.IsUserInRole("admin"))
                     {
                         <div class="col-sm-3">
@@ -611,12 +563,6 @@
                 locale: 'pt-br',
                 dateFormat: 'dd/mm/yy'
             });
-            $("#dataFimInscricoes").datepicker({
-                language: 'pt-BR',
-                pickTime: false,
-                locale: 'pt-br',
-                dateFormat: 'dd/mm/yy',
-            });
 
             $("#sortable1, #sortable2, #sortable3, #sortable4").sortable({
                 connectWith: ".connectedSortable",
@@ -663,37 +609,6 @@
                 minLength: 3
             });
             $('#cidade').attr('autocomplete', 'off');
-        });
-
-        $('#btnCopiarLink').on('click', function (event) {
-            event.preventDefault();
-            navigator.clipboard.writeText('@link');
-            //$(this).attr('data-link')
-            toastr.success("Link copiado com sucesso.", "Aviso");
-        });
-
-        $('#btnNotificarApp').on('click', function (event) {
-            event.preventDefault();
-            $.ajax(
-                {
-                    type: 'GET',
-                    url: '/Torneio/NotificarViaApp',
-                    data: "torneioId=" + $(this).attr('data-torneioid'),
-                    contentType: "application/json; charset=utf-8",
-                    success: function (response) {
-                        if (typeof response == "object") {
-                            if (response.retorno === 1) {
-                                toastr.success("Notificação enviada com sucesso: " + response.segmento, "Aviso");
-                            } else {
-                                toastr.error("Erro ao enviar notificação via APP.", "Erro");
-                            }
-                        }
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        toastr.error("Erro ao enviar notificação via APP.", "Erro");
-                    }
-                }
-            );
         });
 
         function getJogadoresAlterados() {
