@@ -25,7 +25,8 @@ namespace Barragem.Controllers
                     if (perfil.Equals("admin") || perfil.Equals("organizador"))
                     {
                         return RedirectToAction("Dashboard", "Home");
-                    } else if (perfil.Equals("adminTorneio") || perfil.Equals("adminTorneioTenis"))
+                    }
+                    else if (perfil.Equals("adminTorneio") || perfil.Equals("adminTorneioTenis"))
                     {
                         UserProfile usu = db.UserProfiles.Find(WebSecurity.GetUserId(User.Identity.Name));
                         if (usu.barragemId == 0)
@@ -34,7 +35,8 @@ namespace Barragem.Controllers
                         }
                         return RedirectToAction("PainelControle", "Torneio");
                     }
-                }  catch (Exception) { }
+                }
+                catch (Exception) { }
 
                 return RedirectToAction("Index3", "Home");
             }
@@ -76,7 +78,7 @@ namespace Barragem.Controllers
 
         }
 
-        public ActionResult IndexTorneio2(int torneioId=0)
+        public ActionResult IndexTorneio2(int torneioId = 0)
         {
             HttpCookie cookie = Request.Cookies["_barragemId"];
             var barragemId = 1;
@@ -88,46 +90,28 @@ namespace Barragem.Controllers
             {
                 Barragens barragem = db.Barragens.Find(barragemId);
                 return RedirectToAction("IndexTorneioRedirect", "Home", new { id = barragem.dominio });
-            } else {
+            }
+            else
+            {
                 return RedirectToAction("IndexTorneioRedirect", "Home", new { id = torneioId });
             }
-        }
-
-        private Torneio montarDadosTorneio(Torneio torneio) {
-            var torneioLess = new Torneio();
-            torneioLess.nome = torneio.nome;
-            torneioLess.dataInicio = torneio.dataInicio;
-            torneioLess.dataFim = torneio.dataFim;
-            torneioLess.local = torneio.local;
-            torneioLess.cidade = torneio.cidade;
-            torneioLess.Id = torneio.Id;
-            torneioLess.dataFimInscricoes = torneio.dataFimInscricoes;
-            torneioLess.valor = torneio.valor;
-            torneioLess.valorSocio = torneio.valorSocio;
-            torneioLess.isMaisUmaClasse = torneio.isMaisUmaClasse;
-            torneioLess.valorMaisClasses = torneio.valorMaisClasses;
-            torneioLess.valorMaisClassesSocio = torneio.valorMaisClassesSocio;
-            torneioLess.dataFimInscricoes = torneio.dataFimInscricoes;
-            torneioLess.premiacao = torneio.premiacao;
-            torneioLess.barragemId = torneio.barragemId;
-            torneioLess.isDesconto = torneio.isDesconto;
-            torneioLess.descontoPara = torneio.descontoPara;
-            return torneioLess;
-
         }
 
         public ActionResult IndexTorneioRedirect(string id)
         {
             var barragem = new List<BarragemView>();
             int i = 0;
-            if (int.TryParse(id, out i)) {
+            if (int.TryParse(id, out i))
+            {
                 var ranking = db.Torneio.Find(Int32.Parse(id)).barragem;
                 Funcoes.CriarCookieBarragem(Response, Server, ranking.Id, ranking.nome, ranking.isBeachTenis);
                 return RedirectToAction("IndexTorneio", "Home", new { torneioId = id });
-            } else {
+            }
+            else
+            {
                 barragem = db.BarragemView.Where(b => b.dominio.ToLower().Equals(id.ToLower())).ToList<BarragemView>();
             }
-            
+
             if (barragem.Count() > 0)
             {
                 Funcoes.CriarCookieBarragem(Response, Server, barragem[0].Id, barragem[0].nome, barragem[0].isBeachTenis);
@@ -212,7 +196,9 @@ namespace Barragem.Controllers
                 if (cookie == null)
                 {
                     Funcoes.CriarCookieBarragem(Response, Server, usuario.barragemId, usuario.barragem.nome);
-                } else {
+                }
+                else
+                {
                     if (cookie.Value != usuario.barragemId + "")
                     {
                         WebSecurity.Logout();
@@ -356,8 +342,8 @@ namespace Barragem.Controllers
         {
             try
             {
-                DateTime dtNow = DateTime.Now.AddDays(-1);
-                var torneioAberto = db.Torneio.Where(t => t.barragemId == barragemId && t.dataFimInscricoes > dtNow && t.isAtivo).OrderByDescending(t => t.dataInicio).ToList();
+                var dataAtual = DateTime.Now.Date;
+                var torneioAberto = db.Torneio.Where(t => t.barragemId == barragemId && (t.StatusInscricao == (int)StatusInscricaoPainelTorneio.ABERTA || (t.StatusInscricao == (int)StatusInscricaoPainelTorneio.LIBERADA_ATE && t.dataFimInscricoes >= dataAtual)) && t.isAtivo).OrderByDescending(t => t.dataInicio).ToList();
                 if (torneioAberto.Count() > 0)
                 {
                     return torneioAberto[0];
@@ -365,14 +351,14 @@ namespace Barragem.Controllers
                 else
                 {
                     var barragem = db.BarragemView.Find(barragemId);
-                    torneioAberto = db.Torneio.Where(t => t.barragem.cidade == barragem.cidade && t.dataFimInscricoes > dtNow && t.isAtivo && t.divulgaCidade).OrderByDescending(t => t.dataInicio).ToList();
+                    torneioAberto = db.Torneio.Where(t => t.barragem.cidade == barragem.cidade && (t.StatusInscricao == (int)StatusInscricaoPainelTorneio.ABERTA || (t.StatusInscricao == (int)StatusInscricaoPainelTorneio.LIBERADA_ATE && t.dataFimInscricoes >= dataAtual)) && t.isAtivo && t.divulgaCidade).OrderByDescending(t => t.dataInicio).ToList();
                     if (torneioAberto.Count() > 0)
                     {
                         return torneioAberto[0];
                     }
                     else
                     {
-                        torneioAberto = db.Torneio.Where(t => t.dataFimInscricoes > dtNow && t.isAtivo && t.isOpen).OrderByDescending(t => t.dataInicio).ToList();
+                        torneioAberto = db.Torneio.Where(t => (t.StatusInscricao == (int)StatusInscricaoPainelTorneio.ABERTA || (t.StatusInscricao == (int)StatusInscricaoPainelTorneio.LIBERADA_ATE && t.dataFimInscricoes >= dataAtual)) && t.isAtivo && t.isOpen).OrderByDescending(t => t.dataInicio).ToList();
                         if (torneioAberto.Count() > 0)
                         {
                             return torneioAberto[0];
@@ -458,7 +444,7 @@ namespace Barragem.Controllers
                     }
                 }
             }
-            
+
 
             // jogos pendentes
             var dataLimite = DateTime.Now.AddMonths(-10);
@@ -485,42 +471,44 @@ namespace Barragem.Controllers
 
         }
 
-        private string diaDaSemanaEmPortugues(string diaDaSemanaEmIngles) {
+        private string diaDaSemanaEmPortugues(string diaDaSemanaEmIngles)
+        {
             var diaDaSemanaEmPt = "";
 
             if (diaDaSemanaEmIngles == "Sunday")
             {
                 diaDaSemanaEmPt = "Domingo";
             }
-            else if(diaDaSemanaEmIngles == "Monday")
+            else if (diaDaSemanaEmIngles == "Monday")
             {
                 diaDaSemanaEmPt = "Segunda-feira";
             }
-            else if(diaDaSemanaEmIngles == "Tuesday")
+            else if (diaDaSemanaEmIngles == "Tuesday")
             {
                 diaDaSemanaEmPt = "Terça-feira";
             }
-            else if(diaDaSemanaEmIngles == "Wednesday")
+            else if (diaDaSemanaEmIngles == "Wednesday")
             {
                 diaDaSemanaEmPt = "Quarta-feira";
             }
-            else if(diaDaSemanaEmIngles == "Thursday")
+            else if (diaDaSemanaEmIngles == "Thursday")
             {
                 diaDaSemanaEmPt = "Quinta-feira";
             }
-            else if(diaDaSemanaEmIngles == "Friday")
+            else if (diaDaSemanaEmIngles == "Friday")
             {
                 diaDaSemanaEmPt = "Sexta-feira";
             }
-            else if(diaDaSemanaEmIngles == "Saturday")
+            else if (diaDaSemanaEmIngles == "Saturday")
             {
                 diaDaSemanaEmPt = "Sábado";
             }
             return diaDaSemanaEmPt;
         }
 
-        [Authorize(Roles="admin, organizador")]
-        public ActionResult Dashboard() {
+        [Authorize(Roles = "admin, organizador")]
+        public ActionResult Dashboard()
+        {
             HttpCookie cookie = Request.Cookies["_barragemId"];
             var barragemId = Convert.ToInt32(cookie.Value.ToString());
             // caobrança
@@ -558,17 +546,21 @@ namespace Barragem.Controllers
                 ViewBag.diaDaSemana = diaDaSemanaEmPortugues(rodadaAtual.dataFim.DayOfWeek.ToString());
                 var jogosEmAberto = db.Jogo.Where(j => j.rodada_id == rodadaAtual.Id && j.situacao_Id != 4 && j.situacao_Id != 5).Count();
                 ViewBag.jogosEmAberto = jogosEmAberto;
-            }catch (Exception) { }
+            }
+            catch (Exception) { }
             // seção da Temporada atual:
-            try {
+            try
+            {
                 var temporada = db.Temporada.Where(t => t.barragemId == barragemId && t.isAtivo == true).OrderByDescending(t => t.Id).FirstOrDefault();
                 ViewBag.temporada = temporada;
                 var qtddRodada = db.Rodada.Where(r => r.temporadaId == temporada.Id && r.Id <= rodadaAtual.Id && r.barragemId == barragemId).Count();
                 ViewBag.NumeroRodada = "Rodada " + qtddRodada + " de " + temporada.qtddRodadas;
-                
-            } catch (Exception) { }
+
+            }
+            catch (Exception) { }
             // seção dos suspensos por WO:
-            try{
+            try
+            {
                 string suspensoWO = Tipos.Situacao.suspensoWO.ToString();
                 string suspenso = Tipos.Situacao.suspenso.ToString();
                 var jogadoresSuspensosWO = db.UserProfiles.Where(u => u.barragemId == barragemId && u.situacao == suspensoWO).Count();
@@ -614,15 +606,18 @@ namespace Barragem.Controllers
 
             ViewBag.situacaoJogador = usuario.situacao;
             ViewBag.userId = usuario.UserId;
-            if (perfil.Equals("admin") || perfil.Equals("organizador")) {
-                var pb = db.PagamentoBarragem.Where(p => (bool)p.cobrar && p.barragemId == barragemId && (p.status == "Aguardando" || p.status== "canceled")).OrderByDescending(o => o.Id).ToList();
-                if (pb.Count() > 0){
-                    if (pb[0].status=="Aguardando") { 
+            if (perfil.Equals("admin") || perfil.Equals("organizador"))
+            {
+                var pb = db.PagamentoBarragem.Where(p => (bool)p.cobrar && p.barragemId == barragemId && (p.status == "Aguardando" || p.status == "canceled")).OrderByDescending(o => o.Id).ToList();
+                if (pb.Count() > 0)
+                {
+                    if (pb[0].status == "Aguardando")
+                    {
                         ViewBag.cobranca = "Olá, o boleto da sua mensalidade já está disponível para pagamento. Clique no link para acessar o boleto ou copie o número do código de barras:";
                         ViewBag.boleto = pb[0].linkBoleto;
                         ViewBag.numeroCodigoBarras = pb[0].digitableLine;
-                        if (((DateTime.Now.Day > 10)&&(DateTime.Now.DayOfWeek!=DayOfWeek.Saturday) && 
-                            (DateTime.Now.DayOfWeek != DayOfWeek.Sunday) && (DateTime.Now.DayOfWeek != DayOfWeek.Monday)) 
+                        if (((DateTime.Now.Day > 10) && (DateTime.Now.DayOfWeek != DayOfWeek.Saturday) &&
+                            (DateTime.Now.DayOfWeek != DayOfWeek.Sunday) && (DateTime.Now.DayOfWeek != DayOfWeek.Monday))
                             || (DateTime.Now.Day > 13))
                         {
                             var brg = db.Barragens.Find(barragemId);
@@ -632,7 +627,8 @@ namespace Barragem.Controllers
                             ViewBag.cobranca = "Olá, Você possui uma mensalidade em atrasado que ocasionou o bloqueio do seu ranking. Não será possível gerar temporadas e rodadas. Clique no link para acessar o boleto ou copie o número do código de barras para realizar o pagamento:";
                         }
                     }
-                    if (pb[0].status == "canceled"){
+                    if (pb[0].status == "canceled")
+                    {
                         ViewBag.cobranca = "Seu ranking está inativo por falta de pagamento do boleto. Não será possível gerar temporadas e rodadas. Favor consultar os administradores do rankingdetenis.com";
                     }
                 }
@@ -657,22 +653,27 @@ namespace Barragem.Controllers
             {
                 jogo = db.Jogo.Find(idJogo);
                 ViewBag.isRodadaAtual = false;
-                if (perfil.Equals("admin") || perfil.Equals("organizador")){
+                if (perfil.Equals("admin") || perfil.Equals("organizador"))
+                {
                     ViewBag.ViewOrganizador = true;
                 }
             }
             if (jogo != null)
             {
                 //nao permitir edição caso a rodada já esteja fechada e o placar já tenha sido informado
-                if (!perfil.Equals("admin") && !perfil.Equals("organizador") && (jogo.rodada.isAberta == false) && (jogo.gamesJogados != 0)){
+                if (!perfil.Equals("admin") && !perfil.Equals("organizador") && (jogo.rodada.isAberta == false) && (jogo.gamesJogados != 0))
+                {
                     ViewBag.Editar = false;
-                }else{
+                }
+                else
+                {
                     ViewBag.Editar = true;
                 }
                 ViewBag.Placar = "";
                 if ((jogo.situacao_Id == 4) || (jogo.situacao_Id == 5))
                 {
-                    if (perfil.Equals("admin") || perfil.Equals("organizador")) {
+                    if (perfil.Equals("admin") || perfil.Equals("organizador"))
+                    {
                         ViewBag.VoltarPendente = true;
                     }
                     var placar = jogo.qtddGames1setDesafiado + "/" + jogo.qtddGames1setDesafiante;
@@ -707,7 +708,7 @@ namespace Barragem.Controllers
                     }
                 }
             }
-            
+
 
             // jogos pendentes
             var dataLimite = DateTime.Now.AddMonths(-10);
@@ -751,7 +752,8 @@ namespace Barragem.Controllers
 
                 ViewBag.qtddVitoriasDesafiado = jogosHeadToHead.Where(j => j.idDoVencedor == jogo.desafiado_id).Count();
                 ViewBag.qtddVitoriasDesafiante = jogosHeadToHead.Where(j => j.idDoVencedor == jogo.desafiante_id).Count();
-            }catch(Exception e){}
+            }
+            catch (Exception e) { }
             try
             {
                 ViewBag.melhorRankingDesafiado = "";
@@ -772,21 +774,25 @@ namespace Barragem.Controllers
             var labels = "";
             var dados = "";
             var primeiraVez = true;
-            foreach(var rk in meuRanking){
-                if (primeiraVez) {
+            foreach (var rk in meuRanking)
+            {
+                if (primeiraVez)
+                {
                     primeiraVez = false;
-                    labels = "'"+rk.rodada.codigoSeq + ": " + rk.classe.nome.Replace("Classe","Cl.") + "'";
+                    labels = "'" + rk.rodada.codigoSeq + ": " + rk.classe.nome.Replace("Classe", "Cl.") + "'";
                     dados = "" + rk.posicaoClasse;
-                }else{
-                    dados =  rk.posicaoClasse + "," + dados;
-                    labels = "'"+rk.rodada.codigoSeq + ": " + rk.classe.nome.Replace("Classe", "Cl.") + "',"+ labels;
+                }
+                else
+                {
+                    dados = rk.posicaoClasse + "," + dados;
+                    labels = "'" + rk.rodada.codigoSeq + ": " + rk.classe.nome.Replace("Classe", "Cl.") + "'," + labels;
                 }
             }
             ViewBag.ChartLinelabels = labels;
             ViewBag.ChartLineData = dados;
             ViewBag.meuRanking = meuRanking;
             // gráfico rosca - desempenho nos jogos
-            var meusJogos = db.Jogo.Where(j => (j.desafiado_id == usuario.UserId || j.desafiante_id == usuario.UserId) && (j.situacao_Id==5 || j.situacao_Id==4) && j.torneioId==null).ToList();
+            var meusJogos = db.Jogo.Where(j => (j.desafiado_id == usuario.UserId || j.desafiante_id == usuario.UserId) && (j.situacao_Id == 5 || j.situacao_Id == 4) && j.torneioId == null).ToList();
             ViewBag.qtddTotalDerrotas = meusJogos.Where(j => j.idDoVencedor != usuario.UserId).Count();
             ViewBag.qtddTotalVitorias = meusJogos.Where(j => j.idDoVencedor == usuario.UserId).Count();
             //ViewBag.qtddTotalWos = meusJogos.Where(j => j.situacao_Id == 5).Count();

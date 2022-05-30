@@ -23,13 +23,19 @@
                     <input id="filtroJogador" name="filtroJogador" type="text" value="" placeholder="Nome Jogador" class="form-control" />
                 </div>
 
-                <div class="form-group col-sm-2">
+                <div class="form-group col-sm-4">
                     <input type="button" value="Filtrar" class="btn btn-primary" onclick="Selecionar()">
+                </div>
+
+                <div class="form-group col-sm-2">
+                    <button type="button" id="btnImportarCabecaChave" class="btn btn-info" style=" float: right;"
+                            data-toggle="modal" data-target="#modalImportarCabecaChave" onclick="abrirModalImportarCabecaChave()">Importar cabeças chave
+                    </button>
                 </div>
             </div>
             <div class="form-row">
-                <div class="form-group col-sm-12">
-                    <h5>Só é possível selecionar cabeça de chave para jogadores com pagamento da inscrição confirmado.</h5>
+                <div class="form-group col-sm-8">
+                    <h5 style="color: #3c8dbc">Só é possível selecionar cabeça de chave para jogadores com pagamento da inscrição confirmado.</h5>
                 </div>
             </div>
             <div class="box-body table-responsive no-padding">
@@ -45,7 +51,7 @@
                         <th width="200px">
                             Cabeça de chave
                         </th>
-                        
+
                     </tr>
                     @foreach (var item in Model)
                     {
@@ -87,7 +93,7 @@
                                 <input type="hidden" id="@Html.Raw("idInscricao" + i)" value="@item.IdInscricao">
                                 <input type="hidden" value="100" id="@Html.Raw("oldCabecaChave" + i)">
                                 @if (item.TodaInscricaoPaga == false)
-                                {                                    
+                                {
                                     <select name="@Html.Raw("cabecaChave" + i)" id="@Html.Raw("cabecaChave" + i)" class="form-control" disabled>
                                         <option value="100" @if (item.CabecaChave == 100) { @Html.Raw("selected") }>não</option>
                                         @for (int j = 1; j <= ViewBag.CabecasDeChave; j++)
@@ -97,7 +103,7 @@
                                     </select>
                                 }
                                 else
-                                {   
+                                {
                                     <select name="@Html.Raw("cabecaChave" + i)" id="@Html.Raw("cabecaChave" + i)" class="form-control validarCabecaChave" onchange="validarCabecaChave(this)">
                                         <option value="100" @if (item.CabecaChave == 100) { @Html.Raw("selected") }>não</option>
                                         @for (int j = 1; j <= ViewBag.CabecasDeChave; j++)
@@ -115,6 +121,41 @@
         </div>
     </div>
 
+    <div id="modalImportarCabecaChave" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header" style="padding:5px">
+                    <a class="close" data-dismiss="modal">×</a>
+                    <h3>Selecione o circuito</h3>
+                </div>
+
+                <div class="modal-body">
+                    <div class="form-group">
+                        <input type="hidden" id="hiddenIdTorneioModal" class="form-control">
+                        <input type="hidden" id="hiddenFiltroClasseModal" class="form-control">
+                    </div>
+
+                    <select id="filtroImpChave" class="form-control">
+                        <option value="0" selected>SELECIONE</option>
+                        @foreach (var item2 in ViewBag.CircuitosImpCabecaChave)
+                        {
+                            <option value="@item2.Value">@item2.Text</option>
+                        }
+                    </select>
+                </div>
+                <div class="modal-footer">
+
+                    <div style="display: inline-block; float: right;" class="col-md-6">
+                        <button type="button" class="btn btn-default" data-dismiss="modal"><span class="spinner-border spinner-border-sm"></span>Cancelar</button>
+                        <input type="button" value="Importar" class="btn btn-primary" id="btnEfetuarImportacaoCabecaChave" />
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
     <style>
         select option:disabled {
             color: #ff0000;
@@ -124,7 +165,48 @@
 
     @section Scripts {
         <script type="text/javascript">
-            
+
+            function abrirModalImportarCabecaChave() {
+                var torneioId = document.getElementById('torneioId').value;
+                var classeId = document.getElementById('filtroClasse').value;
+
+                $('#hiddenIdTorneioModal').val(torneioId);
+                $('#hiddenFiltroClasseModal').val(classeId);
+            }
+
+            $("#btnEfetuarImportacaoCabecaChave").click(function (event) {
+
+                var ligaId = document.getElementById("filtroImpChave").value;
+
+                if (ligaId == 0) {
+                    toastr.error("Selecione o circuito", "Aviso");
+                    return;
+                }
+
+                $.ajax({
+                    type: "POST",
+                    url: "/Torneio/ImportarCabecasChave",
+                    cache: false,
+                    dataType: "json",
+                    data: {
+                        torneioId: $("#hiddenIdTorneioModal").val(),
+                        ligaId: ligaId,
+                        filtroClasse: $("#hiddenFiltroClasseModal").val()
+                    },
+                    success: function (response) {
+                        if (response.retorno == 0) {
+                            toastr.error(response.erro, "Aviso");
+                        }
+                        else {
+                            toastr.success("Importação de cabeças de chave efetuada com sucesso.", "Aviso");
+                            location.reload(true);
+                        }
+                        $("#modalImportarCabecaChave").modal('hide');
+                    }
+                });
+
+            });
+
             function validarCabecaChave(element) {
                 var qtdeRegistros = parseInt($("#qtdeRegistros").val());
 
@@ -158,27 +240,27 @@
 
             function EfetivarAlteracaoCabecaChave(id, cabecaChave) {
                 $.ajax({
-                        type: "POST",
-                        url: "/Torneio/EditCabecaChave",
-                        dataType: "json",
-                        data: "{'Id':'" + id + "', 'cabecaChave':'" + cabecaChave + "'}",
-                        contentType: "application/json; charset=utf-8",
-                        success: function (response) {
-                            if (typeof response == "object") {
-                                toastr.options = {
-                                    "positionClass": "toast-top-center"
-                                }
-                                if (response.retorno === 0) {
-                                    toastr.error(response.erro, "Erro");
-                                } else {
-                                    toastr.success("Atualização realizada com sucesso.", "Aviso");
-                                }
+                    type: "POST",
+                    url: "/Torneio/EditCabecaChave",
+                    dataType: "json",
+                    data: "{'Id':'" + id + "', 'cabecaChave':'" + cabecaChave + "'}",
+                    contentType: "application/json; charset=utf-8",
+                    success: function (response) {
+                        if (typeof response == "object") {
+                            toastr.options = {
+                                "positionClass": "toast-top-center"
                             }
-                        },
-                        error: function (jqXHR, textStatus, errorThrown) {
-                            location.reload(true);
+                            if (response.retorno === 0) {
+                                toastr.error(response.erro, "Erro");
+                            } else {
+                                toastr.success("Atualização realizada com sucesso.", "Aviso");
+                            }
                         }
-                    });
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        location.reload(true);
+                    }
+                });
             }
 
             function ObterNomeItemAnteriorSelecionado(nomeComboAtualSelecionado) {

@@ -13,7 +13,7 @@
             @using (Html.BeginForm("MontarTabelaFaseGrupo", "Torneio", FormMethod.Post, new { @class = "form-row", @name = "formClasses" }))
             {
                 <input type="hidden" value="@ViewBag.TorneioId" name="torneioId" id="torneioId">
-                <a href="@Url.Action("Tabela", new { torneioId = ViewBag.torneioId })" target="_blank" class="btn btn-success btn-small">Ver Tabela</a>
+                <a href="@Url.Action("Tabela", new { torneioId = ViewBag.TorneioId })" target="_blank" class="btn btn-success btn-small">Ver Tabela</a>
             }
             <div class="form-horizontal">
                 <div class="form-group">
