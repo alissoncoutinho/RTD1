@@ -4102,6 +4102,88 @@ namespace Barragem.Controllers
             return View(dadosTela);
         }
 
+        private List<CabecaChaveModel> PopularDadosCabecaChave(List<InscricaoTorneio> inscricoes, List<InscricaoTorneio> todasIncricoes, bool classeDupla)
+        {
+            List<CabecaChaveModel> dadosTela = new List<CabecaChaveModel>();
+
+
+            foreach (var item in inscricoes)
+            {
+                var itemCabecaChave = new CabecaChaveModel();
+                itemCabecaChave.IdTorneio = item.torneioId;
+                itemCabecaChave.IdInscricao = item.Id;
+                itemCabecaChave.IdClasse = item.classe;
+                itemCabecaChave.CabecaChave = item.cabecaChave;
+                itemCabecaChave.EhDupla = classeDupla;
+                itemCabecaChave.IdParticipante = item.userId;
+                itemCabecaChave.NomeParticipante = item.participante.nome;
+                itemCabecaChave.UserNameParticipante = item.participante.UserName;
+                itemCabecaChave.InscricaoParticipantePaga = item.isAtivo;
+
+                if (classeDupla)
+                {
+                    if (item.parceiroDupla != null)
+                    {
+                        itemCabecaChave.IdParceiroDupla = item.parceiroDuplaId.Value;
+                        itemCabecaChave.NomeParceiroDupla = item.parceiroDupla.nome;
+                        itemCabecaChave.UserNameParceiroDupla = item.parceiroDupla.UserName;
+
+                        bool iscricaoParceiroPaga = todasIncricoes.Count(x => x.userId == itemCabecaChave.IdParceiroDupla && x.isAtivo) == 1;
+                        itemCabecaChave.InscricaoParceiroDuplaPaga = iscricaoParceiroPaga;
+
+                        itemCabecaChave.TodaInscricaoPaga = itemCabecaChave.InscricaoParceiroDuplaPaga && itemCabecaChave.InscricaoParticipantePaga;
+                    }
+                    else
+                    {
+                        itemCabecaChave.EhDupla = false;
+                        itemCabecaChave.TodaInscricaoPaga = itemCabecaChave.InscricaoParticipantePaga;
+                    }
+                }
+                else
+                {
+                    itemCabecaChave.TodaInscricaoPaga = itemCabecaChave.InscricaoParticipantePaga;
+                }
+                dadosTela.Add(itemCabecaChave);
+            }
+            return dadosTela;
+        }
+
+        [HttpPost]
+        public ActionResult EditCabecaChave(int Id, int cabecaChave)
+        {
+            try
+            {
+                List<string> classesPagtoOk = new List<string>();
+                var inscricao = db.InscricaoTorneio.Find(Id);
+                var cabecaChaveAnterior = inscricao.cabecaChave;
+                AtualizarCabecaChave(inscricao, cabecaChave);
+                if (db.Jogo.Any(x => x.torneioId == inscricao.torneioId && x.classeTorneio == inscricao.classe))
+                {
+                    //Se já tinha jogos para a classe grava no log
+                    var msg = $"ALTERACAO_CABECA_CHAVE_JOGOS_JA_EXISTENTES - Id Inscrição: {inscricao.Id} Id User: {inscricao.userId}. CABECA CHAVE ANTERIOR: {cabecaChaveAnterior} CABECA CHAVE ATUAL: {inscricao.cabecaChave}";
+                    GravarLogErro(msg);
+                }
+
+                return Json(new { erro = "", retorno = 1 }, "text/plain", JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { erro = ex.Message, retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        private void AtualizarCabecaChave(InscricaoTorneio inscricao, int cabecaChave)
+        {
+            if (inscricao.classeTorneio.faseGrupo)
+            {
+                inscricao.grupo = cabecaChave;
+            }
+            inscricao.cabecaChave = cabecaChave;
+
+            db.Entry(inscricao).State = EntityState.Modified;
+            db.SaveChanges();
+        }
+
         [HttpPost]
         public ActionResult ImportarCabecasChave(int torneioId, int ligaId, int filtroClasse)
         {
@@ -4216,96 +4298,11 @@ namespace Barragem.Controllers
             return circuitos.ToList();
         }
 
-
-
-        private List<CabecaChaveModel> PopularDadosCabecaChave(List<InscricaoTorneio> inscricoes, List<InscricaoTorneio> todasIncricoes, bool classeDupla)
-        {
-            List<CabecaChaveModel> dadosTela = new List<CabecaChaveModel>();
-
-
-            foreach (var item in inscricoes)
-            {
-                var itemCabecaChave = new CabecaChaveModel();
-                itemCabecaChave.IdTorneio = item.torneioId;
-                itemCabecaChave.IdInscricao = item.Id;
-                itemCabecaChave.IdClasse = item.classe;
-                itemCabecaChave.CabecaChave = item.cabecaChave;
-                itemCabecaChave.EhDupla = classeDupla;
-                itemCabecaChave.IdParticipante = item.userId;
-                itemCabecaChave.NomeParticipante = item.participante.nome;
-                itemCabecaChave.UserNameParticipante = item.participante.UserName;
-                itemCabecaChave.InscricaoParticipantePaga = item.isAtivo;
-
-                if (classeDupla)
-                {
-                    if (item.parceiroDupla != null)
-                    {
-                        itemCabecaChave.IdParceiroDupla = item.parceiroDuplaId.Value;
-                        itemCabecaChave.NomeParceiroDupla = item.parceiroDupla.nome;
-                        itemCabecaChave.UserNameParceiroDupla = item.parceiroDupla.UserName;
-
-                        bool iscricaoParceiroPaga = todasIncricoes.Count(x => x.userId == itemCabecaChave.IdParceiroDupla && x.isAtivo) == 1;
-                        itemCabecaChave.InscricaoParceiroDuplaPaga = iscricaoParceiroPaga;
-
-                        itemCabecaChave.TodaInscricaoPaga = itemCabecaChave.InscricaoParceiroDuplaPaga && itemCabecaChave.InscricaoParticipantePaga;
-                    }
-                    else
-                    {
-                        itemCabecaChave.EhDupla = false;
-                        itemCabecaChave.TodaInscricaoPaga = itemCabecaChave.InscricaoParticipantePaga;
-                    }
-                }
-                else
-                {
-                    itemCabecaChave.TodaInscricaoPaga = itemCabecaChave.InscricaoParticipantePaga;
-                }
-                dadosTela.Add(itemCabecaChave);
-            }
-            return dadosTela;
-        }
-
-        [HttpPost]
-        public ActionResult EditCabecaChave(int Id, int cabecaChave)
-        {
-            try
-            {
-                List<string> classesPagtoOk = new List<string>();
-                var inscricao = db.InscricaoTorneio.Find(Id);
-                var cabecaChaveAnterior = inscricao.cabecaChave;
-                AtualizarCabecaChave(inscricao, cabecaChave);
-                if (db.Jogo.Any(x => x.torneioId == inscricao.torneioId && x.classeTorneio == inscricao.classe))
-                {
-                    //Se já tinha jogos para a classe grava no log
-                    var msg = $"ALTERACAO_CABECA_CHAVE_JOGOS_JA_EXISTENTES - Id Inscrição: {inscricao.Id} Id User: {inscricao.userId}. CABECA CHAVE ANTERIOR: {cabecaChaveAnterior} CABECA CHAVE ATUAL: {inscricao.cabecaChave}";
-                    GravarLogErro(msg);
-                }
-
-                return Json(new { erro = "", retorno = 1 }, "text/plain", JsonRequestBehavior.AllowGet);
-            }
-            catch (Exception ex)
-            {
-                return Json(new { erro = ex.Message, retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
-            }
-        }
-
-        private void AtualizarCabecaChave(InscricaoTorneio inscricao, int cabecaChave)
-        {
-            if (inscricao.classeTorneio.faseGrupo)
-            {
-                inscricao.grupo = cabecaChave;
-            }
-            inscricao.cabecaChave = cabecaChave;
-
-            db.Entry(inscricao).State = EntityState.Modified;
-            db.SaveChanges();
-        }
-
         private void GravarLogErro(string msgErro)
         {
             if (msgErro.Length > 500) msgErro = msgErro.Substring(0, 500);
             db.Log.Add(new Log() { descricao = msgErro });
             db.SaveChanges();
         }
-
     }
 }
