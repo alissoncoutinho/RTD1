@@ -87,6 +87,18 @@ namespace Barragem.Controllers
             }
         }
 
+        private void AtualizarCabecaChave(InscricaoTorneio inscricao, int cabecaChave)
+        {
+            if (inscricao.classeTorneio.faseGrupo)
+            {
+                inscricao.grupo = cabecaChave;
+            }
+            inscricao.cabecaChave = cabecaChave;
+
+            db.Entry(inscricao).State = EntityState.Modified;
+            db.SaveChanges();
+        }
+
         private List<SnapshotRanking> ObterDadosRankingTorneioClasse(int torneioId, int snapshotId, int filtroClasse)
         {
             var rankingJogadores = from torneio in db.Torneio
@@ -4284,18 +4296,6 @@ namespace Barragem.Controllers
             {
                 return Json(new { erro = ex.Message, retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
             }
-        }
-
-        private void AtualizarCabecaChave(InscricaoTorneio inscricao, int cabecaChave)
-        {
-            if (inscricao.classeTorneio.faseGrupo)
-            {
-                inscricao.grupo = cabecaChave;
-            }
-            inscricao.cabecaChave = cabecaChave;
-
-            db.Entry(inscricao).State = EntityState.Modified;
-            db.SaveChanges();
         }
 
         private void GravarLogErro(string msgErro)
