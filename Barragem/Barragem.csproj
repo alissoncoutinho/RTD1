@@ -1158,6 +1158,7 @@
     <Content Include="Views\Account\RegisterUserBarragem.cshtml" />
     <Content Include="Views\Torneio\EditCabecaChave.cshtml" />
     <Content Include="Views\Torneio\PainelTorneio.cshtml" />
+    <Content Include="Views\Torneio\_PartialDadosBancariosTorneio.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

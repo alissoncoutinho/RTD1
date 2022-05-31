@@ -3716,6 +3716,7 @@ namespace Barragem.Controllers
             }
             ViewBag.UnicoCircuitoBeachTennis = ValidarRegraUnicoCircuitoBeachTennis(barragem.isBeachTenis, ligasId.Count, qtddTorneios);
             ViewBag.Categorias = categoriasDeLiga;
+
             return View();
         }
 
