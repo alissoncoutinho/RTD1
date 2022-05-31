@@ -1890,7 +1890,7 @@ namespace Barragem.Controllers
                                     return mensagemRetorno;
                                 }
 
-                                InscricaoTorneio insc2 = preencherInscricaoTorneio(torneioId, userId, classeInscricao2, valorInscricao, observacao, isSocio, isFederado, valorPendente);
+                                InscricaoTorneio insc2 = preencherInscricaoTorneio(torneioId, userId, classeInscricao2, valorInscricao, observacao, isSocio, isFederado, valorPendente, it[0].isAtivo);
                                 db.InscricaoTorneio.Add(insc2);
                             }
                             if (it.Count() > 2)
@@ -1906,7 +1906,7 @@ namespace Barragem.Controllers
                                     mensagemRetorno.mensagem = msgValidacaoClasse;
                                     return mensagemRetorno;
                                 }
-                                InscricaoTorneio insc3 = preencherInscricaoTorneio(torneioId, userId, classeInscricao3, valorInscricao, observacao, isSocio, isFederado, valorPendente);
+                                InscricaoTorneio insc3 = preencherInscricaoTorneio(torneioId, userId, classeInscricao3, valorInscricao, observacao, isSocio, isFederado, valorPendente, it[0].isAtivo);
                                 db.InscricaoTorneio.Add(insc3);
                             }
                             if (it.Count() > 3)
@@ -1922,7 +1922,7 @@ namespace Barragem.Controllers
                                     mensagemRetorno.mensagem = msgValidacaoClasse;
                                     return mensagemRetorno;
                                 }
-                                InscricaoTorneio insc4 = preencherInscricaoTorneio(torneioId, userId, classeInscricao4, valorInscricao, observacao, isSocio, isFederado, valorPendente);
+                                InscricaoTorneio insc4 = preencherInscricaoTorneio(torneioId, userId, classeInscricao4, valorInscricao, observacao, isSocio, isFederado, valorPendente, it[0].isAtivo);
                                 db.InscricaoTorneio.Add(insc4);
                             }
                             db.SaveChanges();
@@ -2121,7 +2121,7 @@ namespace Barragem.Controllers
             return "";
         }
 
-        public InscricaoTorneio preencherInscricaoTorneio(int torneioId, int userId, int classeInscricao, double? valorInscricao, string observacao, bool isSocio, bool isFederado, double valorPendente = 0)
+        public InscricaoTorneio preencherInscricaoTorneio(int torneioId, int userId, int classeInscricao, double? valorInscricao, string observacao, bool isSocio, bool isFederado, double valorPendente = 0, bool isInscricaoAtiva = false)
         {
             InscricaoTorneio inscricao = new InscricaoTorneio();
             inscricao.classe = classeInscricao;
@@ -2132,11 +2132,8 @@ namespace Barragem.Controllers
             inscricao.observacao = observacao;
             inscricao.isSocio = isSocio;
             inscricao.isFederado = isFederado;
-            if (valorInscricao > 0)
-            {
-                inscricao.isAtivo = false;
-            }
-            else
+            inscricao.isAtivo = false;
+            if ((valorInscricao == 0) || ((isInscricaoAtiva) && (valorPendente == 0)))
             {
                 inscricao.isAtivo = true;
             }
