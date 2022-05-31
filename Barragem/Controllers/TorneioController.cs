@@ -26,57 +26,70 @@ namespace Barragem.Controllers
         //
 
         [HttpPost]
-        public ActionResult ImportarCabecasChave(int torneioId, int ligaId, int filtroClasse)
+        public ActionResult ImportarCabecasChave(int torneioId, int ligaId)
         {
             try
             {
-                var importacaoCabecas = new List<ImportacaoCabecaChaveModel>();
-                var qtdeCabecasChave = getOpcoesCabecaDeChave(filtroClasse);
-                var snapshotsDaLiga = db.Snapshot.Where(snap => snap.LigaId == ligaId).OrderByDescending(s => s.Id).FirstOrDefault();
+                var listaClasses = db.ClasseTorneio.Where(c => c.torneioId == torneioId).ToList();
 
-                var ranking = ObterDadosRankingTorneioClasse(torneioId, snapshotsDaLiga.Id, filtroClasse);
-
-                var classeTorneio = db.ClasseTorneio.Find(filtroClasse);
-
-                List<InscricaoTorneio> inscricao = db.InscricaoTorneio.Where(i => i.torneioId == torneioId && i.classe == filtroClasse).ToList();
-
-                if (classeTorneio.isDupla)
+                foreach (var classe in listaClasses)
                 {
-                    var duplasFormadas = inscricao.Where(d => d.parceiroDuplaId != null).ToList();
+                    var importacaoCabecas = new List<ImportacaoCabecaChaveModel>();
+                    var qtdeCabecasChave = getOpcoesCabecaDeChave(classe.Id);
+                    var snapshotsDaLiga = db.Snapshot.Where(snap => snap.LigaId == ligaId).OrderByDescending(s => s.Id).FirstOrDefault();
 
-                    foreach (var inscricaoDupla in duplasFormadas)
+                    var ranking = ObterDadosRankingTorneioClasse(torneioId, snapshotsDaLiga.Id, classe.Id);
+
+                    List<InscricaoTorneio> inscricao = db.InscricaoTorneio.Where(i => i.torneioId == torneioId && i.classe == classe.Id).ToList();
+
+                    if (classe.isDupla)
                     {
-                        var item = new ImportacaoCabecaChaveModel()
+                        var duplasFormadas = inscricao.Where(d => d.parceiroDuplaId != null).ToList();
+
+                        foreach (var inscricaoDupla in duplasFormadas)
                         {
-                            IdInscricao = inscricaoDupla.Id,
-                            TotalPontuacao = ranking.Where(x => x.UserId == inscricaoDupla.userId || x.UserId == inscricaoDupla.parceiroDuplaId).Sum(s => s.Pontuacao)
-                        };
-                        importacaoCabecas.Add(item);
+                            var item = new ImportacaoCabecaChaveModel()
+                            {
+                                IdInscricao = inscricaoDupla.Id,
+                                TotalPontuacao = ranking.Where(x => x.UserId == inscricaoDupla.userId || x.UserId == inscricaoDupla.parceiroDuplaId).Sum(s => s.Pontuacao)
+                            };
+                            importacaoCabecas.Add(item);
+                        }
                     }
-                }
-                else
-                {
-                    foreach (var inscricaoJogador in inscricao)
+                    else
                     {
-                        var item = new ImportacaoCabecaChaveModel()
+                        foreach (var inscricaoJogador in inscricao)
                         {
-                            IdInscricao = inscricaoJogador.Id,
-                            TotalPontuacao = ranking.Where(x => x.UserId == inscricaoJogador.userId).Sum(s => s.Pontuacao)
-                        };
-                        importacaoCabecas.Add(item);
+                            var item = new ImportacaoCabecaChaveModel()
+                            {
+                                IdInscricao = inscricaoJogador.Id,
+                                TotalPontuacao = ranking.Where(x => x.UserId == inscricaoJogador.userId).Sum(s => s.Pontuacao)
+                            };
+                            importacaoCabecas.Add(item);
+                        }
                     }
-                }
 
-                var rankingPontuacao = importacaoCabecas
-                    .OrderByDescending(o => o.TotalPontuacao)
-                    .Take(qtdeCabecasChave);
+                    //Caso tenha cabeças de chave já setadas para a chasse então remove
+                    foreach (var item in importacaoCabecas)
+                    {
+                        var inscricaoCabecaChave = inscricao.FirstOrDefault(x => x.Id == item.IdInscricao);
+                        if (inscricaoCabecaChave.cabecaChave > 0)
+                        {
+                            AtualizarCabecaChave(inscricaoCabecaChave, null);
+                        }
+                    }
 
-                int cabecaChave = 1;
-                foreach (var item in rankingPontuacao)
-                {
-                    var inscricaoCabecaChave = inscricao.FirstOrDefault(x => x.Id == item.IdInscricao);
-                    AtualizarCabecaChave(inscricaoCabecaChave, cabecaChave);
-                    cabecaChave++;
+                    var rankingPontuacao = importacaoCabecas
+                        .OrderByDescending(o => o.TotalPontuacao)
+                        .Take(qtdeCabecasChave);
+
+                    int cabecaChave = 1;
+                    foreach (var item in rankingPontuacao)
+                    {
+                        var inscricaoCabecaChave = inscricao.FirstOrDefault(x => x.Id == item.IdInscricao);
+                        AtualizarCabecaChave(inscricaoCabecaChave, cabecaChave);
+                        cabecaChave++;
+                    }
                 }
 
                 return Json(new { erro = "", retorno = 1 }, "text/plain", JsonRequestBehavior.AllowGet);
@@ -87,7 +100,7 @@ namespace Barragem.Controllers
             }
         }
 
-        private void AtualizarCabecaChave(InscricaoTorneio inscricao, int cabecaChave)
+        private void AtualizarCabecaChave(InscricaoTorneio inscricao, int? cabecaChave)
         {
             if (inscricao.classeTorneio.faseGrupo)
             {
