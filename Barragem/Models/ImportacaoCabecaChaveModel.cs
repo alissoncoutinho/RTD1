@@ -4,5 +4,6 @@
     {
         public int IdInscricao { get; set; }
         public int TotalPontuacao { get; set; }
+        public bool InscricaoPaga { get; set; }
     }
 }

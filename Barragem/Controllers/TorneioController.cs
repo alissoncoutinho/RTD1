@@ -48,10 +48,12 @@ namespace Barragem.Controllers
 
                         foreach (var inscricaoDupla in duplasFormadas)
                         {
+                            bool iscricaoParceiroPaga = inscricao.Count(x => x.userId == inscricaoDupla.parceiroDuplaId && x.isAtivo) == 1;
                             var item = new ImportacaoCabecaChaveModel()
                             {
                                 IdInscricao = inscricaoDupla.Id,
-                                TotalPontuacao = ranking.Where(x => x.UserId == inscricaoDupla.userId || x.UserId == inscricaoDupla.parceiroDuplaId).Sum(s => s.Pontuacao)
+                                TotalPontuacao = ranking.Where(x => x.UserId == inscricaoDupla.userId || x.UserId == inscricaoDupla.parceiroDuplaId).Sum(s => s.Pontuacao),
+                                InscricaoPaga = inscricaoDupla.isAtivo && iscricaoParceiroPaga
                             };
                             importacaoCabecas.Add(item);
                         }
@@ -63,7 +65,8 @@ namespace Barragem.Controllers
                             var item = new ImportacaoCabecaChaveModel()
                             {
                                 IdInscricao = inscricaoJogador.Id,
-                                TotalPontuacao = ranking.Where(x => x.UserId == inscricaoJogador.userId).Sum(s => s.Pontuacao)
+                                TotalPontuacao = ranking.Where(x => x.UserId == inscricaoJogador.userId).Sum(s => s.Pontuacao),
+                                InscricaoPaga = inscricaoJogador.isAtivo
                             };
                             importacaoCabecas.Add(item);
                         }
@@ -80,6 +83,7 @@ namespace Barragem.Controllers
                     }
 
                     var rankingPontuacao = importacaoCabecas
+                        .Where(x => x.InscricaoPaga)
                         .OrderByDescending(o => o.TotalPontuacao)
                         .Take(qtdeCabecasChave);
 
@@ -118,7 +122,7 @@ namespace Barragem.Controllers
                                    join ligaTorneio in db.TorneioLiga
                                        on torneio.Id equals ligaTorneio.TorneioId
                                    join snapshot in db.Snapshot
-                                       on ligaTorneio.snapshotId equals snapshot.Id
+                                       on ligaTorneio.LigaId equals snapshot.LigaId
                                    join classeTorneio in db.ClasseTorneio
                                        on torneio.Id equals classeTorneio.torneioId
                                    join classeLiga in db.ClasseLiga
@@ -143,7 +147,7 @@ namespace Barragem.Controllers
                             join ligaTorneio in db.TorneioLiga
                                 on torneio.Id equals ligaTorneio.TorneioId
                             join snapshot in db.Snapshot
-                                on ligaTorneio.snapshotId equals snapshot.Id
+                                on ligaTorneio.LigaId equals snapshot.LigaId
                             join classeTorneio in db.ClasseTorneio
                                 on torneio.Id equals classeTorneio.torneioId
                             join classeLiga in db.ClasseLiga
