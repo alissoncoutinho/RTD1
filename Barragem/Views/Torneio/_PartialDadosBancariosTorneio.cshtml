@@ -8,7 +8,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.NomeBanco, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-4 input-group">
-                @Html.TextBoxFor(model => model.NomeBanco, new { @class = "form-control" })
+                @Html.TextBoxFor(model => model.NomeBanco, new { @maxlength = "50", @class = "form-control" })
                 @Html.ValidationMessageFor(model => model.NomeBanco, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -16,7 +16,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.Agencia, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-4 input-group">
-                @Html.TextBoxFor(model => model.Agencia, new { @class = "form-control" })
+                @Html.TextBoxFor(model => model.Agencia, new { @maxlength = "50", @class = "form-control" })
                 @Html.ValidationMessageFor(model => model.Agencia, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -24,7 +24,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.ContaCorrente, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-4 input-group">
-                @Html.TextBoxFor(model => model.ContaCorrente, new { @class = "form-control" })
+                @Html.TextBoxFor(model => model.ContaCorrente, new { @maxlength = "100", @class = "form-control" })
                 @Html.ValidationMessageFor(model => model.ContaCorrente, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -32,7 +32,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.CpfConta, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-4 input-group">
-                @Html.TextBoxFor(model => model.CpfConta, new { @class = "form-control" })
+                @Html.TextBoxFor(model => model.CpfConta, new { @maxlength = "30", @class = "form-control" })
                 @Html.ValidationMessageFor(model => model.CpfConta, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -40,7 +40,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.ChavePix, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-4 input-group">
-                @Html.TextBoxFor(model => model.ChavePix, new { @class = "form-control" })
+                @Html.TextBoxFor(model => model.ChavePix, new { @maxlength = "100", @class = "form-control" })
                 @Html.ValidationMessageFor(model => model.ChavePix, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -49,7 +49,7 @@
             <h5 style="color: #3c8dbc; margin-left:20px">Ao finalizar o jogador deve enviar o comprovante para:</h5>
             @Html.LabelFor(model => model.NomeOrganizador, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-4 input-group">
-                @Html.TextBoxFor(model => model.NomeOrganizador, new { @class = "form-control" })
+                @Html.TextBoxFor(model => model.NomeOrganizador, new { @maxlength = "100", @class = "form-control" })
                 @Html.ValidationMessageFor(model => model.NomeOrganizador, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -57,7 +57,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.ContatoOrganizador, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-4 input-group">
-                @Html.TextBoxFor(model => model.ContatoOrganizador, new { @class = "form-control" })
+                @Html.TextBoxFor(model => model.ContatoOrganizador, new { @maxlength = "50", @class = "form-control" })
                 @Html.ValidationMessageFor(model => model.ContatoOrganizador, "", new { @class = "text-danger" })
             </div>
         </div>
