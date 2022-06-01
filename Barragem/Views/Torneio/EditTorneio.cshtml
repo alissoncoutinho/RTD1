@@ -294,19 +294,10 @@
                         <div class="editor-label"> <b>Torneio configurado para receber pagamento Via PIX com detecção automática de pagamento.</b></div>
                     }
                     <br>
-                    @if (Model.dadosBancarios == "")
-                    {
-                        <input type="checkbox" name="transferencia" id="transferencia" value="true" onclick="isTransferenciaBancaria()"> <b>Usar transferência como forma de pagamento</b><br>
-                    }
-                    else
-                    {
-                        <input type="checkbox" name="transferencia" id="transferencia" value="true" checked onclick="isTransferenciaBancaria()"> <b>Usar transferência como forma de pagamento</b><br>
-                    }
-                    <div id="isTransferencia">
-                        <div class="editor-field">
-                            @Html.TextAreaFor(model => model.dadosBancarios)
-                            @Html.ValidationMessageFor(model => model.dadosBancarios)
-                        </div>
+
+                    <input type="checkbox" name="transferencia" id="transferencia" value="true" onclick = "isTransferenciaBancaria()" @if (!string.IsNullOrEmpty(Model.dadosBancarios)){ @Html.Raw("checked")}><b> Usar transferência como forma de pagamento</b><br>
+                    <div id="isTransferencia" style="margin-bottom:-40px">
+                        @Html.Partial("_PartialDadosBancariosTorneio", Model)
                     </div>
 
                 </div>
@@ -350,7 +341,7 @@
                                     }
                                     else
                                     {
-                                        @Html.Raw(lg.Liga.Nome + " - Pt. " + Model.TipoTorneio)
+                                        @Html.Raw(lg.Liga.Nome + " - Pt. " + Model.TipoTorneio) if (Roles.IsUserInRole("admin")) { if (lg.Liga.isModeloTodosContraTodos) {@Html.Raw(" - Todos contra todos")} else {@Html.Raw(" - Regras da Federação") } }
                                     }
                                     <br>
                                 }

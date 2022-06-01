@@ -15,6 +15,7 @@ using Uol.PagSeguro.Constants;
 using Uol.PagSeguro.Domain;
 using Uol.PagSeguro.Exception;
 using System.Transactions;
+using System.Text;
 
 namespace Barragem.Controllers
 {
@@ -2253,11 +2254,9 @@ namespace Barragem.Controllers
             torneio.divulgaCidade = false;
             torneio.isOpen = false;
             torneio.TipoTorneio = pontuacaoCircuito;
+            
+            ValidarFormaPgtoTransferenciaBancaria(torneio, transferencia);
 
-            if (transferencia == false)
-            {
-                torneio.dadosBancarios = "";
-            }
             if (torneio.divulgacao == "nao divulgar")
             {
                 torneio.isAtivo = false;
@@ -2340,6 +2339,47 @@ namespace Barragem.Controllers
 
             CarregarDadosEssenciais(torneio.Id, "edit");
             return View(torneio);
+        }
+
+        private static void ValidarFormaPgtoTransferenciaBancaria(Torneio torneio, bool transferencia)
+        {
+            if (transferencia == false)
+            {
+                torneio.dadosBancarios = string.Empty;
+                torneio.Agencia = string.Empty;
+                torneio.ContaCorrente = string.Empty;
+                torneio.ChavePix = string.Empty;
+                torneio.NomeBanco = string.Empty;
+                torneio.NomeOrganizador = string.Empty;
+                torneio.ContatoOrganizador = string.Empty;
+                torneio.CpfConta = string.Empty;
+            }
+            else 
+            {
+                var htmlDadosBancarios = new StringBuilder();
+                if (!string.IsNullOrEmpty(torneio.ChavePix))
+                {
+                    htmlDadosBancarios.AppendLine($"<p><b>PIX:</b>{torneio.ChavePix}</p>");
+                }
+                if (!string.IsNullOrEmpty(torneio.NomeBanco))
+                {
+                    htmlDadosBancarios.AppendLine($"<p>{torneio.NomeBanco}</p>");
+                }
+                if (!string.IsNullOrEmpty(torneio.Agencia) && !string.IsNullOrEmpty(torneio.ContaCorrente))
+                {
+                    htmlDadosBancarios.AppendLine($"<p><b>Ag.:</b>{torneio.Agencia}  <b>Conta.:</b>{torneio.ContaCorrente}</p>");
+                }
+                if (!string.IsNullOrEmpty(torneio.CpfConta))
+                {
+                    htmlDadosBancarios.AppendLine($"<p><b>CPF.:</b>{torneio.CpfConta}</p>");
+                }
+                if (!string.IsNullOrEmpty(torneio.NomeOrganizador) && !string.IsNullOrEmpty(torneio.ContatoOrganizador))
+                {
+                    htmlDadosBancarios.AppendLine("<p>Ao finalizar envie o comprovante para:</p>");
+                    htmlDadosBancarios.AppendLine($"<p>{torneio.NomeOrganizador} - {torneio.ContatoOrganizador}</p>");
+                }
+                torneio.dadosBancarios = htmlDadosBancarios.ToString();
+            }
         }
 
         [Authorize(Roles = "admin, organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
@@ -3513,10 +3553,9 @@ namespace Barragem.Controllers
             torneio.barragemId = barragemId;
             var barragem = db.Barragens.Find(torneio.barragemId);
             ViewBag.isModeloTodosContraTodos = barragem.isModeloTodosContraTodos;
-            if (transferencia == false)
-            {
-                torneio.dadosBancarios = "";
-            }
+            
+            ValidarFormaPgtoTransferenciaBancaria(torneio, transferencia);
+
             torneio.StatusInscricao = (int)StatusInscricaoPainelTorneio.LIBERADA_ATE;
             torneio.isAtivo = true;
             torneio.liberarEscolhaDuplas = true;
@@ -3730,6 +3769,7 @@ namespace Barragem.Controllers
             }
             ViewBag.UnicoCircuitoBeachTennis = ValidarRegraUnicoCircuitoBeachTennis(barragem.isBeachTenis, ligasId.Count, qtddTorneios);
             ViewBag.Categorias = categoriasDeLiga;
+
             return View();
         }
 

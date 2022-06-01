@@ -151,6 +151,29 @@ namespace Barragem.Models
 
         public int StatusInscricao { get; set; }
 
+        #region Dados Bancarios Transferencia
+        [Display(Name = "Nome do Banco")]
+        public string NomeBanco { get; set; }
+
+        [Display(Name = "Número da agência")]
+        public string Agencia { get; set; }
+
+        [Display(Name = "Número da conta")]
+        public string ContaCorrente { get; set; }
+
+        [Display(Name = "Chave pix")]
+        public string ChavePix { get; set; }
+
+        [Display(Name = "Número do cpf do titular da conta")]
+        public string CpfConta { get; set; }
+
+        [Display(Name = "Nome do organizador")]
+        public string NomeOrganizador { get; set; }
+
+        [Display(Name = "Whatsapp do organizador")]
+        public string ContatoOrganizador { get; set; }
+        #endregion Dados Bancarios Transferencia
+
         [NotMapped]
         public DateTime DataFinalInscricoes 
         { 
