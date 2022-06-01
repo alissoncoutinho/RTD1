@@ -22,8 +22,6 @@
             </div>
             <div class="box-body">
 
-                @Html.Partial("_PartialDadosBancariosTorneio", Model)
-
                 <div class="form-group">
                     @Html.LabelFor(model => model.nome, new { @class = "col-sm-2 control-label" })
                     <div class="col-sm-8 col-xs-12 input-group">
@@ -378,16 +376,6 @@
 
                     @Html.Partial("_PartialDadosBancariosTorneio", Model)
 
-                    @*<div class="editor-field">
-                        <textarea id="dadosBancarios" name="dadosBancarios">
-                        <p><b>PIX:</b>*chave pix* ou</p>                    
-                        <p>*Nome do Banco*</p>
-                        <p><b>Ag.:</b>*Número da agência*  <b>Conta.:</b>*Número da conta*</p>
-                        <p><b>CPF.:</b>*Número do cpf do titular da conta*</p>
-                        <p>Ao finalizar envie o comprovante para:</p>
-                        <p>*Nome do organizador* - *whatsapp do organizador*</p>
-                        </textarea>
-                    </div>*@
                 </div>
                 <br>
                 <input type="submit" id="criarTorneio" class="btn btn-primary" value="Criar Torneio" />

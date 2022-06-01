@@ -165,7 +165,7 @@ namespace Barragem.Models
         public string ChavePix { get; set; }
 
         [Display(Name = "Número do cpf do titular da conta")]
-        public string CPF { get; set; }
+        public string CpfConta { get; set; }
 
         [Display(Name = "Nome do organizador")]
         public string NomeOrganizador { get; set; }

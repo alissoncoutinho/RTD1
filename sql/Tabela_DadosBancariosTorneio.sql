@@ -5,7 +5,7 @@ ALTER TABLE [dbo].[Torneio]
 		[Agencia] varchar(10)  NULL,
 		[ContaCorrente] varchar(20)  NULL,
 		[ChavePix] varchar(100)  NULL,
-		[CPF] varchar(20)  NULL,
+		[CpfConta] varchar(20)  NULL,
 		[NomeOrganizador] varchar(50)  NULL,
 		[ContatoOrganizador] varchar(20)  NULL
 	
