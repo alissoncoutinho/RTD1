@@ -73,7 +73,7 @@
                                         </div>
                                     </div>
                                     <div class="col-4">
-                                        @Html.Raw("<button class='btn btn-sm btn-success copy d-flex align-items-center' data-link='https://www.rankingdetenis.com/torneio-" + item.Id + "' onclick='copyLinkAllInOne(this)'> Copiar link <img src='/Content/img/link.png' alt='Share'> </button>")
+                                        <button class='btn btn-sm btn-success copy d-flex align-items-center' data-link='@Html.Raw(item.LinkCopia)' onclick='copyLinkAllInOne(this)'> Copiar link <img src='/Content/img/link.png' alt='Share'> </button>
                                     </div>
                                 </div>
                                 <div class="d-flex flex-wrap buttons justify-content-center custom">

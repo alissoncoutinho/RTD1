@@ -180,6 +180,9 @@ namespace Barragem.Models
                 return DateTime.Now.Date <= DataFinalInscricoes.Date;
             }
         }
+
+        [NotMapped]
+        public string LinkCopia { get; set; }
     }
 
 

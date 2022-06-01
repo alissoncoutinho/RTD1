@@ -1658,7 +1658,7 @@ namespace Barragem.Controllers
             {
                 return HttpNotFound();
             }
-            ViewBag.LinkParaCopia = "https://" + HttpContext.Request.Url.Host + "/torneio-" + torneio.Id;
+            ViewBag.LinkParaCopia = ObterLinkTorneio(torneio, barragemId);
 
             CarregarDadosEssenciais(id, "edit");
             return View(torneio);
@@ -2336,7 +2336,7 @@ namespace Barragem.Controllers
             torneio.barragem = db.BarragemView.Find(torneio.barragemId);
             ViewBag.isModeloTodosContraTodos = torneio.barragem.isModeloTodosContraTodos;
             ViewBag.CobrancaTorneio = getDadosDeCobrancaTorneio(torneio.Id);
-            ViewBag.LinkParaCopia = "https://" + HttpContext.Request.Url.Host + "/torneio-" + torneio.Id;
+            ViewBag.LinkParaCopia = ObterLinkTorneio(torneio, barragemId);
 
             CarregarDadosEssenciais(torneio.Id, "edit");
             return View(torneio);
@@ -3797,6 +3797,7 @@ namespace Barragem.Controllers
             var torneiosAndamento = db.Torneio.Where(t => t.dataFim > agora && t.barragemId == barragem.Id).OrderByDescending(c => c.Id).ToList();
             foreach (var item in torneiosAndamento)
             {
+                item.LinkCopia = ObterLinkTorneio(item, item.barragemId);
                 // estou colocando estes dados em outros campos do objeto. Gambiarra!!!
                 item.qtddClasses = db.InscricaoTorneio.Where(i => i.torneioId == item.Id).Select(i => (int)i.userId).Distinct().Count();
                 item.valor = db.InscricaoTorneio.Where(i => i.torneioId == item.Id && i.isAtivo == true).Select(i => new { user = (int)i.userId, valor = i.valor }).Distinct().Sum(i => i.valor);
@@ -3815,7 +3816,6 @@ namespace Barragem.Controllers
             {
                 ViewBag.tokenPagSeguro = true;
             }
-
 
             return View(torneios);
         }
@@ -4275,7 +4275,7 @@ namespace Barragem.Controllers
             dadosPagina.IsAtivo = torneio.isAtivo;
             dadosPagina.LiberaVisualizacaoTabela = torneio.liberarTabela;
             dadosPagina.LiberaVisualizacaoInscritos = torneio.liberaTabelaInscricao;
-            dadosPagina.LinkParaCopia = "https://" + HttpContext.Request.Url.Host + "/torneio-" + torneio.Id;
+            dadosPagina.LinkParaCopia = ObterLinkTorneio(torneio, torneio.barragemId);
             dadosPagina.ListaOpcoesStatusInscricao = new SelectList(opcoesStatusInscricao, "Value", "Text", torneio.StatusInscricao);
             dadosPagina.ListaOpcoesDivulgacao = new SelectList(opcoesDivulgacao, "Value", "Text", torneio.divulgacao);
 
@@ -4460,6 +4460,21 @@ namespace Barragem.Controllers
             ViewBag.flag = abaSelecionada;
             ViewBag.TorneioId = torneioId;
             ViewBag.NomeTorneio = torneio.nome;
+        }
+
+        private string ObterLinkTorneio(Torneio torneio, int barragemId)
+        {
+            var hoje = DateTime.Now.Date;
+            var qtdeTorneiosEmAndamento = db.Torneio.Count(t => t.dataFim >= hoje && t.barragemId == barragemId);
+
+            if (qtdeTorneiosEmAndamento == 1 && !string.IsNullOrEmpty(torneio.barragem.dominio))
+            {
+                return "https://" + HttpContext.Request.Url.Host + "/torneio-" + torneio.barragem.dominio;
+            }
+            else
+            {
+                return "https://" + HttpContext.Request.Url.Host + "/torneio-" + torneio.Id;
+            }
         }
     }
 }
