@@ -167,10 +167,10 @@ namespace Barragem.Models
         [Display(Name = "Número do cpf do titular da conta")]
         public string CpfConta { get; set; }
 
-        [Display(Name = "Nome do organizador")]
+        [Display(Name = "Nome")]
         public string NomeOrganizador { get; set; }
 
-        [Display(Name = "Whatsapp do organizador")]
+        [Display(Name = "Whatsapp")]
         public string ContatoOrganizador { get; set; }
         #endregion Dados Bancarios Transferencia
 
