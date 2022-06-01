@@ -1,4 +1,6 @@
-﻿@model Barragem.Models.Torneio
+﻿@using Barragem.Models;
+
+@model Barragem.Models.Torneio
 
 <ul class="nav nav-tabs" id="myTab">
     <li id="tab1" class='active'><a href="#tabPrimario" data-toggle="tab" onclick="ValidarTabAnterior(event,1)"><b>básico</b></a></li>
@@ -19,6 +21,7 @@
                 <h4 class="box-title">Informações Básicas</h4>
             </div>
             <div class="box-body">
+
                 <div class="form-group">
                     @Html.LabelFor(model => model.nome, new { @class = "col-sm-2 control-label" })
                     <div class="col-sm-8 col-xs-12 input-group">
@@ -208,7 +211,7 @@
                             @foreach (var lg in ViewBag.LigasDisponiveis)
                             {
                                 <div class="row" style="padding-left: 15px;">
-                                    <input type="checkbox" name="liga" class="ligas" value="@lg.Liga.Id" onchange="inputCheckboxSelectPontos(this);" @if (ViewBag.UnicoCircuitoBeachTennis) {@Html.Raw("checked") }>
+                                    <input type="checkbox" name="liga" class="ligas" value="@lg.Liga.Id" onchange="inputCheckboxSelectPontos(this);" @if (ViewBag.UnicoCircuitoBeachTennis) { @Html.Raw("checked") }>
                                     @if (ViewBag.isModeloTodosContraTodos)
                                     {
                                         <span>@Html.Raw(lg.Liga.Nome)</span>
@@ -223,7 +226,7 @@
                                                 <span>-</span> <span id="textoPontuacaoLiga">Selecione a pontuação: </span>
                                                 <select name="pontuaLiga" id="pontuaLiga" onchange="SelecionarCircuito(this)">
                                                     <option value="-">-</option>
-                                                    <option value="100" @if (ViewBag.UnicoCircuitoBeachTennis) {@Html.Raw("selected")}>100</option>
+                                                    <option value="100" @if (ViewBag.UnicoCircuitoBeachTennis) { @Html.Raw("selected") }>100</option>
                                                     <option value="250">250</option>
                                                     <option value="500">500</option>
                                                     <option value="1000">1000</option>
@@ -370,16 +373,9 @@
                     <div class="editor-label">
                         <small style="color:red">Complete abaixo os dados para pagamento via transferência</small>
                     </div>
-                    <div class="editor-field">
-                        <textarea id="dadosBancarios" name="dadosBancarios">
-                        <p><b>PIX:</b>*chave pix* ou</p>                    
-                        <p>*Nome do Banco*</p>
-                        <p><b>Ag.:</b>*Número da agência*  <b>Conta.:</b>*Número da conta*</p>
-                        <p><b>CPF.:</b>*Número do cpf do titular da conta*</p>
-                        <p>Ao finalizar envie o comprovante para:</p>
-                        <p>*Nome do organizador* - *whatsapp do organizador*</p>
-                        </textarea>
-                    </div>
+
+                    @Html.Partial("_PartialDadosBancariosTorneio", Model)
+
                 </div>
                 <br>
                 <input type="submit" id="criarTorneio" class="btn btn-primary" value="Criar Torneio" />
