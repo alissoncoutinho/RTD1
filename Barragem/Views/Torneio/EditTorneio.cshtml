@@ -350,7 +350,7 @@
                                     }
                                     else
                                     {
-                                        @Html.Raw(lg.Liga.Nome + " - Pt. " + Model.TipoTorneio)
+                                        @Html.Raw(lg.Liga.Nome + " - Pt. " + Model.TipoTorneio) if (Roles.IsUserInRole("admin")) { if (lg.Liga.isModeloTodosContraTodos) {@Html.Raw(" - Todos contra todos")} else {@Html.Raw(" - Regras da Federação") } }
                                     }
                                     <br>
                                 }
