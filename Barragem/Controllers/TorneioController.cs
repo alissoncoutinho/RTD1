@@ -471,7 +471,6 @@ namespace Barragem.Controllers
         [HttpPost]
         public ActionResult MontarChaveamento(int torneioId, IEnumerable<int> classeIds)
         {
-            //try { 
             string Msg = "";
             var torneio = db.Torneio.Find(torneioId);
             CobrancaTorneio cobrancaTorneio = new CobrancaTorneio();
@@ -538,13 +537,6 @@ namespace Barragem.Controllers
                     Select(i => (int)i.classeTorneio).Distinct().ToList();
             }
             return RedirectToAction("EditJogos", new { torneioId = torneioId, fClasse = 0, fData = "", fNomeJogador = "", fGrupo = "0", fase = 0});
-            //return Json(new { erro = "", retorno = 1 }, "text/plain", JsonRequestBehavior.AllowGet);
-            //}
-            //catch (Exception ex)
-            //{
-            //   return Json(new { erro = ex.Message, retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
-            // }
-
         }
 
         private bool temPendenciaDePagamentoTorneio(Torneio torneio)
@@ -2666,7 +2658,6 @@ namespace Barragem.Controllers
         [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
         public ActionResult EditJogos(int torneioId, int fClasse = 0, string fData = "", string fNomeJogador = "", string fGrupo = "0", int fase = 0)
         {
-            List<Jogo> listaJogos = null;
             var classes = db.ClasseTorneio.Where(i => i.torneioId == torneioId).OrderBy(c => c.Id).ToList();
             var classesGeradas = db.Jogo.Where(i => i.torneioId == torneioId).Select(i => (int)i.classeTorneio)
                 .Distinct().ToList();
@@ -2692,7 +2683,7 @@ namespace Barragem.Controllers
                 ViewBag.primeirafase = db.Jogo.Where(r => r.torneioId == torneioId && r.classeTorneio == fClasse).Max(r => r.faseTorneio);
             }
             var jogo = db.Jogo.Where(i => i.torneioId == torneioId);
-            listaJogos = filtrarJogos(jogo, fClasse, fData, fGrupo, fase, false, fNomeJogador);
+            var listaJogos = filtrarJogos(jogo, fClasse, fData, fGrupo, fase, false, fNomeJogador);
             if (fClasse != 1)
             {
                 var cl = classes.Where(c => c.Id == fClasse).First();
