@@ -2254,7 +2254,7 @@ namespace Barragem.Controllers
             torneio.divulgaCidade = false;
             torneio.isOpen = false;
             torneio.TipoTorneio = pontuacaoCircuito;
-            
+
             ValidarFormaPgtoTransferenciaBancaria(torneio, transferencia);
 
             if (torneio.divulgacao == "nao divulgar")
@@ -2354,7 +2354,7 @@ namespace Barragem.Controllers
                 torneio.ContatoOrganizador = string.Empty;
                 torneio.CpfConta = string.Empty;
             }
-            else 
+            else
             {
                 var htmlDadosBancarios = new StringBuilder();
                 if (!string.IsNullOrEmpty(torneio.ChavePix))
@@ -2586,6 +2586,81 @@ namespace Barragem.Controllers
                 return "2ª Rodada Repescagem";
             }
             return "";
+        }
+
+        [HttpPost]
+        public ActionResult SalvarDadosCadastraisPendentesPagto(int torneioId, string nome, string cpfCnpj)
+        {
+            try
+            {
+                var torneio = db.Torneio.Find(torneioId);
+                var barragem = db.Barragens.Find(torneio.barragemId);
+
+                barragem.nomeResponsavel = nome;
+                barragem.cpfResponsavel = cpfCnpj;
+
+                db.Entry(barragem).State = EntityState.Modified;
+                db.SaveChanges();
+
+                return Json(new { erro = "", status = "OK" }, "text/plain", JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { erro = ex.Message, status = "ERRO" }, "text/plain", JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpGet]
+        public ActionResult ValidarPagamentoTorneio(int torneioId)
+        {
+            try
+            {
+                var cobrancaTorneio = new CobrancaTorneio();
+                bool pendenciaDePagamento = false;
+                var torneio = db.Torneio.Find(torneioId);
+
+                if (temPendenciaDePagamentoTorneio(torneio))
+                {
+                    cobrancaTorneio = getDadosDeCobrancaTorneio(torneioId);
+                    if (cobrancaTorneio.valorASerPago > 0)
+                    {
+                        pendenciaDePagamento = true;
+                    }
+
+                    if (cobrancaTorneio.qtddInscritos > 0 && pendenciaDePagamento)
+                    {
+                        cobrancaTorneio.Nome = torneio.barragem.nomeResponsavel;
+                        cobrancaTorneio.CpfCnpj = torneio.barragem.cpfResponsavel;
+
+                        if (string.IsNullOrEmpty(cobrancaTorneio.Nome) || string.IsNullOrEmpty(cobrancaTorneio.CpfCnpj))
+                        {
+                            //Falta informar dados para pagamento, então solicitar a atualização de dados
+                            return Json(new { erro = "", retorno = cobrancaTorneio, status = "PENDENCIA_CADASTRO" }, "text/plain", JsonRequestBehavior.AllowGet);
+                        }
+                        else
+                        {
+                            //dados ok, então gerar qr code para pagamento
+                            try
+                            {
+                                cobrancaTorneio.qrCode = GetQrCodeCobrancaPIX(torneioId);
+                                return Json(new { erro = "", retorno = cobrancaTorneio, status = "PENDENCIA_PAGAMENTO" }, "text/plain", JsonRequestBehavior.AllowGet);
+                            }
+                            catch (Exception e)
+                            {
+                                cobrancaTorneio.qrCode = new QrCodeCobrancaTorneio();
+                                cobrancaTorneio.qrCode.erroGerarQrCode = "Erro ao gerar o QrCode de pagamento. Favor tente novamente mais tarde:" + e.Message;
+                                return Json(new { erro = cobrancaTorneio.qrCode.erroGerarQrCode, retorno = cobrancaTorneio, status = "ERRO_QRCODE" }, "text/plain", JsonRequestBehavior.AllowGet);
+                            }
+                        }
+                    }
+                }
+                //Tudo ok, então pode gerar tabela
+                return Json(new { erro = "", retorno = cobrancaTorneio, status = "OK" }, "text/plain", JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { erro = ex.Message, retorno = "ERRO", status = "ERRO" }, "text/plain", JsonRequestBehavior.AllowGet);
+            }
         }
 
         [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
@@ -3553,7 +3628,7 @@ namespace Barragem.Controllers
             torneio.barragemId = barragemId;
             var barragem = db.Barragens.Find(torneio.barragemId);
             ViewBag.isModeloTodosContraTodos = barragem.isModeloTodosContraTodos;
-            
+
             ValidarFormaPgtoTransferenciaBancaria(torneio, transferencia);
 
             torneio.StatusInscricao = (int)StatusInscricaoPainelTorneio.LIBERADA_ATE;

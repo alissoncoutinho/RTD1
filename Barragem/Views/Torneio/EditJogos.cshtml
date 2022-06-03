@@ -5,35 +5,59 @@
 @model IEnumerable<Barragem.Models.Jogo>
     @Html.Partial("_PartialTabs")
 
-    @if (ViewBag.CobrancaTorneio != null)
-    {
+    <div id="divPagamentoPendenteTorneio" style="display:none">
         <br>
-        <div class="alert alert-info alert-dismissable">
-            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-            Para gerar a tabela é necessário realizar o pagamento via PIX referente aos inscritos no torneio. <br><br>
-            Inscritos no torneio: @cobrancaTorneio.qtddInscritos <br>
-            Valor por inscrito: R$ 5,00 <br><br>
-            @if (cobrancaTorneio.valorDescontoParaRanking > 0)
-            {
-                @Html.Raw("Desconto para usuários que jogam o ranking: R$ " + cobrancaTorneio.valorDescontoParaRanking + ",00<br><br>")
-            }
-            Valor final a pagar: R$ @cobrancaTorneio.valorASerPago,00 <br><br>
-
-
-            @if (cobrancaTorneio.qrCode.erroGerarQrCode == null)
-            {
-                <center><img id="imgFoto" src="@cobrancaTorneio.qrCode.link" style="width:148px;height:148px;" /></center><br>
-                <span>Leia o QR Code acima ou copie o código abaixo no app do seu banco na opção Pix Copia e Cola.</span><br><br>
-                @cobrancaTorneio.qrCode.text
-                <br><br><span style="color: red;">Após realizar o pagamento, clique no botão Criar Tabela novamente para continuar.</span>
-            }
-            else
-            {
-                @Html.Raw(cobrancaTorneio.qrCode.erroGerarQrCode + "<br>")
-            }
-
+        <div id="divDadosCadastraisPendentesPagto" class="alert alert-info alert-dismissable">
+            <button id="btnFecharDadosCadastraisPendentesPagto" type="button" class="close" aria-hidden="true" onclick="FecharDadosCadastraisPendentesPagto()">&times;</button>
+            É necessário realizar o pagamento para gerar a tabela. <br><br>
+            Favor completar os dados abaixo para que seja possível gerar o QR Code para pagamento via pix.
+            <br>
+            <div style="padding-top: 20px;">
+                <div class="row form-group">
+                    <label class="control-label col-md-1">Nome</label>
+                    <div class="col-md-4">
+                        <input id="txtNomePagador" type="text" class="form-control" maxlength="40" />
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <label class="control-label col-md-1">CPF/CNPJ</label>
+                    <div class="col-md-4">
+                        <input id="txtCpfCnpjPagador" type="text" class="form-control" maxlength="20" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <button id="btnSalvarDadosCadastraisPendentesPagto" type="button" class="btn btn-primary" onclick="SalvarDadosCadastraisPendentesPagto()">Salvar e Gerar QR Code</button>
+                </div>
+            </div>
         </div>
-    }
+
+        <div id="divPixPagtoTorneio" class="alert alert-info alert-dismissable">
+            <button id="btnFecharPixPagtoTorneio" type="button" class="close" aria-hidden="true" onclick="FecharPixPagtoTorneio()">&times;</button>
+            Para gerar a tabela é necessário realizar o pagamento via PIX referente aos inscritos no torneio. <br><br>
+            <span id="lblQtdeInscritosPagtoPend"></span>
+            <br>
+            Valor por inscrito: R$ 5,00
+            <br>
+            <br>
+            <div id="divDescRankingPagtoPend">
+                <span id="lblDescRankingPagtoPend"></span>
+                <br>
+                <br>
+            </div>
+            <span id="lblValorFinalPagtoPend"></span>
+            <div id="divQrCodePagtoPend">
+                <center><img id="imgQrCodePagtoPend" style="width:148px;height:148px;" /></center><br>
+                <span>Leia o QR Code acima ou copie o código abaixo no app do seu banco na opção Pix Copia e Cola.</span><br><br>
+                <span id="lblTextoQrCodePagtoPend"></span>
+                <br><br><span style="color: red;">Após realizar o pagamento, clique no botão Criar Tabela novamente para continuar.</span>
+            </div>
+            <div id="divErroQrCodePagtoPend">
+                <br>
+                <span id="lblDescErroPagtoPend" style="color:red">Dados do erro..</span>
+            </div>
+        </div>
+    </div>
+
     <div id="placar-modal" class="modal fade" role="dialog">
         <div id="loadingDiv"><div class="loader">Loading...</div></div>
         <div class="modal-dialog">
@@ -218,7 +242,7 @@
                         </div>
                         <div class="form-group col-sm-2 filtros">
                             <div class="input-group date" data-date-format="dd/mm/yyyy">
-                                <input id="fData" name="fData" value="@ViewBag.fData" type="text" class="form-control col-md-5" placeholder="Data" onchange="Pesquisar()"/>
+                                <input id="fData" name="fData" value="@ViewBag.fData" type="text" class="form-control col-md-5" placeholder="Data" onchange="Pesquisar()" />
                                 <span class="input-group-addon">
                                     <span class="glyphicon glyphicon-calendar">
                                     </span>
@@ -446,8 +470,8 @@
                                                 Salvar
                                             </button><br>
                                             <!--a href="//Url.Action("LancarResultado", new {id=item.Id })" title="placar" class="btn btn-default btn-xs inscricaoButton">
-                                    Placar
-                                </a-->
+                                                Placar
+                                            </a-->
                                         </form>
                                         <button type="button" id="@Html.Raw("btnPlacar"+item.Id)" class="btn btn-info btn-xs btnLancarPlacar" data-vencedor="@item.idDoVencedor" data-toggle="modal" data-situacao="@item.situacao_Id" data-indice="@i"
                                                 data-placar="@item.qtddGames1setDesafiante|@item.qtddGames1setDesafiado|@item.qtddGames2setDesafiante|@item.qtddGames2setDesafiado|@item.qtddGames3setDesafiante|@item.qtddGames3setDesafiado"
@@ -468,7 +492,7 @@
     <style>
 
         .filtros {
-            padding:5px !important;
+            padding: 5px !important;
         }
 
         .desabilitaCampo {
@@ -660,11 +684,24 @@
             });
 
             function gerarTabelas() {
+
+
+                event.preventDefault();
+
+                var idTorneio = document.getElementById('torneioId').value;
+
+                ValidarPagamentoTorneio(idTorneio);
+
+                //Chamar função no cenário de sucesso da função ValidarPagamentoTorneio
+                //ValidarJogosJaGerados(idTorneio);
+            }
+
+            function ValidarJogosJaGerados(idTorneio) {
+
                 var classesSelecionadas = $('input[name=classeIds]:checked').map(function (_, el) {
                     return $(el).val();
                 }).get();
 
-                event.preventDefault();
                 $.ajax({
                     type: "GET",
                     url: "/Torneio/ValidarJogosJaGerados",
@@ -696,6 +733,129 @@
                         toastr.error(errorThrown, "Erro");
                     }
                 });
+            }
+
+            function ValidarPagamentoTorneio(idTorneio) {
+                $.ajax({
+                    type: "GET",
+                    url: "/Torneio/ValidarPagamentoTorneio",
+                    dataType: "json",
+                    data: {
+                        "torneioId": document.getElementById('torneioId').value
+                    },
+                    traditional: true,
+                    contentType: "application/json; charset=utf-8",
+                    success: function (response) {
+                        if (typeof response == "object") {
+                            toastr.options = {
+                                "positionClass": "toast-top-center"
+                            }
+                            if (response.retorno == "ERRO") {
+                                toastr.error(response.erro, "Erro");
+                            } else {
+                                if (response.status == "PENDENCIA_CADASTRO") {
+                                    //SOLICITAR PREENCHIMENTO DADOS FALTANTES
+                                    document.getElementById("divPagamentoPendenteTorneio").style.display = "block";
+                                    document.getElementById("divPixPagtoTorneio").style.display = "none";
+                                    document.getElementById("divDadosCadastraisPendentesPagto").style.display = "block";
+
+                                    document.getElementById("txtNomePagador").value = response.retorno.Nome;
+                                    document.getElementById("txtCpfCnpjPagador").value = response.retorno.CpfCnpj;
+
+                                }
+                                else if (response.status == "PENDENCIA_PAGAMENTO" || response.status == "ERRO_QRCODE") {
+                                    //SOLICITAR PAGAMENTO
+                                    document.getElementById("divPagamentoPendenteTorneio").style.display = "block";
+                                    document.getElementById("divPixPagtoTorneio").style.display = "block";
+                                    document.getElementById("divDadosCadastraisPendentesPagto").style.display = "none";
+
+                                    document.getElementById("lblQtdeInscritosPagtoPend").textContent = "Inscritos no torneio: " + response.retorno.qtddInscritos;
+
+                                    if (response.retorno.valorDescontoParaRanking > 0) {
+                                        document.getElementById("lblDescRankingPagtoPend").textContent = "Desconto para usuários que jogam o ranking: R$ " + response.retorno.valorDescontoParaRanking + ",00";
+                                        document.getElementById("divDescRankingPagtoPend").style.display = "block";
+                                    }
+                                    else {
+                                        document.getElementById("divDescRankingPagtoPend").style.display = "none";
+                                        document.getElementById("lblDescRankingPagtoPend").textContent = "";
+                                    }
+                                    document.getElementById("lblValorFinalPagtoPend").textContent = "Valor final a pagar: " + response.retorno.valorASerPago + ",00";
+
+                                    if (response.status == "ERRO_QRCODE") {
+                                        document.getElementById("lblDescErroPagtoPend").textContent = response.retorno.qrCode.erroGerarQrCode;
+                                        document.getElementById("divErroQrCodePagtoPend").style.display = "block";
+                                        document.getElementById("divQrCodePagtoPend").style.display = "none";
+                                    }
+                                    else {
+                                        document.getElementById("imgQrCodePagtoPend").src = response.retorno.qrCode.link;
+                                        document.getElementById("lblTextoQrCodePagtoPend").textContent = response.retorno.qrCode.text;
+                                        document.getElementById("divErroQrCodePagtoPend").style.display = "none";
+                                        document.getElementById("divQrCodePagtoPend").style.display = "block";
+                                    }
+                                }
+                                else {
+                                    document.getElementById("divPagamentoPendenteTorneio").style.display = "none";
+                                    
+                                    ValidarJogosJaGerados(idTorneio);
+                                }
+                            }
+                        }
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        toastr.error(errorThrown, "Erro");
+                    }
+                });
+            }
+
+            function SalvarDadosCadastraisPendentesPagto() {
+                var nome = document.getElementById("txtNomePagador").value;
+                var cpfCnpj = document.getElementById("txtCpfCnpjPagador").value;
+                var torneioId = document.getElementById('torneioId').value;
+
+                toastr.options = {
+                    "positionClass": "toast-top-center"
+                }
+
+                if (nome == "") {
+                    toastr.error("O campo Nome é obrigatório", "Erro");
+                    return;
+                }
+                else if (cpfCnpj == "") {
+                    toastr.error("O campo CPF/CNPJ é obrigatório", "Erro");
+                    return;
+                }
+
+                $.ajax({
+                    type: "POST",
+                    url: "/Torneio/SalvarDadosCadastraisPendentesPagto",
+                    dataType: "json",
+                    data: "{'torneioId':'" + torneioId + "', " + "'nome':'" + nome + "', " + "'cpfCnpj':'" + cpfCnpj + "'}",
+                    traditional: true,
+                    contentType: "application/json; charset=utf-8",
+                    success: function (response) {
+                        if (typeof response == "object") {
+                            toastr.options = {
+                                "positionClass": "toast-top-center"
+                            }
+                            if (response.status == "ERRO") {
+                                toastr.error(response.erro, "Erro");
+                            } else {
+                                ValidarPagamentoTorneio(torneioId);
+                            }
+                        }
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        toastr.error(errorThrown, "Erro");
+                    }
+                });
+            }
+
+            function FecharPixPagtoTorneio() {
+                document.getElementById("divPixPagtoTorneio").style.display = "none";
+            }
+
+            function FecharDadosCadastraisPendentesPagto() {
+                document.getElementById("divDadosCadastraisPendentesPagto").style.display = "none";
             }
 
             function ExibirMsgConfirmaExclusaoJogos(conteudoMensagem) {
