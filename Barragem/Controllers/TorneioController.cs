@@ -537,7 +537,7 @@ namespace Barragem.Controllers
                 ViewBag.classesFaseGrupoNaoFinalizadas = db.Jogo.Where(i => i.torneioId == torneioId && i.grupoFaseGrupo != null && (i.situacao_Id == 1 || i.situacao_Id == 2)).
                     Select(i => (int)i.classeTorneio).Distinct().ToList();
             }
-            return RedirectToAction("EditJogos", new { torneioId = torneioId, fClasse = 0, fData = "", fNomeJogador = "", fGrupo = "0", fase = 0, qtddInscritos = cobrancaTorneio.qtddInscritos, valorASerPago = cobrancaTorneio.valorASerPago, valorDescontoParaRanking = cobrancaTorneio.valorDescontoParaRanking });
+            return RedirectToAction("EditJogos", new { torneioId = torneioId, fClasse = 0, fData = "", fNomeJogador = "", fGrupo = "0", fase = 0});
             //return Json(new { erro = "", retorno = 1 }, "text/plain", JsonRequestBehavior.AllowGet);
             //}
             //catch (Exception ex)
@@ -2664,27 +2664,8 @@ namespace Barragem.Controllers
         }
 
         [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
-        public ActionResult EditJogos(int torneioId, int fClasse = 0, string fData = "", string fNomeJogador = "", string fGrupo = "0", int fase = 0, int qtddInscritos = 0, int valorASerPago = 0, int valorDescontoParaRanking = 0)
+        public ActionResult EditJogos(int torneioId, int fClasse = 0, string fData = "", string fNomeJogador = "", string fGrupo = "0", int fase = 0)
         {
-            if (qtddInscritos > 0 && valorASerPago > 0)
-            {
-                var cobrancaTorneio = new CobrancaTorneio();
-                cobrancaTorneio.qtddInscritos = qtddInscritos;
-                cobrancaTorneio.valorASerPago = valorASerPago;
-                cobrancaTorneio.valorDescontoParaRanking = valorDescontoParaRanking;
-
-                try
-                {
-                    cobrancaTorneio.qrCode = GetQrCodeCobrancaPIX(torneioId);
-                }
-                catch (Exception e)
-                {
-                    cobrancaTorneio.qrCode = new QrCodeCobrancaTorneio();
-                    cobrancaTorneio.qrCode.erroGerarQrCode = "Erro ao gerar o QrCode de pagamento. Favor tente novamente mais tarde:" + e.Message;
-                }
-
-                ViewBag.CobrancaTorneio = cobrancaTorneio;
-            }
             List<Jogo> listaJogos = null;
             var classes = db.ClasseTorneio.Where(i => i.torneioId == torneioId).OrderBy(c => c.Id).ToList();
             var classesGeradas = db.Jogo.Where(i => i.torneioId == torneioId).Select(i => (int)i.classeTorneio)
