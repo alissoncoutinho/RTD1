@@ -649,14 +649,19 @@
                 });
             });
 
+            /**Abertura do painel para geração de tabela */
             function AbrirTabelaGeracaoJogos() {
                 MostrarClassesJogos("GERACAO_TABELA");
             }
 
+            /**Abertura do painel para exclusão de tabela de jogos*/
             function AbrirTabelaJogosExclusao() {
                 MostrarClassesJogos("EXCLUSAO");
             }
 
+            /**
+             * Gerencia o comportamento para mostrar o painel de exclusao ou geração de tabela
+             */
             function MostrarClassesJogos(acao) {
                 var elementGeracaoTabelaJogos = document.getElementById("classes");
                 var elementExclusaoJogos = document.getElementById("classesExclusao");
@@ -682,6 +687,9 @@
                 ValidarPagamentoTorneio(idTorneio);
             }
 
+            /**
+             * Valida se a(s) classe(s) selecionada(s) possui jogos já gerados
+             */
             function ValidarJogosJaGerados(idTorneio, acao) {
                 var classesSelecionadas = "";
                 if (acao == "GERACAO_TABELA") {
@@ -728,6 +736,9 @@
                 });
             }
 
+            /**
+             * Valida se o pagamento do torneio foi efetuado
+             */
             function ValidarPagamentoTorneio(idTorneio) {
                 $.ajax({
                     type: "GET",
@@ -800,11 +811,13 @@
                 });
             }
 
+            /**Executa a exclusão de tabela de jogos */
             function ExcluirTabelaJogos() {
                 var idTorneio = document.getElementById('torneioId').value;
                 ValidarJogosJaGerados(idTorneio, "EXCLUSAO");
             }
 
+            /**Salvar dados cadastrais pendentes para pagamento do torneio */
             function SalvarDadosCadastraisPendentesPagto() {
                 var nome = document.getElementById("txtNomePagador").value;
                 var cpfCnpj = document.getElementById("txtCpfCnpjPagador").value;
@@ -856,6 +869,9 @@
                 document.getElementById("divDadosCadastraisPendentesPagto").style.display = "none";
             }
 
+            /**
+             * Exibe mensagem de confirmação da exclusão de jogos com tabelas existente
+             */
             function ExibirMsgConfirmaExclusaoJogos(conteudoMensagem, acao) {
 
                 var textoInicial = "";
@@ -884,6 +900,9 @@
                 });
             }
 
+            /**
+             * Submete o formulário correspontente a ação executada
+             */
             function ExecutarAcaoTabelaJogos(acao) {
                 if (acao == "EXCLUSAO") {
                     document.forms["FormClassesExclusao"].submit();
@@ -896,6 +915,7 @@
                 }
             }
 
+            /**Marcar classes para geração de tabela de jogos */
             function marcarTodos() {
                 var isChecked = false;
                 if (document.getElementById('todos').checked) {
@@ -909,6 +929,7 @@
                 }
             }
 
+            /**Marcar classes para exclusão de tabela de jogos */
             function marcarTodosJogosExclusao() {
                 var isChecked = false;
                 if (document.getElementById('chkExcluirTodasClasses').checked) {

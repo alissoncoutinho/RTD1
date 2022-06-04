@@ -537,8 +537,7 @@ namespace Barragem.Controllers
             foreach (int classeId in idsClassesExclusao)
             {
                 var classe = db.ClasseTorneio.Find(classeId);
-                var faseGrupoFinalizada = verificarSeAFaseDeGrupoFoiFinalizada(classe);
-                ExcluirJogosPorClasse(classe, faseGrupoFinalizada);
+                ExcluirJogosPorClasse(classe, false);
             }
             return RedirectToAction("EditJogos", new { torneioId = torneioId, fClasse = 0, fData = "", fNomeJogador = "", fGrupo = "0", fase = 0 });
         }
