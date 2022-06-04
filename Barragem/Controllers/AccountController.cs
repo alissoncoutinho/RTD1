@@ -1355,6 +1355,12 @@ namespace Barragem.Controllers
         {
             string perfil = Roles.GetRolesForUser(User.Identity.Name)[0];
             string situacaoAtual = "";
+
+            if (model.barragem == null)
+            {
+                model.barragem = db.BarragemView.Find(model.barragemId);
+            }
+
             if ((!perfil.Equals("admin")) && (!perfil.Equals("organizador")) && (WebSecurity.GetUserId(User.Identity.Name) != model.UserId))
             {
                 ViewBag.MsgErro = string.Format("Você não tem permissão para alterar este usuário '{0}'", model.nome);
@@ -1434,9 +1440,8 @@ namespace Barragem.Controllers
                 return RedirectToAction("ListarUsuarios", "Account", new { filtroSituacao = "todos", filtroBarragem = model.barragemId, msg = "ok" });
             }
             ViewBag.classeId = new SelectList(db.Classe.Where(c => c.barragemId == model.barragemId && c.ativa == true).ToList(), "Id", "nome");
+
             return View(model);
-
-
         }
 
         private int getPontuacaoPorNivel(Rodada rodada, string nivelDeJogo)
