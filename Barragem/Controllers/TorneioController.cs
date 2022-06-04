@@ -2675,6 +2675,8 @@ namespace Barragem.Controllers
             ViewBag.fNomeJogador = fNomeJogador;
             ViewBag.fGrupo = fGrupo;
             ViewBag.fase = fase;
+            var classeSelecionada = classes.FirstOrDefault(x => x.Id == fClasse);
+            ViewBag.ClasseEhFaseGrupo = classeSelecionada != null ? classeSelecionada.faseGrupo : false;
             if (fClasse == 0)
             {
                 fClasse = classes[0].Id;

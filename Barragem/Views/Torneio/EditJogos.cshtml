@@ -74,6 +74,7 @@
 </style>
 
 @model IEnumerable<Barragem.Models.Jogo>
+
     @Html.Partial("_PartialTabs")
 
     <div id="divPagamentoPendenteTorneio" style="display:none">
@@ -143,6 +144,14 @@
                             <input type="hidden" name="Id" id="Id" class="form-control">
                             <input type="hidden" id="desafiante_id" name="desafiante_id" value="0">
                             <input type="hidden" id="desafiado_id" name="desafiado_id" value="0">
+                            @if (ViewBag.ClasseEhFaseGrupo)
+                            {
+                                <input type="hidden" id="classeEhFaseGrupo" name="classeEhFaseGrupo" value="1">
+                            }
+                            else
+                            {
+                                <input type="hidden" id="classeEhFaseGrupo" name="classeEhFaseGrupo" value="0">
+                            }
                         </div>
                         <div class="row clearfix">
                             <div id="nomeDesafiante" class="form-group col-md-3 col-xs-5" style="color:#40898e"></div>
@@ -503,9 +512,6 @@
                                             <button title="salvar" data-valor="@Html.Raw(i)" name="@Html.Raw("button"+i)" id="@Html.Raw("button"+i)" class="btn btn-default btn-xs inscricaoButton">
                                                 Salvar
                                             </button><br>
-                                            <!--a href="//Url.Action("LancarResultado", new {id=item.Id })" title="placar" class="btn btn-default btn-xs inscricaoButton">
-                                    Placar
-                                </a-->
                                         </form>
                                         <button type="button" id="@Html.Raw("btnPlacar"+item.Id)" class="btn btn-info btn-xs btnLancarPlacar" data-vencedor="@item.idDoVencedor" data-toggle="modal" data-situacao="@item.situacao_Id" data-indice="@i"
                                                 data-placar="@item.qtddGames1setDesafiante|@item.qtddGames1setDesafiado|@item.qtddGames2setDesafiante|@item.qtddGames2setDesafiado|@item.qtddGames3setDesafiante|@item.qtddGames3setDesafiado"
@@ -519,6 +525,30 @@
                             }
                         </table>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalNotificaWO" tabindex="-1" role="dialog" aria-labelledby="modalNotificaWO" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <b style="color:red;">ATENÇÃO À REGRA DA CBT</b>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        O jogador que perdeu de WO na fase de grupo é <b>eliminado do torneio.</b>
+                    </p>
+                    <p>
+                        <b>Todos os jogos</b> do jogador no grupo serão <b>considerados WO, inclusive os já realizados.</b>
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Ok, ciente</button>
                 </div>
             </div>
         </div>
@@ -1030,6 +1060,7 @@
                                 $("#badge" + id).attr('class', 'badge bg-red');
                                 $("#badge" + id).html('P');
                             }
+
                             spinner.hide();
                             $("#placar-modal").modal('hide');
                             toastr.options = {
@@ -1041,6 +1072,11 @@
                             } else {
                                 toastr.success("Atualização realizada com sucesso.", "Aviso");
                             }
+
+                            if (document.getElementById("situacao_id").value == '5' && document.getElementById("classeEhFaseGrupo").value == "1") {
+                                $("#modalNotificaWO").modal('show');
+                            }
+
                         }
 
                     }
