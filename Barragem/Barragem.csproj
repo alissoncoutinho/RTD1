@@ -1159,6 +1159,8 @@
     <Content Include="Views\Torneio\EditCabecaChave.cshtml" />
     <Content Include="Views\Torneio\PainelTorneio.cshtml" />
     <Content Include="Views\Torneio\_PartialDadosBancariosTorneio.cshtml" />
+    <Content Include="Views\Torneio\_PartialClasseJogosExclusao.cshtml" />
+    <Content Include="Views\Torneio\_PartialClassesJogosGeracaoTabela.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

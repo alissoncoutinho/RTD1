@@ -305,6 +305,10 @@ namespace Barragem.Models
         public int valorASerPago { get; set; }
         public int valorDescontoParaRanking { get; set; }
         public QrCodeCobrancaTorneio qrCode { get; set; }
+
+
+        public string Nome { get; set; }
+        public string CpfCnpj { get; set; }
     }
 
     public class QrCodeCobrancaTorneio

@@ -1,39 +1,134 @@
 ﻿@{
     int i = 0;
-    Barragem.Models.CobrancaTorneio cobrancaTorneio = ViewBag.CobrancaTorneio;
 }
+
+<style>
+    .filtros {
+        padding: 5px !important;
+    }
+
+    .desabilitaCampo {
+        opacity: 0.5;
+        pointer-events: none;
+    }
+
+    .gerarTabela {
+        float: right;
+        margin-top: 30px;
+    }
+
+    .exibir-escolhaDeClasses {
+        overflow: hidden;
+        max-height: 0px;
+        transition: max-height 1s ease-in-out;
+    }
+
+        .exibir-escolhaDeClasses.show {
+            max-height: 700px;
+        }
+
+    .exibir-escolhaDeClassesExclusao {
+        overflow: hidden;
+        max-height: 0px;
+        transition: max-height 1s ease-in-out;
+    }
+
+        .exibir-escolhaDeClassesExclusao.show {
+            max-height: 700px;
+        }
+
+    .loader,
+    .loader:after {
+        border-radius: 50%;
+        width: 10em;
+        height: 10em;
+    }
+
+    .loader {
+        margin: 60px auto;
+        font-size: 10px;
+        position: relative;
+        text-indent: -9999em;
+        border-top: 1.1em solid rgba(255, 255, 255, 0.2);
+        border-right: 1.1em solid rgba(255, 255, 255, 0.2);
+        border-bottom: 1.1em solid rgba(255, 255, 255, 0.2);
+        border-left: 1.1em solid #ffffff;
+        -webkit-transform: translateZ(0);
+        -ms-transform: translateZ(0);
+        transform: translateZ(0);
+        -webkit-animation: load8 1.1s infinite linear;
+        animation: load8 1.1s infinite linear;
+    }
+
+    #loadingDiv {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        background: rgba(0,0,0,0.75) url(../images/loading2.gif) no-repeat center center;
+        z-index: 10000;
+    }
+</style>
+
 @model IEnumerable<Barragem.Models.Jogo>
     @Html.Partial("_PartialTabs")
 
-    @if (ViewBag.CobrancaTorneio != null)
-    {
+    <div id="divPagamentoPendenteTorneio" style="display:none">
         <br>
-        <div class="alert alert-info alert-dismissable">
-            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-            Para gerar a tabela é necessário realizar o pagamento via PIX referente aos inscritos no torneio. <br><br>
-            Inscritos no torneio: @cobrancaTorneio.qtddInscritos <br>
-            Valor por inscrito: R$ 5,00 <br><br>
-            @if (cobrancaTorneio.valorDescontoParaRanking > 0)
-            {
-                @Html.Raw("Desconto para usuários que jogam o ranking: R$ " + cobrancaTorneio.valorDescontoParaRanking + ",00<br><br>")
-            }
-            Valor final a pagar: R$ @cobrancaTorneio.valorASerPago,00 <br><br>
-
-
-            @if (cobrancaTorneio.qrCode.erroGerarQrCode == null)
-            {
-                <center><img id="imgFoto" src="@cobrancaTorneio.qrCode.link" style="width:148px;height:148px;" /></center><br>
-                <span>Leia o QR Code acima ou copie o código abaixo no app do seu banco na opção Pix Copia e Cola.</span><br><br>
-                @cobrancaTorneio.qrCode.text
-                <br><br><span style="color: red;">Após realizar o pagamento, clique no botão Criar Tabela novamente para continuar.</span>
-            }
-            else
-            {
-                @Html.Raw(cobrancaTorneio.qrCode.erroGerarQrCode + "<br>")
-            }
-
+        <div id="divDadosCadastraisPendentesPagto" class="alert alert-info alert-dismissable">
+            <button id="btnFecharDadosCadastraisPendentesPagto" type="button" class="close" aria-hidden="true" onclick="FecharDadosCadastraisPendentesPagto()">&times;</button>
+            É necessário realizar o pagamento para gerar a tabela. <br><br>
+            Favor completar os dados abaixo para que seja possível gerar o QR Code para pagamento via pix.
+            <br>
+            <div style="padding-top: 20px;">
+                <div class="row form-group">
+                    <label class="control-label col-md-1">Nome</label>
+                    <div class="col-md-4">
+                        <input id="txtNomePagador" type="text" class="form-control" maxlength="40" />
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <label class="control-label col-md-1">CPF/CNPJ</label>
+                    <div class="col-md-4">
+                        <input id="txtCpfCnpjPagador" type="text" class="form-control" maxlength="20" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <button id="btnSalvarDadosCadastraisPendentesPagto" type="button" class="btn btn-primary" onclick="SalvarDadosCadastraisPendentesPagto()">Salvar e Gerar QR Code</button>
+                </div>
+            </div>
         </div>
-    }
+
+        <div id="divPixPagtoTorneio" class="alert alert-info alert-dismissable">
+            <button id="btnFecharPixPagtoTorneio" type="button" class="close" aria-hidden="true" onclick="FecharPixPagtoTorneio()">&times;</button>
+            Para gerar a tabela é necessário realizar o pagamento via PIX referente aos inscritos no torneio. <br><br>
+            <span id="lblQtdeInscritosPagtoPend"></span>
+            <br>
+            Valor por inscrito: R$ 5,00
+            <br>
+            <br>
+            <div id="divDescRankingPagtoPend">
+                <span id="lblDescRankingPagtoPend"></span>
+                <br>
+                <br>
+            </div>
+            <span id="lblValorFinalPagtoPend"></span>
+            <div id="divQrCodePagtoPend">
+                <center><img id="imgQrCodePagtoPend" style="width:148px;height:148px;" /></center><br>
+                <span>Leia o QR Code acima ou copie o código abaixo no app do seu banco na opção Pix Copia e Cola.</span><br><br>
+                <span id="lblTextoQrCodePagtoPend"></span>
+                <br><br><span style="color: red;">Após realizar o pagamento, clique no botão Criar Tabela novamente para continuar.</span>
+            </div>
+            <div id="divErroQrCodePagtoPend">
+                <br>
+                <span id="lblDescErroPagtoPend" style="color:red">Dados do erro..</span>
+            </div>
+        </div>
+    </div>
+
     <div id="placar-modal" class="modal fade" role="dialog">
         <div id="loadingDiv"><div class="loader">Loading...</div></div>
         <div class="modal-dialog">
@@ -126,54 +221,17 @@
                     <h4 class="box-title">Ações da Tabela</h4>
                 </div>
                 <p style="margin-top:10px">
-                    <button class="btn btn-primary btn-small exibirClasses"><span class="glyphicon glyphicon-plus"></span> Gerar</button>
+                    <button class="btn btn-primary btn-small" onclick="AbrirTabelaGeracaoJogos()"><span class="glyphicon glyphicon-plus"></span> Gerar</button>
                     <a href="@Url.Action("Tabela", new { torneioId = ViewBag.TorneioId })" target="_blank" class="btn btn-success btn-small"><span class="glyphicon glyphicon-list-alt"></span> Visualizar</a>
                     <button class="btn btn-warning" onclick="Imprimir()"><span class="glyphicon glyphicon-print"></span> Imprimir</button>
+                    <button class="btn btn-danger" onclick="AbrirTabelaJogosExclusao()"><span class="glyphicon glyphicon-trash"></span> Excluir</button>
                 </p>
-
-                <div class="form-row exibir-escolhaDeClasses" id="classes" style="margin-top:25px">
-                    <div class="box box-warning">
-                        <div class="box-header with-border">
-                            <h3 class="box-title">Selecione as classes para a geração de tabela</h3>
-                        </div>
-                        <div class="box-body">
-                            @using (Html.BeginForm("MontarChaveamento", "Torneio", FormMethod.Post, new { @class = "form-row", @name = "FormClasses", @id = "FormClasses" }))
-                            {
-                                <div class="col-sm-4">
-                                    <input type="checkbox" value="1" name="todos" id="todos" onclick="marcarTodos()" /> <b>Todos</b>
-                                </div>
-                                foreach (var item2 in ViewBag.Classes)
-                                {
-                                    var nome = item2.nome;
-                                    if (item2.faseGrupo)
-                                    {
-                                        nome = item2.nome + " <b style='color:green'>(Fase de Grupo)</b>";
-                                    }
-                                    var jogosGerados = false;
-                                    if (ViewBag.ClassesGeradas.Contains(item2.Id))
-                                    {
-                                        jogosGerados = true;
-                                        if ((item2.faseGrupo) && (item2.faseMataMata) && (!ViewBag.classesFaseGrupoNaoFinalizadas.Contains(item2.Id)))
-                                        {
-                                            nome = item2.nome + " <b style='color:red'>(Mata-Mata)</b>";
-                                            if (!ViewBag.ClassesGeradasMataMata.Contains(item2.Id))
-                                            {
-                                                jogosGerados = false;
-                                            }
-                                        }
-                                    }
-
-                                    <div class="col-sm-4">
-                                        <input type="checkbox" value="@item2.Id" name="classeIds" id="classeIds" @if (!jogosGerados) { @Html.Raw("checked") } />
-                                        @Html.Raw(nome)
-                                    </div>
-                                }
-                                <input type="hidden" value="@ViewBag.TorneioId" name="torneioId" id="torneioId">
-                                <button id="btnGerarTabela" type="button" onclick="gerarTabelas()" class="btn btn-primary btn-small gerarTabela">Gerar Tabela</button>
-                            }
-                        </div>
-                    </div>
-                </div>
+                <!-- GERAÇÃO DE JOGOS - INICIO -->
+                @Html.Partial("_PartialClassesJogosGeracaoTabela")
+                <!-- GERAÇÃO DE JOGOS - FIM -->
+                <!-- EXCLUSAO DE JOGOS - INICIO -->
+                @Html.Partial("_PartialClasseJogosExclusao")
+                <!-- EXCLUSAO DE JOGOS - FIM -->
 
                 <div class="box box-primary">
                     <div class="box-header">
@@ -218,7 +276,7 @@
                         </div>
                         <div class="form-group col-sm-2 filtros">
                             <div class="input-group date" data-date-format="dd/mm/yyyy">
-                                <input id="fData" name="fData" value="@ViewBag.fData" type="text" class="form-control col-md-5" placeholder="Data" onchange="Pesquisar()"/>
+                                <input id="fData" name="fData" value="@ViewBag.fData" type="text" class="form-control col-md-5" placeholder="Data" onchange="Pesquisar()" />
                                 <span class="input-group-addon">
                                     <span class="glyphicon glyphicon-calendar">
                                     </span>
@@ -465,67 +523,7 @@
             </div>
         </div>
     </div>
-    <style>
 
-        .filtros {
-            padding:5px !important;
-        }
-
-        .desabilitaCampo {
-            opacity: 0.5;
-            pointer-events: none;
-        }
-
-        .gerarTabela {
-            float: right;
-            margin-top: 30px;
-        }
-
-        .exibir-escolhaDeClasses {
-            overflow: hidden;
-            max-height: 0px;
-            transition: max-height 1s ease-in-out;
-        }
-
-            .exibir-escolhaDeClasses.show {
-                max-height: 700px;
-            }
-
-        .loader,
-        .loader:after {
-            border-radius: 50%;
-            width: 10em;
-            height: 10em;
-        }
-
-        .loader {
-            margin: 60px auto;
-            font-size: 10px;
-            position: relative;
-            text-indent: -9999em;
-            border-top: 1.1em solid rgba(255, 255, 255, 0.2);
-            border-right: 1.1em solid rgba(255, 255, 255, 0.2);
-            border-bottom: 1.1em solid rgba(255, 255, 255, 0.2);
-            border-left: 1.1em solid #ffffff;
-            -webkit-transform: translateZ(0);
-            -ms-transform: translateZ(0);
-            transform: translateZ(0);
-            -webkit-animation: load8 1.1s infinite linear;
-            animation: load8 1.1s infinite linear;
-        }
-
-        #loadingDiv {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            width: 100%;
-            background: rgba(0,0,0,0.75) url(../images/loading2.gif) no-repeat center center;
-            z-index: 10000;
-        }
-    </style>
     @section Scripts {
         @Scripts.Render("~/bundles/jqueryval")
         @Scripts.Render("~/bundles/jqueryform")
@@ -649,29 +647,69 @@
                         }
                     });
                 });
-
-                $(".exibirClasses").click(function (event) {
-                    var element = document.getElementById("classes");
-                    element.classList.add("show");
-                });
-
-
-
             });
 
-            function gerarTabelas() {
-                var classesSelecionadas = $('input[name=classeIds]:checked').map(function (_, el) {
-                    return $(el).val();
-                }).get();
+            /**Abertura do painel para geração de tabela */
+            function AbrirTabelaGeracaoJogos() {
+                MostrarClassesJogos("GERACAO_TABELA");
+            }
 
+            /**Abertura do painel para exclusão de tabela de jogos*/
+            function AbrirTabelaJogosExclusao() {
+                MostrarClassesJogos("EXCLUSAO");
+            }
+
+            /**
+             * Gerencia o comportamento para mostrar o painel de exclusao ou geração de tabela
+             */
+            function MostrarClassesJogos(acao) {
+                var elementGeracaoTabelaJogos = document.getElementById("classes");
+                var elementExclusaoJogos = document.getElementById("classesExclusao");
+
+                if (acao == "EXCLUSAO") {
+                    elementGeracaoTabelaJogos.classList.remove("show");
+                    elementExclusaoJogos.classList.add("show");
+                }
+                else if (acao == "GERACAO_TABELA") {
+                    elementGeracaoTabelaJogos.classList.add("show");
+                    elementExclusaoJogos.classList.remove("show");
+                }
+                else {
+                    elementGeracaoTabelaJogos.classList.remove("show");
+                    elementExclusaoJogos.classList.remove("show");
+                }
+            }
+
+            function gerarTabelas() {
                 event.preventDefault();
+
+                var idTorneio = document.getElementById('torneioId').value;
+                ValidarPagamentoTorneio(idTorneio);
+            }
+
+            /**
+             * Valida se a(s) classe(s) selecionada(s) possui jogos já gerados
+             */
+            function ValidarJogosJaGerados(idTorneio, acao) {
+                var classesSelecionadas = "";
+                if (acao == "GERACAO_TABELA") {
+                    classesSelecionadas = $('input[name=classeIds]:checked').map(function (_, el) {
+                        return $(el).val();
+                    }).get();
+                }
+                else if (acao == "EXCLUSAO") {
+                    classesSelecionadas = $('input[name=idsClassesExclusao]:checked').map(function (_, el) {
+                        return $(el).val();
+                    }).get();
+                }
+
                 $.ajax({
                     type: "GET",
                     url: "/Torneio/ValidarJogosJaGerados",
                     dataType: "json",
                     data: {
                         "classeIds": classesSelecionadas,
-                        "torneioId": document.getElementById('torneioId').value
+                        "torneioId": idTorneio
                     },
                     traditional: true,
                     contentType: "application/json; charset=utf-8",
@@ -684,10 +722,10 @@
                                 toastr.error(response.erro, "Erro");
                             } else {
                                 if (response.retorno != "OK") {
-                                    ExibirMsgConfirmaExclusaoJogos(response.retorno);
+                                    ExibirMsgConfirmaExclusaoJogos(response.retorno, acao);
                                 }
                                 else {
-                                    document.forms[2].submit();
+                                    ExecutarAcaoTabelaJogos(acao);
                                 }
                             }
                         }
@@ -698,9 +736,153 @@
                 });
             }
 
-            function ExibirMsgConfirmaExclusaoJogos(conteudoMensagem) {
+            /**
+             * Valida se o pagamento do torneio foi efetuado
+             */
+            function ValidarPagamentoTorneio(idTorneio) {
+                $.ajax({
+                    type: "GET",
+                    url: "/Torneio/ValidarPagamentoTorneio",
+                    dataType: "json",
+                    data: {
+                        "torneioId": document.getElementById('torneioId').value
+                    },
+                    traditional: true,
+                    contentType: "application/json; charset=utf-8",
+                    success: function (response) {
+                        if (typeof response == "object") {
+                            toastr.options = {
+                                "positionClass": "toast-top-center"
+                            }
+                            if (response.retorno == "ERRO") {
+                                toastr.error(response.erro, "Erro");
+                            } else {
+                                if (response.status == "PENDENCIA_CADASTRO") {
+                                    //SOLICITAR PREENCHIMENTO DADOS FALTANTES
+                                    document.getElementById("divPagamentoPendenteTorneio").style.display = "block";
+                                    document.getElementById("divPixPagtoTorneio").style.display = "none";
+                                    document.getElementById("divDadosCadastraisPendentesPagto").style.display = "block";
 
-                var textoInicial = "<p>Você selecionou categorias que já tem jogos concluídos ou horários marcados. <b>Deseja substituir as tabelas já existentes? </b></p>Categorias cujas tabelas serão zeradas:</br>";
+                                    document.getElementById("txtNomePagador").value = response.retorno.Nome;
+                                    document.getElementById("txtCpfCnpjPagador").value = response.retorno.CpfCnpj;
+
+                                }
+                                else if (response.status == "PENDENCIA_PAGAMENTO" || response.status == "ERRO_QRCODE") {
+                                    //SOLICITAR PAGAMENTO
+                                    document.getElementById("divPagamentoPendenteTorneio").style.display = "block";
+                                    document.getElementById("divPixPagtoTorneio").style.display = "block";
+                                    document.getElementById("divDadosCadastraisPendentesPagto").style.display = "none";
+
+                                    document.getElementById("lblQtdeInscritosPagtoPend").textContent = "Inscritos no torneio: " + response.retorno.qtddInscritos;
+
+                                    if (response.retorno.valorDescontoParaRanking > 0) {
+                                        document.getElementById("lblDescRankingPagtoPend").textContent = "Desconto para usuários que jogam o ranking: R$ " + response.retorno.valorDescontoParaRanking + ",00";
+                                        document.getElementById("divDescRankingPagtoPend").style.display = "block";
+                                    }
+                                    else {
+                                        document.getElementById("divDescRankingPagtoPend").style.display = "none";
+                                        document.getElementById("lblDescRankingPagtoPend").textContent = "";
+                                    }
+                                    document.getElementById("lblValorFinalPagtoPend").textContent = "Valor final a pagar: " + response.retorno.valorASerPago + ",00";
+
+                                    if (response.status == "ERRO_QRCODE") {
+                                        document.getElementById("lblDescErroPagtoPend").textContent = response.retorno.qrCode.erroGerarQrCode;
+                                        document.getElementById("divErroQrCodePagtoPend").style.display = "block";
+                                        document.getElementById("divQrCodePagtoPend").style.display = "none";
+                                    }
+                                    else {
+                                        document.getElementById("imgQrCodePagtoPend").src = response.retorno.qrCode.link;
+                                        document.getElementById("lblTextoQrCodePagtoPend").textContent = response.retorno.qrCode.text;
+                                        document.getElementById("divErroQrCodePagtoPend").style.display = "none";
+                                        document.getElementById("divQrCodePagtoPend").style.display = "block";
+                                    }
+                                }
+                                else {
+                                    document.getElementById("divPagamentoPendenteTorneio").style.display = "none";
+
+                                    ValidarJogosJaGerados(idTorneio, "GERACAO_TABELA");
+                                }
+                            }
+                        }
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        toastr.error(errorThrown, "Erro");
+                    }
+                });
+            }
+
+            /**Executa a exclusão de tabela de jogos */
+            function ExcluirTabelaJogos() {
+                var idTorneio = document.getElementById('torneioId').value;
+                ValidarJogosJaGerados(idTorneio, "EXCLUSAO");
+            }
+
+            /**Salvar dados cadastrais pendentes para pagamento do torneio */
+            function SalvarDadosCadastraisPendentesPagto() {
+                var nome = document.getElementById("txtNomePagador").value;
+                var cpfCnpj = document.getElementById("txtCpfCnpjPagador").value;
+                var torneioId = document.getElementById('torneioId').value;
+
+                toastr.options = {
+                    "positionClass": "toast-top-center"
+                }
+
+                if (nome == "") {
+                    toastr.error("O campo Nome é obrigatório", "Erro");
+                    return;
+                }
+                else if (cpfCnpj == "") {
+                    toastr.error("O campo CPF/CNPJ é obrigatório", "Erro");
+                    return;
+                }
+
+                $.ajax({
+                    type: "POST",
+                    url: "/Torneio/SalvarDadosCadastraisPendentesPagto",
+                    dataType: "json",
+                    data: "{'torneioId':'" + torneioId + "', " + "'nome':'" + nome + "', " + "'cpfCnpj':'" + cpfCnpj + "'}",
+                    traditional: true,
+                    contentType: "application/json; charset=utf-8",
+                    success: function (response) {
+                        if (typeof response == "object") {
+                            toastr.options = {
+                                "positionClass": "toast-top-center"
+                            }
+                            if (response.status == "ERRO") {
+                                toastr.error(response.erro, "Erro");
+                            } else {
+                                ValidarPagamentoTorneio(torneioId);
+                            }
+                        }
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        toastr.error(errorThrown, "Erro");
+                    }
+                });
+            }
+
+            function FecharPixPagtoTorneio() {
+                document.getElementById("divPixPagtoTorneio").style.display = "none";
+            }
+
+            function FecharDadosCadastraisPendentesPagto() {
+                document.getElementById("divDadosCadastraisPendentesPagto").style.display = "none";
+            }
+
+            /**
+             * Exibe mensagem de confirmação da exclusão de jogos com tabelas existente
+             */
+            function ExibirMsgConfirmaExclusaoJogos(conteudoMensagem, acao) {
+
+                var textoInicial = "";
+
+                if (acao == "GERACAO_TABELA") {
+                    textoInicial = "<p>Você selecionou categorias que já tem jogos concluídos ou horários marcados. <b>Deseja substituir as tabelas já existentes? </b></p>Categorias cujas tabelas serão zeradas:</br>";
+                }
+                else if (acao == "EXCLUSAO") {
+                    textoInicial = "<p>Você selecionou categorias que já tem jogos concluídos ou horários marcados. <b>Deseja EXCLUIR as tabelas? </b></p>Categorias cujas tabelas serão EXCLUÍDAS:</br>";
+
+                }
 
                 $.confirm({
                     title: "<span style='color:red'>ATENÇÃO!!!</span>",
@@ -710,7 +892,7 @@
                             text: 'Sim',
                             btnClass: 'btn-primary',
                             action: function () {
-                                document.forms[2].submit();
+                                ExecutarAcaoTabelaJogos(acao);
                             }
                         },
                         cancelar: {}
@@ -718,12 +900,42 @@
                 });
             }
 
+            /**
+             * Submete o formulário correspontente a ação executada
+             */
+            function ExecutarAcaoTabelaJogos(acao) {
+                if (acao == "EXCLUSAO") {
+                    document.forms["FormClassesExclusao"].submit();
+                }
+                else if (acao == "GERACAO_TABELA") {
+                    document.forms["FormClasses"].submit();
+                }
+                else {
+                    return;
+                }
+            }
+
+            /**Marcar classes para geração de tabela de jogos */
             function marcarTodos() {
                 var isChecked = false;
                 if (document.getElementById('todos').checked) {
                     isChecked = true;
                 }
-                var checkboxes = document.getElementsByTagName("input");
+                var checkboxes = document.getElementsByName("classeIds");
+                for (var i = 0; i < checkboxes.length; i++) {
+                    if (checkboxes[i].type == "checkbox") {
+                        checkboxes[i].checked = isChecked;
+                    }
+                }
+            }
+
+            /**Marcar classes para exclusão de tabela de jogos */
+            function marcarTodosJogosExclusao() {
+                var isChecked = false;
+                if (document.getElementById('chkExcluirTodasClasses').checked) {
+                    isChecked = true;
+                }
+                var checkboxes = document.getElementsByName("idsClassesExclusao");
                 for (var i = 0; i < checkboxes.length; i++) {
                     if (checkboxes[i].type == "checkbox") {
                         checkboxes[i].checked = isChecked;

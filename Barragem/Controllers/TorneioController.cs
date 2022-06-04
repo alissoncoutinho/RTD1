@@ -452,26 +452,16 @@ namespace Barragem.Controllers
             }
         }
 
-        private void excluirJogosPorClasse(ClasseTorneio classe, bool faseGrupoFinalizada)
+        private void ExcluirJogosPorClasse(ClasseTorneio classe, bool faseGrupoFinalizada)
         {
-            if (!classe.faseGrupo)
-            {
+            if (!classe.faseGrupo || !faseGrupoFinalizada)
                 db.Database.ExecuteSqlCommand("delete from jogo where classeTorneio=" + classe.Id);
-            }
-            else
-            {
-                if (!faseGrupoFinalizada)
-                {
-                    db.Database.ExecuteSqlCommand("delete from jogo where classeTorneio=" + classe.Id);
-                }
-            }
         }
 
         [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
         [HttpPost]
         public ActionResult MontarChaveamento(int torneioId, IEnumerable<int> classeIds)
         {
-            //try { 
             string Msg = "";
             var torneio = db.Torneio.Find(torneioId);
             CobrancaTorneio cobrancaTorneio = new CobrancaTorneio();
@@ -490,7 +480,7 @@ namespace Barragem.Controllers
                 {
                     var classe = db.ClasseTorneio.Find(classeId);
                     var faseGrupoFinalizada = verificarSeAFaseDeGrupoFoiFinalizada(classe);
-                    excluirJogosPorClasse(classe, faseGrupoFinalizada);
+                    ExcluirJogosPorClasse(classe, faseGrupoFinalizada);
                     if (torneio.barragem.isModeloTodosContraTodos)
                     {
                         tn.montarJogosTodosContraTodos(classe);
@@ -537,14 +527,19 @@ namespace Barragem.Controllers
                 ViewBag.classesFaseGrupoNaoFinalizadas = db.Jogo.Where(i => i.torneioId == torneioId && i.grupoFaseGrupo != null && (i.situacao_Id == 1 || i.situacao_Id == 2)).
                     Select(i => (int)i.classeTorneio).Distinct().ToList();
             }
-            return RedirectToAction("EditJogos", new { torneioId = torneioId, fClasse = 0, fData = "", fNomeJogador = "", fGrupo = "0", fase = 0, qtddInscritos = cobrancaTorneio.qtddInscritos, valorASerPago = cobrancaTorneio.valorASerPago, valorDescontoParaRanking = cobrancaTorneio.valorDescontoParaRanking });
-            //return Json(new { erro = "", retorno = 1 }, "text/plain", JsonRequestBehavior.AllowGet);
-            //}
-            //catch (Exception ex)
-            //{
-            //   return Json(new { erro = ex.Message, retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
-            // }
+            return RedirectToAction("EditJogos", new { torneioId = torneioId, fClasse = 0, fData = "", fNomeJogador = "", fGrupo = "0", fase = 0 });
+        }
 
+        [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
+        [HttpPost]
+        public ActionResult ExcluirTabelaJogos(int torneioId, IEnumerable<int> idsClassesExclusao)
+        {
+            foreach (int classeId in idsClassesExclusao)
+            {
+                var classe = db.ClasseTorneio.Find(classeId);
+                ExcluirJogosPorClasse(classe, false);
+            }
+            return RedirectToAction("EditJogos", new { torneioId = torneioId, fClasse = 0, fData = "", fNomeJogador = "", fGrupo = "0", fase = 0 });
         }
 
         private bool temPendenciaDePagamentoTorneio(Torneio torneio)
@@ -2254,7 +2249,7 @@ namespace Barragem.Controllers
             torneio.divulgaCidade = false;
             torneio.isOpen = false;
             torneio.TipoTorneio = pontuacaoCircuito;
-            
+
             ValidarFormaPgtoTransferenciaBancaria(torneio, transferencia);
 
             if (torneio.divulgacao == "nao divulgar")
@@ -2354,7 +2349,7 @@ namespace Barragem.Controllers
                 torneio.ContatoOrganizador = string.Empty;
                 torneio.CpfConta = string.Empty;
             }
-            else 
+            else
             {
                 var htmlDadosBancarios = new StringBuilder();
                 if (!string.IsNullOrEmpty(torneio.ChavePix))
@@ -2588,29 +2583,84 @@ namespace Barragem.Controllers
             return "";
         }
 
-        [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
-        public ActionResult EditJogos(int torneioId, int fClasse = 0, string fData = "", string fNomeJogador = "", string fGrupo = "0", int fase = 0, int qtddInscritos = 0, int valorASerPago = 0, int valorDescontoParaRanking = 0)
+        [HttpPost]
+        public ActionResult SalvarDadosCadastraisPendentesPagto(int torneioId, string nome, string cpfCnpj)
         {
-            if (qtddInscritos > 0 && valorASerPago > 0)
+            try
+            {
+                var torneio = db.Torneio.Find(torneioId);
+                var barragem = db.Barragens.Find(torneio.barragemId);
+
+                barragem.nomeResponsavel = nome;
+                barragem.cpfResponsavel = cpfCnpj;
+
+                db.Entry(barragem).State = EntityState.Modified;
+                db.SaveChanges();
+
+                return Json(new { erro = "", status = "OK" }, "text/plain", JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { erro = ex.Message, status = "ERRO" }, "text/plain", JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpGet]
+        public ActionResult ValidarPagamentoTorneio(int torneioId)
+        {
+            try
             {
                 var cobrancaTorneio = new CobrancaTorneio();
-                cobrancaTorneio.qtddInscritos = qtddInscritos;
-                cobrancaTorneio.valorASerPago = valorASerPago;
-                cobrancaTorneio.valorDescontoParaRanking = valorDescontoParaRanking;
+                bool pendenciaDePagamento = false;
+                var torneio = db.Torneio.Find(torneioId);
 
-                try
+                if (temPendenciaDePagamentoTorneio(torneio))
                 {
-                    cobrancaTorneio.qrCode = GetQrCodeCobrancaPIX(torneioId);
-                }
-                catch (Exception e)
-                {
-                    cobrancaTorneio.qrCode = new QrCodeCobrancaTorneio();
-                    cobrancaTorneio.qrCode.erroGerarQrCode = "Erro ao gerar o QrCode de pagamento. Favor tente novamente mais tarde:" + e.Message;
-                }
+                    cobrancaTorneio = getDadosDeCobrancaTorneio(torneioId);
+                    if (cobrancaTorneio.valorASerPago > 0)
+                    {
+                        pendenciaDePagamento = true;
+                    }
 
-                ViewBag.CobrancaTorneio = cobrancaTorneio;
+                    if (cobrancaTorneio.qtddInscritos > 0 && pendenciaDePagamento)
+                    {
+                        cobrancaTorneio.Nome = torneio.barragem.nomeResponsavel;
+                        cobrancaTorneio.CpfCnpj = torneio.barragem.cpfResponsavel;
+
+                        if (string.IsNullOrEmpty(cobrancaTorneio.Nome) || string.IsNullOrEmpty(cobrancaTorneio.CpfCnpj))
+                        {
+                            //Falta informar dados para pagamento, então solicitar a atualização de dados
+                            return Json(new { erro = "", retorno = cobrancaTorneio, status = "PENDENCIA_CADASTRO" }, "text/plain", JsonRequestBehavior.AllowGet);
+                        }
+                        else
+                        {
+                            //dados ok, então gerar qr code para pagamento
+                            try
+                            {
+                                cobrancaTorneio.qrCode = GetQrCodeCobrancaPIX(torneioId);
+                                return Json(new { erro = "", retorno = cobrancaTorneio, status = "PENDENCIA_PAGAMENTO" }, "text/plain", JsonRequestBehavior.AllowGet);
+                            }
+                            catch (Exception e)
+                            {
+                                cobrancaTorneio.qrCode = new QrCodeCobrancaTorneio();
+                                cobrancaTorneio.qrCode.erroGerarQrCode = "Erro ao gerar o QrCode de pagamento. Favor tente novamente mais tarde:" + e.Message;
+                                return Json(new { erro = cobrancaTorneio.qrCode.erroGerarQrCode, retorno = cobrancaTorneio, status = "ERRO_QRCODE" }, "text/plain", JsonRequestBehavior.AllowGet);
+                            }
+                        }
+                    }
+                }
+                //Tudo ok, então pode gerar tabela
+                return Json(new { erro = "", retorno = cobrancaTorneio, status = "OK" }, "text/plain", JsonRequestBehavior.AllowGet);
             }
-            List<Jogo> listaJogos = null;
+            catch (Exception ex)
+            {
+                return Json(new { erro = ex.Message, retorno = "ERRO", status = "ERRO" }, "text/plain", JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
+        public ActionResult EditJogos(int torneioId, int fClasse = 0, string fData = "", string fNomeJogador = "", string fGrupo = "0", int fase = 0)
+        {
             var classes = db.ClasseTorneio.Where(i => i.torneioId == torneioId).OrderBy(c => c.Id).ToList();
             var classesGeradas = db.Jogo.Where(i => i.torneioId == torneioId).Select(i => (int)i.classeTorneio)
                 .Distinct().ToList();
@@ -2636,7 +2686,7 @@ namespace Barragem.Controllers
                 ViewBag.primeirafase = db.Jogo.Where(r => r.torneioId == torneioId && r.classeTorneio == fClasse).Max(r => r.faseTorneio);
             }
             var jogo = db.Jogo.Where(i => i.torneioId == torneioId);
-            listaJogos = filtrarJogos(jogo, fClasse, fData, fGrupo, fase, false, fNomeJogador);
+            var listaJogos = filtrarJogos(jogo, fClasse, fData, fGrupo, fase, false, fNomeJogador);
             if (fClasse != 1)
             {
                 var cl = classes.Where(c => c.Id == fClasse).First();
@@ -3553,7 +3603,7 @@ namespace Barragem.Controllers
             torneio.barragemId = barragemId;
             var barragem = db.Barragens.Find(torneio.barragemId);
             ViewBag.isModeloTodosContraTodos = barragem.isModeloTodosContraTodos;
-            
+
             ValidarFormaPgtoTransferenciaBancaria(torneio, transferencia);
 
             torneio.StatusInscricao = (int)StatusInscricaoPainelTorneio.LIBERADA_ATE;
