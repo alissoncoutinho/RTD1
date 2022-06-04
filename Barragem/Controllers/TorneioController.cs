@@ -452,19 +452,10 @@ namespace Barragem.Controllers
             }
         }
 
-        private void excluirJogosPorClasse(ClasseTorneio classe, bool faseGrupoFinalizada)
+        private void ExcluirJogosPorClasse(ClasseTorneio classe, bool faseGrupoFinalizada)
         {
-            if (!classe.faseGrupo)
-            {
+            if (!classe.faseGrupo || !faseGrupoFinalizada)
                 db.Database.ExecuteSqlCommand("delete from jogo where classeTorneio=" + classe.Id);
-            }
-            else
-            {
-                if (!faseGrupoFinalizada)
-                {
-                    db.Database.ExecuteSqlCommand("delete from jogo where classeTorneio=" + classe.Id);
-                }
-            }
         }
 
         [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
@@ -489,7 +480,7 @@ namespace Barragem.Controllers
                 {
                     var classe = db.ClasseTorneio.Find(classeId);
                     var faseGrupoFinalizada = verificarSeAFaseDeGrupoFoiFinalizada(classe);
-                    excluirJogosPorClasse(classe, faseGrupoFinalizada);
+                    ExcluirJogosPorClasse(classe, faseGrupoFinalizada);
                     if (torneio.barragem.isModeloTodosContraTodos)
                     {
                         tn.montarJogosTodosContraTodos(classe);
@@ -536,7 +527,20 @@ namespace Barragem.Controllers
                 ViewBag.classesFaseGrupoNaoFinalizadas = db.Jogo.Where(i => i.torneioId == torneioId && i.grupoFaseGrupo != null && (i.situacao_Id == 1 || i.situacao_Id == 2)).
                     Select(i => (int)i.classeTorneio).Distinct().ToList();
             }
-            return RedirectToAction("EditJogos", new { torneioId = torneioId, fClasse = 0, fData = "", fNomeJogador = "", fGrupo = "0", fase = 0});
+            return RedirectToAction("EditJogos", new { torneioId = torneioId, fClasse = 0, fData = "", fNomeJogador = "", fGrupo = "0", fase = 0 });
+        }
+
+        [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
+        [HttpPost]
+        public ActionResult ExcluirTabelaJogos(int torneioId, IEnumerable<int> idsClassesExclusao)
+        {
+            foreach (int classeId in idsClassesExclusao)
+            {
+                var classe = db.ClasseTorneio.Find(classeId);
+                var faseGrupoFinalizada = verificarSeAFaseDeGrupoFoiFinalizada(classe);
+                ExcluirJogosPorClasse(classe, faseGrupoFinalizada);
+            }
+            return RedirectToAction("EditJogos", new { torneioId = torneioId, fClasse = 0, fData = "", fNomeJogador = "", fGrupo = "0", fase = 0 });
         }
 
         private bool temPendenciaDePagamentoTorneio(Torneio torneio)

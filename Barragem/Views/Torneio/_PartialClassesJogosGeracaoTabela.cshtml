@@ -1,0 +1,43 @@
+﻿<div class="form-row exibir-escolhaDeClasses" id="classes" style="margin-top:25px">
+    <div class="box box-warning">
+        <div class="box-header with-border">
+            <h3 class="box-title">Selecione as classes para a geração de tabela</h3>
+        </div>
+        <div class="box-body">
+            @using (Html.BeginForm("MontarChaveamento", "Torneio", FormMethod.Post, new { @class = "form-row", @name = "FormClasses", @id = "FormClasses" }))
+            {
+                <div class="col-sm-4">
+                    <input type="checkbox" value="1" name="todos" id="todos" onclick="marcarTodos()" /> <b>Todos</b>
+                </div>
+                foreach (var item2 in ViewBag.Classes)
+                {
+                    var nome = item2.nome;
+                    if (item2.faseGrupo)
+                    {
+                        nome = item2.nome + " <b style='color:green'>(Fase de Grupo)</b>";
+                    }
+                    var jogosGerados = false;
+                    if (ViewBag.ClassesGeradas.Contains(item2.Id))
+                    {
+                        jogosGerados = true;
+                        if ((item2.faseGrupo) && (item2.faseMataMata) && (!ViewBag.classesFaseGrupoNaoFinalizadas.Contains(item2.Id)))
+                        {
+                            nome = item2.nome + " <b style='color:red'>(Mata-Mata)</b>";
+                            if (!ViewBag.ClassesGeradasMataMata.Contains(item2.Id))
+                            {
+                                jogosGerados = false;
+                            }
+                        }
+                    }
+
+                    <div class="col-sm-4">
+                        <input type="checkbox" value="@item2.Id" name="classeIds" id="classeIds" @if (!jogosGerados) { @Html.Raw("checked") } />
+                        @Html.Raw(nome)
+                    </div>
+                }
+                <input type="hidden" value="@ViewBag.TorneioId" name="torneioId" id="torneioId">
+                <button id="btnGerarTabela" type="button" onclick="gerarTabelas()" class="btn btn-primary btn-small gerarTabela">Gerar Tabela</button>
+            }
+        </div>
+    </div>
+</div>
