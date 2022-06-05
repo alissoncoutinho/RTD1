@@ -2679,7 +2679,7 @@ namespace Barragem.Controllers
             ViewBag.ClasseEhFaseGrupo = classeSelecionada != null ? classeSelecionada.faseGrupo : false;
             if (fClasse == 0)
             {
-                fClasse = classes[0].Id;
+                fClasse = classes.FirstOrDefault()?.Id ?? 0;
                 ViewBag.filtroClasse = fClasse;
             }
             if (fClasse != 1)
@@ -2691,8 +2691,12 @@ namespace Barragem.Controllers
             var listaJogos = filtrarJogos(jogo, fClasse, fData, fGrupo, fase, false, fNomeJogador);
             if (fClasse != 1)
             {
-                var cl = classes.Where(c => c.Id == fClasse).First();
-                if (cl.isDupla)
+                var cl = classes.Where(c => c.Id == fClasse).FirstOrDefault();
+                if (cl == null)
+                {
+                    ViewBag.Inscritos = new List<InscricaoTorneio>(); 
+                }
+                else if (cl.isDupla)
                 {
                     ViewBag.Inscritos = db.InscricaoTorneio.Where(c => c.torneioId == torneioId && c.isAtivo && c.parceiroDuplaId != null && c.classe == fClasse).ToList();
                 }
