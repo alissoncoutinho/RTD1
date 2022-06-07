@@ -130,98 +130,7 @@
         </div>
     </div>
 
-    <div id="placar-modal" class="modal fade" role="dialog">
-        <div id="loadingDiv"><div class="loader">Loading...</div></div>
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header" style="padding:5px">
-                    <a class="close" data-dismiss="modal">×</a>
-                    <h3>Placar</h3>
-                </div>
-                <form id="placarForm" name="placarForm" role="form" method="post">
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <input type="hidden" name="Id" id="Id" class="form-control">
-                            <input type="hidden" id="desafiante_id" name="desafiante_id" value="0">
-                            <input type="hidden" id="desafiado_id" name="desafiado_id" value="0">
-                            @if (ViewBag.ClasseEhFaseGrupo)
-                            {
-                                <input type="hidden" id="classeEhFaseGrupo" name="classeEhFaseGrupo" value="1">
-                            }
-                            else
-                            {
-                                <input type="hidden" id="classeEhFaseGrupo" name="classeEhFaseGrupo" value="0">
-                            }
-                        </div>
-                        <div class="row clearfix">
-                            <div id="nomeDesafiante" class="form-group col-md-3 col-xs-5" style="color:#40898e"></div>
-                            <div class="form-group col-md-1 col-xs-1"></div>
-                            <div id="nomeDesafiado" class="form-group col-md-3 col-xs-5" style="color:#ff6a00"></div>
-                        </div>
-                        <div class="row clearfix">
-                            <div class="form-group col-md-3 col-xs-5">
-                                <input type="text" name="qtddGames1setDesafiante" id="qtddGames1setDesafiante" class="col-md-2 form-control" style="border-color:#40898e">
-                            </div>
-                            <div class="form-group col-md-1 col-xs-1" style="margin-top: 10px;">
-                                X
-                            </div>
-                            <div class="form-group col-md-3 col-xs-5">
-                                <input type="text" name="qtddGames1setDesafiado" id="qtddGames1setDesafiado" class="col-md-2 form-control" style="border-color:#ff6a00">
-                            </div>
-                        </div>
-                        <div class="row clearfix">
-                            <div class="form-group col-md-3 col-xs-5">
-                                <input type="text" name="qtddGames2setDesafiante" id="qtddGames2setDesafiante" class="col-md-2 form-control" style="border-color:#40898e">
-                            </div>
-                            <div class="form-group col-md-1 col-xs-1" style="margin-top: 10px;">
-                                X
-                            </div>
-                            <div class="form-group col-md-3 col-xs-5">
-                                <input type="text" name="qtddGames2setDesafiado" id="qtddGames2setDesafiado" class="col-md-2 form-control" style="border-color:#ff6a00">
-                            </div>
-                        </div>
-                        <div class="row clearfix">
-                            <div class="form-group col-md-3 col-xs-5">
-                                <input type="text" name="qtddGames3setDesafiante" id="qtddGames3setDesafiante" class="col-md-2 form-control" style="border-color:#40898e">
-                            </div>
-                            <div class="form-group col-md-1 col-xs-1" style="margin-top: 10px;">
-                                X
-                            </div>
-                            <div class="form-group col-md-3 col-xs-5">
-                                <input type="text" name="qtddGames3setDesafiado" id="qtddGames3setDesafiado" class="col-md-2 form-control" style="border-color:#ff6a00">
-                            </div>
-                        </div>
-                        <div class="row clearfix">
-                            <div class="form-group">
-                                <label class="control-label col-md-3">Situação</label>
-                                <div class="col-sm-5">
-                                    <select class="form-control input-sm valid" onchange="exibirOpcaoVencedores()" id="situacao_id" name="situacao_id" aria-invalid="false">
-                                        <option value="1">pendente</option>
-                                        <option value="2">marcado</option>
-                                        <option value="4">finalizado</option>
-                                        <option value="5">WO</option>
-                                        <option value="6">desistência</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row clearfix exibir-inserirResultados" style="margin-top:5px;padding:0px" id="IndicadorVencedor">
-                            <div class="form-group col-md-12 col-xs-12" style="margin-bottom:5px">Marque o <b>VENCEDOR</b> do jogo:</div>
-                            <div class="col-md-12 col-xs-12">
-                                <input type="radio" id="vDesafiante" name="vencedorWO" value="0"> <label id="vencedorDesafianteNome" style="color:#40898e"></label><br>
-                                <input type="radio" id="vDesafiado" name="vencedorWO" value="0"> <label id="vencedorDesafiadoNome" style="color:#ff6a00"></label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal"><span class="spinner-border spinner-border-sm"></span>Cancelar</button>
-                        <input type="submit" value="Salvar" class="btn btn-success" id="salvarPlacar" name="salvarPlacar" />
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
+    @Html.Partial("_PartialLancarPlacarJogo")
 
     <div class="tab-content">
         <div class="tab-pane fade in active" id="tabJogos">
@@ -513,7 +422,7 @@
                                                 Salvar
                                             </button><br>
                                         </form>
-                                        <button type="button" id="@Html.Raw("btnPlacar"+item.Id)" class="btn btn-info btn-xs btnLancarPlacar" data-vencedor="@item.idDoVencedor" data-toggle="modal" data-situacao="@item.situacao_Id" data-indice="@i"
+                                        <button type="button" id="@Html.Raw("btnPlacar"+item.Id)" class="btn btn-info btn-xs" onclick="LancarPlacar(this, 'JOGOS')" data-vencedor="@item.idDoVencedor" data-toggle="modal" data-situacao="@item.situacao_Id" data-indice="@i"
                                                 data-placar="@item.qtddGames1setDesafiante|@item.qtddGames1setDesafiado|@item.qtddGames2setDesafiante|@item.qtddGames2setDesafiado|@item.qtddGames3setDesafiante|@item.qtddGames3setDesafiado"
                                                 data-idJogo="@item.Id" data-desafianteId="@item.desafiante_id" data-desafiadoId="@item.desafiado_id" data-target="#placar-modal">
                                             Placar
@@ -557,80 +466,9 @@
     @section Scripts {
         @Scripts.Render("~/bundles/jqueryval")
         @Scripts.Render("~/bundles/jqueryform")
+        <script src="~/Content/js/torneio/lancarPlacar.js"></script>
         <script type="text/javascript">
             var spinner = $('#loadingDiv');
-            $(document).on("click", ".btnLancarPlacar", function () {
-                var indice = $(this).attr('data-indice');
-                var id = $(this).attr('data-idJogo');
-                var situacao = $(this).attr('data-situacao');
-                var vencedorWO = $(this).attr('data-vencedor');
-                var desafiante_id = $(this).attr('data-desafianteId');
-                var desafiado_id = $(this).attr('data-desafiadoId');
-                var placar = $(this).attr('data-placar');
-                var desafiante = document.querySelector("#jogador1_" + indice);
-                var desafiado = document.querySelector("#jogador2_" + indice);
-                if (typeof desafiante.options === "undefined") {
-                    var nomeDesafiante = document.getElementById("jogador1Nome_" + indice).value;
-
-                    var lblNomeDuplaDesafiante = document.getElementById("jogador1DuplaNome_" + indice);
-                    if (lblNomeDuplaDesafiante != null) {
-                        var nomeDesafiante2 = lblNomeDuplaDesafiante.value;
-                    }
-                    var nomeDesafiado = document.getElementById("jogador2Nome_" + indice).value;
-
-                    var lblNomeDuplaDesafiado = document.getElementById("jogador2DuplaNome_" + indice);
-                    if (lblNomeDuplaDesafiado != null) {
-                        var nomeDesafiado2 = lblNomeDuplaDesafiado.value;
-                    }
-
-
-                } else {
-                    var nomeDesafiante = desafiante.options[desafiante.selectedIndex].text;
-                    var nomeDesafiado = desafiado.options[desafiado.selectedIndex].text;
-
-                }
-                var str = placar.split('|');
-                var set1Desafiante = str[0];
-                var set1Desafiado = str[1];
-                var set2Desafiante = str[2];
-                var set2Desafiado = str[3];
-                var set3Desafiante = str[4];
-                var set3Desafiado = str[5];
-                $(".modal-body #Id").val(id);
-                $(".modal-body #qtddGames1setDesafiante").val(set1Desafiante);
-                $(".modal-body #qtddGames1setDesafiado").val(set1Desafiado);
-                $(".modal-body #qtddGames2setDesafiante").val(set2Desafiante);
-                $(".modal-body #qtddGames2setDesafiado").val(set2Desafiado);
-                $(".modal-body #qtddGames3setDesafiante").val(set3Desafiante);
-                $(".modal-body #qtddGames3setDesafiado").val(set3Desafiado);
-                $(".modal-body #vDesafiante").val(desafiante_id);
-                $(".modal-body #vDesafiado").val(desafiado_id);
-                $(".modal-body #desafiante_id").val(desafiante_id);
-                $(".modal-body #desafiado_id").val(desafiado_id);
-                if (vencedorWO == desafiante_id) {
-                    $(".modal-body #vDesafiante").attr('checked', true);
-                } else {
-                    $(".modal-body #vDesafiado").attr('checked', true);
-                }
-
-                $("select#situacao_id").val(situacao);
-                exibirOpcaoVencedores()
-                if (nomeDesafiante2 != undefined) {
-                    $(".modal-body #nomeDesafiante").html(nomeDesafiante + ' / ' + nomeDesafiante2);
-                }
-                else {
-                    $(".modal-body #nomeDesafiante").html(nomeDesafiante);
-                }
-
-                if (nomeDesafiado2 != undefined) {
-                    $(".modal-body #nomeDesafiado").html(nomeDesafiado + ' / ' + nomeDesafiado2);
-                }
-                else {
-                    $(".modal-body #nomeDesafiado").html(nomeDesafiado);
-                }
-                $(".modal-body #vencedorDesafiadoNome").html(nomeDesafiado);
-                $(".modal-body #vencedorDesafianteNome").html(nomeDesafiante);
-            });
 
             $(".date").datepicker({
                 language: 'pt-BR',
@@ -991,100 +829,5 @@
                 var fase = document.getElementById('fase').value;
                 window.open("ImprimirJogos?torneioId=" + torneioId + "&fClasse=" + classeId + "&fData=" + data + "&fNomeJogador=" + nomeJogador + "&fGrupo=" + grupo + "&fase=" + fase, '_blank');
             }
-
-            document.getElementById("IndicadorVencedor").classList.remove("show");
-
-            function exibirOpcaoVencedores() {
-                if (document.getElementById("situacao_id").value == '5') {
-                    document.getElementById("IndicadorVencedor").classList.add("show");
-                } else {
-                    if (document.getElementById("situacao_id").value == '1') {
-                        $(".modal-body #qtddGames1setDesafiante").val(0);
-                        $(".modal-body #qtddGames1setDesafiado").val(0);
-                        $(".modal-body #qtddGames2setDesafiante").val(0);
-                        $(".modal-body #qtddGames2setDesafiado").val(0);
-                        $(".modal-body #qtddGames3setDesafiante").val(0);
-                        $(".modal-body #qtddGames3setDesafiado").val(0);
-                    }
-                    document.getElementById("IndicadorVencedor").classList.remove("show");
-                }
-            }
-
-            $("#placarForm").submit(function (event) {
-                // document.getElementById("salvarPlacar").disabled = true;
-                event.preventDefault();
-                spinner.show();
-                var url = "LancarResultado"
-                if (document.getElementById("situacao_id").value == '5') {
-                    url = "LancarWO";
-                }
-                submitForm(url);
-                // document.getElementById("salvarPlacar").disabled = false;
-                return false;
-            });
-
-            function submitForm(url) {
-                $.ajax({
-                    type: "POST",
-                    url: url,
-                    cache: false,
-                    dataType: "json",
-                    data: $('form#placarForm').serialize(),
-                    success: function (resp) {
-                        if (resp.retorno == 0) {
-                            spinner.hide();
-                            toastr.error(resp.erro, "Erro");
-                        } else {
-                            var id = $(".modal-body #Id").val();
-                            if ((document.getElementById("situacao_id").value == 2) && (($(".modal-body #qtddGames1setDesafiado").val() != 0) || ($(".modal-body #qtddGames1setDesafiante").val() != 0))) {
-                                $("#btnPlacar" + id).attr('data-situacao', 4);
-                                $("#badge" + id).attr('class', 'badge bg-green');
-                                $("#badge" + id).html('F');
-                            } else {
-                                $("#btnPlacar" + id).attr('data-situacao', document.getElementById("situacao_id").value);
-                            }
-                            if (document.getElementById("situacao_id").value == 1) {
-                                $("#btnPlacar" + id).attr('data-placar', "0|0|0|0|0|0")
-                            } else {
-                                $("#btnPlacar" + id).attr('data-placar', $(".modal-body #qtddGames1setDesafiante").val() + "|" + $(".modal-body #qtddGames1setDesafiado").val() + "|" +
-                                    $(".modal-body #qtddGames2setDesafiante").val() + "|" + $(".modal-body #qtddGames2setDesafiado").val() + "|" +
-                                    $(".modal-body #qtddGames3setDesafiante").val() + "|" + $(".modal-body #qtddGames3setDesafiado").val());
-                            }
-                            if (document.getElementById("situacao_id").value == '5' || document.getElementById("situacao_id").value == '6' || document.getElementById("situacao_id").value == '4') {
-                                $("#badge" + id).attr('class', 'badge bg-green');
-                                $("#badge" + id).html('F');
-                            } else if ((document.getElementById("situacao_id").value == '1') && ($(".modal-body #qtddGames1setDesafiante").val() != '0' || $(".modal-body #qtddGames1setDesafiado").val() != '0')) {
-                                $("#badge" + id).attr('class', 'badge bg-green');
-                                $("#badge" + id).html('F');
-                            } else if (document.getElementById("situacao_id").value == '1') {
-                                $("#badge" + id).attr('class', 'badge bg-red');
-                                $("#badge" + id).html('P');
-                            }
-
-                            spinner.hide();
-                            $("#placar-modal").modal('hide');
-                            toastr.options = {
-                                "positionClass": "toast-top-center",
-                                "timeOut": 10000
-                            }
-                            if (resp.pontuacaoLiga == 1) {
-                                toastr.success("<a href='https://www.rankingdetenis.com/Ranking/RankingDasLigas'>Torneio Finalizado: A pontuação da liga foi gerada. CLIQUE AQUI para acessar a pontuação.</a>", "Aviso");
-                            } else {
-                                toastr.success("Atualização realizada com sucesso.", "Aviso");
-                            }
-
-                            if (document.getElementById("situacao_id").value == '5' && document.getElementById("classeEhFaseGrupo").value == "1") {
-                                $("#modalNotificaWO").modal('show');
-                            }
-
-                        }
-
-                    }
-                });
-            }
-
-
-
-
         </script>
     }

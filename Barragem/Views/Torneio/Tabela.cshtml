@@ -45,7 +45,7 @@
                         <input type="button" value="Fase Grupo" name="verFaseGrupo" id="verFaseGrupo" class="form-control btn btn-primary" onclick="Selecionar(false)">
                     </div>
                 }
-                else if(ViewBag.classeFaseGrupo == true)
+                else if (ViewBag.classeFaseGrupo == true)
                 {
                     <div class="col-sm-2 col-xs-4">
                         <input type="button" value="Imprimir" class="btn btn-primary" onclick="ImprimirFaseGrupo()" />
@@ -252,6 +252,7 @@
     }
 
     @section Scripts {
+        <script src="~/Content/js/torneio/lancarPlacar.js"></script>
         <script type="text/javascript">
             function Selecionar(verMataMata) {
                 var torneioId = document.getElementById('torneioId').value;

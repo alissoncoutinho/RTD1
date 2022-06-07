@@ -1,0 +1,91 @@
+﻿<div id="placar-modal" class="modal fade" style="z-index: 99999999999999; " role="dialog">
+    <div id="loadingDiv"><div class="loader">Loading...</div></div>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header" style="padding:5px">
+                <a class="close" data-dismiss="modal">×</a>
+                <h3>Placar</h3>
+            </div>
+            <form id="placarForm" name="placarForm" role="form" method="post">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <input type="hidden" name="Id" id="Id" class="form-control">
+                        <input type="hidden" id="desafiante_id" name="desafiante_id" value="0">
+                        <input type="hidden" id="desafiado_id" name="desafiado_id" value="0">
+                        @if (ViewBag.ClasseEhFaseGrupo)
+                        {
+                            <input type="hidden" id="classeEhFaseGrupo" name="classeEhFaseGrupo" value="1">
+                        }
+                        else
+                        {
+                            <input type="hidden" id="classeEhFaseGrupo" name="classeEhFaseGrupo" value="0">
+                        }
+                    </div>
+                    <div class="row clearfix">
+                        <div id="nomeDesafiante" class="form-group col-md-3 col-xs-5" style="color:#40898e"></div>
+                        <div class="form-group col-md-1 col-xs-1"></div>
+                        <div id="nomeDesafiado" class="form-group col-md-3 col-xs-5" style="color:#ff6a00"></div>
+                    </div>
+                    <div class="row clearfix">
+                        <div class="form-group col-md-3 col-xs-5">
+                            <input type="text" name="qtddGames1setDesafiante" id="qtddGames1setDesafiante" class="col-md-2 form-control" style="border-color:#40898e">
+                        </div>
+                        <div class="form-group col-md-1 col-xs-1" style="margin-top: 10px;">
+                            X
+                        </div>
+                        <div class="form-group col-md-3 col-xs-5">
+                            <input type="text" name="qtddGames1setDesafiado" id="qtddGames1setDesafiado" class="col-md-2 form-control" style="border-color:#ff6a00">
+                        </div>
+                    </div>
+                    <div class="row clearfix">
+                        <div class="form-group col-md-3 col-xs-5">
+                            <input type="text" name="qtddGames2setDesafiante" id="qtddGames2setDesafiante" class="col-md-2 form-control" style="border-color:#40898e">
+                        </div>
+                        <div class="form-group col-md-1 col-xs-1" style="margin-top: 10px;">
+                            X
+                        </div>
+                        <div class="form-group col-md-3 col-xs-5">
+                            <input type="text" name="qtddGames2setDesafiado" id="qtddGames2setDesafiado" class="col-md-2 form-control" style="border-color:#ff6a00">
+                        </div>
+                    </div>
+                    <div class="row clearfix">
+                        <div class="form-group col-md-3 col-xs-5">
+                            <input type="text" name="qtddGames3setDesafiante" id="qtddGames3setDesafiante" class="col-md-2 form-control" style="border-color:#40898e">
+                        </div>
+                        <div class="form-group col-md-1 col-xs-1" style="margin-top: 10px;">
+                            X
+                        </div>
+                        <div class="form-group col-md-3 col-xs-5">
+                            <input type="text" name="qtddGames3setDesafiado" id="qtddGames3setDesafiado" class="col-md-2 form-control" style="border-color:#ff6a00">
+                        </div>
+                    </div>
+                    <div class="row clearfix">
+                        <div class="form-group">
+                            <label class="control-label col-md-3">Situação</label>
+                            <div class="col-sm-5">
+                                <select class="form-control input-sm valid" onchange="exibirOpcaoVencedores()" id="situacao_id" name="situacao_id" aria-invalid="false">
+                                    <option value="1">pendente</option>
+                                    <option value="2">marcado</option>
+                                    <option value="4">finalizado</option>
+                                    <option value="5">WO</option>
+                                    <option value="6">desistência</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row clearfix exibir-inserirResultados" style="margin-top:5px;padding:0px" id="IndicadorVencedor">
+                        <div class="form-group col-md-12 col-xs-12" style="margin-bottom:5px">Marque o <b>VENCEDOR</b> do jogo:</div>
+                        <div class="col-md-12 col-xs-12">
+                            <input type="radio" id="vDesafiante" name="vencedorWO" value="0"> <label id="vencedorDesafianteNome" style="color:#40898e"></label><br>
+                            <input type="radio" id="vDesafiado" name="vencedorWO" value="0"> <label id="vencedorDesafiadoNome" style="color:#ff6a00"></label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal"><span class="spinner-border spinner-border-sm"></span>Cancelar</button>
+                    <input type="submit" value="Salvar" class="btn btn-success" id="salvarPlacar" name="salvarPlacar" />
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

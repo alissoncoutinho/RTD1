@@ -6,7 +6,7 @@
         int? faseTorneio = 0;
         string faseId = "";
         int grupo = ViewBag.qtddGrupos;
-        var classificacaoGrupo = (List<Barragem.Models.ClassificacaoFaseGrupo>) ViewBag.classificacaoGrupo;
+        var classificacaoGrupo = (List<Barragem.Models.ClassificacaoFaseGrupo>)ViewBag.classificacaoGrupo;
     }
 
     <h4 class="info-box-text">@ViewBag.nomeTorneio</h4>
@@ -27,7 +27,7 @@
                             {
                                 foreach (var item2 in ViewBag.Classes)
                                 {
-                                    <option value="@item2.Id" @if (ViewBag.filtroClasse == item2.Id) { @Html.Raw("selected")    }>@item2.nome</option>
+                                    <option value="@item2.Id" @if (ViewBag.filtroClasse == item2.Id) { @Html.Raw("selected") }>@item2.nome</option>
                                 }
                             }
                         </select>
@@ -67,15 +67,17 @@
                                 <td> @posicao º</td>
                                 <td>
                                     @item.nome
-                                    @if (item.inscricao.parceiroDupla != null) {
+                                    @if (item.inscricao.parceiroDupla != null)
+                                    {
                                         @Html.Raw("/ " + item.inscricao.parceiroDupla.nome)
                                     }
                                 </td>
                                 <td>@item.inscricao.pontuacaoFaseGrupo</td>
-                                <td>@if (item.confrontoDireto > 0) { @Html.Raw("V") } </td>
+                                <td>@if (item.confrontoDireto > 0)
+                                {@Html.Raw("V")} </td>
                                 <td>@Html.Raw(item.saldoSets + "/" + item.saldoGames)</td>
 
-                        </tr>
+                            </tr>
                         }
                     }
                 </table>
@@ -86,16 +88,17 @@
                         @{
                             int? rodada = 0;
                         }
-                        @if (Model != null){
-                    foreach (var item in Model)
-                    {
-                        if (rodada != item.rodadaFaseGrupo)
+                        @if (Model != null)
                         {
-                            if (rodada != 0)
+                            foreach (var item in Model)
                             {
+                                if (rodada != item.rodadaFaseGrupo)
+                                {
+                                    if (rodada != 0)
+                                    {
                                         @Html.Raw("</div>");
-                            }
-                            rodada = item.rodadaFaseGrupo;
+                                    }
+                                    rodada = item.rodadaFaseGrupo;
                                     @Html.Raw("<div class='col-xs-2 box_rodada'>");
                                     <div class="titulo">Rodada @item.rodadaFaseGrupo</div>
                                 }
@@ -105,15 +108,16 @@
                     </div>
                 </div>
             </div>
-                        }
+        }
     </div>
     @section Scripts {
+        <script src="~/Content/js/torneio/lancarPlacar.js"></script>
         <script type="text/javascript">
             function Selecionar() {
                 var torneioId = document.getElementById('torneioId').value;
                 var classeId = document.getElementById('filtroClasse').value;
                 var grupo = document.getElementById('grupo').value;
-                window.location = "TabelaFaseGrupo?torneioId=" + torneioId + "&filtroClasse=" + classeId + "&grupo=" + grupo ;
+                window.location = "TabelaFaseGrupo?torneioId=" + torneioId + "&filtroClasse=" + classeId + "&grupo=" + grupo;
             }
         </script>
     }
