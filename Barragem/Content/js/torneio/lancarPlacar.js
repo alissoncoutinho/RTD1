@@ -205,7 +205,7 @@ function submitForm(url) {
                     toastr.success("Atualização realizada com sucesso.", "Aviso");
                 }
 
-                if (document.getElementById("situacao_id").value == '5' && document.getElementById("classeEhFaseGrupo").value == "1") {
+                if (situacaoId == '5' && document.getElementById("classeEhFaseGrupo").value == "1") {
                     $("#modalNotificaWO").modal('show');
                 }
                 else if ($(".modal-body #Origem").val() == "TABELA") {

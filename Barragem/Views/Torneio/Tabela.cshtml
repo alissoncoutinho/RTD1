@@ -252,7 +252,14 @@
 
     }
 
-    @Html.Partial("_PartialLancarPlacarJogo", true)
+    @if (ViewBag.classeFaseGrupo != true && ViewBag.modeloTodosContraTodos == null)
+    {
+        @Html.Partial("_PartialLancarPlacarJogo", "TABELA_MATAMATA")
+    }
+    else
+    {
+        @Html.Partial("_PartialLancarPlacarJogo", "TABELA_FASEGRUPO")
+    }
 
     @section Scripts {
         <script src="~/Content/js/torneio/lancarPlacar.js"></script>
