@@ -9,6 +9,7 @@ function LancarPlacar(el, origem) {
     var desafiante_id = el.dataset.desafianteid;
     var desafiado_id = el.dataset.desafiadoid;
     var placar = el.dataset.placar;
+    var jogoFaseGrupo = el.dataset.fasegrupo;
     var nomeDesafiante = "";
     var nomeDesafiado = "";
     var nomeDesafiante2 = "";
@@ -50,6 +51,7 @@ function LancarPlacar(el, origem) {
     var set3Desafiado = str[5];
     $(".modal-body #Id").val(id);
     $(".modal-body #Origem").val(origem);
+    $(".modal-body #JogoFaseGrupo").val(jogoFaseGrupo);
     $(".modal-body #qtddGames1setDesafiante").val(set1Desafiante);
     $(".modal-body #qtddGames1setDesafiado").val(set1Desafiado);
     $(".modal-body #qtddGames2setDesafiante").val(set2Desafiante);
@@ -205,7 +207,7 @@ function submitForm(url) {
                     toastr.success("Atualização realizada com sucesso.", "Aviso");
                 }
 
-                if (situacaoId == '5' && document.getElementById("classeEhFaseGrupo").value == "1") {
+                if (situacaoId == '5' && document.getElementById("classeEhFaseGrupo").value == "1" && $(".modal-body #JogoFaseGrupo").val() != "") {
                     $("#modalNotificaWO").modal('show');
                 }
                 else if ($(".modal-body #Origem").val() == "TABELA") {

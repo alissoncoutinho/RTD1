@@ -424,7 +424,7 @@
                                         </form>
                                         <button type="button" id="@Html.Raw("btnPlacar"+item.Id)" class="btn btn-info btn-xs" onclick="LancarPlacar(this, 'JOGOS')" data-vencedor="@item.idDoVencedor" data-toggle="modal" data-situacao="@item.situacao_Id" data-indice="@i"
                                                 data-placar="@item.qtddGames1setDesafiante|@item.qtddGames1setDesafiado|@item.qtddGames2setDesafiante|@item.qtddGames2setDesafiado|@item.qtddGames3setDesafiante|@item.qtddGames3setDesafiado"
-                                                data-idJogo="@item.Id" data-desafianteId="@item.desafiante_id" data-desafiadoId="@item.desafiado_id" data-target="#placar-modal">
+                                                data-idJogo="@item.Id" data-desafianteId="@item.desafiante_id" data-desafiadoId="@item.desafiado_id" data-faseGrupo="@item.grupoFaseGrupo" data-target="#placar-modal">
                                             Placar
                                         </button>
 
