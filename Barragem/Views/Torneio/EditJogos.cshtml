@@ -130,7 +130,7 @@
         </div>
     </div>
 
-    @Html.Partial("_PartialLancarPlacarJogo")
+    @Html.Partial("_PartialLancarPlacarJogo", false)
 
     <div class="tab-content">
         <div class="tab-pane fade in active" id="tabJogos">
@@ -439,36 +439,12 @@
         </div>
     </div>
 
-    <div class="modal fade" id="modalNotificaWO" tabindex="-1" role="dialog" aria-labelledby="modalNotificaWO" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content" style="margin:20px">
-                <div class="modal-header">
-                    <b style="color:red;">ATENÇÃO À REGRA DA CBT</b>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <p>
-                        O jogador que perdeu de WO na fase de grupo é <b>eliminado do torneio.</b>
-                    </p>
-                    <p>
-                        <b>Todos os jogos</b> do jogador no grupo serão <b>considerados WO, inclusive os já realizados.</b>
-                    </p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-dismiss="modal">Ok, ciente</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     @section Scripts {
         @Scripts.Render("~/bundles/jqueryval")
         @Scripts.Render("~/bundles/jqueryform")
         <script src="~/Content/js/torneio/lancarPlacar.js"></script>
         <script type="text/javascript">
-            var spinner = $('#loadingDiv');
+            
 
             $(".date").datepicker({
                 language: 'pt-BR',

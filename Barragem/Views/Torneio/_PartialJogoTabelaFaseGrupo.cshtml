@@ -1,45 +1,46 @@
 ﻿@model Barragem.Models.Jogo
 
-<div>
-    @if (Model.desafiante != null)
-    {
-        @Html.Hidden("desafiante", Model.desafiante.nome)
-    }
-    else
-    {
-        @Html.Hidden("desafiante", string.Empty)
-    }
-
-    @if (Model.desafiado != null)
-    {
-        @Html.Hidden("desafiado", Model.desafiado.nome)
-    }
-    else
-    {
-        @Html.Hidden("desafiado", string.Empty)
-    }
-
-    @if (Model.desafiante2 != null)
-    {
-        @Html.Hidden("desafiante2", Model.desafiante2.nome)
-    }
-    else
-    {
-        @Html.Hidden("desafiante2", string.Empty)
-    }
-
-    @if (Model.desafiado2 != null)
-    {
-        @Html.Hidden("desafiado2", Model.desafiado2.nome)
-    }
-    else
-    {
-        @Html.Hidden("desafiado2", string.Empty)
-    }
-</div>
-
 <div class="alinhamento">
     <div class="bloco_jogo">
+
+        <div>
+            @if (Model.desafiante != null)
+            {
+                @Html.Hidden("desafiante" + Model.Id, Model.desafiante.nome)
+            }
+            else
+            {
+                @Html.Hidden("desafiante" + Model.Id, string.Empty)
+            }
+
+            @if (Model.desafiado != null)
+            {
+                @Html.Hidden("desafiado" + Model.Id, Model.desafiado.nome)
+            }
+            else
+            {
+                @Html.Hidden("desafiado" + Model.Id, string.Empty)
+            }
+
+            @if (Model.desafiante2 != null)
+            {
+                @Html.Hidden("desafiante2" + Model.Id, Model.desafiante2.nome)
+            }
+            else
+            {
+                @Html.Hidden("desafiante2" + Model.Id, string.Empty)
+            }
+
+            @if (Model.desafiado2 != null)
+            {
+                @Html.Hidden("desafiado2" + Model.Id, Model.desafiado2.nome)
+            }
+            else
+            {
+                @Html.Hidden("desafiado2" + Model.Id, string.Empty)
+            }
+        </div>
+
         <p class="data">
             @if (Model.desafiante_id == 10)
             {
@@ -72,18 +73,22 @@
                 @Html.Raw("Aguardando adversário")
             }
         </p>
-        <div class="numeros">
+        <div class="numeros alinhamentoPlacar">
             @if ((Model.situacao_Id == 4) && (Model.desafiante_id != 10))
             {
                 if (Roles.IsUserInRole("admin") || Roles.IsUserInRole("organizador"))
                 {
-                    <div>
+                    <div id="@Html.Raw("placarResultado"+Model.Id)">
                         @Html.Raw(Model.qtddGames1setDesafiado + "/" + Model.qtddGames1setDesafiante + " - " + Model.qtddGames2setDesafiado + "/" + Model.qtddGames2setDesafiante)
                         @if ((Model.qtddGames3setDesafiado != 0) || (Model.qtddGames3setDesafiante != 0))
                         {
                             @Html.Raw(" - " + Model.qtddGames3setDesafiado + "/" + Model.qtddGames3setDesafiante)
                         }
-                        <a id="btnLancarPlacar" class="badge" style="background-color: #007bff; margin-left: 4px; " onclick='LancarPlacar(this, "TABELA")'><span style="font-size: 9px;" class="glyphicon glyphicon-edit"></span></a>
+                    </div>
+                    <div>
+                        <a id="@Html.Raw("btnPlacar"+ Model.Id)" class="badge placarButton" onclick="LancarPlacar(this, 'TABELA')" data-vencedor="@Model.idDoVencedor" data-toggle="modal" data-situacao="@Model.situacao_Id" data-indice="0"
+                           data-placar="@Model.qtddGames1setDesafiante|@Model.qtddGames1setDesafiado|@Model.qtddGames2setDesafiante|@Model.qtddGames2setDesafiado|@Model.qtddGames3setDesafiante|@Model.qtddGames3setDesafiado"
+                           data-idJogo="@Model.Id" data-desafianteId="@Model.desafiante_id" data-desafiadoId="@Model.desafiado_id" data-target="#placar-modal"><span style="font-size: 9px;" class="glyphicon glyphicon-edit"></span></a>
                     </div>
                 }
                 else
@@ -99,9 +104,14 @@
             {
                 if (Roles.IsUserInRole("admin") || Roles.IsUserInRole("organizador"))
                 {
-                    <div>
+
+                    <div id="@Html.Raw("placarResultado"+Model.Id)">
                         @Html.Raw("WO")
-                        <a id="btnLancarPlacar" class="badge" style="background-color: #007bff; margin-left: 4px; " onclick="LancarPlacar(this, 'TABELA')"><span style="font-size: 9px;" class="glyphicon glyphicon-edit"></span></a>
+                    </div>
+                    <div>
+                        <a id="@Html.Raw("btnPlacar"+ Model.Id)" class="badge placarButton" onclick="LancarPlacar(this, 'TABELA')" data-vencedor="@Model.idDoVencedor" data-toggle="modal" data-situacao="@Model.situacao_Id" data-indice="0"
+                           data-placar="@Model.qtddGames1setDesafiante|@Model.qtddGames1setDesafiado|@Model.qtddGames2setDesafiante|@Model.qtddGames2setDesafiado|@Model.qtddGames3setDesafiante|@Model.qtddGames3setDesafiado"
+                           data-idJogo="@Model.Id" data-desafianteId="@Model.desafiante_id" data-desafiadoId="@Model.desafiado_id" data-target="#placar-modal"><span style="font-size: 9px;" class="glyphicon glyphicon-edit"></span></a>
                     </div>
                 }
                 else
@@ -113,14 +123,18 @@
             {
                 if (Roles.IsUserInRole("admin") || Roles.IsUserInRole("organizador"))
                 {
-                    <div>
+                    <div id="@Html.Raw("placarResultado"+Model.Id)">
                         @Html.Raw(Model.qtddGames1setDesafiado + "/" + Model.qtddGames1setDesafiante + " - " + Model.qtddGames2setDesafiado + "/" + Model.qtddGames2setDesafiante)
                         @if ((Model.qtddGames3setDesafiado != 0) || (Model.qtddGames3setDesafiante != 0))
                         {
                             @Html.Raw(" - " + Model.qtddGames3setDesafiado + "/" + Model.qtddGames3setDesafiante)
                         }
                         @Html.Raw(" desist.")
-                        <a id="btnLancarPlacar" class="badge" style="background-color: #007bff; margin-left: 4px; " onclick="LancarPlacar(this, 'TABELA')"><span style="font-size: 9px;" class="glyphicon glyphicon-edit"></span></a>
+                    </div>
+                    <div>
+                        <a id="@Html.Raw("btnPlacar"+ Model.Id)" class="badge placarButton" onclick="LancarPlacar(this, 'TABELA')" data-vencedor="@Model.idDoVencedor" data-toggle="modal" data-situacao="@Model.situacao_Id" data-indice="0"
+                           data-placar="@Model.qtddGames1setDesafiante|@Model.qtddGames1setDesafiado|@Model.qtddGames2setDesafiante|@Model.qtddGames2setDesafiado|@Model.qtddGames3setDesafiante|@Model.qtddGames3setDesafiado"
+                           data-idJogo="@Model.Id" data-desafianteId="@Model.desafiante_id" data-desafiadoId="@Model.desafiado_id" data-target="#placar-modal"><span style="font-size: 9px;" class="glyphicon glyphicon-edit"></span></a>
                     </div>
                 }
                 else
@@ -141,12 +155,14 @@
                 }
                 else
                 {
-                    if (Roles.IsUserInRole("admin") || Roles.IsUserInRole("organizador"))
+                    if ((Roles.IsUserInRole("admin") || Roles.IsUserInRole("organizador")) && Model.desafiante_id != 10 && Model.desafiante_id > 0 && Model.desafiado_id > 0)
                     {
+
+                        <div id="@Html.Raw("placarResultado"+ Model.Id)"></div>
                         <div>
-                            <a id="btnLancarPlacar" class="badge" style="background-color: #007bff; margin-left: 4px; " onclick="LancarPlacar(this, 'TABELA')" data-vencedor="@Model.idDoVencedor" data-toggle="modal" data-situacao="@Model.situacao_Id" data-indice="0"
+                            <a id="@Html.Raw("btnPlacar"+ Model.Id)" class="badge placarButton" onclick="LancarPlacar(this, 'TABELA')" data-vencedor="@Model.idDoVencedor" data-toggle="modal" data-situacao="@Model.situacao_Id" data-indice="0"
                                data-placar="@Model.qtddGames1setDesafiante|@Model.qtddGames1setDesafiado|@Model.qtddGames2setDesafiante|@Model.qtddGames2setDesafiado|@Model.qtddGames3setDesafiante|@Model.qtddGames3setDesafiado"
-                               data-idJogo="@Model.Id" data-desafianteId="@Model.desafiante_id" data-desafiadoId="@Model.desafiado_id" data-target="#placar-modal"><span style="font-size: 9px;" class="glyphicon glyphicon-edit">Lançar placar</span></a>
+                               data-idJogo="@Model.Id" data-desafianteId="@Model.desafiante_id" data-desafiadoId="@Model.desafiado_id" data-target="#placar-modal"><span style="font-size: 10px;" class="glyphicon glyphicon-plus"></span> Lançar placar</a>
                         </div>
                     }
                     else
@@ -184,6 +200,17 @@
     </div>
 </div>
 
-@section Scripts {
-    <script src="~/Content/js/torneio/lancarPlacar.js"></script>
-}
+<style>
+    .alinhamentoPlacar {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .placarButton {
+        background-color: #007bff;
+        margin-left: 4px;
+        font-size: 11px;
+    }
+</style>
