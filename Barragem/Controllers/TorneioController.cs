@@ -537,9 +537,15 @@ namespace Barragem.Controllers
             foreach (int classeId in idsClassesExclusao)
             {
                 var classe = db.ClasseTorneio.Find(classeId);
+                RemoverGrupoInscricao(classeId, torneioId);
                 ExcluirJogosPorClasse(classe, false);
             }
             return RedirectToAction("EditJogos", new { torneioId = torneioId, fClasse = 0, fData = "", fNomeJogador = "", fGrupo = "0", fase = 0 });
+        }
+
+        private void RemoverGrupoInscricao(int classeId, int torneioId)
+        {
+            db.Database.ExecuteSqlCommand($"update InscricaoTorneio set grupo = null where torneioid = {torneioId} and classe = {classeId}");
         }
 
         private bool temPendenciaDePagamentoTorneio(Torneio torneio)
@@ -761,7 +767,7 @@ namespace Barragem.Controllers
             {
                 ViewBag.Torneio = "Sim";
             }
-            
+
             ViewBag.tabelaLiberada = false;
             if (torneioId == 0)
             {
@@ -806,7 +812,7 @@ namespace Barragem.Controllers
             var classe = db.ClasseTorneio.Find(filtroClasse);
             var jogos = new List<Jogo>();
             ViewBag.viewFaseGrupo = false;
-            
+
             if (torneio.barragem.isModeloTodosContraTodos)
             {
                 //ViewBag.viewFaseGrupo = true;
@@ -2696,7 +2702,7 @@ namespace Barragem.Controllers
                 var cl = classes.Where(c => c.Id == fClasse).FirstOrDefault();
                 if (cl == null)
                 {
-                    ViewBag.Inscritos = new List<InscricaoTorneio>(); 
+                    ViewBag.Inscritos = new List<InscricaoTorneio>();
                 }
                 else if (cl.isDupla)
                 {
