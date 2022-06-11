@@ -39,7 +39,7 @@ namespace Barragem.Controllers
                     var qtdeCabecasChave = getOpcoesCabecaDeChave(classe.Id);
                     var snapshotsDaLiga = db.Snapshot.Where(snap => snap.LigaId == ligaId).OrderByDescending(s => s.Id).FirstOrDefault();
 
-                    var ranking = ObterDadosRankingTorneioClasse(torneioId, snapshotsDaLiga.Id, classe.Id);
+                    var ranking = tn.ObterDadosRankingTorneioClasse(torneioId, snapshotsDaLiga.Id, classe.Id);
 
                     List<InscricaoTorneio> inscricao = db.InscricaoTorneio.Where(i => i.torneioId == torneioId && i.classe == classe.Id).ToList();
 
@@ -115,31 +115,6 @@ namespace Barragem.Controllers
 
             db.Entry(inscricao).State = EntityState.Modified;
             db.SaveChanges();
-        }
-
-        private List<SnapshotRanking> ObterDadosRankingTorneioClasse(int torneioId, int snapshotId, int filtroClasse)
-        {
-            var rankingJogadores = from torneio in db.Torneio
-                                   join ligaTorneio in db.TorneioLiga
-                                       on torneio.Id equals ligaTorneio.TorneioId
-                                   join snapshot in db.Snapshot
-                                       on ligaTorneio.LigaId equals snapshot.LigaId
-                                   join classeTorneio in db.ClasseTorneio
-                                       on torneio.Id equals classeTorneio.torneioId
-                                   join classeLiga in db.ClasseLiga
-                                       on new { categoriaId = (int)classeTorneio.categoriaId, ligaId = snapshot.LigaId } equals new { categoriaId = classeLiga.CategoriaId, ligaId = classeLiga.LigaId }
-                                   join snapshotRanking in db.SnapshotRanking
-                                       on new { snapshotId = snapshot.Id, categoriaId = classeLiga.CategoriaId } equals new { snapshotId = snapshotRanking.SnapshotId, categoriaId = snapshotRanking.CategoriaId }
-                                   where ligaTorneio.TorneioId == torneioId
-                                   where classeTorneio.Id == filtroClasse
-                                   where snapshot.Id == snapshotId
-                                   orderby snapshotRanking.Posicao
-                                   select snapshotRanking;
-
-            if (rankingJogadores == null)
-                return new List<SnapshotRanking>();
-
-            return rankingJogadores.ToList();
         }
 
         private List<SelectListItem> ObterCircuitosImportacaoCabecaChave(int torneioId, int filtroClasse)

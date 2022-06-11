@@ -731,19 +731,27 @@ namespace Barragem.Class
 
         public List<ClassificadosEmCadaGrupo> getClassificadosEmCadaGrupo(ClasseTorneio classe)
         {
-            var qtddGrupos = getQtddDeGrupos(classe.Id);
             List<ClassificadosEmCadaGrupo> listClassificadosEmCadaGrupo = new List<ClassificadosEmCadaGrupo>();
+
+            var qtddGrupos = getQtddDeGrupos(classe.Id);
+
+            var snapshotId = ObterSnapshotRankingMaisRecente(classe.torneioId, classe.Id);
+            var ranking = ObterDadosRankingTorneioClasse(classe.torneioId, snapshotId, classe.Id);
+
             for (int gp = 1; gp <= qtddGrupos; gp++)
             {
                 // Pega a ordem de classificação de cada grupo
                 var classificacaoFaseGrupo = ordenarClassificacaoFaseGrupo(classe, gp);
                 // mantem apenas os 2 primeiros de cada grupo
+
+                bool ehDupla = classificacaoFaseGrupo[0].inscricao.parceiroDuplaId != null;
+
                 var classificadosEmCadaGrupo = new ClassificadosEmCadaGrupo()
                 {
                     userId = classificacaoFaseGrupo[0].userId,
                     nomeUser = classificacaoFaseGrupo[0].nome,
                     userIdParceiro = classificacaoFaseGrupo[0].inscricao.parceiroDuplaId,
-                    nomeParceiro = (classificacaoFaseGrupo[0].inscricao.parceiroDuplaId != null) ? classificacaoFaseGrupo[0].inscricao.parceiroDupla.nome : "",
+                    nomeParceiro = ehDupla ? classificacaoFaseGrupo[0].inscricao.parceiroDupla.nome : "",
                     userId2oColocado = (classificacaoFaseGrupo.Count > 1) ? classificacaoFaseGrupo[1].userId : 10,
                     nome2oColocado = (classificacaoFaseGrupo.Count > 1) ? classificacaoFaseGrupo[1].nome : "bye",
                     userIdParceiro2oColocado = (classificacaoFaseGrupo.Count > 1) ? classificacaoFaseGrupo[1].inscricao.parceiroDuplaId : 10,
@@ -752,6 +760,7 @@ namespace Barragem.Class
                     saldoSets = classificacaoFaseGrupo[0].saldoSets,
                     saldoGames = classificacaoFaseGrupo[0].saldoGames,
                     pontuacao = classificacaoFaseGrupo[0].inscricao.pontuacaoFaseGrupo,
+                    PontuacaoRanking = ranking.Where(x => x.UserId == classificacaoFaseGrupo[0].userId || (ehDupla && x.UserId == classificacaoFaseGrupo[0].inscricao.parceiroDuplaId)).Sum(s => s.Pontuacao),
                     averageSets = classificacaoFaseGrupo[0].averageSets,
                     averageGames = classificacaoFaseGrupo[0].averageGames
                 };
@@ -760,17 +769,15 @@ namespace Barragem.Class
             int qtddInscritos = getInscritosPorClasse(classe).Count();
             if (qtddInscritos % 3 == 0 || qtddInscritos % 4 == 0 || qtddGrupos == 1)
             {
-                listClassificadosEmCadaGrupo = listClassificadosEmCadaGrupo.OrderByDescending(l => l.pontuacao).ThenByDescending(l => l.saldoSets).ThenByDescending(l => l.saldoGames).ToList();
+                listClassificadosEmCadaGrupo = listClassificadosEmCadaGrupo.OrderByDescending(l => l.pontuacao).ThenByDescending(l => l.saldoSets).ThenByDescending(l => l.saldoGames).ThenByDescending(l => l.PontuacaoRanking).ToList();
             }
             else
             {
                 listClassificadosEmCadaGrupo = listClassificadosEmCadaGrupo.OrderByDescending(l => l.averageSets).ThenByDescending(l => l.averageGames).ToList();
             }
 
-
             return listClassificadosEmCadaGrupo;
         }
-
 
         public List<InscricaoTorneio> getDesclassificadosEmCadaGrupo(ClasseTorneio classe)
         {
@@ -1119,5 +1126,58 @@ namespace Barragem.Class
 
         }
 
+        private int ObterSnapshotRankingMaisRecente(int torneioId, int filtroClasse)
+        {
+            var circuitos = from torneio in db.Torneio
+                            join ligaTorneio in db.TorneioLiga
+                                on torneio.Id equals ligaTorneio.TorneioId
+                            join snapshot in db.Snapshot
+                                on ligaTorneio.LigaId equals snapshot.LigaId
+                            join classeTorneio in db.ClasseTorneio
+                                on torneio.Id equals classeTorneio.torneioId
+                            join classeLiga in db.ClasseLiga
+                                on new { categoriaId = (int)classeTorneio.categoriaId, ligaId = snapshot.LigaId } equals new { categoriaId = classeLiga.CategoriaId, ligaId = classeLiga.LigaId }
+                            join liga in db.Liga
+                                on snapshot.LigaId equals liga.Id
+                            join snapshotRanking in db.SnapshotRanking
+                                on new { snapshotId = snapshot.Id, categoriaId = classeLiga.CategoriaId } equals new { snapshotId = snapshotRanking.SnapshotId, categoriaId = snapshotRanking.CategoriaId }
+                            where ligaTorneio.TorneioId == torneioId
+                            where classeTorneio.Id == filtroClasse
+                            orderby snapshot.Data descending
+                            select snapshot.Id;
+
+            if (circuitos == null)
+                return 0;
+
+            return circuitos.FirstOrDefault();
+        }
+
+        public List<SnapshotRanking> ObterDadosRankingTorneioClasse(int torneioId, int snapshotId, int filtroClasse)
+        {
+            if (snapshotId == 0)
+                return new List<SnapshotRanking>();
+
+            var rankingJogadores = from torneio in db.Torneio
+                                   join ligaTorneio in db.TorneioLiga
+                                       on torneio.Id equals ligaTorneio.TorneioId
+                                   join snapshot in db.Snapshot
+                                       on ligaTorneio.LigaId equals snapshot.LigaId
+                                   join classeTorneio in db.ClasseTorneio
+                                       on torneio.Id equals classeTorneio.torneioId
+                                   join classeLiga in db.ClasseLiga
+                                       on new { categoriaId = (int)classeTorneio.categoriaId, ligaId = snapshot.LigaId } equals new { categoriaId = classeLiga.CategoriaId, ligaId = classeLiga.LigaId }
+                                   join snapshotRanking in db.SnapshotRanking
+                                       on new { snapshotId = snapshot.Id, categoriaId = classeLiga.CategoriaId } equals new { snapshotId = snapshotRanking.SnapshotId, categoriaId = snapshotRanking.CategoriaId }
+                                   where ligaTorneio.TorneioId == torneioId
+                                   where classeTorneio.Id == filtroClasse
+                                   where snapshot.Id == snapshotId
+                                   orderby snapshotRanking.Posicao
+                                   select snapshotRanking;
+
+            if (rankingJogadores == null)
+                return new List<SnapshotRanking>();
+
+            return rankingJogadores.ToList();
+        }
     }
 }

@@ -45,6 +45,7 @@ namespace Barragem.Models
         public int saldoGames { get; set; }
         public int pontuacao { get; set; }
         public int grupo { get; set; }
+        public int PontuacaoRanking { get; set; }
     }
 
     
