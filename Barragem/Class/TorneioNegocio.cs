@@ -365,16 +365,16 @@ namespace Barragem.Class
                         }
                         // como já foi incluído os 2 jogadores, já pula para o próximo:
                         i++;
-                        // 5ª verificação: caso tenha havido empate entre 3 ou mais jogadores: A ordem levará em considereção o jogador com o maior saldo de sets/games    
                     }
                     else
                     {
+                        // 5ª verificação: caso tenha havido empate entre 3 ou mais jogadores: A ordem levará em considereção o jogador com o maior saldo de sets/games    
                         List<ClassificacaoFaseGrupo> temp = new List<ClassificacaoFaseGrupo>();
                         foreach (var item in jogadoresEmpatados)
                         {
                             temp.Add(getDadosClassificatoriosFaseGrupo(item));
                         }
-                        temp = temp.OrderByDescending(oc => oc.saldoSets).ThenByDescending(oc => oc.saldoGames).ToList();
+                        temp = temp.OrderByDescending(oc => oc.saldoSets).ThenByDescending(oc => oc.saldoGames).ThenByDescending(x => x.averageGames).ToList();
                         ordemClassificacao.AddRange(temp);
                         i = i + (jogadoresEmpatados.Count() - 1);
                     }

@@ -797,6 +797,7 @@ namespace Barragem.Controllers
                 var classificacaoGrupo = tn.ordenarClassificacaoFaseGrupo(classe, grupo);
                 ViewBag.classificacaoGrupo = classificacaoGrupo;
                 ViewBag.InscritosWO = ObterInscritosComWO(classe, grupo);
+                ViewBag.EhTriploEmpate = ValidaTriploEmpate(classificacaoGrupo);
                 var qtddJogosPorRodada = (classificacaoGrupo.Count() > 0) ? (int)classificacaoGrupo.Count() / 2 : 2;
                 qtddJogosPorRodada = (qtddJogosPorRodada % 2 != 0) ? qtddJogosPorRodada + 1 : qtddJogosPorRodada;
 
@@ -828,6 +829,7 @@ namespace Barragem.Controllers
                     var classificacaoGrupo = tn.ordenarClassificacaoFaseGrupo(classe, grupo);
                     ViewBag.classificacaoGrupo = classificacaoGrupo;
                     ViewBag.InscritosWO = ObterInscritosComWO(classe, grupo);
+                    ViewBag.EhTriploEmpate = ValidaTriploEmpate(classificacaoGrupo);
                     var qtddJogosPorRodada = (classificacaoGrupo.Count() > 0) ? (int)classificacaoGrupo.Count() / 2 : 2;
                     qtddJogosPorRodada = (qtddJogosPorRodada % 2 != 0) ? qtddJogosPorRodada + 1 : qtddJogosPorRodada;
                     ViewBag.grupo = grupo;
@@ -902,76 +904,11 @@ namespace Barragem.Controllers
             }
         }
 
-        //public ActionResult TabelaFaseGrupo(int torneioId = 0, int filtroClasse = 0, int grupo=1, string Msg = "", string Url = "", int barra = 0)
-        //{
-        //    if (Url == "torneio")
-        //    {
-        //        ViewBag.Torneio = "Sim";
-        //    }
-        //    ViewBag.tabelaLiberada = false;
-        //    if (torneioId == 0)
-        //    {
-        //        HttpCookie cookie = Request.Cookies["_barragemId"];
-        //        if (cookie != null)
-        //        {
-        //            var barragemId = Convert.ToInt32(cookie.Value.ToString());
-        //            BarragemView barragem = db.BarragemView.Find(barragemId);
-        //            var tn = db.Torneio.Where(t => t.barragemId == barragemId && t.isAtivo).OrderByDescending(t => t.Id).ToList();
-        //            if (tn.Count() == 0)
-        //            {
-        //                mensagem("Não localizamos nenhum torneio ativo no seu ranking.");
-        //                return View();
-        //            }
-        //            torneioId = tn[0].Id;
-        //        }
-        //        else if (barra != 0)
-        //        {
-        //            BarragemView barragem = db.BarragemView.Find(barra);
-        //            var tn = db.Torneio.Where(t => t.barragemId == barra && t.isAtivo).OrderByDescending(t => t.Id).ToList();
-        //            if (tn.Count() == 0)
-        //            {
-        //                mensagem("Não localizamos nenhum torneio ativo no seu ranking.");
-        //                return View();
-        //            }
-        //            torneioId = tn[0].Id;
-        //            Funcoes.CriarCookieBarragem(Response, Server, barragem.Id, barragem.nome);
-        //        }
-        //    }
-        //    var torneio = db.Torneio.Find(torneioId);
-        //    if (torneioId == 0)
-        //    {
-        //        mensagem("Não localizamos nenhum torneio.");
-        //        return View();
-        //    }
-        //    if (torneio.liberarTabela) ViewBag.tabelaLiberada = torneio.liberarTabela;
-        //    var classes = db.ClasseTorneio.Where(c => c.torneioId == torneioId && c.faseGrupo).OrderBy(c => c.nivel).ToList();
-        //    ViewBag.Classes = classes;
-        //    if (filtroClasse == 0)
-        //    {
-        //        filtroClasse = classes[0].Id;
-        //    }
-        //    var jogos = db.Jogo.Where(r => r.torneioId == torneioId && r.classeTorneio == filtroClasse && r.rodadaFaseGrupo!=0 && r.grupoFaseGrupo==grupo).OrderBy(r => r.rodadaFaseGrupo).ToList();
-        //    ViewBag.qtddGrupos = db.InscricaoTorneio.Where(it => it.torneioId == torneioId && it.classe == filtroClasse).Max(it => it.grupo);
-        //    var inscritosGrupo = db.InscricaoTorneio.Where(it => it.torneioId == torneioId && it.classe == filtroClasse
-        //                       && it.grupo == grupo);
-        //    List<InscricaoTorneio> classificacaoGrupo;
-        //    if (classes.Where(c=> c.Id == filtroClasse).Single().isDupla)
-        //    {
-        //        classificacaoGrupo = inscritosGrupo.Where(i=>i.parceiroDuplaId!=null && i.parceiroDuplaId!=0).
-        //            OrderByDescending(it => it.pontuacaoFaseGrupo).ThenBy(it => it.participante.nome).ToList();
-        //    }else{
-        //        classificacaoGrupo = inscritosGrupo.OrderByDescending(it => it.pontuacaoFaseGrupo).ThenBy(it => it.participante.nome).ToList();
-        //    }
-
-        //    ViewBag.classificacaoGrupo = ordenarClassificacaoFaseGrupo(classificacaoGrupo);
-        //    ViewBag.torneioId = torneioId;
-        //    ViewBag.nomeTorneio = torneio.nome;
-        //    ViewBag.filtroClasse = filtroClasse;
-        //    ViewBag.grupo = grupo;
-
-        //    mensagem(Msg);
-        //    return View(jogos);
-        //}
+        private bool ValidaTriploEmpate(List<ClassificacaoFaseGrupo> classificacao)
+        {
+            var gruposClassificatorios = classificacao.GroupBy(g => new { g.saldoSets, g.saldoGames, g.averageGames });
+            return gruposClassificatorios.Any(x => x.Count() == 3);
+        }
 
         public ActionResult InscricoesTorneio2(int torneioId = 0, string Msg = "", string Url = "", int barra = 0)
         {
