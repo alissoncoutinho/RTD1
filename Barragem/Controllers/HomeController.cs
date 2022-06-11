@@ -138,6 +138,16 @@ namespace Barragem.Controllers
             //ViewBag.contato = (from bg in db.Barragens where bg.Id == barragemId select bg.contato).Single();
             var tr = db.Torneio.Find(torneioId);
             var patrocinadores = db.Patrocinador.Where(p => p.torneioId == torneioId).ToList();
+            var userId = WebSecurity.GetUserId(User.Identity.Name);
+            if (userId > 0)
+            {
+                ViewBag.UsuarioInscritoTorneio = db.InscricaoTorneio.Any(x => x.torneioId == torneioId && x.userId == userId);
+            }
+            else
+            {
+                ViewBag.UsuarioInscritoTorneio = false;
+            }
+
             ViewBag.patrocinadores = patrocinadores;
             ViewBag.TorneioId = tr.Id;
             return View(tr);
