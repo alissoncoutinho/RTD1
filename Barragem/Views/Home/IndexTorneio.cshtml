@@ -38,7 +38,15 @@
         </p>
         @if (Model.PermitirInscricoes)
         {
-            <p><a class="btn btn-cta btn-cta-primary" href="@Url.Action("Login", "Account", new { returnUrl = "torneio", torneioId = Model.Id })">Inscreva-se</a> <a class="btn btn-cta btn-cta-secondary" href="#informacao">Informações</a></p>
+            if (ViewBag.UsuarioInscritoTorneio)
+            {
+                <p><a class="btn btn-cta btn-cta-primary" href="@Url.Action("Login", "Account", new { returnUrl = "torneio", torneioId = Model.Id })">Pagar/Alterar</a> <a class="btn btn-cta btn-cta-secondary" href="#informacao">Informações</a></p>
+            }
+            else
+            {
+                <p><a class="btn btn-cta btn-cta-primary" href="@Url.Action("Login", "Account", new { returnUrl = "torneio", torneioId = Model.Id })">Inscreva-se</a> <a class="btn btn-cta btn-cta-secondary" href="#informacao">Informações</a></p>
+            }
+
         }
         else
         {
@@ -102,7 +110,15 @@
             </div><!--//row-->
             @if (Model.PermitirInscricoes)
             {
-                <div class="text-center"><p><a class="btn btn-cta btn-cta-primary" href="@Url.Action("Login", "Account", new { returnUrl = "torneio", torneioId = Model.Id })">Inscreva-se</a></div>
+                if (ViewBag.UsuarioInscritoTorneio)
+                {
+                    <div class="text-center"><p><a class="btn btn-cta btn-cta-primary" href="@Url.Action("Login", "Account", new { returnUrl = "torneio", torneioId = Model.Id })">Pagar/Alterar</a></div>
+                }
+                else
+                {
+                    <div class="text-center"><p><a class="btn btn-cta btn-cta-primary" href="@Url.Action("Login", "Account", new { returnUrl = "torneio", torneioId = Model.Id })">Inscreva-se</a></div>
+                }
+
             }
         </div><!--//container-->
     </section>
