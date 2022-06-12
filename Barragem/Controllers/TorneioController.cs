@@ -4510,5 +4510,64 @@ namespace Barragem.Controllers
                 return "https://" + HttpContext.Request.Url.Host + "/torneio-" + torneio.Id;
             }
         }
+
+
+
+
+        //[Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
+        public ActionResult EditJogosV2(int torneioId, int fClasse = 0, string fData = "", string fNomeJogador = "", string fGrupo = "0", int fase = 0)
+        {
+            var classes = db.ClasseTorneio.Where(i => i.torneioId == torneioId).OrderBy(c => c.Id).ToList();
+            var classesGeradas = db.Jogo.Where(i => i.torneioId == torneioId).Select(i => (int)i.classeTorneio)
+                .Distinct().ToList();
+            ViewBag.classesFaseGrupoNaoFinalizadas = db.Jogo.Where(i => i.torneioId == torneioId && i.grupoFaseGrupo != null && (i.situacao_Id == 1 || i.situacao_Id == 2)).
+                Select(i => (int)i.classeTorneio).Distinct().ToList();
+            ViewBag.ClassesGeradasMataMata = db.Jogo.Where(i => i.torneioId == torneioId && i.grupoFaseGrupo == null).Select(i => (int)i.classeTorneio)
+                .Distinct().ToList();
+            ViewBag.ClassesGeradas = classesGeradas;
+            ViewBag.Classes = classes;
+            ViewBag.fClasse = fClasse;
+            ViewBag.fData = fData;
+            ViewBag.fNomeJogador = fNomeJogador;
+            ViewBag.fGrupo = fGrupo;
+            ViewBag.fase = fase;
+            var classeSelecionada = classes.FirstOrDefault(x => x.Id == fClasse);
+            ViewBag.ClasseEhFaseGrupo = classeSelecionada != null ? classeSelecionada.faseGrupo : false;
+            if (fClasse == 0)
+            {
+                fClasse = classes.FirstOrDefault()?.Id ?? 0;
+                ViewBag.filtroClasse = fClasse;
+            }
+            if (fClasse != 1)
+            {
+                ViewBag.permitirEdicaoDeJogador = true;
+                ViewBag.primeirafase = db.Jogo.Where(r => r.torneioId == torneioId && r.classeTorneio == fClasse).Max(r => r.faseTorneio);
+            }
+            var jogo = db.Jogo.Where(i => i.torneioId == torneioId);
+            var listaJogos = filtrarJogos(jogo, fClasse, fData, fGrupo, fase, false, fNomeJogador);
+            if (fClasse != 1)
+            {
+                var cl = classes.Where(c => c.Id == fClasse).FirstOrDefault();
+                if (cl == null)
+                {
+                    ViewBag.Inscritos = new List<InscricaoTorneio>();
+                }
+                else if (cl.isDupla)
+                {
+                    ViewBag.Inscritos = db.InscricaoTorneio.Where(c => c.torneioId == torneioId && c.isAtivo && c.parceiroDuplaId != null && c.classe == fClasse).ToList();
+                }
+                else
+                {
+                    ViewBag.Inscritos = db.InscricaoTorneio.Where(c => c.torneioId == torneioId && c.isAtivo && c.classe == fClasse).ToList();
+                }
+
+            }
+
+            CarregarDadosEssenciais(torneioId, "jogos");
+            return View(listaJogos);
+        }
+
+
+
     }
 }
