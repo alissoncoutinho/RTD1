@@ -761,6 +761,24 @@ namespace Barragem.Controllers
             return View(inscricoes);
         }
 
+        public ActionResult TesteDropDown()
+        {
+            return View();
+        }
+
+        public JsonResult ObterJogadores(int torneioId, int classeId = 0, int grupoId = 0)
+        {
+            var lista = new List<AutoCompleteOption>();
+            lista.Add(new AutoCompleteOption("GRUPO 1", "Jogador 1", "1"));
+            lista.Add(new AutoCompleteOption("GRUPO 1", "Jogador 2", "2"));
+            lista.Add(new AutoCompleteOption("GRUPO 1", "Jogador 3", "3"));
+            lista.Add(new AutoCompleteOption("GRUPO 2", "Jogador 4", "4"));
+            lista.Add(new AutoCompleteOption("GRUPO 2", "Jogador 5", "5"));
+            lista.Add(new AutoCompleteOption("GRUPO 2", "Jogador 6", "6"));
+            lista.Add(new AutoCompleteOption("FORA TABELA", "Jogador 10", "10"));
+            return Json(lista.ToArray(), JsonRequestBehavior.AllowGet);
+        }
+
         public ActionResult Tabela(int torneioId = 0, int filtroClasse = 0, string Msg = "", string Url = "", int barra = 0, int grupo = 1)
         {
             if (Url == "torneio")

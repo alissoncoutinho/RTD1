@@ -290,6 +290,7 @@
     <Compile Include="Helper\StringHelper.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountModels.cs" />
+    <Compile Include="Models\AutoCompleteOption.cs" />
     <Compile Include="Models\BarragemCidadeModel.cs" />
     <Compile Include="Models\BarragemLiga.cs" />
     <Compile Include="Models\Barragens.cs" />
@@ -394,6 +395,15 @@
     <Content Include="Content\css\integracao-pagseguro.css" />
     <Content Include="Content\css\jquery-ui-1.10.4.min.css" />
     <Content Include="Content\css\toogleButton.css" />
+    <Content Include="Content\css\torneio\editJogos.css" />
+    <Content Include="Content\jsuites\jsuites.basic.css" />
+    <Content Include="Content\jsuites\jsuites.basic.js" />
+    <Content Include="Content\jsuites\jsuites.css" />
+    <Content Include="Content\jsuites\jsuites.js" />
+    <Content Include="Content\jsuites\jsuites.layout.css" />
+    <Content Include="Content\jsuites\jsuites.layout.js" />
+    <Content Include="Content\jsuites\jsuites.webcomponents.js" />
+    <Content Include="Content\js\torneio\editJogos.js" />
     <Content Include="Content\js\torneio\lancarPlacar.js" />
     <Content Include="Content\paginaespecial\css\hamburgers.min.css" />
     <Content Include="Content\paginaespecial\css\style.css" />
@@ -1163,6 +1173,8 @@
     <Content Include="Views\Torneio\_PartialClasseJogosExclusao.cshtml" />
     <Content Include="Views\Torneio\_PartialClassesJogosGeracaoTabela.cshtml" />
     <Content Include="Views\Torneio\_PartialLancarPlacarJogo.cshtml" />
+    <Content Include="Views\Torneio\EditJogosV2.cshtml" />
+    <Content Include="Views\Torneio\TesteDropDown.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
