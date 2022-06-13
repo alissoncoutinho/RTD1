@@ -190,7 +190,7 @@
                                         @if (ViewBag.fClasse != 1 && ((Roles.IsUserInRole("admin")) || ((ViewBag.primeirafase != null) && (ViewBag.primeirafase == item.faseTorneio)) || item.classe.faseGrupo))
                                         {
                                             <!--Desafiante Possibilita edição-->
-                                            <div id="@Html.Raw("jogador1_" + i)" class="escolhaJogador"></div>
+                                            <div id="@Html.Raw("jogador1_" + i)" class="escolhaJogador" data-jogador="@item.desafiante_id"></div>
 
 
                                             @*<select name="@Html.Raw("jogador1_" + i)" id="@Html.Raw("jogador1_" + i)" class="form-control">
@@ -249,7 +249,7 @@
                                     <td>
                                         @if (ViewBag.fClasse != 1 && ((Roles.IsUserInRole("admin")) || ((ViewBag.primeirafase != null) && (ViewBag.primeirafase == item.faseTorneio)) || item.classe.faseGrupo))
                                         {
-                                            <div id="@Html.Raw("jogador2_" + i)" class="escolhaJogador" style="min-width:150px"></div>
+                                            <div id="@Html.Raw("jogador2_" + i)" class="escolhaJogador" data-jogador="@item.desafiado_id"></div>
                                             @*<select name="@Html.Raw("jogador2_" + i)" id="@Html.Raw("jogador2_" + i)" class="form-control">
                                                     <option value="0">aguardando adversário</option>
                                                     <option value="10">bye</option>

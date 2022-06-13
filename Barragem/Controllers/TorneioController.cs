@@ -743,6 +743,22 @@ namespace Barragem.Controllers
 
         public JsonResult ObterJogadores(int torneioId, int classeId = 0, int grupoId = 0)
         {
+            //List<InscricaoTorneio> inscritos;
+            //var cl = classes.Where(c => c.Id == classeId).FirstOrDefault();
+            //if (cl == null)
+            //{
+            //    inscritos = new List<InscricaoTorneio>();
+            //}
+            //else if (cl.isDupla)
+            //{
+            //    inscritos = db.InscricaoTorneio.Where(c => c.torneioId == torneioId && c.isAtivo && c.parceiroDuplaId != null && c.classe == classeId).ToList();
+            //}
+            //else
+            //{
+            //    inscritos = db.InscricaoTorneio.Where(c => c.torneioId == torneioId && c.isAtivo && c.classe == classeId).ToList();
+            //}
+
+
             var lista = new List<AutoCompleteOption>();
             lista.Add(new AutoCompleteOption("GRUPO 1", "Jogador 1", "1"));
             lista.Add(new AutoCompleteOption("GRUPO 1", "Jogador 2", "2"));

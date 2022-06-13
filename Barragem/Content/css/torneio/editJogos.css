@@ -1,0 +1,68 @@
+﻿.filtros {
+    padding: 5px !important;
+}
+
+.desabilitaCampo {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.gerarTabela {
+    float: right;
+    margin-top: 30px;
+}
+
+.exibir-escolhaDeClasses {
+    overflow: hidden;
+    max-height: 0px;
+    transition: max-height 1s ease-in-out;
+}
+
+    .exibir-escolhaDeClasses.show {
+        max-height: 700px;
+    }
+
+.exibir-escolhaDeClassesExclusao {
+    overflow: hidden;
+    max-height: 0px;
+    transition: max-height 1s ease-in-out;
+}
+
+    .exibir-escolhaDeClassesExclusao.show {
+        max-height: 700px;
+    }
+
+.loader,
+.loader:after {
+    border-radius: 50%;
+    width: 10em;
+    height: 10em;
+}
+
+.loader {
+    margin: 60px auto;
+    font-size: 10px;
+    position: relative;
+    text-indent: -9999em;
+    border-top: 1.1em solid rgba(255, 255, 255, 0.2);
+    border-right: 1.1em solid rgba(255, 255, 255, 0.2);
+    border-bottom: 1.1em solid rgba(255, 255, 255, 0.2);
+    border-left: 1.1em solid #ffffff;
+    -webkit-transform: translateZ(0);
+    -ms-transform: translateZ(0);
+    transform: translateZ(0);
+    -webkit-animation: load8 1.1s infinite linear;
+    animation: load8 1.1s infinite linear;
+}
+
+#loadingDiv {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    background: rgba(0,0,0,0.75) url(../images/loading2.gif) no-repeat center center;
+    z-index: 10000;
+}
