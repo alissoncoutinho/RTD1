@@ -375,7 +375,7 @@ function CarregarJogadores() {
             [
                 dropdownsJogadores[i],
                 jSuites.dropdown(dropdownsJogadores[i], {
-                    url: '/torneio/ObterJogadores?torneioId=1390',
+                    url: '/torneio/ObterJogadores?torneioId=' + document.getElementById('torneioId').value + "&classeId=" + document.getElementById('fClasse').value + "&grupoId=" + document.getElementById('fGrupo').value + "&jogoId=" + dropdownsJogadores[i].dataset.jogoid + "&tipojogador=" + dropdownsJogadores[i].dataset.tipojogador,
                     remoteSearch: false,
                     lazyLoading: true,
                     width: 'auto',

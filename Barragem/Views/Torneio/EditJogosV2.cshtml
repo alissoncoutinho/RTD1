@@ -190,7 +190,7 @@
                                         @if (ViewBag.fClasse != 1 && ((Roles.IsUserInRole("admin")) || ((ViewBag.primeirafase != null) && (ViewBag.primeirafase == item.faseTorneio)) || item.classe.faseGrupo))
                                         {
                                             <!--Desafiante Possibilita edição-->
-                                            <div id="@Html.Raw("jogador1_" + i)" class="escolhaJogador" data-jogador="@item.desafiante_id"></div>
+                                            <div id="@Html.Raw("jogador1_" + i)" class="escolhaJogador" data-jogador="@item.desafiante_id" data-jogoId="@item.Id" data-tipojogador="desafiante"></div>
 
 
                                             @*<select name="@Html.Raw("jogador1_" + i)" id="@Html.Raw("jogador1_" + i)" class="form-control">
@@ -249,20 +249,20 @@
                                     <td>
                                         @if (ViewBag.fClasse != 1 && ((Roles.IsUserInRole("admin")) || ((ViewBag.primeirafase != null) && (ViewBag.primeirafase == item.faseTorneio)) || item.classe.faseGrupo))
                                         {
-                                            <div id="@Html.Raw("jogador2_" + i)" class="escolhaJogador" data-jogador="@item.desafiado_id"></div>
+                                            <div id="@Html.Raw("jogador2_" + i)" class="escolhaJogador" data-jogador="@item.desafiado_id" data-jogoId="@item.Id" data-tipojogador="desafiado"></div>
                                             @*<select name="@Html.Raw("jogador2_" + i)" id="@Html.Raw("jogador2_" + i)" class="form-control">
-                                                    <option value="0">aguardando adversário</option>
-                                                    <option value="10">bye</option>
-                                                    @foreach (var item2 in ViewBag.Inscritos)
-                                                    {
-                                                        var nomeJogadores = item2.participante.nome;
-                                                        if (item2.parceiroDupla != null)
-                                                        {
-                                                            nomeJogadores = item2.participante.nome + " / " + item2.parceiroDupla.nome;
-                                                        }
-                                                        <option value="@item2.userId" @if (item.desafiado_id == item2.userId) { @Html.Raw("selected") }>@nomeJogadores</option>
-                                                    }
-                                                </select>*@
+                <option value="0">aguardando adversário</option>
+                <option value="10">bye</option>
+                @foreach (var item2 in ViewBag.Inscritos)
+                {
+                    var nomeJogadores = item2.participante.nome;
+                    if (item2.parceiroDupla != null)
+                    {
+                        nomeJogadores = item2.participante.nome + " / " + item2.parceiroDupla.nome;
+                    }
+                    <option value="@item2.userId" @if (item.desafiado_id == item2.userId) { @Html.Raw("selected") }>@nomeJogadores</option>
+                }
+            </select>*@
                                         }
                                         else
                                         {
