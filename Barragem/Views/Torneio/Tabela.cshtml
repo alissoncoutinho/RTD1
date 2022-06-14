@@ -26,9 +26,9 @@
     {
 
         <div class="form-horizontal">
-            <div class="form-group col-sm-12">
-                <label class="col-sm-2 control-label">Classes</label>
-                <div class="col-sm-4">
+            <div class="form-group">
+                <label class="col-xs-4 col-sm-2 control-label">Classes</label>
+                <div class="col-sm-4 col-xs-8">
                     <select name="filtroClasse" id="filtroClasse" class="form-control" onchange="Selecionar(false)">
                         @if (ViewBag.Classes != null)
                         {
@@ -42,20 +42,20 @@
                 </div>
                 @if (ViewBag.viewFaseGrupo == true)
                 {
-                    <div class="col-sm-2">
+                    <div class="col-sm-2 col-xs-4">
                         <input type="button" value="Fase Grupo" name="verFaseGrupo" id="verFaseGrupo" class="form-control btn btn-primary" onclick="Selecionar(false)">
                     </div>
                 }
                 else if (ViewBag.classeFaseGrupo == true)
                 {
-                    <div class="col-sm-2">
+                    <div class="col-sm-2 col-xs-4">
                         <input type="button" value="Imprimir" class="btn btn-primary" onclick="ImprimirFaseGrupo()" />
                     </div>
                 }
 
                 @if (ViewBag.classeFaseGrupo != true && ViewBag.modeloTodosContraTodos == null)
                 {
-                    <div class="col-sm-2">
+                    <div class="col-sm-2 col-xs-4">
                         <input type="button" value="imprimir" class="btn btn-primary" onclick="Imprimir()" />
                     </div>
                 }
@@ -63,9 +63,9 @@
             @if (ViewBag.classeFaseGrupo == true)
             {
                 int grupo = ViewBag.qtddGrupos ?? 0;
-                <div class="form-group col-sm-12">
-                    <label class="col-sm-2 control-label">Grupo</label>
-                    <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-xs-12 col-sm-2 control-label">Grupo</label>
+                    <div class="col-sm-4 col-xs-8">
                         <select name="grupo" id="grupo" class="form-control" onchange="Selecionar(false)">
                             @for (int i = 1; i <= ViewBag.qtddGrupos; i++)
                             {
@@ -75,8 +75,8 @@
                     </div>
                     @if (ViewBag.temMataMata == true)
                     {
-                        <div class="col-sm-2">
-                            <input type="button" value="Fase Mata-Mata" name="verMataMata" id="verMataMata" class="form-control btn btn-primary" style="width:155px" onclick="Selecionar(true)">
+                        <div class="col-sm-2 col-xs-4">
+                            <input type="button" value="Fase Mata-Mata" name="verMataMata" id="verMataMata" class="form-control btn btn-primary" onclick="Selecionar(true)">
                         </div>
                     }
                 </div>
@@ -223,7 +223,7 @@
                                                 @Html.Raw("</div>");
                                             }
                                             rodada = item.rodadaFaseGrupo;
-                                            @Html.Raw("<div class='col-xs-2 box_rodada' style='height:" + ViewBag.height + "px!important;'>");
+                                            @Html.Raw("<div class='col-xs-2 box_rodada_fg' style='height:" + ViewBag.height + "px!important;'>");
                                             <div class="titulo">Rodada @item.rodadaFaseGrupo</div>
                                         }
                                         @Html.Partial("_PartialJogoTabelaFaseGrupo", (Barragem.Models.Jogo)item)
