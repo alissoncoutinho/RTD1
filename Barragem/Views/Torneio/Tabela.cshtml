@@ -208,7 +208,7 @@
                 <div class="box-body table-responsive no-padding no-border table-hover">
                     <div class="" id="tabFase2">
                         <div id="">
-                            <div class="">
+                            <div class="" style="padding-top:30px">
                                 @{
                                     int? rodada = 0;
                                 }
@@ -223,7 +223,7 @@
                                                 @Html.Raw("</div>");
                                             }
                                             rodada = item.rodadaFaseGrupo;
-                                            @Html.Raw("<div class='col-xs-2 box_rodada' style='height:" + ViewBag.height + "px!important;'>");
+                                            @Html.Raw("<div class='col-xs-2 box_rodada_fg' style='height:" + ViewBag.height + "px!important;'>");
                                             <div class="titulo">Rodada @item.rodadaFaseGrupo</div>
                                         }
                                         @Html.Partial("_PartialJogoTabelaFaseGrupo", (Barragem.Models.Jogo)item)

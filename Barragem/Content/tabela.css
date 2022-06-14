@@ -133,6 +133,13 @@
     height: 3350px !important;
 }
 
+.box_rodada_fg {
+    min-width: 200px;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    height: 3350px !important;
+}
+
 .box_rodadaImpressao {
     min-width: 200px;
     padding-left: 0 !important;
@@ -356,5 +363,16 @@
         -webkit-border-radius: 40px;
         -khtml-border-radius: 40px;
         border-radius: 40px;
+    }
+}
+
+
+@media only screen and (max-width: 600px) {
+
+    .box_rodada_fg {
+        min-width: 200px;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        height: 275px !important;
     }
 }
