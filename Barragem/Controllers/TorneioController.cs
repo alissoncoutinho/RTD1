@@ -4549,7 +4549,6 @@ namespace Barragem.Controllers
             return View(listaJogos);
         }
 
-        [OutputCache(Duration = 100)]
         public JsonResult ObterJogadores(int torneioId, int classeId = 0, int grupoId = 0, int jogoId = 0, string tipojogador = "")
         {
             List<InscricaoTorneio> inscritos;
@@ -4622,6 +4621,71 @@ namespace Barragem.Controllers
             }
             lista.AddRange(listaForaTabela);
             return Json(lista.ToArray(), JsonRequestBehavior.AllowGet);
+        }
+
+
+        public JsonResult ObterJogadoresv2(int torneioId, int classeId = 0, int grupoId = 0)
+        {
+            List<InscricaoTorneio> inscritos;
+            var dadosRetorno = new ListaOpcoesJogadoresModel();
+
+            var cl = db.ClasseTorneio.FirstOrDefault(x => x.torneioId == torneioId && x.Id == classeId);
+            if (cl == null)
+            {
+                inscritos = new List<InscricaoTorneio>();
+            }
+            else if (cl.isDupla)
+            {
+                inscritos = db.InscricaoTorneio.Where(c => c.torneioId == torneioId && c.isAtivo && c.parceiroDuplaId != null && c.classe == classeId).ToList();
+            }
+            else
+            {
+                inscritos = db.InscricaoTorneio.Where(c => c.torneioId == torneioId && c.isAtivo && c.classe == classeId).ToList();
+            }
+
+            #region Jogadores Fora da Tabela
+            var jogosClasseTorneio = db.Jogo.Where(x => x.classeTorneio == classeId);
+            var listaForaTabela = new List<AutoCompleteOption>();
+            foreach (var inscrito in inscritos)
+            {
+                if (!jogosClasseTorneio.Any(x => x.desafiado_id == inscrito.userId || x.desafiante_id == inscrito.userId))
+                {
+                    listaForaTabela.Add(new AutoCompleteOption("FORA DA TABELA", inscrito.participante.nome, inscrito.userId.ToString()));
+                }
+            }
+            #endregion Jogadores Fora da Tabela
+
+            var lista = new List<AutoCompleteOption>();
+            lista.Add(new AutoCompleteOption("", "Aguardando adversário", "0"));
+            lista.Add(new AutoCompleteOption("", "bye", "10"));
+            foreach (var inscrito in inscritos.OrderBy(x => x.grupo))
+            {
+                var grupo = inscrito.grupo != null ? $"GRUPO {inscrito.grupo}" : "NA TABELA";
+
+                if (cl.isDupla)
+                {
+                    lista.Add(new AutoCompleteOption(grupo, $"{inscrito.participante.nome} / {inscrito.parceiroDupla.nome}", inscrito.userId.ToString()));
+                }
+                else
+                {
+                    lista.Add(new AutoCompleteOption(grupo, inscrito.participante.nome, inscrito.userId.ToString()));
+                }
+            }
+            lista.AddRange(listaForaTabela);
+
+            #region Regra Grupo Unico
+            var inscritosComGrupo = inscritos.Where(x => x.grupo != null).GroupBy(g => g.grupo);
+
+            if (inscritosComGrupo.Count() == 1)
+            {
+                dadosRetorno.EhGrupoUnico = true;
+            }
+            #endregion Regra Grupo Unico
+
+            dadosRetorno.OpcoesJogador = lista;
+            dadosRetorno.Jogos = jogosClasseTorneio.Select(s => new ListaOpcoesJogadoresModel.DadosJogosModel { JogoId = s.Id, IdDesafiado = s.desafiado_id, IdDesafiante = s.desafiante_id }).ToList();
+
+            return Json(dadosRetorno, JsonRequestBehavior.AllowGet);
         }
 
         private static void RemoverJogadorDaListagemJogadores(string tipojogador, List<InscricaoTorneio> inscritos, Jogo jogo, int idJogador)

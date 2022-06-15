@@ -368,8 +368,12 @@ function Imprimir() {
 
 function CarregarJogadores() {
 
-    var dropdownsJogadores = document.getElementsByClassName("escolhaJogador")
+    $.get('/torneio/ObterJogadoresv2?torneioId=' + document.getElementById('torneioId').value + "&classeId=" + document.getElementById('fClasse').value + "&grupoId=" + document.getElementById('fGrupo').value,
+        function (data, status) {
+            CarregarOpcoesJogador(data);
+        });
 
+    /*
     for (var i = 0; i < dropdownsJogadores.length; i++) {
         jogadoresDropDownList.push(
             [
@@ -403,7 +407,98 @@ function CarregarJogadores() {
             ]
         );
     }
+    */
 }
+
+function CarregarOpcoesJogador(dadosJogadores) {
+
+    var dropdownsJogadores = document.getElementsByClassName("escolhaJogador");
+
+    for (var i = 0; i < dropdownsJogadores.length; i++) {
+        //obtém opções de jogadores para carregar cada combo
+        var opcoesDisponiveis = FiltrarOpcoesJogadores(dadosJogadores, dropdownsJogadores[i].dataset.jogoid, dropdownsJogadores[i].dataset.tipojogador);
+
+        //Cria combos e mantem instancias na lista jogadoresDropDownList
+        jogadoresDropDownList.push(
+            [
+                dropdownsJogadores[i],
+                jSuites.dropdown(dropdownsJogadores[i], {
+                    data: opcoesDisponiveis,
+                    width: 'auto',
+                    autocomplete: true,
+                    onopen: function (el) {
+                        for (var i = 0; i < jogadoresDropDownList.length; i++) {
+                            var dropItem = jogadoresDropDownList[i][1];
+                            if (el.id != jogadoresDropDownList[i][0].id && dropItem.options.opened == true) {
+                                dropItem.close();
+                            }
+                            else {
+                                dropItem.options.opened = true;
+                            }
+                        }
+                    },
+                })
+            ]
+        );
+
+        //Seleciona jogador no combo
+        jogadoresDropDownList[i][1].setValue(jogadoresDropDownList[i][0].dataset.jogador)
+    }
+}
+
+function FiltrarOpcoesJogadores(dadosJogadores, idJogo, tipojogador) {
+
+    //1) Regra para não exibir jogador adversário
+    var dadosJogo = dadosJogadores.Jogos.find(jogo => jogo.JogoId == idJogo);
+    if (dadosJogo != null) {
+
+        var copiaOpcoesJogador = dadosJogadores.OpcoesJogador.slice();
+
+        var idJogador = ObterIdJogador(copiaOpcoesJogador, dadosJogo, tipojogador);
+
+        var i = copiaOpcoesJogador.length;
+        while (i--) {
+            if (tipojogador == "desafiante") {
+                if (copiaOpcoesJogador[i].value == dadosJogo.IdDesafiado && dadosJogo.IdDesafiado != 10 && dadosJogo.IdDesafiado != 0) {
+                    copiaOpcoesJogador.splice(i, 1);
+                }
+            }
+            else if (idJogador > 0 && copiaOpcoesJogador[i].value == 0) {
+                //3) Remover opção Aguardando adversário caso tenha algum jogador já selecionado
+                copiaOpcoesJogador.splice(i, 1);
+            }
+            else if (tipojogador == "desafiado") {
+                if (copiaOpcoesJogador[i].value == dadosJogo.IdDesafiante && dadosJogo.IdDesafiante != 10 && dadosJogo.IdDesafiante != 0) {
+                    copiaOpcoesJogador.splice(i, 1);
+                }
+            }
+        }
+    }
+
+    if (dadosJogadores.ehGrupoUnico) {
+        //2) Regra para não exibir jogadores já selecionados no grupo
+    }
+    return copiaOpcoesJogador;
+}
+
+function ObterIdJogador(opcoesJogador, jogo, tipojogador) {
+    if (tipojogador == "desafiante") {
+        var jogador = opcoesJogador.find(x => x.value == jogo.IdDesafiante);
+        if (jogador != null) {
+            return jogador.value;
+        }
+        return 0;
+    }
+    else {
+        var jogador = opcoesJogador.find(x => x.value == jogo.IdDesafiado);
+        if (jogador != null) {
+            return jogador.value;
+        }
+        return 0;
+    }
+}
+
+
 
 $(document).mouseup(function (el) {
     if (el.target.classList.contains("jdropdown-header") == false) {
