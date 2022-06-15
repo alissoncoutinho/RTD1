@@ -4553,7 +4553,7 @@ namespace Barragem.Controllers
         public JsonResult ObterJogadores(int torneioId, int classeId = 0, int grupoId = 0, int jogoId = 0, string tipojogador = "")
         {
             List<InscricaoTorneio> inscritos;
-
+            bool grupoUnico = false;
             var cl = db.ClasseTorneio.FirstOrDefault(x => x.torneioId == torneioId && x.Id == classeId);
             if (cl == null)
             {
@@ -4570,6 +4570,13 @@ namespace Barragem.Controllers
 
             var jogosClasseTorneio = db.Jogo.Where(x => x.classeTorneio == classeId);
 
+            var inscritosComGrupo = inscritos.Where(x => x.grupo != null).GroupBy(g => g.grupo);
+
+            if (inscritosComGrupo.Count() == 1)
+            {
+                grupoUnico = true;
+            }
+
             #region Jogadores Fora da Tabela
             var listaForaTabela = new List<AutoCompleteOption>();
             foreach (var inscrito in inscritos)
@@ -4585,20 +4592,14 @@ namespace Barragem.Controllers
             var jogo = jogosClasseTorneio.FirstOrDefault(x => x.Id == jogoId);
             if (jogo != null)
             {
-                if (tipojogador == "desafiante")
+                var idJogador = ObterIdJogador(tipojogador, inscritos, jogo);
+                RemoverJogadorDaListagemJogadores(tipojogador, inscritos, jogo, idJogador);
+
+                if (grupoUnico)
                 {
-                    var inscritoRemover = inscritos.FirstOrDefault(x => x.userId == jogo.desafiado_id);
-                    if (inscritoRemover != null)
+                    foreach (var jogoItem in jogosClasseTorneio)
                     {
-                        inscritos.Remove(inscritoRemover);
-                    }
-                }
-                else
-                {
-                    var inscritoRemover = inscritos.FirstOrDefault(x => x.userId == jogo.desafiante_id);
-                    if (inscritoRemover != null)
-                    {
-                        inscritos.Remove(inscritoRemover);
+                        RemoverJogadorDaListagemJogadores(tipojogador, inscritos, jogoItem, idJogador);
                     }
                 }
             }
@@ -4606,7 +4607,7 @@ namespace Barragem.Controllers
 
             var lista = new List<AutoCompleteOption>();
             lista.Add(new AutoCompleteOption("", "bye", "10"));
-            foreach (var inscrito in inscritos.OrderBy(x=>x.grupo))
+            foreach (var inscrito in inscritos.OrderBy(x => x.grupo))
             {
                 var grupo = inscrito.grupo != null ? $"GRUPO {inscrito.grupo}" : "NA TABELA";
 
@@ -4621,6 +4622,38 @@ namespace Barragem.Controllers
             }
             lista.AddRange(listaForaTabela);
             return Json(lista.ToArray(), JsonRequestBehavior.AllowGet);
+        }
+
+        private static void RemoverJogadorDaListagemJogadores(string tipojogador, List<InscricaoTorneio> inscritos, Jogo jogo, int idJogador)
+        {
+            if (tipojogador == "desafiante")
+            {
+                var inscritoRemover = inscritos.FirstOrDefault(x => x.userId == jogo.desafiado_id && x.userId != idJogador);
+                if (inscritoRemover != null)
+                {
+                    inscritos.Remove(inscritoRemover);
+                }
+            }
+            else
+            {
+                var inscritoRemover = inscritos.FirstOrDefault(x => x.userId == jogo.desafiante_id && x.userId != idJogador);
+                if (inscritoRemover != null)
+                {
+                    inscritos.Remove(inscritoRemover);
+                }
+            }
+        }
+
+        private int ObterIdJogador(string tipojogador, List<InscricaoTorneio> inscritos, Jogo jogo)
+        {
+            if (tipojogador == "desafiante")
+            {
+                return inscritos.FirstOrDefault(x => x.userId == jogo.desafiante_id)?.userId ?? 0;
+            }
+            else
+            {
+                return inscritos.FirstOrDefault(x => x.userId == jogo.desafiado_id)?.userId ?? 0;
+            }
         }
     }
 }
