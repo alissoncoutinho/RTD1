@@ -286,6 +286,7 @@
     <Compile Include="Helper\CustomExceptions\BusinessException.cs" />
     <Compile Include="Helper\HtmlHelpers.cs" />
     <Compile Include="Helper\DateTimeHelper.cs" />
+    <Compile Include="Helper\ResponseMessage.cs" />
     <Compile Include="Helper\SessionHelper.cs" />
     <Compile Include="Helper\StringHelper.cs" />
     <Compile Include="Migrations\Configuration.cs" />

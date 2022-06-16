@@ -16,6 +16,7 @@ using Uol.PagSeguro.Domain;
 using Uol.PagSeguro.Exception;
 using System.Transactions;
 using System.Text;
+using Barragem.Helper;
 
 namespace Barragem.Controllers
 {
@@ -2778,10 +2779,10 @@ namespace Barragem.Controllers
                     }
                     if ((porEsteDesafiante == 10) || (porEsteDesafiado == 10))
                     {
-                        if (verificarSeJaTemByeNoGrupo((int)jogo.classeTorneio, (int)jogo.grupoFaseGrupo))
-                        {
-                            return Json(new { erro = "Não é possível incluir bye neste grupo pois já existe um bye neste grupo.", retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
-                        }
+                        var resultadoValidacao = VerificarSeJaTemByeNoGrupo((int)jogo.classeTorneio, (int)jogo.grupoFaseGrupo);
+                        if (resultadoValidacao.retorno == 0)
+                            return Json(resultadoValidacao, "text/plain", JsonRequestBehavior.AllowGet);
+
                         jogo.situacao_Id = 5;
                         jogo.qtddGames1setDesafiado = 6;
                         jogo.qtddGames2setDesafiado = 6;
@@ -2839,10 +2840,18 @@ namespace Barragem.Controllers
             }
         }
 
-        private bool verificarSeJaTemByeNoGrupo(int classeId, int grupo)
+        private ResponseMessage VerificarSeJaTemByeNoGrupo(int classeId, int grupo)
         {
             var jaTemByeNesteGrupo = db.Jogo.Where(j => j.desafiante_id == 10 && j.classeTorneio == classeId && j.grupoFaseGrupo == grupo).Any();
-            return jaTemByeNesteGrupo;
+
+            if (jaTemByeNesteGrupo)
+            {
+                return new ResponseMessage { erro = "Não é possível incluir bye neste grupo pois já existe um bye neste grupo.", retorno = 0 };
+            }
+            else
+            {
+                return new ResponseMessage { retorno = 1 };
+            }
         }
 
         private Jogo ObterJogoAnteriorDoJogador(int idJogador, TipoJogador tipoJogador, int classeId, int grupo)
@@ -4576,29 +4585,30 @@ namespace Barragem.Controllers
                     //Troca de jogador durante a fase de grupos
 
                     alterarJogosFaseGrupo = true;
+
                     if (jogo.desafiante_id != jogador1)
                     {
                         // não permitir trocar se o jogador já pertence a este grupo
-                        var inscricao = db.InscricaoTorneio.FirstOrDefault(i => i.userId == jogador1 && i.classe == jogo.classeTorneio);
-                        if (inscricao?.grupo == jogo.grupoFaseGrupo)
-                        {
-                            return Json(new { erro = "O jogador: " + inscricao.participante.nome + " já está em outros jogos neste grupo. Não é possível acrescentá-lo em mais jogos.", retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
-                        }
+                        var resultadoValidacao = ValidarParticipanteAlocadoMesmoGrupo(jogador1, jogo.classeTorneio, jogo.grupoFaseGrupo);
+                        if (resultadoValidacao.retorno == 0)
+                            return Json(resultadoValidacao, "text/plain", JsonRequestBehavior.AllowGet);
+
                         substituirEsteDesafiante = (int)jogo.desafiante_id;
                         porEsteDesafiante = jogador1;
+
                         if (substituirEsteDesafiante == 10)
                         {
                             jogo.AlterarJogoParaPendente();
                         }
+                        // TODO: E SE AO INVES DO BYE FOSSE OUTRO JOGADOR? NAO DEVERIA TAMBEM VOLTAR PARA PENDENTE?
                     }
+
                     if (jogo.desafiado_id != jogador2)
                     {
-                        var inscricao = db.InscricaoTorneio.FirstOrDefault(i => i.userId == jogador2 && i.classe == jogo.classeTorneio);
-                        if (inscricao?.grupo == jogo.grupoFaseGrupo)
-                        {
-                            // não permitir trocar se o jogador já pertence a este grupo
-                            return Json(new { erro = "O jogador: " + inscricao.participante.nome + " já está em outros jogos neste grupo. Não é possível acrescentá-lo em mais jogos.", retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
-                        }
+                        var resultadoValidacao = ValidarParticipanteAlocadoMesmoGrupo(jogador2, jogo.classeTorneio, jogo.grupoFaseGrupo);
+                        if (resultadoValidacao.retorno == 0)
+                            return Json(resultadoValidacao, "text/plain", JsonRequestBehavior.AllowGet);
+
                         substituirEsteDesafiado = (int)jogo.desafiado_id;
                         porEsteDesafiado = jogador2;
                     }
@@ -4606,10 +4616,10 @@ namespace Barragem.Controllers
                     if (porEsteDesafiante == 10 || porEsteDesafiado == 10)
                     {
                         //Troca de jogador por BYE
-                        if (verificarSeJaTemByeNoGrupo((int)jogo.classeTorneio, (int)jogo.grupoFaseGrupo))
-                        {
-                            return Json(new { erro = "Não é possível incluir bye neste grupo pois já existe um bye neste grupo.", retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
-                        }
+                        var resultadoValidacao = VerificarSeJaTemByeNoGrupo((int)jogo.classeTorneio, (int)jogo.grupoFaseGrupo);
+                        if (resultadoValidacao.retorno == 0)
+                            return Json(resultadoValidacao, "text/plain", JsonRequestBehavior.AllowGet);
+
                         jogo.AlterarJogoParaBye(porEsteDesafiante == 10 ? TipoJogador.DESAFIANTE : TipoJogador.DESAFIADO);
                     }
 
@@ -4617,26 +4627,8 @@ namespace Barragem.Controllers
 
                 if (jogo.classe.isDupla)
                 {
-                    //Se for dupla obtém dados da dupla
-                    var dupla = db.InscricaoTorneio.FirstOrDefault(i => i.userId == jogador1 && i.classe == jogo.classeTorneio && i.parceiroDuplaId != null);
-                    if (dupla != null)
-                    {
-                        porEsteDesafiante2 = (int)dupla.parceiroDuplaId;
-                    }
-                    else
-                    {
-                        porEsteDesafiante2 = null;
-                    }
-
-                    var dupla2 = db.InscricaoTorneio.FirstOrDefault(i => i.userId == jogador2 && i.classe == jogo.classeTorneio && i.parceiroDuplaId != null);
-                    if (dupla2 != null)
-                    {
-                        porEsteDesafiado2 = (int)dupla2.parceiroDuplaId;
-                    }
-                    else
-                    {
-                        porEsteDesafiado2 = null;
-                    }
+                    porEsteDesafiante2 = ObterIdentificadorDuplaJogador(jogador1, jogo.classeTorneio);
+                    porEsteDesafiado2 = ObterIdentificadorDuplaJogador(jogador2, jogo.classeTorneio);
                 }
 
                 //Efetua a troca dos jogadores do jogo
@@ -4682,6 +4674,29 @@ namespace Barragem.Controllers
             }
         }
 
+        private ResponseMessage ValidarParticipanteAlocadoMesmoGrupo(int idJogador, int? idClasseTorneio, int? idGrupo)
+        {
+            var inscricao = db.InscricaoTorneio.FirstOrDefault(i => i.userId == idJogador && i.classe == idClasseTorneio);
+            if (inscricao?.grupo == idGrupo)
+            {
+                return new ResponseMessage { erro = "O jogador: " + inscricao.participante.nome + " já está em outros jogos neste grupo. Não é possível acrescentá-lo em mais jogos.", retorno = 0 };
+            }
+            return new ResponseMessage { retorno = 1 };
+        }
+
+        private int? ObterIdentificadorDuplaJogador(int idJogador, int? idClasseTorneio)
+        {
+            var dupla = db.InscricaoTorneio.FirstOrDefault(i => i.userId == idJogador && i.classe == idClasseTorneio && i.parceiroDuplaId != null);
+            if (dupla != null)
+            {
+                return (int)dupla.parceiroDuplaId;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
         public JsonResult ObterJogadores(int torneioId, int classeId = 0, int grupoId = 0)
         {
             List<InscricaoTorneio> inscritos;
@@ -4694,11 +4709,11 @@ namespace Barragem.Controllers
             }
             else if (cl.isDupla)
             {
-                inscritos = db.InscricaoTorneio.Where(c => c.torneioId == torneioId && c.isAtivo && c.parceiroDuplaId != null && c.classe == classeId).ToList();
+                inscritos = db.InscricaoTorneio.Where(c => c.torneioId == torneioId && c.isAtivo && c.parceiroDuplaId != null && c.classe == classeId && (c.grupo == grupoId || grupoId == 0)).ToList();
             }
             else
             {
-                inscritos = db.InscricaoTorneio.Where(c => c.torneioId == torneioId && c.isAtivo && c.classe == classeId).ToList();
+                inscritos = db.InscricaoTorneio.Where(c => c.torneioId == torneioId && c.isAtivo && c.classe == classeId && (c.grupo == grupoId || grupoId == 0)).ToList();
             }
 
             var jogosClasseTorneio = db.Jogo.Where(x => x.classeTorneio == classeId && (x.grupoFaseGrupo == grupoId || grupoId == 0));
@@ -4748,7 +4763,7 @@ namespace Barragem.Controllers
             #endregion Regra Grupo Unico
 
             dadosRetorno.OpcoesJogador = lista;
-            dadosRetorno.Jogos = jogosClasseTorneio.Select(s => new ListaOpcoesJogadoresModel.DadosJogosModel { JogoId = s.Id, IdDesafiado = s.desafiado_id, IdDesafiante = s.desafiante_id, Grupo=s.grupoFaseGrupo }).ToList();
+            dadosRetorno.Jogos = jogosClasseTorneio.Select(s => new ListaOpcoesJogadoresModel.DadosJogosModel { JogoId = s.Id, IdDesafiado = s.desafiado_id, IdDesafiante = s.desafiante_id, Grupo = s.grupoFaseGrupo }).ToList();
 
             return Json(dadosRetorno, JsonRequestBehavior.AllowGet);
         }

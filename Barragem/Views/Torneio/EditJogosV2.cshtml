@@ -187,7 +187,7 @@
                                     </td>
                                     <!--Desafiante-->
                                     <td>
-                                        @if ((ViewBag.fClasse != 1 && Roles.IsUserInRole("admin")) || (ViewBag.PrimeiraFase != null && ViewBag.PrimeiraFase == item.faseTorneio) || item.classe.faseGrupo)
+                                        @if ((ViewBag.fClasse != 1 && Roles.IsUserInRole("admin")) || (ViewBag.PrimeiraFase != null && ViewBag.PrimeiraFase == item.faseTorneio) || (item.classe.faseGrupo && item.grupoFaseGrupo != null))
                                         {
                                             <!--Desafiante Possibilita edição-->
                                             <div id="@Html.Raw("jogador1_" + i)" class="escolhaJogador" data-jogador="@item.desafiante_id" data-jogoId="@item.Id" data-tipojogador="desafiante"></div>
@@ -204,7 +204,7 @@
                                             }
                                             else if (item.desafiante_id == 0)
                                             {
-                                                @Html.Raw("Aguardando Adversário");
+                                                @Html.Raw("Aguardando adversário");
                                                 <input type="hidden" name="@Html.Raw("jogador1Nome_" + i)" id="@Html.Raw("jogador1Nome_" + i)" value="Aguardando Adversário">
                                             }
                                             else
@@ -232,7 +232,7 @@
                                     </td>
                                     <!--Desafiado-->
                                     <td>
-                                        @if ((ViewBag.fClasse != 1 && Roles.IsUserInRole("admin")) || (ViewBag.PrimeiraFase != null && ViewBag.PrimeiraFase == item.faseTorneio) || item.classe.faseGrupo)
+                                        @if ((ViewBag.fClasse != 1 && Roles.IsUserInRole("admin")) || (ViewBag.PrimeiraFase != null && ViewBag.PrimeiraFase == item.faseTorneio) || (item.classe.faseGrupo && item.grupoFaseGrupo != null))
                                         {
                                             <div id="@Html.Raw("jogador2_" + i)" class="escolhaJogador" data-jogador="@item.desafiado_id" data-jogoId="@item.Id" data-tipojogador="desafiado"></div>
                                         }
@@ -246,7 +246,7 @@
                                             }
                                             else if (item.desafiado_id == 0)
                                             {
-                                                @Html.Raw("Aguardando Adversário");
+                                                @Html.Raw("Aguardando adversário");
                                                 <input type="hidden" name="@Html.Raw("jogador2Nome_" + i)" id="@Html.Raw("jogador2Nome_" + i)" value="Aguardando Adversário">
                                             }
                                             else
