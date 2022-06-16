@@ -25,5 +25,8 @@ namespace Barragem.Models
         public string group { get; private set; }
         public string text { get; private set; }
         public string value { get; private set; }
+
+        public int? Grupo { get; set; }
+        public bool JogadorAlocado { get; set; }
     }
 }

@@ -119,17 +119,20 @@ namespace Barragem.Models
             get
             {
                 string descricao = "Aguardando";
-                if ((situacao_Id == 4) || (situacao_Id == 5)){
-                    descricao = "Finalizado";    
+                if ((situacao_Id == 4) || (situacao_Id == 5))
+                {
+                    descricao = "Finalizado";
                 }
-                if (dataJogo != null){
+                if (dataJogo != null)
+                {
                     descricao = ((DateTime)dataJogo).ToShortDateString();
                     descricao = descricao + " " + horaJogo + " ";
                 }
-                if ((quadra != null) && (quadra != "0") && (quadra!="100")){
+                if ((quadra != null) && (quadra != "0") && (quadra != "100"))
+                {
                     descricao = descricao + " quadra " + quadra;
                 }
-                
+
                 return descricao;
             }
 
@@ -284,9 +287,43 @@ namespace Barragem.Models
             }
 
         }
+
+        public void AlterarJogoParaPendente()
+        {
+            situacao_Id = 1;
+            qtddGames1setDesafiado = 0;
+            qtddGames2setDesafiado = 0;
+            qtddGames3setDesafiado = 0;
+            qtddGames1setDesafiante = 0;
+            qtddGames2setDesafiante = 0;
+            qtddGames3setDesafiante = 0;
+        }
+        public void AlterarJogoParaBye(TipoJogador tipoJogadorEfetuarTroca)
+        {
+            situacao_Id = 5; //WO
+            qtddGames1setDesafiado = 6;
+            qtddGames2setDesafiado = 6;
+            qtddGames1setDesafiante = 1;
+            qtddGames2setDesafiante = 1;
+
+            if (tipoJogadorEfetuarTroca == TipoJogador.DESAFIADO)
+            {
+                //Se for o desafiado então troca o desafiante para desafiado
+                desafiado_id = desafiante_id;
+                desafiado2_id = desafiante2_id;
+                desafiante_id = 10;
+                desafiante2_id = null;
+            }
+            else
+            {
+                desafiante_id = 10;
+                desafiante2_id = null;
+            }
+        }
     }
 
-    public class MeuJogo {
+    public class MeuJogo
+    {
 
         public int Id { get; set; }
 
@@ -346,7 +383,7 @@ namespace Barragem.Models
 
         public int qtddSetsGanhosDesafiado { get; set; }
 
-        public int idDoVencedor{ get; set; }
+        public int idDoVencedor { get; set; }
 
         public string linkWhatsapp { get; set; }
 
@@ -415,13 +452,18 @@ namespace Barragem.Models
         public string inicioRankingDesafiado { get; set; }
         public string melhorPosicaoDesafiante { get; set; }
         public string melhorPosicaoDesafiado { get; set; }
-                
+
     }
 
     public class JogoTeste
     {
         public string jogo { get; set; }
-        
+
     }
 
+    public enum TipoJogador
+    {
+        DESAFIADO = 1,
+        DESAFIANTE = 2
+    }
 }

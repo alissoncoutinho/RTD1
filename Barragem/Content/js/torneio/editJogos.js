@@ -22,7 +22,7 @@ $(document).ready(function () {
         event.preventDefault();
         $.ajax({
             type: "POST",
-            url: "/Torneio/EditJogos",
+            url: "/Torneio/EditJogosV2",
             dataType: "json",
             data: "{'Id':'" + Id + "', 'jogador1':'" + jogador1 + "', 'jogador2':'" + jogador2 + "', 'dataJogo':'" + dataJogo + "', 'horaJogo':'" + horaJogo + "', 'quadra':'" + quadra + "'}",
             contentType: "application/json; charset=utf-8",
@@ -361,53 +361,11 @@ function Imprimir() {
     window.open("ImprimirJogos?torneioId=" + torneioId + "&fClasse=" + classeId + "&fData=" + data + "&fNomeJogador=" + nomeJogador + "&fGrupo=" + grupo + "&fase=" + fase, '_blank');
 }
 
-
-
-
-
-
 function CarregarJogadores() {
-
-    $.get('/torneio/ObterJogadoresv2?torneioId=' + document.getElementById('torneioId').value + "&classeId=" + document.getElementById('fClasse').value + "&grupoId=" + document.getElementById('fGrupo').value,
+    $.get('/torneio/ObterJogadores?torneioId=' + document.getElementById('torneioId').value + "&classeId=" + document.getElementById('fClasse').value + "&grupoId=" + document.getElementById('fGrupo').value,
         function (data, status) {
             CarregarOpcoesJogador(data);
         });
-
-    /*
-    for (var i = 0; i < dropdownsJogadores.length; i++) {
-        jogadoresDropDownList.push(
-            [
-                dropdownsJogadores[i],
-                jSuites.dropdown(dropdownsJogadores[i], {
-                    url: '/torneio/ObterJogadores?torneioId=' + document.getElementById('torneioId').value + "&classeId=" + document.getElementById('fClasse').value + "&grupoId=" + document.getElementById('fGrupo').value + "&jogoId=" + dropdownsJogadores[i].dataset.jogoid + "&tipojogador=" + dropdownsJogadores[i].dataset.tipojogador,
-                    remoteSearch: false,
-                    lazyLoading: true,
-                    width: 'auto',
-                    autocomplete: true,
-                    onopen: function (el) {
-                        for (var i = 0; i < jogadoresDropDownList.length; i++) {
-                            var dropItem = jogadoresDropDownList[i][1];
-                            if (el.id != jogadoresDropDownList[i][0].id && dropItem.options.opened == true) {
-                                dropItem.close();
-                            }
-                            else {
-                                dropItem.options.opened = true;
-                            }
-                        }
-                    },
-                    onload: function (el) {
-                        for (var i = 0; i < jogadoresDropDownList.length; i++) {
-                            var dropItem = jogadoresDropDownList[i][1];
-                            if (el.id == jogadoresDropDownList[i][0].id) {
-                                dropItem.setValue(jogadoresDropDownList[i][0].dataset.jogador);
-                            }
-                        }
-                    },
-                })
-            ]
-        );
-    }
-    */
 }
 
 function CarregarOpcoesJogador(dadosJogadores) {
@@ -463,6 +421,9 @@ function FiltrarOpcoesJogadores(dadosJogadores, idJogo, tipojogador) {
                 if (copiaOpcoesJogador[i].group != "FORA DA TABELA" && copiaOpcoesJogador[i].value != 10 && copiaOpcoesJogador[i].value != idJogador) {
                     copiaOpcoesJogador.splice(i, 1);
                 }
+            }
+            else if (idJogador != copiaOpcoesJogador[i].value && copiaOpcoesJogador[i].JogadorAlocado && dadosJogo.Grupo != null && dadosJogo.Grupo == copiaOpcoesJogador[i].Grupo) {
+                copiaOpcoesJogador.splice(i, 1);
             }
             else if (tipojogador == "desafiante" && copiaOpcoesJogador[i].value != 0) {
                 if (copiaOpcoesJogador[i].value == dadosJogo.IdDesafiado && dadosJogo.IdDesafiado != 10 && dadosJogo.IdDesafiado != 0) {

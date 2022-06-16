@@ -2845,6 +2845,11 @@ namespace Barragem.Controllers
             return jaTemByeNesteGrupo;
         }
 
+        private Jogo ObterJogoAnteriorDoJogador(int idJogador, TipoJogador tipoJogador, int classeId, int grupo)
+        {
+            return db.Jogo.FirstOrDefault(j => ((j.desafiante_id == idJogador && tipoJogador == TipoJogador.DESAFIANTE) || (j.desafiado_id == idJogador && tipoJogador == TipoJogador.DESAFIADO)) && j.classeTorneio == classeId && j.grupoFaseGrupo == grupo);
+        }
+
         private void substituirJogadorFaseGrupo(int grupo, int classeId, int substituirEsteJogador, int porEsteJogador, int porEsteParceiroDupla)
         {
             if (substituirEsteJogador > 0)
@@ -4493,42 +4498,23 @@ namespace Barragem.Controllers
             }
         }
 
-
-
-
         //[Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
         public ActionResult EditJogosV2(int torneioId, int fClasse = 0, string fData = "", string fNomeJogador = "", string fGrupo = "0", int fase = 0)
         {
+            var jogosTorneio = db.Jogo.Where(i => i.torneioId == torneioId);
             var classes = db.ClasseTorneio.Where(i => i.torneioId == torneioId).OrderBy(c => c.Id).ToList();
-            var classesGeradas = db.Jogo.Where(i => i.torneioId == torneioId).Select(i => (int)i.classeTorneio)
-                .Distinct().ToList();
-            ViewBag.classesFaseGrupoNaoFinalizadas = db.Jogo.Where(i => i.torneioId == torneioId && i.grupoFaseGrupo != null && (i.situacao_Id == 1 || i.situacao_Id == 2)).
-                Select(i => (int)i.classeTorneio).Distinct().ToList();
-            ViewBag.ClassesGeradasMataMata = db.Jogo.Where(i => i.torneioId == torneioId && i.grupoFaseGrupo == null).Select(i => (int)i.classeTorneio)
-                .Distinct().ToList();
-            ViewBag.ClassesGeradas = classesGeradas;
-            ViewBag.Classes = classes;
-            ViewBag.fClasse = fClasse;
-            ViewBag.fData = fData;
-            ViewBag.fNomeJogador = fNomeJogador;
-            ViewBag.fGrupo = fGrupo;
-            ViewBag.fase = fase;
-            var classeSelecionada = classes.FirstOrDefault(x => x.Id == fClasse);
-            ViewBag.ClasseEhFaseGrupo = classeSelecionada != null ? classeSelecionada.faseGrupo : false;
+            var classesGeradas = jogosTorneio.Select(i => (int)i.classeTorneio).Distinct().ToList();
+
             if (fClasse == 0)
             {
                 fClasse = classes.FirstOrDefault()?.Id ?? 0;
-                ViewBag.filtroClasse = fClasse;
+                ViewBag.fClasse = fClasse;
             }
-            if (fClasse != 1)
+            else if (fClasse > 1)
             {
                 ViewBag.permitirEdicaoDeJogador = true;
-                ViewBag.primeirafase = db.Jogo.Where(r => r.torneioId == torneioId && r.classeTorneio == fClasse).Max(r => r.faseTorneio);
-            }
-            var jogo = db.Jogo.Where(i => i.torneioId == torneioId);
-            var listaJogos = filtrarJogos(jogo, fClasse, fData, fGrupo, fase, false, fNomeJogador);
-            if (fClasse != 1)
-            {
+                ViewBag.PrimeiraFase = jogosTorneio.Where(r => r.classeTorneio == fClasse).Max(r => r.faseTorneio);
+
                 var cl = classes.Where(c => c.Id == fClasse).FirstOrDefault();
                 if (cl == null)
                 {
@@ -4542,89 +4528,161 @@ namespace Barragem.Controllers
                 {
                     ViewBag.Inscritos = db.InscricaoTorneio.Where(c => c.torneioId == torneioId && c.isAtivo && c.classe == fClasse).ToList();
                 }
-
             }
+
+            var listaJogos = filtrarJogos(jogosTorneio, fClasse, fData, fGrupo, fase, false, fNomeJogador);
+
+            ViewBag.classesFaseGrupoNaoFinalizadas = jogosTorneio
+                .Where(i => i.grupoFaseGrupo != null && (i.situacao_Id == 1 || i.situacao_Id == 2))
+                .Select(i => (int)i.classeTorneio).Distinct().ToList();
+
+            ViewBag.ClassesGeradasMataMata = jogosTorneio
+                .Where(i => i.grupoFaseGrupo == null)
+                .Select(i => (int)i.classeTorneio)
+                .Distinct().ToList();
+
+            var classeSelecionada = classes.FirstOrDefault(x => x.Id == fClasse);
+            ViewBag.ClasseEhFaseGrupo = classeSelecionada != null ? classeSelecionada.faseGrupo : false;
+
+            ViewBag.ClassesGeradas = classesGeradas;
+            ViewBag.Classes = classes;
+            ViewBag.fClasse = fClasse;
+            ViewBag.fData = fData;
+            ViewBag.fNomeJogador = fNomeJogador;
+            ViewBag.fGrupo = fGrupo;
+            ViewBag.fase = fase;
 
             CarregarDadosEssenciais(torneioId, "jogos");
             return View(listaJogos);
         }
 
-        public JsonResult ObterJogadores(int torneioId, int classeId = 0, int grupoId = 0, int jogoId = 0, string tipojogador = "")
+        [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
+        [HttpPost]
+        public ActionResult EditJogosV2(int Id, int jogador1, int jogador2, string dataJogo = "", string horaJogo = "", string quadra = "0")
         {
-            List<InscricaoTorneio> inscritos;
-            bool grupoUnico = false;
-            var cl = db.ClasseTorneio.FirstOrDefault(x => x.torneioId == torneioId && x.Id == classeId);
-            if (cl == null)
+            try
             {
-                inscritos = new List<InscricaoTorneio>();
-            }
-            else if (cl.isDupla)
-            {
-                inscritos = db.InscricaoTorneio.Where(c => c.torneioId == torneioId && c.isAtivo && c.parceiroDuplaId != null && c.classe == classeId).ToList();
-            }
-            else
-            {
-                inscritos = db.InscricaoTorneio.Where(c => c.torneioId == torneioId && c.isAtivo && c.classe == classeId).ToList();
-            }
+                var jogo = db.Jogo.Find(Id);
+                var alterarJogosFaseGrupo = false;
+                var substituirEsteDesafiante = 0;
+                var porEsteDesafiante = 0;
+                var substituirEsteDesafiado = 0;
+                var porEsteDesafiado = 0;
+                int? porEsteDesafiante2 = null;
+                int? porEsteDesafiado2 = null;
 
-            var jogosClasseTorneio = db.Jogo.Where(x => x.classeTorneio == classeId);
-
-            var inscritosComGrupo = inscritos.Where(x => x.grupo != null).GroupBy(g => g.grupo);
-
-            if (inscritosComGrupo.Count() == 1)
-            {
-                grupoUnico = true;
-            }
-
-            #region Jogadores Fora da Tabela
-            var listaForaTabela = new List<AutoCompleteOption>();
-            foreach (var inscrito in inscritos)
-            {
-                if (!jogosClasseTorneio.Any(x => x.desafiado_id == inscrito.userId || x.desafiante_id == inscrito.userId))
+                if ((jogo?.grupoFaseGrupo > 0) && (jogo.desafiante_id != jogador1 || jogo.desafiado_id != jogador2))
                 {
-                    listaForaTabela.Add(new AutoCompleteOption("FORA DA TABELA", inscrito.participante.nome, inscrito.userId.ToString()));
-                }
-            }
-            #endregion Jogadores Fora da Tabela
+                    //Troca de jogador durante a fase de grupos
 
-            #region Remover jogador adversário
-            var jogo = jogosClasseTorneio.FirstOrDefault(x => x.Id == jogoId);
-            if (jogo != null)
-            {
-                var idJogador = ObterIdJogador(tipojogador, inscritos, jogo);
-                RemoverJogadorDaListagemJogadores(tipojogador, inscritos, jogo, idJogador);
-
-                if (grupoUnico)
-                {
-                    foreach (var jogoItem in jogosClasseTorneio)
+                    alterarJogosFaseGrupo = true;
+                    if (jogo.desafiante_id != jogador1)
                     {
-                        RemoverJogadorDaListagemJogadores(tipojogador, inscritos, jogoItem, idJogador);
+                        // não permitir trocar se o jogador já pertence a este grupo
+                        var inscricao = db.InscricaoTorneio.FirstOrDefault(i => i.userId == jogador1 && i.classe == jogo.classeTorneio);
+                        if (inscricao?.grupo == jogo.grupoFaseGrupo)
+                        {
+                            return Json(new { erro = "O jogador: " + inscricao.participante.nome + " já está em outros jogos neste grupo. Não é possível acrescentá-lo em mais jogos.", retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
+                        }
+                        substituirEsteDesafiante = (int)jogo.desafiante_id;
+                        porEsteDesafiante = jogador1;
+                        if (substituirEsteDesafiante == 10)
+                        {
+                            jogo.AlterarJogoParaPendente();
+                        }
+                    }
+                    if (jogo.desafiado_id != jogador2)
+                    {
+                        var inscricao = db.InscricaoTorneio.FirstOrDefault(i => i.userId == jogador2 && i.classe == jogo.classeTorneio);
+                        if (inscricao?.grupo == jogo.grupoFaseGrupo)
+                        {
+                            // não permitir trocar se o jogador já pertence a este grupo
+                            return Json(new { erro = "O jogador: " + inscricao.participante.nome + " já está em outros jogos neste grupo. Não é possível acrescentá-lo em mais jogos.", retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
+                        }
+                        substituirEsteDesafiado = (int)jogo.desafiado_id;
+                        porEsteDesafiado = jogador2;
+                    }
+
+                    if (porEsteDesafiante == 10 || porEsteDesafiado == 10)
+                    {
+                        //Troca de jogador por BYE
+                        if (verificarSeJaTemByeNoGrupo((int)jogo.classeTorneio, (int)jogo.grupoFaseGrupo))
+                        {
+                            return Json(new { erro = "Não é possível incluir bye neste grupo pois já existe um bye neste grupo.", retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
+                        }
+                        jogo.AlterarJogoParaBye(porEsteDesafiante == 10 ? TipoJogador.DESAFIANTE : TipoJogador.DESAFIADO);
+                    }
+
+                }
+
+                if (jogo.classe.isDupla)
+                {
+                    //Se for dupla obtém dados da dupla
+                    var dupla = db.InscricaoTorneio.FirstOrDefault(i => i.userId == jogador1 && i.classe == jogo.classeTorneio && i.parceiroDuplaId != null);
+                    if (dupla != null)
+                    {
+                        porEsteDesafiante2 = (int)dupla.parceiroDuplaId;
+                    }
+                    else
+                    {
+                        porEsteDesafiante2 = null;
+                    }
+
+                    var dupla2 = db.InscricaoTorneio.FirstOrDefault(i => i.userId == jogador2 && i.classe == jogo.classeTorneio && i.parceiroDuplaId != null);
+                    if (dupla2 != null)
+                    {
+                        porEsteDesafiado2 = (int)dupla2.parceiroDuplaId;
+                    }
+                    else
+                    {
+                        porEsteDesafiado2 = null;
                     }
                 }
-            }
-            #endregion Remover jogador adversário
 
-            var lista = new List<AutoCompleteOption>();
-            lista.Add(new AutoCompleteOption("", "bye", "10"));
-            foreach (var inscrito in inscritos.OrderBy(x => x.grupo))
-            {
-                var grupo = inscrito.grupo != null ? $"GRUPO {inscrito.grupo}" : "NA TABELA";
+                //Efetua a troca dos jogadores do jogo
+                jogo.desafiante_id = jogador1;
+                jogo.desafiante2_id = porEsteDesafiante2;
+                jogo.desafiado_id = jogador2;
+                jogo.desafiado2_id = porEsteDesafiado2;
 
-                if (cl.isDupla)
+                if (dataJogo != "")
                 {
-                    lista.Add(new AutoCompleteOption(grupo, $"{inscrito.participante.nome} / {inscrito.parceiroDupla.nome}", inscrito.userId.ToString()));
+                    jogo.dataJogo = Convert.ToDateTime(dataJogo);
+                    if (jogo.situacao_Id != 4 && jogo.situacao_Id != 5)
+                    {
+                        jogo.situacao_Id = 2;
+                    }
+                }
+
+                jogo.horaJogo = horaJogo;
+                jogo.quadra = quadra;
+                db.Entry(jogo).State = EntityState.Modified;
+                db.SaveChanges();
+                if (jogo.desafiante_id == 10)
+                {
+                    tn.MontarProximoJogoTorneio(jogo);
+                }
+
+                if (alterarJogosFaseGrupo)
+                {
+                    substituirJogadorFaseGrupo((int)jogo.grupoFaseGrupo, (int)jogo.classeTorneio, substituirEsteDesafiante, porEsteDesafiante, porEsteDesafiante2 ?? 0);
+                    substituirJogadorFaseGrupo((int)jogo.grupoFaseGrupo, (int)jogo.classeTorneio, substituirEsteDesafiado, porEsteDesafiado, porEsteDesafiado2 ?? 0);
+                    return Json(new { erro = "", retorno = 2 }, "text/plain", JsonRequestBehavior.AllowGet);
                 }
                 else
                 {
-                    lista.Add(new AutoCompleteOption(grupo, inscrito.participante.nome, inscrito.userId.ToString()));
+                    return Json(new { erro = "", retorno = 1 }, "text/plain", JsonRequestBehavior.AllowGet);
                 }
+
+
             }
-            lista.AddRange(listaForaTabela);
-            return Json(lista.ToArray(), JsonRequestBehavior.AllowGet);
+            catch (Exception ex)
+            {
+                return Json(new { erro = ex.Message, retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
+            }
         }
 
-
-        public JsonResult ObterJogadoresv2(int torneioId, int classeId = 0, int grupoId = 0)
+        public JsonResult ObterJogadores(int torneioId, int classeId = 0, int grupoId = 0)
         {
             List<InscricaoTorneio> inscritos;
             var dadosRetorno = new ListaOpcoesJogadoresModel();
@@ -4643,10 +4701,11 @@ namespace Barragem.Controllers
                 inscritos = db.InscricaoTorneio.Where(c => c.torneioId == torneioId && c.isAtivo && c.classe == classeId).ToList();
             }
 
+            var jogosClasseTorneio = db.Jogo.Where(x => x.classeTorneio == classeId && (x.grupoFaseGrupo == grupoId || grupoId == 0));
+
             #region Jogadores Fora da Tabela
-            var jogosClasseTorneio = db.Jogo.Where(x => x.classeTorneio == classeId);
             var listaForaTabela = new List<AutoCompleteOption>();
-            foreach (var inscrito in inscritos)
+            foreach (var inscrito in inscritos.OrderBy(x => x.participante.nome))
             {
                 if (!jogosClasseTorneio.Any(x => x.desafiado_id == inscrito.userId || x.desafiante_id == inscrito.userId))
                 {
@@ -4660,16 +4719,22 @@ namespace Barragem.Controllers
             lista.Add(new AutoCompleteOption("  ", "bye", "10"));
             foreach (var inscrito in inscritos.OrderBy(x => x.grupo).ThenBy(x => x.participante.nome))
             {
+                AutoCompleteOption itemInscrito;
+                var jogadorAlocadoNoGrupo = jogosClasseTorneio.Any(x => (x.desafiante_id == inscrito.userId || x.desafiado_id == inscrito.userId) && x.grupoFaseGrupo == inscrito.grupo);
+
                 var grupo = inscrito.grupo != null ? $"GRUPO {inscrito.grupo}" : "NA TABELA";
 
                 if (cl.isDupla)
                 {
-                    lista.Add(new AutoCompleteOption(grupo, $"{inscrito.participante.nome} / {inscrito.parceiroDupla.nome}", inscrito.userId.ToString()));
+                    itemInscrito = new AutoCompleteOption(grupo, $"{inscrito.participante.nome} / {inscrito.parceiroDupla.nome}", inscrito.userId.ToString());
                 }
                 else
                 {
-                    lista.Add(new AutoCompleteOption(grupo, inscrito.participante.nome, inscrito.userId.ToString()));
+                    itemInscrito = new AutoCompleteOption(grupo, inscrito.participante.nome, inscrito.userId.ToString());
                 }
+                itemInscrito.Grupo = inscrito.grupo;
+                itemInscrito.JogadorAlocado = jogadorAlocadoNoGrupo;
+                lista.Add(itemInscrito);
             }
             lista.AddRange(listaForaTabela);
 
@@ -4683,7 +4748,7 @@ namespace Barragem.Controllers
             #endregion Regra Grupo Unico
 
             dadosRetorno.OpcoesJogador = lista;
-            dadosRetorno.Jogos = jogosClasseTorneio.Select(s => new ListaOpcoesJogadoresModel.DadosJogosModel { JogoId = s.Id, IdDesafiado = s.desafiado_id, IdDesafiante = s.desafiante_id }).ToList();
+            dadosRetorno.Jogos = jogosClasseTorneio.Select(s => new ListaOpcoesJogadoresModel.DadosJogosModel { JogoId = s.Id, IdDesafiado = s.desafiado_id, IdDesafiante = s.desafiante_id, Grupo=s.grupoFaseGrupo }).ToList();
 
             return Json(dadosRetorno, JsonRequestBehavior.AllowGet);
         }

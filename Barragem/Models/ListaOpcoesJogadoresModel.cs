@@ -13,6 +13,7 @@ namespace Barragem.Models
             public int JogoId { get; set; }
             public int IdDesafiante { get; set; }
             public int IdDesafiado { get; set; }
+            public int? Grupo { get; set; }
         }
     }
 }
