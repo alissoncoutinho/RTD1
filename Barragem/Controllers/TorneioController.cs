@@ -4656,9 +4656,9 @@ namespace Barragem.Controllers
             #endregion Jogadores Fora da Tabela
 
             var lista = new List<AutoCompleteOption>();
-            lista.Add(new AutoCompleteOption("", "Aguardando adversário", "0"));
-            lista.Add(new AutoCompleteOption("", "bye", "10"));
-            foreach (var inscrito in inscritos.OrderBy(x => x.grupo))
+            lista.Add(new AutoCompleteOption("  ", "Aguardando adversário", "0"));
+            lista.Add(new AutoCompleteOption("  ", "bye", "10"));
+            foreach (var inscrito in inscritos.OrderBy(x => x.grupo).ThenBy(x => x.participante.nome))
             {
                 var grupo = inscrito.grupo != null ? $"GRUPO {inscrito.grupo}" : "NA TABELA";
 
