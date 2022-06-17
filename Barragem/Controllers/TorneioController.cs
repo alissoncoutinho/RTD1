@@ -4639,6 +4639,10 @@ namespace Barragem.Controllers
                         substituirEsteDesafiante = (int)jogo.desafiante_id;
                         porEsteDesafiante = jogador1;
 
+                        var podeEfetuarTroca = ValidarTrocaDeJogadorPermitida(inscricaoNovoJogador, substituirEsteDesafiante, porEsteDesafiante);
+                        if (podeEfetuarTroca.retorno == 0)
+                            return Json(podeEfetuarTroca, "text/plain", JsonRequestBehavior.AllowGet);
+
                         if (substituirEsteDesafiante == Constantes.Jogo.BYE)
                         {
                             jogo.AlterarJogoParaPendente();
@@ -4655,6 +4659,10 @@ namespace Barragem.Controllers
 
                         substituirEsteDesafiado = (int)jogo.desafiado_id;
                         porEsteDesafiado = jogador2;
+
+                        var podeEfetuarTroca = ValidarTrocaDeJogadorPermitida(inscricaoNovoJogador, substituirEsteDesafiado, porEsteDesafiado);
+                        if (podeEfetuarTroca.retorno == 0)
+                            return Json(podeEfetuarTroca, "text/plain", JsonRequestBehavior.AllowGet);
                     }
 
                     if (porEsteDesafiante == Constantes.Jogo.BYE || porEsteDesafiado == Constantes.Jogo.BYE)
@@ -4766,6 +4774,20 @@ namespace Barragem.Controllers
             if (inscricao?.grupo == idGrupo)
             {
                 return new ResponseMessage { erro = "O jogador: " + inscricao.participante.nome + " já está em outros jogos neste grupo. Não é possível acrescentá-lo em mais jogos.", retorno = 0 };
+            }
+            return new ResponseMessage { retorno = 1 };
+        }
+
+        private ResponseMessage ValidarTrocaDeJogadorPermitida(InscricaoTorneio inscricao, int substituirEste, int porEste)
+        {
+            int qtdeInscricoesGrupo = db.InscricaoTorneio.Count(x => x.isAtivo && x.torneioId == inscricao.torneioId && x.classe == inscricao.classe && x.grupo == inscricao.grupo);
+
+            if (qtdeInscricoesGrupo % 3 == 0)
+            {
+                if (substituirEste == Constantes.Jogo.BYE || porEste == Constantes.Jogo.BYE)
+                {
+                    return new ResponseMessage { erro = "Não é possível realizar a troca de jogador de um jogo bye com apenas 3 inscritos no grupo.", retorno = 0 };
+                }
             }
             return new ResponseMessage { retorno = 1 };
         }
