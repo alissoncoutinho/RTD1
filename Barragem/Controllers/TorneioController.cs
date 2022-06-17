@@ -2868,49 +2868,31 @@ namespace Barragem.Controllers
                 {
                     if (substituirEsteJogador == jogo.desafiante_id)
                     {
-                        jogo.desafiante_id = porEsteJogador;
-                        if (porEsteParceiroDupla > 0)
+                        if (porEsteJogador == Constantes.Jogo.BYE)
                         {
-                            jogo.desafiante2_id = porEsteParceiroDupla;
+                            jogo.AlterarJogoParaBye(TipoJogador.DESAFIANTE);
+                        }
+                        else
+                        {
+                            jogo.AlterarJogador(TipoJogador.DESAFIANTE, porEsteJogador, porEsteParceiroDupla);
                         }
                     }
                     else if (substituirEsteJogador == jogo.desafiado_id)
                     {
-                        if (porEsteJogador == 10)
+                        if (porEsteJogador == Constantes.Jogo.BYE)
                         {
-                            jogo.desafiado_id = jogo.desafiante_id;
-                            jogo.desafiante_id = porEsteJogador;
-                            if (jogo.desafiante2_id != null)
-                            {
-                                jogo.desafiado2_id = jogo.desafiante2_id;
-                                jogo.desafiante2_id = null;
-                            }
-                            jogo.situacao_Id = 5;
-                            jogo.qtddGames1setDesafiado = 6;
-                            jogo.qtddGames2setDesafiado = 6;
-                            jogo.qtddGames1setDesafiante = 1;
-                            jogo.qtddGames2setDesafiante = 1;
+                            jogo.AlterarJogoParaBye(TipoJogador.DESAFIADO);
                         }
                         else
                         {
-                            jogo.desafiado_id = porEsteJogador;
-                            if (porEsteParceiroDupla > 0)
-                            {
-                                jogo.desafiado2_id = porEsteParceiroDupla;
-                            }
+                            jogo.AlterarJogador(TipoJogador.DESAFIADO, porEsteJogador, porEsteParceiroDupla);
                         }
-
                     }
-                    if (substituirEsteJogador == 10)
+                    if (substituirEsteJogador == Constantes.Jogo.BYE)
                     {
-                        jogo.situacao_Id = 1;
-                        jogo.qtddGames1setDesafiado = 0;
-                        jogo.qtddGames2setDesafiado = 0;
-                        jogo.qtddGames1setDesafiante = 0;
-                        jogo.qtddGames2setDesafiante = 0;
-
+                        jogo.AlterarJogoParaPendente();
                     }
-                    if (!(jogo.desafiante_id == 10 && jogo.desafiado_id == 10))
+                    if (!(jogo.desafiante_id == Constantes.Jogo.BYE && jogo.desafiado_id == Constantes.Jogo.BYE))
                     {
                         db.Entry(jogo).State = EntityState.Modified;
                         db.SaveChanges();
@@ -2919,7 +2901,7 @@ namespace Barragem.Controllers
                 }
                 try
                 {
-                    if (substituirEsteJogador != 10)
+                    if (substituirEsteJogador != Constantes.Jogo.BYE)
                     {
                         var inscricao = db.InscricaoTorneio.Where(i => i.classe == classeId && i.userId == substituirEsteJogador).First();
                         if (inscricao.grupo == grupo)
@@ -2940,6 +2922,53 @@ namespace Barragem.Controllers
                     db.SaveChanges();
                 }
                 catch (Exception e) { }
+            }
+        }
+
+        private void SubstituirJogadorMataMata(int idJogo, int faseTorneio, int classeId, int substituirEsteJogador, int porEsteJogador, int porEsteParceiroDupla)
+        {
+            if (substituirEsteJogador > 0)
+            {
+                var listaJogos = db.Jogo.Where(j => j.Id != idJogo && j.grupoFaseGrupo == null && j.faseTorneio == faseTorneio && j.classeTorneio == classeId && (j.desafiante_id == substituirEsteJogador || j.desafiado_id == substituirEsteJogador)).ToList();
+                foreach (var jogo in listaJogos)
+                {
+                    if (substituirEsteJogador == jogo.desafiante_id)
+                    {
+                        if (porEsteJogador == Constantes.Jogo.BYE)
+                        {
+                            jogo.AlterarJogoParaBye(TipoJogador.DESAFIANTE);
+                        }
+                        else
+                        {
+                            jogo.AlterarJogador(TipoJogador.DESAFIANTE, porEsteJogador, porEsteParceiroDupla);
+                        }
+                    }
+                    else
+                    {
+                        if (porEsteJogador == Constantes.Jogo.BYE)
+                        {
+                            jogo.AlterarJogoParaBye(TipoJogador.DESAFIADO);
+                        }
+                        else
+                        {
+                            jogo.AlterarJogador(TipoJogador.DESAFIADO, porEsteJogador, porEsteParceiroDupla);
+                        }
+                    }
+
+                    if (substituirEsteJogador == Constantes.Jogo.BYE)
+                    {
+                        jogo.AlterarJogoParaPendente();
+                    }
+
+                    if (!(jogo.desafiante_id == Constantes.Jogo.BYE && jogo.desafiado_id == Constantes.Jogo.BYE))
+                    {
+                        db.Entry(jogo).State = EntityState.Modified;
+                        db.SaveChanges();
+
+                        //Atualiza o próximo jogo do mata
+                        tn.MontarProximoJogoTorneio(jogo);
+                    }
+                }
             }
         }
 
@@ -4571,16 +4600,29 @@ namespace Barragem.Controllers
         {
             try
             {
-                var jogo = db.Jogo.Find(Id);
-                var alterarJogosFaseGrupo = false;
-                var substituirEsteDesafiante = 0;
+                InscricaoTorneio inscricaoNovoJogador = null;
+
+                bool alterarJogosFaseGrupo = false;
+                bool alterarJogosMataMata = false;
+
+                //Dados jogador antigo
+                int substituirEsteDesafiante = 0;
+                int substituirEsteDesafiado = 0;
+                int? substituirEsteDesafiante2 = null;
+                int? substituirEsteDesafiado2 = null;
+
+                //Dados novo jogador
                 var porEsteDesafiante = 0;
-                var substituirEsteDesafiado = 0;
                 var porEsteDesafiado = 0;
                 int? porEsteDesafiante2 = null;
                 int? porEsteDesafiado2 = null;
 
-                if ((jogo?.grupoFaseGrupo > 0) && (jogo.desafiante_id != jogador1 || jogo.desafiado_id != jogador2))
+                var jogo = db.Jogo.Find(Id);
+
+                substituirEsteDesafiante2 = jogo.desafiante2_id;
+                substituirEsteDesafiado2 = jogo.desafiado2_id;
+
+                if (jogo?.grupoFaseGrupo > 0 && (jogo.desafiante_id != jogador1 || jogo.desafiado_id != jogador2))
                 {
                     //Troca de jogador durante a fase de grupos
 
@@ -4589,14 +4631,15 @@ namespace Barragem.Controllers
                     if (jogo.desafiante_id != jogador1)
                     {
                         // não permitir trocar se o jogador já pertence a este grupo
-                        var resultadoValidacao = ValidarParticipanteAlocadoMesmoGrupo(jogador1, jogo.classeTorneio, jogo.grupoFaseGrupo);
+                        inscricaoNovoJogador = ObterInscricaoJogador(jogador1, jogo.classeTorneio);
+                        var resultadoValidacao = ValidarParticipanteAlocadoMesmoGrupo(inscricaoNovoJogador, jogo.grupoFaseGrupo);
                         if (resultadoValidacao.retorno == 0)
                             return Json(resultadoValidacao, "text/plain", JsonRequestBehavior.AllowGet);
 
                         substituirEsteDesafiante = (int)jogo.desafiante_id;
                         porEsteDesafiante = jogador1;
 
-                        if (substituirEsteDesafiante == 10)
+                        if (substituirEsteDesafiante == Constantes.Jogo.BYE)
                         {
                             jogo.AlterarJogoParaPendente();
                         }
@@ -4605,7 +4648,8 @@ namespace Barragem.Controllers
 
                     if (jogo.desafiado_id != jogador2)
                     {
-                        var resultadoValidacao = ValidarParticipanteAlocadoMesmoGrupo(jogador2, jogo.classeTorneio, jogo.grupoFaseGrupo);
+                        inscricaoNovoJogador = ObterInscricaoJogador(jogador2, jogo.classeTorneio);
+                        var resultadoValidacao = ValidarParticipanteAlocadoMesmoGrupo(inscricaoNovoJogador, jogo.grupoFaseGrupo);
                         if (resultadoValidacao.retorno == 0)
                             return Json(resultadoValidacao, "text/plain", JsonRequestBehavior.AllowGet);
 
@@ -4613,16 +4657,43 @@ namespace Barragem.Controllers
                         porEsteDesafiado = jogador2;
                     }
 
-                    if (porEsteDesafiante == 10 || porEsteDesafiado == 10)
+                    if (porEsteDesafiante == Constantes.Jogo.BYE || porEsteDesafiado == Constantes.Jogo.BYE)
                     {
                         //Troca de jogador por BYE
                         var resultadoValidacao = VerificarSeJaTemByeNoGrupo((int)jogo.classeTorneio, (int)jogo.grupoFaseGrupo);
                         if (resultadoValidacao.retorno == 0)
                             return Json(resultadoValidacao, "text/plain", JsonRequestBehavior.AllowGet);
 
-                        jogo.AlterarJogoParaBye(porEsteDesafiante == 10 ? TipoJogador.DESAFIANTE : TipoJogador.DESAFIADO);
+                        jogo.AlterarJogoParaBye(porEsteDesafiante == Constantes.Jogo.BYE ? TipoJogador.DESAFIANTE : TipoJogador.DESAFIADO);
                     }
 
+                }
+                else if (jogo.grupoFaseGrupo == null && (jogo.desafiante_id != jogador1 || jogo.desafiado_id != jogador2))
+                {
+                    //MATA-MATA
+                    alterarJogosMataMata = true;
+
+                    if (jogo.desafiante_id != jogador1)
+                    {
+                        substituirEsteDesafiante = (int)jogo.desafiante_id;
+                        porEsteDesafiante = jogador1;
+
+                        if (substituirEsteDesafiante == Constantes.Jogo.BYE)
+                        {
+                            jogo.AlterarJogoParaPendente();
+                        }
+                    }
+
+                    if (jogo.desafiado_id != jogador2)
+                    {
+                        substituirEsteDesafiado = (int)jogo.desafiado_id;
+                        porEsteDesafiado = jogador2;
+                    }
+
+                    if (porEsteDesafiante == Constantes.Jogo.BYE || porEsteDesafiado == Constantes.Jogo.BYE)
+                    {
+                        jogo.AlterarJogoParaBye(porEsteDesafiante == Constantes.Jogo.BYE ? TipoJogador.DESAFIANTE : TipoJogador.DESAFIADO);
+                    }
                 }
 
                 if (jogo.classe.isDupla)
@@ -4632,10 +4703,8 @@ namespace Barragem.Controllers
                 }
 
                 //Efetua a troca dos jogadores do jogo
-                jogo.desafiante_id = jogador1;
-                jogo.desafiante2_id = porEsteDesafiante2;
-                jogo.desafiado_id = jogador2;
-                jogo.desafiado2_id = porEsteDesafiado2;
+                jogo.AlterarJogador(TipoJogador.DESAFIANTE, jogador1, porEsteDesafiante2);
+                jogo.AlterarJogador(TipoJogador.DESAFIADO, jogador2, porEsteDesafiado2);
 
                 if (dataJogo != "")
                 {
@@ -4650,7 +4719,8 @@ namespace Barragem.Controllers
                 jogo.quadra = quadra;
                 db.Entry(jogo).State = EntityState.Modified;
                 db.SaveChanges();
-                if (jogo.desafiante_id == 10)
+
+                if (jogo.desafiante_id == Constantes.Jogo.BYE)
                 {
                     tn.MontarProximoJogoTorneio(jogo);
                 }
@@ -4659,14 +4729,31 @@ namespace Barragem.Controllers
                 {
                     substituirJogadorFaseGrupo((int)jogo.grupoFaseGrupo, (int)jogo.classeTorneio, substituirEsteDesafiante, porEsteDesafiante, porEsteDesafiante2 ?? 0);
                     substituirJogadorFaseGrupo((int)jogo.grupoFaseGrupo, (int)jogo.classeTorneio, substituirEsteDesafiado, porEsteDesafiado, porEsteDesafiado2 ?? 0);
+
+                    if (inscricaoNovoJogador.grupo != jogo.grupoFaseGrupo)
+                    {
+                        //Os jogos antigos do novo jogador serão alterados para o jogador de origem
+                        substituirJogadorFaseGrupo((int)inscricaoNovoJogador.grupo, (int)jogo.classeTorneio, porEsteDesafiante, substituirEsteDesafiante, substituirEsteDesafiante2 ?? 0);
+                        substituirJogadorFaseGrupo((int)inscricaoNovoJogador.grupo, (int)jogo.classeTorneio, porEsteDesafiado, substituirEsteDesafiado, substituirEsteDesafiado2 ?? 0);
+                    }
+
+                    return Json(new { erro = "", retorno = 2 }, "text/plain", JsonRequestBehavior.AllowGet);
+                }
+                else if (alterarJogosMataMata)
+                {
+                    //Atualiza próximo jogo mata-mata conforme jogo recém atualizado
+                    tn.MontarProximoJogoTorneio(jogo);
+
+                    //Atualiza demais jogos
+                    SubstituirJogadorMataMata(jogo.Id, jogo.faseTorneio.Value, (int)jogo.classeTorneio, porEsteDesafiante, substituirEsteDesafiante, substituirEsteDesafiante2 ?? 0);
+                    SubstituirJogadorMataMata(jogo.Id, jogo.faseTorneio.Value, (int)jogo.classeTorneio, porEsteDesafiado, substituirEsteDesafiado, substituirEsteDesafiado2 ?? 0);
+
                     return Json(new { erro = "", retorno = 2 }, "text/plain", JsonRequestBehavior.AllowGet);
                 }
                 else
                 {
                     return Json(new { erro = "", retorno = 1 }, "text/plain", JsonRequestBehavior.AllowGet);
                 }
-
-
             }
             catch (Exception ex)
             {
@@ -4674,14 +4761,18 @@ namespace Barragem.Controllers
             }
         }
 
-        private ResponseMessage ValidarParticipanteAlocadoMesmoGrupo(int idJogador, int? idClasseTorneio, int? idGrupo)
+        private ResponseMessage ValidarParticipanteAlocadoMesmoGrupo(InscricaoTorneio inscricao, int? idGrupo)
         {
-            var inscricao = db.InscricaoTorneio.FirstOrDefault(i => i.userId == idJogador && i.classe == idClasseTorneio);
             if (inscricao?.grupo == idGrupo)
             {
                 return new ResponseMessage { erro = "O jogador: " + inscricao.participante.nome + " já está em outros jogos neste grupo. Não é possível acrescentá-lo em mais jogos.", retorno = 0 };
             }
             return new ResponseMessage { retorno = 1 };
+        }
+
+        public InscricaoTorneio ObterInscricaoJogador(int idJogador, int? idClasseTorneio)
+        {
+            return db.InscricaoTorneio.FirstOrDefault(i => i.userId == idJogador && i.classe == idClasseTorneio);
         }
 
         private int? ObterIdentificadorDuplaJogador(int idJogador, int? idClasseTorneio)
@@ -4730,8 +4821,8 @@ namespace Barragem.Controllers
             #endregion Jogadores Fora da Tabela
 
             var lista = new List<AutoCompleteOption>();
-            lista.Add(new AutoCompleteOption("  ", "Aguardando adversário", "0"));
-            lista.Add(new AutoCompleteOption("  ", "bye", "10"));
+            lista.Add(new AutoCompleteOption("  ", "Aguardando adversário", Constantes.Jogo.AGUARDANDO_JOGADOR.ToString()));
+            lista.Add(new AutoCompleteOption("  ", "bye", Constantes.Jogo.BYE.ToString()));
             foreach (var inscrito in inscritos.OrderBy(x => x.grupo).ThenBy(x => x.participante.nome))
             {
                 AutoCompleteOption itemInscrito;

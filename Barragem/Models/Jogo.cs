@@ -320,6 +320,35 @@ namespace Barragem.Models
                 desafiante2_id = null;
             }
         }
+
+        public void AlterarJogador(TipoJogador tipoJogadorEfetuarTroca, int idJogador, int? idJogadorDupla = null)
+        {
+            if (tipoJogadorEfetuarTroca == TipoJogador.DESAFIANTE)
+            {
+                desafiante_id = idJogador;
+                if (idJogadorDupla > 0)
+                {
+                    desafiante2_id = idJogadorDupla;
+                }
+                else
+                {
+                    desafiante2_id = null;
+                }
+            }
+            else 
+            {
+                desafiado_id = idJogador;
+                if (idJogadorDupla > 0)
+                {
+                    desafiado2_id = idJogadorDupla;
+                }
+                else
+                {
+                    desafiado2_id = null;
+                }
+            }
+            
+        }
     }
 
     public class MeuJogo
