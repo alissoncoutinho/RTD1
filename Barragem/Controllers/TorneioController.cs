@@ -5000,5 +5000,32 @@ namespace Barragem.Controllers
                 return inscritos.FirstOrDefault(x => x.userId == jogo.desafiado_id)?.userId ?? 0;
             }
         }
+
+        private List<ClasseGrupoSeguidoMataMataModel> ValidarClassesGrupoSeguidoMataMataPoucosJogadores(int torneioId, int[] classeIds)
+        {
+            var classes = new List<ClasseGrupoSeguidoMataMataModel>();
+
+            foreach (var classeId in classeIds)
+            {
+                var classe = db.ClasseTorneio.Find(classeId);
+                if (classe != null && classe.faseGrupo && classe.faseMataMata)
+                {
+                    var qtdeInscricoes = db.InscricaoTorneio.Count(x => x.isAtivo == true && x.torneioId == torneioId && x.classe == classeId);
+
+                    if (qtdeInscricoes <= 5)
+                    {
+                        classes.Add(new ClasseGrupoSeguidoMataMataModel()
+                        {
+                            IdClasse = classe.Id,
+                            IdTorneio = torneioId,
+                            NomeClasse = classe.nome,
+                            QtdeInscricoes = qtdeInscricoes
+                        });
+                    }
+                }
+            }
+            return classes;
+        }
+
     }
 }
