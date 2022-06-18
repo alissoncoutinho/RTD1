@@ -465,7 +465,7 @@ function ObterIdJogador(opcoesJogador, jogo, tipojogador) {
 
 
 $(document).mouseup(function (el) {
-    if (el.target.classList.contains("jdropdown-header") == false) {
+    if (el.target.classList.contains("jdropdown-header") == false && el.target.classList.contains("jdropdown-content") == false) {
         for (var i = 0; i < jogadoresDropDownList.length; i++) {
             var dropdownItem = jogadoresDropDownList[i][1];
             if (el.id != jogadoresDropDownList[i][0].id && dropdownItem.options.opened == true) {

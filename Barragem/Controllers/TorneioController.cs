@@ -4600,8 +4600,6 @@ namespace Barragem.Controllers
         {
             try
             {
-                InscricaoTorneio inscricaoNovoJogador = null;
-
                 bool alterarJogosFaseGrupo = false;
                 bool alterarJogosMataMata = false;
 
@@ -4617,6 +4615,9 @@ namespace Barragem.Controllers
                 int? porEsteDesafiante2 = null;
                 int? porEsteDesafiado2 = null;
 
+                int? grupoPorEsteDesafiante = 0;
+                int? grupoPorEsteDesafiado = 0;
+
                 var jogo = db.Jogo.Find(Id);
 
                 substituirEsteDesafiante2 = jogo.desafiante2_id;
@@ -4631,7 +4632,9 @@ namespace Barragem.Controllers
                     if (jogo.desafiante_id != jogador1)
                     {
                         // não permitir trocar se o jogador já pertence a este grupo
-                        inscricaoNovoJogador = ObterInscricaoJogador(jogador1, jogo.classeTorneio);
+                        var inscricaoNovoJogador = ObterInscricaoJogador(jogador1, jogo.classeTorneio);
+                        grupoPorEsteDesafiante = inscricaoNovoJogador?.grupo;
+
                         var resultadoValidacao = ValidarParticipanteAlocadoMesmoGrupo(inscricaoNovoJogador, jogo.grupoFaseGrupo);
                         if (resultadoValidacao.retorno == 0)
                             return Json(resultadoValidacao, "text/plain", JsonRequestBehavior.AllowGet);
@@ -4639,7 +4642,7 @@ namespace Barragem.Controllers
                         substituirEsteDesafiante = (int)jogo.desafiante_id;
                         porEsteDesafiante = jogador1;
 
-                        var podeEfetuarTroca = ValidarTrocaDeJogadorPermitida(inscricaoNovoJogador, substituirEsteDesafiante, porEsteDesafiante);
+                        var podeEfetuarTroca = ValidarTrocaDeJogadorPermitida(jogo.torneioId.Value, jogo.classeTorneio.Value, jogo.grupoFaseGrupo, inscricaoNovoJogador?.grupo, substituirEsteDesafiante, porEsteDesafiante);
                         if (podeEfetuarTroca.retorno == 0)
                             return Json(podeEfetuarTroca, "text/plain", JsonRequestBehavior.AllowGet);
 
@@ -4652,7 +4655,8 @@ namespace Barragem.Controllers
 
                     if (jogo.desafiado_id != jogador2)
                     {
-                        inscricaoNovoJogador = ObterInscricaoJogador(jogador2, jogo.classeTorneio);
+                        var inscricaoNovoJogador = ObterInscricaoJogador(jogador2, jogo.classeTorneio);
+                        grupoPorEsteDesafiado = inscricaoNovoJogador?.grupo;
                         var resultadoValidacao = ValidarParticipanteAlocadoMesmoGrupo(inscricaoNovoJogador, jogo.grupoFaseGrupo);
                         if (resultadoValidacao.retorno == 0)
                             return Json(resultadoValidacao, "text/plain", JsonRequestBehavior.AllowGet);
@@ -4660,7 +4664,9 @@ namespace Barragem.Controllers
                         substituirEsteDesafiado = (int)jogo.desafiado_id;
                         porEsteDesafiado = jogador2;
 
-                        var podeEfetuarTroca = ValidarTrocaDeJogadorPermitida(inscricaoNovoJogador, substituirEsteDesafiado, porEsteDesafiado);
+                        var grupoId = inscricaoNovoJogador == null ? jogo.grupoFaseGrupo : inscricaoNovoJogador.grupo;
+
+                        var podeEfetuarTroca = ValidarTrocaDeJogadorPermitida(jogo.torneioId.Value, jogo.classeTorneio.Value, jogo.grupoFaseGrupo, inscricaoNovoJogador?.grupo, substituirEsteDesafiado, porEsteDesafiado);
                         if (podeEfetuarTroca.retorno == 0)
                             return Json(podeEfetuarTroca, "text/plain", JsonRequestBehavior.AllowGet);
                     }
@@ -4735,14 +4741,16 @@ namespace Barragem.Controllers
 
                 if (alterarJogosFaseGrupo)
                 {
+                    //substitui o jogador nos jogos do grupo
                     substituirJogadorFaseGrupo((int)jogo.grupoFaseGrupo, (int)jogo.classeTorneio, substituirEsteDesafiante, porEsteDesafiante, porEsteDesafiante2 ?? 0);
                     substituirJogadorFaseGrupo((int)jogo.grupoFaseGrupo, (int)jogo.classeTorneio, substituirEsteDesafiado, porEsteDesafiado, porEsteDesafiado2 ?? 0);
 
-                    if (inscricaoNovoJogador.grupo != jogo.grupoFaseGrupo)
+                    //Em caso de ter sido efetuada a troca de jogador por outro que estava em outro grupo
+                    if ((grupoPorEsteDesafiante > 0 && grupoPorEsteDesafiante != jogo.grupoFaseGrupo) || (grupoPorEsteDesafiado > 0 && grupoPorEsteDesafiado != jogo.grupoFaseGrupo))
                     {
                         //Os jogos antigos do novo jogador serão alterados para o jogador de origem
-                        substituirJogadorFaseGrupo((int)inscricaoNovoJogador.grupo, (int)jogo.classeTorneio, porEsteDesafiante, substituirEsteDesafiante, substituirEsteDesafiante2 ?? 0);
-                        substituirJogadorFaseGrupo((int)inscricaoNovoJogador.grupo, (int)jogo.classeTorneio, porEsteDesafiado, substituirEsteDesafiado, substituirEsteDesafiado2 ?? 0);
+                        substituirJogadorFaseGrupo(grupoPorEsteDesafiante.HasValue ? grupoPorEsteDesafiante.Value : 0, (int)jogo.classeTorneio, porEsteDesafiante, substituirEsteDesafiante, substituirEsteDesafiante2 ?? 0);
+                        substituirJogadorFaseGrupo(grupoPorEsteDesafiado.HasValue ? grupoPorEsteDesafiado.Value : 0, (int)jogo.classeTorneio, porEsteDesafiado, substituirEsteDesafiado, substituirEsteDesafiado2 ?? 0);
                     }
 
                     return Json(new { erro = "", retorno = 2 }, "text/plain", JsonRequestBehavior.AllowGet);
@@ -4778,9 +4786,17 @@ namespace Barragem.Controllers
             return new ResponseMessage { retorno = 1 };
         }
 
-        private ResponseMessage ValidarTrocaDeJogadorPermitida(InscricaoTorneio inscricao, int substituirEste, int porEste)
+        private ResponseMessage ValidarTrocaDeJogadorPermitida(int torneioId, int classeId, int? grupoIdJogo, int? grupoIdInscrito, int substituirEste, int porEste)
         {
-            int qtdeInscricoesGrupo = db.InscricaoTorneio.Count(x => x.isAtivo && x.torneioId == inscricao.torneioId && x.classe == inscricao.classe && x.grupo == inscricao.grupo);
+            if (grupoIdJogo == grupoIdInscrito || (grupoIdInscrito == null && porEste == Constantes.Jogo.BYE) || (grupoIdInscrito == null && porEste != Constantes.Jogo.BYE))
+            {
+                //validar a qtde de inscritos somente se o grupo do jogo for diferente do grupo do "porEste" e caso o grupo for nulo (no caso de não ter encontrado o inscrito pq é bye tbm não validar..
+                return new ResponseMessage { retorno = 1 };
+            }
+
+            int grupo = grupoIdInscrito.HasValue ? grupoIdInscrito.Value : grupoIdJogo.Value;
+
+            int qtdeInscricoesGrupo = db.InscricaoTorneio.Count(x => x.isAtivo && x.torneioId == torneioId && x.classe == classeId && x.grupo == grupo);
 
             if (qtdeInscricoesGrupo % 3 == 0)
             {
@@ -4850,19 +4866,22 @@ namespace Barragem.Controllers
                 AutoCompleteOption itemInscrito;
                 var jogadorAlocadoNoGrupo = jogosClasseTorneio.Any(x => (x.desafiante_id == inscrito.userId || x.desafiado_id == inscrito.userId) && x.grupoFaseGrupo == inscrito.grupo);
 
-                var grupo = inscrito.grupo != null ? $"GRUPO {inscrito.grupo}" : "NA TABELA";
+                if (jogosClasseTorneio.Any(x => x.desafiado_id == inscrito.userId || x.desafiante_id == inscrito.userId))
+                {
+                    var grupo = (inscrito.grupo != null && inscrito.grupo > 0) ? $"GRUPO {inscrito.grupo}" : "NA TABELA";
 
-                if (cl.isDupla)
-                {
-                    itemInscrito = new AutoCompleteOption(grupo, $"{inscrito.participante.nome} / {inscrito.parceiroDupla.nome}", inscrito.userId.ToString());
+                    if (cl.isDupla)
+                    {
+                        itemInscrito = new AutoCompleteOption(grupo, $"{inscrito.participante.nome} / {inscrito.parceiroDupla.nome}", inscrito.userId.ToString());
+                    }
+                    else
+                    {
+                        itemInscrito = new AutoCompleteOption(grupo, inscrito.participante.nome, inscrito.userId.ToString());
+                    }
+                    itemInscrito.Grupo = inscrito.grupo;
+                    itemInscrito.JogadorAlocado = jogadorAlocadoNoGrupo;
+                    lista.Add(itemInscrito);
                 }
-                else
-                {
-                    itemInscrito = new AutoCompleteOption(grupo, inscrito.participante.nome, inscrito.userId.ToString());
-                }
-                itemInscrito.Grupo = inscrito.grupo;
-                itemInscrito.JogadorAlocado = jogadorAlocadoNoGrupo;
-                lista.Add(itemInscrito);
             }
             lista.AddRange(listaForaTabela);
 
