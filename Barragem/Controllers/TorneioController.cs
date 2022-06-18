@@ -4825,7 +4825,8 @@ namespace Barragem.Controllers
         {
             List<InscricaoTorneio> inscritos;
             var dadosRetorno = new ListaOpcoesJogadoresModel();
-
+            bool classeMataMata = false;
+            bool classeFaseGrupo = false;
             var cl = db.ClasseTorneio.FirstOrDefault(x => x.torneioId == torneioId && x.Id == classeId);
             if (cl == null)
             {
@@ -4834,10 +4835,14 @@ namespace Barragem.Controllers
             else if (cl.isDupla)
             {
                 inscritos = db.InscricaoTorneio.Where(c => c.torneioId == torneioId && c.isAtivo && c.parceiroDuplaId != null && c.classe == classeId && (c.grupo == grupoId || grupoId == 0)).ToList();
+                classeMataMata = cl.faseMataMata;
+                classeFaseGrupo = cl.faseGrupo;
             }
             else
             {
                 inscritos = db.InscricaoTorneio.Where(c => c.torneioId == torneioId && c.isAtivo && c.classe == classeId && (c.grupo == grupoId || grupoId == 0)).ToList();
+                classeMataMata = cl.faseMataMata;
+                classeFaseGrupo = cl.faseGrupo;
             }
 
             var jogosClasseTorneio = db.Jogo.Where(x => x.classeTorneio == classeId && (x.grupoFaseGrupo == grupoId || grupoId == 0));
@@ -4853,43 +4858,81 @@ namespace Barragem.Controllers
             }
             #endregion Jogadores Fora da Tabela
 
-            var lista = new List<AutoCompleteOption>();
-            lista.Add(new AutoCompleteOption("  ", "Aguardando adversário", Constantes.Jogo.AGUARDANDO_JOGADOR.ToString()));
-            lista.Add(new AutoCompleteOption("  ", "bye", Constantes.Jogo.BYE.ToString()));
-            foreach (var inscrito in inscritos.OrderBy(x => x.grupo).ThenBy(x => x.participante.nome))
-            {
-                AutoCompleteOption itemInscrito;
-                var jogadorAlocadoNoGrupo = jogosClasseTorneio.Any(x => (x.desafiante_id == inscrito.userId || x.desafiado_id == inscrito.userId) && x.grupoFaseGrupo == inscrito.grupo);
+            var listaFG = new List<AutoCompleteOption>();
+            var listaMM = new List<AutoCompleteOption>();
 
-                if (jogosClasseTorneio.Any(x => x.desafiado_id == inscrito.userId || x.desafiante_id == inscrito.userId))
+            if (classeMataMata)
+            {
+                listaMM.Add(new AutoCompleteOption("  ", "Aguardando adversário", Constantes.Jogo.AGUARDANDO_JOGADOR.ToString()));
+                listaMM.Add(new AutoCompleteOption("  ", "bye", Constantes.Jogo.BYE.ToString()));
+
+                foreach (var inscrito in inscritos.OrderBy(x => x.participante.nome))
                 {
-                    var grupo = (inscrito.grupo != null && inscrito.grupo > 0) ? $"GRUPO {inscrito.grupo}" : "NA TABELA";
+                    AutoCompleteOption itemInscrito;
 
-                    if (cl.isDupla)
+                    if (jogosClasseTorneio.Any(x => (x.desafiado_id == inscrito.userId || x.desafiante_id == inscrito.userId) && x.grupoFaseGrupo == null))
                     {
-                        itemInscrito = new AutoCompleteOption(grupo, $"{inscrito.participante.nome} / {inscrito.parceiroDupla.nome}", inscrito.userId.ToString());
+                        var grupo = "NA TABELA";
+
+                        if (cl.isDupla)
+                        {
+                            itemInscrito = new AutoCompleteOption(grupo, $"{inscrito.participante.nome} / {inscrito.parceiroDupla.nome}", inscrito.userId.ToString());
+                        }
+                        else
+                        {
+                            itemInscrito = new AutoCompleteOption(grupo, inscrito.participante.nome, inscrito.userId.ToString());
+                        }
+
+                        itemInscrito.Grupo = inscrito.grupo;
+                        itemInscrito.JogadorAlocado = false;
+                        listaMM.Add(itemInscrito);
                     }
-                    else
-                    {
-                        itemInscrito = new AutoCompleteOption(grupo, inscrito.participante.nome, inscrito.userId.ToString());
-                    }
-                    itemInscrito.Grupo = inscrito.grupo;
-                    itemInscrito.JogadorAlocado = jogadorAlocadoNoGrupo;
-                    lista.Add(itemInscrito);
                 }
+                listaMM.AddRange(listaForaTabela);
             }
-            lista.AddRange(listaForaTabela);
 
-            #region Regra Grupo Unico
-            var inscritosComGrupo = inscritos.Where(x => x.grupo != null).GroupBy(g => g.grupo);
-
-            if (inscritosComGrupo.Count() == 1)
+            if (classeFaseGrupo)
             {
-                dadosRetorno.EhGrupoUnico = true;
-            }
-            #endregion Regra Grupo Unico
+                listaFG.Add(new AutoCompleteOption("  ", "Aguardando adversário", Constantes.Jogo.AGUARDANDO_JOGADOR.ToString()));
+                listaFG.Add(new AutoCompleteOption("  ", "bye", Constantes.Jogo.BYE.ToString()));
 
-            dadosRetorno.OpcoesJogador = lista;
+                foreach (var inscrito in inscritos.OrderBy(x => x.grupo).ThenBy(x => x.participante.nome))
+                {
+                    AutoCompleteOption itemInscrito;
+                    var jogadorAlocadoNoGrupo = jogosClasseTorneio.Any(x => (x.desafiante_id == inscrito.userId || x.desafiado_id == inscrito.userId) && x.grupoFaseGrupo == inscrito.grupo);
+
+                    if (jogosClasseTorneio.Any(x => x.desafiado_id == inscrito.userId || x.desafiante_id == inscrito.userId))
+                    {
+                        var grupo = (inscrito.grupo != null && inscrito.grupo > 0) ? $"GRUPO {inscrito.grupo}" : "NA TABELA";
+
+                        if (cl.isDupla)
+                        {
+                            itemInscrito = new AutoCompleteOption(grupo, $"{inscrito.participante.nome} / {inscrito.parceiroDupla.nome}", inscrito.userId.ToString());
+                        }
+                        else
+                        {
+                            itemInscrito = new AutoCompleteOption(grupo, inscrito.participante.nome, inscrito.userId.ToString());
+                        }
+                        itemInscrito.Grupo = inscrito.grupo;
+                        itemInscrito.JogadorAlocado = jogadorAlocadoNoGrupo;
+                        listaFG.Add(itemInscrito);
+                    }
+                }
+
+                listaFG.AddRange(listaForaTabela);
+
+                #region Regra Grupo Unico
+                var inscritosComGrupo = inscritos.Where(x => x.grupo != null).GroupBy(g => g.grupo);
+
+                if (inscritosComGrupo.Count() == 1)
+                {
+                    dadosRetorno.EhGrupoUnico = true;
+                }
+                #endregion Regra Grupo Unico
+            }
+
+            dadosRetorno.OpcoesJogador = listaFG;
+            dadosRetorno.OpcoesJogadorMataMata = listaMM;
             dadosRetorno.Jogos = jogosClasseTorneio.Select(s => new ListaOpcoesJogadoresModel.DadosJogosModel { JogoId = s.Id, IdDesafiado = s.desafiado_id, IdDesafiante = s.desafiante_id, Grupo = s.grupoFaseGrupo }).ToList();
 
             return Json(dadosRetorno, JsonRequestBehavior.AllowGet);

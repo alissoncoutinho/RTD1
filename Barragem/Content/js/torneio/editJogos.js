@@ -411,38 +411,74 @@ function FiltrarOpcoesJogadores(dadosJogadores, idJogo, tipojogador) {
     if (dadosJogo != null) {
 
         var copiaOpcoesJogador = dadosJogadores.OpcoesJogador.slice();
+        var copiaOpcoesJogadorMataMata = dadosJogadores.OpcoesJogadorMataMata.slice();
 
         var idJogador = ObterIdJogador(copiaOpcoesJogador, dadosJogo, tipojogador);
 
-        var i = copiaOpcoesJogador.length;
-        while (i--) {
-            if (dadosJogadores.EhGrupoUnico) {
-                //2) Regra exibir apenas jogadores FORA DA TABELA e bye
-                if (copiaOpcoesJogador[i].group != "FORA DA TABELA" && copiaOpcoesJogador[i].value != 10 && copiaOpcoesJogador[i].value != idJogador) {
-                    copiaOpcoesJogador.splice(i, 1);
+        var jogoMataMata = dadosJogo.Grupo == null;
+
+        if (jogoMataMata) {
+            var i = copiaOpcoesJogadorMataMata.length;
+            while (i--) {
+                
+                if (idJogador != copiaOpcoesJogadorMataMata[i].value && copiaOpcoesJogadorMataMata[i].JogadorAlocado && dadosJogo.Grupo != null && dadosJogo.Grupo == copiaOpcoesJogador[i].Grupo) {
+                    copiaOpcoesJogadorMataMata.splice(i, 1);
+                }
+                else if (tipojogador == "desafiante" && copiaOpcoesJogadorMataMata[i].value != 0) {
+                    if (copiaOpcoesJogadorMataMata[i].value == dadosJogo.IdDesafiado && dadosJogo.IdDesafiado != 10 && dadosJogo.IdDesafiado != 0) {
+                        copiaOpcoesJogadorMataMata.splice(i, 1);
+                    }
+                }
+                else if (idJogador > 0 && copiaOpcoesJogadorMataMata[i].value == 0) {
+                    //3) Remover opção Aguardando adversário caso tenha algum jogador já selecionado
+                    copiaOpcoesJogadorMataMata.splice(i, 1);
+                }
+                else if (tipojogador == "desafiado" && copiaOpcoesJogadorMataMata[i].value != 0) {
+                    if (copiaOpcoesJogadorMataMata[i].value == dadosJogo.IdDesafiante && dadosJogo.IdDesafiante != 10 && dadosJogo.IdDesafiante != 0) {
+                        copiaOpcoesJogadorMataMata.splice(i, 1);
+                    }
                 }
             }
-            else if (idJogador != copiaOpcoesJogador[i].value && copiaOpcoesJogador[i].JogadorAlocado && dadosJogo.Grupo != null && dadosJogo.Grupo == copiaOpcoesJogador[i].Grupo) {
-                copiaOpcoesJogador.splice(i, 1);
-            }
-            else if (tipojogador == "desafiante" && copiaOpcoesJogador[i].value != 0) {
-                if (copiaOpcoesJogador[i].value == dadosJogo.IdDesafiado && dadosJogo.IdDesafiado != 10 && dadosJogo.IdDesafiado != 0) {
+
+            return copiaOpcoesJogadorMataMata;
+        }
+        else {
+
+            var i = copiaOpcoesJogador.length;
+            while (i--) {
+                if (dadosJogo.Grupo == null && copiaOpcoesJogador[i].group != "  " && copiaOpcoesJogador[i].group != "FORA DA TABELA") {
+                    //Quando for mata-mata altera nome para NA TABELA
+                    copiaOpcoesJogador[i].group = "NA TABELA";
+                }
+
+                if (dadosJogadores.EhGrupoUnico) {
+                    //2) Regra exibir apenas jogadores FORA DA TABELA e bye
+                    if (copiaOpcoesJogador[i].group != "FORA DA TABELA" && copiaOpcoesJogador[i].value != 10 && copiaOpcoesJogador[i].value != idJogador) {
+                        copiaOpcoesJogador.splice(i, 1);
+                    }
+                }
+                else if (idJogador != copiaOpcoesJogador[i].value && copiaOpcoesJogador[i].JogadorAlocado && dadosJogo.Grupo != null && dadosJogo.Grupo == copiaOpcoesJogador[i].Grupo) {
                     copiaOpcoesJogador.splice(i, 1);
                 }
-            }
-            else if (idJogador > 0 && copiaOpcoesJogador[i].value == 0) {
-                //3) Remover opção Aguardando adversário caso tenha algum jogador já selecionado
-                copiaOpcoesJogador.splice(i, 1);
-            }
-            else if (tipojogador == "desafiado" && copiaOpcoesJogador[i].value != 0) {
-                if (copiaOpcoesJogador[i].value == dadosJogo.IdDesafiante && dadosJogo.IdDesafiante != 10 && dadosJogo.IdDesafiante != 0) {
+                else if (tipojogador == "desafiante" && copiaOpcoesJogador[i].value != 0) {
+                    if (copiaOpcoesJogador[i].value == dadosJogo.IdDesafiado && dadosJogo.IdDesafiado != 10 && dadosJogo.IdDesafiado != 0) {
+                        copiaOpcoesJogador.splice(i, 1);
+                    }
+                }
+                else if (idJogador > 0 && copiaOpcoesJogador[i].value == 0) {
+                    //3) Remover opção Aguardando adversário caso tenha algum jogador já selecionado
                     copiaOpcoesJogador.splice(i, 1);
                 }
+                else if (tipojogador == "desafiado" && copiaOpcoesJogador[i].value != 0) {
+                    if (copiaOpcoesJogador[i].value == dadosJogo.IdDesafiante && dadosJogo.IdDesafiante != 10 && dadosJogo.IdDesafiante != 0) {
+                        copiaOpcoesJogador.splice(i, 1);
+                    }
+                }
             }
+
+            return copiaOpcoesJogador;
         }
     }
-
-    return copiaOpcoesJogador;
 }
 
 function ObterIdJogador(opcoesJogador, jogo, tipojogador) {
