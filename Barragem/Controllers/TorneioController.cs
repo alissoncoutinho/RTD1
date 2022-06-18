@@ -4645,7 +4645,15 @@ namespace Barragem.Controllers
                         {
                             jogo.AlterarJogoParaPendente();
                         }
-                        // TODO: E SE AO INVES DO BYE FOSSE OUTRO JOGADOR? NAO DEVERIA TAMBEM VOLTAR PARA PENDENTE?
+
+                        var resultadoValidacaoJogo = ValidarExistenciaJogosFinalizados(substituirEsteDesafiante, jogo.desafiante.nome, jogo.torneioId.Value, jogo.classeTorneio.Value, false);
+                        if (resultadoValidacaoJogo.retorno == 0)
+                            return Json(resultadoValidacaoJogo, "text/plain", JsonRequestBehavior.AllowGet);
+
+                        resultadoValidacaoJogo = ValidarExistenciaJogosFinalizados(porEsteDesafiante, inscricaoNovoJogador.participante.nome, jogo.torneioId.Value, jogo.classeTorneio.Value, false);
+                        if (resultadoValidacaoJogo.retorno == 0)
+                            return Json(resultadoValidacaoJogo, "text/plain", JsonRequestBehavior.AllowGet);
+
                     }
 
                     if (jogo.desafiado_id != jogador2)
@@ -4664,6 +4672,15 @@ namespace Barragem.Controllers
                         var podeEfetuarTroca = ValidarTrocaDeJogadorPermitida(jogo.torneioId.Value, jogo.classeTorneio.Value, jogo.grupoFaseGrupo, inscricaoNovoJogador?.grupo, substituirEsteDesafiado, porEsteDesafiado);
                         if (podeEfetuarTroca.retorno == 0)
                             return Json(podeEfetuarTroca, "text/plain", JsonRequestBehavior.AllowGet);
+
+                        var resultadoValidacaoJogo = ValidarExistenciaJogosFinalizados(substituirEsteDesafiado, jogo.desafiado.nome, jogo.torneioId.Value, jogo.classeTorneio.Value, false);
+                        if (resultadoValidacaoJogo.retorno == 0)
+                            return Json(resultadoValidacaoJogo, "text/plain", JsonRequestBehavior.AllowGet);
+
+                        resultadoValidacaoJogo = ValidarExistenciaJogosFinalizados(porEsteDesafiado, inscricaoNovoJogador.participante.nome, jogo.torneioId.Value, jogo.classeTorneio.Value, false);
+                        if (resultadoValidacaoJogo.retorno == 0)
+                            return Json(resultadoValidacaoJogo, "text/plain", JsonRequestBehavior.AllowGet);
+
                     }
 
                     if (porEsteDesafiante == Constantes.Jogo.BYE || porEsteDesafiado == Constantes.Jogo.BYE)
@@ -4781,9 +4798,23 @@ namespace Barragem.Controllers
             return new ResponseMessage { retorno = 1 };
         }
 
+        private ResponseMessage ValidarExistenciaJogosFinalizados(int userId, string nomeParticipante, int torneioId, int classeId, bool ehMataMata)
+        {
+            var possuiJogosFinalizados = db.Jogo.Any(j => (j.desafiado_id == userId || j.desafiante_id == userId) && j.desafiante_id != 10
+                       && (j.situacao_Id == 5 || j.situacao_Id == 4 || j.situacao_Id == 6)
+                       && ((j.grupoFaseGrupo == null && ehMataMata) || (j.grupoFaseGrupo != null && !ehMataMata))
+                       && j.torneioId == torneioId && j.classeTorneio == classeId);
+
+            if (possuiJogosFinalizados)
+            {
+                return new ResponseMessage { erro = $"O jogador: {nomeParticipante} já possui jogos finalizados. Não é possível alterá-lo.", retorno = 0 };
+            }
+            return new ResponseMessage { retorno = 1 };
+        }
+
         private ResponseMessage ValidarTrocaDeJogadorPermitida(int torneioId, int classeId, int? grupoIdJogo, int? grupoIdInscrito, int substituirEste, int porEste)
         {
-            if (grupoIdJogo == grupoIdInscrito || (grupoIdInscrito == null && porEste == Constantes.Jogo.BYE) || (grupoIdInscrito == null && porEste != Constantes.Jogo.BYE))
+            if (grupoIdJogo == grupoIdInscrito || grupoIdInscrito == null)
             {
                 //validar a qtde de inscritos somente se o grupo do jogo for diferente do grupo do "porEste" e caso o grupo for nulo (no caso de não ter encontrado o inscrito pq é bye tbm não validar..
                 return new ResponseMessage { retorno = 1 };
