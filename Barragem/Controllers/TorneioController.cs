@@ -5001,30 +5001,38 @@ namespace Barragem.Controllers
             }
         }
 
-        private List<ClasseGrupoSeguidoMataMataModel> ValidarClassesGrupoSeguidoMataMataPoucosJogadores(int torneioId, int[] classeIds)
+
+        [HttpGet]
+        public JsonResult ValidarClassesGrupoSeguidoMataMataPoucosJogadores(int torneioId, int[] classeIds)
         {
             var classes = new List<ClasseGrupoSeguidoMataMataModel>();
-
-            foreach (var classeId in classeIds)
+            try
             {
-                var classe = db.ClasseTorneio.Find(classeId);
-                if (classe != null && classe.faseGrupo && classe.faseMataMata)
+                foreach (var classeId in classeIds)
                 {
-                    var qtdeInscricoes = db.InscricaoTorneio.Count(x => x.isAtivo == true && x.torneioId == torneioId && x.classe == classeId);
-
-                    if (qtdeInscricoes <= 5)
+                    var classe = db.ClasseTorneio.Find(classeId);
+                    if (classe != null && classe.faseGrupo && classe.faseMataMata)
                     {
-                        classes.Add(new ClasseGrupoSeguidoMataMataModel()
+                        var qtdeInscricoes = db.InscricaoTorneio.Count(x => x.isAtivo == true && x.torneioId == torneioId && x.classe == classeId);
+
+                        if (qtdeInscricoes <= 5)
                         {
-                            IdClasse = classe.Id,
-                            IdTorneio = torneioId,
-                            NomeClasse = classe.nome,
-                            QtdeInscricoes = qtdeInscricoes
-                        });
+                            classes.Add(new ClasseGrupoSeguidoMataMataModel()
+                            {
+                                IdClasse = classe.Id,
+                                IdTorneio = torneioId,
+                                NomeClasse = classe.nome,
+                                QtdeInscricoes = qtdeInscricoes
+                            });
+                        }
                     }
                 }
+                return Json(new { erro = "", retorno = "OK", data = classes }, "text/plain", JsonRequestBehavior.AllowGet);
             }
-            return classes;
+            catch (Exception ex)
+            {
+                return Json(new { erro = ex.Message, retorno = "ERRO" }, "text/plain", JsonRequestBehavior.AllowGet);
+            }
         }
 
     }
