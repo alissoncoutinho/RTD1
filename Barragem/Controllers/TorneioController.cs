@@ -2854,11 +2854,6 @@ namespace Barragem.Controllers
             }
         }
 
-        private Jogo ObterJogoAnteriorDoJogador(int idJogador, TipoJogador tipoJogador, int classeId, int grupo)
-        {
-            return db.Jogo.FirstOrDefault(j => ((j.desafiante_id == idJogador && tipoJogador == TipoJogador.DESAFIANTE) || (j.desafiado_id == idJogador && tipoJogador == TipoJogador.DESAFIADO)) && j.classeTorneio == classeId && j.grupoFaseGrupo == grupo);
-        }
-
         private void substituirJogadorFaseGrupo(int grupo, int classeId, int substituirEsteJogador, int porEsteJogador, int porEsteParceiroDupla)
         {
             if (substituirEsteJogador > 0)
@@ -4536,7 +4531,7 @@ namespace Barragem.Controllers
             }
         }
 
-        //[Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
+        [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
         public ActionResult EditJogosV2(int torneioId, int fClasse = 0, string fData = "", string fNomeJogador = "", string fGrupo = "0", int fase = 0)
         {
             var jogosTorneio = db.Jogo.Where(i => i.torneioId == torneioId);
