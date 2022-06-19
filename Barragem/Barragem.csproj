@@ -1179,6 +1179,7 @@
     <Content Include="Views\Torneio\_PartialLancarPlacarJogo.cshtml" />
     <Content Include="Views\Torneio\EditJogosV2.cshtml" />
     <Content Include="Views\Torneio\TesteDropDown.cshtml" />
+    <Content Include="Views\Torneio\_PartialAcaoClassesPoucosJogadores.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
