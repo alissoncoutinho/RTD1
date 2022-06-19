@@ -4646,11 +4646,11 @@ namespace Barragem.Controllers
                             jogo.AlterarJogoParaPendente();
                         }
 
-                        var resultadoValidacaoJogo = ValidarExistenciaJogosFinalizados(substituirEsteDesafiante, jogo.desafiante.nome, jogo.torneioId.Value, jogo.classeTorneio.Value, false);
+                        var resultadoValidacaoJogo = ValidarExistenciaJogosFinalizados(substituirEsteDesafiante, jogo.desafiante.nome, jogo.torneioId.Value, jogo.classeTorneio.Value, false, false);
                         if (resultadoValidacaoJogo.retorno == 0)
                             return Json(resultadoValidacaoJogo, "text/plain", JsonRequestBehavior.AllowGet);
 
-                        resultadoValidacaoJogo = ValidarExistenciaJogosFinalizados(porEsteDesafiante, inscricaoNovoJogador.participante.nome, jogo.torneioId.Value, jogo.classeTorneio.Value, false);
+                        resultadoValidacaoJogo = ValidarExistenciaJogosFinalizados(porEsteDesafiante, inscricaoNovoJogador?.participante.nome, jogo.torneioId.Value, jogo.classeTorneio.Value, false, true);
                         if (resultadoValidacaoJogo.retorno == 0)
                             return Json(resultadoValidacaoJogo, "text/plain", JsonRequestBehavior.AllowGet);
 
@@ -4673,11 +4673,11 @@ namespace Barragem.Controllers
                         if (podeEfetuarTroca.retorno == 0)
                             return Json(podeEfetuarTroca, "text/plain", JsonRequestBehavior.AllowGet);
 
-                        var resultadoValidacaoJogo = ValidarExistenciaJogosFinalizados(substituirEsteDesafiado, jogo.desafiado.nome, jogo.torneioId.Value, jogo.classeTorneio.Value, false);
+                        var resultadoValidacaoJogo = ValidarExistenciaJogosFinalizados(substituirEsteDesafiado, jogo.desafiado.nome, jogo.torneioId.Value, jogo.classeTorneio.Value, false, false);
                         if (resultadoValidacaoJogo.retorno == 0)
                             return Json(resultadoValidacaoJogo, "text/plain", JsonRequestBehavior.AllowGet);
 
-                        resultadoValidacaoJogo = ValidarExistenciaJogosFinalizados(porEsteDesafiado, inscricaoNovoJogador.participante.nome, jogo.torneioId.Value, jogo.classeTorneio.Value, false);
+                        resultadoValidacaoJogo = ValidarExistenciaJogosFinalizados(porEsteDesafiado, inscricaoNovoJogador?.participante.nome, jogo.torneioId.Value, jogo.classeTorneio.Value, false, true);
                         if (resultadoValidacaoJogo.retorno == 0)
                             return Json(resultadoValidacaoJogo, "text/plain", JsonRequestBehavior.AllowGet);
 
@@ -4708,12 +4708,35 @@ namespace Barragem.Controllers
                         {
                             jogo.AlterarJogoParaPendente();
                         }
+
+
+                        var inscricaoNovoJogador = ObterInscricaoJogador(porEsteDesafiante, jogo.classeTorneio);
+
+                        var resultadoValidacaoJogo = ValidarExistenciaJogosFinalizados(substituirEsteDesafiante, jogo.desafiante.nome, jogo.torneioId.Value, jogo.classeTorneio.Value, true, false);
+                        if (resultadoValidacaoJogo.retorno == 0)
+                            return Json(resultadoValidacaoJogo, "text/plain", JsonRequestBehavior.AllowGet);
+
+                        resultadoValidacaoJogo = ValidarExistenciaJogosFinalizados(porEsteDesafiante, inscricaoNovoJogador?.participante.nome, jogo.torneioId.Value, jogo.classeTorneio.Value, true, true);
+                        if (resultadoValidacaoJogo.retorno == 0)
+                            return Json(resultadoValidacaoJogo, "text/plain", JsonRequestBehavior.AllowGet);
+
                     }
 
                     if (jogo.desafiado_id != jogador2)
                     {
                         substituirEsteDesafiado = (int)jogo.desafiado_id;
                         porEsteDesafiado = jogador2;
+
+                        var inscricaoNovoJogador = ObterInscricaoJogador(porEsteDesafiante, jogo.classeTorneio);
+
+                        var resultadoValidacaoJogo = ValidarExistenciaJogosFinalizados(substituirEsteDesafiado, jogo.desafiado.nome, jogo.torneioId.Value, jogo.classeTorneio.Value, true, false);
+                        if (resultadoValidacaoJogo.retorno == 0)
+                            return Json(resultadoValidacaoJogo, "text/plain", JsonRequestBehavior.AllowGet);
+
+                        resultadoValidacaoJogo = ValidarExistenciaJogosFinalizados(porEsteDesafiado, inscricaoNovoJogador?.participante.nome, jogo.torneioId.Value, jogo.classeTorneio.Value, true, true);
+                        if (resultadoValidacaoJogo.retorno == 0)
+                            return Json(resultadoValidacaoJogo, "text/plain", JsonRequestBehavior.AllowGet);
+
                     }
 
                     if (porEsteDesafiante == Constantes.Jogo.BYE || porEsteDesafiado == Constantes.Jogo.BYE)
@@ -4798,7 +4821,7 @@ namespace Barragem.Controllers
             return new ResponseMessage { retorno = 1 };
         }
 
-        private ResponseMessage ValidarExistenciaJogosFinalizados(int userId, string nomeParticipante, int torneioId, int classeId, bool ehMataMata)
+        private ResponseMessage ValidarExistenciaJogosFinalizados(int userId, string nomeParticipante, int torneioId, int classeId, bool ehMataMata, bool ehJogadorNovo)
         {
             var possuiJogosFinalizados = db.Jogo.Any(j => (j.desafiado_id == userId || j.desafiante_id == userId) && j.desafiante_id != 10
                        && (j.situacao_Id == 5 || j.situacao_Id == 4 || j.situacao_Id == 6)
@@ -4807,7 +4830,10 @@ namespace Barragem.Controllers
 
             if (possuiJogosFinalizados)
             {
-                return new ResponseMessage { erro = $"O jogador: {nomeParticipante} já possui jogos finalizados. Não é possível alterá-lo.", retorno = 0 };
+                if (ehJogadorNovo)
+                    return new ResponseMessage { erro = $"O novo jogador informado: {nomeParticipante} já possui jogos finalizados. Não é permitido substituí-lo.", retorno = 0 };
+                else
+                    return new ResponseMessage { erro = $"O jogador: {nomeParticipante} já possui jogos finalizados. Não é possível alterá-lo.", retorno = 0 };
             }
             return new ResponseMessage { retorno = 1 };
         }

@@ -130,6 +130,10 @@
         </div>
     </div>
 
+    <div>
+
+    </div>
+
     @Html.Partial("_PartialLancarPlacarJogo", "JOGOS")
 
     <div class="tab-content">
@@ -643,6 +647,8 @@
                                 }
                                 else {
                                     document.getElementById("divPagamentoPendenteTorneio").style.display = "none";
+
+                                    //TODO: VALIDAR CLASSES COM POUCOS JOGADORES
 
                                     ValidarJogosJaGerados(idTorneio, "GERACAO_TABELA");
                                 }

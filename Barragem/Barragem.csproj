@@ -303,6 +303,7 @@
     <Compile Include="Models\CategoriaAutoComplete.cs" />
     <Compile Include="Models\Cidade.cs" />
     <Compile Include="Models\Classe.cs" />
+    <Compile Include="Models\ClasseGrupoSeguidoMataMataModel.cs" />
     <Compile Include="Models\ClasseLiga.cs" />
     <Compile Include="Models\ClasseTorneio.cs" />
     <Compile Include="Models\ClassificacaoFaseGrupo.cs" />
