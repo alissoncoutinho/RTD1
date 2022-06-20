@@ -83,6 +83,9 @@ function gerarTabelas() {
     event.preventDefault();
 
     var idTorneio = document.getElementById('torneioId').value;
+
+    document.getElementById("divClasseJogosPoucosJogadores").style.display = "none";
+
     ValidarPagamentoTorneio(idTorneio);
 }
 
@@ -198,6 +201,7 @@ function ValidarPagamentoTorneio(idTorneio) {
                     }
                     else {
                         document.getElementById("divPagamentoPendenteTorneio").style.display = "none";
+                        document.getElementById("divClasseJogosPoucosJogadores").style.display = "none";
                         if ($("#chkTemClassesMenosSeisJogadores").val() == "N") {
                             ValidarJogosJaGerados(idTorneio, "GERACAO_TABELA");
                         }
@@ -255,6 +259,7 @@ function ExibirAlteracaoClassesGeracaoJogos() {
         document.getElementById("divClasseJogosPoucosJogadores").style.display = "block";
     }
     else {
+        document.getElementById("divClasseJogosPoucosJogadores").style.display = "none";
         var idTorneio = document.getElementById('torneioId').value;
         ValidarJogosJaGerados(idTorneio, "GERACAO_TABELA");
     }
