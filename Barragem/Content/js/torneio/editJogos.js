@@ -198,8 +198,12 @@ function ValidarPagamentoTorneio(idTorneio) {
                     }
                     else {
                         document.getElementById("divPagamentoPendenteTorneio").style.display = "none";
-
-                        ValidarJogosJaGerados(idTorneio, "GERACAO_TABELA");
+                        if ($("#chkTemClassesMenosSeisJogadores").val() == "N") {
+                            ValidarJogosJaGerados(idTorneio, "GERACAO_TABELA");
+                        }
+                        else {
+                            ExibirAlteracaoClassesGeracaoJogos();
+                        }
                     }
                 }
             }
@@ -214,6 +218,71 @@ function ValidarPagamentoTorneio(idTorneio) {
 function ExcluirTabelaJogos() {
     var idTorneio = document.getElementById('torneioId').value;
     ValidarJogosJaGerados(idTorneio, "EXCLUSAO");
+}
+
+/*Salva as alterações de config. das Classes e efetua a geração dos jogos*/
+function SalvarAlteracaoClassesGeracaoJogos() {
+    $.ajax({
+        type: "POST",
+        url: "/Torneio/SalvarAlteracaoClassesGeracaoJogos",
+        dataType: "json",
+        data: $("#FormAlteracoesClassesGeracaoJogos").serialize(),
+        traditional: true,
+        contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+        success: function (response) {
+            if (typeof response == "object") {
+                toastr.options = {
+                    "positionClass": "toast-top-center"
+                }
+                if (response.status == "ERRO") {
+                    toastr.error(response.erro, "Erro");
+                } else {
+                    toastr.success(response.mensagem, "Sucesso");
+                    document.getElementById("divClasseJogosPoucosJogadores").style.display = "none";
+                    var idTorneio = document.getElementById('torneioId').value;
+                    ValidarJogosJaGerados(idTorneio, "GERACAO_TABELA");
+                }
+            }
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            toastr.error(errorThrown, "Erro");
+        }
+    });
+}
+
+function ExibirAlteracaoClassesGeracaoJogos() {
+    if (ValidarExistenciaClasseMenosSeisInscritos() == true) {
+        document.getElementById("divClasseJogosPoucosJogadores").style.display = "block";
+    }
+    else {
+        var idTorneio = document.getElementById('torneioId').value;
+        ValidarJogosJaGerados(idTorneio, "GERACAO_TABELA");
+    }
+}
+
+function ValidarExistenciaClasseMenosSeisInscritos() {
+    var classesMenosSeisJogadores = $('input[name=classeIdsMenosSeisJogadores]').map(function (_, el) {
+        return $(el).val();
+    }).get();
+
+    var classesSelecionadas = $('input[name=classeIds]:checked').map(function (_, el) {
+        return $(el).val();
+    }).get();
+
+    var temClassesPoucosJogadores = false;
+
+    for (var i = 0; i < classesMenosSeisJogadores.length; i++) {
+        if (classesSelecionadas.indexOf(classesMenosSeisJogadores[i]) > -1) {
+            document.getElementById("div_classeitem_" + classesMenosSeisJogadores[i]).style.display = "block";
+            document.getElementById("lbl_classeitem_" + classesMenosSeisJogadores[i]).style.display = "block";
+            temClassesPoucosJogadores = true;
+        }
+        else {
+            document.getElementById("div_classeitem_" + classesMenosSeisJogadores[i]).style.display = "none";
+            document.getElementById("lbl_classeitem_" + classesMenosSeisJogadores[i]).style.display = "none";
+        }
+    }
+    return temClassesPoucosJogadores;
 }
 
 /**Salvar dados cadastrais pendentes para pagamento do torneio */
@@ -420,7 +489,7 @@ function FiltrarOpcoesJogadores(dadosJogadores, idJogo, tipojogador) {
         if (jogoMataMata) {
             var i = copiaOpcoesJogadorMataMata.length;
             while (i--) {
-                
+
                 if (idJogador != copiaOpcoesJogadorMataMata[i].value && copiaOpcoesJogadorMataMata[i].JogadorAlocado && dadosJogo.Grupo != null && dadosJogo.Grupo == copiaOpcoesJogador[i].Grupo) {
                     copiaOpcoesJogadorMataMata.splice(i, 1);
                 }

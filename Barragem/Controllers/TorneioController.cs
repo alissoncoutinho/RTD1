@@ -464,6 +464,11 @@ namespace Barragem.Controllers
                     else if ((classe.faseGrupo) && (!faseGrupoFinalizada))
                     {
                         int qtddGrupo = tn.MontarGruposFaseGrupo(classe);
+                        if (qtddGrupo == 0)
+                        {
+                            continue;
+                        }
+
                         var qtddParticipantes = qtddGrupo * 2;
                         tn.MontarJogosFaseGrupo(classe);
                         if (classe.faseMataMata)
@@ -519,6 +524,40 @@ namespace Barragem.Controllers
             return RedirectToAction("EditJogos", new { torneioId = torneioId, fClasse = 0, fData = "", fNomeJogador = "", fGrupo = "0", fase = 0 });
         }
 
+        [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
+        [HttpPost]
+        public JsonResult SalvarAlteracaoClassesGeracaoJogos(ICollection<ClasseGrupoSeguidoMataMataRequestModel> dadosClasses)
+        {
+            try
+            {
+                foreach (var classeItem in dadosClasses)
+                {
+                    var classe = db.ClasseTorneio.Find(classeItem.IdClasse);
+
+                    if (classeItem.ConfigSelecionadaClasse == 2)
+                    {
+                        classe.faseMataMata = false;
+                    }
+                    else if (classeItem.ConfigSelecionadaClasse == 3)
+                    {
+                        classe.faseGrupo = false;
+                    }
+
+                    if (classeItem.ConfigSelecionadaClasse != 1)
+                    {
+                        db.Entry(classe).State = EntityState.Modified;
+                        db.SaveChanges();
+                    }
+                }
+
+                return Json(new { erro = "", retorno = "OK", mensagem = "Classes do torneio atualizadas com sucesso!" }, "text/plain", JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { erro = ex.Message, retorno = "ERRO" }, "text/plain", JsonRequestBehavior.AllowGet);
+            }
+        }
+
         private void RemoverGrupoInscricao(int classeId, int torneioId)
         {
             db.Database.ExecuteSqlCommand($"update InscricaoTorneio set grupo = null where torneioid = {torneioId} and classe = {classeId}");
@@ -539,24 +578,6 @@ namespace Barragem.Controllers
                 return true;
             }
         }
-
-        //private List<InscricaoTorneio> getClassificadosFaseGrupo(ClasseTorneio classe)
-        //{
-        //    //var qtddClassificadosPorgrupo = classe.qtddPassamFase;
-        //    var qtddGrupos = db.InscricaoTorneio.Where(i => i.classe == classe.Id && i.isAtivo).Max(i => i.grupo);
-        //    var totalClassificados = new List<InscricaoTorneio>();
-        //    for (int i = 1; i <= qtddGrupos; i++)
-        //    {
-        //        var classificacao = tn.ordenarClassificacaoFaseGrupo(classe, i);
-
-        //        var classificados = classificacao.Take(2).ToList();
-        //        foreach (var item in classificados)
-        //        {
-        //            totalClassificados.Add(item.inscricao);
-        //        }
-        //    }
-        //    return totalClassificados;
-        //}
 
         private void popularJogosFase1(List<Jogo> jogosRodada1, List<InscricaoTorneio> inscritos, int qtddByes, bool temRepescagem)
         {
@@ -2627,6 +2648,7 @@ namespace Barragem.Controllers
                 }
 
             }
+            ViewBag.ClassesPoucosJogadores = ObterClassesGrupoSeguidoMataMataPoucosJogadores(torneioId);
 
             CarregarDadosEssenciais(torneioId, "jogos");
             return View(listaJogos);
@@ -4040,60 +4062,9 @@ namespace Barragem.Controllers
         [HttpGet]
         public ActionResult ValidarJogosJaGerados(int torneioId, int[] classeIds)
         {
-            List<string> classesComJogosGerados = new List<string>();
-            List<int> idsSituacaoJogosFinalizados = new List<int>() { { 3 }, { 4 }, { 5 }, { 6 } };
-
-            bool ehMataMataSeguidoFaseGrupo = false;
-            bool ehMataMata = false;
-
             try
             {
-                if (classeIds != null)
-                {
-                    var classesTorneio = db.ClasseTorneio.Where(x => x.torneioId == torneioId);
-                    foreach (var classeId in classeIds)
-                    {
-                        //obter informacoes da classe e jogos
-                        var classe = classesTorneio.FirstOrDefault(x => x.Id == classeId);
-                        var possuiJogos = db.Jogo.Any(x => x.torneioId == torneioId && x.classeTorneio == classeId);
-                        var qtdeJogosGeradosFaseGrupo = db.Jogo.Count(x => x.torneioId == torneioId && x.classeTorneio == classeId && x.grupoFaseGrupo != null && (x.situacao_Id == 1 || x.situacao_Id == 2));
-
-                        //obter tipo a checar os jogos gerados
-                        if (classe.faseGrupo)
-                        {
-                            ehMataMataSeguidoFaseGrupo = false;
-                        }
-
-                        if (classe.faseMataMata)
-                        {
-                            ehMataMata = true;
-                        }
-
-                        if (possuiJogos)
-                        {
-                            if (classe.faseGrupo && classe.faseMataMata && qtdeJogosGeradosFaseGrupo == 0)
-                            {
-                                ehMataMataSeguidoFaseGrupo = true;
-                            }
-                        }
-
-                        //Validar jogos gerados
-                        var classeComJogosGerados = db.Jogo.Any(x => x.torneioId == torneioId && x.classeTorneio == classeId
-                          && ((x.rodadaFaseGrupo != 0 && !ehMataMataSeguidoFaseGrupo) || (x.rodadaFaseGrupo == 0 && ehMataMataSeguidoFaseGrupo) || (x.rodadaFaseGrupo == 0 && ehMataMata))
-                          &&
-                          (
-                              (x.dataJogo != null && x.horaJogo != null && !ehMataMataSeguidoFaseGrupo)
-                              ||
-                              (idsSituacaoJogosFinalizados.Contains(x.situacao_Id) && (x.qtddGames1setDesafiado > 0 || x.qtddGames1setDesafiante > 0 || x.qtddGames2setDesafiado > 0 || x.qtddGames2setDesafiante > 0 || x.qtddGames3setDesafiado > 0 || x.qtddGames3setDesafiante > 0) && x.desafiante_id != 10 && x.desafiado_id != 10)
-                          )
-                         );
-
-                        if (classeComJogosGerados)
-                        {
-                            classesComJogosGerados.Add(classe.nome);
-                        }
-                    }
-                }
+                var classesComJogosGerados = ObterClassesJogosJaGerados(torneioId, classeIds);
                 string dadosMensagem;
                 if (classesComJogosGerados.Count > 0)
                 {
@@ -4110,6 +4081,63 @@ namespace Barragem.Controllers
             {
                 return Json(new { erro = ex.Message, retorno = "ERRO" }, "text/plain", JsonRequestBehavior.AllowGet);
             }
+        }
+
+        private List<string> ObterClassesJogosJaGerados(int torneioId, int[] classeIds)
+        {
+            List<string> classesComJogosGerados = new List<string>();
+            List<int> idsSituacaoJogosFinalizados = new List<int>() { { 3 }, { 4 }, { 5 }, { 6 } };
+
+            bool ehMataMataSeguidoFaseGrupo = false;
+            bool ehMataMata = false;
+
+            if (classeIds != null)
+            {
+                var classesTorneio = db.ClasseTorneio.Where(x => x.torneioId == torneioId);
+                foreach (var classeId in classeIds)
+                {
+                    //obter informacoes da classe e jogos
+                    var classe = classesTorneio.FirstOrDefault(x => x.Id == classeId);
+                    var possuiJogos = db.Jogo.Any(x => x.torneioId == torneioId && x.classeTorneio == classeId);
+                    var qtdeJogosGeradosFaseGrupo = db.Jogo.Count(x => x.torneioId == torneioId && x.classeTorneio == classeId && x.grupoFaseGrupo != null && (x.situacao_Id == 1 || x.situacao_Id == 2));
+
+                    //obter tipo a checar os jogos gerados
+                    if (classe.faseGrupo)
+                    {
+                        ehMataMataSeguidoFaseGrupo = false;
+                    }
+
+                    if (classe.faseMataMata)
+                    {
+                        ehMataMata = true;
+                    }
+
+                    if (possuiJogos)
+                    {
+                        if (classe.faseGrupo && classe.faseMataMata && qtdeJogosGeradosFaseGrupo == 0)
+                        {
+                            ehMataMataSeguidoFaseGrupo = true;
+                        }
+                    }
+
+                    //Validar jogos gerados
+                    var classeComJogosGerados = db.Jogo.Any(x => x.torneioId == torneioId && x.classeTorneio == classeId
+                      && ((x.rodadaFaseGrupo != 0 && !ehMataMataSeguidoFaseGrupo) || (x.rodadaFaseGrupo == 0 && ehMataMataSeguidoFaseGrupo) || (x.rodadaFaseGrupo == 0 && ehMataMata))
+                      &&
+                      (
+                          (x.dataJogo != null && x.horaJogo != null && !ehMataMataSeguidoFaseGrupo)
+                          ||
+                          (idsSituacaoJogosFinalizados.Contains(x.situacao_Id) && (x.qtddGames1setDesafiado > 0 || x.qtddGames1setDesafiante > 0 || x.qtddGames2setDesafiado > 0 || x.qtddGames2setDesafiante > 0 || x.qtddGames3setDesafiado > 0 || x.qtddGames3setDesafiante > 0) && x.desafiante_id != 10 && x.desafiado_id != 10)
+                      )
+                     );
+
+                    if (classeComJogosGerados)
+                    {
+                        classesComJogosGerados.Add(classe.nome);
+                    }
+                }
+            }
+            return classesComJogosGerados;
         }
 
         public ActionResult ObterCategorias(int torneioId, string filtro)
@@ -4574,6 +4602,8 @@ namespace Barragem.Controllers
                 .Select(i => (int)i.classeTorneio)
                 .Distinct().ToList();
 
+            ViewBag.ClassesPoucosJogadores = ObterClassesGrupoSeguidoMataMataPoucosJogadores(torneioId);
+
             var classeSelecionada = classes.FirstOrDefault(x => x.Id == fClasse);
             ViewBag.ClasseEhFaseGrupo = classeSelecionada != null ? classeSelecionada.faseGrupo : false;
 
@@ -5027,38 +5057,33 @@ namespace Barragem.Controllers
             }
         }
 
-
-        [HttpGet]
-        public JsonResult ValidarClassesGrupoSeguidoMataMataPoucosJogadores(int torneioId, int[] classeIds)
+        private List<ClasseGrupoSeguidoMataMataModel> ObterClassesGrupoSeguidoMataMataPoucosJogadores(int torneioId)
         {
             var classes = new List<ClasseGrupoSeguidoMataMataModel>();
-            try
-            {
-                foreach (var classeId in classeIds)
-                {
-                    var classe = db.ClasseTorneio.Find(classeId);
-                    if (classe != null && classe.faseGrupo && classe.faseMataMata)
-                    {
-                        var qtdeInscricoes = db.InscricaoTorneio.Count(x => x.isAtivo == true && x.torneioId == torneioId && x.classe == classeId);
 
-                        if (qtdeInscricoes <= 5)
+            foreach (var classe in db.ClasseTorneio.Where(x => x.torneioId == torneioId))
+            {
+                if (classe != null && classe.faseGrupo && classe.faseMataMata)
+                {
+                    var classesComJogosGerados = ObterClassesJogosJaGerados(torneioId, new List<int> { { classe.Id } }.ToArray());
+                    if (classesComJogosGerados.Count > 0)
+                        continue;
+
+                    var qtdeInscricoes = db.InscricaoTorneio.Count(x => x.isAtivo == true && x.torneioId == torneioId && x.classe == classe.Id);
+
+                    if (qtdeInscricoes <= 5)
+                    {
+                        classes.Add(new ClasseGrupoSeguidoMataMataModel()
                         {
-                            classes.Add(new ClasseGrupoSeguidoMataMataModel()
-                            {
-                                IdClasse = classe.Id,
-                                IdTorneio = torneioId,
-                                NomeClasse = classe.nome,
-                                QtdeInscricoes = qtdeInscricoes
-                            });
-                        }
+                            IdClasse = classe.Id,
+                            IdTorneio = torneioId,
+                            NomeClasse = classe.nome,
+                            QtdeInscricoes = qtdeInscricoes
+                        });
                     }
                 }
-                return Json(new { erro = "", retorno = "OK", data = classes }, "text/plain", JsonRequestBehavior.AllowGet);
             }
-            catch (Exception ex)
-            {
-                return Json(new { erro = ex.Message, retorno = "ERRO" }, "text/plain", JsonRequestBehavior.AllowGet);
-            }
+            return classes;
         }
 
     }

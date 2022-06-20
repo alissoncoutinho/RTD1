@@ -72,7 +72,7 @@
         z-index: 10000;
     }
 </style>
-
+@using Barragem.Models;
 @model IEnumerable<Barragem.Models.Jogo>
 
     @Html.Partial("_PartialTabs")
@@ -130,10 +130,6 @@
         </div>
     </div>
 
-    <div>
-
-    </div>
-
     @Html.Partial("_PartialLancarPlacarJogo", "JOGOS")
 
     <div class="tab-content">
@@ -154,6 +150,7 @@
                 <!-- EXCLUSAO DE JOGOS - INICIO -->
                 @Html.Partial("_PartialClasseJogosExclusao")
                 <!-- EXCLUSAO DE JOGOS - FIM -->
+                @Html.Partial("_PartialAcaoClassesPoucosJogadores", (ICollection<ClasseGrupoSeguidoMataMataModel>)ViewBag.ClassesPoucosJogadores)
 
                 <div class="box box-primary">
                     <div class="box-header">
@@ -448,7 +445,7 @@
         @Scripts.Render("~/bundles/jqueryform")
         <script src="~/Content/js/torneio/lancarPlacar.js"></script>
         <script type="text/javascript">
-            
+
 
             $(".date").datepicker({
                 language: 'pt-BR',
@@ -648,9 +645,12 @@
                                 else {
                                     document.getElementById("divPagamentoPendenteTorneio").style.display = "none";
 
-                                    //TODO: VALIDAR CLASSES COM POUCOS JOGADORES
-
-                                    ValidarJogosJaGerados(idTorneio, "GERACAO_TABELA");
+                                    if ($("#chkTemClassesMenosSeisJogadores").val() == "N") {
+                                        ValidarJogosJaGerados(idTorneio, "GERACAO_TABELA");
+                                    }
+                                    else {
+                                        ExibirAlteracaoClassesGeracaoJogos();
+                                    }
                                 }
                             }
                         }
@@ -710,6 +710,73 @@
                     }
                 });
             }
+
+
+            /*Salva as alterações de config. das Classes e efetua a geração dos jogos*/
+            function SalvarAlteracaoClassesGeracaoJogos() {
+                $.ajax({
+                    type: "POST",
+                    url: "/Torneio/SalvarAlteracaoClassesGeracaoJogos",
+                    dataType: "json",
+                    data: $("#FormAlteracoesClassesGeracaoJogos").serialize(),
+                    traditional: true,
+                    contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+                    success: function (response) {
+                        if (typeof response == "object") {
+                            toastr.options = {
+                                "positionClass": "toast-top-center"
+                            }
+                            if (response.status == "ERRO") {
+                                toastr.error(response.erro, "Erro");
+                            } else {
+                                toastr.success(response.mensagem, "Sucesso");
+                                document.getElementById("divClasseJogosPoucosJogadores").style.display = "none";
+                                var idTorneio = document.getElementById('torneioId').value;
+                                ValidarJogosJaGerados(idTorneio, "GERACAO_TABELA");
+                            }
+                        }
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        toastr.error(errorThrown, "Erro");
+                    }
+                });
+            }
+
+            function ExibirAlteracaoClassesGeracaoJogos() {
+                if (ValidarExistenciaClasseMenosSeisInscritos() == true) {
+                    document.getElementById("divClasseJogosPoucosJogadores").style.display = "block";
+                }
+                else {
+                    var idTorneio = document.getElementById('torneioId').value;
+                    ValidarJogosJaGerados(idTorneio, "GERACAO_TABELA");
+                }
+            }
+
+            function ValidarExistenciaClasseMenosSeisInscritos() {
+                var classesMenosSeisJogadores = $('input[name=classeIdsMenosSeisJogadores]').map(function (_, el) {
+                    return $(el).val();
+                }).get();
+
+                var classesSelecionadas = $('input[name=classeIds]:checked').map(function (_, el) {
+                    return $(el).val();
+                }).get();
+
+                var temClassesPoucosJogadores = false;
+
+                for (var i = 0; i < classesMenosSeisJogadores.length; i++) {
+                    if (classesSelecionadas.indexOf(classesMenosSeisJogadores[i]) > -1) {
+                        document.getElementById("div_classeitem_" + classesMenosSeisJogadores[i]).style.display = "block";
+                        document.getElementById("lbl_classeitem_" + classesMenosSeisJogadores[i]).style.display = "block";
+                        temClassesPoucosJogadores = true;
+                    }
+                    else {
+                        document.getElementById("div_classeitem_" + classesMenosSeisJogadores[i]).style.display = "none";
+                        document.getElementById("lbl_classeitem_" + classesMenosSeisJogadores[i]).style.display = "none";
+                    }
+                }
+                return temClassesPoucosJogadores;
+            }
+
 
             function FecharPixPagtoTorneio() {
                 document.getElementById("divPixPagtoTorneio").style.display = "none";

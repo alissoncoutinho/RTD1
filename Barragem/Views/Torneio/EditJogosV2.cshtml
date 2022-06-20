@@ -1,6 +1,7 @@
 ﻿@{
     int i = 0;
 }
+@using Barragem.Models;
 @model IEnumerable<Barragem.Models.Jogo>
 
     <link rel="stylesheet" href="~/Content/css/torneio/editJogos.css">
@@ -80,6 +81,7 @@
 
                 @Html.Partial("_PartialClasseJogosExclusao")
 
+                @Html.Partial("_PartialAcaoClassesPoucosJogadores", (ICollection<ClasseGrupoSeguidoMataMataModel>)ViewBag.ClassesPoucosJogadores)
 
                 <div class="box box-primary">
                     <!-------------------------------------------------------->
