@@ -4083,7 +4083,7 @@ namespace Barragem.Controllers
             }
         }
 
-        private List<string> ObterClassesJogosJaGerados(int torneioId, int[] classeIds)
+        private List<string> ObterClassesJogosJaGerados(int torneioId, int[] classeIds, ICollection<ClasseTorneio> classesTorneio = null)
         {
             List<string> classesComJogosGerados = new List<string>();
             List<int> idsSituacaoJogosFinalizados = new List<int>() { { 3 }, { 4 }, { 5 }, { 6 } };
@@ -4093,7 +4093,11 @@ namespace Barragem.Controllers
 
             if (classeIds != null)
             {
-                var classesTorneio = db.ClasseTorneio.Where(x => x.torneioId == torneioId);
+                if (classesTorneio == null)
+                {
+                    classesTorneio = db.ClasseTorneio.Where(x => x.torneioId == torneioId).ToList();
+                }
+
                 foreach (var classeId in classeIds)
                 {
                     //obter informacoes da classe e jogos
@@ -5060,12 +5064,12 @@ namespace Barragem.Controllers
         private List<ClasseGrupoSeguidoMataMataModel> ObterClassesGrupoSeguidoMataMataPoucosJogadores(int torneioId)
         {
             var classes = new List<ClasseGrupoSeguidoMataMataModel>();
-
-            foreach (var classe in db.ClasseTorneio.Where(x => x.torneioId == torneioId))
+            var classesTorneio = db.ClasseTorneio.Where(x => x.torneioId == torneioId).ToList();
+            foreach (var classe in classesTorneio)
             {
                 if (classe != null && classe.faseGrupo && classe.faseMataMata)
                 {
-                    var classesComJogosGerados = ObterClassesJogosJaGerados(torneioId, new List<int> { { classe.Id } }.ToArray());
+                    var classesComJogosGerados = ObterClassesJogosJaGerados(torneioId, new List<int> { { classe.Id } }.ToArray(), classesTorneio);
                     if (classesComJogosGerados.Count > 0)
                         continue;
 
