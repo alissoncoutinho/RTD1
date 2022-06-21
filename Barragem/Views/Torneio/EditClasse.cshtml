@@ -6,147 +6,152 @@
     @Html.Partial("_PartialTabs")
 
     <div class="tab-content">
-        <div class="tab-pane fade" id="tabCadastro"></div>
-        <div class="tab-pane fade" id="tabInscritos"></div>
-        <div class="tab-pane fade" id="tabJogos"></div>
-        <div class="tab-pane fade" id="tabDuplas"></div>
         <div class="tab-pane fade in active" id="tabEditClasses">
-            <br>
-            <p>
-                <a href="@Url.Action("CreateClasse", new {torneioId = ViewBag.TorneioId, qtddClasses = qtddClasses })" class="btn btn-primary btn-small"><span class="glyphicon glyphicon-plus"></span> Nova</a>
-            </p>
             @using (Html.BeginForm("EditOrdemExibicaoClasse", "Torneio", FormMethod.Post, new { @class = "form-horizontal" }))
             {
-                <div class="box-body table-responsive no-padding">
-                    <table class="table table-striped table-condensed table-bordered">
-                        <tr>
-                            <th>
-                                <b>Ordem Exibição</b>
-                            </th>
-                            @if (ViewBag.isLiga)
-                            {
-                                <th>
-                                    @Html.DisplayName("Nome categoria no circuito")
-                                </th>
-                            }
-                            <th>
-                                @Html.DisplayName("Nome categoria no Torneio")
-                            </th>
-                            @if (ViewBag.temLimiteDeInscricao != null && (bool)ViewBag.temLimiteDeInscricao)
-                            {
-                                <th>
-                                    @Html.DisplayName("Limite inscrição")
-                                </th>
-                            }
-                            <th>
-                                @Html.DisplayName("Dupla")
-                            </th>
-                            @if (!ViewBag.isModeloTodosContraTodos)
-                            {
-                                <th>
-                                    @Html.DisplayName("Fase Grupo")
-                                </th>
-                                <th>
-                                    @Html.DisplayName("Mata-Mata")
-                                </th>
-                            }
-                            <th></th>
-                        </tr>
-                        @foreach (var item in Model)
-                        {
-                            i++;
-                            <tr id="@item.Id">
-                                <td>
-                                    <select name="ordemExibicao">
-                                        @for (int j = 1; j <= Model.Count(); j++)
-                                        {
-                                            <option @if (item.nivel == j) { @Html.Raw(" selected ") }>@j</option>
-                                        }
-                                    </select>
-                                </td>
-                                @if (ViewBag.isLiga)
-                                {
+                <div class="box box-primary">
+                    <div class="box-header">
+                        <h4 class="box-title">Ações</h4>
+                    </div>
+                    <p style="margin-top:10px">
+                        <a href="@Url.Action("CreateClasse", new {torneioId = ViewBag.TorneioId, qtddClasses = qtddClasses })" class="btn btn-primary btn-small"><span class="glyphicon glyphicon-plus"></span> Nova</a>
+                        <input type="hidden" name="torneioId" value="@ViewBag.TorneioId" />
+                        <button class="btn btn-cta-secondary btn-small" type="submit">Salvar ordem de exibição</button>
+                    </p>
+
+
+                    <div class="box box-primary">
+                        <div class="box-header">
+                            <h4 class="box-title">Categorias do Torneio</h4>
+                        </div>
+                        <div class="box-body table-responsive no-padding">
+                            <table class="table table-striped table-condensed table-bordered">
+                                <tr>
                                     <th>
-                                        @if (@item.Categoria != null)
-                                        {
-                                            @Html.Raw(item.Categoria.Nome)
-                                        }
-                                        else
-                                        {
-                                            @Html.Raw("não pontua para circuito")
-
-                                            <button type="button" id="@Html.Raw("btnEditCatCircuito"+ item.Id)" class="btn btn-info btn-xs"
-                                                    data-toggle="modal" data-target="#modalEditCatCircuito" onclick="abrirModalEditCatCircuito(@item.Id, @ViewBag.TorneioId)">
-                                                <span class="glyphicon glyphicon-edit"></span>
-                                            </button>
-                                        }
+                                        <b>Ordem Exibição</b>
                                     </th>
-                                }
-                                <td>
-                                    <input type="text" class="col-md-6 form-control" name="@Html.Raw("nome" + i)" id="@Html.Raw("nome" + i)" value="@item.nome">
-                                </td>
-                                @if (ViewBag.temLimiteDeInscricao != null && (bool)ViewBag.temLimiteDeInscricao)
-                                {
-                                    <td>
-                                        <input type="text" class="col-md-6 form-control" name="@Html.Raw("maximoInscritos" + i)" id="@Html.Raw("maximoInscritos" + i)" value="@item.maximoInscritos">
-                                    </td>
-                                }
-                                else
-                                {
-                                    <input type="hidden" name="@Html.Raw("maximoInscritos" + i)" id="@Html.Raw("maximoInscritos" + i)" value="@item.maximoInscritos" />
-                                }
-                                <td>
-                                    @if (item.isDupla)
+                                    @if (ViewBag.isLiga)
                                     {
-                                        <input type="checkbox" checked value="true" name="@Html.Raw("isDupla" + i)" id="@Html.Raw("isDupla" + i)" />
+                                        <th>
+                                            @Html.DisplayName("Nome categoria no circuito")
+                                        </th>
                                     }
-                                    else
+                                    <th>
+                                        @Html.DisplayName("Nome categoria no Torneio")
+                                    </th>
+                                    @if (ViewBag.temLimiteDeInscricao != null && (bool)ViewBag.temLimiteDeInscricao)
                                     {
-                                        <input type="checkbox" value="true" name="@Html.Raw("isDupla" + i)" id="@Html.Raw("isDupla" + i)" />
+                                        <th>
+                                            @Html.DisplayName("Limite inscrição")
+                                        </th>
                                     }
-                                </td>
-                                @if (!ViewBag.isModeloTodosContraTodos)
+                                    <th>
+                                        @Html.DisplayName("Dupla")
+                                    </th>
+                                    @if (!ViewBag.isModeloTodosContraTodos)
+                                    {
+                                        <th>
+                                            @Html.DisplayName("Fase Grupo")
+                                        </th>
+                                        <th>
+                                            @Html.DisplayName("Mata-Mata")
+                                        </th>
+                                    }
+                                    <th></th>
+                                </tr>
+                                @foreach (var item in Model)
                                 {
-                                    <td>
-                                        @if (item.faseGrupo)
+                                    i++;
+                                    <tr id="@item.Id">
+                                        <td>
+                                            <select name="ordemExibicao">
+                                                @for (int j = 1; j <= Model.Count(); j++)
+                                                {
+                                                    <option @if (item.nivel == j) { @Html.Raw(" selected ") }>@j</option>
+                                                }
+                                            </select>
+                                        </td>
+                                        @if (ViewBag.isLiga)
                                         {
-                                            <input type="checkbox" checked value="true" name="@Html.Raw("faseGrupo" + i)" id="@Html.Raw("faseGrupo" + i)" />
-                                        }
-                                        else
-                                        {
-                                            <input type="checkbox" value="true" name="@Html.Raw("faseGrupo" + i)" id="@Html.Raw("faseGrupo" + i)" />
-                                        }
-                                    </td>
-                                    <td>
-                                        @if (item.faseMataMata)
-                                        {
-                                            <input type="checkbox" checked value="true" name="@Html.Raw("faseMataMata" + i)" id="@Html.Raw("faseMataMata" + i)" />
-                                        }
-                                        else
-                                        {
-                                            <input type="checkbox" value="true" name="@Html.Raw("faseMataMata" + i)" id="@Html.Raw("faseMataMata" + i)" />
-                                        }
-                                    </td>
-                                }
-                                <td align="center">
-                                    <form method="post" enctype="multipart/form-data" action="#" name="@Html.Raw("form" + i)" id="@Html.Raw("form" + i)" class="form">
-                                        <button title="salvar" data-valor="@Html.Raw(i)" data-ident="@item.Id" name="@Html.Raw("button" + i)" id="@Html.Raw("button" + i)" class="btn btn-default btn-xs inscricaoButton">
-                                            Salvar
-                                        </button>
-                                        <button title="excluir" data-valor="@item.Id" name="@Html.Raw("buttonEx" + i)" id="@Html.Raw("buttonEx" + i)" class="btn btn-danger btn-xs excluirButton">
-                                            Excluir
-                                        </button>
-                                    </form>
-                                </td>
+                                            <th>
+                                                @if (@item.Categoria != null)
+                                                {
+                                                    @Html.Raw(item.Categoria.Nome)
+                                                }
+                                                else
+                                                {
+                                                    @Html.Raw("não pontua para circuito")
 
-                            </tr>
-                        }
-                    </table>
+                                                    <button type="button" id="@Html.Raw("btnEditCatCircuito"+ item.Id)" class="btn btn-info btn-xs"
+                                                            data-toggle="modal" data-target="#modalEditCatCircuito" onclick="abrirModalEditCatCircuito(@item.Id, @ViewBag.TorneioId)">
+                                                        <span class="glyphicon glyphicon-edit"></span>
+                                                    </button>
+                                                }
+                                            </th>
+                                        }
+                                        <td>
+                                            <input type="text" class="col-md-6 form-control" name="@Html.Raw("nome" + i)" id="@Html.Raw("nome" + i)" value="@item.nome">
+                                        </td>
+                                        @if (ViewBag.temLimiteDeInscricao != null && (bool)ViewBag.temLimiteDeInscricao)
+                                        {
+                                            <td>
+                                                <input type="text" class="col-md-6 form-control" name="@Html.Raw("maximoInscritos" + i)" id="@Html.Raw("maximoInscritos" + i)" value="@item.maximoInscritos">
+                                            </td>
+                                        }
+                                        else
+                                        {
+                                            <input type="hidden" name="@Html.Raw("maximoInscritos" + i)" id="@Html.Raw("maximoInscritos" + i)" value="@item.maximoInscritos" />
+                                        }
+                                        <td>
+                                            @if (item.isDupla)
+                                            {
+                                                <input type="checkbox" checked value="true" name="@Html.Raw("isDupla" + i)" id="@Html.Raw("isDupla" + i)" />
+                                            }
+                                            else
+                                            {
+                                                <input type="checkbox" value="true" name="@Html.Raw("isDupla" + i)" id="@Html.Raw("isDupla" + i)" />
+                                            }
+                                        </td>
+                                        @if (!ViewBag.isModeloTodosContraTodos)
+                                        {
+                                            <td>
+                                                @if (item.faseGrupo)
+                                                {
+                                                    <input type="checkbox" checked value="true" name="@Html.Raw("faseGrupo" + i)" id="@Html.Raw("faseGrupo" + i)" />
+                                                }
+                                                else
+                                                {
+                                                    <input type="checkbox" value="true" name="@Html.Raw("faseGrupo" + i)" id="@Html.Raw("faseGrupo" + i)" />
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (item.faseMataMata)
+                                                {
+                                                    <input type="checkbox" checked value="true" name="@Html.Raw("faseMataMata" + i)" id="@Html.Raw("faseMataMata" + i)" />
+                                                }
+                                                else
+                                                {
+                                                    <input type="checkbox" value="true" name="@Html.Raw("faseMataMata" + i)" id="@Html.Raw("faseMataMata" + i)" />
+                                                }
+                                            </td>
+                                        }
+                                        <td align="center">
+                                            <form method="post" enctype="multipart/form-data" action="#" name="@Html.Raw("form" + i)" id="@Html.Raw("form" + i)" class="form">
+                                                <button title="salvar" data-valor="@Html.Raw(i)" data-ident="@item.Id" name="@Html.Raw("button" + i)" id="@Html.Raw("button" + i)" class="btn btn-default btn-xs inscricaoButton">
+                                                    Salvar
+                                                </button>
+                                                <button title="excluir" data-valor="@item.Id" name="@Html.Raw("buttonEx" + i)" id="@Html.Raw("buttonEx" + i)" class="btn btn-danger btn-xs excluirButton">
+                                                    Excluir
+                                                </button>
+                                            </form>
+                                        </td>
+
+                                    </tr>
+                                }
+                            </table>
+                        </div>
+                    </div>
                 </div>
-                <p>
-                    <input type="hidden" name="torneioId" value="@ViewBag.TorneioId" />
-                    <button class="btn btn-cta-secondary btn-small" type="submit">Salvar ordem de exibição</button>
-                </p>
             }
         </div>
     </div>
