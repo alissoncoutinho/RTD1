@@ -5083,7 +5083,7 @@ namespace Barragem.Controllers
                         qtdeInscricoes = db.InscricaoTorneio.Count(x => x.isAtivo && x.torneioId == torneioId && x.classe == classe.Id);
                     }
 
-                    if (qtdeInscricoes <= 5)
+                    if (qtdeInscricoes > 0 && qtdeInscricoes <= 5)
                     {
                         classes.Add(new ClasseGrupoSeguidoMataMataModel()
                         {
