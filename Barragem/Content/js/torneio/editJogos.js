@@ -572,7 +572,15 @@ function ObterIdJogador(opcoesJogador, jogo, tipojogador) {
     }
 }
 
-
+function ObterNomeJogadorSelecionado(indice, tipoJogador) {
+    for (var i = 0; i < jogadoresDropDownList.length; i++) {
+        var dropItem = jogadoresDropDownList[i][1];
+        if (indice == jogadoresDropDownList[i][0].dataset.indice && tipoJogador == jogadoresDropDownList[i][0].dataset.tipojogador) {
+            return dropItem.getText();
+        }
+    }
+    return null;
+}
 
 $(document).mouseup(function (el) {
     if (el.target.classList.contains("jdropdown-header") == false && el.target.classList.contains("jdropdown-content") == false) {

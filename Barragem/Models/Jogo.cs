@@ -1,4 +1,5 @@
 ﻿using Barragem.Class;
+using Barragem.Helper;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -348,6 +349,50 @@ namespace Barragem.Models
                 }
             }
             
+        }
+
+        public string ObterNomeJogador(TipoJogador tipoJogador)
+        {
+            if (tipoJogador == TipoJogador.DESAFIANTE)
+            {
+                if (desafiante_id == Constantes.Jogo.BYE)
+                {
+                    return "bye";
+                }
+                else if (desafiante_id == Constantes.Jogo.AGUARDANDO_JOGADOR)
+                {
+                    return "Aguardando jogador";
+                }
+                else
+                {
+                    if (desafiante2_id > 0)
+                    {
+                        return $"{desafiante?.nome}/{desafiante2?.nome}";
+                    }
+                    else
+                    {
+                        return desafiante?.nome;
+                    }
+                }
+            }
+            else
+            {
+                if (desafiado_id == Constantes.Jogo.AGUARDANDO_JOGADOR)
+                {
+                    return "Aguardando jogador";
+                }
+                else
+                {
+                    if (desafiado2_id > 0)
+                    {
+                        return $"{desafiado?.nome}/{desafiado2?.nome}";
+                    }
+                    else
+                    {
+                        return desafiado?.nome;
+                    }
+                }
+            }
         }
     }
 

@@ -192,7 +192,7 @@
                                         @if ((ViewBag.fClasse != 1 && Roles.IsUserInRole("admin")) || (ViewBag.PrimeiraFase != null && ViewBag.PrimeiraFase == item.faseTorneio) || (item.classe.faseGrupo && item.grupoFaseGrupo != null))
                                         {
                                             <!--Desafiante Possibilita edição-->
-                                            <div id="@Html.Raw("jogador1_" + i)" class="escolhaJogador" data-jogador="@item.desafiante_id" data-jogoId="@item.Id" data-tipojogador="desafiante"></div>
+                                            <div id="@Html.Raw("jogador1_" + i)" class="escolhaJogador" data-jogador="@item.desafiante_id" data-jogoId="@item.Id" data-tipojogador="desafiante" data-indice="@i"></div>
                                         }
                                         else
                                         {
@@ -236,7 +236,7 @@
                                     <td>
                                         @if ((ViewBag.fClasse != 1 && Roles.IsUserInRole("admin")) || (ViewBag.PrimeiraFase != null && ViewBag.PrimeiraFase == item.faseTorneio) || (item.classe.faseGrupo && item.grupoFaseGrupo != null))
                                         {
-                                            <div id="@Html.Raw("jogador2_" + i)" class="escolhaJogador" data-jogador="@item.desafiado_id" data-jogoId="@item.Id" data-tipojogador="desafiado"></div>
+                                            <div id="@Html.Raw("jogador2_" + i)" class="escolhaJogador" data-jogador="@item.desafiado_id" data-jogoId="@item.Id" data-tipojogador="desafiado" data-indice="@i"></div>
                                         }
                                         else
                                         {
@@ -362,6 +362,6 @@
         @Scripts.Render("~/bundles/jqueryval")
         @Scripts.Render("~/bundles/jqueryform")
         <script src="~/Content/jsuites/jsuites.js"></script>
-        <script src="~/Content/js/torneio/lancarPlacar.js"></script>
+        <script src="~/Content/js/torneio/lancarPlacarv2.js"></script>
         <script src="~/Content/js/torneio/editJogos.js"></script>
     }

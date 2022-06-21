@@ -408,6 +408,7 @@
     <Content Include="Content\jsuites\jsuites.layout.js" />
     <Content Include="Content\jsuites\jsuites.webcomponents.js" />
     <Content Include="Content\js\torneio\editJogos.js" />
+    <Content Include="Content\js\torneio\lancarPlacarv2.js" />
     <Content Include="Content\js\torneio\lancarPlacar.js" />
     <Content Include="Content\paginaespecial\css\hamburgers.min.css" />
     <Content Include="Content\paginaespecial\css\style.css" />

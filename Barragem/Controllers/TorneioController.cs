@@ -4680,7 +4680,7 @@ namespace Barragem.Controllers
                             jogo.AlterarJogoParaPendente();
                         }
 
-                        var resultadoValidacaoJogo = ValidarExistenciaJogosFinalizados(substituirEsteDesafiante, jogo.desafiante.nome, jogo.torneioId.Value, jogo.classeTorneio.Value, false, false);
+                        var resultadoValidacaoJogo = ValidarExistenciaJogosFinalizados(substituirEsteDesafiante, jogo.ObterNomeJogador(TipoJogador.DESAFIANTE), jogo.torneioId.Value, jogo.classeTorneio.Value, false, false);
                         if (resultadoValidacaoJogo.retorno == 0)
                             return Json(resultadoValidacaoJogo, "text/plain", JsonRequestBehavior.AllowGet);
 
@@ -4707,7 +4707,7 @@ namespace Barragem.Controllers
                         if (podeEfetuarTroca.retorno == 0)
                             return Json(podeEfetuarTroca, "text/plain", JsonRequestBehavior.AllowGet);
 
-                        var resultadoValidacaoJogo = ValidarExistenciaJogosFinalizados(substituirEsteDesafiado, jogo.desafiado.nome, jogo.torneioId.Value, jogo.classeTorneio.Value, false, false);
+                        var resultadoValidacaoJogo = ValidarExistenciaJogosFinalizados(substituirEsteDesafiado, jogo.ObterNomeJogador(TipoJogador.DESAFIADO), jogo.torneioId.Value, jogo.classeTorneio.Value, false, false);
                         if (resultadoValidacaoJogo.retorno == 0)
                             return Json(resultadoValidacaoJogo, "text/plain", JsonRequestBehavior.AllowGet);
 
@@ -4746,7 +4746,7 @@ namespace Barragem.Controllers
 
                         var inscricaoNovoJogador = ObterInscricaoJogador(porEsteDesafiante, jogo.classeTorneio);
 
-                        var resultadoValidacaoJogo = ValidarExistenciaJogosFinalizados(substituirEsteDesafiante, jogo.desafiante.nome, jogo.torneioId.Value, jogo.classeTorneio.Value, true, false);
+                        var resultadoValidacaoJogo = ValidarExistenciaJogosFinalizados(substituirEsteDesafiante, jogo.ObterNomeJogador(TipoJogador.DESAFIANTE), jogo.torneioId.Value, jogo.classeTorneio.Value, true, false);
                         if (resultadoValidacaoJogo.retorno == 0)
                             return Json(resultadoValidacaoJogo, "text/plain", JsonRequestBehavior.AllowGet);
 
@@ -4763,7 +4763,7 @@ namespace Barragem.Controllers
 
                         var inscricaoNovoJogador = ObterInscricaoJogador(porEsteDesafiante, jogo.classeTorneio);
 
-                        var resultadoValidacaoJogo = ValidarExistenciaJogosFinalizados(substituirEsteDesafiado, jogo.desafiado.nome, jogo.torneioId.Value, jogo.classeTorneio.Value, true, false);
+                        var resultadoValidacaoJogo = ValidarExistenciaJogosFinalizados(substituirEsteDesafiado, jogo.ObterNomeJogador(TipoJogador.DESAFIADO), jogo.torneioId.Value, jogo.classeTorneio.Value, true, false);
                         if (resultadoValidacaoJogo.retorno == 0)
                             return Json(resultadoValidacaoJogo, "text/plain", JsonRequestBehavior.AllowGet);
 
@@ -5063,6 +5063,7 @@ namespace Barragem.Controllers
 
         private List<ClasseGrupoSeguidoMataMataModel> ObterClassesGrupoSeguidoMataMataPoucosJogadores(int torneioId)
         {
+            int qtdeInscricoes = 0;
             var classes = new List<ClasseGrupoSeguidoMataMataModel>();
             var classesTorneio = db.ClasseTorneio.Where(x => x.torneioId == torneioId).ToList();
             foreach (var classe in classesTorneio)
@@ -5073,7 +5074,14 @@ namespace Barragem.Controllers
                     if (classesComJogosGerados.Count > 0)
                         continue;
 
-                    var qtdeInscricoes = db.InscricaoTorneio.Count(x => x.isAtivo == true && x.torneioId == torneioId && x.classe == classe.Id);
+                    if (classe.isDupla)
+                    {
+                        qtdeInscricoes = db.InscricaoTorneio.Count(x => x.isAtivo && x.torneioId == torneioId && x.classe == classe.Id && x.parceiroDuplaId != null);
+                    }
+                    else
+                    {
+                        qtdeInscricoes = db.InscricaoTorneio.Count(x => x.isAtivo && x.torneioId == torneioId && x.classe == classe.Id);
+                    }
 
                     if (qtdeInscricoes <= 5)
                     {
