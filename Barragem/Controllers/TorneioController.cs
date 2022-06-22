@@ -928,7 +928,7 @@ namespace Barragem.Controllers
 
         private bool ValidaTriploEmpate(List<ClassificacaoFaseGrupo> classificacao)
         {
-            var gruposClassificatorios = classificacao.GroupBy(g => new { g.saldoSets, g.saldoGames, g.averageGames });
+            var gruposClassificatorios = classificacao.Where(x => x.saldoSets != 0 && x.saldoGames != 0 && x.averageGames != 0).GroupBy(g => new { g.saldoSets, g.saldoGames, g.averageGames });
             return gruposClassificatorios.Any(x => x.Count() == 3);
         }
 
