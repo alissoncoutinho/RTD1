@@ -2944,9 +2944,11 @@ namespace Barragem.Controllers
 
         private void SubstituirJogadorMataMata(int idJogo, int faseTorneio, int classeId, int substituirEsteJogador, int porEsteJogador, int porEsteParceiroDupla)
         {
+            //substituirEsteJogador: Novo Jogador informado no jogo alterado
+            //porEsteJogador: Jogador anterior do jogo alterado
             if (substituirEsteJogador > 0)
             {
-                var listaJogos = db.Jogo.Where(j => j.Id != idJogo && j.grupoFaseGrupo == null && j.faseTorneio == faseTorneio && j.classeTorneio == classeId && (j.desafiante_id == substituirEsteJogador || j.desafiado_id == substituirEsteJogador)).ToList();
+                var listaJogos = db.Jogo.Where(j => j.Id != idJogo && j.grupoFaseGrupo == null && j.faseTorneio == faseTorneio && j.classeTorneio == classeId && (j.desafiante_id == substituirEsteJogador || j.desafiado_id == substituirEsteJogador) && j.desafiante_id != Constantes.Jogo.BYE).ToList();
                 foreach (var jogo in listaJogos)
                 {
                     if (substituirEsteJogador == jogo.desafiante_id)
