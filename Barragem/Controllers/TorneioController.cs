@@ -4951,6 +4951,23 @@ namespace Barragem.Controllers
             }
             #endregion Jogadores Fora da Tabela
 
+            bool faseGrupoSeguidoMataMata = classeFaseGrupo && classeMataMata;
+
+            #region Jogadores Sairam Fase Grupo
+            var listaJogadoresSairamFaseGrupo = new List<AutoCompleteOption>();
+            if (faseGrupoSeguidoMataMata)
+            {
+                foreach (var inscrito in inscritos.OrderBy(x => x.participante.nome))
+                {
+                    //TODO: AGUARDANDO REGRA
+                    //if (!jogosClasseTorneio.Any(x => x.desafiado_id == inscrito.userId || x.desafiante_id == inscrito.userId))
+                    //{
+                    //    listaJogadoresSairamFaseGrupo.Add(new AutoCompleteOption("SAIRAM FASE GRUPO", inscrito.participante.nome, inscrito.userId.ToString()));
+                    //}
+                }
+            }
+            #endregion Jogadores Sairam Fase Grupo
+
             var listaFG = new List<AutoCompleteOption>();
             var listaMM = new List<AutoCompleteOption>();
 
@@ -4981,7 +4998,14 @@ namespace Barragem.Controllers
                         listaMM.Add(itemInscrito);
                     }
                 }
-                listaMM.AddRange(listaForaTabela);
+                if (!faseGrupoSeguidoMataMata)
+                {
+                    listaMM.AddRange(listaForaTabela);
+                }
+                else
+                {
+                    listaMM.AddRange(listaJogadoresSairamFaseGrupo);
+                }
             }
 
             if (classeFaseGrupo)
@@ -5023,7 +5047,7 @@ namespace Barragem.Controllers
                 }
                 #endregion Regra Grupo Unico
             }
-            dadosRetorno.FaseGrupoSeguidoMataMata = classeFaseGrupo && classeMataMata;
+            dadosRetorno.FaseGrupoSeguidoMataMata = faseGrupoSeguidoMataMata;
             dadosRetorno.OpcoesJogador = listaFG;
             dadosRetorno.OpcoesJogadorMataMata = listaMM;
             dadosRetorno.Jogos = jogosClasseTorneio.Select(s => new ListaOpcoesJogadoresModel.DadosJogosModel { JogoId = s.Id, IdDesafiado = s.desafiado_id, IdDesafiante = s.desafiante_id, Grupo = s.grupoFaseGrupo }).ToList();
