@@ -4987,10 +4987,6 @@ namespace Barragem.Controllers
                 {
                     listaMM.AddRange(listaForaTabela);
                 }
-                else
-                {
-                    listaMM.AddRange(listaJogadoresSairamFaseGrupo);
-                }
             }
 
             if (classeFaseGrupo)
