@@ -4957,14 +4957,6 @@ namespace Barragem.Controllers
             var listaJogadoresSairamFaseGrupo = new List<AutoCompleteOption>();
             if (faseGrupoSeguidoMataMata)
             {
-                foreach (var inscrito in inscritos.OrderBy(x => x.participante.nome))
-                {
-                    //TODO: AGUARDANDO REGRA
-                    //if (!jogosClasseTorneio.Any(x => x.desafiado_id == inscrito.userId || x.desafiante_id == inscrito.userId))
-                    //{
-                    //    listaJogadoresSairamFaseGrupo.Add(new AutoCompleteOption("SAIRAM FASE GRUPO", inscrito.participante.nome, inscrito.userId.ToString()));
-                    //}
-                }
             }
             #endregion Jogadores Sairam Fase Grupo
 
