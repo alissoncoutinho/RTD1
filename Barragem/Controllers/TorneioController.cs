@@ -4953,13 +4953,6 @@ namespace Barragem.Controllers
 
             bool faseGrupoSeguidoMataMata = classeFaseGrupo && classeMataMata;
 
-            #region Jogadores Sairam Fase Grupo
-            var listaJogadoresSairamFaseGrupo = new List<AutoCompleteOption>();
-            if (faseGrupoSeguidoMataMata)
-            {
-            }
-            #endregion Jogadores Sairam Fase Grupo
-
             var listaFG = new List<AutoCompleteOption>();
             var listaMM = new List<AutoCompleteOption>();
 
