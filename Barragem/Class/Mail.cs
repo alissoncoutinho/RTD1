@@ -20,7 +20,7 @@ namespace Barragem.Class
             Usuario = System.Configuration.ConfigurationManager.AppSettings.Get("UsuarioMail");
             Senha = System.Configuration.ConfigurationManager.AppSettings.Get("SenhaMail");
             SMTPPort = System.Configuration.ConfigurationManager.AppSettings.Get("PortaSMTP");
-            HostIP = "mail.rankingdetenis.com"; //System.Configuration.ConfigurationManager.AppSettings.Get("ServidorSMTP");
+            HostIP = System.Configuration.ConfigurationManager.AppSettings.Get("ServidorSMTP");
         }
 
         public Mail(string de, string para, string assunto, string conteudo, Tipos.FormatoEmail formato, List<string> bcc=null)
@@ -35,7 +35,7 @@ namespace Barragem.Class
             Usuario = System.Configuration.ConfigurationManager.AppSettings.Get("UsuarioMail");
             Senha = System.Configuration.ConfigurationManager.AppSettings.Get("SenhaMail");
             SMTPPort = System.Configuration.ConfigurationManager.AppSettings.Get("PortaSMTP");
-            HostIP = "mail.rankingdetenis.com"; //System.Configuration.ConfigurationManager.AppSettings.Get("ServidorSMTP");
+            HostIP = System.Configuration.ConfigurationManager.AppSettings.Get("ServidorSMTP");
         }
 
         public string de { get; set; }
@@ -92,8 +92,8 @@ namespace Barragem.Class
         {
             MailMessage m = new MailMessage();
             SmtpClient sc = new SmtpClient();
-            m.From = new MailAddress("postmaster@rankingdetenis.com");
-            sc.Host = "mail.rankingdetenis.com";
+            m.From = new MailAddress(Usuario);
+            sc.Host = HostIP;
             sc.Port = 25;
             sc.EnableSsl = false;
             m.To.Add(para);
@@ -104,7 +104,7 @@ namespace Barragem.Class
             }else{
                 m.IsBodyHtml = false;
             }
-            sc.Credentials = new System.Net.NetworkCredential("postmaster@rankingdetenis.com", "@abc5826");
+            sc.Credentials = new System.Net.NetworkCredential(Usuario, Senha);
             try{
                 sc.Send(m);
             } catch (Exception ex){

@@ -928,7 +928,7 @@ namespace Barragem.Controllers
 
         private bool ValidaTriploEmpate(List<ClassificacaoFaseGrupo> classificacao)
         {
-            var gruposClassificatorios = classificacao.GroupBy(g => new { g.saldoSets, g.saldoGames, g.averageGames });
+            var gruposClassificatorios = classificacao.Where(x => x.saldoSets != 0 || x.saldoGames != 0 || x.averageGames != 0).GroupBy(g => new { g.saldoSets, g.saldoGames, g.averageGames });
             return gruposClassificatorios.Any(x => x.Count() == 3);
         }
 
@@ -2944,9 +2944,11 @@ namespace Barragem.Controllers
 
         private void SubstituirJogadorMataMata(int idJogo, int faseTorneio, int classeId, int substituirEsteJogador, int porEsteJogador, int porEsteParceiroDupla)
         {
+            //substituirEsteJogador: Novo Jogador informado no jogo alterado
+            //porEsteJogador: Jogador anterior do jogo alterado
             if (substituirEsteJogador > 0)
             {
-                var listaJogos = db.Jogo.Where(j => j.Id != idJogo && j.grupoFaseGrupo == null && j.faseTorneio == faseTorneio && j.classeTorneio == classeId && (j.desafiante_id == substituirEsteJogador || j.desafiado_id == substituirEsteJogador)).ToList();
+                var listaJogos = db.Jogo.Where(j => j.Id != idJogo && j.grupoFaseGrupo == null && j.faseTorneio == faseTorneio && j.classeTorneio == classeId && (j.desafiante_id == substituirEsteJogador || j.desafiado_id == substituirEsteJogador) && j.desafiante_id != Constantes.Jogo.BYE).ToList();
                 foreach (var jogo in listaJogos)
                 {
                     if (substituirEsteJogador == jogo.desafiante_id)
@@ -4949,6 +4951,8 @@ namespace Barragem.Controllers
             }
             #endregion Jogadores Fora da Tabela
 
+            bool faseGrupoSeguidoMataMata = classeFaseGrupo && classeMataMata;
+
             var listaFG = new List<AutoCompleteOption>();
             var listaMM = new List<AutoCompleteOption>();
 
@@ -4979,7 +4983,14 @@ namespace Barragem.Controllers
                         listaMM.Add(itemInscrito);
                     }
                 }
-                listaMM.AddRange(listaForaTabela);
+                if (!faseGrupoSeguidoMataMata)
+                {
+                    listaMM.AddRange(listaForaTabela);
+                }
+                else
+                {
+                    listaMM.AddRange(listaJogadoresSairamFaseGrupo);
+                }
             }
 
             if (classeFaseGrupo)
@@ -5021,7 +5032,7 @@ namespace Barragem.Controllers
                 }
                 #endregion Regra Grupo Unico
             }
-
+            dadosRetorno.FaseGrupoSeguidoMataMata = faseGrupoSeguidoMataMata;
             dadosRetorno.OpcoesJogador = listaFG;
             dadosRetorno.OpcoesJogadorMataMata = listaMM;
             dadosRetorno.Jogos = jogosClasseTorneio.Select(s => new ListaOpcoesJogadoresModel.DadosJogosModel { JogoId = s.Id, IdDesafiado = s.desafiado_id, IdDesafiante = s.desafiante_id, Grupo = s.grupoFaseGrupo }).ToList();
@@ -5083,7 +5094,7 @@ namespace Barragem.Controllers
                         qtdeInscricoes = db.InscricaoTorneio.Count(x => x.isAtivo && x.torneioId == torneioId && x.classe == classe.Id);
                     }
 
-                    if (qtdeInscricoes <= 5)
+                    if (qtdeInscricoes > 0 && qtdeInscricoes <= 5)
                     {
                         classes.Add(new ClasseGrupoSeguidoMataMataModel()
                         {
