@@ -5,6 +5,7 @@ namespace Barragem.Models
     public class ListaOpcoesJogadoresModel
     {
         public bool EhGrupoUnico { get; set; }
+        public bool FaseGrupoSeguidoMataMata { get; set; }
         public List<DadosJogosModel> Jogos { get; set; }
         public List<AutoCompleteOption> OpcoesJogador { get; set; }
         public List<AutoCompleteOption> OpcoesJogadorMataMata { get; set; }

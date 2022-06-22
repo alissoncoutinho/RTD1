@@ -493,7 +493,11 @@ function FiltrarOpcoesJogadores(dadosJogadores, idJogo, tipojogador) {
             var idJogador = ObterIdJogador(copiaOpcoesJogadorMataMata, dadosJogo, tipojogador);
             var i = copiaOpcoesJogadorMataMata.length;
             while (i--) {
-                if (idJogador == 0 && copiaOpcoesJogadorMataMata[i].value == 10)
+                if (dadosJogadores.FaseGrupoSeguidoMataMata && copiaOpcoesJogadorMataMata[i].group == "FORA DA TABELA") {
+                    //Fase de grupo seguido de mata mata não pode mostrar opções de jogadores FORA DA TABELA
+                    copiaOpcoesJogadorMataMata.splice(i, 1);
+                }
+                else if (idJogador == 0 && copiaOpcoesJogadorMataMata[i].value == 10)
                 {
                     //Manter somente a opção Aguardando adversário
                     copiaOpcoesJogadorMataMata.splice(i, 1);

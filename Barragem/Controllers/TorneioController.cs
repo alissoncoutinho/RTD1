@@ -5021,7 +5021,7 @@ namespace Barragem.Controllers
                 }
                 #endregion Regra Grupo Unico
             }
-
+            dadosRetorno.FaseGrupoSeguidoMataMata = classeFaseGrupo && classeMataMata;
             dadosRetorno.OpcoesJogador = listaFG;
             dadosRetorno.OpcoesJogadorMataMata = listaMM;
             dadosRetorno.Jogos = jogosClasseTorneio.Select(s => new ListaOpcoesJogadoresModel.DadosJogosModel { JogoId = s.Id, IdDesafiado = s.desafiado_id, IdDesafiante = s.desafiante_id, Grupo = s.grupoFaseGrupo }).ToList();
