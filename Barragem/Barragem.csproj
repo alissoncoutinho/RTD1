@@ -408,7 +408,6 @@
     <Content Include="Content\jsuites\jsuites.layout.js" />
     <Content Include="Content\jsuites\jsuites.webcomponents.js" />
     <Content Include="Content\js\torneio\editJogos.js" />
-    <Content Include="Content\js\torneio\lancarPlacarv2.js" />
     <Content Include="Content\js\torneio\lancarPlacar.js" />
     <Content Include="Content\paginaespecial\css\hamburgers.min.css" />
     <Content Include="Content\paginaespecial\css\style.css" />
@@ -1094,7 +1093,6 @@
     <Content Include="Views\Torneio\ConfirmacaoInscricao.cshtml" />
     <Content Include="Views\Torneio\_PartialTabs.cshtml" />
     <Content Include="Views\Torneio\EditInscritos.cshtml" />
-    <Content Include="Views\Torneio\EditJogos.cshtml" />
     <Content Include="Views\Shared\_LayoutTorneio2.cshtml" />
     <Content Include="Views\Torneio\Tabela.cshtml" />
     <Content Include="Views\Torneio\EditClasse.cshtml" />
@@ -1178,7 +1176,7 @@
     <Content Include="Views\Torneio\_PartialClasseJogosExclusao.cshtml" />
     <Content Include="Views\Torneio\_PartialClassesJogosGeracaoTabela.cshtml" />
     <Content Include="Views\Torneio\_PartialLancarPlacarJogo.cshtml" />
-    <Content Include="Views\Torneio\EditJogosV2.cshtml" />
+    <Content Include="Views\Torneio\EditJogos.cshtml" />
     <Content Include="Views\Torneio\_PartialAcaoClassesPoucosJogadores.cshtml" />
   </ItemGroup>
   <ItemGroup>

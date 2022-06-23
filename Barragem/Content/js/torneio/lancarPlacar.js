@@ -1,4 +1,4 @@
-﻿var spinner = $('#loadingDiv');
+﻿var loaderPage = $('#loadingDiv');
 
 function LancarPlacar(el, origem) {
 
@@ -21,9 +21,10 @@ function LancarPlacar(el, origem) {
         nomeDesafiado2 = document.getElementById("desafiado2" + id).value;
     }
     else {
-        var desafiante = document.querySelector("#jogador1_" + indice);
-        var desafiado = document.querySelector("#jogador2_" + indice);
-        if (typeof desafiante.options === "undefined") {
+        nomeDesafiante = ObterNomeJogadorSelecionado(indice, "desafiante");
+        nomeDesafiado = ObterNomeJogadorSelecionado(indice, "desafiado");
+
+        if (nomeDesafiante == null && nomeDesafiado == null) {
             nomeDesafiante = document.getElementById("jogador1Nome_" + indice).value;
 
             var lblNomeDuplaDesafiante = document.getElementById("jogador1DuplaNome_" + indice);
@@ -36,10 +37,6 @@ function LancarPlacar(el, origem) {
             if (lblNomeDuplaDesafiado != null) {
                 nomeDesafiado2 = lblNomeDuplaDesafiado.value;
             }
-        } else {
-            nomeDesafiante = desafiante.options[desafiante.selectedIndex].text;
-            nomeDesafiado = desafiado.options[desafiado.selectedIndex].text;
-
         }
     }
     var str = placar.split('|');
@@ -90,7 +87,7 @@ function LancarPlacar(el, origem) {
 $("#placarForm").submit(function (event) {
     // document.getElementById("salvarPlacar").disabled = true;
     event.preventDefault();
-    spinner.show();
+    loaderPage.show();
     var url = "LancarResultado"
     if (document.getElementById("situacao_id").value == '5') {
         url = "LancarWO";
@@ -109,7 +106,7 @@ function submitForm(url) {
         data: $('form#placarForm').serialize(),
         success: function (resp) {
             if (resp.retorno == 0) {
-                spinner.hide();
+                loaderPage.hide();
                 toastr.error(resp.erro, "Erro");
             } else {
                 var id = $(".modal-body #Id").val();
@@ -195,7 +192,7 @@ function submitForm(url) {
                         AtualizarBotaoLancarPlacar(id, false);
                     }
                 }
-                spinner.hide();
+                loaderPage.hide();
                 $("#placar-modal").modal('hide');
                 toastr.options = {
                     "positionClass": "toast-top-center",
@@ -222,7 +219,7 @@ function submitForm(url) {
 
 function exibirOpcaoVencedores(situacao) {
     if (situacao == '5') {
-         document.getElementById("IndicadorVencedor").classList.add("show");
+        document.getElementById("IndicadorVencedor").classList.add("show");
     } else {
         if (situacao == '1') {
             $(".modal-body #qtddGames1setDesafiante").val(0);
@@ -232,7 +229,7 @@ function exibirOpcaoVencedores(situacao) {
             $(".modal-body #qtddGames3setDesafiante").val(0);
             $(".modal-body #qtddGames3setDesafiado").val(0);
         }
-         document.getElementById("IndicadorVencedor").classList.remove("show");
+        document.getElementById("IndicadorVencedor").classList.remove("show");
     }
 }
 
