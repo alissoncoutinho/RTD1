@@ -1,5 +1,5 @@
 ﻿var jogadoresDropDownList = [];
-
+var loaderPage = $('#loadingDiv');
 
 $(".date").datepicker({
     language: 'pt-BR',
@@ -22,7 +22,7 @@ $(document).ready(function () {
         event.preventDefault();
         $.ajax({
             type: "POST",
-            url: "/Torneio/EditJogosV2",
+            url: "/Torneio/EditJogos",
             dataType: "json",
             data: "{'Id':'" + Id + "', 'jogador1':'" + jogador1 + "', 'jogador2':'" + jogador2 + "', 'dataJogo':'" + dataJogo + "', 'horaJogo':'" + horaJogo + "', 'quadra':'" + quadra + "'}",
             contentType: "application/json; charset=utf-8",
@@ -436,14 +436,15 @@ function Imprimir() {
 }
 
 function CarregarJogadores() {
+    loaderPage.show();
     $.get('/torneio/ObterJogadores?torneioId=' + document.getElementById('torneioId').value + "&classeId=" + document.getElementById('fClasse').value + "&grupoId=" + document.getElementById('fGrupo').value,
         function (data, status) {
             CarregarOpcoesJogador(data);
+            loaderPage.hide();
         });
 }
 
 function CarregarOpcoesJogador(dadosJogadores) {
-
     var dropdownsJogadores = document.getElementsByClassName("escolhaJogador");
 
     for (var i = 0; i < dropdownsJogadores.length; i++) {
