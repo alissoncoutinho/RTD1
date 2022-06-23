@@ -1139,13 +1139,7 @@ namespace Barragem.Controllers
             ViewBag.Classes = db.ClasseTorneio.Where(c => c.torneioId == torneioId).ToList();
             ViewBag.filtroClasse = filtroClasse;
             ViewBag.FiltroStatusPagamento = filtroStatusPagamento;
-            ViewBag.InscIndividuais = db.InscricaoTorneio.Where(i => i.torneioId == torneioId).Select(i => (int)i.userId).Distinct().Count();
-            ViewBag.InscIndividuaisSocios = db.InscricaoTorneio.Where(i => i.torneioId == torneioId && i.isSocio == true).Select(i => (int)i.userId).Distinct().Count();
-            ViewBag.InscIndividuaisFederados = db.InscricaoTorneio.Where(i => i.torneioId == torneioId && i.isFederado == true).Select(i => (int)i.userId).Distinct().Count();
-            ViewBag.TotalPagantes = db.InscricaoTorneio.Where(i => i.torneioId == torneioId && i.isAtivo == true).Select(i => (int)i.userId).Distinct().Count();
-            ViewBag.ValorPago = db.InscricaoTorneio.Where(i => i.torneioId == torneioId && i.isAtivo == true).Select(i => new { user = (int)i.userId, valor = i.valor }).Distinct().Sum(i => i.valor);
-            ViewBag.PagoNoCartao = db.InscricaoTorneio.Where(i => i.torneioId == torneioId && i.isAtivo == true && (i.statusPagamento == "3" || i.statusPagamento == "4" || i.statusPagamento == "PAID")).
-                Select(i => (int)i.userId).Distinct().Count();
+
             mensagem(Msg);
 
             CarregarDadosEssenciais(torneioId, "inscritos");
@@ -4195,6 +4189,18 @@ namespace Barragem.Controllers
             dadosPagina.LinkParaCopia = ObterLinkTorneio(torneio, torneio.barragemId);
             dadosPagina.ListaOpcoesStatusInscricao = new SelectList(opcoesStatusInscricao, "Value", "Text", torneio.StatusInscricao);
             dadosPagina.ListaOpcoesDivulgacao = new SelectList(opcoesDivulgacao, "Value", "Text", torneio.divulgacao);
+
+
+            dadosPagina.InscIndividuais = db.InscricaoTorneio.Where(i => i.torneioId == torneioId).Select(i => (int)i.userId).Distinct().Count();
+            dadosPagina.InscIndividuaisSocios = db.InscricaoTorneio.Where(i => i.torneioId == torneioId && i.isSocio == true).Select(i => (int)i.userId).Distinct().Count();
+            dadosPagina.InscIndividuaisFederados = db.InscricaoTorneio.Where(i => i.torneioId == torneioId && i.isFederado == true).Select(i => (int)i.userId).Distinct().Count();
+            dadosPagina.TotalPagantes = db.InscricaoTorneio.Where(i => i.torneioId == torneioId && i.isAtivo == true).Select(i => (int)i.userId).Distinct().Count();
+            if (dadosPagina.TotalPagantes != 0)
+            {
+                dadosPagina.ValorPago = db.InscricaoTorneio.Where(i => i.torneioId == torneioId && i.isAtivo == true).Select(i => new { user = (int)i.userId, valor = i.valor }).Distinct().Sum(i => i.valor) ?? 0;
+            }
+            dadosPagina.PagoNoCartao = db.InscricaoTorneio.Where(i => i.torneioId == torneioId && i.isAtivo == true && (i.statusPagamento == "3" || i.statusPagamento == "4" || i.statusPagamento == "PAID")).
+                Select(i => (int)i.userId).Distinct().Count();
 
             CarregarDadosEssenciais(torneioId, "painelTorneio");
             return View(dadosPagina);

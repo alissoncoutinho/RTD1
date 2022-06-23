@@ -1,10 +1,5 @@
 ﻿@{
     int i = 0;
-    double valor = 0;
-    if (ViewBag.TotalPagantes != 0)
-    {
-        valor = ViewBag.ValorPago;
-    }
 }
 @model IEnumerable<Barragem.Models.InscricaoTorneio>
     @Html.Partial("_PartialTabs")
@@ -59,48 +54,16 @@
                         <table class="table table-striped table-condensed table-bordered">
                             <tr>
                                 <th>
-                                    @Html.DisplayName("Total inscritos")
-                                </th>
-                                <th>
-                                    @Html.DisplayName("Sócios")
-                                </th>
-                                <th>
-                                    @Html.DisplayName("Federados")
-                                </th>
-                                <th>
-                                    @Html.DisplayName("Pagantes")
-                                </th>
-                                <th>
-                                    @Html.DisplayName("PagSeguro")
-                                </th>
-                                <th>
-                                    @Html.DisplayName("Valor Pago")
-                                </th>
-                            </tr>
-                            <tr>
-                                <td>@ViewBag.InscIndividuais</td>
-                                <td>@ViewBag.InscIndividuaisSocios</td>
-                                <td>@ViewBag.InscIndividuaisFederados</td>
-                                <td>@ViewBag.TotalPagantes</td>
-                                <td>@ViewBag.PagoNoCartao</td>
-                                <td>R$ @string.Format("{0:N}", valor)</td>
-                            </tr>
-                        </table>
-                    </div>
-                    <div class="box-body table-responsive no-padding">
-                        <table class="table table-striped table-condensed table-bordered">
-                            <tr>
-                                <th>
                                     <b>#</b>
                                 </th>
                                 <th>
-                                    @Html.DisplayName("nome")
+                                    @Html.DisplayName("Nome")
                                 </th>
                                 <th>
-                                    classe <span style="color:#f9f9f9">____________________</span>
+                                    Classe <span style="color:#f9f9f9">____________________</span>
                                 </th>
                                 <th>
-                                    @Html.DisplayName("pago")
+                                    @Html.DisplayName("Pago")
                                 </th>
                                 <th>
                                     @Html.DisplayName("PagSeguro")
