@@ -4584,7 +4584,7 @@ namespace Barragem.Controllers
                         if (resultadoValidacaoJogo.retorno == 0)
                             return Json(resultadoValidacaoJogo, "text/plain", JsonRequestBehavior.AllowGet);
 
-                        var resultadoValidacaoTrocaMataMata = ValidarTrocaDeJogadorPermitidaMataMata(jogo.torneioId.Value, jogo.classeTorneio.Value, substituirEsteDesafiante, porEsteDesafiante);
+                        var resultadoValidacaoTrocaMataMata = ValidarTrocaDeJogadorPermitidaMataMata(jogo.torneioId.Value, jogo.classeTorneio.Value, jogo.faseTorneio.Value, substituirEsteDesafiante, porEsteDesafiante);
                         if (resultadoValidacaoTrocaMataMata.retorno == 0)
                             return Json(resultadoValidacaoTrocaMataMata, "text/plain", JsonRequestBehavior.AllowGet);
                     }
@@ -4604,7 +4604,7 @@ namespace Barragem.Controllers
                         if (resultadoValidacaoJogo.retorno == 0)
                             return Json(resultadoValidacaoJogo, "text/plain", JsonRequestBehavior.AllowGet);
 
-                        var resultadoValidacaoTrocaMataMata = ValidarTrocaDeJogadorPermitidaMataMata(jogo.torneioId.Value, jogo.classeTorneio.Value, substituirEsteDesafiado, porEsteDesafiado);
+                        var resultadoValidacaoTrocaMataMata = ValidarTrocaDeJogadorPermitidaMataMata(jogo.torneioId.Value, jogo.classeTorneio.Value, jogo.faseTorneio.Value, substituirEsteDesafiado, porEsteDesafiado);
                         if (resultadoValidacaoTrocaMataMata.retorno == 0)
                             return Json(resultadoValidacaoTrocaMataMata, "text/plain", JsonRequestBehavior.AllowGet);
 
@@ -4736,11 +4736,11 @@ namespace Barragem.Controllers
             return new ResponseMessage { retorno = 1 };
         }
 
-        private ResponseMessage ValidarTrocaDeJogadorPermitidaMataMata(int torneioId, int classeId, int substituirEste, int porEste)
+        private ResponseMessage ValidarTrocaDeJogadorPermitidaMataMata(int torneioId, int classeId, int faseTorneio, int substituirEste, int porEste)
         {
             if (substituirEste == Constantes.Jogo.BYE)
             {
-                bool jaPossuiJogosVsBye = db.Jogo.Any(x => x.desafiado_id == porEste && x.desafiante_id == Constantes.Jogo.BYE);
+                bool jaPossuiJogosVsBye = db.Jogo.Any(x => x.desafiado_id == porEste && x.desafiante_id == Constantes.Jogo.BYE && x.grupoFaseGrupo == null && x.classeTorneio == classeId && x.torneioId == torneioId && x.faseTorneio == faseTorneio);
                 if (jaPossuiJogosVsBye)
                 {
                     return new ResponseMessage { erro = "Não é possível realizar a troca de jogador pois esta situação gera um jogo bye vs bye.", retorno = 0 };
