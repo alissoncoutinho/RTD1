@@ -2913,6 +2913,10 @@ namespace Barragem.Controllers
                     {
                         db.Entry(jogo).State = EntityState.Modified;
                         db.SaveChanges();
+
+                        var userIdLog = WebSecurity.GetUserId(User.Identity.Name);
+                        var msg = $"ALTERACAO_JOGADOR (B) {DateTimeHelper.GetDateTimeBrasilia()} - ORGANIZADOR: ID:{userIdLog} NOME: {User.Identity.Name} JOGO AFETADO NA TROCA: {jogo.Id}";
+                        GravarLogErro(msg);
                     }
 
                 }
@@ -2983,6 +2987,10 @@ namespace Barragem.Controllers
                     {
                         db.Entry(jogo).State = EntityState.Modified;
                         db.SaveChanges();
+
+                        var userIdLog = WebSecurity.GetUserId(User.Identity.Name);
+                        var msg = $"ALTERACAO_JOGADOR (B) {DateTimeHelper.GetDateTimeBrasilia()} - ORGANIZADOR: ID:{userIdLog} NOME: {User.Identity.Name} JOGO AFETADO NA TROCA: {jogo.Id}";
+                        GravarLogErro(msg);
 
                         //Atualiza o próximo jogo do mata
                         tn.MontarProximoJogoTorneio(jogo);
@@ -4745,7 +4753,6 @@ namespace Barragem.Controllers
                             jogo.AlterarJogoParaPendente();
                         }
 
-
                         var inscricaoNovoJogador = ObterInscricaoJogador(porEsteDesafiante, jogo.classeTorneio);
 
                         var resultadoValidacaoJogo = ValidarExistenciaJogosFinalizados(substituirEsteDesafiante, jogo.ObterNomeJogador(TipoJogador.DESAFIANTE), jogo.torneioId.Value, jogo.classeTorneio.Value, true, false);
@@ -4811,6 +4818,11 @@ namespace Barragem.Controllers
                 jogo.quadra = quadra;
                 db.Entry(jogo).State = EntityState.Modified;
                 db.SaveChanges();
+
+                var userIdLog = WebSecurity.GetUserId(User.Identity.Name);
+
+                var msg = $"ALTERACAO_JOGADOR (A) {DateTimeHelper.GetDateTimeBrasilia()} - ORGANIZADOR: ID:{userIdLog} NOME: {User.Identity.Name} AÇÃO REALIZADA: DESAFIANTE: [{substituirEsteDesafiante} => {porEsteDesafiante}] DESAFIADO: [{substituirEsteDesafiado} => {porEsteDesafiado}]";
+                GravarLogErro(msg);
 
                 if (jogo.desafiante_id == Constantes.Jogo.BYE)
                 {
