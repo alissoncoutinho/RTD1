@@ -2767,7 +2767,7 @@ namespace Barragem.Controllers
             //porEsteJogador: Jogador anterior do jogo alterado
             if (substituirEsteJogador > 0)
             {
-                var listaJogos = db.Jogo.Where(j => j.Id != idJogo && j.grupoFaseGrupo == null && j.faseTorneio == faseTorneio && j.classeTorneio == classeId && (j.desafiante_id == substituirEsteJogador || j.desafiado_id == substituirEsteJogador) && j.desafiante_id != Constantes.Jogo.BYE).ToList();
+                var listaJogos = db.Jogo.Where(j => j.Id != idJogo && j.grupoFaseGrupo == null && j.faseTorneio == faseTorneio && j.classeTorneio == classeId && (j.desafiante_id == substituirEsteJogador || j.desafiado_id == substituirEsteJogador)).ToList();
                 foreach (var jogo in listaJogos)
                 {
                     if (substituirEsteJogador == jogo.desafiante_id)
@@ -4590,7 +4590,7 @@ namespace Barragem.Controllers
                         if (resultadoValidacaoJogo.retorno == 0)
                             return Json(resultadoValidacaoJogo, "text/plain", JsonRequestBehavior.AllowGet);
 
-                        var resultadoValidacaoTrocaMataMata = ValidarTrocaDeJogadorPermitidaMataMata(jogo.torneioId.Value, jogo.classeTorneio.Value, jogo.faseTorneio.Value, jogo.desafiante_id, porEsteDesafiante);
+                        var resultadoValidacaoTrocaMataMata = ValidarTrocaDeJogadorPermitidaMataMata(jogo.torneioId.Value, jogo.classeTorneio.Value, jogo.Id, jogo.faseTorneio.Value, jogo.desafiante_id, porEsteDesafiante);
                         if (resultadoValidacaoTrocaMataMata.retorno == 0)
                             return Json(resultadoValidacaoTrocaMataMata, "text/plain", JsonRequestBehavior.AllowGet);
                     }
@@ -4609,10 +4609,6 @@ namespace Barragem.Controllers
                         resultadoValidacaoJogo = ValidarExistenciaJogosFinalizados(porEsteDesafiado, inscricaoNovoJogador?.participante.nome, jogo.torneioId.Value, jogo.classeTorneio.Value, true, true);
                         if (resultadoValidacaoJogo.retorno == 0)
                             return Json(resultadoValidacaoJogo, "text/plain", JsonRequestBehavior.AllowGet);
-
-                        var resultadoValidacaoTrocaMataMata = ValidarTrocaDeJogadorPermitidaMataMata(jogo.torneioId.Value, jogo.classeTorneio.Value, jogo.faseTorneio.Value, jogo.desafiante_id, porEsteDesafiado);
-                        if (resultadoValidacaoTrocaMataMata.retorno == 0)
-                            return Json(resultadoValidacaoTrocaMataMata, "text/plain", JsonRequestBehavior.AllowGet);
                     }
 
                     if (porEsteDesafiante == Constantes.Jogo.BYE || porEsteDesafiado == Constantes.Jogo.BYE)
@@ -4741,11 +4737,12 @@ namespace Barragem.Controllers
             return new ResponseMessage { retorno = 1 };
         }
 
-        private ResponseMessage ValidarTrocaDeJogadorPermitidaMataMata(int torneioId, int classeId, int faseTorneio, int desafiante, int porEste)
+        private ResponseMessage ValidarTrocaDeJogadorPermitidaMataMata(int torneioId, int classeId, int jogoId, int faseTorneio, int desafiante, int porEsteDesafiante)
         {
             if (desafiante == Constantes.Jogo.BYE)
             {
-                bool jaPossuiJogosVsBye = db.Jogo.Any(x => x.desafiado_id == porEste && x.desafiante_id == Constantes.Jogo.BYE && x.grupoFaseGrupo == null && x.classeTorneio == classeId && x.torneioId == torneioId && x.faseTorneio == faseTorneio);
+                //Se esta ocorrendo a troca de desafiante bye p/ jogador, verificar se o jogador já tem um jogo vs bye
+                bool jaPossuiJogosVsBye = db.Jogo.Any(x => x.Id != jogoId && x.desafiado_id == porEsteDesafiante && x.desafiante_id == Constantes.Jogo.BYE && x.grupoFaseGrupo == null && x.classeTorneio == classeId && x.torneioId == torneioId && x.faseTorneio == faseTorneio);
                 if (jaPossuiJogosVsBye)
                 {
                     return new ResponseMessage { erro = "Não é possível realizar a troca de jogador pois esta situação gera um jogo bye vs bye.", retorno = 0 };

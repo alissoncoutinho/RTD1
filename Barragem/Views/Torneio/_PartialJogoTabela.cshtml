@@ -83,7 +83,7 @@
         <div class="numeros alinhamentoPlacar">
             @if (Model.situacao_Id == 4 && Model.desafiante_id != 10)
             {
-                if (Roles.IsUserInRole("admin") || Roles.IsUserInRole("organizador"))
+                if (Roles.IsUserInRole("admin") || Roles.IsUserInRole("organizador") || Roles.IsUserInRole("adminTorneio") || Roles.IsUserInRole("adminTorneioTenis"))
                 {
 
                     <div id="@Html.Raw("placarResultado"+Model.Id)">
@@ -110,7 +110,7 @@
             }
             else if ((Model.situacao_Id == 5) && (Model.desafiante_id != 10))
             {
-                if (Roles.IsUserInRole("admin") || Roles.IsUserInRole("organizador"))
+                if (Roles.IsUserInRole("admin") || Roles.IsUserInRole("organizador") || Roles.IsUserInRole("adminTorneio") || Roles.IsUserInRole("adminTorneioTenis"))
                 {
 
                     <div id="@Html.Raw("placarResultado"+Model.Id)">
@@ -129,7 +129,7 @@
             }
             else if (Model.situacao_Id == 6)
             {
-                if (Roles.IsUserInRole("admin") || Roles.IsUserInRole("organizador"))
+                if (Roles.IsUserInRole("admin") || Roles.IsUserInRole("organizador") || Roles.IsUserInRole("adminTorneio") || Roles.IsUserInRole("adminTorneioTenis"))
                 {
 
                     <div id="@Html.Raw("placarResultado"+Model.Id)">
@@ -159,7 +159,7 @@
             else
             {
 
-                if ((Roles.IsUserInRole("admin") || Roles.IsUserInRole("organizador")) && Model.desafiante_id != 10 && Model.desafiante_id > 0 && Model.desafiado_id > 0)
+                if ((Roles.IsUserInRole("admin") || Roles.IsUserInRole("organizador") || Roles.IsUserInRole("adminTorneio") || Roles.IsUserInRole("adminTorneioTenis")) && Model.desafiante_id != 10 && Model.desafiante_id > 0 && Model.desafiado_id > 0)
                 {
 
                     <div id="@Html.Raw("placarResultado"+ Model.Id)"></div>
