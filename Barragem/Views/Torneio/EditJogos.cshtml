@@ -190,7 +190,7 @@
                                     </td>
                                     <!--Desafiante-->
                                     <td>
-                                        @if ((ViewBag.fClasse != 1 && Roles.IsUserInRole("admin")) || (ViewBag.PrimeiraFase != null && ViewBag.PrimeiraFase == item.faseTorneio) || (item.classe.faseGrupo && item.grupoFaseGrupo != null))
+                                        @if (ViewBag.fClasse != 1 && (Roles.IsUserInRole("admin") || (ViewBag.PrimeiraFase != null && ViewBag.PrimeiraFase == item.faseTorneio) || (item.classe.faseGrupo && item.grupoFaseGrupo != null)))
                                         {
                                             <!--Desafiante Possibilita edição-->
                                             <div id="@Html.Raw("jogador1_" + i)" class="escolhaJogador" data-jogador="@item.desafiante_id" data-jogoId="@item.Id" data-tipojogador="desafiante" data-indice="@i"></div>
@@ -235,7 +235,7 @@
                                     </td>
                                     <!--Desafiado-->
                                     <td>
-                                        @if ((ViewBag.fClasse != 1 && Roles.IsUserInRole("admin")) || (ViewBag.PrimeiraFase != null && ViewBag.PrimeiraFase == item.faseTorneio) || (item.classe.faseGrupo && item.grupoFaseGrupo != null))
+                                        @if (ViewBag.fClasse != 1 && (Roles.IsUserInRole("admin") || (ViewBag.PrimeiraFase != null && ViewBag.PrimeiraFase == item.faseTorneio) || (item.classe.faseGrupo && item.grupoFaseGrupo != null)))
                                         {
                                             <div id="@Html.Raw("jogador2_" + i)" class="escolhaJogador" data-jogador="@item.desafiado_id" data-jogoId="@item.Id" data-tipojogador="desafiado" data-indice="@i"></div>
                                         }
