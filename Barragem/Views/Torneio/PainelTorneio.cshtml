@@ -95,36 +95,26 @@
                 <div class="box-header with-border">
                     <h4 class="box-title">Compilado de Inscrições</h4>
                 </div>
-                <table class="table table-striped table-condensed table-bordered">
-                    <tr>
-                        <th>
-                            @Html.DisplayName("Total inscritos")
-                        </th>
-                        <th>
-                            @Html.DisplayName("Sócios")
-                        </th>
-                        <th>
-                            @Html.DisplayName("Federados")
-                        </th>
-                        <th>
-                            @Html.DisplayName("Pagantes")
-                        </th>
-                        <th>
-                            @Html.DisplayName("PagSeguro")
-                        </th>
-                        <th>
-                            @Html.DisplayName("Valor Pago")
-                        </th>
-                    </tr>
-                    <tr>
-                        <td>@Model.InscIndividuais</td>
-                        <td>@Model.InscIndividuaisSocios</td>
-                        <td>@Model.InscIndividuaisFederados</td>
-                        <td>@Model.TotalPagantes</td>
-                        <td>@Model.PagoNoCartao</td>
-                        <td>R$ @string.Format("{0:N}", Model.ValorPago)</td>
-                    </tr>
-                </table>
+                <div class="table-responsive">
+                    <table class="table table-sm table-striped table-condensed table-bordered">
+                        <tr>
+                            <th scope="col">Total inscritos</th>
+                            <th scope="col">Sócios</th>
+                            <th scope="col">Federados</th>
+                            <th scope="col">Pagantes</th>
+                            <th scope="col">PagSeguro</th>
+                            <th scope="col">Valor Pago</th>
+                        </tr>
+                        <tr>
+                            <td scope="row">@Model.InscIndividuais</td>
+                            <td scope="row">@Model.InscIndividuaisSocios</td>
+                            <td scope="row">@Model.InscIndividuaisFederados</td>
+                            <td scope="row">@Model.TotalPagantes</td>
+                            <td scope="row">@Model.PagoNoCartao</td>
+                            <td scope="row">R$ @string.Format("{0:N}", Model.ValorPago)</td>
+                        </tr>
+                    </table>
+                </div>
             </div>
 
         </div>

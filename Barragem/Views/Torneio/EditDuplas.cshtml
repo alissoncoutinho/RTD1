@@ -2,172 +2,178 @@
     @Html.Partial("_PartialTabs")
 
     <div class="tab-content">
-        <div class="tab-pane fade" id="tabCadastro"></div>
-        <div class="tab-pane fade" id="tabClasses"></div>
-        <div class="tab-pane fade" id="tabInscritos"></div>
-        <div class="tab-pane fade" id="tabEditClasses"></div>
-        <div class="tab-pane fade" id="tabJogos"></div>
         <div class="tab-pane fade in active" id="tabDuplas">
-            <br>
-            <div class="form-group">
-                @Html.Label("Classes", new { @class = "col-md-1 control-label" })
-                <div class="col-xs-8 col-md-3 input-group">
-                    <select name="filtroClasse" id="filtroClasse" class="form-control" onchange="Selecionar()">
-                        <option value="0">Todas</option>
-                        @foreach (var item2 in ViewBag.Classes)
-                        {
-                            <option value="@item2.Id" @if (ViewBag.filtroClasse == item2.Id) { @Html.Raw("selected") }>@item2.nome</option>
-                        }
-                    </select>
+            <div class="box box-primary">
+                <div class="box-header">
+                    <h4 class="box-title">Filtro</h4>
                 </div>
-                <input type="hidden" value="@ViewBag.TorneioId" name="torneioId" id="torneioId">
-            </div>
+                <div class="form-group">
+                    <label class="col-md-1 control-label">Categoria</label>
+                    <div class="col-xs-8 col-md-3 input-group">
+                        <select name="filtroClasse" id="filtroClasse" class="form-control" onchange="Selecionar()">
+                            <option value="0">Todas</option>
+                            @foreach (var item2 in ViewBag.Classes)
+                            {
+                                <option value="@item2.Id" @if (ViewBag.filtroClasse == item2.Id) { @Html.Raw("selected") }>@item2.nome</option>
+                            }
+                        </select>
+                    </div>
+                    <input type="hidden" value="@ViewBag.TorneioId" name="torneioId" id="torneioId">
+                </div>
 
-            @if (Model == null)
-            {
-                <p>Esse torneio não possui classes de duplas.</p>
-            }
-            else
-            {
-                int i = 0;
-                <table class="table table-striped table-condensed table-bordered">
-                    <tr>
-                        <th>
-                            Jogadores sem dupla
-                        </th>
-                    </tr>
-                    @foreach (var item in ViewBag.InscricaoSemDupla)
-                    {
-                        <tr>
-                            <td>
-                                <a href="@Html.Raw(item.participante.linkwhatsappSemMsg +
+                @if (Model == null)
+                {
+                    <p>Esse torneio não possui classes de duplas.</p>
+                }
+                else
+                {
+                    int i = 0;
+                    <div class="box box-primary">
+                        <div class="box-header">
+                            <h4 class="box-title">Jogadores Sem Duplas</h4>
+                        </div>
+                        <table class="table table-striped table-condensed table-bordered">
+                            @foreach (var item in ViewBag.InscricaoSemDupla)
+                            {
+                                <tr>
+                                    <td>
+                                        <a href="@Html.Raw(item.participante.linkwhatsappSemMsg +
                                             "Você%20está%20sem%20dupla%20no%20" +
                                             item.torneio.nome +
                                             ".%20Escolha%20sua%20dupla%20agora%20para%20não%20ficar%20de%20fora%20clicando%20no%20link%20abaixo%20ou%20informe%20seu%20parceiro%20para%20se%20inscrever:%20https://www.rankingdetenis.com/Torneio/EscolherDupla/" + item.torneioId + "?userId=" + item.participante.UserId + "&classe=" + item.classe)">
-                                    <img width="25" height="25" src="/Content/image/whatsapp.png">
-                                </a>
-                                <a href="@Url.Action("../Account/Detalhes", new { userId = @item.participante.UserId })" title="Detalhes do jogador">@item.participante.nome</a>
-                                @if (item.isAtivo)
-                                {
-                                    <a style="text-decoration: none; color: white; background-color: #28a745; font-size: 9px; padding: 2px">PAGO</a>
-                                }
-                                else
-                                {
-                                    <a style="text-decoration: none; color: white; background-color: #dc3545; font-size: 9px; padding: 2px ">NÃO PAGO</a>
-                                }
-                            </td>
-                        </tr>
-                    }
-                </table>
-                <table class="table table-striped table-condensed table-bordered">
+                                            <img width="25" height="25" src="/Content/image/whatsapp.png">
+                                        </a>
+                                        <a href="@Url.Action("../Account/Detalhes", new { userId = @item.participante.UserId })" title="Detalhes do jogador">@item.participante.nome</a>
+                                        @if (item.isAtivo)
+                                        {
+                                            <a style="text-decoration: none; color: white; background-color: #28a745; font-size: 9px; padding: 2px">PAGO</a>
+                                        }
+                                        else
+                                        {
+                                            <a style="text-decoration: none; color: white; background-color: #dc3545; font-size: 9px; padding: 2px ">NÃO PAGO</a>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </table>
 
-                    <tr>
-                        <th>
-                            <b>#</b>
-                        </th>
-                        <th>
-                            @Html.DisplayName("Jogador 1")
-                        </th>
-                        <th>
-                            @Html.DisplayName("Jogador 2")
-                        </th>
-                        <th></th>
-                    </tr>
-                    @foreach (var item in Model)
-                    {
-                        i++;
-                        if (i > (Model.Count() / 2))
-                        {
-                            break;
-                        }
-                        <tr>
-                            <td>
-                                @i
-                            </td>
-                            <td>
-                                @{ var isDupla = false;
-                                    var idParticipante = 0;
-                                    var nomeParticipante = "";
-                                    var isAtivo = false;}
-                                @foreach (var item2 in ViewBag.Inscritos)
+                        <div class="box box-primary">
+                            <div class="box-header">
+                                <h4 class="box-title">Jogadores com Duplas Formadas</h4>
+                            </div>
+                            <table class="table table-striped table-condensed table-bordered">
+
+                                <tr>
+                                    <th>
+                                        <b>#</b>
+                                    </th>
+                                    <th>
+                                        @Html.DisplayName("Jogador 1")
+                                    </th>
+                                    <th>
+                                        @Html.DisplayName("Jogador 2")
+                                    </th>
+                                    <th></th>
+                                </tr>
+                                @foreach (var item in Model)
                                 {
-                                    if (item.userId == item2.userId && item.parceiroDuplaId != null)
+                                    i++;
+                                    if (i > (Model.Count() / 2))
                                     {
-                                        isDupla = true;
-                                        idParticipante = item2.Id;
-                                        nomeParticipante = item2.participante.nome;
-                                        isAtivo = item2.isAtivo;
                                         break;
                                     }
-                                }
-                                @if (isDupla)
-                                {
-                                    <input type="hidden" value="@idParticipante" name="@Html.Raw("jogador1_" + i)" id="@Html.Raw("jogador1_" + i)">
-                                    @Html.Raw(nomeParticipante)
-                                    if (isAtivo)
-                                    {
-                                        <a style="text-decoration: none; color: white; background-color: #28a745; font-size: 9px; padding: 2px">PAGO</a>
-                                    }
-                                    else
-                                    {
-                                        <a style="text-decoration: none; color: white; background-color: #dc3545; font-size: 9px; padding: 2px ">NÃO PAGO</a>
-                                    }
-                                }
-                                else
-                                {
-                                    <select name="@Html.Raw("jogador1_" + i)" id="@Html.Raw("jogador1_" + i)" class="form-control">
-                                        <option value="0"></option>
-                                        @foreach (var item2 in ViewBag.InscricaoSemDupla)
-                                        {
-                                            <option value="@item2.Id" @if (item.userId == item2.userId && item.parceiroDuplaId != null) { @Html.Raw("selected") }>@item2.participante.nome</option>
-                                        }
-                                    </select>
-                                }
-                            </td>
-                            <td>
-                                @if (isDupla)
-                                {
-                                    <select name="@Html.Raw("jogador2_" + i)" id="@Html.Raw("jogador2_" + i)" class="form-control">
-                                        <option value="null"></option>
-                                        @foreach (var item2 in ViewBag.Inscritos)
-                                        {
-                                            <option value="@item2.userId" @if (item.parceiroDuplaId == item2.userId) { @Html.Raw("selected") }>
-                                                @item2.participante.nome @if (item2.isAtivo)
-                                                {@Html.Raw("<b> (Pago)</b>")}
-                                            </option>
-                                        }
-                                    </select>
-                                }
-                                else
-                                {
-                                    <select name="@Html.Raw("jogador2_" + i)" id="@Html.Raw("jogador2_" + i)" class="form-control">
-                                        <option value="null"></option>
-                                        @foreach (var item2 in ViewBag.InscricaoSemDupla)
-                                        {
-                                            <option value="@item2.userId" @if (item.parceiroDuplaId == item2.userId) { @Html.Raw("selected") }>
-                                                @item2.participante.nome @if (item2.isAtivo)
-                                            {@Html.Raw(" (Pago)")}
-                                            </option>
-                                        }
-                                    </select>
-                                }
-                            </td>
-                            <td align="center">
-                                <form method="post" enctype="multipart/form-data" action="#" name="@Html.Raw("form"+i)" id="@Html.Raw("form"+i)" class="form">
-                                    <input type="hidden" name="Id" id="Id" value="@item.Id">
-                                    <button title="salvar" data-valor="@Html.Raw(i)" name="@Html.Raw("button"+i)" id="@Html.Raw("button"+i)" class="btn btn-default btn-xs inscricaoButton">
-                                        Salvar
-                                    </button>
-                                    <button title="Desfazer dupla" data-valor="@Html.Raw(i)" name="@Html.Raw("button"+i)" id="@Html.Raw("button"+i)" class="btn btn-default btn-xs desfazerDupla">
-                                        Desfazer dupla
-                                    </button>
-                                </form>
-                            </td>
+                                    <tr>
+                                        <td>
+                                            @i
+                                        </td>
+                                        <td>
+                                            @{ var isDupla = false;
+                                                var idParticipante = 0;
+                                                var nomeParticipante = "";
+                                                var isAtivo = false;}
+                                            @foreach (var item2 in ViewBag.Inscritos)
+                                            {
+                                                if (item.userId == item2.userId && item.parceiroDuplaId != null)
+                                                {
+                                                    isDupla = true;
+                                                    idParticipante = item2.Id;
+                                                    nomeParticipante = item2.participante.nome;
+                                                    isAtivo = item2.isAtivo;
+                                                    break;
+                                                }
+                                            }
+                                            @if (isDupla)
+                                            {
+                                                <input type="hidden" value="@idParticipante" name="@Html.Raw("jogador1_" + i)" id="@Html.Raw("jogador1_" + i)">
+                                                @Html.Raw(nomeParticipante)
+                                                if (isAtivo)
+                                                {
+                                                    <a style="text-decoration: none; color: white; background-color: #28a745; font-size: 9px; padding: 2px">PAGO</a>
+                                                }
+                                                else
+                                                {
+                                                    <a style="text-decoration: none; color: white; background-color: #dc3545; font-size: 9px; padding: 2px ">NÃO PAGO</a>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <select name="@Html.Raw("jogador1_" + i)" id="@Html.Raw("jogador1_" + i)" class="form-control">
+                                                    <option value="0"></option>
+                                                    @foreach (var item2 in ViewBag.InscricaoSemDupla)
+                                                    {
+                                                        <option value="@item2.Id" @if (item.userId == item2.userId && item.parceiroDuplaId != null) { @Html.Raw("selected") }>@item2.participante.nome</option>
+                                                    }
+                                                </select>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (isDupla)
+                                            {
+                                                <select name="@Html.Raw("jogador2_" + i)" id="@Html.Raw("jogador2_" + i)" class="form-control">
+                                                    <option value="null"></option>
+                                                    @foreach (var item2 in ViewBag.Inscritos)
+                                                    {
+                                                        <option value="@item2.userId" @if (item.parceiroDuplaId == item2.userId) { @Html.Raw("selected") }>
+                                                            @item2.participante.nome @if (item2.isAtivo)
+                                                            {@Html.Raw("<b> (Pago)</b>")}
+                                                        </option>
+                                                    }
+                                                </select>
+                                            }
+                                            else
+                                            {
+                                                <select name="@Html.Raw("jogador2_" + i)" id="@Html.Raw("jogador2_" + i)" class="form-control">
+                                                    <option value="null"></option>
+                                                    @foreach (var item2 in ViewBag.InscricaoSemDupla)
+                                                    {
+                                                        <option value="@item2.userId" @if (item.parceiroDuplaId == item2.userId) { @Html.Raw("selected") }>
+                                                            @item2.participante.nome @if (item2.isAtivo)
+                                                            {@Html.Raw(" (Pago)")}
+                                                        </option>
+                                                    }
+                                                </select>
+                                            }
+                                        </td>
+                                        <td align="center">
+                                            <form method="post" enctype="multipart/form-data" action="#" name="@Html.Raw("form"+i)" id="@Html.Raw("form"+i)" class="form">
+                                                <input type="hidden" name="Id" id="Id" value="@item.Id">
+                                                <button title="salvar" data-valor="@Html.Raw(i)" name="@Html.Raw("button"+i)" id="@Html.Raw("button"+i)" class="btn btn-default btn-xs inscricaoButton">
+                                                    Salvar
+                                                </button>
+                                                <button title="Desfazer dupla" data-valor="@Html.Raw(i)" name="@Html.Raw("button"+i)" id="@Html.Raw("button"+i)" class="btn btn-default btn-xs desfazerDupla">
+                                                    Desfazer dupla
+                                                </button>
+                                            </form>
+                                        </td>
 
-                        </tr>
-                    }
-                </table>
-            }
+                                    </tr>
+                                }
+                            </table>
+                        </div>
+                    </div>
+                }
+
+            </div>
         </div>
     </div>
     @section Scripts {

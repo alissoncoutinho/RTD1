@@ -23,7 +23,7 @@
                     <div class="form-row">
                         <div class="form-group col-sm-3">
                             <select name="filtroClasse" id="filtroClasse" class="form-control" onchange="Selecionar()">
-                                <option value="0">Todas Classes</option>
+                                <option value="0">Todas Categorias</option>
                                 @foreach (var item2 in ViewBag.Classes)
                                 {
                                     <option value="@item2.Id" @if (ViewBag.filtroClasse == item2.Id) { @Html.Raw("selected") }>@item2.nome</option>
@@ -60,7 +60,7 @@
                                     @Html.DisplayName("Nome")
                                 </th>
                                 <th>
-                                    Classe <span style="color:#f9f9f9">____________________</span>
+                                    Categoria <span style="color:#f9f9f9">____________________</span>
                                 </th>
                                 <th>
                                     @Html.DisplayName("Pago")
