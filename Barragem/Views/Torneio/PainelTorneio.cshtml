@@ -89,13 +89,38 @@
                     <label> Liberar visualização dos inscritos do torneio</label>
                 </div>
             </div>
-        </div>
 
+
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h4 class="box-title">Compilado de Inscrições</h4>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-sm table-striped table-condensed table-bordered">
+                        <tr>
+                            <th scope="col">Total inscritos</th>
+                            <th scope="col">Sócios</th>
+                            <th scope="col">Federados</th>
+                            <th scope="col">Pagantes</th>
+                            <th scope="col">PagSeguro</th>
+                            <th scope="col">Valor Pago</th>
+                        </tr>
+                        <tr>
+                            <td scope="row">@Model.InscIndividuais</td>
+                            <td scope="row">@Model.InscIndividuaisSocios</td>
+                            <td scope="row">@Model.InscIndividuaisFederados</td>
+                            <td scope="row">@Model.TotalPagantes</td>
+                            <td scope="row">@Model.PagoNoCartao</td>
+                            <td scope="row">R$ @string.Format("{0:N}", Model.ValorPago)</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+
+        </div>
 
     </div>
 </div>
-
-
 
 @section Scripts {
 
