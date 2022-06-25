@@ -337,7 +337,7 @@
                                     <input type="checkbox" class="circuitos" @if (ligasTorneio.Where(l => l.Id == lg.Liga.Id).Count() > 0) { @Html.Raw("checked") } name="liga" value="@lg.Liga.Id" onchange="inputCheckboxSelectPontos(this)">
                                     if (ViewBag.isModeloTodosContraTodos)
                                     {
-                                        @Html.Raw(lg.Liga.Nome)
+                                        @Html.Raw(lg.Liga.Nome) if (Roles.IsUserInRole("admin")) { @Html.Raw(" - Todos contra todos")}
                                     }
                                     else
                                     {
