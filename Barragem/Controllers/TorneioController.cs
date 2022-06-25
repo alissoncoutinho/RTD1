@@ -2863,6 +2863,8 @@ namespace Barragem.Controllers
             ////////////////////////////////
             ViewBag.Inscritos = db.InscricaoTorneio.Where(c => c.torneioId == torneioId && c.classe == filtroClasse).ToList();
 
+            ViewBag.DuplasFormadasComJogos = ObterDuplasJogosFormados(torneioId, filtroClasse, duplasFormadas);
+
             CarregarDadosEssenciais(torneioId, "duplas");
             return View(duplas);
         }
@@ -4956,6 +4958,20 @@ namespace Barragem.Controllers
                 }
             }
             return classes;
+        }
+
+        private List<int> ObterDuplasJogosFormados(int idTorneio, int classeId, List<InscricaoTorneio> duplas)
+        {
+            var duplasJogos = new List<int>();
+            var jogos = db.Jogo.Where(x => x.torneioId == idTorneio && (x.classeTorneio == classeId || classeId == 0));
+            foreach (var dupla in duplas)
+            {
+                if (jogos.Any(x => x.desafiante_id == dupla.userId || x.desafiado_id == dupla.userId))
+                {
+                    duplasJogos.Add(dupla.userId);
+                }
+            }
+            return duplasJogos;
         }
 
     }

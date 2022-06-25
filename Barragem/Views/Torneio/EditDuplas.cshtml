@@ -1,4 +1,6 @@
-﻿@model IEnumerable<Barragem.Models.InscricaoTorneio>
+﻿@using System.Linq;
+@using Barragem.Models;
+@model IEnumerable<Barragem.Models.InscricaoTorneio>
     @Html.Partial("_PartialTabs")
 
     <div class="tab-content">
@@ -85,10 +87,15 @@
                                 @i
                             </td>
                             <td>
-                                @{ var isDupla = false;
+                                @{
+                                    var isDupla = false;
                                     var idParticipante = 0;
                                     var nomeParticipante = "";
-                                    var isAtivo = false;}
+                                    var isAtivo = false;
+
+                                    bool jaPossuiJogo = ((List<int>)ViewBag.DuplasFormadasComJogos).Any(x => x == item.userId);
+                                }
+
                                 @foreach (var item2 in ViewBag.Inscritos)
                                 {
                                     if (item.userId == item2.userId && item.parceiroDuplaId != null)
@@ -127,7 +134,7 @@
                             <td>
                                 @if (isDupla)
                                 {
-                                    <select name="@Html.Raw("jogador2_" + i)" id="@Html.Raw("jogador2_" + i)" class="form-control">
+                                    <select name="@Html.Raw("jogador2_" + i)" id="@Html.Raw("jogador2_" + i)" class="form-control" @if (jaPossuiJogo) { @Html.Raw("disabled") }>
                                         <option value="null"></option>
                                         @foreach (var item2 in ViewBag.Inscritos)
                                         {
@@ -146,22 +153,33 @@
                                         {
                                             <option value="@item2.userId" @if (item.parceiroDuplaId == item2.userId) { @Html.Raw("selected") }>
                                                 @item2.participante.nome @if (item2.isAtivo)
-                                            {@Html.Raw(" (Pago)")}
+                                                {@Html.Raw(" (Pago)")}
                                             </option>
                                         }
                                     </select>
                                 }
                             </td>
                             <td align="center">
-                                <form method="post" enctype="multipart/form-data" action="#" name="@Html.Raw("form"+i)" id="@Html.Raw("form"+i)" class="form">
-                                    <input type="hidden" name="Id" id="Id" value="@item.Id">
-                                    <button title="salvar" data-valor="@Html.Raw(i)" name="@Html.Raw("button"+i)" id="@Html.Raw("button"+i)" class="btn btn-default btn-xs inscricaoButton">
-                                        Salvar
-                                    </button>
-                                    <button title="Desfazer dupla" data-valor="@Html.Raw(i)" name="@Html.Raw("button"+i)" id="@Html.Raw("button"+i)" class="btn btn-default btn-xs desfazerDupla">
-                                        Desfazer dupla
-                                    </button>
-                                </form>
+                                
+                                    <form method="post" enctype="multipart/form-data" action="#" name="@Html.Raw("form"+i)" id="@Html.Raw("form"+i)" class="form">
+                                        <input type="hidden" name="Id" id="Id" value="@item.Id">
+                                        <button title="salvar" data-valor="@Html.Raw(i)" name="@Html.Raw("button"+i)" id="@Html.Raw("button"+i)" class="btn btn-default btn-xs inscricaoButton">
+                                            Salvar
+                                        </button>
+                                        @if (!jaPossuiJogo)
+                                        {
+                                            <button title="Desfazer dupla" data-valor="@Html.Raw(i)" name="@Html.Raw("button" + i)" id="@Html.Raw("button" + i)" class="btn btn-default btn-xs desfazerDupla">
+                                                Desfazer dupla
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <button type="button" name="@Html.Raw("btnAlterarParceiroDupla" + i)" id="@Html.Raw("btnAlterarParceiroDupla" + i)" class="btn btn-default btn-xs" onclick="AlterarParceiroDupla(this)"
+                                                    data-indice="@i" data-idInscricao="@item.Id" data-idTorneio="@ViewBag.TorneioId" data-idClasse="@ViewBag.filtroClasse" data-toggle="modal" data-target="#modalAlterarParceiroDupla">
+                                                Alterar parceiro
+                                            </button>
+                                        }
+                                    </form>
                             </td>
 
                         </tr>
@@ -170,6 +188,9 @@
             }
         </div>
     </div>
+
+    @Html.Partial("_PartialAlterarParceiroDupla")
+
     @section Scripts {
         @Scripts.Render("~/bundles/jqueryval")
         @Scripts.Render("~/bundles/jqueryform")
@@ -237,6 +258,16 @@
                     });
                 });
             });
+
+            function AlterarParceiroDupla(el) {
+                var idInscricao = el.dataset.idinscricao;
+                var idTorneio = el.dataset.idtorneio;
+                var idClasse = el.dataset.idclasse;
+
+                $(".modal-body #IdInscricao").val(idInscricao);
+                $(".modal-body #IdTorneio").val(idTorneio);
+                $(".modal-body #IdClasse").val(idClasse);
+            }
 
             function Selecionar() {
                 var torneioId = document.getElementById('torneioId').value;

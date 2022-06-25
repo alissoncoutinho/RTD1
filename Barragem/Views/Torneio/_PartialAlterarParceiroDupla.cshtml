@@ -1,0 +1,50 @@
+﻿@using Barragem.Models;
+
+<div class="modal fade" id="modalAlterarParceiroDupla" style="z-index: 99999999999999; " role="dialog" aria-labelledby="modalAlterarParceiroDupla" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" style="margin:20px">
+            <div class="modal-header">
+                <b>ALTERAR PARCEIRO DUPLA</b>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            @using (Html.BeginForm("AlterarParceiroDupla", "Torneio", FormMethod.Post, new { @name = "FormAlterarParceiroDupla", @id = "FormAlterarParceiroDupla" }))
+            {
+        <div class="modal-body">
+            <input type="hidden" name="IdTorneio" id="IdTorneio" class="form-control">
+            <input type="hidden" name="IdClasse" id="IdClasse" class="form-control">
+            <input type="hidden" name="IdInscricao" id="IdInscricao" class="form-control">
+
+            <p>
+                Qual jogador deseja substituir?
+            </p>
+
+            <div>
+                <div>
+                    <input type="radio" id="chkJogador1" name="JogadorAlterado" value="1">
+                    <label for="chkJogador1">Jogador 1</label>
+                </div>
+                <div>
+                    <input type="radio" id="chkJogador2" name="JogadorAlterado" value="2" checked>
+                    <label for="chkJogador2">Jogador 2</label>
+                </div>
+                <div style="margin-top:10px">
+                    <label for="IdJogador">Incluir jogador no lugar:</label>
+                    <select name="IdJogador" id="IdJogador" class="form-control">
+                        <option value="0" selected>Selecionar Jogador</option>
+                        @foreach (var inscrito in ViewBag.InscricaoSemDupla)
+                        {
+                            <option value="@inscrito.Id">@inscrito.participante.nome</option>
+                        }
+                    </select>
+                </div>
+            </div>
+        </div>
+                <div class="modal-footer">
+                    <button id="btnAlterarParceiroDupla" type="button" class="btn btn-primary btn-small" style="float:right" onclick="SalvarAlteracaoParceiroDupla()">Salvar</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
