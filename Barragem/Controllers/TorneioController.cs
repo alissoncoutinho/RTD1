@@ -4158,6 +4158,9 @@ namespace Barragem.Controllers
                 dadosTela = PopularDadosCabecaChave(inscricao, inscricao, false);
             }
 
+            var possuiJogos = db.Jogo.Any(x => x.torneioId == torneioId && x.classeTorneio == classe.Id);
+
+            ViewBag.ClasseJogosJaGerados = possuiJogos;
             ViewBag.CabecasDeChave = getOpcoesCabecaDeChave(filtroClasse);
             ViewBag.CircuitosImpCabecaChave = ObterCircuitosImportacaoCabecaChave(torneioId, filtroClasse);
             ViewBag.Classes = listaClasses;
