@@ -6,11 +6,6 @@
         public int IdJogador { get; set; }
         public int IdTorneio { get; set; }
         public int IdClasse { get; set; }
-    }
-
-    public class DadosModalAlteracaoParceiroDuplaModel
-    {
-        public int IdTorneio { get; set; }
-        public int IdClasse { get; set; }
+        public int IdInscricao { get; set; }
     }
 }

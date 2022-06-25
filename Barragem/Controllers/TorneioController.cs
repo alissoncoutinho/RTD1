@@ -558,6 +558,76 @@ namespace Barragem.Controllers
             }
         }
 
+        [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
+        [HttpPost]
+        public JsonResult AlterarParceiroDupla(DadosAlteracaoParceiroDuplaModel dados)
+        {
+            try
+            {
+                if (dados.IdInscricao <= 0)
+                {
+                    return Json(new { erro = "Identificador da inscrição inválido", retorno = "ERRO" }, "text/plain", JsonRequestBehavior.AllowGet);
+                }
+                else if (dados.IdTorneio <= 0)
+                {
+                    return Json(new { erro = "Identificador do torneio inválido", retorno = "ERRO" }, "text/plain", JsonRequestBehavior.AllowGet);
+                }
+                else if (dados.IdClasse <= 0)
+                {
+                    return Json(new { erro = "Identificador da classe inválido", retorno = "ERRO" }, "text/plain", JsonRequestBehavior.AllowGet);
+                }
+                else if (dados.IdJogador <= 0)
+                {
+                    return Json(new { erro = "Informe o Jogador para alteração", retorno = "ERRO" }, "text/plain", JsonRequestBehavior.AllowGet);
+                }
+                
+                int? userIdAnterior = 0;
+                var inscricaoDupla = db.InscricaoTorneio.Find(dados.IdInscricao);
+                var inscricaoDuplaJogadorEscolhido = db.InscricaoTorneio.FirstOrDefault(x => x.torneioId == dados.IdTorneio && x.classe == dados.IdClasse && x.userId == dados.IdJogador && x.parceiroDuplaId == null);
+
+                if (inscricaoDupla == null)
+                {
+                    return Json(new { erro = "Inscrição da dupla não encontrada", retorno = "ERRO" }, "text/plain", JsonRequestBehavior.AllowGet);
+                }
+
+                if (dados.JogadorAlterado == 1)
+                {
+                    userIdAnterior = inscricaoDupla.userId;
+
+                    inscricaoDupla.userId = dados.IdJogador;
+                    db.Entry(inscricaoDupla).State = EntityState.Modified;
+                    db.SaveChanges();
+
+                    if (inscricaoDuplaJogadorEscolhido != null)
+                    {
+                        inscricaoDuplaJogadorEscolhido.userId = userIdAnterior.Value;
+                        db.Entry(inscricaoDuplaJogadorEscolhido).State = EntityState.Modified;
+                        db.SaveChanges();
+                    }
+
+                    db.Database.ExecuteSqlCommand($"update Jogo set desafiado_id  = {dados.IdJogador} where torneioId = {dados.IdTorneio} and classeTorneio = {dados.IdClasse} and desafiado_id  = {userIdAnterior} ");
+                    db.Database.ExecuteSqlCommand($"update Jogo set desafiante_id = {dados.IdJogador} where torneioId = {dados.IdTorneio} and classeTorneio = {dados.IdClasse} and desafiante_id = {userIdAnterior} ");
+                }
+                else
+                {
+                    userIdAnterior = inscricaoDupla.parceiroDuplaId;
+
+                    inscricaoDupla.parceiroDuplaId = dados.IdJogador;
+                    db.Entry(inscricaoDupla).State = EntityState.Modified;
+                    db.SaveChanges();
+
+                    db.Database.ExecuteSqlCommand($"update Jogo set desafiado2_id  = {dados.IdJogador} where torneioId = {dados.IdTorneio} and classeTorneio = {dados.IdClasse} and desafiado2_id  = {userIdAnterior} ");
+                    db.Database.ExecuteSqlCommand($"update Jogo set desafiante2_id = {dados.IdJogador} where torneioId = {dados.IdTorneio} and classeTorneio = {dados.IdClasse} and desafiante2_id = {userIdAnterior} ");
+                }
+
+                return Json(new { erro = "", retorno = "OK", mensagem = "Inscrição da dupla atualizada com sucesso!" }, "text/plain", JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { erro = ex.Message, retorno = "ERRO" }, "text/plain", JsonRequestBehavior.AllowGet);
+            }
+        }
+
         private void RemoverGrupoInscricao(int classeId, int torneioId)
         {
             db.Database.ExecuteSqlCommand($"update InscricaoTorneio set grupo = null where torneioid = {torneioId} and classe = {classeId}");
@@ -3154,45 +3224,7 @@ namespace Barragem.Controllers
             {
                 return Json(new { erro = ex.Message, retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
             }
-
-            //return RedirectToAction("LancarResultado", "Torneio", new { torneioId = jogo.Id, msg = Mensagem });
         }
-        //private void GravarPontuacaoFaseGrupo(Jogo jogo, int idVencedorAnterior = 0)
-        //{
-        //    var torneioId = jogo.torneioId;
-        //    var classeId = jogo.classeTorneio;
-        //    var userId = jogo.idDoVencedor;
-        //    var inscricao = new InscricaoTorneio();
-        //    if (jogo.situacao_Id != 2)
-        //    {
-        //        if((jogo.situacao_Id == 1)&&(idVencedorAnterior != 0)) {
-        //            inscricao = db.InscricaoTorneio.Where(it => it.torneioId == torneioId &&
-        //                        it.classe == classeId && it.isAtivo && it.userId == idVencedorAnterior).Single();
-        //            inscricao.pontuacaoFaseGrupo--;
-        //        } else { 
-        //            inscricao = db.InscricaoTorneio.Where(it => it.torneioId == torneioId &&
-        //                        it.classe == classeId && it.isAtivo && it.userId == userId).Single();
-        //            if (idVencedorAnterior == 0)
-        //            {
-        //                inscricao.pontuacaoFaseGrupo++;
-        //            }
-        //            else if (idVencedorAnterior == jogo.idDoPerdedor)
-        //            {
-        //                inscricao.pontuacaoFaseGrupo++;
-        //            }
-        //        }
-
-        //        db.Entry(inscricao).State = EntityState.Modified;
-        //        db.SaveChanges();
-        //        if ((jogo.situacao_Id != 1) && (idVencedorAnterior == jogo.idDoPerdedor)){
-        //            var inscPerderdor = db.InscricaoTorneio.Where(it => it.torneioId == torneioId &&
-        //                it.classe == classeId && it.isAtivo && it.userId == idVencedorAnterior).Single();
-        //            inscPerderdor.pontuacaoFaseGrupo--;
-        //            db.Entry(inscPerderdor).State = EntityState.Modified;
-        //            db.SaveChanges();
-        //        }
-        //    }
-        //}
 
         [HttpPost]
         [Authorize(Roles = "admin,usuario,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
@@ -4978,6 +5010,8 @@ namespace Barragem.Controllers
             }
             return duplasJogos;
         }
+
+
 
     }
 }
