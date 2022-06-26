@@ -292,6 +292,7 @@
     <Compile Include="Helper\StringHelper.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountModels.cs" />
+    <Compile Include="Models\AlteracaoPlacarResponseModel.cs" />
     <Compile Include="Models\AutoCompleteOption.cs" />
     <Compile Include="Models\BarragemCidadeModel.cs" />
     <Compile Include="Models\BarragemLiga.cs" />

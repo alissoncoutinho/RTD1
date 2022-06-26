@@ -1,13 +1,4 @@
-﻿var loaderPage = $('#loadingDiv');
-var loaderPageConsolidacao = $('#loadingConsolidacaoDiv');
-
-var LoaderSelecionado;
-const TipoLoader = {
-    PADRAO: 1,
-    CONSOLIDACAO: 2
-};
-
-function LancarPlacar(el, origem) {
+﻿function LancarPlacar(el, origem) {
     ShowLoader(false);
     var indice = el.dataset.indice;
     var id = el.dataset.idjogo;
@@ -99,40 +90,11 @@ $("#placarForm").submit(function (event) {
     return false;
 });
 
-function ShowLoader(mostrar) {
-    if (LoaderSelecionado == TipoLoader.CONSOLIDACAO) {
-        if (mostrar) {
-            loaderPageConsolidacao.show();
-        }
-        else {
-            loaderPageConsolidacao.hide();
-        }
-    }
-    else if (LoaderSelecionado == TipoLoader.PADRAO) {
-        if (mostrar) {
-            loaderPage.show();
-        }
-        else {
-            loaderPage.hide();
-        }
-    }
-    else {
-        if (mostrar) {
-            loaderPage.show();
-            loaderPageConsolidacao.show();
-        }
-        else {
-            loaderPage.hide();
-            loaderPageConsolidacao.hide();
-        }
-    }
-}
-
 function ValidarConsolidacaoPontosFaseGrupo() {
     var id = $(".modal-body #Id").val();
     $.ajax({
         type: "GET",
-        url: "/Torneio/ValidarConsolidacaoPontosFaseGrupo",
+        url: "/Torneio/ValidarAlteracaoPlacar",
         dataType: "json",
         data: {
             "jogoId": id
@@ -142,27 +104,48 @@ function ValidarConsolidacaoPontosFaseGrupo() {
         success: function (response) {
             if (typeof response == "object") {
                 toastr.options = {
-                    "positionClass": "toast-top-center"
+                    "positionClass": "toast-top-right"
                 }
-                if (response.status == "ERRO") {
-                    toastr.error(response.erro, "Erro");
+                if (response.RequisicaoOk == false) {
+                    toastr.error(response.Erro, "Erro");
                 } else {
-                    if (response.status == "CONSOLIDAR") {
+
+                    if (response.StatusConsolidacao == "CONSOLIDAR") {
                         LoaderSelecionado = TipoLoader.CONSOLIDACAO;
                     }
                     else {
                         LoaderSelecionado = TipoLoader.PADRAO;
                     }
 
-                    ShowLoader(true);
-
-                    //LANÇAMENTO DO PLACAR - INICIO 
-                    var url = "LancarResultado"
-                    if (document.getElementById("situacao_id").value == '5') {
-                        url = "LancarWO";
+                    if (response.StatusAlteracaoPlacar == "NECESSITA_ATUALIZAR_MATA_MATA") {
+                        $.confirm({
+                            title: 'ATENÇÃO!',
+                            content: 'Você está alterando o placar de um jogo de fase de grupo já concluída. Isso alterará a posição dos classificados para a fase mata mata. É necessário gerar novamente a fase mata mata para esta categoria.',
+                            columnClass: 'large',
+                            buttons: {
+                                confirm: {
+                                    text: 'Salvar e Gerar Mata Mata',
+                                    btnClass: 'btn btn-green',
+                                    action: function () {
+                                        ShowLoader(true);
+                                        EfetuarLancamentoPlacar();
+                                    }
+                                },
+                                cancel: {
+                                    text: 'Cancelar Alteração de Placar',
+                                    btnClass: 'btn-red any-other-class',
+                                    action: function () {
+                                        ShowLoader(false);
+                                        $("#placar-modal").modal('hide');
+                                    }
+                                }
+                            }
+                        });
                     }
-                    submitForm(url);
-                    //LANÇAMENTO DO PLACAR - FIM 
+                    else {
+                        ShowLoader(true);
+                        EfetuarLancamentoPlacar();
+                    }
                 }
             }
         },
@@ -173,7 +156,13 @@ function ValidarConsolidacaoPontosFaseGrupo() {
 
 }
 
-function submitForm(url) {
+function EfetuarLancamentoPlacar() {
+
+    var url = "LancarResultado"
+    if (document.getElementById("situacao_id").value == '5') {
+        url = "LancarWO";
+    }
+
     $.ajax({
         type: "POST",
         url: url,
@@ -181,6 +170,11 @@ function submitForm(url) {
         dataType: "json",
         data: $('form#placarForm').serialize(),
         success: function (resp) {
+            toastr.options = {
+                "positionClass": "toast-top-right",
+                "timeOut": 10000
+            }
+
             if (resp.retorno == 0) {
                 ShowLoader(false);
                 toastr.error(resp.erro, "Erro");
@@ -270,10 +264,7 @@ function submitForm(url) {
                 }
                 ShowLoader(false);
                 $("#placar-modal").modal('hide');
-                toastr.options = {
-                    "positionClass": "toast-top-center",
-                    "timeOut": 10000
-                }
+
                 if (resp.pontuacaoLiga == 1) {
                     toastr.success("<a href='https://www.rankingdetenis.com/Ranking/RankingDasLigas'>Torneio Finalizado: A pontuação da liga foi gerada. CLIQUE AQUI para acessar a pontuação.</a>", "Aviso");
                 } else {

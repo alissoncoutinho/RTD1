@@ -1,5 +1,13 @@
 ﻿var jogadoresDropDownList = [];
+
 var loaderPage = $('#loadingDiv');
+
+var LoaderSelecionado;
+const TipoLoader = {
+    PADRAO: 1,
+    CONSOLIDACAO: 2
+};
+
 
 $(".date").datepicker({
     language: 'pt-BR',
@@ -137,6 +145,24 @@ function ValidarJogosJaGerados(idTorneio, acao) {
         }
     });
 }
+
+
+function ShowLoader(mostrar) {
+    if (LoaderSelecionado == TipoLoader.CONSOLIDACAO) {
+        $("#exibirLoadingPontuacaoCircuito").css('display', 'block');
+    }
+    else {
+        $("#exibirLoadingPontuacaoCircuito").css('display', 'none');
+    }
+
+    if (mostrar) {
+        loaderPage.show();
+    }
+    else {
+        loaderPage.hide();
+    }
+}
+
 
 /**
  * Valida se o pagamento do torneio foi efetuado
@@ -436,11 +462,11 @@ function Imprimir() {
 }
 
 function CarregarJogadores() {
-    loaderPage.show();
+    ShowLoader(true);
     $.get('/torneio/ObterJogadores?torneioId=' + document.getElementById('torneioId').value + "&classeId=" + document.getElementById('fClasse').value + "&grupoId=" + document.getElementById('fGrupo').value,
         function (data, status) {
             CarregarOpcoesJogador(data);
-            loaderPage.hide();
+            ShowLoader(false);
         });
 }
 

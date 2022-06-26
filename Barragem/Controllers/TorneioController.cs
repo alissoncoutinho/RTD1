@@ -17,6 +17,7 @@ using Uol.PagSeguro.Exception;
 using System.Transactions;
 using System.Text;
 using Barragem.Helper;
+using System.Threading;
 
 namespace Barragem.Controllers
 {
@@ -2599,30 +2600,55 @@ namespace Barragem.Controllers
         }
 
         [HttpGet]
-        public ActionResult ValidarConsolidacaoPontosFaseGrupo(int jogoId)
+        public ActionResult ValidarAlteracaoPlacar(int jogoId)
         {
+            AlteracaoPlacarResponseModel response = new AlteracaoPlacarResponseModel();
             try
             {
                 var jogo = db.Jogo.Find(jogoId);
 
                 if (jogo != null && jogo.rodadaFaseGrupo != 0)
                 {
-                    var ehClasseSoGrupo = jogo.classe;
+                    var classe = jogo.classe;
+
+                    #region Validação CONSOLIDACAO 
                     Torneio torneio = db.Torneio.Include(t => t.barragem).FirstOrDefault(t => t.Id == jogo.torneioId);
-                    if (torneio != null && torneio.barragem.isModeloTodosContraTodos || (ehClasseSoGrupo.faseGrupo && !ehClasseSoGrupo.faseMataMata))
+                    if (torneio != null && torneio.barragem.isModeloTodosContraTodos || (classe.faseGrupo && !classe.faseMataMata))
                     {
                         var existeAlgumjogoAindaEmAberto = db.Jogo.Count(j => j.grupoFaseGrupo != 0 && j.classeTorneio == jogo.classeTorneio && (j.situacao_Id == 1 || j.situacao_Id == 2));
                         if (existeAlgumjogoAindaEmAberto == 0)
                         {
-                            return Json(new { erro = "", retorno = "", status = "CONSOLIDAR" }, "text/plain", JsonRequestBehavior.AllowGet);
+                            response.StatusConsolidacao = "CONSOLIDAR";
+                        }
+                        else
+                        {
+                            response.StatusConsolidacao = "OK";
                         }
                     }
+                    else
+                    {
+                        response.StatusConsolidacao = "OK";
+                    }
+                    #endregion Validação CONSOLIDACAO 
+
+                    #region Validação de alteração de jogo Fase Grupo com jogos de mata-mata já gerados
+                    if (ValidarAlteracaoJogoFaseGrupoComMataMataExistente(jogo))
+                    {
+                        response.StatusAlteracaoPlacar = "NECESSITA_ATUALIZAR_MATA_MATA";
+                    }
+                    else
+                    {
+                        response.StatusAlteracaoPlacar = "OK";
+                    }
+                    #endregion Validação de alteração de jogo Fase Grupo com jogos de mata-mata já gerados
                 }
-                return Json(new { erro = "", retorno = "", status = "OK" }, "text/plain", JsonRequestBehavior.AllowGet);
+                response.RequisicaoOk = true;
+                return Json(response, "text/plain", JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {
-                return Json(new { erro = ex.Message, retorno = "ERRO", status = "ERRO" }, "text/plain", JsonRequestBehavior.AllowGet);
+                response = new AlteracaoPlacarResponseModel() { Erro = ex.Message, RequisicaoOk = false };
+                return Json(response, "text/plain", JsonRequestBehavior.AllowGet);
             }
         }
 
@@ -3921,7 +3947,7 @@ namespace Barragem.Controllers
         {
             try
             {
-                var classesComJogosGerados = ObterClassesJogosJaGerados(torneioId, classeIds);
+                var classesComJogosGerados = ObterClassesJogosJaGeradosEFinalizados(torneioId, classeIds);
                 string dadosMensagem;
                 if (classesComJogosGerados.Count > 0)
                 {
@@ -3940,7 +3966,7 @@ namespace Barragem.Controllers
             }
         }
 
-        private List<string> ObterClassesJogosJaGerados(int torneioId, int[] classeIds, ICollection<ClasseTorneio> classesTorneio = null)
+        private List<string> ObterClassesJogosJaGeradosEFinalizados(int torneioId, int[] classeIds, ICollection<ClasseTorneio> classesTorneio = null)
         {
             List<string> classesComJogosGerados = new List<string>();
             List<int> idsSituacaoJogosFinalizados = new List<int>() { { 3 }, { 4 }, { 5 }, { 6 } };
@@ -3999,6 +4025,31 @@ namespace Barragem.Controllers
                 }
             }
             return classesComJogosGerados;
+        }
+
+        private bool ValidarAlteracaoJogoFaseGrupoComMataMataExistente(Jogo jogo)
+        {
+            List<string> classesComJogosGerados = new List<string>();
+
+            bool ehMataMataSeguidoFaseGrupo = false;
+
+            var jogoEhFaseGrupo = jogo.grupoFaseGrupo != null;
+
+            if(!jogoEhFaseGrupo)
+            {
+                return false;
+            }
+
+            var qtdeJogosGeradosFaseGrupoPendentes = db.Jogo.Count(x => x.torneioId == jogo.classe.torneioId && x.classeTorneio == jogo.classe.Id && x.grupoFaseGrupo != null && (x.situacao_Id == 1 || x.situacao_Id == 2));
+
+            if (jogo.classe.faseGrupo && jogo.classe.faseMataMata && qtdeJogosGeradosFaseGrupoPendentes == 0)
+            {
+                ehMataMataSeguidoFaseGrupo = true;
+            }
+
+            //Validar jogos gerados
+            var classeComJogosGerados = db.Jogo.Any(x => x.torneioId == jogo.classe.torneioId && x.classeTorneio == jogo.classe.Id && (x.rodadaFaseGrupo == 0 && ehMataMataSeguidoFaseGrupo));
+            return classeComJogosGerados;
         }
 
         public ActionResult ObterCategorias(int torneioId, string filtro)
@@ -4952,7 +5003,7 @@ namespace Barragem.Controllers
             {
                 if (classe != null && classe.faseGrupo && classe.faseMataMata)
                 {
-                    var classesComJogosGerados = ObterClassesJogosJaGerados(torneioId, new List<int> { { classe.Id } }.ToArray(), classesTorneio);
+                    var classesComJogosGerados = ObterClassesJogosJaGeradosEFinalizados(torneioId, new List<int> { { classe.Id } }.ToArray(), classesTorneio);
                     if (classesComJogosGerados.Count > 0)
                         continue;
 

@@ -8,7 +8,20 @@
     <link rel="stylesheet" href="~/Content/jsuites/jsuites.css">
 
     @Html.Partial("_PartialTabs")
-    <div id="loadingDiv"><div class="loader">Carregando...</div></div>
+    <div id="loadingDiv">
+        <div class="loader">Carregando...</div>
+        <div id="exibirLoadingPontuacaoCircuito">
+            <p style="text-align:center;color:white">
+                AGUARDE...
+            </p>
+            <p style="text-align:center;color:white">
+                Estamos gerando as pontuações da liga/circuito.
+            </p>
+            <p style="text-align:center;color:white">
+                Não feche esta janela. Essa operação pode demorar um pouco.
+            </p>
+        </div>
+    </div>
 
     <div id="divPagamentoPendenteTorneio" style="display:none">
         <br>
