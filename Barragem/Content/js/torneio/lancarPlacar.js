@@ -1,7 +1,14 @@
 ﻿var loaderPage = $('#loadingDiv');
+var loaderPageConsolidacao = $('#loadingConsolidacaoDiv');
+
+var LoaderSelecionado;
+const TipoLoader = {
+    PADRAO: 1,
+    CONSOLIDACAO: 2
+};
 
 function LancarPlacar(el, origem) {
-
+    ShowLoader(false);
     var indice = el.dataset.indice;
     var id = el.dataset.idjogo;
     var situacao = el.dataset.situacao;
@@ -85,17 +92,86 @@ function LancarPlacar(el, origem) {
 }
 
 $("#placarForm").submit(function (event) {
-    // document.getElementById("salvarPlacar").disabled = true;
     event.preventDefault();
-    loaderPage.show();
-    var url = "LancarResultado"
-    if (document.getElementById("situacao_id").value == '5') {
-        url = "LancarWO";
-    }
-    submitForm(url);
-    // document.getElementById("salvarPlacar").disabled = false;
+
+    ValidarConsolidacaoPontosFaseGrupo();
+
     return false;
 });
+
+function ShowLoader(mostrar) {
+    if (LoaderSelecionado == TipoLoader.CONSOLIDACAO) {
+        if (mostrar) {
+            loaderPageConsolidacao.show();
+        }
+        else {
+            loaderPageConsolidacao.hide();
+        }
+    }
+    else if (LoaderSelecionado == TipoLoader.PADRAO) {
+        if (mostrar) {
+            loaderPage.show();
+        }
+        else {
+            loaderPage.hide();
+        }
+    }
+    else {
+        if (mostrar) {
+            loaderPage.show();
+            loaderPageConsolidacao.show();
+        }
+        else {
+            loaderPage.hide();
+            loaderPageConsolidacao.hide();
+        }
+    }
+}
+
+function ValidarConsolidacaoPontosFaseGrupo() {
+    var id = $(".modal-body #Id").val();
+    $.ajax({
+        type: "GET",
+        url: "/Torneio/ValidarConsolidacaoPontosFaseGrupo",
+        dataType: "json",
+        data: {
+            "jogoId": id
+        },
+        traditional: true,
+        contentType: "application/json; charset=utf-8",
+        success: function (response) {
+            if (typeof response == "object") {
+                toastr.options = {
+                    "positionClass": "toast-top-center"
+                }
+                if (response.status == "ERRO") {
+                    toastr.error(response.erro, "Erro");
+                } else {
+                    if (response.status == "CONSOLIDAR") {
+                        LoaderSelecionado = TipoLoader.CONSOLIDACAO;
+                    }
+                    else {
+                        LoaderSelecionado = TipoLoader.PADRAO;
+                    }
+
+                    ShowLoader(true);
+
+                    //LANÇAMENTO DO PLACAR - INICIO 
+                    var url = "LancarResultado"
+                    if (document.getElementById("situacao_id").value == '5') {
+                        url = "LancarWO";
+                    }
+                    submitForm(url);
+                    //LANÇAMENTO DO PLACAR - FIM 
+                }
+            }
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            toastr.error(errorThrown, "Erro");
+        }
+    });
+
+}
 
 function submitForm(url) {
     $.ajax({
@@ -106,7 +182,7 @@ function submitForm(url) {
         data: $('form#placarForm').serialize(),
         success: function (resp) {
             if (resp.retorno == 0) {
-                loaderPage.hide();
+                ShowLoader(false);
                 toastr.error(resp.erro, "Erro");
             } else {
                 var id = $(".modal-body #Id").val();
@@ -192,7 +268,7 @@ function submitForm(url) {
                         AtualizarBotaoLancarPlacar(id, false);
                     }
                 }
-                loaderPage.hide();
+                ShowLoader(false);
                 $("#placar-modal").modal('hide');
                 toastr.options = {
                     "positionClass": "toast-top-center",

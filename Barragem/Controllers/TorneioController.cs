@@ -1672,9 +1672,6 @@ namespace Barragem.Controllers
             return View(torneio);
         }
 
-
-
-
         private bool VerificarGratuidade(Torneio torneio, int userId)
         {
             if (!torneio.isGratuitoSocio)
@@ -2594,6 +2591,34 @@ namespace Barragem.Controllers
                 }
                 //Tudo ok, então pode gerar tabela
                 return Json(new { erro = "", retorno = cobrancaTorneio, status = "OK" }, "text/plain", JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { erro = ex.Message, retorno = "ERRO", status = "ERRO" }, "text/plain", JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpGet]
+        public ActionResult ValidarConsolidacaoPontosFaseGrupo(int jogoId)
+        {
+            try
+            {
+                var jogo = db.Jogo.Find(jogoId);
+
+                if (jogo != null && jogo.rodadaFaseGrupo != 0)
+                {
+                    var ehClasseSoGrupo = jogo.classe;
+                    Torneio torneio = db.Torneio.Include(t => t.barragem).FirstOrDefault(t => t.Id == jogo.torneioId);
+                    if (torneio != null && torneio.barragem.isModeloTodosContraTodos || (ehClasseSoGrupo.faseGrupo && !ehClasseSoGrupo.faseMataMata))
+                    {
+                        var existeAlgumjogoAindaEmAberto = db.Jogo.Count(j => j.grupoFaseGrupo != 0 && j.classeTorneio == jogo.classeTorneio && (j.situacao_Id == 1 || j.situacao_Id == 2));
+                        if (existeAlgumjogoAindaEmAberto == 0)
+                        {
+                            return Json(new { erro = "", retorno = "", status = "CONSOLIDAR" }, "text/plain", JsonRequestBehavior.AllowGet);
+                        }
+                    }
+                }
+                return Json(new { erro = "", retorno = "", status = "OK" }, "text/plain", JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {
