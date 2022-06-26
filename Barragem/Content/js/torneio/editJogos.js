@@ -73,14 +73,20 @@ function MostrarClassesJogos(acao) {
     var elementExclusaoJogos = document.getElementById("classesExclusao");
 
     if (acao == "EXCLUSAO") {
+        elementGeracaoTabelaJogos.style.display = "none";
+        elementExclusaoJogos.style.display = "block";
         elementGeracaoTabelaJogos.classList.remove("show");
         elementExclusaoJogos.classList.add("show");
     }
     else if (acao == "GERACAO_TABELA") {
+        elementGeracaoTabelaJogos.style.display = "block";
+        elementExclusaoJogos.style.display = "none";
         elementGeracaoTabelaJogos.classList.add("show");
         elementExclusaoJogos.classList.remove("show");
     }
     else {
+        elementGeracaoTabelaJogos.style.display = "none";
+        elementExclusaoJogos.style.display = "none";
         elementGeracaoTabelaJogos.classList.remove("show");
         elementExclusaoJogos.classList.remove("show");
     }
@@ -92,7 +98,7 @@ function gerarTabelas() {
     var idTorneio = document.getElementById('torneioId').value;
 
     document.getElementById("divClasseJogosPoucosJogadores").style.display = "none";
-
+    
     ValidarPagamentoTorneio(idTorneio);
 }
 

@@ -320,6 +320,7 @@
     <Compile Include="Models\InscricaoTorneioPagaModel.cs" />
     <Compile Include="Models\Jogo.cs" />
     <Compile Include="Models\JogoCabecaChave.cs" />
+    <Compile Include="Models\DadosAlteracaoParceiroDuplaModel.cs" />
     <Compile Include="Models\Liga.cs" />
     <Compile Include="Models\ListaOpcoesJogadoresModel.cs" />
     <Compile Include="Models\Log.cs" />
@@ -1179,6 +1180,7 @@
     <Content Include="Views\Torneio\_PartialLancarPlacarJogo.cshtml" />
     <Content Include="Views\Torneio\EditJogos.cshtml" />
     <Content Include="Views\Torneio\_PartialAcaoClassesPoucosJogadores.cshtml" />
+    <Content Include="Views\Torneio\_PartialAlterarParceiroDupla.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

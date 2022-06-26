@@ -82,7 +82,7 @@
         <div class="tab-pane fade in active" id="tabJogos">
             <div class="box box-primary">
                 <div class="box-header">
-                    <h4 class="box-title">Ações da Tabela</h4>
+                    <h4 class="box-title">Ações</h4>
                 </div>
                 <p style="margin-top:10px">
                     <button class="btn btn-primary btn-small" onclick="AbrirTabelaGeracaoJogos()"><span class="glyphicon glyphicon-plus"></span> Gerar</button>
@@ -100,13 +100,13 @@
                 <div class="box box-primary">
                     <!-------------------------------------------------------->
                     <div class="box-header">
-                        <h4 class="box-title">Filtro de Jogos</h4>
+                        <h4 class="box-title">Filtro</h4>
                     </div>
 
                     <div class="form-row">
                         <div class="form-group col-sm-2 filtros">
                             <select name="fClasse" id="fClasse" class="form-control" onchange="Pesquisar()">
-                                <option value="1">Todas classes</option>
+                                <option value="1">Todas Categorias</option>
                                 @foreach (var item2 in ViewBag.Classes)
                                 {
                                     <option value="@item2.Id" @if (ViewBag.fClasse == item2.Id) { @Html.Raw("selected") }>@item2.nome</option>
