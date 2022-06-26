@@ -87,12 +87,12 @@ function LancarPlacar(el, origem) {
 $("#placarForm").submit(function (event) {
     event.preventDefault();
 
-    ValidarConsolidacaoPontosFaseGrupo();
+    ValidarAlteracaoPlacar();
 
     return false;
 });
 
-function ValidarConsolidacaoPontosFaseGrupo() {
+function ValidarAlteracaoPlacar() {
     var id = $(".modal-body #Id").val();
     $.ajax({
         type: "GET",
