@@ -1,4 +1,6 @@
-﻿function LancarPlacar(el, origem) {
+﻿var AtualizarTela = false;
+
+function LancarPlacar(el, origem) {
     ShowLoader(false);
     var indice = el.dataset.indice;
     var id = el.dataset.idjogo;
@@ -128,6 +130,7 @@ function ValidarConsolidacaoPontosFaseGrupo() {
                                     btnClass: 'btn btn-green',
                                     action: function () {
                                         ShowLoader(true);
+                                        $(".modal-body #atualizarJogosMataMata").val(1);
                                         EfetuarLancamentoPlacar();
                                     }
                                 },
@@ -136,6 +139,7 @@ function ValidarConsolidacaoPontosFaseGrupo() {
                                     btnClass: 'btn-red any-other-class',
                                     action: function () {
                                         ShowLoader(false);
+                                        $(".modal-body #atualizarJogosMataMata").val(0);
                                         $("#placar-modal").modal('hide');
                                     }
                                 }
@@ -144,6 +148,7 @@ function ValidarConsolidacaoPontosFaseGrupo() {
                     }
                     else {
                         ShowLoader(true);
+                        $(".modal-body #atualizarJogosMataMata").val(0);
                         EfetuarLancamentoPlacar();
                     }
                 }
@@ -271,13 +276,16 @@ function EfetuarLancamentoPlacar() {
                     toastr.success("Atualização realizada com sucesso.", "Aviso");
                 }
 
+                if ($(".modal-body #atualizarJogosMataMata").val() == "1" || $(".modal-body #Origem").val() == "TABELA") {
+                    AtualizarTela = true;
+                }
+
                 if (situacaoId == '5' && document.getElementById("classeEhFaseGrupo").value == "1" && $(".modal-body #JogoFaseGrupo").val() != "") {
                     $("#modalNotificaWO").modal('show');
                 }
-                else if ($(".modal-body #Origem").val() == "TABELA") {
+                else {
                     AtualizarTabela()
                 }
-
             }
 
         }
@@ -310,7 +318,9 @@ function AtualizarBotaoLancarPlacar(id, ehEdicao) {
 }
 
 function AtualizarTabela() {
-    document.location.reload(true);
+    if (AtualizarTela) {
+        document.location.reload(true);
+    }
 }
 
 document.getElementById("IndicadorVencedor").classList.remove("show");

@@ -386,7 +386,7 @@ namespace Barragem.Class
         public List<Jogo> getJogosPrimeiraRodada(int classeId)
         {
             var jogo = db.Jogo.Where(j => j.classeTorneio == classeId).OrderByDescending(j => j.faseTorneio).First<Jogo>();
-            var primeiraFase = (int)jogo.faseTorneio;
+            var primeiraFase = jogo.faseTorneio ?? 0;
             var jogosRodada1 = db.Jogo.Where(j => j.classeTorneio == classeId && j.faseTorneio == primeiraFase).OrderBy(j => j.ordemJogo).ToList();
             return jogosRodada1;
         }

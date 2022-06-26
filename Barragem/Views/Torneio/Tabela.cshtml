@@ -13,8 +13,24 @@
         int? faseTorneio = 0;
         string faseId = "";
     }
+    <link rel="stylesheet" href="~/Content/css/torneio/editJogos.css">
 
     <h4 class="info-box-text">@ViewBag.nomeTorneio</h4>
+
+    <div id="loadingDiv" style="z-index: 999999991; ">
+        <div class="loader">Carregando...</div>
+        <div id="exibirLoadingPontuacaoCircuito">
+            <p style="text-align:center;color:white">
+                AGUARDE...
+            </p>
+            <p style="text-align:center;color:white">
+                Estamos gerando as pontuações da liga/circuito.
+            </p>
+            <p style="text-align:center;color:white">
+                Não feche esta janela. Essa operação pode demorar um pouco.
+            </p>
+        </div>
+    </div>
 
     @if ((!ViewBag.tabelaLiberada) && !((Roles.IsUserInRole("admin")) || (Roles.IsUserInRole("organizador")) || (Roles.IsUserInRole("adminTorneio")) || (Roles.IsUserInRole("adminTorneioTenis"))))
     {
@@ -270,6 +286,31 @@
     @section Scripts {
         <script src="~/Content/js/torneio/lancarPlacar.js"></script>
         <script type="text/javascript">
+
+            var loaderPage = $('#loadingDiv');
+
+            var LoaderSelecionado;
+            const TipoLoader = {
+                PADRAO: 1,
+                CONSOLIDACAO: 2
+            };
+
+            function ShowLoader(mostrar) {
+                if (LoaderSelecionado == TipoLoader.CONSOLIDACAO) {
+                    $("#exibirLoadingPontuacaoCircuito").css('display', 'block');
+                }
+                else {
+                    $("#exibirLoadingPontuacaoCircuito").css('display', 'none');
+                }
+
+                if (mostrar) {
+                    loaderPage.show();
+                }
+                else {
+                    loaderPage.hide();
+                }
+            }
+
             function Selecionar(verMataMata) {
                 var torneioId = document.getElementById('torneioId').value;
                 var classeId = document.getElementById('filtroClasse').value;

@@ -8,7 +8,6 @@ const TipoLoader = {
     CONSOLIDACAO: 2
 };
 
-
 $(".date").datepicker({
     language: 'pt-BR',
     pickTime: false,
