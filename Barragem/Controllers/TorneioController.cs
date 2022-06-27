@@ -206,10 +206,10 @@ namespace Barragem.Controllers
         {
             try
             {
-                var inscritos = db.InscricaoTorneio.Where(i => i.classe == Id && i.isAtivo).Count();
+                var inscritos = db.InscricaoTorneio.Where(i => i.classe == Id).Count();
                 if (inscritos > 0)
                 {
-                    return Json(new { erro = "Já existem jogadores inscritos nesta classe. Para excluí-la é necessário inativar as inscrições.", retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
+                    return Json(new { erro = "Não é possível excluir categoria que tem jogadores inscritos. Para excluí-la é necessário excluir as inscrições ou alterar os jogadores de categoria.", retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
                 }
                 ClasseTorneio classe = db.ClasseTorneio.Find(Id);
                 db.ClasseTorneio.Remove(classe);
