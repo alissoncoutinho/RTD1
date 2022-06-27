@@ -1,5 +1,6 @@
 ﻿@using System.Linq;
 @using Barragem.Models;
+
 @model IEnumerable<Barragem.Models.InscricaoTorneio>
     @Html.Partial("_PartialTabs")
 
@@ -33,7 +34,7 @@
                     string nomeJogador1 = string.Empty;
                     string nomeJogador2 = string.Empty;
 
-                    if (ViewBag.InscricaoSemDupla.Count > 0)
+                    if (ViewBag.InscricaoSemDupla !=null && ViewBag.InscricaoSemDupla.Count > 0)
                     {
                         <div class="box box-primary">
                             <div class="box-header">
@@ -141,11 +142,17 @@
                                                         if (item.userId == item2.userId && item.parceiroDuplaId != null)
                                                         {
                                                             nomeJogador1 = item2.participante.nome;
-                                                            <option value="@item2.Id" selected>@nomeJogador1</option>
+                                                            <option value="@item2.Id" selected>
+                                                                @nomeJogador1 @if (item2.isAtivo)
+                                                                {@Html.Raw("<b> (Pago)</b>")}
+                                                            </option>
                                                         }
                                                         else
                                                         {
-                                                            <option value="@item2.Id">@item2.participante.nome</option>
+                                                            <option value="@item2.Id">
+                                                                @item2.participante.nome @if (item2.isAtivo)
+                                                                {@Html.Raw("<b> (Pago)</b>")}
+                                                            </option>
                                                         }
                                                     }
                                                 </select>

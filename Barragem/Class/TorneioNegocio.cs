@@ -226,7 +226,7 @@ namespace Barragem.Class
         private void cadastrarColocacaoDupla(int userId, int colocacao, int torneioId, int classeTorneio, bool isModeloTodosContraTodos = false, int pontuacao = 0)
         {
             var inscricao = db.InscricaoTorneio.Where(i => i.userId == userId
-                && i.torneioId == torneioId && i.classe == classeTorneio && i.isAtivo).ToList();
+                && i.torneioId == torneioId && i.classe == classeTorneio).ToList();
             if (inscricao.Count() > 0)
             {
                 inscricao[0].colocacao = colocacao;

@@ -463,7 +463,7 @@ namespace Barragem.Controllers
                 ";
                 db.Database.ExecuteSqlCommand(query);
             }
-                
+
         }
 
         [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
@@ -612,7 +612,7 @@ namespace Barragem.Controllers
                 {
                     return Json(new { erro = "Informe o Jogador para alteração", retorno = "ERRO" }, "text/plain", JsonRequestBehavior.AllowGet);
                 }
-                
+
                 int? userIdAnterior = 0;
                 var inscricaoDupla = db.InscricaoTorneio.Find(dados.IdInscricao);
                 var inscricaoDuplaJogadorEscolhido = db.InscricaoTorneio.FirstOrDefault(x => x.torneioId == dados.IdTorneio && x.classe == dados.IdClasse && x.userId == dados.IdJogador && x.parceiroDuplaId == null);
@@ -2701,28 +2701,34 @@ namespace Barragem.Controllers
             {
                 var jogo = db.Jogo.Find(jogoId);
 
-                if (jogo != null && jogo.rodadaFaseGrupo != 0)
+                if (jogo != null)
                 {
                     var classe = jogo.classe;
 
                     #region Validação CONSOLIDACAO 
                     Torneio torneio = db.Torneio.Include(t => t.barragem).FirstOrDefault(t => t.Id == jogo.torneioId);
-                    if (torneio != null && torneio.barragem.isModeloTodosContraTodos || (classe.faseGrupo && !classe.faseMataMata))
+                    if (torneio != null && jogo.rodadaFaseGrupo != 0 && (torneio.barragem.isModeloTodosContraTodos || (classe.faseGrupo && !classe.faseMataMata)))
                     {
-                        var existeAlgumjogoAindaEmAberto = db.Jogo.Count(j => j.grupoFaseGrupo != 0 && j.classeTorneio == jogo.classeTorneio && (j.situacao_Id == 1 || j.situacao_Id == 2));
-                        if (existeAlgumjogoAindaEmAberto == 0)
+                        var existeAlgumJogoFaseGrupoAindaEmAberto = db.Jogo.Count(x => x.torneioId == jogo.torneioId && x.classeTorneio == jogo.classeTorneio && x.grupoFaseGrupo != 0 && (x.situacao_Id == 1 || x.situacao_Id == 2));
+                        if (existeAlgumJogoFaseGrupoAindaEmAberto == 0)
                         {
                             response.StatusConsolidacao = "CONSOLIDAR";
                         }
-                        else
+                    }
+                    else if (classe.faseMataMata)
+                    {
+                        var lancamentoResultUltimoJogoMataMata = db.Jogo.Any(x => x.torneioId == jogo.torneioId && x.classeTorneio == jogo.classeTorneio && x.grupoFaseGrupo == null && x.faseTorneio == 1 && x.Id == jogo.Id);
+                        if (lancamentoResultUltimoJogoMataMata)
                         {
-                            response.StatusConsolidacao = "OK";
+                            response.StatusConsolidacao = "CONSOLIDAR";
                         }
                     }
-                    else
+
+                    if (string.IsNullOrEmpty(response.StatusConsolidacao))
                     {
                         response.StatusConsolidacao = "OK";
                     }
+
                     #endregion Validação CONSOLIDACAO 
 
                     #region Validação de alteração de jogo Fase Grupo com jogos de mata-mata já gerados
@@ -3004,7 +3010,7 @@ namespace Barragem.Controllers
 
                 }
             }
-            ViewBag.InscricaoSemDupla = duplasNaoFormadas;
+            ViewBag.InscricaoSemDupla = duplasNaoFormadas.OrderBy(o => o.participante.nome).ToList();
             ////////////////////////////////
             ViewBag.Inscritos = db.InscricaoTorneio.Where(c => c.torneioId == torneioId && c.classe == filtroClasse).ToList();
 
@@ -3286,7 +3292,7 @@ namespace Barragem.Controllers
                 tn.MontarProximoJogoTorneio(jogo);
 
                 tn.consolidarPontuacaoFaseGrupo(jogo);
-                
+
                 if (atualizarJogosMataMata == 1)
                 {
                     ResetarJogosMataMataPorClasse(jogo.classeTorneio.Value, true);
