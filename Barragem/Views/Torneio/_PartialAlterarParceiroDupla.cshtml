@@ -23,20 +23,23 @@
                     <div>
                         <div>
                             <input type="radio" id="chkJogador1" name="JogadorAlterado" value="1">
-                            <label for="chkJogador1">Jogador 1</label>
+                            <label id="lblJogador1" for="chkJogador1">Jogador 1</label>
                         </div>
                         <div>
                             <input type="radio" id="chkJogador2" name="JogadorAlterado" value="2" checked>
-                            <label for="chkJogador2">Jogador 2</label>
+                            <label id="lblJogador2" for="chkJogador2">Jogador 2</label>
                         </div>
                         <div style="margin-top:10px">
                             <label for="IdJogador">Incluir jogador no lugar:</label>
                             <select name="IdJogador" id="IdJogador" class="form-control">
                                 <option value="0" selected>Selecionar Jogador</option>
-                                @foreach (InscricaoTorneio inscrito in ViewBag.InscricaoSemDupla)
+                                @if (ViewBag.InscricaoSemDupla != null)
                                 {
-                                    if (!inscrito.isAtivo) { continue; };
-                                    <option value="@inscrito.userId">@inscrito.participante.nome</option>
+                                    foreach (InscricaoTorneio inscrito in ViewBag.InscricaoSemDupla)
+                                    {
+                                        if (!inscrito.isAtivo) { continue; };
+                                        <option value="@inscrito.userId">@inscrito.participante.nome</option>
+                                    }
                                 }
                             </select>
                         </div>
