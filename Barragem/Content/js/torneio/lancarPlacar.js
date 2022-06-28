@@ -126,7 +126,7 @@ function ValidarAlteracaoPlacar() {
                             columnClass: 'large',
                             buttons: {
                                 confirm: {
-                                    text: 'Salvar e Gerar Mata Mata',
+                                    text: 'Salvar e Gerar um novo Mata-Mata',
                                     btnClass: 'btn btn-green',
                                     action: function () {
                                         ShowLoader(true);

@@ -1,5 +1,10 @@
 ﻿@using Barragem.Models;
-
+<style>
+    .labelInformacao {
+        font-size: small;
+        color: #3c8dbc;
+    }
+</style>
 <div class="modal fade" id="modalAlterarParceiroDupla" style="z-index: 99999999999999; " role="dialog" aria-labelledby="modalAlterarParceiroDupla" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content" style="margin:20px">
@@ -31,6 +36,7 @@
                         </div>
                         <div style="margin-top:10px">
                             <label for="IdJogador">Incluir jogador no lugar:</label>
+                            <label id="lblDesc" class="col-sm-12 control-label labelInformacao">Só é possível incluir jogador que pagou a inscrição.</label>
                             <select name="IdJogador" id="IdJogador" class="form-control">
                                 <option value="0" selected>Selecionar Jogador</option>
                                 @if (ViewBag.InscricaoSemDupla != null)
