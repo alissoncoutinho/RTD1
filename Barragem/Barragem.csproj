@@ -1181,6 +1181,8 @@
     <Content Include="Views\Torneio\EditJogos.cshtml" />
     <Content Include="Views\Torneio\_PartialAcaoClassesPoucosJogadores.cshtml" />
     <Content Include="Views\Torneio\_PartialAlterarParceiroDupla.cshtml" />
+    <Content Include="Views\Shared\_FooterBT3.cshtml" />
+    <Content Include="Views\Shared\_Rodape3.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
