@@ -92,14 +92,29 @@ $("#placarForm").submit(function (event) {
     return false;
 });
 
+function ValidarSituacao() {
+
+    var situacaoId = $(".modal-body #situacao_id").val();
+    var qtddGames1setDesafiado = $(".modal-body #qtddGames1setDesafiado").val();
+    var qtddGames1setDesafiante = $(".modal-body #qtddGames1setDesafiante").val();
+
+    if ((situacaoId == 1 || situacaoId == 2) && (qtddGames1setDesafiado != 0 || qtddGames1setDesafiante != 0)) {
+        $(".modal-body #situacao_id").val(4);
+    }
+}
+
 function ValidarAlteracaoPlacar() {
     var id = $(".modal-body #Id").val();
+
+    ValidarSituacao();
+
     $.ajax({
         type: "GET",
         url: "/Torneio/ValidarAlteracaoPlacar",
         dataType: "json",
         data: {
-            "jogoId": id
+            "jogoId": id,
+            "situacaoId": $(".modal-body #situacao_id").val()
         },
         traditional: true,
         contentType: "application/json; charset=utf-8",
@@ -118,8 +133,34 @@ function ValidarAlteracaoPlacar() {
                     else {
                         LoaderSelecionado = TipoLoader.PADRAO;
                     }
-
-                    if (response.StatusAlteracaoPlacar == "NECESSITA_ATUALIZAR_MATA_MATA") {
+                    if (response.StatusAlteracaoPlacar == "SOLICITAR_GERACAO_MATA_MATA") {
+                        $.confirm({
+                            title: '<a style=\'color:#e08e0b\'> IMPORTANTE </a>',
+                            content: 'Você finalizou a fase de grupos desta categoria. <br> Deseja gerar o mata-mata desta categoria?',
+                            columnClass: 'medium',
+                            buttons: {
+                                confirm: {
+                                    text: 'Sim',
+                                    btnClass: 'btn btn-green',
+                                    action: function () {
+                                        ShowLoader(true);
+                                        $(".modal-body #gerarJogosMataMata").val(1)
+                                        EfetuarLancamentoPlacar();
+                                    }
+                                },
+                                cancel: {
+                                    text: 'Não',
+                                    btnClass: 'btn-red any-other-class',
+                                    action: function () {
+                                        ShowLoader(true);
+                                        $(".modal-body #gerarJogosMataMata").val(0)
+                                        EfetuarLancamentoPlacar();
+                                    }
+                                }
+                            }
+                        });
+                    }
+                    else if (response.StatusAlteracaoPlacar == "NECESSITA_ATUALIZAR_MATA_MATA") {
                         $.confirm({
                             title: 'ATENÇÃO!',
                             content: 'Você está alterando o placar de um jogo de fase de grupo já concluída. Isso alterará a posição dos classificados para a fase mata mata. É necessário gerar novamente a fase mata mata para esta categoria.',
@@ -148,6 +189,7 @@ function ValidarAlteracaoPlacar() {
                     }
                     else {
                         ShowLoader(true);
+                        $(".modal-body #gerarJogosMataMata").val(0)
                         $(".modal-body #atualizarJogosMataMata").val(0);
                         EfetuarLancamentoPlacar();
                     }
@@ -276,7 +318,7 @@ function EfetuarLancamentoPlacar() {
                     toastr.success("Atualização realizada com sucesso.", "Aviso");
                 }
 
-                if ($(".modal-body #atualizarJogosMataMata").val() == "1" || $(".modal-body #Origem").val() == "TABELA") {
+                if ($(".modal-body #atualizarJogosMataMata").val() == "1" || $(".modal-body #gerarJogosMataMata").val() == "1" || $(".modal-body #Origem").val() == "TABELA") {
                     AtualizarTela = true;
                 }
 

@@ -1012,7 +1012,7 @@ namespace Barragem.Class
                 Torneio torneio = db.Torneio.Include(t => t.barragem).Where(t => t.Id == jogo.torneioId).Single();
                 if ((torneio.barragem.isModeloTodosContraTodos) || (ehClasseSoGrupo.faseGrupo && !ehClasseSoGrupo.faseMataMata))
                 {
-                    var existeAlgumjogoAindaEmAberto = db.Jogo.Where(j => j.grupoFaseGrupo != 0 && j.classeTorneio == jogo.classeTorneio && (j.situacao_Id == 1 || j.situacao_Id == 2)).Count();
+                    var existeAlgumjogoAindaEmAberto = db.Jogo.Where(j => j.grupoFaseGrupo != null && j.classeTorneio == jogo.classeTorneio && (j.situacao_Id == 1 || j.situacao_Id == 2)).Count();
                     // se não existir nenhum jogo da fase de grupo em aberto
                     if (existeAlgumjogoAindaEmAberto == 0)
                     {
@@ -1044,7 +1044,7 @@ namespace Barragem.Class
                         try
                         {
                             var liga = db.TorneioLiga.Where(t => t.TorneioId == jogo.torneioId).First();
-                            var existejogoEmAbertoNoTorneio = db.Jogo.Where(j => j.grupoFaseGrupo != 0 && j.torneioId == jogo.torneioId && (j.situacao_Id == 1 || j.situacao_Id == 2)).Count();
+                            var existejogoEmAbertoNoTorneio = db.Jogo.Where(j => j.grupoFaseGrupo != null && j.torneioId == jogo.torneioId && (j.situacao_Id == 1 || j.situacao_Id == 2)).Count();
                             if ((torneio.barragem.isModeloTodosContraTodos && existejogoEmAbertoNoTorneio == 0) || liga.snapshotId != null)
                             {
                                 new CalculadoraDePontos().GerarSnapshotDaLiga(jogo);

@@ -2694,7 +2694,7 @@ namespace Barragem.Controllers
         }
 
         [HttpGet]
-        public ActionResult ValidarAlteracaoPlacar(int jogoId)
+        public ActionResult ValidarAlteracaoPlacar(int jogoId, int situacaoId)
         {
             AlteracaoPlacarResponseModel response = new AlteracaoPlacarResponseModel();
             try
@@ -2709,8 +2709,7 @@ namespace Barragem.Controllers
                     Torneio torneio = db.Torneio.Include(t => t.barragem).FirstOrDefault(t => t.Id == jogo.torneioId);
                     if (torneio != null && jogo.rodadaFaseGrupo != 0 && (torneio.barragem.isModeloTodosContraTodos || (classe.faseGrupo && !classe.faseMataMata)))
                     {
-                        var existeAlgumJogoFaseGrupoAindaEmAberto = db.Jogo.Count(x => x.torneioId == jogo.torneioId && x.classeTorneio == jogo.classeTorneio && x.grupoFaseGrupo != 0 && (x.situacao_Id == 1 || x.situacao_Id == 2));
-                        if (existeAlgumJogoFaseGrupoAindaEmAberto == 0)
+                        if (ObterQtdeJogosPendentesFaseGrupo(jogo.torneioId.Value, jogo.classeTorneio.Value) == 0)
                         {
                             response.StatusConsolidacao = "CONSOLIDAR";
                         }
@@ -2728,19 +2727,11 @@ namespace Barragem.Controllers
                     {
                         response.StatusConsolidacao = "OK";
                     }
-
                     #endregion Validação CONSOLIDACAO 
 
-                    #region Validação de alteração de jogo Fase Grupo com jogos de mata-mata já gerados
-                    if (ValidarAlteracaoJogoFaseGrupoComMataMataExistente(jogo))
-                    {
-                        response.StatusAlteracaoPlacar = "NECESSITA_ATUALIZAR_MATA_MATA";
-                    }
-                    else
-                    {
-                        response.StatusAlteracaoPlacar = "OK";
-                    }
-                    #endregion Validação de alteração de jogo Fase Grupo com jogos de mata-mata já gerados
+                    #region Validação de lançamento placar jogo fase grupo com mata mata
+                    response.StatusAlteracaoPlacar = ValidarAlteracaoJogoFaseGrupoComMataMataExistente(jogo, situacaoId);
+                    #endregion Validação de lançamento placar jogo fase grupo com mata mata
                 }
                 response.RequisicaoOk = true;
                 return Json(response, "text/plain", JsonRequestBehavior.AllowGet);
@@ -3221,7 +3212,7 @@ namespace Barragem.Controllers
 
         [HttpPost]
         [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
-        public ActionResult LancarResultado(Jogo j, int atualizarJogosMataMata = 0)
+        public ActionResult LancarResultado(Jogo j, int atualizarJogosMataMata = 0, int gerarJogosMataMata = 0)
         {
             try
             {
@@ -3262,7 +3253,8 @@ namespace Barragem.Controllers
                     jogo.idVencedor = 0;
                     jogo.idPerderdor = 0;
                     if (jogo.situacao_Id == 5)
-                    { //WO
+                    {
+                        //WO
                         jogo.qtddGames1setDesafiado = setDesafiado;
                         jogo.qtddGames1setDesafiante = setDesafiante;
                         jogo.qtddGames2setDesafiado = setDesafiado;
@@ -3270,12 +3262,7 @@ namespace Barragem.Controllers
                     }
                     if (jogo.situacao_Id == 1 || jogo.situacao_Id == 2) // pendente ou marcado
                     {
-                        jogo.qtddGames1setDesafiado = 0;
-                        jogo.qtddGames1setDesafiante = 0;
-                        jogo.qtddGames2setDesafiado = 0;
-                        jogo.qtddGames2setDesafiante = 0;
-                        jogo.qtddGames3setDesafiado = 0;
-                        jogo.qtddGames3setDesafiante = 0;
+                        jogo.ZerarPontuacao();
                     }
                     db.Entry(jogo).State = EntityState.Modified;
                     db.SaveChanges();
@@ -3286,8 +3273,6 @@ namespace Barragem.Controllers
                     return Json(new { erro = "Dados Inválidos.", retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
                 }
 
-                //jogo = db.Jogo.Include(j => j.desafiado).Include(j => j.desafiante).Where(j => j.Id == jogo.Id).Single();
-                //ViewBag.situacao_Id = new SelectList(db.SituacaoJogo, "Id", "descricao", jogo.situacao_Id);
                 //calcula os pontos, posicao e monta proximo jogo
                 tn.MontarProximoJogoTorneio(jogo);
 
@@ -3296,6 +3281,10 @@ namespace Barragem.Controllers
                 if (atualizarJogosMataMata == 1)
                 {
                     ResetarJogosMataMataPorClasse(jogo.classeTorneio.Value, true);
+                    MontarChaveamento(jogo.torneioId.Value, new int[] { jogo.classeTorneio.Value });
+                }
+                else if (gerarJogosMataMata == 1)
+                {
                     MontarChaveamento(jogo.torneioId.Value, new int[] { jogo.classeTorneio.Value });
                 }
 
@@ -3324,10 +3313,12 @@ namespace Barragem.Controllers
 
         [HttpPost]
         [Authorize(Roles = "admin,usuario,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
-        public ActionResult LancarWO(int Id, int vencedorWO = 0, int situacao_id = 5, int atualizarJogosMataMata = 0)
+        public ActionResult LancarWO(int Id, int vencedorWO = 0, int situacao_id = 5, int atualizarJogosMataMata = 0, int gerarJogosMataMata = 0)
         {
             try
             {
+                int perderdorWO = 0;
+
                 if (vencedorWO == 0)
                 {
                     return Json(new { erro = "Informe o vencedor do jogo.", retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
@@ -3335,37 +3326,25 @@ namespace Barragem.Controllers
 
                 Jogo jogoAtual = db.Jogo.Find(Id);
 
-                var perderdorWO = 0;
-
                 if ((jogoAtual.rodadaFaseGrupo != 0) && (jogoAtual.situacao_Id == 5) && (jogoAtual.idDoVencedor != vencedorWO))
                 {
                     desfazerJogosWOFaseGrupo(jogoAtual.idDoPerdedor, (int)jogoAtual.classeTorneio);
                 }
                 //alterar quantidade de games para desafiado e desafiante
-                int gamesDesafiante = 0;
-                int gamesDesafiado = 0;
                 if (jogoAtual.desafiado_id == vencedorWO)
                 {
-                    gamesDesafiado = 6;
-                    gamesDesafiante = 1;
+                    jogoAtual.AlterarSituacaoJogoParaWO(TipoJogador.DESAFIADO);
                     perderdorWO = jogoAtual.desafiante_id;
                 }
                 else
                 {
-                    gamesDesafiado = 1;
-                    gamesDesafiante = 6;
+                    jogoAtual.AlterarSituacaoJogoParaWO(TipoJogador.DESAFIANTE);
                     perderdorWO = jogoAtual.desafiado_id;
                 }
-                jogoAtual.qtddGames1setDesafiado = gamesDesafiado;
-                jogoAtual.qtddGames1setDesafiante = gamesDesafiante;
-                jogoAtual.qtddGames2setDesafiado = gamesDesafiado;
-                jogoAtual.qtddGames2setDesafiante = gamesDesafiante;
-                jogoAtual.qtddGames3setDesafiado = 0;
-                jogoAtual.qtddGames3setDesafiante = 0;
-                //alterar status do jogo WO
-                jogoAtual.situacao_Id = situacao_id;
+
                 jogoAtual.usuarioInformResultado = User.Identity.Name;
                 jogoAtual.dataCadastroResultado = DateTime.Now;
+
                 db.Entry(jogoAtual).State = EntityState.Modified;
                 db.SaveChanges();
 
@@ -3379,6 +3358,10 @@ namespace Barragem.Controllers
                 if (atualizarJogosMataMata == 1)
                 {
                     ResetarJogosMataMataPorClasse(jogoAtual.classeTorneio.Value, true);
+                    MontarChaveamento(jogoAtual.torneioId.Value, new int[] { jogoAtual.classeTorneio.Value });
+                }
+                else if (gerarJogosMataMata == 1)
+                {
                     MontarChaveamento(jogoAtual.torneioId.Value, new int[] { jogoAtual.classeTorneio.Value });
                 }
 
@@ -4051,7 +4034,13 @@ namespace Barragem.Controllers
         private List<string> ObterClassesJogosJaGeradosEFinalizados(int torneioId, int[] classeIds, ICollection<ClasseTorneio> classesTorneio = null)
         {
             List<string> classesComJogosGerados = new List<string>();
-            List<int> idsSituacaoJogosFinalizados = new List<int>() { { 3 }, { 4 }, { 5 }, { 6 } };
+            List<int> idsSituacaoJogosFinalizados = new List<int>()
+            {
+                { Constantes.Jogo.Situacao.EM_ANDAMENTO },
+                { Constantes.Jogo.Situacao.FINALIZADO },
+                { Constantes.Jogo.Situacao.WO },
+                { Constantes.Jogo.Situacao.DESISTENCIA }
+            };
 
             bool ehMataMataSeguidoFaseGrupo = false;
             bool ehMataMata = false;
@@ -4109,29 +4098,44 @@ namespace Barragem.Controllers
             return classesComJogosGerados;
         }
 
-        private bool ValidarAlteracaoJogoFaseGrupoComMataMataExistente(Jogo jogo)
+        private string ValidarAlteracaoJogoFaseGrupoComMataMataExistente(Jogo jogo, int situacaoId)
         {
             List<string> classesComJogosGerados = new List<string>();
 
-            bool ehMataMataSeguidoFaseGrupo = false;
-
+            bool ehMataMataSeguidoFaseGrupo = jogo.classe.faseGrupo && jogo.classe.faseMataMata;
+            bool lancamentoUltimoJogoFaseGrupo = false;
+            bool todosJogosFaseGrupoFinalizados = false;
             var jogoEhFaseGrupo = jogo.grupoFaseGrupo != null;
 
             if (!jogoEhFaseGrupo)
             {
-                return false;
+                return "OK";
             }
 
-            var qtdeJogosGeradosFaseGrupoPendentes = db.Jogo.Count(x => x.torneioId == jogo.classe.torneioId && x.classeTorneio == jogo.classe.Id && x.grupoFaseGrupo != null && (x.situacao_Id == 1 || x.situacao_Id == 2));
-
-            if (jogo.classe.faseGrupo && jogo.classe.faseMataMata && qtdeJogosGeradosFaseGrupoPendentes == 0)
+            var qtdeJogosPendentes = ObterQtdeJogosPendentesFaseGrupo(jogo.torneioId.Value, jogo.classeTorneio.Value);
+            if (ehMataMataSeguidoFaseGrupo && qtdeJogosPendentes == 0 && situacaoId != Constantes.Jogo.Situacao.PENDENTE && situacaoId != Constantes.Jogo.Situacao.MARCADO)
             {
-                ehMataMataSeguidoFaseGrupo = true;
+                todosJogosFaseGrupoFinalizados = true;
+            }
+            else if (ehMataMataSeguidoFaseGrupo && qtdeJogosPendentes == 1)
+            {
+                var jogosPendentes = ObterJogosPendentesFaseGrupo(jogo.torneioId.Value, jogo.classeTorneio.Value);
+                if (jogosPendentes.Any(x => x.Id == jogo.Id))
+                {
+                    lancamentoUltimoJogoFaseGrupo = true;
+                }
             }
 
             //Validar jogos gerados
-            var classeComJogosGerados = db.Jogo.Any(x => x.torneioId == jogo.classe.torneioId && x.classeTorneio == jogo.classe.Id && (x.rodadaFaseGrupo == 0 && ehMataMataSeguidoFaseGrupo));
-            return classeComJogosGerados;
+            var temJogosGerados = db.Jogo.Any(x => x.torneioId == jogo.torneioId && x.classeTorneio == jogo.classe.Id && x.rodadaFaseGrupo == 0 && ehMataMataSeguidoFaseGrupo
+                      && x.desafiante_id != Constantes.Jogo.BYE && x.desafiante_id != Constantes.Jogo.AGUARDANDO_JOGADOR && x.desafiado_id != Constantes.Jogo.AGUARDANDO_JOGADOR);
+
+            if (todosJogosFaseGrupoFinalizados && temJogosGerados)
+                return "NECESSITA_ATUALIZAR_MATA_MATA";
+            else if (lancamentoUltimoJogoFaseGrupo && !temJogosGerados)
+                return "SOLICITAR_GERACAO_MATA_MATA";
+            else
+                return "OK";
         }
 
         public ActionResult ObterCategorias(int torneioId, string filtro)
@@ -5142,7 +5146,13 @@ namespace Barragem.Controllers
             return duplasJogos;
         }
 
-
-
+        private int ObterQtdeJogosPendentesFaseGrupo(int torneioId, int classeId)
+        {
+            return db.Jogo.Count(x => x.torneioId == torneioId && x.classeTorneio == classeId && x.grupoFaseGrupo != null && (x.situacao_Id == 1 || x.situacao_Id == 2));
+        }
+        private IEnumerable<Jogo> ObterJogosPendentesFaseGrupo(int torneioId, int classeId)
+        {
+            return db.Jogo.Where(x => x.torneioId == torneioId && x.classeTorneio == classeId && x.grupoFaseGrupo != null && (x.situacao_Id == 1 || x.situacao_Id == 2));
+        }
     }
 }

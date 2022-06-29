@@ -292,6 +292,33 @@ namespace Barragem.Models
         public void AlterarJogoParaPendente()
         {
             situacao_Id = 1;
+            ZerarPontuacao();
+        }
+
+        public void AlterarSituacaoJogoParaWO(TipoJogador tipoJogadorVencedor)
+        {
+            situacao_Id = 5; //WO
+            if (tipoJogadorVencedor == TipoJogador.DESAFIANTE)
+            {
+                qtddGames1setDesafiado = 6;
+                qtddGames2setDesafiado = 6;
+                qtddGames1setDesafiante = 1;
+                qtddGames2setDesafiante = 1;
+
+            }
+            else
+            {
+                qtddGames1setDesafiado = 1;
+                qtddGames2setDesafiado = 1;
+                qtddGames1setDesafiante = 6;
+                qtddGames2setDesafiante = 6;
+            }
+            qtddGames3setDesafiado = 0;
+            qtddGames3setDesafiante = 0;
+        }
+
+        public void ZerarPontuacao()
+        {
             qtddGames1setDesafiado = 0;
             qtddGames2setDesafiado = 0;
             qtddGames3setDesafiado = 0;
@@ -299,6 +326,7 @@ namespace Barragem.Models
             qtddGames2setDesafiante = 0;
             qtddGames3setDesafiante = 0;
         }
+
         public void AlterarJogoParaBye(TipoJogador tipoJogadorEfetuarTroca)
         {
             situacao_Id = 5; //WO
