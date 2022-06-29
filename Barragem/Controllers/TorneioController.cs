@@ -179,6 +179,15 @@ namespace Barragem.Controllers
                 torneioId = inscricao.torneioId;
                 db.InscricaoTorneio.Remove(inscricao);
                 db.SaveChanges();
+
+                var inscricoesParceiroDupla = db.InscricaoTorneio.FirstOrDefault(i => i.torneioId == torneioId && i.parceiroDuplaId == userId);
+                if (inscricoesParceiroDupla != null)
+                {
+                    inscricoesParceiroDupla.parceiroDuplaId = null;
+                    db.Entry(inscricoesParceiroDupla).State = EntityState.Modified;
+                    db.SaveChanges();
+                }
+
                 var inscricoes = db.InscricaoTorneio.Where(i => i.torneioId == torneioId && i.userId == userId).ToList();
                 if (inscricoes.Count() > 0)
                 {
