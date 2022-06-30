@@ -21,6 +21,7 @@ namespace Barragem.Models
         public int Id { get; set; }
 
         [Required(AllowEmptyStrings = false)]
+        [Display(Name = "Nome")]
         public string nome { get; set; }
 
         [Display(Name = "Observação")]

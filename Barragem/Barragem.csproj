@@ -292,6 +292,7 @@
     <Compile Include="Helper\StringHelper.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountModels.cs" />
+    <Compile Include="Models\AdministradorBarragemView.cs" />
     <Compile Include="Models\AlteracaoPlacarResponseModel.cs" />
     <Compile Include="Models\AutoCompleteOption.cs" />
     <Compile Include="Models\BarragemCidadeModel.cs" />
@@ -322,6 +323,7 @@
     <Compile Include="Models\JogoCabecaChave.cs" />
     <Compile Include="Models\DadosAlteracaoParceiroDuplaModel.cs" />
     <Compile Include="Models\Liga.cs" />
+    <Compile Include="Models\ListagemTorneioModel.cs" />
     <Compile Include="Models\ListaOpcoesJogadoresModel.cs" />
     <Compile Include="Models\Log.cs" />
     <Compile Include="Models\ModalidadeTorneio.cs" />

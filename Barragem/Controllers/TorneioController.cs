@@ -312,25 +312,49 @@ namespace Barragem.Controllers
         public ActionResult Index()
         {
             string perfil = Roles.GetRolesForUser(User.Identity.Name)[0];
-            List<Torneio> torneio = null;
+            List<Torneio> torneios = null;
             var userId = WebSecurity.GetUserId(User.Identity.Name);
             int barragemId = (from up in db.UserProfiles where up.UserId == userId select up.barragemId).Single();
             if (perfil.Equals("admin"))
             {
-                torneio = db.Torneio.OrderByDescending(c => c.Id).ToList();
+                torneios = db.Torneio.OrderByDescending(c => c.Id ).ToList();
             }
             else if (perfil.Equals("parceiroBT"))
             {
-                torneio = db.Torneio.Where(r => r.barragem.isBeachTenis == true && !r.nome.ToUpper().Contains("TESTE")).OrderByDescending(c => c.Id).ToList();
+                torneios = db.Torneio.Where(r => r.barragem.isBeachTenis == true && !r.nome.ToUpper().Contains("TESTE")).OrderByDescending(c => c.Id).ToList();
             }
             else
             {
-                torneio = db.Torneio.Where(r => r.barragemId == barragemId).OrderByDescending(c => c.Id).ToList();
+                torneios = db.Torneio.Where(r => r.barragemId == barragemId).OrderByDescending(c => c.Id).ToList();
             }
             var barragem = db.BarragemView.Find(barragemId);
             ViewBag.isBarragemAtiva = barragem.isAtiva;
 
-            return View(torneio);
+            List<ListagemTorneioModel> listagemTorneios = new List<ListagemTorneioModel>();
+            if (torneios != null)
+            {
+                var administradoresBarragem = db.AdministradorBarragemView.ToList();
+
+                foreach (var torneio in torneios)
+                {
+                    var adminBarragemTorneio = administradoresBarragem.FirstOrDefault(x => x.idBarragem == torneio.barragemId);
+                    if (adminBarragemTorneio == null)
+                    {
+                        continue;
+                    }
+                    listagemTorneios.Add(new ListagemTorneioModel()
+                    {
+                        Id = torneio.Id,
+                        Nome = torneio.nome,
+                        DataInicio = torneio.dataInicio,
+                        NomeBarragem = torneio.barragem.nome,
+                        TipoBarragem = torneio.barragem.isBeachTenis ? "Beach Tennis" : "Tênis",
+                        NomeUsuarioAdmin = adminBarragemTorneio.userName,
+                        TelefoneCelular = adminBarragemTorneio.telefone
+                    });
+                }
+            }
+            return View(listagemTorneios);
         }
 
         [Authorize(Roles = "admin,usuario,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]

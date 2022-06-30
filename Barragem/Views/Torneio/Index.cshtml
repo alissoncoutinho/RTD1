@@ -1,7 +1,7 @@
 ﻿@{
     ViewBag.Title = "Index";
 }
-@model IEnumerable<Barragem.Models.Torneio>
+@model IEnumerable<Barragem.Models.ListagemTorneioModel>
     <legend>Torneio</legend>
     @if (ViewBag.isBarragemAtiva)
     {
@@ -13,27 +13,34 @@
         <table class="table table-striped table-condensed table-bordered">
             <tr>
                 <th>
-                    @Html.DisplayNameFor(model => model.nome)
+                    @Html.DisplayNameFor(model => model.Nome)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.dataInicio)
+                    @Html.DisplayNameFor(model => model.DataInicio)
                 </th>
                 <th>
-                    ranking
+                    @Html.DisplayNameFor(model => model.NomeBarragem)
                 </th>
-                <th></th>
+                <th style="width: 110px;">
+                    @Html.DisplayNameFor(model => model.TipoBarragem)
+                </th>
+                <th style="width: 65px;"></th>
             </tr>
             @foreach (var item in Model)
             {
                 <tr>
                     <td>
-                        @Html.DisplayFor(modelItem => item.nome)
+                        @Html.DisplayFor(modelItem => item.Nome)
+                        <a href="@item.LinkWhatsApp" target="_blank"><img width="25" height="25" src="/Content/image/whatsapp.png"></a>
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.dataInicio)
+                        @Html.DisplayFor(modelItem => item.DataInicio)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.barragem.nome)
+                        @Html.DisplayFor(modelItem => item.NomeBarragem)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TipoBarragem)
                     </td>
                     <td>
                         <a href="@Url.Action("PainelTorneio", new {torneioId = @item.Id })" title="Editar/Detalhar" class="btn btn-default btn-xs">
@@ -41,17 +48,8 @@
                         </a>
                         @if (Roles.IsUserInRole("admin"))
                         {
-                            @Html.ActionLink(" ", "ExcluirTorneio", new { id = item.Id }, new { @class = "btn btn-danger btn-xs glyphicon glyphicon-trash", onclick = "return confirm('Você confirma a exclusão do torneio " + item.nome + "?')" })
+                            @Html.ActionLink(" ", "ExcluirTorneio", new { id = item.Id }, new { @class = "btn btn-danger btn-xs glyphicon glyphicon-trash", onclick = "return confirm('Você confirma a exclusão do torneio " + item.Nome + "?')" })
                         }
-                        <!--a href="Url.Action("InscricoesTorneio", new {torneioId = item.Id })" title="Inscrições" class="btn btn-default btn-xs">
-                            <span class="glyphicon glyphicon-list"></span>
-                        </a>
-                        <a href="Url.Action("TabelaJogos", new {torneioId = item.Id })" title="Tabela de Jogos" class="btn btn-default btn-xs">
-                            <span class="glyphicon glyphicon-tasks"></span>
-                        </a>
-                        <a href="Url.Action("ListarJogos", new {torneioId = item.Id })" title="Lista de Jogos" class="btn btn-default btn-xs">
-                            <span class="glyphicon glyphicon-play"></span>
-                        </a-->
                     </td>
                 </tr>
             }
