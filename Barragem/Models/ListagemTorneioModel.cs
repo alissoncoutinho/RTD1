@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Barragem.Class;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace Barragem.Models
@@ -27,18 +28,7 @@ namespace Barragem.Models
         {
             get
             {
-                var i = TelefoneCelular.IndexOf("/");
-                var dddcel = "";
-                if (i < 1)
-                {
-                    dddcel = TelefoneCelular.Trim().Replace("(", "").Replace(")", "").Replace(" ", "").Replace("-", "");
-                }
-                else
-                {
-                    dddcel = TelefoneCelular.Substring(0, i).Trim().Replace("(", "").Replace(")", "").Replace(" ", "").Replace("-", "");
-                }
-
-                return "https://api.whatsapp.com/send?phone=55" + dddcel + "&text=Olá,%20" + NomeUsuarioAdmin + " ";
+                return "https://api.whatsapp.com/send?phone=55" + TelefoneCelular.OnlyDigits() + "&text=Olá,%20" + NomeUsuarioAdmin + " ";
             }
         }
     }

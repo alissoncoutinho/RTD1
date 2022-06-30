@@ -22,6 +22,14 @@ namespace Barragem.Class
                hostHeader,
                request.RawUrl));
         }
+        public static string OnlyDigits(this string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                return value;
+
+            var onlyDigits = new Regex(@"[^\d]");
+            return onlyDigits.Replace(value, "");
+        }
 
         public static bool isCPF(string cpf)
         {

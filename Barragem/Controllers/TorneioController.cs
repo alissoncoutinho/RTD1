@@ -338,10 +338,6 @@ namespace Barragem.Controllers
                 foreach (var torneio in torneios)
                 {
                     var adminBarragemTorneio = administradoresBarragem.FirstOrDefault(x => x.idBarragem == torneio.barragemId);
-                    if (adminBarragemTorneio == null)
-                    {
-                        continue;
-                    }
                     listagemTorneios.Add(new ListagemTorneioModel()
                     {
                         Id = torneio.Id,
@@ -349,8 +345,8 @@ namespace Barragem.Controllers
                         DataInicio = torneio.dataInicio,
                         NomeBarragem = torneio.barragem.nome,
                         TipoBarragem = torneio.barragem.isBeachTenis ? "Beach Tennis" : "Tênis",
-                        NomeUsuarioAdmin = adminBarragemTorneio.userName,
-                        TelefoneCelular = adminBarragemTorneio.telefone
+                        NomeUsuarioAdmin = adminBarragemTorneio?.userName,
+                        TelefoneCelular = adminBarragemTorneio?.telefone
                     });
                 }
             }

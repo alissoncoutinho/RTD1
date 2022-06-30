@@ -12,7 +12,6 @@ left join webpages_UsersInRoles usr_roles
 	on prof.UserId=usr_roles.UserId
 left join webpages_Roles roles
 	on usr_roles.RoleId=roles.RoleId
-where b.isativa=1 
- and roles.RoleId IN(2,3,4,5,6)
+where roles.RoleId IN(2,3,4,5,6)
  and prof.situacao != 'desativado'
  group by b.Id, b.nome
