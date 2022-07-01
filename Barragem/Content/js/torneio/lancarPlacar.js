@@ -318,20 +318,44 @@ function EfetuarLancamentoPlacar() {
                     toastr.success("Atualização realizada com sucesso.", "Aviso");
                 }
 
-                if ($(".modal-body #atualizarJogosMataMata").val() == "1" || $(".modal-body #gerarJogosMataMata").val() == "1" || $(".modal-body #Origem").val() == "TABELA") {
-                    AtualizarTela = true;
-                }
-
-                if (situacaoId == '5' && document.getElementById("classeEhFaseGrupo").value == "1" && $(".modal-body #JogoFaseGrupo").val() != "") {
-                    $("#modalNotificaWO").modal('show');
+                if ($(".modal-body #gerarJogosMataMata").val() == "1") {
+                    $.alert({
+                        title: '<a style=\'color:#e08e0b\'> Mata-Mata gerado com sucesso </a>',
+                        content: 'A posição dos jogadores no mata- mata segue a regra da CBT. <br> Consulte a aba Fase de Grupos para mais detalhes.',
+                        buttons: {
+                            confirm: {
+                                text: 'OK',
+                                btnClass: 'btn-blue',
+                                action: function () {
+                                    ValidaAtualizacaoTela(situacaoId);
+                                }
+                            }
+                        }
+                    });
                 }
                 else {
-                    AtualizarTabela()
+                    ValidaAtualizacaoTela(situacaoId);
                 }
+
+
+                
             }
 
         }
     });
+}
+
+function ValidaAtualizacaoTela(situacaoId) {
+    if ($(".modal-body #atualizarJogosMataMata").val() == "1" || $(".modal-body #gerarJogosMataMata").val() == "1" || $(".modal-body #Origem").val() == "TABELA") {
+        AtualizarTela = true;
+    }
+
+    if (situacaoId == '5' && document.getElementById("classeEhFaseGrupo").value == "1" && $(".modal-body #JogoFaseGrupo").val() != "") {
+        $("#modalNotificaWO").modal('show');
+    }
+    else {
+        AtualizarTabela()
+    }
 }
 
 function exibirOpcaoVencedores(situacao) {
