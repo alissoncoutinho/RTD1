@@ -317,7 +317,7 @@ namespace Barragem.Controllers
             int barragemId = (from up in db.UserProfiles where up.UserId == userId select up.barragemId).Single();
             if (perfil.Equals("admin"))
             {
-                torneios = db.Torneio.OrderByDescending(c => c.Id ).ToList();
+                torneios = db.Torneio.OrderByDescending(c => c.Id).ToList();
             }
             else if (perfil.Equals("parceiroBT"))
             {
@@ -4976,7 +4976,17 @@ namespace Barragem.Controllers
             var dadosRetorno = new ListaOpcoesJogadoresModel();
             bool classeMataMata = false;
             bool classeFaseGrupo = false;
+            bool todosContraTodos = false;
+
+
+            var torneio = db.Torneio.Find(torneioId);
             var cl = db.ClasseTorneio.FirstOrDefault(x => x.torneioId == torneioId && x.Id == classeId);
+
+            if (torneio != null)
+            {
+                todosContraTodos = torneio.barragem.isModeloTodosContraTodos;
+            }
+
             if (cl == null)
             {
                 inscritos = new List<InscricaoTorneio>();
@@ -5045,7 +5055,7 @@ namespace Barragem.Controllers
                 }
             }
 
-            if (classeFaseGrupo)
+            if (classeFaseGrupo || todosContraTodos)
             {
                 listaFG.Add(new AutoCompleteOption("  ", "Aguardando adversário", Constantes.Jogo.AGUARDANDO_JOGADOR.ToString()));
                 listaFG.Add(new AutoCompleteOption("  ", "bye", Constantes.Jogo.BYE.ToString()));
