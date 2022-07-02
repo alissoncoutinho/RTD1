@@ -98,7 +98,7 @@ function gerarTabelas() {
     var idTorneio = document.getElementById('torneioId').value;
 
     document.getElementById("divClasseJogosPoucosJogadores").style.display = "none";
-    
+
     ValidarPagamentoTorneio(idTorneio);
 }
 
@@ -420,14 +420,27 @@ function ExecutarAcaoTabelaJogos(acao) {
 }
 
 /**Marcar classes para geração de tabela de jogos */
-function marcarTodos() {
+function marcarTodasCategoriasFaseGrupo() {
     var isChecked = false;
-    if (document.getElementById('todos').checked) {
+    if (document.getElementById('chkTodasCategoriasFaseGrupo').checked) {
         isChecked = true;
     }
     var checkboxes = document.getElementsByName("classeIds");
     for (var i = 0; i < checkboxes.length; i++) {
-        if (checkboxes[i].type == "checkbox") {
+        if (checkboxes[i].type == "checkbox" && checkboxes[i].dataset.tipo == "FG") {
+            checkboxes[i].checked = isChecked;
+        }
+    }
+}
+
+function marcarTodasCategoriasMataMata() {
+    var isChecked = false;
+    if (document.getElementById('chkTodasCategoriasMataMata').checked) {
+        isChecked = true;
+    }
+    var checkboxes = document.getElementsByName("classeIds");
+    for (var i = 0; i < checkboxes.length; i++) {
+        if (checkboxes[i].type == "checkbox" && checkboxes[i].dataset.tipo == "MM") {
             checkboxes[i].checked = isChecked;
         }
     }
@@ -529,8 +542,7 @@ function FiltrarOpcoesJogadores(dadosJogadores, idJogo, tipojogador) {
                     //Fase de grupo seguido de mata mata não pode mostrar opções de jogadores FORA DA TABELA
                     copiaOpcoesJogadorMataMata.splice(i, 1);
                 }
-                else if (idJogador == 0 && copiaOpcoesJogadorMataMata[i].value == 10)
-                {
+                else if (idJogador == 0 && copiaOpcoesJogadorMataMata[i].value == 10) {
                     //Manter somente a opção Aguardando adversário
                     copiaOpcoesJogadorMataMata.splice(i, 1);
                 }

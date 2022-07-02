@@ -4693,12 +4693,11 @@ namespace Barragem.Controllers
 
             var listaJogos = filtrarJogos(jogosTorneio, fClasse, fData, fGrupo, fase, false, fNomeJogador);
 
-            ViewBag.classesFaseGrupoNaoFinalizadas = jogosTorneio
+            var classesFaseGrupoNaoFinalizadas = jogosTorneio
                 .Where(i => i.grupoFaseGrupo != null && (i.situacao_Id == 1 || i.situacao_Id == 2))
                 .Select(i => (int)i.classeTorneio).Distinct().ToList();
 
-            ViewBag.ClassesGeradasMataMata = jogosTorneio
-                .Where(i => i.grupoFaseGrupo == null)
+            var classesGeradasMataMata = jogosTorneio.Where(x => x.grupoFaseGrupo == null && x.desafiante_id != Constantes.Jogo.BYE && x.desafiante_id != Constantes.Jogo.AGUARDANDO_JOGADOR && x.desafiado_id != Constantes.Jogo.AGUARDANDO_JOGADOR)
                 .Select(i => (int)i.classeTorneio)
                 .Distinct().ToList();
 
@@ -4706,6 +4705,8 @@ namespace Barragem.Controllers
 
             var classeSelecionada = classes.FirstOrDefault(x => x.Id == fClasse);
             ViewBag.ClasseEhFaseGrupo = classeSelecionada != null ? classeSelecionada.faseGrupo : false;
+
+            ViewBag.CategoriasGeracaoJogos = ObterListaCategoriasGeracaoJogos(torneioId, classes, classesGeradas, classesFaseGrupoNaoFinalizadas, classesGeradasMataMata);
 
             ViewBag.ClassesGeradas = classesGeradas;
             ViewBag.Classes = classes;
@@ -4717,6 +4718,46 @@ namespace Barragem.Controllers
 
             CarregarDadosEssenciais(torneioId, "jogos");
             return View(listaJogos);
+        }
+
+        private List<CategoriaGeracaoJogoModel> ObterListaCategoriasGeracaoJogos(int torneioId, List<ClasseTorneio> categorias, List<int> classesGeradas, List<int> classesFaseGrupoNaoFinalizadas, List<int> classesGeradasMataMata)
+        {
+            var categoriasGeracaoJogos = new List<CategoriaGeracaoJogoModel>();
+
+            var torneio = db.Torneio.Find(torneioId);
+
+            foreach (var categoriaTorneio in categorias)
+            {
+                var catItem = new CategoriaGeracaoJogoModel();
+                catItem.Id = categoriaTorneio.Id;
+                catItem.Nome = categoriaTorneio.nome;
+                if (categoriaTorneio.faseGrupo || torneio.barragem.isModeloTodosContraTodos)
+                {
+                    catItem.Tipo = "FG";
+                }
+                else if (!categoriaTorneio.faseGrupo && categoriaTorneio.faseMataMata)
+                {
+                    catItem.Tipo = "MM";
+                }
+
+                var jogosGerados = false;
+                if (classesGeradas.Contains(categoriaTorneio.Id))
+                {
+                    jogosGerados = true;
+                    if (categoriaTorneio.faseGrupo && categoriaTorneio.faseMataMata && !classesFaseGrupoNaoFinalizadas.Contains(categoriaTorneio.Id))
+                    {
+                        catItem.Tipo = "MM";
+                        if (!classesGeradasMataMata.Contains(categoriaTorneio.Id))
+                        {
+                            jogosGerados = false;
+                        }
+                    }
+                }
+                catItem.JogosJaGerados = jogosGerados;
+
+                categoriasGeracaoJogos.Add(catItem);
+            }
+            return categoriasGeracaoJogos;
         }
 
         [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
