@@ -81,7 +81,7 @@
                         <div class="row">
                             @if (inscricao == null)
                             {
-                                @Html.Label("Uma categoria", new { @class = "col-sm-5" })
+                                @Html.Label("Uma Categoria", new { @class = "col-sm-5" })
                                 <div class="col-sm-7 info-box-text">
                                     @if ((Model.valor == 0) || (ViewBag.isGratuito))
                                     {
@@ -305,7 +305,7 @@
                                     <div class="col-sm-8 info-box-text">
                                         <select id="classeInscricao2" name="classeInscricao2" class="form-control segundaOpcaoClasse escolherTerceiraOpcaoClasse" data-classe3="@(Model.qtddCategoriasPorJogador>2)">
                                             <option value="0">Selecione uma classe...</option>
-                                            @foreach (var item in ViewBag.Classes2)
+                                            @foreach (var item in ViewBag.Classes)
                                             {
                                                 if (item.maximoInscritos > 0)
                                                 {
@@ -348,7 +348,7 @@
                                     <div class="col-sm-8 info-box-text">
                                         <select id="classeInscricao3" name="classeInscricao3" class="form-control terceiraOpcaoClasse escolherQuartaOpcaoClasse" data-classe3="@(Model.qtddCategoriasPorJogador>3)">
                                             <option value="0">Selecione uma classe...</option>
-                                            @foreach (var item in ViewBag.Classes2)
+                                            @foreach (var item in ViewBag.Classes)
                                             {
                                                 if (item.maximoInscritos > 0)
                                                 {
@@ -390,7 +390,7 @@
                                     <div class="col-sm-8 info-box-text">
                                         <select name="classeInscricao4" id="classeInscricao4" class="form-control quartaOpcaoClasse">
                                             <option value="0">Selecione uma classe...</option>
-                                            @foreach (var item in ViewBag.Classes2)
+                                            @foreach (var item in ViewBag.Classes)
                                             {
                                                 if (item.maximoInscritos > 0)
                                                 {
@@ -474,7 +474,7 @@
                                     <div class="col-sm-8 info-box-text">
                                         <select id="classeInscricao2" name="classeInscricao2" class="form-control segundaOpcaoClasse escolherTerceiraOpcaoClasse" data-classe3="@(Model.qtddCategoriasPorJogador>2)">
                                             <option value="0">Selecione uma classe...</option>
-                                            @foreach (var item in ViewBag.Classes2)
+                                            @foreach (var item in ViewBag.Classes)
                                             {
                                                 if (item.maximoInscritos > 0)
                                                 {
@@ -521,7 +521,7 @@
                                     <div class="col-sm-8 info-box-text">
                                         <select name="classeInscricao3" id="classeInscricao3" class="form-control terceiraOpcaoClasse escolherQuartaOpcaoClasse" data-classe3="@(Model.qtddCategoriasPorJogador>3)">
                                             <option value="0">Selecione uma classe...</option>
-                                            @foreach (var item in ViewBag.Classes2)
+                                            @foreach (var item in ViewBag.Classes)
                                             {
                                                 if (item.maximoInscritos > 0)
                                                 {
@@ -564,7 +564,7 @@
                                     <div class="col-sm-8 info-box-text">
                                         <select id="classeInscricao4" name="classeInscricao4" class="form-control quartaOpcaoClasse">
                                             <option value="0">Selecione uma classe...</option>
-                                            @foreach (var item in ViewBag.Classes2)
+                                            @foreach (var item in ViewBag.Classes)
                                             {
                                                 if (item.maximoInscritos > 0)
                                                 {
@@ -909,6 +909,9 @@
                     document.formInscricao.isClasseDupla.value = false;
                 }
             }
+
+            var categoria1Selecionada = $("#classeInscricao").val();
+            $("#classeInscricao2").find('[value="' + categoria1Selecionada +'"]').remove();
         }
 
         function terceiraOpcaoDeClasse() {
@@ -928,6 +931,11 @@
                     document.formInscricao.isClasseDupla.value = false;
                 }
             }
+
+            var categoria1Selecionada = $("#classeInscricao").val();
+            var categoria2Selecionada = $("#classeInscricao2").val();
+            $("#classeInscricao3").find('[value="' + categoria1Selecionada + '"]').remove();
+            $("#classeInscricao3").find('[value="' + categoria2Selecionada + '"]').remove();
         }
 
         function quartaOpcaoDeClasse() {
@@ -947,6 +955,13 @@
                     document.formInscricao.isClasseDupla.value = false;
                 }
             }
+
+            var categoria1Selecionada = $("#classeInscricao").val();
+            var categoria2Selecionada = $("#classeInscricao2").val();
+            var categoria3Selecionada = $("#classeInscricao3").val();
+            $("#classeInscricao4").find('[value="' + categoria1Selecionada + '"]').remove();
+            $("#classeInscricao4").find('[value="' + categoria2Selecionada + '"]').remove();
+            $("#classeInscricao4").find('[value="' + categoria3Selecionada + '"]').remove();
         }
 
 

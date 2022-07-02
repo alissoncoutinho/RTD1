@@ -1771,7 +1771,6 @@ namespace Barragem.Controllers
             var classes = db.ClasseTorneio.Where(i => i.torneioId == id).OrderBy(c => c.nivel).ToList();
             //var classes2 = db.ClasseTorneio.Where(i => i.torneioId == id && i.isSegundaOpcao).OrderBy(c => c.nivel).ToList();
             ViewBag.Classes = classes;
-            ViewBag.Classes2 = classes;
             ViewBag.ClasseInscricao2 = 0;
             ViewBag.ClasseInscricao3 = 0;
             ViewBag.ClasseInscricao4 = 0;
