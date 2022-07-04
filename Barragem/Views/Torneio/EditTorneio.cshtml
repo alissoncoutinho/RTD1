@@ -295,7 +295,7 @@
                     }
                     <br>
 
-                    <input type="checkbox" name="transferencia" id="transferencia" value="true" onclick = "isTransferenciaBancaria()" @if (!string.IsNullOrEmpty(Model.dadosBancarios)){ @Html.Raw("checked")}><b> Usar transferência como forma de pagamento</b><br>
+                    <input type="checkbox" name="transferencia" id="transferencia" value="true" onclick="isTransferenciaBancaria()" @if (!string.IsNullOrEmpty(Model.dadosBancarios)) { @Html.Raw("checked") }><b> Usar transferência como forma de pagamento</b><br>
                     <div id="isTransferencia" style="margin-bottom:-40px">
                         @Html.Partial("_PartialDadosBancariosTorneio", Model)
                     </div>
@@ -337,31 +337,39 @@
                                     <input type="checkbox" class="circuitos" @if (ligasTorneio.Where(l => l.Id == lg.Liga.Id).Count() > 0) { @Html.Raw("checked") } name="liga" value="@lg.Liga.Id" onchange="inputCheckboxSelectPontos(this)">
                                     if (ViewBag.isModeloTodosContraTodos)
                                     {
-                                        @Html.Raw(lg.Liga.Nome) if (Roles.IsUserInRole("admin")) { @Html.Raw(" - Todos contra todos")}
-                                    }
-                                    else
-                                    {
-                                        @Html.Raw(lg.Liga.Nome + " - Pt. " + Model.TipoTorneio) if (Roles.IsUserInRole("admin")) { if (lg.Liga.isModeloTodosContraTodos) {@Html.Raw(" - Todos contra todos")} else {@Html.Raw(" - Regras da Federação") } }
-                                    }
-                                    <br>
+                                        @Html.Raw(lg.Liga.Nome) if (Roles.IsUserInRole("admin"))
+                                        { @Html.Raw(" - Todos contra todos")}
                                 }
-
-                                <ul id="circuitosPermiteEdicaoPontos" style="display:none">
-                                    @foreach (var lg in ViewBag.LigasDisponiveis)
+                                else
+                                {
+                                    @Html.Raw(lg.Liga.Nome + " - Pt. " + Model.TipoTorneio) if (Roles.IsUserInRole("admin"))
                                     {
-                                        if (ViewBag.barraId == lg.BarragemId && !ViewBag.isModeloTodosContraTodos)
-                                        {
-                                            <li>@lg.Liga.Id</li>
+                                        if (lg.Liga.isModeloTodosContraTodos)
+                                        {@Html.Raw(" - Todos contra todos")}
+                                    else
+                                    {@Html.Raw(" - Regras da Federação") }
+                            }
+                        }
+                        <br>
+                    }
 
-                                        }
-                                    }
-                                </ul>
+                    <ul id="circuitosPermiteEdicaoPontos" style="display:none">
+                        @foreach (var lg in ViewBag.LigasDisponiveis)
+                        {
+                            if (ViewBag.barraId == lg.BarragemId && !ViewBag.isModeloTodosContraTodos)
+                            {
+                                <li>@lg.Liga.Id</li>
+
+                            }
+                        }
+                    </ul>
                             }
 
                             <div>
                                 <input type="hidden" value="@Model.TipoTorneio" id="pontuacaoOriginalTorneio">
                                 <span class="pontuacao-circuito">
-                                    <span id="textoPontuacaoLiga">Selecione a pontuação: </span>
+                                    <br />
+                                    <span id="textoPontuacaoLiga"><b>Selecione a pontuação: </b></span>
                                     <select name="pontuacaoCircuito" id="pontuacaoCircuito" onchange="SelecionarCircuito(this)">
                                         <option @if (Model.TipoTorneio == null) { @Html.Raw("selected") } disabled="disabled" value="-">-</option>
                                         <option @if (Model.TipoTorneio == "100") { @Html.Raw("selected") } value="100">100</option>
@@ -370,6 +378,67 @@
                                         <option @if (Model.TipoTorneio == "1000") { @Html.Raw("selected") } value="1000">1000</option>
                                     </select>
                                 </span>
+                            </div>
+                            <div id="divTabelasPontuacao" class="tabelasPontuacao">
+                                <div class="box-header with-border">
+                                    <h4 class="box-title">Pontuação por posição no torneio</h4>
+                                </div>
+                                <div class="table-responsive">
+                                    <table id="tabelaPontuacaoPosicaoTorneio" class="table table-sm table-striped table-condensed table-bordered">
+                                        <tr>
+                                            <th class="cabecalhoTabelaPontos" scope="col">Campeão</th>
+                                            <th class="cabecalhoTabelaPontos" scope="col">Vice</th>
+                                            <th class="cabecalhoTabelaPontos" scope="col">Semi</th>
+                                            <th class="cabecalhoTabelaPontos" scope="col">Quartas</th>
+                                        </tr>
+                                        <tr>
+                                            <td scope="row"></td>
+                                            <td scope="row"></td>
+                                            <td scope="row"></td>
+                                            <td scope="row"></td>
+                                        </tr>
+                                        <tr>
+                                            <th class="cabecalhoTabelaPontos" scope="col">Oitavas</th>
+                                            <th class="cabecalhoTabelaPontos" scope="col">16 de Final</th>
+                                            <th class="cabecalhoTabelaPontos" scope="col">32 de Final</th>
+                                            <th class="cabecalhoTabelaPontos" scope="col">Fase Grupo</th>
+                                        </tr>
+                                        <tr>
+                                            <td scope="row"></td>
+                                            <td scope="row"></td>
+                                            <td scope="row"></td>
+                                            <td scope="row"></td>
+                                        </tr>
+                                    </table>
+
+                                    <div>
+                                        <div class="box-header with-border">
+                                            <h4 class="box-title">Pontuação em chave de grupos com até 5 jogadores</h4>
+                                        </div>
+                                        <div class="table-responsive">
+                                            <table id="tabelaPontuacaoChaveGrupo" class="table table-sm table-condensed table-bordered">
+                                                <tr>
+                                                    <th class="cabecalhoTabelaPontos" scope="row">1º</th>
+                                                    <td scope="row"></td>
+                                                    <th class="cabecalhoTabelaPontos" scope="row">4º</th>
+                                                    <td scope="row"></td>
+                                                </tr>
+                                                <tr>
+                                                    <th class="cabecalhoTabelaPontos" scope="row">2º</th>
+                                                    <td scope="row"></td>
+                                                    <th class="cabecalhoTabelaPontos" scope="row">5º</th>
+                                                    <td scope="row"></td>
+                                                </tr>
+                                                <tr>
+                                                    <th class="cabecalhoTabelaPontos" scope="row">3º</th>
+                                                    <td scope="row"></td>
+                                                    <th class="cabecalhoTabelaPontos" scope="row"></th>
+                                                    <td scope="row"></td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -473,6 +542,14 @@
     .ui-autocomplete-loading {
         background: white url("/Content/image/ui-anim_basic_16x16.gif") right center no-repeat;
     }
+
+    .tabelasPontuacao {
+        padding-top: 10px;
+    }
+
+    .cabecalhoTabelaPontos {
+        background-color: #bad6ed !important;
+    }
 </style>
 @section Scripts {
     @Scripts.Render("~/bundles/editor")
@@ -528,6 +605,53 @@
             } else {
                 document.getElementById('isTransferencia').style.opacity = "0 !important";
                 document.getElementById('isTransferencia').style.display = "none";
+            }
+        }
+
+        function carregarTabelasPontuacao(pontuacaoLiga) {
+
+            var pontuacao = obterPontuacao(pontuacaoLiga);
+
+            $('#tabelaPontuacaoPosicaoTorneio td').eq(0).html(pontuacao[1]);
+            $('#tabelaPontuacaoPosicaoTorneio td').eq(1).html(pontuacao[2]);
+            $('#tabelaPontuacaoPosicaoTorneio td').eq(2).html(pontuacao[3]);
+            $('#tabelaPontuacaoPosicaoTorneio td').eq(3).html(pontuacao[4]);
+            $('#tabelaPontuacaoPosicaoTorneio td').eq(4).html(pontuacao[5]);
+            $('#tabelaPontuacaoPosicaoTorneio td').eq(5).html(pontuacao[6]);
+            $('#tabelaPontuacaoPosicaoTorneio td').eq(6).html(pontuacao[7]);
+            $('#tabelaPontuacaoPosicaoTorneio td').eq(7).html(pontuacao[7]);
+
+            $('#tabelaPontuacaoChaveGrupo td').eq(0).html(pontuacao[1]);
+            $('#tabelaPontuacaoChaveGrupo td').eq(2).html(pontuacao[2]);
+            $('#tabelaPontuacaoChaveGrupo td').eq(4).html(pontuacao[3]);
+            $('#tabelaPontuacaoChaveGrupo td').eq(1).html(pontuacao[4]);
+            $('#tabelaPontuacaoChaveGrupo td').eq(3).html(pontuacao[5]);
+
+        }
+
+        function obterPontuacao(pontuacaoLiga) {
+            var pontuacoes = [
+                [100, 100, 70, 50, 30, 15, 10, 5],
+                [250, 250, 175, 125, 75, 37, 25, 12],
+                [500, 500, 350, 250, 150, 75, 50, 25],
+                [1000, 1000, 700, 500, 300, 150, 100, 50],
+                [2000, 2000, 1400, 1000, 600, 300, 200, 100],
+            ];
+
+            for (var i = 0; i < pontuacoes.length; i++) {
+                if (pontuacaoLiga == pontuacoes[i][0]) {
+                    return pontuacoes[i];
+                }
+            }
+            return null;
+        }
+
+        function mostrarTabelaPontuacoes(mostrarTabela) {
+            if (mostrarTabela) {
+                $("#divTabelasPontuacao").css("display", "block");
+            }
+            else {
+                $("#divTabelasPontuacao").css("display", "none");
             }
         }
 
@@ -739,8 +863,11 @@
             var spanSelecione = document.getElementsByClassName("pontuacao-circuito")[0];
             if (input.value == "-") {
                 spanSelecione.style.color = "#ff0000";
+                mostrarTabelaPontuacoes(false);
             }
             else {
+                mostrarTabelaPontuacoes(true);
+                carregarTabelasPontuacao(input.value);
                 spanSelecione.style.color = "#000000";
             }
         }
@@ -769,8 +896,12 @@
                 var pontuacaoOriginal = document.getElementById("pontuacaoOriginalTorneio").value;
                 var comboCircuito = document.getElementById("pontuacaoCircuito");
                 comboCircuito.value = pontuacaoOriginal;
+                carregarTabelasPontuacao(pontuacaoOriginal);
             }
-
+            else {
+                var comboCircuito = document.getElementById("pontuacaoCircuito");
+                carregarTabelasPontuacao(comboCircuito.value);
+            }
             return possuiItemOk;
         }
 

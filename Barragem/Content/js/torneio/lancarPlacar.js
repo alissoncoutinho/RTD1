@@ -129,7 +129,7 @@ function ValidarDadosLancamentoPlacar() {
     else if (situacaoId == 6 && todosSetsZerados == true) {
         $.alert({
             title: '<a style=\'color:red\'> ATENÇÃO </a>',
-            content: 'O placar do jogo é obrigatório ao informar uma desistência.'
+            content: 'Informe qual era o placar do jogo no momento desistência.'
         });
         return false;
     }
