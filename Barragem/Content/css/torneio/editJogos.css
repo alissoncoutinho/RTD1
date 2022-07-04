@@ -8,8 +8,9 @@
 }
 
 .gerarTabela {
-    float: right;
-    margin-top: 30px;
+    float: left;
+    margin-top: 10px;
+    margin-bottom:10px;
 }
 
 .exibir-escolhaDeClasses {

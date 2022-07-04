@@ -300,18 +300,18 @@ namespace Barragem.Models
             situacao_Id = 5; //WO
             if (tipoJogadorVencedor == TipoJogador.DESAFIANTE)
             {
-                qtddGames1setDesafiado = 6;
-                qtddGames2setDesafiado = 6;
-                qtddGames1setDesafiante = 1;
-                qtddGames2setDesafiante = 1;
-
-            }
-            else
-            {
                 qtddGames1setDesafiado = 1;
                 qtddGames2setDesafiado = 1;
                 qtddGames1setDesafiante = 6;
                 qtddGames2setDesafiante = 6;
+
+            }
+            else
+            {
+                qtddGames1setDesafiado = 6;
+                qtddGames2setDesafiado = 6;
+                qtddGames1setDesafiante = 1;
+                qtddGames2setDesafiante = 1;
             }
             qtddGames3setDesafiado = 0;
             qtddGames3setDesafiante = 0;

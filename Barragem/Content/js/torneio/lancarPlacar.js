@@ -1,11 +1,16 @@
 ﻿var AtualizarTela = false;
 
+toastr.options = {
+    "positionClass": "toast-top-right",
+    "timeOut": 10000
+}
+
 function LancarPlacar(el, origem) {
     ShowLoader(false);
     var indice = el.dataset.indice;
     var id = el.dataset.idjogo;
     var situacao = el.dataset.situacao;
-    var vencedorWO = el.dataset.vencedor;
+    var vencedor = el.dataset.vencedor;
     var desafiante_id = el.dataset.desafianteid;
     var desafiado_id = el.dataset.desafiadoid;
     var placar = el.dataset.placar;
@@ -59,10 +64,16 @@ function LancarPlacar(el, origem) {
     $(".modal-body #vDesafiado").val(desafiado_id);
     $(".modal-body #desafiante_id").val(desafiante_id);
     $(".modal-body #desafiado_id").val(desafiado_id);
-    if (vencedorWO == desafiante_id) {
+
+    $(".modal-body #chkPerdedorDesistenciaDesafiante").val(desafiante_id);
+    $(".modal-body #chkPerdedorDesistenciaDesafiado").val(desafiado_id);
+
+    if (vencedor == desafiante_id) {
         $(".modal-body #vDesafiante").attr('checked', true);
+        $(".modal-body #chkPerdedorDesistenciaDesafiado").attr('checked', true);
     } else {
         $(".modal-body #vDesafiado").attr('checked', true);
+        $(".modal-body #chkPerdedorDesistenciaDesafiante").attr('checked', true);
     }
 
     $("select#situacao_id").val(situacao);
@@ -82,6 +93,10 @@ function LancarPlacar(el, origem) {
     }
     $(".modal-body #vencedorDesafiadoNome").html(nomeDesafiado);
     $(".modal-body #vencedorDesafianteNome").html(nomeDesafiante);
+    $(".modal-body #perdedorDesistenciaDesafiadoNome").html(nomeDesafiado);
+    $(".modal-body #perdedorDesistenciaDesafianteNome").html(nomeDesafiante);
+    
+
 }
 
 $("#placarForm").submit(function (event) {
@@ -92,21 +107,41 @@ $("#placarForm").submit(function (event) {
     return false;
 });
 
-function ValidarSituacao() {
-
+function ValidarDadosLancamentoPlacar() {
     var situacaoId = $(".modal-body #situacao_id").val();
+
     var qtddGames1setDesafiado = $(".modal-body #qtddGames1setDesafiado").val();
     var qtddGames1setDesafiante = $(".modal-body #qtddGames1setDesafiante").val();
+
+    var qtddGames2setDesafiado = $(".modal-body #qtddGames2setDesafiado").val();
+    var qtddGames2setDesafiante = $(".modal-body #qtddGames2setDesafiante").val();
+
+    var qtddGames3setDesafiado = $(".modal-body #qtddGames3setDesafiado").val();
+    var qtddGames3setDesafiante = $(".modal-body #qtddGames3setDesafiante").val();
+
+    var todosSetsZerados = qtddGames1setDesafiado <= 0 && qtddGames1setDesafiante <= 0
+        && qtddGames2setDesafiado <= 0 && qtddGames2setDesafiante <= 0
+        && qtddGames3setDesafiado <= 0 && qtddGames3setDesafiante <= 0;
 
     if ((situacaoId == 1 || situacaoId == 2) && (qtddGames1setDesafiado != 0 || qtddGames1setDesafiante != 0)) {
         $(".modal-body #situacao_id").val(4);
     }
+    else if (situacaoId == 6 && todosSetsZerados == true) {
+        $.alert({
+            title: '<a style=\'color:red\'> ATENÇÃO </a>',
+            content: 'Informe qual era o placar do jogo no momento desistência.'
+        });
+        return false;
+    }
+    return true;
 }
 
 function ValidarAlteracaoPlacar() {
     var id = $(".modal-body #Id").val();
 
-    ValidarSituacao();
+    if (ValidarDadosLancamentoPlacar() == false) {
+        return false;
+    }
 
     $.ajax({
         type: "GET",
@@ -120,9 +155,7 @@ function ValidarAlteracaoPlacar() {
         contentType: "application/json; charset=utf-8",
         success: function (response) {
             if (typeof response == "object") {
-                toastr.options = {
-                    "positionClass": "toast-top-right"
-                }
+
                 if (response.RequisicaoOk == false) {
                     toastr.error(response.Erro, "Erro");
                 } else {
@@ -209,6 +242,9 @@ function EfetuarLancamentoPlacar() {
     if (document.getElementById("situacao_id").value == '5') {
         url = "LancarWO";
     }
+    else if (document.getElementById("situacao_id").value == '6') {
+        url = "LancarDesistencia";
+    }
 
     $.ajax({
         type: "POST",
@@ -217,10 +253,6 @@ function EfetuarLancamentoPlacar() {
         dataType: "json",
         data: $('form#placarForm').serialize(),
         success: function (resp) {
-            toastr.options = {
-                "positionClass": "toast-top-right",
-                "timeOut": 10000
-            }
 
             if (resp.retorno == 0) {
                 ShowLoader(false);
@@ -338,7 +370,7 @@ function EfetuarLancamentoPlacar() {
                 }
 
 
-                
+
             }
 
         }
@@ -346,7 +378,7 @@ function EfetuarLancamentoPlacar() {
 }
 
 function ValidaAtualizacaoTela(situacaoId) {
-    if ($(".modal-body #atualizarJogosMataMata").val() == "1" || $(".modal-body #gerarJogosMataMata").val() == "1" || $(".modal-body #Origem").val() == "TABELA") {
+    if ($(".modal-body #atualizarJogosMataMata").val() == "1" || $(".modal-body #gerarJogosMataMata").val() == "1" || $(".modal-body #Origem").val() == "TABELA" || situacaoId == '6') {
         AtualizarTela = true;
     }
 
@@ -360,8 +392,12 @@ function ValidaAtualizacaoTela(situacaoId) {
 
 function exibirOpcaoVencedores(situacao) {
     if (situacao == '5') {
-        document.getElementById("IndicadorVencedor").classList.add("show");
-    } else {
+        MostrarIndicadoresPlacar("WO");
+    }
+    else if (situacao == '6') {
+        MostrarIndicadoresPlacar("DESISTENCIA");
+    }
+    else {
         if (situacao == '1') {
             $(".modal-body #qtddGames1setDesafiante").val(0);
             $(".modal-body #qtddGames1setDesafiado").val(0);
@@ -370,8 +406,33 @@ function exibirOpcaoVencedores(situacao) {
             $(".modal-body #qtddGames3setDesafiante").val(0);
             $(".modal-body #qtddGames3setDesafiado").val(0);
         }
+        MostrarIndicadoresPlacar("");
+    }
+}
+
+function MostrarIndicadoresPlacar(tipo) {
+    if (tipo == "WO") {
+        document.getElementById("IndicadorVencedor").classList.add("show");
+        document.getElementById("IndicadorVencedor").style.display = "block";
+
+        document.getElementById("IndicadorVencedorDesistencia").style.display = "none";
+        document.getElementById("IndicadorVencedorDesistencia").classList.remove("show");
+    }
+    else if (tipo == "DESISTENCIA") {
+        document.getElementById("IndicadorVencedorDesistencia").classList.add("show");
+        document.getElementById("IndicadorVencedorDesistencia").style.display = "block";
+
+        document.getElementById("IndicadorVencedor").style.display = "none";
+        document.getElementById("IndicadorVencedor").classList.remove("show");
+
+    }
+    else {
+        document.getElementById("IndicadorVencedorDesistencia").style.display = "none";
+        document.getElementById("IndicadorVencedorDesistencia").classList.remove("show");
+        document.getElementById("IndicadorVencedor").style.display = "none";
         document.getElementById("IndicadorVencedor").classList.remove("show");
     }
+   
 }
 
 function AtualizarBotaoLancarPlacar(id, ehEdicao) {
@@ -389,4 +450,4 @@ function AtualizarTabela() {
     }
 }
 
-document.getElementById("IndicadorVencedor").classList.remove("show");
+MostrarIndicadoresPlacar("");
