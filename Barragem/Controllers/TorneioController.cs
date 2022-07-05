@@ -3403,13 +3403,13 @@ namespace Barragem.Controllers
                     //Desistencia no 1º Set
                     if (tipoVencedor == TipoJogador.DESAFIANTE)
                     {
-                        jogo.qtddGames1setDesafiante = 6;
+                        jogo.qtddGames1setDesafiante = jogoPlacar.qtddGames1setDesafiado == 6 ? 7 : 6;
                         jogo.qtddGames1setDesafiado = jogoPlacar.qtddGames1setDesafiado;
                     }
                     else
                     {
                         jogo.qtddGames1setDesafiante = jogoPlacar.qtddGames1setDesafiante;
-                        jogo.qtddGames1setDesafiado = 6;
+                        jogo.qtddGames1setDesafiado = jogoPlacar.qtddGames1setDesafiante == 6 ? 7 : 6;
                     }
                 }
                 else
