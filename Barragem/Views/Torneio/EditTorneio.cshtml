@@ -896,11 +896,23 @@
                 var pontuacaoOriginal = document.getElementById("pontuacaoOriginalTorneio").value;
                 var comboCircuito = document.getElementById("pontuacaoCircuito");
                 comboCircuito.value = pontuacaoOriginal;
-                carregarTabelasPontuacao(pontuacaoOriginal);
+                if (checkedItens.length > 0) {
+                    carregarTabelasPontuacao(pontuacaoOriginal);
+                    mostrarTabelaPontuacoes(true);
+                }
+                else {
+                    mostrarTabelaPontuacoes(false);
+                }
             }
             else {
                 var comboCircuito = document.getElementById("pontuacaoCircuito");
-                carregarTabelasPontuacao(comboCircuito.value);
+                if (checkedItens.length > 0) {
+                    carregarTabelasPontuacao(comboCircuito.value);
+                    mostrarTabelaPontuacoes(true);
+                }
+                else {
+                    mostrarTabelaPontuacoes(false);
+                }
             }
             return possuiItemOk;
         }
