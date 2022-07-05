@@ -3647,9 +3647,9 @@ namespace Barragem.Controllers
             {
                 torneio.isOpen = true;
             }
-            if (barragem.soTorneio != null && (bool)barragem.soTorneio)
+            if (barragem?.soTorneio == true)
             {
-                torneio.regulamento = barragem.regulamento;
+                torneio.regulamento = ObterRegulamentoTorneio(barragem);
             }
             if ((ModelState.IsValid) && (barragem.isAtiva))
             {
@@ -3760,6 +3760,24 @@ namespace Barragem.Controllers
             return View();
         }
 
+        private string ObterRegulamentoTorneio(Barragens barragem)
+        {
+            if (barragem.isBeachTenis)
+            {
+                if (barragem.isModeloTodosContraTodos)
+                {
+                    return db.Regra.Find(4)?.descricao;
+                }
+                else
+                {
+                    return db.Regra.Find(3)?.descricao;
+                }
+            }
+            else
+            {
+                return db.Regra.Find(5)?.descricao;
+            }
+        }
 
         [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis")]
         public ActionResult IncluirCategoriaNoCircuito(int categoriaId)

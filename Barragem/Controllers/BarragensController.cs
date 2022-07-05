@@ -94,8 +94,8 @@ namespace Barragem.Controllers
                         }
                         if (!(bool)barragens.soTorneio)
                         {
-                            var meuRanking = db.Barragens.Find(8);
-                            barragens.regulamento = meuRanking.regulamento;
+                            var regulamentoTorneioTenis = db.Regra.Find(6);
+                            barragens.regulamento = regulamentoTorneioTenis?.descricao;
                         }
                         db.Barragens.Add(barragens);
                         db.SaveChanges();
@@ -178,7 +178,7 @@ namespace Barragem.Controllers
                 barragens.PaginaEspecialId = barraAtual.PaginaEspecialId;
             }
 
-            if (barragens.PaginaEspecialId == (int)EnumPaginaEspecial.Selecione) 
+            if (barragens.PaginaEspecialId == (int)EnumPaginaEspecial.Selecione)
                 barragens.PaginaEspecialId = null;
 
             barragens.isBeachTenis = barraAtual.isBeachTenis;

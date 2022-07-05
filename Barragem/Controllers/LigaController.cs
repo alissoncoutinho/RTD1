@@ -395,10 +395,12 @@ namespace Barragem.Controllers
                         if (createBarragemLiga.modalidadeBarragem == "1")
                         {
                             barragens.isModeloTodosContraTodos = false;
+                            barragens.regulamento = db.Regra.Find(3)?.descricao;
                         }
                         else
                         {
                             barragens.isModeloTodosContraTodos = true;
+                            barragens.regulamento = db.Regra.Find(4)?.descricao;
                         }
                         barragens.soTorneio = true;
                         barragens.isBeachTenis = true;
@@ -408,7 +410,7 @@ namespace Barragem.Controllers
 
                         UserProfile usuario = db.UserProfiles.Find(WebSecurity.GetUserId(User.Identity.Name));
                         barragens.email = usuario.email;
-                        barragens.regulamento = db.Regra.Find(3).descricao;
+
                         db.Barragens.Add(barragens);
                         db.SaveChanges();
 
