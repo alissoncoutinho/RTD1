@@ -481,7 +481,7 @@ function Imprimir() {
 
 function CarregarJogadores() {
     ShowLoader(true);
-    $.get('/torneio/ObterJogadores?torneioId=' + document.getElementById('torneioId').value + "&classeId=" + document.getElementById('fClasse').value + "&grupoId=" + document.getElementById('fGrupo').value,
+    $.get('/torneio/ObterJogadores?torneioId=' + document.getElementById('torneioId').value + "&classeId=" + document.getElementById('fClasse').value,
         function (data, status) {
             CarregarOpcoesJogador(data);
             ShowLoader(false);

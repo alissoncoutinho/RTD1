@@ -5086,7 +5086,7 @@ namespace Barragem.Controllers
             }
         }
 
-        public JsonResult ObterJogadores(int torneioId, int classeId = 0, int grupoId = 0)
+        public JsonResult ObterJogadores(int torneioId, int classeId = 0)
         {
             List<InscricaoTorneio> inscritos;
             var dadosRetorno = new ListaOpcoesJogadoresModel();
@@ -5109,18 +5109,18 @@ namespace Barragem.Controllers
             }
             else if (cl.isDupla)
             {
-                inscritos = db.InscricaoTorneio.Where(c => c.torneioId == torneioId && c.isAtivo && c.parceiroDuplaId != null && c.classe == classeId && (c.grupo == grupoId || grupoId == 0)).ToList();
+                inscritos = db.InscricaoTorneio.Where(c => c.torneioId == torneioId && c.isAtivo && c.parceiroDuplaId != null && c.classe == classeId).ToList();
                 classeMataMata = cl.faseMataMata;
                 classeFaseGrupo = cl.faseGrupo;
             }
             else
             {
-                inscritos = db.InscricaoTorneio.Where(c => c.torneioId == torneioId && c.isAtivo && c.classe == classeId && (c.grupo == grupoId || grupoId == 0)).ToList();
+                inscritos = db.InscricaoTorneio.Where(c => c.torneioId == torneioId && c.isAtivo && c.classe == classeId).ToList();
                 classeMataMata = cl.faseMataMata;
                 classeFaseGrupo = cl.faseGrupo;
             }
 
-            var jogosClasseTorneio = db.Jogo.Where(x => x.classeTorneio == classeId && (x.grupoFaseGrupo == grupoId || grupoId == 0));
+            var jogosClasseTorneio = db.Jogo.Where(x => x.classeTorneio == classeId);
 
             #region Jogadores Fora da Tabela
             var listaForaTabela = new List<AutoCompleteOption>();
