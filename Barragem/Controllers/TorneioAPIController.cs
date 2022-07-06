@@ -517,7 +517,7 @@ namespace Barragem.Controllers
                             tabelaApp.classificacaoFaseGrupoApp = getClassificacaoFaseGrupoApp(c.Id, (int)grupoUser);
                         }
                         var inscricao = inscricaoUser.Where(i => i.classe == c.Id).FirstOrDefault();
-                        c.grupoUser = (int)inscricao.grupo;
+                        c.grupoUser = inscricao.grupo ?? 0;
                     }
                 }
                 else
@@ -970,7 +970,7 @@ namespace Barragem.Controllers
                                 valor = t.valor,
                                 valorSocio = t.valorSocio,
                                 dataFim = t.dataFim,
-                                StatusInscricao=t.StatusInscricao,
+                                StatusInscricao = t.StatusInscricao,
                                 dataFimInscricoes = t.dataFimInscricoes,
                                 cidade = t.cidade,
                                 premiacao = t.premiacao,
