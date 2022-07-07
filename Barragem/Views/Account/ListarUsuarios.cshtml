@@ -4,6 +4,8 @@
         ViewBag.Title = "Listar Jogadores";
         int contador = 0;
         string filtro = ViewBag.filtro;
+
+        bool regraDetalhesConta = (ViewBag.situacao == "ativo" || ViewBag.situacao == "licenciado" || ViewBag.situacao == "suspenso" || ViewBag.situacao == "suspensoWO" || Roles.IsUserInRole("admin") || Roles.IsUserInRole("organizador"));
     }
 
     <h2>Jogadores</h2>
@@ -27,7 +29,7 @@
                             <option value="desativado" @if (filtro == "desativado") { @Html.Raw("selected") }>desativados</option>
                             <option value="Ativamento solicitado" @if (filtro == "Ativamento solicitado") { @Html.Raw("selected") }>solicitações de ativamento</option>
                             <option value="pendente" @if (filtro == "pendente") { @Html.Raw("selected") }>pendentes</option>
-                            <option value="torneio" @if (filtro == "torneio") { @Html.Raw("selected")  }>torneio</option>
+                            <option value="torneio" @if (filtro == "torneio") { @Html.Raw("selected") }>torneio</option>
                             <option value="inativo" @if (filtro == "inativo") { @Html.Raw("selected") }>inativos</option>
                             <option value="todos" @if (filtro == "todos") { @Html.Raw("selected") }>todos</option>
                         </select>
@@ -91,8 +93,7 @@
                 <tr>
                     <td>@Html.Raw(contador)</td>
                     <td>
-                        @if ((ViewBag.situacao == "ativo") || (ViewBag.situacao == "licenciado")
-          || (ViewBag.situacao == "suspenso") || (ViewBag.situacao == "suspensoWO") || (Roles.IsUserInRole("admin")) || (Roles.IsUserInRole("organizador")))
+                        @if (regraDetalhesConta)
                         {
                             <a href="@Url.Action("../Account/Detalhes", new { userId = @item.UserId })" title="Detalhes do jogador">
                                 @Html.DisplayFor(modelItem => item.nome)
@@ -104,8 +105,7 @@
                         }
                     </td>
                     <td>
-                        @if ((ViewBag.situacao == "ativo") || (ViewBag.situacao == "licenciado")
-|| (ViewBag.situacao == "suspenso") || (ViewBag.situacao == "suspensoWO") || (Roles.IsUserInRole("admin")) || (Roles.IsUserInRole("organizador")))
+                        @if (regraDetalhesConta)
                         {
                             @Html.DisplayFor(modelItem => item.telefoneCelular)
                         }
@@ -118,8 +118,7 @@
                         </td>
                     }
                     <td>
-                        @if ((ViewBag.situacao == "ativo") || (ViewBag.situacao == "licenciado")
-          || (ViewBag.situacao == "suspenso") || (ViewBag.situacao == "suspensoWO") || (Roles.IsUserInRole("admin")) || (Roles.IsUserInRole("organizador")))
+                        @if (regraDetalhesConta)
                         {
                             @Html.DisplayFor(modelItem => item.email)
                         }
@@ -140,16 +139,13 @@
                     </td>
 
                     <td style="text-align:center;width:90px;">
-                        
+
                         <div class="btn-group">
-                            @if ((ViewBag.situacao == "ativo") || (ViewBag.situacao == "licenciado")
-|| (ViewBag.situacao == "suspenso") || (ViewBag.situacao == "suspensoWO") || (Roles.IsUserInRole("admin")) || (Roles.IsUserInRole("organizador")))
+                            @if (regraDetalhesConta)
                             {
-                                if ((Roles.IsUserInRole("admin")) || (Roles.IsUserInRole("organizador")) || (User.Identity.Name.Equals(item.UserName)))
+                                if (Roles.IsUserInRole("admin") || Roles.IsUserInRole("organizador") || User.Identity.Name.Equals(item.UserName))
                                 {
-                                    if ( ( Roles.IsUserInRole("admin") || Roles.IsUserInRole("organizador") )
-                                        &&
-                                        ( "torneio".Equals(item.situacao) || "pendente".Equals(item.situacao) ) )
+                                    if ((Roles.IsUserInRole("admin") || Roles.IsUserInRole("organizador")) && !"ativo".Equals(item.situacao))
                                     {
                                         <a title="Ativar Jogador" class="btn btn-default btn-xs"><span data-valor="@Html.Raw(item.UserId)" class="glyphicon glyphicon-ok"></span></a>
                                     }
@@ -158,7 +154,7 @@
                                 <a href="@Url.Action("Detalhes", new { userId = item.UserId })" title="detalhes do jogador" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-list"></span></a>
                             }
                         </div>
-                        
+
                     </td>
                 </tr>
                 //}
@@ -196,6 +192,6 @@
                 });
             });
 
-            
+
         </script>
     }
