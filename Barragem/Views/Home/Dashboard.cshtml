@@ -31,35 +31,43 @@
             <h4 class="box-title">@Html.Raw("Painel de Controle")</h4>
             <!-- Info boxes -->
             <div class="row">
-                @if (ViewBag.rodadaAtual != null){
+                @if (ViewBag.rodadaAtual != null)
+                {
                     Barragem.Models.Rodada rodada = ViewBag.rodadaAtual;
                     <div class="col-md-6 col-sm-6 col-xs-12">
                         <div class="info-box">
                             <span class="info-box-icon bg-aqua"><i class="fa fa-gear"></i></span>
 
                             <div class="info-box-content">
-                                <span class="info-box-text">Rodada <b>@rodada.codigoSeq</b>
-                                @if (!rodada.isAberta) {
-                                    @Html.Raw("<span class='label label-danger'>Fechada</span>")
-                                }else {
-                                    @Html.Raw("<span class='label label-success'>Aberta</span>")
-                                }
+                                <span class="info-box-text">
+                                    Rodada <b>@rodada.codigoSeq</b>
+                                    @if (!rodada.isAberta)
+                                    {
+                                        @Html.Raw("<span class='label label-danger'>Fechada</span>")
+                                    }
+                                    else
+                                    {
+                                        @Html.Raw("<span class='label label-success'>Aberta</span>")
+                                    }
                                 </span>
                                 <span class="info-box-text">até @Html.Raw(String.Format("{0:dd/MM/yyyy}", rodada.dataFim)) @ViewBag.diaDaSemana</span>
-                                @if (ViewBag.jogosEmAberto != null){
+                                @if (ViewBag.jogosEmAberto != null)
+                                {
                                     <div><a href="/Jogo/Index" style="font-size:12px; color:grey; text-decoration: underline;">@ViewBag.jogosEmAberto jogos em aberto</a></div>
                                 }
                                 <div>
-                                    <a class="btn btn-sm btn-success btn-flat pull-left" style="padding-top:3px; padding-bottom:3px; font-size:11px" href="/Rodada/Create" >Criar rodada</a>
+                                    <a class="btn btn-sm btn-success btn-flat botoesRodada" href="/Rodada/Create">Criar Rodada</a>
+                                    <a class="btn btn-sm btn-primary btn-flat botoesRodada" href="@Html.Raw("/Rodada/edit/" + rodada.Id)">Editar Rodada</a>
+
                                     <button data-link="@Url.Action("../Rodada/FecharRodada", new { id = rodada.Id })" data-title="Fechar Rodada!"
-                                            title="Fechar Rodada" class="btn btn-danger btn-flat btn-sm pull-right confirmDialog" style="padding-top:3px; padding-bottom:3px; font-size:11px">
+                                            title="Fechar Rodada" class="btn btn-danger btn-flat btn-sm confirmDialog botoesRodada">
                                         Fechar Rodada
                                     </button>
                                 </div>
-                            <!-- /.info-box-content -->
+                                <!-- /.info-box-content -->
+                            </div>
+                            <!-- /.info-box -->
                         </div>
-                        <!-- /.info-box -->
-                    </div>
                     </div>
                 }
                 <!-- /.col -->
@@ -77,57 +85,58 @@
                                 <div>
                                     <a href="/Temporada/Create" style="font-size:12px; color:grey; text-decoration: underline;">Criar nova temporada</a>
                                 </div>
-</div>
+                            </div>
                             <!-- /.info-box-content -->
                         </div>
                         <!-- /.info-box -->
                     </div>
                 }
-        </div>
+            </div>
             <div class="row">
-    <!-- /.col -->
-    <!-- fix for small devices only -->
+                <!-- /.col -->
+                <!-- fix for small devices only -->
                 <div class="clearfix visible-sm-block"></div>
-                @if (ViewBag.jogadoresSuspensosWO != null) { 
-                <div class="col-md-6 col-sm-6 col-xs-12">
-                <div class="info-box">
-                    <span class="info-box-icon bg-red"><i class="fa fa-pause"></i></span>
+                @if (ViewBag.jogadoresSuspensosWO != null)
+                {
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                        <div class="info-box">
+                            <span class="info-box-icon bg-red"><i class="fa fa-pause"></i></span>
 
-                    <div class="info-box-content">
-                        <span class="info-box-text">Suspensos</span>
-                        <div><a href="@Url.Action("../Account/ListarUsuarios", new { filtroSituacao = "suspensoWO" })" style="font-size:12px; color:grey; text-decoration: underline;"><span data-toggle="tooltip" title="" class="badge bg-red">@ViewBag.jogadoresSuspensosWO</span> suspensos por WO</a></div>
-                        <a href="@Url.Action("../Account/ListarUsuarios", new { filtroSituacao = "suspenso" })" style="font-size:12px; color:grey; text-decoration: underline;"><span data-toggle="tooltip" title="" class="badge bg-red">@ViewBag.jogadoresSuspensos</span> suspensos por jogos atrasados</a>
+                            <div class="info-box-content">
+                                <span class="info-box-text">Suspensos</span>
+                                <div><a href="@Url.Action("../Account/ListarUsuarios", new { filtroSituacao = "suspensoWO" })" style="font-size:12px; color:grey; text-decoration: underline;"><span data-toggle="tooltip" title="" class="badge bg-red">@ViewBag.jogadoresSuspensosWO</span> suspensos por WO</a></div>
+                                <a href="@Url.Action("../Account/ListarUsuarios", new { filtroSituacao = "suspenso" })" style="font-size:12px; color:grey; text-decoration: underline;"><span data-toggle="tooltip" title="" class="badge bg-red">@ViewBag.jogadoresSuspensos</span> suspensos por jogos atrasados</a>
+                            </div>
+                            <!-- /.info-box-content -->
+                        </div>
+                        <!-- /.info-box -->
                     </div>
-                    <!-- /.info-box-content -->
-                </div>
-                <!-- /.info-box -->
-            </div>
                 }
-            <!-- /.col -->
-        @if (ViewBag.jogadorespendentes != null)
-        {
-        <div class="col-md-6 col-sm-6 col-xs-12">
-        <div class="info-box">
-            <span class="info-box-icon bg-yellow"><i class="fa fa-group"></i></span>
+                <!-- /.col -->
+                @if (ViewBag.jogadorespendentes != null)
+                {
+                    <div class="col-md-6 col-sm-6 col-xs-12">
+                        <div class="info-box">
+                            <span class="info-box-icon bg-yellow"><i class="fa fa-group"></i></span>
 
-            <div class="info-box-content">
-                <span class="info-box-text">Novas solicitações de participação</span>
-                @if (ViewBag.jogadorespendentes > 0)
-                {
-                    <a href="@Url.Action("../Account/ListarUsuarios", new { filtroSituacao = "pendente" })"><span data-toggle="tooltip" title="" class="badge bg-green">@ViewBag.jogadorespendentes</span> <span style="font-size:12px; color:grey; text-decoration: underline;">solicitações</span></a>
+                            <div class="info-box-content">
+                                <span class="info-box-text">Novas solicitações de participação</span>
+                                @if (ViewBag.jogadorespendentes > 0)
+                                {
+                                    <a href="@Url.Action("../Account/ListarUsuarios", new { filtroSituacao = "pendente" })"><span data-toggle="tooltip" title="" class="badge bg-green">@ViewBag.jogadorespendentes</span> <span style="font-size:12px; color:grey; text-decoration: underline;">solicitações</span></a>
+                                }
+                                else
+                                {
+                                    <a href="@Url.Action("../Account/ListarUsuarios", new { filtroSituacao = "pendente" })" style="font-size:12px; color:grey; text-decoration: underline;">@ViewBag.jogadorespendentes solicitações</a>
+                                }
+                            </div>
+                            <!-- /.info-box-content -->
+                        </div>
+                        <!-- /.info-box -->
+                    </div>
                 }
-                else
-                {
-                    <a href="@Url.Action("../Account/ListarUsuarios", new { filtroSituacao = "pendente" })" style="font-size:12px; color:grey; text-decoration: underline;">@ViewBag.jogadorespendentes solicitações</a>
-                }
+                <!-- /.col -->
             </div>
-            <!-- /.info-box-content -->
-        </div>
-        <!-- /.info-box -->
-    </div>
-        }
-    <!-- /.col -->
-</div>
             <!-- /.row -->
         </section>
         <!-- /.content -->
@@ -138,11 +147,11 @@
 
 
 @section Scripts {
-    
+
     <script type="text/javascript">
-        
+
     </script>
-    
+
 }
 
 <style>
@@ -169,4 +178,13 @@
     .info-box {
         min-height: 100px;
     }
+
+    .botoesRodada {
+        padding-top: 3px;
+        padding-bottom: 3px;
+        font-size: 11px;
+        margin-right: 7px;
+        margin-top:3px;
+    }
+
 </style>
