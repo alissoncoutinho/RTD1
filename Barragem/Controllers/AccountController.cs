@@ -1788,7 +1788,7 @@ namespace Barragem.Controllers
             return View(dadosListagem);
         }
 
-        public ActionResult ListarUsuarios(String filtroSituacao = "", int filtroBarragem = 0, string msg = "")
+        public ActionResult ListarUsuarios(String filtroSituacao = "", int filtroBarragem = 0, int filtroCategoria = 0, string msg = "")
         {
             if (msg == "ok")
             {
@@ -1816,6 +1816,9 @@ namespace Barragem.Controllers
             if (filtroBarragem != 0)
             {
                 consulta = consulta.Where(u => u.barragemId == filtroBarragem);
+
+                ViewBag.Categorias = db.Classe.Where(c => c.barragemId == filtroBarragem && c.ativa == true).ToList();
+                ViewBag.filtroCategoria = filtroCategoria;
             }
             string perfil = Roles.GetRolesForUser(User.Identity.Name)[0];
             if (!perfil.Equals("admin"))
@@ -1830,6 +1833,10 @@ namespace Barragem.Controllers
             {
                 usuarios = consulta.OrderBy(u => u.nome).ToList();
             }
+
+
+            
+
             return View(usuarios);
         }
 
