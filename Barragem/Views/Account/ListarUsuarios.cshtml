@@ -188,7 +188,7 @@
                                         }
                                         if ((Roles.IsUserInRole("admin") || Roles.IsUserInRole("organizador")) && ("ativo".Equals(item.situacao) || "licenciado".Equals(item.situacao) || "suspenso".Equals(item.situacao) || "suspensoWO".Equals(item.situacao)))
                                         {
-                                            <a title="Voltar Jogador Pendente" class="btn btn-default btn-xs" onclick="PenderJogador(@item.UserId)"><span class="glyphicon glyphicon-repeat"></span></a>
+                                            <a title="Pender Jogador" class="btn btn-default btn-xs" onclick="PenderJogador(@item.UserId)"><span class="glyphicon glyphicon-repeat"></span></a>
                                         }
                                         <a href="@Url.Action("EditaUsuario", new { UserName = item.UserName })" title="Editar" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-edit"></span></a>
                                     }
