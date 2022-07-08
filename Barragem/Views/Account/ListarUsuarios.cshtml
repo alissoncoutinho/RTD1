@@ -175,7 +175,7 @@
                             @Html.DisplayFor(modelItem => item.situacao)
                         </td>
 
-                        <td style="text-align:center;width:90px;">
+                        <td style="text-align:center;width:110px;">
 
                             <div class="btn-group">
                                 @if (regraDetalhesConta)
@@ -186,6 +186,10 @@
                                         {
                                             <a title="Ativar Jogador" class="btn btn-default btn-xs"><span data-valor="@Html.Raw(item.UserId)" class="glyphicon glyphicon-ok"></span></a>
                                         }
+                                        if ((Roles.IsUserInRole("admin") || Roles.IsUserInRole("organizador")) && ("ativo".Equals(item.situacao) || "licenciado".Equals(item.situacao) || "suspenso".Equals(item.situacao) || "suspensoWO".Equals(item.situacao)))
+                                        {
+                                            <a title="Voltar Jogador Pendente" class="btn btn-default btn-xs" onclick="PenderJogador(@item.UserId)"><span class="glyphicon glyphicon-repeat"></span></a>
+                                        }
                                         <a href="@Url.Action("EditaUsuario", new { UserName = item.UserName })" title="Editar" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-edit"></span></a>
                                     }
                                     <a href="@Url.Action("Detalhes", new { userId = item.UserId })" title="detalhes do jogador" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-list"></span></a>
@@ -194,7 +198,6 @@
 
                         </td>
                     </tr>
-                    //}
                 }
 
             </table>
@@ -202,6 +205,9 @@
     </div>
     @section Scripts {
         <script type="text/javascript">
+
+            var mensagem = "@ViewBag.Mensagem";
+
             $(document).ready(function () {
                 $(".glyphicon-ok").click(function (event) {
                     var userId = $(this).data("valor");
@@ -229,6 +235,40 @@
                 });
             });
 
+            function PenderJogador(idJogador) {
+                $.ajax({
+                    type: "POST",
+                    url: "/Account/PenderJogador",
+                    dataType: "json",
+                    data: "{'userId':'" + idJogador + "'}",
+                    contentType: "application/json; charset=utf-8",
+                    success: function (response) {
+                        if (typeof response == "object") {
+                            if (response.retorno === 0) {
+                                toastr.error(response.erro, "Erro");
+                            } else {
+                                var tdSituacao = document.getElementById("situacao" + idJogador);
+                                tdSituacao.innerText = "pendente";
+                                toastr.success("Situação do jogador alterada para Pendente.", "Aviso");
+                            }
+                        }
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        location.reload(true);
+                    }
+                });
+            }
 
+            function NotificarMensagem()
+            {
+                if (mensagem != "") {
+                    toastr.success(mensagem, "Aviso");
+                    mensagem = "";
+                    var urlParams = new URLSearchParams(window.location.search);
+                    urlParams.delete('msg');
+                    history.replaceState(null, '', '?' + urlParams + location.hash)
+                }
+            }
+            NotificarMensagem();
         </script>
     }

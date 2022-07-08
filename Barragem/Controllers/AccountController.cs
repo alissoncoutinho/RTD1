@@ -1189,10 +1189,12 @@ namespace Barragem.Controllers
         [Authorize(Roles = "admin,usuario,organizador,adminTorneio,adminTorneioTenis")]
         public ActionResult Excluir(int Id)
         {
+            string nomeUsuario = string.Empty;
             string perfil = Roles.GetRolesForUser(User.Identity.Name)[0];
             if ((perfil.Equals("admin")) || (perfil.Equals("organizador")) || (WebSecurity.GetUserId(User.Identity.Name) == Id))
             {
                 var usuario = db.UserProfiles.Find(Id);
+                nomeUsuario = usuario.nome;
                 if (usuario.situacao == "pendente")
                 {
                     var listaJogos = db.Jogo.Where(j => j.desafiado_id == Id || j.desafiante_id == Id).ToList();
@@ -1209,7 +1211,7 @@ namespace Barragem.Controllers
                     }
                 }
             }
-            return RedirectToAction("ListarUsuarios");
+            return RedirectToAction("ListarUsuarios", new { msg = $"Jogador {nomeUsuario} excluído com sucesso." });
         }
 
         [HttpGet]
@@ -1596,6 +1598,35 @@ namespace Barragem.Controllers
             return RedirectToAction("Index3", "Home", new { ViewBag.Sucesso, ViewBag.MsgAlerta });
         }
 
+
+        [HttpPost]
+        [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis")]
+        public ActionResult PenderJogador(int userId)
+        {
+            try
+            {
+                var user = db.UserProfiles.Where(u => u.UserId == userId).FirstOrDefault();
+                if (user != null)
+                {
+                    user.situacao = "pendente";
+                    user.logAlteracao = User.Identity.Name;
+                    
+                    db.Entry(user).State = EntityState.Modified;
+                    db.SaveChanges();
+                    return Json(new { erro = "", retorno = 1 }, "text/plain", JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    return Json(new { erro = "Usuário não encontrado", retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { erro = ex.Message, retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
+            }
+        }
+
+
         [HttpPost]
         [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis")]
         public ActionResult AtivaUsuario(int userId)
@@ -1795,11 +1826,17 @@ namespace Barragem.Controllers
             {
                 ViewBag.Ok = "ok";
             }
+            else if (!string.IsNullOrEmpty(msg))
+            {
+                ViewBag.Mensagem = msg;
+                msg = "";
+            }
+
             UserProfile usu = db.UserProfiles.Find(WebSecurity.GetUserId(User.Identity.Name));
             ViewBag.situacao = usu.situacao;
             ViewBag.filtro = filtroSituacao;
             //ViewBag.filtroBarragem = filtroBarragem;
-            
+
             List<UserProfile> usuarios;
             IQueryable<UserProfile> consulta = null;
 
@@ -1878,7 +1915,7 @@ namespace Barragem.Controllers
             }
 
             ViewBag.filtroBarragem = new SelectList(db.BarragemView.OrderBy(x => x.nome), "Id", "nome", filtroBarragem);
-            
+
             return View(usuarios);
         }
 
