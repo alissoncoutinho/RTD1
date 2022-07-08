@@ -69,7 +69,7 @@
                             </div>
 
                             <div class="form-group col-sm-12" style="width:270px">
-                                @if (!Roles.IsUserInRole("admin"))
+                                @if (Roles.IsUserInRole("admin"))
                                 {
                                     <label class="control-label" style="width:100px">Barragens</label>
                                     <div class="input-group" style="width:250px">

@@ -1790,6 +1790,7 @@ namespace Barragem.Controllers
 
         public ActionResult ListarUsuarios(String filtroSituacao = "", int filtroBarragem = 0, int filtroCategoria = 0, string msg = "")
         {
+            int idBarragem = filtroBarragem;
             if (msg == "ok")
             {
                 ViewBag.Ok = "ok";
@@ -1798,9 +1799,10 @@ namespace Barragem.Controllers
             ViewBag.situacao = usu.situacao;
             ViewBag.filtro = filtroSituacao;
             //ViewBag.filtroBarragem = filtroBarragem;
-            ViewBag.filtroBarragem = new SelectList(db.BarragemView.OrderBy(x => x.nome), "Id", "nome", filtroBarragem);
+            
             List<UserProfile> usuarios;
             IQueryable<UserProfile> consulta = null;
+
             if (filtroSituacao == "")
             {
                 consulta = db.UserProfiles.Where(u => u.situacao.Equals("ativo") || u.situacao.Equals("licenciado") || u.situacao.Equals("suspenso") || u.situacao.Equals("suspensoWO"));
@@ -1813,16 +1815,18 @@ namespace Barragem.Controllers
             {
                 consulta = db.UserProfiles.Where(u => u.situacao.Equals(filtroSituacao));
             }
+
             if (filtroBarragem != 0)
             {
                 consulta = consulta.Where(u => u.barragemId == filtroBarragem);
-
-                ViewBag.Categorias = db.Classe.Where(c => c.barragemId == filtroBarragem && c.ativa == true).ToList();
-                ViewBag.filtroCategoria = filtroCategoria;
             }
+
             string perfil = Roles.GetRolesForUser(User.Identity.Name)[0];
+
             if (!perfil.Equals("admin"))
             {
+                idBarragem = usu.barragemId;
+                filtroBarragem = idBarragem;
                 usuarios = consulta.Where(u => u.barragemId == usu.barragemId).OrderBy(u => u.nome).ToList();
             }
             else if (filtroBarragem == 0)
@@ -1834,9 +1838,47 @@ namespace Barragem.Controllers
                 usuarios = consulta.OrderBy(u => u.nome).ToList();
             }
 
+            if (idBarragem > 0)
+            {
+                var categorias = db.Classe.Where(c => c.barragemId == idBarragem && c.ativa == true).ToList();
+                ViewBag.Categorias = categorias;
+                ViewBag.filtroCategoria = filtroCategoria;
 
+                if (filtroCategoria > 0)
+                {
+                    var categoriaSelecionada = categorias.FirstOrDefault(x => x.Id == filtroCategoria);
+
+                    var idRodada = db.Rodada.Where(r => r.isRodadaCarga == false && r.barragemId == idBarragem).Max(r => r.Id);
+
+                    var listaJogosRodadaCategoria = db.Jogo.Where(x => x.rodada_id == idRodada && (x.desafiado.classe.nivel == categoriaSelecionada.nivel || (x.desafiado.classeId == null && categoriaSelecionada.nivel == 1)));
+                    if (listaJogosRodadaCategoria != null)
+                    {
+                        var listaUsuarios = new List<int>();
+                        foreach (var jogo in listaJogosRodadaCategoria)
+                        {
+                            listaUsuarios.Add(jogo.desafiante_id);
+                            listaUsuarios.Add(jogo.desafiado_id);
+                            if (jogo.desafiante2_id > 0)
+                            {
+                                listaUsuarios.Add(jogo.desafiante2_id.Value);
+                            }
+                            if (jogo.desafiado2_id > 0)
+                            {
+                                listaUsuarios.Add(jogo.desafiado2_id.Value);
+                            }
+                        }
+                        usuarios = consulta.Where(x => listaUsuarios.Contains(x.UserId)).OrderBy(u => u.nome).ToList();
+                    }
+                }
+            }
+            else
+            {
+                ViewBag.Categorias = new List<Classe>();
+                ViewBag.filtroCategoria = filtroCategoria;
+            }
+
+            ViewBag.filtroBarragem = new SelectList(db.BarragemView.OrderBy(x => x.nome), "Id", "nome", filtroBarragem);
             
-
             return View(usuarios);
         }
 
