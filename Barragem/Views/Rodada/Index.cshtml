@@ -78,9 +78,9 @@
                             {
                                 <button data-link="@Url.Action("FecharRodada", new { id = item.Id })" data-title="Fechar Rodada!" title="Fechar Rodada" class="btn btn-default btn-xs confirmDialog"><span class="glyphicon glyphicon-remove-circle"></span></button>
                             }
-                            if (Roles.IsUserInRole("admin"))
+                            if (Roles.IsUserInRole("admin") || Roles.IsUserInRole("organizador"))
                             {
-                                <button data-link="@Url.Action("ExcluirRodada", new { id = item.Id })" data-title="Excluir Rodada!" title="Excluir Rodada" class="btn btn-default btn-xs confirmExclusaoRodada"><span class="glyphicon glyphicon-remove-sign"></span></button>
+                                <button data-link="@Url.Action("ExcluirRodada", new { id = item.Id })" data-id="@item.Id" data-title="Excluir Rodada!" title="Excluir Rodada" class="btn btn-default btn-xs confirmExclusaoRodada"><span class="glyphicon glyphicon-remove-sign"></span></button>
                             }
                         }
                     </td>

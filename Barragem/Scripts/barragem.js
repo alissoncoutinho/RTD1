@@ -44,13 +44,49 @@ $(document).ready(function () {
                 text: 'Sim',
                 btnClass: 'btn-primary',
                 action: function () {
-                    location.href = this.$target.data("link");
+                    ValidarExclusaoRodada(this.$target.data("id"), this.$target.data("link"));
                 }
             },
             cancelar: function () { }
         }
     });
-    
+
+    function ValidarExclusaoRodada(id, link) {
+        $.ajax({
+            type: "GET",
+            url: "/Rodada/ValidarExclusaoRodada",
+            dataType: "json",
+            data: {
+                "id": id
+            },
+            traditional: true,
+            contentType: "application/json; charset=utf-8",
+            success: function (response) {
+                if (typeof response == "object") {
+                    toastr.options = {
+                        "positionClass": "toast-top-center"
+                    }
+                    if (response.retorno == "ERRO") {
+                        toastr.error(response.erro, "Erro");
+                    } else {
+                        if (response.retorno != "OK") {
+                            $.alert({
+                                title: '<a style=\'color:red\'> ATENÇÃO!!! </a>',
+                                content: response.mensagem
+                            });
+                        }
+                        else {
+                            location.href = link;
+                        }
+                    }
+                }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                toastr.error(errorThrown, "Erro");
+            }
+        });
+    }
+
 });
 
 
