@@ -2837,7 +2837,7 @@ namespace Barragem.Controllers
             }
             if (nomeJogador != "")
             {
-                jogos = jogos.Where(j => j.desafiante.nome.ToUpper().Contains(nomeJogador.ToUpper()) || j.desafiado.nome.ToUpper().Contains(nomeJogador.ToUpper()));
+                jogos = jogos.Where(j => j.desafiante.nome.ToUpper().Contains(nomeJogador.ToUpper()) || j.desafiado.nome.ToUpper().Contains(nomeJogador.ToUpper()) || ((j.desafiante2 != null && j.desafiante2.nome.ToUpper().Contains(nomeJogador.ToUpper())) || (j.desafiado2 != null && j.desafiado2.nome.ToUpper().Contains(nomeJogador.ToUpper()))));
             }
 
             if (isImprimir)
