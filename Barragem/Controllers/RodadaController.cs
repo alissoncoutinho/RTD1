@@ -416,21 +416,27 @@ namespace Barragem.Controllers
         }
 
         [HttpGet]
-        public ActionResult ValidarRodadasTemporada(int idTemporada)
+        public ActionResult ValidarRegrasGeracaoRodada(int idTemporada)
         {
             try
             {
                 var temporada = db.Temporada.Find(idTemporada);
                 var qtdeRodadasExistente = db.Rodada.Count(x => x.temporadaId == idTemporada);
 
-                if (temporada.qtddRodadas > qtdeRodadasExistente)
+                var usuariosPendentes = db.UserProfiles.Where(x => x.situacao == "pendente" && x.barragemId == temporada.barragemId);
+
+                if (temporada.qtddRodadas < qtdeRodadasExistente)
                 {
-                    return Json(new { erro = "", retorno = "OK" }, "text/plain", JsonRequestBehavior.AllowGet);
+                    return Json(new { erro = "", retorno = "REGRA_EXCEDEU_QTDE_RODADAS" }, "text/plain", JsonRequestBehavior.AllowGet);
+
                 }
-                else
+
+                if (usuariosPendentes.Count() - 1 > 0)
                 {
-                    return Json(new { erro = "", retorno = "MSG" }, "text/plain", JsonRequestBehavior.AllowGet);
+                    return Json(new { erro = "", retorno = "REGRA_USUARIOS_PENDENTES", qtdeJogadores = usuariosPendentes.Count() - 1 }, "text/plain", JsonRequestBehavior.AllowGet);
                 }
+
+                return Json(new { erro = "", retorno = "OK" }, "text/plain", JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {

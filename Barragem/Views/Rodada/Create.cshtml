@@ -112,7 +112,7 @@
 
             $.ajax({
                 type: "GET",
-                url: "/Rodada/ValidarRodadasTemporada",
+                url: "/Rodada/ValidarRegrasGeracaoRodada",
                 dataType: "json",
                 data: {
                     "idTemporada": id
@@ -128,7 +128,7 @@
                             toastr.error(response.erro, "Erro");
                         } else
                         {
-                            if (response.retorno != "OK")
+                            if (response.retorno == "REGRA_EXCEDEU_QTDE_RODADAS")
                             {
                                 $.confirm({
                                     title: "<span style='color:red'>ATENÇÃO!</span>",
@@ -152,18 +152,32 @@
                                     }
                                 });
                             }
+                            else if (response.retorno == "REGRA_USUARIOS_PENDENTES") {
+                                $.confirm({
+                                    title: "<span style='color:orange'>IMPORTANTE!</span>",
+                                    content: "Você tem " + response.qtdeJogadores + " jogadores pendentes no seu ranking. </br> Deseja revisar os jogadores pendentes antes de gerar a rodada?",
+                                    columnClass: 'medium',
+                                    buttons: {
+                                        a: {
+                                            text: 'Sim',
+                                            btnClass: 'btn-success',
+                                            action: function () {
+                                                location.href = "/Account/ListarUsuarios?filtroSituacao=pendente";
+                                            }
+                                        },
+                                        b: {
+                                            text: 'Não',
+                                            btnClass: 'btn-primary',
+                                            action: function () {
+                                                SubmeterFormulario(acao);
+                                            }
+                                        }
+                                    }
+                                });
+                            }
                             else
                             {
-                                event.preventDefault();
-                                if (acao == 1)
-                                {
-                                    document.forms[1].submit();
-                                }
-                                else if (acao == 2)
-                                {
-                                    document.forms[1].action = "/Rodada/CriaESorteia";
-                                    document.forms[1].submit();
-                                }
+                                SubmeterFormulario(acao);
                             }
                         }
                     }
@@ -174,6 +188,16 @@
             });
         }
 
+        function SubmeterFormulario(acao) {
+            event.preventDefault();
+            if (acao == 1) {
+                document.forms[1].submit();
+            }
+            else if (acao == 2) {
+                document.forms[1].action = "/Rodada/CriaESorteia";
+                document.forms[1].submit();
+            }
+        }
 
     </script>
 }
