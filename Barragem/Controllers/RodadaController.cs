@@ -377,6 +377,7 @@ namespace Barragem.Controllers
             return RedirectToAction("Index", new { msg = msg, detalheErro = detalheErro });
         }
 
+        [HttpGet]
         public ActionResult ValidarExclusaoRodada(int id)
         {
             try
@@ -385,7 +386,26 @@ namespace Barragem.Controllers
 
                 var possuiJogosJaIniciados = db.Jogo.Any(x => x.rodada_id == id && x.desafiante_id != 8 && x.situacao_Id != 1);
                 if (possuiJogosJaIniciados)
-                    return Json(new { mensagem = "Não é possível excluir a rodada pois já existem jogos marcados ou finalizados.", retorno = "MSG" }, "text/plain", JsonRequestBehavior.AllowGet);
+                    return Json(new { erro = "", retorno = "MSG" }, "text/plain", JsonRequestBehavior.AllowGet);
+                else
+                    return Json(new { erro = "", retorno = "OK" }, "text/plain", JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { erro = ex.Message, retorno = "ERRO" }, "text/plain", JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpGet]
+        public ActionResult ValidarFechamentoRodada(int id)
+        {
+            try
+            {
+                var torneio = db.Rodada.Find(id);
+
+                var possuiJogosJaIniciados = db.Jogo.Any(x => x.rodada_id == id && x.desafiante_id != 8 && x.situacao_Id != 1);
+                if (!possuiJogosJaIniciados)
+                    return Json(new { erro = "", retorno = "MSG" }, "text/plain", JsonRequestBehavior.AllowGet);
                 else
                     return Json(new { erro = "", retorno = "OK" }, "text/plain", JsonRequestBehavior.AllowGet);
             }

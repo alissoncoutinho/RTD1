@@ -76,7 +76,7 @@
                             <a href="@Url.Action("../Jogo/Index", new { rodadaId = item.Id })" title="Jogos da Rodada" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-list"></span></a>
                             if (Roles.IsUserInRole("admin") || Roles.IsUserInRole("organizador"))
                             {
-                                <button data-link="@Url.Action("FecharRodada", new { id = item.Id })" data-title="Fechar Rodada!" title="Fechar Rodada" class="btn btn-default btn-xs confirmDialog"><span class="glyphicon glyphicon-remove-circle"></span></button>
+                                <button data-link="@Url.Action("FecharRodada", new { id = item.Id })" data-id="@item.Id" data-title="Fechar Rodada!" title="Fechar Rodada" class="btn btn-default btn-xs confirmDialog"><span class="glyphicon glyphicon-remove-circle"></span></button>
                             }
                             if (Roles.IsUserInRole("admin") || Roles.IsUserInRole("organizador"))
                             {
