@@ -71,7 +71,7 @@ $(document).ready(function () {
                     } else {
                         if (response.retorno != "OK") {
                             $.alert({
-                                title: '<a style=\'color:red\'> ATENÇÃO!!! </a>',
+                                title: "<span style='color:red'>ATENÇÃO!!!</span>",
                                 content: "Não é possível excluir a rodada pois já existem jogos marcados ou finalizados."
                             });
                         }
@@ -107,7 +107,7 @@ $(document).ready(function () {
                     } else {
                         if (response.retorno != "OK") {
                             $.alert({
-                                title: '<a style=\'color:red\'> ATENÇÃO!!! </a>',
+                                title: "<span style='color:red'>ATENÇÃO!!!</span>",
                                 content: "Não é possível fechar a rodada pois nenhum jogo foi realizado.</br> Você pode excluir a rodada caso queira lançar outra."
                             });
                         }

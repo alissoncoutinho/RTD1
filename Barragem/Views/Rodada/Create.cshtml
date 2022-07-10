@@ -4,16 +4,17 @@
     ViewBag.Title = "Create";
 }
 
-@using (Html.BeginForm()) {
+@using (Html.BeginForm())
+{
     @Html.AntiForgeryToken()
     @Html.ValidationSummary(true)
 
-        <legend>Criar Rodada</legend>
+    <legend>Criar Rodada</legend>
 
-        <div class="editor-field">
-            <input type="hidden" name="codigo" value="A"/>
-            <input type="hidden" name="sequencial" value="1" />
-        </div>
+    <div class="editor-field">
+        <input type="hidden" name="codigo" value="A" />
+        <input type="hidden" name="sequencial" value="1" />
+    </div>
 
     <div class="row">
         <div class="col-md-4">
@@ -72,11 +73,11 @@
         </div>
     </div>
 
-    <br/>
+    <br />
     <div class="row">
         <div class="col-xs-12">
-            <input class="btn btn-primary" type="submit" value="Criar" />
-            <input class="btn btn-success criarESortear" type="submit" value="Criar e Sortear" />
+            <input class="btn btn-primary" onclick="ValidarFechamentoRodada(1)" type="button" value="Criar" />
+            <input class="btn btn-success" onclick="ValidarFechamentoRodada(2)" type="button" value="Criar e Sortear" />
         </div>
     </div>
     <div class="row">
@@ -92,7 +93,7 @@
 </div>
 
 @section Scripts {
-    
+
     <script type="text/javascript">
         $(function () {
             $("#dataInicio").datepicker({
@@ -103,16 +104,76 @@
                 language: 'pt-BR',
                 pickTime: false
             });
-
-            $(".criarESortear").click(function (event) {
-                event.preventDefault();
-                document.forms[1].action = "/Rodada/CriaESorteia";
-                document.forms[1].submit();
-            });
         });
 
-        
+        function ValidarFechamentoRodada(acao) {
 
-            
+            var id = $("#temporadaId").val();
+
+            $.ajax({
+                type: "GET",
+                url: "/Rodada/ValidarRodadasTemporada",
+                dataType: "json",
+                data: {
+                    "idTemporada": id
+                },
+                traditional: true,
+                contentType: "application/json; charset=utf-8",
+                success: function (response) {
+                    if (typeof response == "object") {
+                        toastr.options = {
+                            "positionClass": "toast-top-center"
+                        }
+                        if (response.retorno == "ERRO") {
+                            toastr.error(response.erro, "Erro");
+                        } else
+                        {
+                            if (response.retorno != "OK")
+                            {
+                                $.confirm({
+                                    title: "<span style='color:red'>ATENÇÃO!</span>",
+                                    content: "Não é possível gerar rodada pois foi excedido o número de rodadas dessa temporada. </br> O que deseja fazer?",
+                                    columnClass: 'medium',
+                                    buttons: {
+                                        a: {
+                                            text: 'Aumentar rodadas na temporada',
+                                            btnClass: 'btn-primary',
+                                            action: function () {
+                                                location.href = "/Temporada/Edit/" + id;
+                                            }
+                                        },
+                                        b: {
+                                            text: 'Criar uma nova temporada',
+                                            btnClass: 'btn-primary',
+                                            action: function () {
+                                                location.href = "/Temporada/Create";
+                                            }
+                                        }
+                                    }
+                                });
+                            }
+                            else
+                            {
+                                event.preventDefault();
+                                if (acao == 1)
+                                {
+                                    document.forms[1].submit();
+                                }
+                                else if (acao == 2)
+                                {
+                                    document.forms[1].action = "/Rodada/CriaESorteia";
+                                    document.forms[1].submit();
+                                }
+                            }
+                        }
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    toastr.error(errorThrown, "Erro");
+                }
+            });
+        }
+
+
     </script>
 }

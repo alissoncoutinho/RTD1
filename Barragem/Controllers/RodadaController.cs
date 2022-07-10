@@ -415,6 +415,29 @@ namespace Barragem.Controllers
             }
         }
 
+        [HttpGet]
+        public ActionResult ValidarRodadasTemporada(int idTemporada)
+        {
+            try
+            {
+                var temporada = db.Temporada.Find(idTemporada);
+                var qtdeRodadasExistente = db.Rodada.Count(x => x.temporadaId == idTemporada);
+
+                if (temporada.qtddRodadas > qtdeRodadasExistente)
+                {
+                    return Json(new { erro = "", retorno = "OK" }, "text/plain", JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    return Json(new { erro = "", retorno = "MSG" }, "text/plain", JsonRequestBehavior.AllowGet);
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { erro = ex.Message, retorno = "ERRO" }, "text/plain", JsonRequestBehavior.AllowGet);
+            }
+        }
+
         private void verificarRegraSuspensaoPorAtraso(Jogo jogo)
         {
             // 5.6.O jogador que não receber pontuação ou deixar de jogar, mesmo que justificadamente, por 2 (dois) jogos seguidos
