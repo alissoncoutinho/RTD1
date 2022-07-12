@@ -507,27 +507,27 @@ namespace Barragem.Controllers
 
         private void gerarRancking(int idRodada)
         {
-            int posicao = 1;
             List<Rancking> listaRancking = db.Rancking.Where(r => r.rodada_id == idRodada && r.userProfile.situacao != "desativado" && r.userProfile.situacao != "inativo").OrderByDescending(r => r.totalAcumulado).ToList();
+
+            rn.OrdenarJogadoresRanking(listaRancking, true, false);
+
             foreach (Rancking ran in listaRancking)
             {
-                ran.posicao = posicao;
                 db.Entry(ran).State = EntityState.Modified;
                 db.SaveChanges();
-                posicao++;
             }
         }
 
         private void gerarRanckingPorClasse(int idRodada, int classeId)
         {
-            int posicao = 1;
             List<Rancking> listaRancking = db.Rancking.Where(r => r.rodada_id == idRodada && r.userProfile.classeId == classeId && r.userProfile.situacao != "desativado" && r.userProfile.situacao != "inativo").OrderByDescending(r => r.totalAcumulado).ToList();
+
+            rn.OrdenarJogadoresRanking(listaRancking, false, true);
+
             foreach (Rancking ran in listaRancking)
             {
-                ran.posicaoClasse = posicao;
                 db.Entry(ran).State = EntityState.Modified;
                 db.SaveChanges();
-                posicao++;
             }
         }
 
