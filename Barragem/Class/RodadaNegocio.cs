@@ -775,12 +775,14 @@ namespace Barragem.Class
                         AplicarOrdenacao(dadosJogador1, posicaoRanking, ordenarPosicao, ordenarPosicaoClasse);
                         posicaoRanking++;
                         AplicarOrdenacao(dadosJogador2, posicaoRanking, ordenarPosicao, ordenarPosicaoClasse);
+                        posicaoRanking++;
                     }
                     else if (partidasGanhasJogador1 < partidasGanhasJogador2)
                     {
                         AplicarOrdenacao(dadosJogador2, posicaoRanking, ordenarPosicao, ordenarPosicaoClasse);
                         posicaoRanking++;
                         AplicarOrdenacao(dadosJogador1, posicaoRanking, ordenarPosicao, ordenarPosicaoClasse);
+                        posicaoRanking++;
                     }
                     else
                     {
