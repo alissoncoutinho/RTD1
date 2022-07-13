@@ -27,29 +27,35 @@ namespace Barragem.Controllers
         // GET: /Rodada/
 
         [Authorize(Roles = "admin,usuario,organizador")]
-        public ActionResult Index(string msg="", string detalheErro ="")
+        public ActionResult Index(string msg = "", string detalheErro = "")
         {
-            if (msg.Equals("ok")){
+            if (msg.Equals("ok"))
+            {
                 ViewBag.Ok = msg;
-            }else if (!msg.Equals("")){
+            }
+            else if (!msg.Equals(""))
+            {
                 ViewBag.MsgErro = msg;
                 ViewBag.DetalheErro = detalheErro;
             }
-            
+
             string perfil = Roles.GetRolesForUser(User.Identity.Name)[0];
             List<Rodada> rodada = null;
             var userId = WebSecurity.GetUserId(User.Identity.Name);
             int barragemId = (from up in db.UserProfiles where up.UserId == userId select up.barragemId).Single();
-            if (perfil.Equals("admin")){
+            if (perfil.Equals("admin"))
+            {
                 rodada = db.Rodada.Where(r => r.isRodadaCarga == false).OrderByDescending(c => c.Id).ToList();
-            } else {
-                rodada = db.Rodada.Where(r => r.isRodadaCarga == false && r.barragemId==barragemId).OrderByDescending(c => c.Id).ToList();
+            }
+            else
+            {
+                rodada = db.Rodada.Where(r => r.isRodadaCarga == false && r.barragemId == barragemId).OrderByDescending(c => c.Id).ToList();
             }
             var barragem = db.BarragemView.Find(barragemId);
             ViewBag.isBarragemAtiva = barragem.isAtiva;
             return View(rodada);
         }
-       
+
         //
         // GET: /Rodada/Create
 
@@ -88,9 +94,12 @@ namespace Barragem.Controllers
             string mensagem = "ok";
             if (ModelState.IsValid)
             {
-                try{
+                try
+                {
                     new RodadaNegocio().Create(rodada);
-                }catch (Exception e){
+                }
+                catch (Exception e)
+                {
                     mensagem = e.Message;
                 }
                 return RedirectToAction("Index", new { msg = mensagem });
@@ -104,27 +113,31 @@ namespace Barragem.Controllers
         [Authorize(Roles = "admin, organizador")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult CriaESorteia(Rodada rodada, String notificarApp="off")
+        public ActionResult CriaESorteia(Rodada rodada, String notificarApp = "off")
         {
             string mensagem = "";
             if (ModelState.IsValid)
             {
                 var rodadaNegocio = new RodadaNegocio();
-                try {
+                try
+                {
                     rodadaNegocio.Create(rodada);
                     mensagem = "ok";
-                    rodadaNegocio.SortearJogos(rodada.Id, rodada.barragemId, notificarApp=="on" ? true : false);
-                }catch (Exception e){
+                    rodadaNegocio.SortearJogos(rodada.Id, rodada.barragemId, notificarApp == "on" ? true : false);
+                }
+                catch (Exception e)
+                {
                     if (e.InnerException != null) { mensagem = e.Message + ": " + e.InnerException.Message; } else { mensagem = e.Message; }
                 }
                 return RedirectToAction("Index", new { msg = mensagem });
-                                
+
             }
             return RedirectToAction("Create");
-            
+
         }
 
-        private void setClasseUnica(int barragemId){
+        private void setClasseUnica(int barragemId)
+        {
             var barragem = db.BarragemView.Find(barragemId);
             this.isClasseUnica = barragem.isClasseUnica;
         }
@@ -141,83 +154,13 @@ namespace Barragem.Controllers
             try
             {
                 new RodadaNegocio().SortearJogos(id, barragemId, false);
-            }catch(Exception e)
+            }
+            catch (Exception e)
             {
                 mensagem = e.Message;
             }
-            return RedirectToAction("Index", new { msg=mensagem});
+            return RedirectToAction("Index", new { msg = mensagem });
         }
-
-        /*
-        private List<RankingView> selecionarJogadorParaFicarFora(List<RankingView> jogadores, int rodadaAnterior, int rodadaAtual, int classeId){
-            try
-            {
-                // busca jogos que ainda não foram realizados na rodada anterior
-                List<Jogo> jogo = db.Jogo.Where(j => j.rodada_id == rodadaAnterior && j.situacao_Id != 4 && j.situacao_Id != 5 && j.desafiado.classeId == classeId && (j.desafiante.situacao == "ativo" || j.desafiado.situacao == "ativo")).ToList();
-                UserProfile jogador = null;
-                RankingView rv = null;
-                if (jogo.Count()>0){
-                    Random r = new Random();
-                    int randomIndex = r.Next(jogo.Count()); //Choose a random object in the list
-                    var desafiante = jogo[randomIndex].desafiante;
-                    var desafiado = jogo[randomIndex].desafiado;
-                    if (desafiante.situacao.Equals("ativo")){
-                        jogador = desafiante;
-                    }else if (desafiado.situacao.Equals("ativo")){
-                        jogador = desafiado;
-                    }
-                }
-                UserProfile curinga = db.UserProfiles.Where(u => u.situacao.Equals("curinga")).Single();
-                if ((jogador != null) && (jogadores.SingleOrDefault(r => r.userProfile_id == jogador.UserId)!=null)){
-                    criarJogo(jogador.UserId, curinga.UserId, rodadaAtual, true);
-                    var itemToRemove = jogadores.SingleOrDefault(r => r.userProfile_id == jogador.UserId);
-                    jogadores.Remove(itemToRemove);
-                }else{
-                    Random r = new Random();
-                    int randomIndex = r.Next(jogadores.Count());
-                    criarJogo(jogadores[randomIndex].userProfile_id, curinga.UserId, rodadaAtual, true);
-                    rv = jogadores[randomIndex];
-                    jogadores.Remove(rv);
-                }
-
-                return jogadores;
-            } catch (Exception e) {
-                System.ArgumentException argEx = new System.ArgumentException("Selecionar jogador para ficar fora da rodada da classe " + classeId + ": "+ e.Message, e);
-                throw argEx;
-            }
-        }
-
-        private void EfetuarSorteio(int idRodada, int barragemId, int classeId){
-             try
-             {
-                 // excluir os jogos já sorteados para o caso de estar sorteando novamente
-                 db.Database.ExecuteSqlCommand("DELETE j fROM jogo j INNER JOIN UserProfile u ON j.desafiado_id=u.UserId WHERE u.classeId = " + classeId + " AND j.rodada_id =" + idRodada);
-                 // monta a lista ordenada pelo último rancking consolidado
-                 int Id_rodadaAnterior = db.Rancking.Where(r => r.rodada.isAberta == false && r.rodada_id < idRodada && r.rodada.barragemId == barragemId).Max(r => r.rodada_id);
-                 List<RankingView> jogadores = db.RankingView.Where(r => r.barragemId == barragemId && r.classeId == classeId && r.situacao.Equals("ativo")).OrderByDescending(r => r.totalAcumulado).ToList();
-
-                 // se a quantidade de participantes ativos for impar o sistema escolherá, 
-                 // de acordo com a regra estabelecida, um jogador para ficar de fora
-                 if (jogadores.Count % 2 != 0)
-                 {
-                     jogadores = selecionarJogadorParaFicarFora(jogadores, Id_rodadaAnterior, idRodada, classeId);
-                 }
-                 // o mais bem posicionado no ranking será desafiado por alguém pior posicionado
-                 RankingView desafiante = null;
-                 while (jogadores.Count > 0)
-                 {
-                     RankingView desafiado = jogadores[0];
-                     desafiante = selecionarAdversario(jogadores, desafiado, Id_rodadaAnterior, idRodada, classeId);
-                     criarJogo(desafiado.userProfile_id, desafiante.userProfile_id, idRodada);
-                 }
-             } catch (Exception e) {
-                 System.ArgumentException argEx = new System.ArgumentException("Sorteio classe " + classeId + ": " + e.Message, e);
-                 throw argEx;
-
-             }
-         }
-         */
-
 
         [Authorize(Roles = "admin, organizador")]
         public ActionResult notificarViaApp(int barragemId)
@@ -237,9 +180,9 @@ namespace Barragem.Controllers
                 mail.de = System.Configuration.ConfigurationManager.AppSettings.Get("UsuarioMail");
                 mail.para = "barragemdocerrado@gmail.com";
                 mail.assunto = "RDT - Nova Rodada - " + rodada.codigoSeq;
-                mail.conteudo = "Olá Pessoal,<br><br>A nova rodada " + rodada.codigoSeq +" já está disponível no site e vai até o dia:" + rodada.dataFim + ".<br><br>Bons jogos a todos.";
+                mail.conteudo = "Olá Pessoal,<br><br>A nova rodada " + rodada.codigoSeq + " já está disponível no site e vai até o dia:" + rodada.dataFim + ".<br><br>Bons jogos a todos.";
                 mail.formato = Tipos.FormatoEmail.Html;
-                List<UserProfile> users = db.UserProfiles.Where(u => u.situacao == "ativo"  && u.barragemId==rodada.barragemId).ToList();
+                List<UserProfile> users = db.UserProfiles.Where(u => u.situacao == "ativo" && u.barragemId == rodada.barragemId).ToList();
                 List<string> bcc = new List<string>();
                 foreach (UserProfile user in users)
                 {
@@ -247,178 +190,11 @@ namespace Barragem.Controllers
                 }
                 mail.bcc = bcc;
                 mail.EnviarMail();
-            } catch (Exception ex) { }
+            }
+            catch (Exception ex) { }
             return RedirectToAction("Index", new { msg = "ok" });
         }
-        /*
-        private RankingView selecionarAdversario(List<RankingView> listaJogadores, RankingView desafiado, int rodadaAnteriorId, int rodadaAtual=0, int classeId=0)
-        {
-            try
-            {
-                RankingView desafiante = null;
-                if (listaJogadores.Count() == 1)
-                {
-                    UserProfile curinga = db.UserProfiles.Where(u => u.situacao.Equals("curinga")).Single();
-                    listaJogadores.RemoveAt(0);
-                    desafiante = new RankingView();
-                    desafiante.userProfile_id = curinga.UserId;
-                    return desafiante;
-                }
-                if (listaJogadores.Count() == 2)
-                {
-                    desafiante = listaJogadores[1];
-                    listaJogadores.RemoveAt(1);
-                    listaJogadores.RemoveAt(0);
-                    return desafiante;
-                }
-                // O jogador não deve repetir o mesmo jogo das 3 últimas rodadas
-                // busca os 3 últimos jogos do desafiado
-                List<Jogo> jogosAnteriores = db.Jogo.Where(j => (j.rodada_id <= rodadaAnteriorId &&
-                        (j.desafiado_id == desafiado.userProfile_id || j.desafiante_id == desafiado.userProfile_id))).
-                        Take(3).OrderByDescending(j => j.Id).ToList();
-                for (int i = 0; i <= 2; i++)
-                {
-                    // busca um oponente mais próximo que não tenha jogado nos últimos 3 jogos ou nos últimos 2 jogos ou no último jogo
-                    desafiante = buscarOponentesNaoRepetidos(listaJogadores, jogosAnteriores, i);
-                    if (desafiante != null)
-                    {
-                        return desafiante;
-                    }
-                }
-                // caso não encontre em nenhuma situação acima, realiza um sorteio
-                Random r = new Random();
-                int randomIndex = r.Next(1, listaJogadores.Count); //Choose a random object in the list
-                desafiante = listaJogadores[randomIndex]; //add it 
-                listaJogadores.RemoveAt(randomIndex);
-                listaJogadores.RemoveAt(0);
-                return desafiante;
-            }catch(Exception e){
-                System.ArgumentException argEx = new System.ArgumentException("Selecionar adversário para o desafiado: " + desafiado.userProfile_id + ":" + e.Message, e);
-                throw argEx;
-            }
-        }
 
-        private UserProfile selecionarDesafiante(List<Rancking> listaJogadores, UserProfile desafiado, int rodadaAnteriorId)
-        {
-            UserProfile desafiante = null;
-            // caso a regra: selecionarJogadorParaFicarFora não tenha selecionado nehum jogador
-            // o último da lista ficará de fora da rodada caso o número seja impar
-            if (listaJogadores.Count() == 1){
-                UserProfile curinga = db.UserProfiles.Where(u => u.situacao.Equals("curinga")).Single();
-                listaJogadores.RemoveAt(0);
-                return curinga;
-                // caso só reste duas opções não há mais como aplicar as regras
-            }else if (listaJogadores.Count() == 2){
-                desafiante = listaJogadores[1].userProfile;
-                listaJogadores.RemoveAt(1);
-                listaJogadores.RemoveAt(0);
-                return desafiante;
-            }
-            // o jogador deve jogar com o oponente mais próximo do ranking 
-            // porém o jogador não deve repetir o mesmo jogo das 3 últimas rodadas
-
-            // busca os 3 últimos jogos do desafiado
-            List<Jogo> jogosAnteriores = db.Jogo.Where(j => (j.rodada_id <= rodadaAnteriorId &&
-                    (j.desafiado_id == desafiado.UserId || j.desafiante_id == desafiado.UserId))).
-                    Take(3).OrderByDescending(j=>j.Id).ToList();
-            // busca um oponente mais próximo que não tenha jogado nos últimos 3 jogos 
-            //desafiante = buscarOponentesNaoRepetidos(listaJogadores, jogosAnteriores);
-            if (desafiante != null) {
-                return desafiante;
-            }
-            // caso não encontre oponente na 1º verificação, busca um oponente mais próximo que não tenha jogado nos últimos 2 jogos 
-            //desafiante = buscarOponentesNaoRepetidos(listaJogadores, jogosAnteriores,1);
-            if (desafiante != null) {
-                return desafiante;
-            }
-            // caso não encontre oponente na 2º verificação, busca um oponente mais próximo que não tenha jogado no último jogo 
-            //desafiante = buscarOponentesNaoRepetidos(listaJogadores, jogosAnteriores, 2);
-            if (desafiante != null){
-                return desafiante;
-            }
-            // caso não encontre em nenhuma situação acima, busca o oponente mais próximo na pontuação
-            desafiante = listaJogadores[1].userProfile;
-            listaJogadores.RemoveAt(1);
-            listaJogadores.RemoveAt(0);
-            return desafiante;
-        }
-
-        private RankingView buscarOponentesNaoRepetidos(List<RankingView> listaJogadores, List<Jogo> ultimosJogos, int reduzVerificacao=0) {
-            int index = 0;
-            int range = 0;
-            try
-            {
-                bool isDesafiante;
-                bool decrementa = true;
-                int qtddTentativas = 0;
-                Random r = new Random();
-                range = listaJogadores.Count;
-                // quando a barragem tiver uma única classe o sistema sorteará o oponente entre as pessoas com ranking proximo.
-                if (getClasseUnica()) {
-                    if (listaJogadores.Count >= 5) { range = 5; } else { range = listaJogadores.Count; }
-                }
-                index = r.Next(1, range); //Choose a random object in the list
-                if (index == range){
-                    index--;
-                }
-                while (qtddTentativas < 30){
-                    isDesafiante = true;
-                    for (int j = 0; j < ultimosJogos.Count() - reduzVerificacao; j++){
-                        if ((ultimosJogos[j].desafiado_id == listaJogadores[index].userProfile_id) || 
-                            (ultimosJogos[j].desafiante_id == listaJogadores[index].userProfile_id)){
-                            isDesafiante = false;
-                            break;
-                        }
-                    }
-                    if (isDesafiante){
-                        RankingView desafiante = listaJogadores[index];
-                        listaJogadores.RemoveAt(index);
-                        listaJogadores.RemoveAt(0);
-                        return desafiante;
-                    }
-                    // percorre a lista de logadores primeiro decrescendo e depois crescendo.
-                    if (index == 1) {
-                        decrementa=false;
-                    }else if(index==range-1){
-                        decrementa = true;
-                    }
-                    if (decrementa) { index--; } else { index++; }
-                    qtddTentativas++;
-                }
-                return null;
-            }catch(Exception e){
-                System.ArgumentException argEx = new System.ArgumentException("Index:" + index + " Range:"+ range  +" Oponente não repetido:" + e.Message, e);
-                throw argEx;
-            }
-        }
-        
-        private void criarJogo(int desafiadoId, int desafianteId, int idRodada, bool isCuringa=false){
-            try
-            {
-                Jogo jogo = new Jogo();
-                jogo.desafiado_id = desafiadoId;
-                jogo.desafiante_id = desafianteId;
-                jogo.rodada_id = idRodada;
-                jogo.situacao_Id = 1;
-                if (isCuringa)
-                {
-                    jogo.situacao_Id = 4;
-                    jogo.qtddGames1setDesafiado = 6;
-                    jogo.qtddGames2setDesafiado = 6;
-                    jogo.qtddGames1setDesafiante = 0;
-                    jogo.qtddGames2setDesafiante = 0;
-
-                }
-                db.Jogo.Add(jogo);
-                db.SaveChanges();
-            }
-            catch (Exception e)
-            {
-                System.ArgumentException argEx = new System.ArgumentException("Criar Jogo - Id do desafiado: " + desafiadoId + ", Id do desafiante: " + desafianteId + ":" + e.Message, e);
-                throw argEx;
-            }
-        }
-        */
         //
         // GET: /Rodada/Edit/5
         [Authorize(Roles = "admin, organizador")]
@@ -432,7 +208,7 @@ namespace Barragem.Controllers
             return View(rodada);
         }
 
-        [Authorize(Roles = "admin")]
+        [Authorize(Roles = "admin, organizador")]
         public ActionResult ExcluirRodada(int id)
         {
             db.Database.ExecuteSqlCommand("delete from rancking where rodada_id=" + id);
@@ -459,28 +235,32 @@ namespace Barragem.Controllers
         }
 
         // este método não está mais sendo utilizado, mas pode vir a ser útil no futuro
-        private UserProfile SorteiaJogadorTorneio(List<Rancking> ranckiados){
+        private UserProfile SorteiaJogadorTorneio(List<Rancking> ranckiados)
+        {
             UserProfile ranckiado;
             Random r = new Random();
             int randomIndex = 1;
-            if (ranckiados.Count() == 1){
+            if (ranckiados.Count() == 1)
+            {
                 UserProfile curinga = db.UserProfiles.Where(u => u.UserName.Equals("coringa")).Single();
                 ranckiados.RemoveAt(0);
                 return curinga;
                 // caso só reste duas opções não há mais como aplicar as regras
-            }else if (ranckiados.Count == 2){
-                ranckiado = ranckiados[1].userProfile;  
-                ranckiados.RemoveAt(1); 
+            }
+            else if (ranckiados.Count == 2)
+            {
+                ranckiado = ranckiados[1].userProfile;
+                ranckiados.RemoveAt(1);
                 ranckiados.RemoveAt(0);
                 return ranckiado;
             }
 
             randomIndex = r.Next(1, ranckiados.Count); //Choose a random object in the list
-            ranckiado =  ranckiados[randomIndex].userProfile; //add it 
+            ranckiado = ranckiados[randomIndex].userProfile; //add it 
             ranckiados.RemoveAt(randomIndex); //remove to avoid duplicates
             ranckiados.RemoveAt(0);
             return ranckiado;
-             
+
         }
 
         [Authorize(Roles = "admin, organizador")]
@@ -488,11 +268,13 @@ namespace Barragem.Controllers
         {
             string msg = "";
             //situação: 4: finalizado -- 5: wo
-            List<Jogo> jogos = db.Jogo.Where(r => r.rodada_id == id && r.dataCadastroResultado>r.rodada.dataFim && (r.situacao_Id==4 || r.situacao_Id==5)).ToList();
+            List<Jogo> jogos = db.Jogo.Where(r => r.rodada_id == id && r.dataCadastroResultado > r.rodada.dataFim && (r.situacao_Id == 4 || r.situacao_Id == 5)).ToList();
             var pontosDesafiante = 0.0;
             var pontosDesafiado = 0.0;
-            try{
-                using (TransactionScope scope = new TransactionScope()){
+            try
+            {
+                using (TransactionScope scope = new TransactionScope())
+                {
                     foreach (Jogo item in jogos)
                     {
                         pontosDesafiante = rn.calcularPontosDesafiante(item);
@@ -513,44 +295,50 @@ namespace Barragem.Controllers
                         }
                         db.SaveChanges();
                     }
-                        scope.Complete();
-                        msg = "ok";
+                    scope.Complete();
+                    msg = "ok";
                 }
-            }catch (Exception ex){
+            }
+            catch (Exception ex)
+            {
                 msg = ex.Message;
             }
             return RedirectToAction("Index", new { msg = msg });
         }
-        
+
         [Authorize(Roles = "admin, organizador")]
         public ActionResult FecharRodada(int id)
         {
             string msg = "";
-            string detalheErro="";
+            string detalheErro = "";
             db.Database.ExecuteSqlCommand("Delete from Rancking where rodada_id=" + id + " and posicaoClasse is not null");
-            List<Jogo> jogos = db.Jogo.Where(r => r.rodada_id == id).ToList(); 
+            List<Jogo> jogos = db.Jogo.Where(r => r.rodada_id == id).ToList();
             var pontosDesafiante = 0.0;
             var pontosDesafiado = 0.0;
             Rodada rodada = db.Rodada.Find(id);
             BarragemView barragem = db.BarragemView.Find(rodada.barragemId);
             var log2 = new Log();
-            log2.descricao = "Fecha data:" + DateTime.Now + " " + barragem.nome +" Fecha barragem";
+            log2.descricao = "Fecha data:" + DateTime.Now + " " + barragem.nome + " Fecha barragem";
             db.Log.Add(log2);
             db.SaveChanges();
             try
             {
-               using (TransactionScope scope = new TransactionScope()){
-                    foreach (Jogo item in jogos){
+                using (TransactionScope scope = new TransactionScope())
+                {
+                    foreach (Jogo item in jogos)
+                    {
                         pontosDesafiante = rn.calcularPontosDesafiante(item);
                         pontosDesafiado = rn.calcularPontosDesafiado(item);
-                        msg = "pontosDesafio" + item.desafiado_id;    
-                        if (!item.desafiante.UserName.Equals("coringa")){
+                        msg = "pontosDesafio" + item.desafiado_id;
+                        if (!item.desafiante.UserName.Equals("coringa"))
+                        {
                             rn.gravarPontuacaoNaRodada(id, item.desafiante, pontosDesafiante);
                             msg = "gravarPontuacaoNaRodadaDesafiante" + item.desafiante_id;
                         }
                         rn.gravarPontuacaoNaRodada(id, item.desafiado, pontosDesafiado);
                         msg = "gravarPontuacaoNaRodadaDesafiado" + item.desafiado_id;
-                        if (barragem.suspensaoPorAtraso){
+                        if (barragem.suspensaoPorAtraso)
+                        {
                             verificarRegraSuspensaoPorAtraso(item);
                         }
                         if (barragem.suspensaoPorWO)
@@ -559,14 +347,15 @@ namespace Barragem.Controllers
                         }
                         msg = "verificarRegraSuspensao" + item.desafiado_id;
                     }
-                    
+
                     rn.gerarPontuacaoDosJogadoresForaDaRodada(id, rodada.barragemId);
                     msg = "gerarPontuacaoDosJogadoresForaDaRodada";
-                    
+
                     gerarRancking(id);
                     msg = "gerarRanking";
                     List<Classe> classes = db.Classe.Where(c => c.barragemId == rodada.barragemId).ToList();
-                    for (int i = 0; i < classes.Count(); i++){
+                    for (int i = 0; i < classes.Count(); i++)
+                    {
                         gerarRanckingPorClasse(id, classes[i].Id);
                     }
                     msg = "gerarRankingPorClasse";
@@ -576,20 +365,91 @@ namespace Barragem.Controllers
                     db.SaveChanges();
                     scope.Complete();
                     msg = "ok";
-               }
-            }catch (Exception ex){
-                    msg = msg +": " +ex.Message;
-                    if (ex.InnerException == null) { ViewBag.DetalheErro = ex.StackTrace; } else { ViewBag.DetalheErro = ex.InnerException.StackTrace; }
-                    ViewBag.MsgErro = msg;
-                    return View();
-               }
+                }
+            }
+            catch (Exception ex)
+            {
+                msg = msg + ": " + ex.Message;
+                if (ex.InnerException == null) { ViewBag.DetalheErro = ex.StackTrace; } else { ViewBag.DetalheErro = ex.InnerException.StackTrace; }
+                ViewBag.MsgErro = msg;
+                return View();
+            }
             return RedirectToAction("Index", new { msg = msg, detalheErro = detalheErro });
         }
 
-        private void verificarRegraSuspensaoPorAtraso(Jogo jogo){
+        [HttpGet]
+        public ActionResult ValidarExclusaoRodada(int id)
+        {
+            try
+            {
+                var torneio = db.Rodada.Find(id);
+
+                var possuiJogosJaIniciados = db.Jogo.Any(x => x.rodada_id == id && x.desafiante_id != 8 && x.situacao_Id != 1);
+                if (possuiJogosJaIniciados)
+                    return Json(new { erro = "", retorno = "MSG" }, "text/plain", JsonRequestBehavior.AllowGet);
+                else
+                    return Json(new { erro = "", retorno = "OK" }, "text/plain", JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { erro = ex.Message, retorno = "ERRO" }, "text/plain", JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpGet]
+        public ActionResult ValidarFechamentoRodada(int id)
+        {
+            try
+            {
+                var torneio = db.Rodada.Find(id);
+
+                var possuiJogosJaIniciados = db.Jogo.Any(x => x.rodada_id == id && x.desafiante_id != 8 && x.situacao_Id != 1);
+                if (!possuiJogosJaIniciados)
+                    return Json(new { erro = "", retorno = "MSG" }, "text/plain", JsonRequestBehavior.AllowGet);
+                else
+                    return Json(new { erro = "", retorno = "OK" }, "text/plain", JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { erro = ex.Message, retorno = "ERRO" }, "text/plain", JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpGet]
+        public ActionResult ValidarRegrasGeracaoRodada(int idTemporada)
+        {
+            try
+            {
+                var temporada = db.Temporada.Find(idTemporada);
+                var qtdeRodadasExistente = db.Rodada.Count(x => x.temporadaId == idTemporada);
+
+                var usuariosPendentes = db.UserProfiles.Where(x => x.situacao == "pendente" && x.barragemId == temporada.barragemId);
+
+                if (temporada.qtddRodadas < qtdeRodadasExistente)
+                {
+                    return Json(new { erro = "", retorno = "REGRA_EXCEDEU_QTDE_RODADAS" }, "text/plain", JsonRequestBehavior.AllowGet);
+
+                }
+
+                if (usuariosPendentes.Count() - 1 > 0)
+                {
+                    return Json(new { erro = "", retorno = "REGRA_USUARIOS_PENDENTES", qtdeJogadores = usuariosPendentes.Count() - 1 }, "text/plain", JsonRequestBehavior.AllowGet);
+                }
+
+                return Json(new { erro = "", retorno = "OK" }, "text/plain", JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { erro = ex.Message, retorno = "ERRO" }, "text/plain", JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        private void verificarRegraSuspensaoPorAtraso(Jogo jogo)
+        {
             // 5.6.O jogador que não receber pontuação ou deixar de jogar, mesmo que justificadamente, por 2 (dois) jogos seguidos
             //será retirado das rodadas e colocado em suspensão automática até que regularize seus jogos de forma que ele saia desta condição.
-            if (jogo.gamesJogados == 0) { 
+            if (jogo.gamesJogados == 0)
+            {
                 // Caso no fechamento da rodada o jogo não tenha sido realizado, verificar a situação da rodada anterior
                 verificarSeJogoRealizadoNaRodadaAnterior(jogo.desafiado_id, jogo.rodada_id, jogo.rodada.barragemId);
                 verificarSeJogoRealizadoNaRodadaAnterior(jogo.desafiante_id, jogo.rodada_id, jogo.rodada.barragemId);
@@ -603,7 +463,7 @@ namespace Barragem.Controllers
             {
                 var userDerrotado = jogo.idDoPerdedor;
                 verificarSeHouveWONaRodadaAnterior(userDerrotado, jogo.rodada_id, jogo.rodada.barragemId);
-                
+
             }
         }
 
@@ -612,7 +472,8 @@ namespace Barragem.Controllers
             int idRodadaAnterior = db.Rodada.Where(r => r.isAberta == false && r.Id < rodada_id && r.barragemId == barragemId).Max(r => r.Id);
             List<Jogo> jogoAnterior = db.Jogo.Where(j => j.rodada_id == idRodadaAnterior && (j.desafiado_id == idJogador || j.desafiante_id == idJogador))
                 .ToList();
-            if (jogoAnterior.Count > 0) { 
+            if (jogoAnterior.Count > 0)
+            {
                 if (jogoAnterior[0].gamesJogados == 0)
                 {
                     UserProfile jogador = db.UserProfiles.Find(idJogador);
@@ -620,7 +481,7 @@ namespace Barragem.Controllers
                     db.SaveChanges();
                 }
             }
-        
+
         }
 
         private void verificarSeHouveWONaRodadaAnterior(int idJogador, int rodada_id, int barragemId)
@@ -644,31 +505,32 @@ namespace Barragem.Controllers
 
         }
 
-        private void gerarRancking(int idRodada){
-            int posicao = 1;
+        private void gerarRancking(int idRodada)
+        {
             List<Rancking> listaRancking = db.Rancking.Where(r => r.rodada_id == idRodada && r.userProfile.situacao != "desativado" && r.userProfile.situacao != "inativo").OrderByDescending(r => r.totalAcumulado).ToList();
+
+            rn.OrdenarJogadoresRanking(listaRancking, true, false);
+
             foreach (Rancking ran in listaRancking)
             {
-                ran.posicao = posicao;
                 db.Entry(ran).State = EntityState.Modified;
                 db.SaveChanges();
-                posicao++;
             }
         }
 
         private void gerarRanckingPorClasse(int idRodada, int classeId)
         {
-            int posicao = 1;
-            List<Rancking> listaRancking = db.Rancking.Where(r => r.rodada_id == idRodada && r.userProfile.classeId==classeId && r.userProfile.situacao != "desativado" && r.userProfile.situacao != "inativo").OrderByDescending(r => r.totalAcumulado).ToList();
+            List<Rancking> listaRancking = db.Rancking.Where(r => r.rodada_id == idRodada && r.userProfile.classeId == classeId && r.userProfile.situacao != "desativado" && r.userProfile.situacao != "inativo").OrderByDescending(r => r.totalAcumulado).ToList();
+
+            rn.OrdenarJogadoresRanking(listaRancking, false, true);
+
             foreach (Rancking ran in listaRancking)
             {
-                ran.posicaoClasse = posicao;
                 db.Entry(ran).State = EntityState.Modified;
                 db.SaveChanges();
-                posicao++;
             }
         }
-        
+
         protected override void Dispose(bool disposing)
         {
             db.Dispose();

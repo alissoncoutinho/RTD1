@@ -128,15 +128,16 @@ namespace Barragem.Class
                 {
                     int quantidadeDeRodadasParaPontuacao = 9;
                     Rodada rodadaAtual = db.Rodada.Where(r => r.Id == idRodada).Single();
-                    if (rodadaAtual.temporada !=null && rodadaAtual.temporada.iniciarZerada)
+                    if (rodadaAtual.temporada != null && rodadaAtual.temporada.iniciarZerada)
                     {
-                        int quantidadeDeRodadasRealizadas = db.Rodada.Where(r => r.temporadaId == rodadaAtual.temporadaId && r.Id!=idRodada).Count();
+                        int quantidadeDeRodadasRealizadas = db.Rodada.Where(r => r.temporadaId == rodadaAtual.temporadaId && r.Id != idRodada).Count();
                         if (quantidadeDeRodadasRealizadas < quantidadeDeRodadasParaPontuacao)
                         {
                             quantidadeDeRodadasParaPontuacao = quantidadeDeRodadasRealizadas;
                         }
                     }
-                    if (quantidadeDeRodadasParaPontuacao > 0){
+                    if (quantidadeDeRodadasParaPontuacao > 0)
+                    {
                         pontuacaoTotal = db.Rancking.Where(r => r.rodada.isAberta == false && r.userProfile_id == jogador.UserId && r.rodada_id < idRodada).
                         OrderByDescending(r => r.rodada_id).Take(quantidadeDeRodadasParaPontuacao).Sum(r => r.pontuacao);
                     }
@@ -313,13 +314,16 @@ namespace Barragem.Class
         private List<UserProfile> getJogadoresPermitidos(List<UserProfile> jogadores, List<UserProfile> jogadoresQueNaoPodeJogar)
         {
             List<UserProfile> jogadoresPermitidos = new List<UserProfile>();
-            foreach(var jogador in jogadores)
+            foreach (var jogador in jogadores)
             {
                 var temNalista = 0;
-                try{
+                try
+                {
                     temNalista = jogadoresQueNaoPodeJogar.Where(j => j.UserId == jogador.UserId).Count();
-                } catch (Exception e) { }
-                    if (temNalista == 0){
+                }
+                catch (Exception e) { }
+                if (temNalista == 0)
+                {
                     jogadoresPermitidos.Add(jogador);
                 }
             }
@@ -408,15 +412,20 @@ namespace Barragem.Class
             //        Where(r => r.barragemId == barragemId && r.classeId == classeId && r.situacao.Equals("ativo")).
             //        OrderByDescending(r => r.totalAcumulado).ToList();
             var jgs = new List<UserProfile>();
-            if (rankingJogadores.Count() == 0) {
+            if (rankingJogadores.Count() == 0)
+            {
                 jgs = db.UserProfiles.Where(u => u.classeId == classeId && u.situacao == "ativo").ToList();
-            // esse if é necessário para os casos de jogadores que estavam desativados e voltaram para a barragem, eles estarão sem ranking atualizado
-            } else if (rankingJogadores.Count() != db.UserProfiles.Where(u => u.classeId == classeId && u.situacao == "ativo").Count()){
+                // esse if é necessário para os casos de jogadores que estavam desativados e voltaram para a barragem, eles estarão sem ranking atualizado
+            }
+            else if (rankingJogadores.Count() != db.UserProfiles.Where(u => u.classeId == classeId && u.situacao == "ativo").Count())
+            {
                 var userIds = rankingJogadores.Select(r => r.userId).ToArray<int>();
                 var jogadores = db.UserProfiles.Where(u => u.classeId == classeId && u.situacao == "ativo" && !userIds.Contains(u.UserId)).ToList();
                 jgs = rankingJogadores.Select(j => new UserProfile() { UserId = j.userId, nome = j.nomeUser }).Distinct().ToList();
                 jgs.AddRange(jogadores);
-            } else {
+            }
+            else
+            {
                 jgs = rankingJogadores.Select(j => new UserProfile() { UserId = j.userId, nome = j.nomeUser }).Distinct().ToList();
             }
             dadosLog = dadosBaseLog + "qtdd Jogadores:" + jgs.Count();
@@ -459,7 +468,7 @@ namespace Barragem.Class
 
         private List<UserProfile> getUltimosOponentes(int userId, int qtddJogos, int barragemId)
         {
-            
+
             var oponentes = new List<UserProfile>();
             var retorno = (from j in db.Jogo
                            join rodada in db.Rodada on j.rodada_id equals rodada.Id
@@ -471,9 +480,12 @@ namespace Barragem.Class
                 select j).Take(qtddJogos).OrderByDescending(j => j.Id).ToList();
             foreach (var jogo in retorno)
             {
-                if (jogo.desafiante_id == userId){
+                if (jogo.desafiante_id == userId)
+                {
                     oponentes.Add(jogo.desafiado);
-                } else if (jogo.desafiado_id == userId){
+                }
+                else if (jogo.desafiado_id == userId)
+                {
                     oponentes.Add(jogo.desafiante);
                 }
             }
@@ -484,7 +496,8 @@ namespace Barragem.Class
 
         public List<Jogo> definirDesafianteDesafiado(List<Jogo> jogos, int classeId, int barragemId, List<Classificacao> ranking = null)
         {
-            if (ranking == null){
+            if (ranking == null)
+            {
                 var ultimaRodada = db.Rodada.Where(r => r.barragemId == barragemId && r.isAberta == false).Max(r => r.Id);
                 ranking = db.Rancking.Include(r => r.userProfile).Include(r => r.rodada).
                     Where(r => r.rodada_id == ultimaRodada && r.userProfile.situacao == "ativo" && r.classe.Id == classeId).
@@ -504,7 +517,7 @@ namespace Barragem.Class
             {
                 try
                 {
-                   
+
                     // quer dizer que o coringa está na posição errada.
                     if (jogo.desafiado_id == 8)
                     {
@@ -587,11 +600,12 @@ namespace Barragem.Class
                 {
                     throw new ExceptionRodadaEmAberto("Não foi possível criar uma nova rodada, pois ainda existe rodada(s) em aberto.");
                 }
-                
+
                 Rodada rd = db.Rodada.Where(r => r.barragemId == rodada.barragemId).OrderByDescending(r => r.Id).Take(1).Single();
                 if (rd.sequencial == 10)
                 {
-                    try { 
+                    try
+                    {
                         string alfabeto = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
                         int pos = alfabeto.IndexOf(rd.codigo);
                         pos++;
@@ -609,18 +623,19 @@ namespace Barragem.Class
                     rodada.sequencial = rd.sequencial + 1;
                     rodada.codigo = rd.codigo;
                 }
-                
+
                 rodada.isAberta = true;
                 rodada.dataFim = new DateTime(rodada.dataFim.Year, rodada.dataFim.Month, rodada.dataFim.Day, 23, 59, 59);
                 db.Rodada.Add(rodada);
                 db.SaveChanges();
 
                 return rodada;
-            }catch(Exception e)
-            {
-                throw new Exception("Houve um erro no processamento da rodada.",e);
             }
-            
+            catch (Exception e)
+            {
+                throw new Exception("Houve um erro no processamento da rodada.", e);
+            }
+
         }
 
         public void FecharRodada(int id)
@@ -709,27 +724,125 @@ namespace Barragem.Class
 
         private void gerarRancking(int idRodada)
         {
-            int posicao = 1;
             List<Rancking> listaRancking = db.Rancking.Where(r => r.rodada_id == idRodada && r.userProfile.situacao != "desativado" && r.userProfile.situacao != "inativo").OrderByDescending(r => r.totalAcumulado).ToList();
+
+            OrdenarJogadoresRanking(listaRancking, true, false);
+
             foreach (Rancking ran in listaRancking)
             {
-                ran.posicao = posicao;
                 db.Entry(ran).State = EntityState.Modified;
                 db.SaveChanges();
-                posicao++;
+            }
+        }
+
+        public void OrdenarJogadoresRanking(List<Rancking> listaRancking, bool ordenarPosicao, bool ordenarPosicaoClasse)
+        {
+            List<Rancking> rankingOrdenado = new List<Rancking>();
+            int posicaoRanking = 1;
+            var agrupamentoJogadoresPontuacao = listaRancking.OrderByDescending(o => o.totalAcumulado).GroupBy(g => g.totalAcumulado);
+            foreach (var grupoJogadoresEmpatados in agrupamentoJogadoresPontuacao)
+            {
+                if (grupoJogadoresEmpatados.Count() == 2)
+                {
+                    var dadosJogador1 = grupoJogadoresEmpatados.First();
+                    var dadosJogador2 = grupoJogadoresEmpatados.Last();
+                    var rodada = db.Rodada.Find(dadosJogador1.rodada_id);
+                    //OBTER AS ULTIMAS 10 rodadas
+                    var ultimasRodadas = db.Rodada.Where(x => x.barragemId == rodada.barragemId && x.isAberta == false).OrderByDescending(x => x.Id).Take(10).Select(s => s.Id);
+
+                    //BUSCAR JOGOS PARA VERIFICAR CONFRONTO
+                    var confrontosJogadores = db.Jogo.Where(x => ultimasRodadas.Contains(x.rodada_id)
+                        && ((x.desafiante_id == dadosJogador1.userProfile_id && x.desafiado_id == dadosJogador2.userProfile_id)
+                         || (x.desafiante_id == dadosJogador2.userProfile_id && x.desafiado_id == dadosJogador1.userProfile_id)));
+
+                    //VERIFICAR A QUANTIDADE DE CONFRONTOS ENTRE OS EMPATADOS
+                    int partidasGanhasJogador1 = 0;
+                    int partidasGanhasJogador2 = 0;
+                    foreach (var x in confrontosJogadores)
+                    {
+                        if ((x.qtddSetsGanhosDesafiante > x.qtddSetsGanhosDesafiado && x.desafiante_id == dadosJogador1.userProfile_id) || (x.qtddSetsGanhosDesafiante < x.qtddSetsGanhosDesafiado && x.desafiado_id == dadosJogador1.userProfile_id))
+                        {
+                            partidasGanhasJogador1++;
+                        }
+                        else if ((x.qtddSetsGanhosDesafiante > x.qtddSetsGanhosDesafiado && x.desafiante_id == dadosJogador2.userProfile_id) || (x.qtddSetsGanhosDesafiante < x.qtddSetsGanhosDesafiado && x.desafiado_id == dadosJogador2.userProfile_id))
+                        {
+                            partidasGanhasJogador2++;
+                        }
+                    }
+
+                    if (partidasGanhasJogador1 > partidasGanhasJogador2)
+                    {
+                        AplicarOrdenacao(dadosJogador1, posicaoRanking, ordenarPosicao, ordenarPosicaoClasse);
+                        posicaoRanking++;
+                        AplicarOrdenacao(dadosJogador2, posicaoRanking, ordenarPosicao, ordenarPosicaoClasse);
+                        posicaoRanking++;
+                    }
+                    else if (partidasGanhasJogador1 < partidasGanhasJogador2)
+                    {
+                        AplicarOrdenacao(dadosJogador2, posicaoRanking, ordenarPosicao, ordenarPosicaoClasse);
+                        posicaoRanking++;
+                        AplicarOrdenacao(dadosJogador1, posicaoRanking, ordenarPosicao, ordenarPosicaoClasse);
+                        posicaoRanking++;
+                    }
+                    else
+                    {
+                        var jogadoresEmpatados = grupoJogadoresEmpatados
+                        .Select(s => new { s.userProfile_id, s.userProfile.dataNascimento })
+                        .OrderBy(o => o.dataNascimento);
+
+                        foreach (var jogador in jogadoresEmpatados)
+                        {
+                            AplicarOrdenacao(grupoJogadoresEmpatados.First(x => x.userProfile_id == jogador.userProfile_id), posicaoRanking, ordenarPosicao, ordenarPosicaoClasse);
+                            posicaoRanking++;
+                        }
+                    }
+
+                }
+                else if (grupoJogadoresEmpatados.Count() >= 3)
+                {
+                    var jogadoresEmpatados = grupoJogadoresEmpatados
+                        .Select(s => new { s.userProfile_id, s.userProfile.dataNascimento })
+                        .OrderBy(o => o.dataNascimento);
+
+                    foreach (var jogador in jogadoresEmpatados)
+                    {
+                        AplicarOrdenacao(grupoJogadoresEmpatados.First(x => x.userProfile_id == jogador.userProfile_id), posicaoRanking, ordenarPosicao, ordenarPosicaoClasse);
+                        posicaoRanking++;
+                    }
+                }
+                else
+                {
+                    foreach (var jogador in grupoJogadoresEmpatados)
+                    {
+                        AplicarOrdenacao(jogador, posicaoRanking, ordenarPosicao, ordenarPosicaoClasse);
+                        posicaoRanking++;
+                    }
+                }
+            }
+        }
+
+        private static void AplicarOrdenacao(Rancking ranking, int posicao, bool ordenarPosicao, bool ordenarPosicaoClasse)
+        {
+            if (ordenarPosicao)
+            {
+                ranking.posicao = posicao;
+            }
+            if (ordenarPosicaoClasse)
+            {
+                ranking.posicaoClasse = posicao;
             }
         }
 
         private void gerarRanckingPorClasse(int idRodada, int classeId)
         {
-            int posicao = 1;
             List<Rancking> listaRancking = db.Rancking.Where(r => r.rodada_id == idRodada && r.userProfile.classeId == classeId && r.userProfile.situacao != "desativado" && r.userProfile.situacao != "inativo").OrderByDescending(r => r.totalAcumulado).ToList();
+            
+            OrdenarJogadoresRanking(listaRancking, false, true);
+
             foreach (Rancking ran in listaRancking)
             {
-                ran.posicaoClasse = posicao;
                 db.Entry(ran).State = EntityState.Modified;
                 db.SaveChanges();
-                posicao++;
             }
         }
 
@@ -767,7 +880,7 @@ namespace Barragem.Class
 
         }
 
-        public void SortearJogos(int id, int barragemId, bool notificarApp=true)
+        public void SortearJogos(int id, int barragemId, bool notificarApp = true)
         {
             var rodadaNegocio = new RodadaNegocio();
             try
@@ -795,17 +908,18 @@ namespace Barragem.Class
                 throw e;
             }
             if (notificarApp) { NotificacaoApp(barragemId); }
-            
+
         }
 
-        public void NotificacaoApp(int barragemId) {
+        public void NotificacaoApp(int barragemId)
+        {
             try
             {
                 var nomeRanking = db.BarragemView.Find(barragemId).nome;
                 var titulo = nomeRanking + ": Classificação atualizada e nova rodada gerada!";
                 var conteudo = "Clique aqui e entre em contato com seu adversário o mais breve possível e bom jogo.";
 
-                var fbmodel = new FirebaseNotificationModel() { to = "/topics/ranking" + barragemId, notification = new NotificationModel() { title = titulo, body = conteudo }, data = new DataModel() { title = titulo, body = conteudo, type = "nova_rodada_aberta", idRanking= barragemId } };
+                var fbmodel = new FirebaseNotificationModel() { to = "/topics/ranking" + barragemId, notification = new NotificationModel() { title = titulo, body = conteudo }, data = new DataModel() { title = titulo, body = conteudo, type = "nova_rodada_aberta", idRanking = barragemId } };
                 new FirebaseNotification().SendNotification(fbmodel);
             }
             catch (Exception e)

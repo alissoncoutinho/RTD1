@@ -96,6 +96,7 @@ namespace Barragem.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(Temporada temporada)
         {
+            temporada.isAutomatico = false;
             if (ModelState.IsValid)
             {
                 db.Entry(temporada).State = EntityState.Modified;
@@ -137,6 +138,7 @@ namespace Barragem.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(Temporada temporada)
         {
+            temporada.isAutomatico = false;
             if (ModelState.IsValid)
             {
 
