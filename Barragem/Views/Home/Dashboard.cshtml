@@ -59,7 +59,7 @@
                                     <a class="btn btn-sm btn-success btn-flat botoesRodada" href="/Rodada/Create">Criar Rodada</a>
                                     <a class="btn btn-sm btn-primary btn-flat botoesRodada" href="@Html.Raw("/Rodada/edit/" + rodada.Id)">Editar Rodada</a>
 
-                                    <button data-link="@Url.Action("../Rodada/FecharRodada", new { id = rodada.Id })" data-title="Fechar Rodada!"
+                                    <button data-link="@Url.Action("../Rodada/FecharRodada", new { id = rodada.Id })" data-id="@rodada.Id" data-title="Fechar Rodada!"
                                             title="Fechar Rodada" class="btn btn-danger btn-flat btn-sm confirmDialog botoesRodada">
                                         Fechar Rodada
                                     </button>
