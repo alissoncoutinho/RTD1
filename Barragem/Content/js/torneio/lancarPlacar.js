@@ -95,15 +95,15 @@ function LancarPlacar(el, origem) {
     $(".modal-body #vencedorDesafianteNome").html(nomeDesafiante);
     $(".modal-body #perdedorDesistenciaDesafiadoNome").html(nomeDesafiado);
     $(".modal-body #perdedorDesistenciaDesafianteNome").html(nomeDesafiante);
-    
+
 
 }
 
 $("#placarForm").submit(function (event) {
     event.preventDefault();
-
-    ValidarAlteracaoPlacar();
-
+    if (!event.detail || event.detail == 1) {
+        ValidarAlteracaoPlacar();
+    }
     return false;
 });
 
@@ -432,7 +432,7 @@ function MostrarIndicadoresPlacar(tipo) {
         document.getElementById("IndicadorVencedor").style.display = "none";
         document.getElementById("IndicadorVencedor").classList.remove("show");
     }
-   
+
 }
 
 function AtualizarBotaoLancarPlacar(id, ehEdicao) {
