@@ -101,9 +101,9 @@ function LancarPlacar(el, origem) {
 
 $("#placarForm").submit(function (event) {
     event.preventDefault();
-    if (!event.detail || event.detail == 1) {
-        ValidarAlteracaoPlacar();
-    }
+    $("#salvarPlacar").attr("disabled", "disabled");
+    ValidarAlteracaoPlacar();
+    setTimeout('$("#salvarPlacar").removeAttr("disabled")', 2500);
     return false;
 });
 
