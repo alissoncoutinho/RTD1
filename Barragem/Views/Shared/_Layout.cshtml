@@ -92,60 +92,58 @@
                     </div><!--//navbar-header-->
                     <div id="navbar-collapse" class="navbar-collapse collapse">
                         <ul class="nav navbar-nav">
-                            
-                        @if (!Roles.IsUserInRole("adminTorneio"))
-                        {
-                            <li class="active nav-item">@Html.ActionLink("Home", "IndexBarragens", "Home")</li>
-                            <li class="nav-item dropdown">
-                                <a class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-delay="0" data-close-others="false" href="#">Torneio <i class="fa fa-angle-down"></i></a>
-                                <ul class="dropdown-menu">
-                                    <li>@Html.ActionLink("Inscritos", "InscricoesTorneio2", "Torneio")</li>
-                                    <li>@Html.ActionLink("Tabela de Jogos", "Tabela", "Torneio")</li>
-                                    <li>@Html.ActionLink("Torneios Abertos", "TorneiosDisponiveis", "Torneio")</li>
-                                    <li>@Html.ActionLink("Lançar Resultado", "../Torneio/LancarResultado")</li>
-                                </ul>
-                            </li>
-                            <li class="nav-item dropdown">
-                                <a class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-delay="0" data-close-others="false" href="#">Ranking<i class="fa fa-angle-down"></i></a>
-                                <ul class="dropdown-menu">
-                                    <li class="nav-item">@Html.ActionLink("Regra da Pontuação", "RegraPontuacao", "Ranking")</li>
-                                    <li class="nav-item">@Html.ActionLink("Minha Pontuação", "MinhaPontuacao", "Account")</li>
-                                    <li class="nav-item">@Html.ActionLink("Ranking", "index", "Ranking")</li>
-                                    <li class="nav-item">@Html.ActionLink("Liga", "RankingDasLigas", "Ranking")</li>
-                                    <li class="nav-item">
-                                        @Html.ActionLink("Alterar Status", "../Account/EditaUsuario", new
-                                                    {
-                                                        UserName = User.Identity.Name
-                                                    })
-                                    </li>
-                                    <li class="nav-item">@Html.ActionLink("Rodada Atual", "Index", "Jogo")</li>
-                                    <li class="nav-item">@Html.ActionLink("Rodadas Anteriores", "index", "Rodada")</li>
-                                    <li class="nav-item">@Html.ActionLink("Jogadores", "ListarUsuarios", "Account")</li>
-                                </ul>
-                            </li>
-                            <li class="nav-item dropdown">
-                                <a class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-delay="0" data-close-others="false" href="#">Informações <i class="fa fa-angle-down"></i></a>
-                                <ul class="dropdown-menu">
-                                    <li>@Html.ActionLink("Regulamento", "Regulamento2", "Home")</li>
-                                    <!--li>Html.ActionLink("Torneios", "FuncTorneio2", "Home")</li-->
-                                    <li>@Html.ActionLink("Quem somos", "QuemSomos2", "Home")</li>
-                                    <li>@Html.ActionLink("Fale Conosco", "FaleConosco2", "Home")</li>
-                                </ul>
-                            </li>
-                        }
-                        else
-                        {
-                            <li class="active nav-item">@Html.ActionLink("Painel", "PainelControle", "Torneio")</li>
-                            <li class="active nav-item">@Html.ActionLink("Manuais", "Manuais", "Torneio")</li>
-                            <li class="active nav-item"><a href="https://api.whatsapp.com/send?phone=5561998095668&text=Ol%C3%A1%2C%20gostaria%20de%20ajuda%20com%20o%20sistema%20Ranking%20Beach%20Tennis" target="_blank">Suporte</a></li>
-                        }
-                        </ul><!--//nav-->
-                        <ul class="nav navbar-nav navbar-right">
-                            <li class="login">
-                                @Html.Partial("_LoginPartial","")
-                            </li>
 
-                        </ul>
+                            @if (!Roles.IsUserInRole("adminTorneio"))
+                            {
+                                <li class="active nav-item">@Html.ActionLink("Home", "IndexBarragens", "Home")</li>
+                                <li class="nav-item dropdown">
+                                    <a class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-delay="0" data-close-others="false" href="#">Torneio <i class="fa fa-angle-down"></i></a>
+                                    <ul class="dropdown-menu">
+                                        <li>@Html.ActionLink("Inscritos", "InscricoesTorneio2", "Torneio")</li>
+                                        <li>@Html.ActionLink("Tabela de Jogos", "Tabela", "Torneio")</li>
+                                        <li>@Html.ActionLink("Torneios Abertos", "TorneiosDisponiveis", "Torneio")</li>
+                                        <li>@Html.ActionLink("Lançar Resultado", "../Torneio/LancarResultado")</li>
+                                    </ul>
+                                </li>
+                                <li class="nav-item dropdown">
+                                    <a class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-delay="0" data-close-others="false" href="#">Ranking<i class="fa fa-angle-down"></i></a>
+                                    <ul class="dropdown-menu">
+                                        <li class="nav-item">@Html.ActionLink("Regra da Pontuação", "RegraPontuacao", "Ranking")</li>
+                                        <li class="nav-item">@Html.ActionLink("Minha Pontuação", "MinhaPontuacao", "Account")</li>
+                                        <li class="nav-item">@Html.ActionLink("Ranking", "index", "Ranking")</li>
+                                        <li class="nav-item">@Html.ActionLink("Liga", "RankingDasLigas", "Ranking")</li>
+                                        <li class="nav-item">
+                                            @Html.ActionLink("Alterar Status", "../Account/EditaUsuario", new
+                                                        {
+                                                            UserName = User.Identity.Name
+                                                        })
+                                        </li>
+                                        <li class="nav-item">@Html.ActionLink("Rodada Atual", "Index", "Jogo")</li>
+                                        <li class="nav-item">@Html.ActionLink("Rodadas Anteriores", "index", "Rodada")</li>
+                                        <li class="nav-item">@Html.ActionLink("Jogadores", "ListarUsuarios", "Account")</li>
+                                    </ul>
+                                </li>
+                                <li class="nav-item dropdown">
+                                    <a class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-delay="0" data-close-others="false" href="#">Informações <i class="fa fa-angle-down"></i></a>
+                                    <ul class="dropdown-menu">
+                                        <li>@Html.ActionLink("Regulamento", "Regulamento2", "Home")</li>
+                                        <!--li>Html.ActionLink("Torneios", "FuncTorneio2", "Home")</li-->
+                                        <li>@Html.ActionLink("Quem somos", "QuemSomos2", "Home")</li>
+                                        <li>@Html.ActionLink("Fale Conosco", "FaleConosco2", "Home")</li>
+                                    </ul>
+                                </li>
+                            }
+                            else
+                            {
+                                <li class="active nav-item">@Html.ActionLink("Painel", "PainelControle", "Torneio")</li>
+                                <li class="active nav-item">@Html.ActionLink("Manuais", "Manuais", "Torneio")</li>
+                                <li class="active nav-item"><a href="https://api.whatsapp.com/send?phone=5561998095668&text=Ol%C3%A1%2C%20gostaria%20de%20ajuda%20com%20o%20sistema%20Ranking%20Beach%20Tennis" target="_blank">Suporte</a></li>
+                            }
+
+                            @Html.Partial("_LoginPartial", "")
+                            
+                        </ul><!--//nav-->
+                        
                     </div><!--//navabr-collapse-->
                 </nav><!--//main-nav--><!--//main-nav-->
             </div><!--//container-->

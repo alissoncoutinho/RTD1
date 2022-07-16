@@ -1,12 +1,24 @@
 ﻿@model string
 @{
-    string ehTorneio = Model; 
+    string ehTorneio = Model;
 }
 @if (Request.IsAuthenticated)
 {
-    <li class="dropdown">
-        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-            <img id="imgFoto" src="@Url.Action("BuscaFoto", "Account", new { id = 0, userName = User.Identity.Name })" class="profile-image img-circle" style="width:40px;height:40px;">&nbsp;@User.Identity.Name<strong class="caret"></strong></a>
+
+    <li class="nav-item dropdown">
+        <a class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-delay="0" data-close-others="false" href="#">Informações <i class="fa fa-angle-down"></i></a>
+        <ul class="dropdown-menu">
+            <li>@Html.ActionLink("Regulamento", "Regulamento2", "Home")</li>
+            <!--li>Html.ActionLink("Torneios", "FuncTorneio2", "Home")</li-->
+            <li>@Html.ActionLink("Quem somos", "QuemSomos2", "Home")</li>
+            <li>@Html.ActionLink("Fale Conosco", "FaleConosco2", "Home")</li>
+        </ul>
+    </li>
+
+    <li class="nav-item dropdown">
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown">
+            <img id="imgFoto" src="@Url.Action("BuscaFoto", "Account", new { id = 0, userName = User.Identity.Name })" class="profile-image img-circle" style="width:40px;height:40px;">&nbsp;@User.Identity.Name <i class="fa fa-angle-down"></i>
+        </a>
         <ul class="dropdown-menu">
             @if (Roles.IsUserInRole("adminTorneio") || Roles.IsUserInRole("adminTorneioTenis") || Roles.IsUserInRole("organizador") || Roles.IsUserInRole("admin"))
             {
@@ -60,25 +72,27 @@
             {
                 <li>@Html.ActionLink("Usuários Duplicados", "UsuariosDuplicado", "Account")</li>
             }
-
-            <!--li class="divider"></!--li-->
-            <li>
-                <a href="javascript:document.getElementById('logoutForm').submit()">Sair-</a>
-            </li>
         </ul>
     </li>
-    
-    
-    using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm" })) {
+
+    <li class="active nav-item"><a href="javascript:document.getElementById('logoutForm').submit()"><span class="glyphicon glyphicon-log-out" aria-hidden="true"></span> Sair</a></li>
+
+    using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm" }))
+    {
         @Html.AntiForgeryToken()
-        <input type="hidden" name="isTorneio" value="@ehTorneio"/>
+        <input type="hidden" name="isTorneio" value="@ehTorneio" />
     }
 
-}else{
+}
+else
+{
     <li class="nav-item nav-item-cta last">
-        @if (ehTorneio == "torneio") { 
+        @if (ehTorneio == "torneio")
+        {
             <a class="btn btn-cta btn-cta-secondary" href="@Url.Action("Login", "Account", new { returnUrl = "torneio" })">Log in</a>
-        } else  {
+        }
+        else
+        {
             <a class="btn btn-cta btn-cta-secondary" href="@Url.Action("Login", "Account")">Log in</a>
         }
     </li>
