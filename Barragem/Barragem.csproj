@@ -304,6 +304,7 @@
     <Compile Include="Models\Categoria.cs" />
     <Compile Include="Models\CategoriaAutoComplete.cs" />
     <Compile Include="Models\CategoriaGeracaoJogoModel.cs" />
+    <Compile Include="Models\CategoriaInscricaoNaoPagaModel.cs" />
     <Compile Include="Models\Cidade.cs" />
     <Compile Include="Models\Classe.cs" />
     <Compile Include="Models\CategoriaValidarQtdeJogadores.cs" />
@@ -1186,6 +1187,7 @@
     <Content Include="Views\Torneio\_PartialAlterarParceiroDupla.cshtml" />
     <Content Include="Views\Shared\_FooterBT3.cshtml" />
     <Content Include="Views\Shared\_Rodape3.cshtml" />
+    <Content Include="Views\Torneio\_PartialAcaoCategoriasInscricoesNaoPagas.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

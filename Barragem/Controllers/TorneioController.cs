@@ -4729,7 +4729,7 @@ namespace Barragem.Controllers
                 .Distinct().ToList();
 
             ViewBag.CategoriasValidarQtdeJogadores = ObterCategoriasValidarQtdeJogadores(torneioId);
-
+            ViewBag.CategoriasInscricoesNaoPagas = ObterCategoriasInscricoesNaoPagas(torneioId);
             var classeSelecionada = classes.FirstOrDefault(x => x.Id == fClasse);
             ViewBag.ClasseEhFaseGrupo = classeSelecionada != null ? classeSelecionada.faseGrupo : false;
 
@@ -5267,7 +5267,7 @@ namespace Barragem.Controllers
             var categoriasTorneio = db.ClasseTorneio.Where(x => x.torneioId == torneioId).ToList();
             foreach (var categoria in categoriasTorneio)
             {
-                if (categoria != null && categoria.faseGrupo && categoria.faseMataMata)
+                if (categoria.faseGrupo && categoria.faseMataMata)
                 {
                     var classesComJogosGerados = ObterClassesJogosJaGeradosEFinalizados(torneioId, new List<int> { { categoria.Id } }.ToArray(), categoriasTorneio);
                     if (classesComJogosGerados.Count > 0)
@@ -5287,7 +5287,7 @@ namespace Barragem.Controllers
                         });
                     }
                 }
-                else if (categoria != null && categoria.faseGrupo)
+                else if (categoria.faseGrupo)
                 {
                     var classesComJogosGerados = ObterClassesJogosJaGeradosEFinalizados(torneioId, new List<int> { { categoria.Id } }.ToArray(), categoriasTorneio);
                     if (classesComJogosGerados.Count > 0)
@@ -5309,6 +5309,47 @@ namespace Barragem.Controllers
                 }
             }
             return categorias;
+        }
+
+        private List<CategoriaInscricaoNaoPagaModel> ObterCategoriasInscricoesNaoPagas(int torneioId)
+        {
+            var categoriasTorneio = db.ClasseTorneio.Where(x => x.torneioId == torneioId).ToList();
+            var categoriasInscritosPendentePgto = new List<CategoriaInscricaoNaoPagaModel>();
+            foreach (var categoria in categoriasTorneio)
+            {
+                var item = new CategoriaInscricaoNaoPagaModel()
+                {
+                    IdCategoria = categoria.Id,
+                    NomeCategoria = categoria.nome,
+                    EhDupla = categoria.isDupla
+                };
+                var listaInscricoesCategoria = db.InscricaoTorneio.Where(x => x.torneioId == torneioId && x.classe == categoria.Id);
+                var duplas = listaInscricoesCategoria.Where(x => x.isAtivo == false && x.parceiroDuplaId != null);
+
+                if (categoria.isDupla)
+                {
+                    foreach (var dupla in duplas)
+                    {
+                        if (!dupla.isAtivo || listaInscricoesCategoria.Any(x => !x.isAtivo && x.userId == dupla.parceiroDuplaId))
+                        {
+                            item.Jogadores.Add($"{dupla.participante.nome} e {dupla.parceiroDupla.nome}");
+                        }
+                    }
+                }
+                else
+                {
+                    var inscricoes = listaInscricoesCategoria.Where(x => !x.isAtivo);
+                    foreach (var inscrito in inscricoes)
+                    {
+                        item.Jogadores.Add($"{inscrito.participante.nome}");
+                    }
+                }
+                if (item.Jogadores.Any())
+                {
+                    categoriasInscritosPendentePgto.Add(item);
+                }
+            }
+            return categoriasInscritosPendentePgto.OrderBy(o => o.NomeCategoria).ToList();
         }
 
         private int ObterQuantidadeInscritosCategoria(int torneioId, ClasseTorneio categoria)
