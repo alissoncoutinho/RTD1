@@ -17,7 +17,7 @@
 
     <li class="nav-item dropdown">
         <a href="#" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown">
-            <img id="imgFoto" src="@Url.Action("BuscaFoto", "Account", new { id = 0, userName = User.Identity.Name })" class="profile-image img-circle" style="width:40px;height:40px;">&nbsp;@User.Identity.Name <i class="fa fa-angle-down"></i>
+            <img id="imgFoto" src="@Url.Action("BuscaFoto", "Account", new { id = 0, userName = User.Identity.Name })" class="profile-image img-circle" style="width: 40px; height: 40px; vertical-align: top; margin-top:-9px">&nbsp;@User.Identity.Name <i class="fa fa-angle-down"></i>
         </a>
         <ul class="dropdown-menu">
             @if (Roles.IsUserInRole("adminTorneio") || Roles.IsUserInRole("adminTorneioTenis") || Roles.IsUserInRole("organizador") || Roles.IsUserInRole("admin"))

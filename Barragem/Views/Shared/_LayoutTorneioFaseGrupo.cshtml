@@ -67,9 +67,9 @@
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
 </head>
-<body class="home-page">
+<body class="blog-page">
     <!-- ******HEADER****** -->
-    <header id="header" class="header navbar-fixed-top">
+    <header id="header" class="header header-blog">
         <div class="container">
             <h1 class="logo">
                 <a href="~/Home/IndexTorneio2">
@@ -96,11 +96,7 @@
                         <li class="nav-item">@Html.ActionLink("Tabela", "../Torneio/Tabela", new { url = "torneio", barra = barraId })</li>
                         <li class="nav-item">@Html.ActionLink("Lançar Placar", "../Torneio/LancarResultado", new { barragem = barraId })</li>
                         <li class="nav-item">@Html.ActionLink("Regras", "../Torneio/Regulamento", new { barragem = barraId })</li>
-                    </ul>
-                    <ul class="nav navbar-nav navbar-right">
-                        <li class="login">
-                            @Html.Partial("_LoginPartial", "torneio")
-                        </li>
+                        @Html.Partial("_LoginPartial", "torneio")
                     </ul>
                 </div>
 

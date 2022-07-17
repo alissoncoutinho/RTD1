@@ -3885,7 +3885,7 @@ select {
     }
 
     .header .main-nav .nav .nav-item {
-        margin-right: 5px;
+        margin-right: -12px;
     }
 
     .main-nav.navbar-right {

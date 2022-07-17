@@ -25,7 +25,8 @@
     {
         scrLogo = "/Content/image/logo" + barraId + ".jpg";
     }
-    if (ViewBag.TorneioId != null) {
+    if (ViewBag.TorneioId != null)
+    {
         torneioId = ViewBag.TorneioId;
     }
 }
@@ -42,7 +43,7 @@
     <link rel="shortcut icon" href=@scrLogo>
     <link href='http://fonts.googleapis.com/css?family=Roboto:400,400italic,500,500italic,700,700italic,900,900italic,300italic,300' rel='stylesheet' type='text/css'>
     <link href='http://fonts.googleapis.com/css?family=Roboto+Slab:400,700,300,100' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.1.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="~/Content/bootstrap.min.css">
     <link href="@Url.Content("/Content/css/rodape-BT.css")" rel="stylesheet" type="text/css" />
     @Styles.Render("~/css")
     @Styles.Render("~/tabela")
@@ -70,9 +71,10 @@
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
 </head>
-<body class="home-page">
+<body class="blog-page">
+
     <!-- ******HEADER****** -->
-    <header id="header" class="header navbar-fixed-top">
+    <header id="header" class="header header-blog">
         <div class="container">
             <h1 class="logo">
                 <a href="~/Home/IndexTorneio2">
@@ -99,12 +101,9 @@
                         <li class="nav-item">@Html.ActionLink("Tabela", "../Torneio/Tabela", new { torneioId = torneioId, url = "torneio", barra = barraId })</li>
                         <li class="nav-item">@Html.ActionLink("Lançar Placar", "../Torneio/LancarResultado", new { barragem = barraId })</li>
                         <li class="nav-item">@Html.ActionLink("Regras", "../Torneio/Regulamento", new { barragem = barraId })</li>
+                        @Html.Partial("_LoginPartial", "torneio")
                     </ul>
-                    <ul class="nav navbar-nav navbar-right">
-                        <li class="login">
-                            @Html.Partial("_LoginPartial", "torneio")
-                        </li>
-                    </ul>
+
                 </div>
 
             </nav><!--//main-nav-->
