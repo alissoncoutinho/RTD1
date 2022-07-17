@@ -576,11 +576,14 @@ namespace Barragem.Controllers
         [HttpPost]
         public ActionResult ExcluirTabelaJogos(int torneioId, IEnumerable<int> idsClassesExclusao)
         {
-            foreach (int classeId in idsClassesExclusao)
+            if (idsClassesExclusao != null)
             {
-                var classe = db.ClasseTorneio.Find(classeId);
-                RemoverGrupoInscricao(classeId, torneioId);
-                ExcluirJogosPorClasse(classe, false);
+                foreach (int classeId in idsClassesExclusao)
+                {
+                    var classe = db.ClasseTorneio.Find(classeId);
+                    RemoverGrupoInscricao(classeId, torneioId);
+                    ExcluirJogosPorClasse(classe, false);
+                }
             }
             return RedirectToAction("EditJogos", new { torneioId = torneioId, fClasse = 0, fData = "", fNomeJogador = "", fGrupo = "0", fase = 0 });
         }
@@ -5269,7 +5272,7 @@ namespace Barragem.Controllers
                     var classesComJogosGerados = ObterClassesJogosJaGeradosEFinalizados(torneioId, new List<int> { { categoria.Id } }.ToArray(), categoriasTorneio);
                     if (classesComJogosGerados.Count > 0)
                         continue;
-                    
+
                     qtdeInscricoes = ObterQuantidadeInscritosCategoria(torneioId, categoria);
 
                     if (qtdeInscricoes > 0 && qtdeInscricoes <= 5)
@@ -5291,7 +5294,7 @@ namespace Barragem.Controllers
                         continue;
 
                     qtdeInscricoes = ObterQuantidadeInscritosCategoria(torneioId, categoria);
-                    
+
                     if (qtdeInscricoes > 5)
                     {
                         categorias.Add(new CategoriaValidarQtdeJogadores()
