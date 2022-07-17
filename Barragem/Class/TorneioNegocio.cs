@@ -706,7 +706,7 @@ namespace Barragem.Class
             }
             var inscritosRestantes = getInscritosSemGrupo(classe);
             // Os inscritos restantes serão distribuídos nos grupos já existentes
-            var grupo = 1;
+            var grupo = qtddDeGrupos;
             for (int i = 0; i < inscritosRestantes.Count(); i++)
             {
                 inscritosRestantes[i].grupo = grupo;
@@ -721,9 +721,9 @@ namespace Barragem.Class
                     db.SaveChanges();
                 }
                 db.SaveChanges();
-                if (grupo < qtddDeGrupos)
+                if (grupo > 0)
                 {
-                    grupo++;
+                    grupo--;
                 }
             }
             return qtddDeGrupos;
