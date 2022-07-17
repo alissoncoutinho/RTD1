@@ -306,7 +306,7 @@
     <Compile Include="Models\CategoriaGeracaoJogoModel.cs" />
     <Compile Include="Models\Cidade.cs" />
     <Compile Include="Models\Classe.cs" />
-    <Compile Include="Models\ClasseGrupoSeguidoMataMataModel.cs" />
+    <Compile Include="Models\CategoriaValidarQtdeJogadores.cs" />
     <Compile Include="Models\ClasseLiga.cs" />
     <Compile Include="Models\ClasseTorneio.cs" />
     <Compile Include="Models\ClassificacaoFaseGrupo.cs" />
@@ -1182,7 +1182,7 @@
     <Content Include="Views\Torneio\_PartialClassesJogosGeracaoTabela.cshtml" />
     <Content Include="Views\Torneio\_PartialLancarPlacarJogo.cshtml" />
     <Content Include="Views\Torneio\EditJogos.cshtml" />
-    <Content Include="Views\Torneio\_PartialAcaoClassesPoucosJogadores.cshtml" />
+    <Content Include="Views\Torneio\_PartialAcaoClassesValidarQtdeJogadores.cshtml" />
     <Content Include="Views\Torneio\_PartialAlterarParceiroDupla.cshtml" />
     <Content Include="Views\Shared\_FooterBT3.cshtml" />
     <Content Include="Views\Shared\_Rodape3.cshtml" />

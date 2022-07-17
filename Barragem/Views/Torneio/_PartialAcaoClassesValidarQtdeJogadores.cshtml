@@ -1,0 +1,99 @@
+﻿@using System.Linq;
+@using Barragem.Models;
+
+@model ICollection<Barragem.Models.CategoriaValidarQtdeJogadores>
+
+    @{
+        var listagem = ((List<CategoriaValidarQtdeJogadores>)Model);
+        var temClassesMenosSeisJogadores = listagem.Count(x => x.Tipo == TipoValidacaoCategoria.MENOS_DE_SEIS_JOGADORES) > 0 ? "S" : "N";
+        var temClassesMaisCincoJogadores = listagem.Count(x => x.Tipo == TipoValidacaoCategoria.MAIS_DE_CINCO_JOGADORES) > 0 ? "S" : "N";
+    }
+
+    <style>
+        .estiloSeletorClasse {
+            font-weight: 400;
+        }
+    </style>
+
+    <div id="divCatValidarQtdeJogadores" style="display: none; margin-top:-15px">
+        <br>
+        <div id="divConteudoCatValidarQtdeJogadores" class="alert alert-warning alert-dismissable">
+
+            <button id="btnFecharCatValidarQtdeJogadores" type="button" class="close" aria-hidden="true" onclick="FecharCatValidarQtdeJogadores()">&times;</button>
+            <b>IMPORTANTE!</b><br>
+            @using (Html.BeginForm("SalvarAlteracaoClassesGeracaoJogos", "Torneio", FormMethod.Post, new { @name = "FormAlteracoesClassesGeracaoJogos", @id = "FormAlteracoesClassesGeracaoJogos" }))
+            {
+                int i = 0;
+
+                <div class="box-body">
+                    <input type="hidden" name="chkTemClassesMenosSeisJogadores" id="chkTemClassesMenosSeisJogadores" value="@temClassesMenosSeisJogadores">
+                    <input type="hidden" name="chkTemClassesMaisCincoJogadores" id="chkTemClassesMaisCincoJogadores" value="@temClassesMaisCincoJogadores">
+
+                    @if (temClassesMenosSeisJogadores == "S")
+                    {
+                        <b><u>Categoria com menos de 6 jogadores:</u></b>
+                        <p>
+                            As categorias abaixo estão com<b> menos de 6 jogadores/duplas</b> mas estão configuradas para jogar<b> todos contra todos seguido de uma final</b> com os 2 primeiros colocados do grupo.
+                        </p>
+                        
+                        <p>Escolha o que deseja fazer com cada categoria:</p>
+                        
+                        foreach (var item in listagem.Where(x => x.Tipo == TipoValidacaoCategoria.MENOS_DE_SEIS_JOGADORES))
+                        {
+                            <input type="hidden" value="@item.IdClasse" name="classeIdsMenosSeisJogadores" id="classeIdsMenosSeisJogadores" checked />
+
+                            <label id="lbl_classeitem_@item.IdClasse" class="col-sm" style="display:block">@item.NomeClasse</label>
+                            <div id="div_classeitem_@item.IdClasse" name="classeItem" class="row" style="display:block; margin-left: 0px">
+                                <input type="hidden" name="@Html.Raw("[" + i + "].IdTorneio")" value="@item.IdTorneio">
+                                <input type="hidden" name="@Html.Raw("[" + i + "].IdClasse")" value="@item.IdClasse">
+                                <div class="col-sm-2" style="width:180px">
+                                    <input type="radio" id="@Html.Raw("chkManterEstadoAtual" + item.IdClasse)" name="@Html.Raw("[" + i + "].ConfigSelecionadaClasse")" value="1" checked>
+                                    <label class="estiloSeletorClasse" for="@Html.Raw("chkManterEstadoAtual" + item.IdClasse)">Manter como está</label>
+                                </div>
+                                <div class="col-sm-2" style="width:250px">
+                                    <input type="radio" id="@Html.Raw("chkApenasTodosContraTodos" + item.IdClasse)" name="@Html.Raw("[" + i + "].ConfigSelecionadaClasse")" value="2">
+                                    <label class="estiloSeletorClasse" for="@Html.Raw("chkApenasTodosContraTodos" + item.IdClasse)">Apenas todos contra todos</label>
+                                </div>
+                                <div class="col-sm-2" style="width:200px">
+                                    <input type="radio" id="@Html.Raw("chkApenasMataMata" + item.IdClasse)" name="@Html.Raw("[" + i + "].ConfigSelecionadaClasse")" value="3">
+                                    <label class="estiloSeletorClasse" for="@Html.Raw("chkApenasMataMata" + item.IdClasse)">Apenas mata mata</label>
+                                </div>
+                            </div>
+                            i++;
+                        }
+                    }
+                    <br />
+                    @if (temClassesMaisCincoJogadores == "S")
+                    {
+                        <b><u>Categoria com mais de 5 jogadores:</u></b>
+                        <p>
+                            As categorias abaixo estão com<b> mais de 5 jogadores/duplas</b> mas configuradas com apenas fase de grupos e não formarão final.
+                        </p>
+                        <p>Escolha o novo formato de cada categoria:</p>
+                        
+                        foreach (var item in listagem.Where(x => x.Tipo == TipoValidacaoCategoria.MAIS_DE_CINCO_JOGADORES))
+                        {
+                            <input type="hidden" value="@item.IdClasse" name="classeIdsMaisCincoJogadores" id="classeIdsMaisCincoJogadores" checked />
+
+                            <label id="lbl_classeitem_@item.IdClasse" class="col-sm" style="display:block">@item.NomeClasse</label>
+                            <div id="div_classeitem_@item.IdClasse" name="classeItem" class="row" style="display:block; margin-left: 0px">
+                                <input type="hidden" name="@Html.Raw("[" + i + "].IdTorneio")" value="@item.IdTorneio">
+                                <input type="hidden" name="@Html.Raw("[" + i + "].IdClasse")" value="@item.IdClasse">
+                                <div class="col-sm-2" style="width:256px">
+                                    <input type="radio" id="@Html.Raw("chkGrupoSeguidoMataMata" + item.IdClasse)" name="@Html.Raw("[" + i + "].ConfigSelecionadaClasse")" value="5" checked>
+                                    <label class="estiloSeletorClasse" for="@Html.Raw("chkGrupoSeguidoMataMata" + item.IdClasse)">Grupo seguido de mata mata</label>
+                                </div>
+                                <div class="col-sm-2" style="width:256px">
+                                    <input type="radio" id="@Html.Raw("chkApenasMataMata" + item.IdClasse)" name="@Html.Raw("[" + i + "].ConfigSelecionadaClasse")" value="6">
+                                    <label class="estiloSeletorClasse" for="@Html.Raw("chkApenasMataMata" + item.IdClasse)">Apenas mata mata</label>
+                                </div>
+                            </div>
+                            i++;
+                        }
+                    }
+
+                    <button id="btnSalvarAlteracaoClasses" type="button" class="btn btn-primary btn-small" style="float:right" onclick="SalvarAlteracaoClassesGeracaoJogos()">Salvar e Gerar Tabela</button>
+                </div>
+            }
+        </div>
+    </div>

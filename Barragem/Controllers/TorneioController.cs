@@ -587,7 +587,7 @@ namespace Barragem.Controllers
 
         [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
         [HttpPost]
-        public JsonResult SalvarAlteracaoClassesGeracaoJogos(ICollection<ClasseGrupoSeguidoMataMataRequestModel> dadosClasses)
+        public JsonResult SalvarAlteracaoClassesGeracaoJogos(ICollection<CategoriaValidarQtdeJogadoresRequestModel> dadosClasses)
         {
             try
             {
@@ -597,11 +597,18 @@ namespace Barragem.Controllers
 
                     if (classeItem.ConfigSelecionadaClasse == 2)
                     {
+                        classe.faseGrupo = true;
                         classe.faseMataMata = false;
                     }
-                    else if (classeItem.ConfigSelecionadaClasse == 3)
+                    else if (classeItem.ConfigSelecionadaClasse == 3 || classeItem.ConfigSelecionadaClasse == 6)
                     {
                         classe.faseGrupo = false;
+                        classe.faseMataMata = true;
+                    }
+                    else if (classeItem.ConfigSelecionadaClasse == 5)
+                    {
+                        classe.faseGrupo = true;
+                        classe.faseMataMata = true;
                     }
 
                     if (classeItem.ConfigSelecionadaClasse != 1)
@@ -4718,7 +4725,7 @@ namespace Barragem.Controllers
                 .Select(i => (int)i.classeTorneio)
                 .Distinct().ToList();
 
-            ViewBag.ClassesPoucosJogadores = ObterClassesGrupoSeguidoMataMataPoucosJogadores(torneioId);
+            ViewBag.CategoriasValidarQtdeJogadores = ObterCategoriasValidarQtdeJogadores(torneioId);
 
             var classeSelecionada = classes.FirstOrDefault(x => x.Id == fClasse);
             ViewBag.ClasseEhFaseGrupo = classeSelecionada != null ? classeSelecionada.faseGrupo : false;
@@ -5250,41 +5257,70 @@ namespace Barragem.Controllers
             }
         }
 
-        private List<ClasseGrupoSeguidoMataMataModel> ObterClassesGrupoSeguidoMataMataPoucosJogadores(int torneioId)
+        private List<CategoriaValidarQtdeJogadores> ObterCategoriasValidarQtdeJogadores(int torneioId)
         {
             int qtdeInscricoes = 0;
-            var classes = new List<ClasseGrupoSeguidoMataMataModel>();
-            var classesTorneio = db.ClasseTorneio.Where(x => x.torneioId == torneioId).ToList();
-            foreach (var classe in classesTorneio)
+            var categorias = new List<CategoriaValidarQtdeJogadores>();
+            var categoriasTorneio = db.ClasseTorneio.Where(x => x.torneioId == torneioId).ToList();
+            foreach (var categoria in categoriasTorneio)
             {
-                if (classe != null && classe.faseGrupo && classe.faseMataMata)
+                if (categoria != null && categoria.faseGrupo && categoria.faseMataMata)
                 {
-                    var classesComJogosGerados = ObterClassesJogosJaGeradosEFinalizados(torneioId, new List<int> { { classe.Id } }.ToArray(), classesTorneio);
+                    var classesComJogosGerados = ObterClassesJogosJaGeradosEFinalizados(torneioId, new List<int> { { categoria.Id } }.ToArray(), categoriasTorneio);
                     if (classesComJogosGerados.Count > 0)
                         continue;
-
-                    if (classe.isDupla)
-                    {
-                        qtdeInscricoes = db.InscricaoTorneio.Count(x => x.isAtivo && x.torneioId == torneioId && x.classe == classe.Id && x.parceiroDuplaId != null);
-                    }
-                    else
-                    {
-                        qtdeInscricoes = db.InscricaoTorneio.Count(x => x.isAtivo && x.torneioId == torneioId && x.classe == classe.Id);
-                    }
+                    
+                    qtdeInscricoes = ObterQuantidadeInscritosCategoria(torneioId, categoria);
 
                     if (qtdeInscricoes > 0 && qtdeInscricoes <= 5)
                     {
-                        classes.Add(new ClasseGrupoSeguidoMataMataModel()
+                        categorias.Add(new CategoriaValidarQtdeJogadores()
                         {
-                            IdClasse = classe.Id,
+                            IdClasse = categoria.Id,
                             IdTorneio = torneioId,
-                            NomeClasse = classe.nome,
-                            QtdeInscricoes = qtdeInscricoes
+                            NomeClasse = categoria.nome,
+                            QtdeInscricoes = qtdeInscricoes,
+                            Tipo = TipoValidacaoCategoria.MENOS_DE_SEIS_JOGADORES
+                        });
+                    }
+                }
+                else if (categoria != null && categoria.faseGrupo)
+                {
+                    var classesComJogosGerados = ObterClassesJogosJaGeradosEFinalizados(torneioId, new List<int> { { categoria.Id } }.ToArray(), categoriasTorneio);
+                    if (classesComJogosGerados.Count > 0)
+                        continue;
+
+                    qtdeInscricoes = ObterQuantidadeInscritosCategoria(torneioId, categoria);
+                    
+                    if (qtdeInscricoes > 5)
+                    {
+                        categorias.Add(new CategoriaValidarQtdeJogadores()
+                        {
+                            IdClasse = categoria.Id,
+                            IdTorneio = torneioId,
+                            NomeClasse = categoria.nome,
+                            QtdeInscricoes = qtdeInscricoes,
+                            Tipo = TipoValidacaoCategoria.MAIS_DE_CINCO_JOGADORES
                         });
                     }
                 }
             }
-            return classes;
+            return categorias;
+        }
+
+        private int ObterQuantidadeInscritosCategoria(int torneioId, ClasseTorneio categoria)
+        {
+            int qtdeInscricoes;
+            if (categoria.isDupla)
+            {
+                qtdeInscricoes = db.InscricaoTorneio.Count(x => x.isAtivo && x.torneioId == torneioId && x.classe == categoria.Id && x.parceiroDuplaId != null);
+            }
+            else
+            {
+                qtdeInscricoes = db.InscricaoTorneio.Count(x => x.isAtivo && x.torneioId == torneioId && x.classe == categoria.Id);
+            }
+
+            return qtdeInscricoes;
         }
 
         private List<int> ObterDuplasJogosFormados(int idTorneio, int classeId, List<InscricaoTorneio> duplas)
