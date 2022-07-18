@@ -5359,7 +5359,7 @@ namespace Barragem.Controllers
                     NomeCategoria = categoria.nome,
                     EhDupla = categoria.isDupla
                 };
-                var listaInscricoesCategoria = db.InscricaoTorneio.Where(x => x.torneioId == torneioId && x.classe == categoria.Id);
+                var listaInscricoesCategoria = db.InscricaoTorneio.Include(i=>i.participante).Include(i=>i.parceiroDupla).Where(x => x.torneioId == torneioId && x.classe == categoria.Id);
                 var duplas = listaInscricoesCategoria.Where(x => x.isAtivo == false && x.parceiroDuplaId != null);
 
                 if (categoria.isDupla)
