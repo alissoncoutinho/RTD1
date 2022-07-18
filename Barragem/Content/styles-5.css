@@ -2903,7 +2903,7 @@ select {
   color: #253340;
 }
 /* Extra small devices (phones, less than 768px) */
-@media (max-width: 767px) {
+@media (max-width: 1219px) {
   .config-wrapper {
     display: none;
   }
@@ -2949,9 +2949,7 @@ select {
   .has-full-screen-bg.access-page .upper-wrapper {
     background: #384d60;
   }
-  .access-section {
-    padding-top: 15px;
-  }
+  
   .headline-bg + .section,
   .bg-slider-wrapper + .section {
     padding-top: 45px;
@@ -2969,6 +2967,7 @@ select {
     padding-left: 0;
     padding-right: 0;
     padding-bottom: 60px;
+    padding-top:0;
   }
   .signup-page .form-box .intro {
     margin-bottom: 45px;
@@ -3136,7 +3135,7 @@ select {
   }
 }
 /* Small devices (tablets, 768px and up) */
-@media (min-width: 768px) {
+@media (min-width: 1220px) {
   .config-wrapper {
     display: none;
   }
@@ -3261,7 +3260,7 @@ select {
   }
 }
 /* Medium devices (desktops, 992px and up) */
-@media (min-width: 992px) {
+@media (min-width: 1220px) {
   .config-wrapper {
     display: block;
   }
@@ -3317,7 +3316,7 @@ select {
     margin: inherit;
   }
   .header .main-nav .nav .nav-item {
-    margin-right: 15px;
+    margin-right: -12px;
   }
   .main-nav.navbar-right {
     float: right !important;
