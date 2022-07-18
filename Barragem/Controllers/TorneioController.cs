@@ -2808,6 +2808,42 @@ namespace Barragem.Controllers
             }
         }
 
+        [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
+        public ActionResult ImprimirGrupos(int torneioId)
+        {
+            ImprimirGruposModel dadosImpressao = new ImprimirGruposModel();
+            var torneio = db.Torneio.Find(torneioId);
+            var classes = db.ClasseTorneio.Where(i => i.torneioId == torneioId && i.faseGrupo).OrderBy(c => c.nome).ToList();
+            dadosImpressao.NomeTorneio = torneio.nome;
+            foreach (var categoria in classes)
+            {
+                var dadosCategoria = new ImprimirGruposModel.ItemCategoriaModel() { NomeCategoria = categoria.nome };
+
+
+                var inscritos = tn.getInscritosPorClasse(categoria).OrderBy(i => i.grupo).ToList();
+
+                foreach (var grupoInsc in inscritos.GroupBy(g => g.grupo))
+                {
+                    var dadosGrupo = new ImprimirGruposModel.ItemGruposModel() { NomeGrupo = $"GRUPO {grupoInsc.Key}" };
+
+                    foreach (var inscrito in grupoInsc)
+                    {
+                        if (categoria.isDupla)
+                        {
+                            dadosGrupo.Inscritos.Add($"{inscrito.participante.nome} / {inscrito.parceiroDupla.nome}");
+                        }
+                        else
+                        {
+                            dadosGrupo.Inscritos.Add(inscrito.participante.nome);
+                        }
+                    }
+                    dadosCategoria.Grupos.Add(dadosGrupo);
+                }
+                dadosImpressao.Categorias.Add(dadosCategoria);
+            }
+            return View(dadosImpressao);
+        }
+
         private List<Jogo> filtrarJogos(IQueryable<Jogo> jogos, int classe, string data, string grupo, int fase, Boolean isImprimir = false, string nomeJogador = "")
         {
             ViewBag.fClasse = classe;

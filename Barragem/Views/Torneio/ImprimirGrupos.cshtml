@@ -1,0 +1,66 @@
+﻿@using Barragem.Models;
+
+
+
+@{
+    Layout = null;
+}
+
+@model Barragem.Models.ImprimirGruposModel
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Formação de grupos por categoria</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    @Styles.Render("~/css")
+    <style type="text/css">
+        body {
+            margin: 10px;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <h3><b>@Model.NomeTorneio</b></h3>
+
+    @foreach (var categoria in Model.Categorias)
+    {
+        if (categoria.Grupos.Count > 0)
+        {
+            <br />
+            <h4><b>@categoria.NomeCategoria</b></h4>
+
+            <table class="table table-striped table-condensed table-bordered">
+
+                @foreach (var grupo in categoria.Grupos)
+                {
+                    <tr>
+                        <th>
+                            @grupo.NomeGrupo
+                        </th>
+                    </tr>
+                    foreach (var inscrito in grupo.Inscritos)
+                    {
+                        <tr>
+                            <td>
+                                @inscrito
+                            </td>
+                        </tr>
+                    }
+                }
+            </table>
+        }
+    }
+
+    <script>
+        window.print();
+    </script>
+</body>
+</html>

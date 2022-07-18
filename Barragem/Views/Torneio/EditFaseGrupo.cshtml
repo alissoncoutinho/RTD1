@@ -8,11 +8,8 @@
                     <h4 class="box-title">Ações</h4>
                 </div>
                 <p>
-                    @using (Html.BeginForm("MontarTabelaFaseGrupo", "Torneio", FormMethod.Post, new { @class = "form-row", @name = "formClasses" }))
-                    {
-                        <input type="hidden" value="@ViewBag.TorneioId" name="torneioId" id="torneioId">
-                        <a href="@Url.Action("Tabela", new { torneioId = ViewBag.TorneioId })" target="_blank" class="btn btn-success btn-small">Ver Tabela</a>
-                    }
+                    <a href="@Url.Action("Tabela", new { torneioId = ViewBag.TorneioId })" target="_blank" class="btn btn-success btn-small">Ver Tabela</a>
+                    <button class="btn btn-warning" onclick="Imprimir()"><span class="glyphicon glyphicon-print"></span> Imprimir Grupos</button>
                 </p>
                 <div class="box box-primary">
                     <div class="box-header">
@@ -213,5 +210,10 @@
                 window.location = "EditFaseGrupo?torneioId=" + torneioId + "&filtroClasse=" + classeId;
             }
 
+            function Imprimir() {
+                var torneioId = document.getElementById('torneioId').value;
+
+                window.open("ImprimirGrupos?torneioId=" + torneioId, '_blank');
+            }
         </script>
     }
