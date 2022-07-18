@@ -4,17 +4,6 @@
 }
 @if (Request.IsAuthenticated)
 {
-
-    <li class="nav-item dropdown">
-        <a class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-delay="0" data-close-others="false" href="#">Informações <i class="fa fa-angle-down"></i></a>
-        <ul class="dropdown-menu">
-            <li>@Html.ActionLink("Regulamento", "Regulamento2", "Home")</li>
-            <!--li>Html.ActionLink("Torneios", "FuncTorneio2", "Home")</li-->
-            <li>@Html.ActionLink("Quem somos", "QuemSomos2", "Home")</li>
-            <li>@Html.ActionLink("Fale Conosco", "FaleConosco2", "Home")</li>
-        </ul>
-    </li>
-
     <li class="nav-item dropdown">
         <a href="#" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown">
             <img id="imgFoto" src="@Url.Action("BuscaFoto", "Account", new { id = 0, userName = User.Identity.Name })" class="profile-image img-circle" style="width: 40px; height: 40px; vertical-align: top; margin-top:-9px">&nbsp;@User.Identity.Name <i class="fa fa-angle-down"></i>
