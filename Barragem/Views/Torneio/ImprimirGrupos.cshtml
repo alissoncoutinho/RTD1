@@ -1,7 +1,5 @@
 ﻿@using Barragem.Models;
 
-
-
 @{
     Layout = null;
 }
@@ -42,16 +40,12 @@
                 @foreach (var grupo in categoria.Grupos)
                 {
                     <tr>
-                        <th>
-                            @grupo.NomeGrupo
-                        </th>
+                        <th>@grupo.NomeGrupo</th>
                     </tr>
                     foreach (var inscrito in grupo.Inscritos)
                     {
                         <tr>
-                            <td>
-                                @inscrito
-                            </td>
+                            <td>@inscrito</td>
                         </tr>
                     }
                 }
