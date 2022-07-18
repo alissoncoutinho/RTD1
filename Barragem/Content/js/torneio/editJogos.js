@@ -97,7 +97,7 @@ function gerarTabelas() {
 
     var idTorneio = document.getElementById('torneioId').value;
 
-    document.getElementById("divClasseJogosPoucosJogadores").style.display = "none";
+    document.getElementById("divCatValidarQtdeJogadores").style.display = "none";
 
     ValidarPagamentoTorneio(idTorneio);
 }
@@ -232,13 +232,8 @@ function ValidarPagamentoTorneio(idTorneio) {
                     }
                     else {
                         document.getElementById("divPagamentoPendenteTorneio").style.display = "none";
-                        document.getElementById("divClasseJogosPoucosJogadores").style.display = "none";
-                        if ($("#chkTemClassesMenosSeisJogadores").val() == "N") {
-                            ValidarJogosJaGerados(idTorneio, "GERACAO_TABELA");
-                        }
-                        else {
-                            ExibirAlteracaoClassesGeracaoJogos();
-                        }
+                        document.getElementById("divCatValidarQtdeJogadores").style.display = "none";
+                        ExibirAlteracaoClassesGeracaoJogos();
                     }
                 }
             }
@@ -273,9 +268,8 @@ function SalvarAlteracaoClassesGeracaoJogos() {
                     toastr.error(response.erro, "Erro");
                 } else {
                     toastr.success(response.mensagem, "Sucesso");
-                    document.getElementById("divClasseJogosPoucosJogadores").style.display = "none";
-                    var idTorneio = document.getElementById('torneioId').value;
-                    ValidarJogosJaGerados(idTorneio, "GERACAO_TABELA");
+                    document.getElementById("divCatValidarQtdeJogadores").style.display = "none";
+                    ExibirCategoriasInscricoesPagtoPendente();
                 }
             }
         },
@@ -286,18 +280,38 @@ function SalvarAlteracaoClassesGeracaoJogos() {
 }
 
 function ExibirAlteracaoClassesGeracaoJogos() {
-    if (ValidarExistenciaClasseMenosSeisInscritos() == true) {
-        document.getElementById("divClasseJogosPoucosJogadores").style.display = "block";
+    if (ValidarExistenciaCategoriasVerificarQtdeJogadores()) {
+        document.getElementById("divCatValidarQtdeJogadores").style.display = "block";
+        document.getElementById("divConteudoCatValidarQtdeJogadores").style.display = "block";
     }
     else {
-        document.getElementById("divClasseJogosPoucosJogadores").style.display = "none";
-        var idTorneio = document.getElementById('torneioId').value;
-        ValidarJogosJaGerados(idTorneio, "GERACAO_TABELA");
+        document.getElementById("divCatValidarQtdeJogadores").style.display = "none";
+        ExibirCategoriasInscricoesPagtoPendente();
     }
 }
 
-function ValidarExistenciaClasseMenosSeisInscritos() {
+function ExibirCategoriasInscricoesPagtoPendente() {
+    if (ValidarExistenciaCategoriasInscricoesPagtoPendente()) {
+        document.getElementById("divCatInscricoesNaoPagas").style.display = "block";
+        document.getElementById("divConteudoCatInscricoesNaoPagas").style.display = "block";
+    }
+    else {
+        document.getElementById("divCatInscricoesNaoPagas").style.display = "none";
+        GerarTabelaJogos();
+    }
+}
+
+function GerarTabelaJogos() {
+    var idTorneio = document.getElementById('torneioId').value;
+    ValidarJogosJaGerados(idTorneio, "GERACAO_TABELA");
+}
+
+function ValidarExistenciaCategoriasVerificarQtdeJogadores() {
     var classesMenosSeisJogadores = $('input[name=classeIdsMenosSeisJogadores]').map(function (_, el) {
+        return $(el).val();
+    }).get();
+
+    var classesMaisCincoJogadores = $('input[name=classeIdsMaisCincoJogadores]').map(function (_, el) {
         return $(el).val();
     }).get();
 
@@ -305,20 +319,90 @@ function ValidarExistenciaClasseMenosSeisInscritos() {
         return $(el).val();
     }).get();
 
-    var temClassesPoucosJogadores = false;
+    var existeCategoriasValidarQtdeJogadores = false;
 
-    for (var i = 0; i < classesMenosSeisJogadores.length; i++) {
-        if (classesSelecionadas.indexOf(classesMenosSeisJogadores[i]) > -1) {
-            document.getElementById("div_classeitem_" + classesMenosSeisJogadores[i]).style.display = "block";
-            document.getElementById("lbl_classeitem_" + classesMenosSeisJogadores[i]).style.display = "block";
-            temClassesPoucosJogadores = true;
+    for (let categoriaMenosSeisJogadores of classesMenosSeisJogadores) {
+        if (classesSelecionadas.indexOf(categoriaMenosSeisJogadores) > -1) {
+            document.getElementById("div_classeitem_" + categoriaMenosSeisJogadores).style.display = "block";
+            document.getElementById("lbl_classeitem_" + categoriaMenosSeisJogadores).style.display = "block";
+            existeCategoriasValidarQtdeJogadores = true;
         }
         else {
-            document.getElementById("div_classeitem_" + classesMenosSeisJogadores[i]).style.display = "none";
-            document.getElementById("lbl_classeitem_" + classesMenosSeisJogadores[i]).style.display = "none";
+            document.getElementById("div_classeitem_" + categoriaMenosSeisJogadores).style.display = "none";
+            document.getElementById("lbl_classeitem_" + categoriaMenosSeisJogadores).style.display = "none";
         }
     }
-    return temClassesPoucosJogadores;
+
+    for (let categoriaMaisCincoJogadores of classesMaisCincoJogadores) {
+        if (classesSelecionadas.indexOf(categoriaMaisCincoJogadores) > -1) {
+            document.getElementById("div_classeitem_" + categoriaMaisCincoJogadores).style.display = "block";
+            document.getElementById("lbl_classeitem_" + categoriaMaisCincoJogadores).style.display = "block";
+            existeCategoriasValidarQtdeJogadores = true;
+        }
+        else {
+            document.getElementById("div_classeitem_" + categoriaMaisCincoJogadores).style.display = "none";
+            document.getElementById("lbl_classeitem_" + categoriaMaisCincoJogadores).style.display = "none";
+        }
+    }
+    return existeCategoriasValidarQtdeJogadores;
+}
+
+
+var existeCategoriasInscricoesPagtoPendente = false;
+function ValidarExistenciaCategoriasInscricoesPagtoPendente() {
+    
+    var classesSelecionadas = $('input[name=classeIds]:checked').map(function (_, el) {
+        return $(el).val();
+    }).get();
+
+    existeCategoriasInscricoesPagtoPendente = false;
+
+    $("#tblBodyInscricoesPendentePgto tr").each(function () {
+        if (classesSelecionadas.indexOf(this.id) > -1) {
+            this.style.display = "block";
+            existeCategoriasInscricoesPagtoPendente = true;
+        }
+        else {
+            this.style.display = "none";
+        }
+    });
+
+    $("#tblBodyDuplasPendentePgto tr").each(function () {
+        if (classesSelecionadas.indexOf(this.id) > -1) {
+            this.style.display = "block";
+            existeCategoriasInscricoesPagtoPendente = true;
+        }
+        else {
+            this.style.display = "none";
+        }
+    });
+
+    var arrayInsc = $.makeArray($('#tblBodyInscricoesPendentePgto tr[id]').map(function () {
+        if (this.style.display != "none") {
+            return this.id;
+        }
+    }));
+    var arrayDuplas = $.makeArray($('#tblBodyDuplasPendentePgto tr[id]').map(function () {
+        if (this.style.display != "none") {
+            return this.id;
+        }
+    }));
+
+    if (arrayInsc.length <= 0) {
+        $("div#divInscPagtoPendente").css('display', 'none');
+    }
+    else {
+        $("div#divInscPagtoPendente").css('display', 'block');
+    }
+
+    if (arrayDuplas.length <= 0) {
+        $("div#divInscDuplaPagtoPendente").css('display', 'none');
+    }
+    else {
+        $("div#divInscDuplaPagtoPendente").css('display', 'block');
+    }
+
+    return existeCategoriasInscricoesPagtoPendente;
 }
 
 /**Salvar dados cadastrais pendentes para pagamento do torneio */
@@ -367,6 +451,14 @@ function SalvarDadosCadastraisPendentesPagto() {
 
 function FecharPixPagtoTorneio() {
     document.getElementById("divPixPagtoTorneio").style.display = "none";
+}
+
+function FecharCatValidarQtdeJogadores() {
+    document.getElementById("divCatValidarQtdeJogadores").style.display = "none";
+}
+
+function FecharCatInscricoesNaoPagas() {
+    document.getElementById("divCatInscricoesNaoPagas").style.display = "none";
 }
 
 function FecharDadosCadastraisPendentesPagto() {
@@ -486,6 +578,11 @@ function CarregarJogadores() {
             CarregarOpcoesJogador(data);
             ShowLoader(false);
         });
+}
+
+function RevisarInscricoesTorneio() {
+    var torneioId = document.getElementById('torneioId').value;
+    window.open("EditInscritos?torneioId=" + torneioId + "&filtroStatusPagamento=0", '_blank');
 }
 
 function CarregarOpcoesJogador(dadosJogadores) {

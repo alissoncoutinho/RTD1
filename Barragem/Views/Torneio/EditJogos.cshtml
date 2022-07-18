@@ -95,7 +95,9 @@
 
                 @Html.Partial("_PartialClasseJogosExclusao")
 
-                @Html.Partial("_PartialAcaoClassesPoucosJogadores", (ICollection<ClasseGrupoSeguidoMataMataModel>)ViewBag.ClassesPoucosJogadores)
+                @Html.Partial("_PartialAcaoClassesValidarQtdeJogadores", (ICollection<CategoriaValidarQtdeJogadores>)ViewBag.CategoriasValidarQtdeJogadores)
+
+                @Html.Partial("_PartialAcaoCategoriasInscricoesNaoPagas", (ICollection<CategoriaInscricaoNaoPagaModel>)ViewBag.CategoriasInscricoesNaoPagas)
 
                 <div class="box box-primary">
                     <!-------------------------------------------------------->

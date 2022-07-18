@@ -1,0 +1,85 @@
+﻿@using System.Linq;
+@using Barragem.Models;
+
+@model ICollection<Barragem.Models.CategoriaInscricaoNaoPagaModel>
+
+    @{
+        var listagem = ((List<CategoriaInscricaoNaoPagaModel>)Model);
+        var temInscritosDuplas = listagem.Any(x => x.EhDupla);
+        var temInscritos = listagem.Any(x => !x.EhDupla);
+    }
+
+    <style>
+        .layout_tabela_inscricoes {
+            border: none;
+        }
+
+        .layout_td {
+            color: black;
+            border: none;
+            padding: 15px 8px 15px 8px;
+        }
+
+        .layout_th {
+            color: black;
+            border: none;
+        }
+
+        .corTextos {
+            color: black;
+        }
+    </style>
+
+    <div id="divCatInscricoesNaoPagas" style="display: none; margin-top:-15px">
+        <br>
+        <div id="divConteudoCatInscricoesNaoPagas" class="alert alert-success alert-dismissable">
+
+            <button id="btnFecharCatInscricoesNaoPagas" type="button" class="close" aria-hidden="true" onclick="FecharCatInscricoesNaoPagas()">&times;</button>
+            <b class="corTextos">IMPORTANTE!</b><br>
+
+            <div class="box-body">
+
+                @if (temInscritos)
+                {
+                    <div id="divInscPagtoPendente" style="display:block">
+                        <b class="corTextos"><u>Jogadores que não pagaram inscrição NÃO entrarão na tabela:</u></b>
+                        <table id="tblInscricoesPendentePgto" class="layout_tabela_inscricoes">
+                            <tbody id="tblBodyInscricoesPendentePgto">
+                                @foreach (var item in listagem.Where(x => !x.EhDupla))
+                                {
+                                    <tr id="@Html.Raw(item.IdCategoria)">
+                                        <th scope="row" class="layout_th"><b>@Html.Raw(item.NomeCategoria):</b></th>
+                                        <td scope="row" class="layout_td">@Html.Raw(string.Join(", ", item.Jogadores))</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                
+                @if (temInscritosDuplas)
+                {
+                    <div id="divInscDuplaPagtoPendente" style="display:block">
+                        <b class="corTextos"><u>Duplas que NÃO entrarão na tabela pois um ou mais jogadores não pagaram inscrição:</u></b>
+                        <table id="tblDuplasPendentePgto" class="layout_tabela_inscricoes">
+                            <tbody id="tblBodyDuplasPendentePgto">
+                                @foreach (var item in listagem.Where(x => x.EhDupla))
+                                {
+                                    <tr id="@Html.Raw(item.IdCategoria)">
+                                        <th scope="row" class="layout_th"><b>@Html.Raw(item.NomeCategoria):</b></th>
+                                        <td scope="row" class="layout_td">@Html.Raw(string.Join(", ", item.Jogadores))</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                <br />
+                <b class="corTextos">O que deseja fazer:</b>
+                <br />
+                <button id="btnRevisarInscritos" type="button" class="btn btn-primary btn-small" style="float:left; margin-right:10px;margin-top:8px" onclick="RevisarInscricoesTorneio()">Revisar Inscritos</button>
+                <button id="btnGerarTabela" type="button" class="btn btn-primary btn-small" style="float: left; margin-top: 8px " onclick="GerarTabelaJogos()">Gerar Tabela</button>
+            </div>
+
+        </div>
+    </div>
