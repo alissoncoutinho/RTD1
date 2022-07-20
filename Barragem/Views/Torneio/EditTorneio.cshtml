@@ -213,6 +213,34 @@
                     </div>
                 </div>
             </div>
+
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h4 class="box-title">Formas de pagamento da inscrição</h4>
+                </div>
+                <div class="box-body">
+                    <input type="hidden" id="tokenPagSeguro" value="@ViewBag.tokenPagSeguro">
+                    <br><input type="checkbox" name="cartao" id="cartao" value="true" onclick="isCartaoCredito()" @if (!string.IsNullOrEmpty(ViewBag.tokenPagSeguro)) { @Html.Raw("checked") }> <b>Deseja aceitar inscrição via PIX com detecção automática de pagamento?</b><br>
+
+                    <div id="isCartao">
+                        <div class="editor-label">
+                            <small style="color:red">Você ainda não integrou o Pagseguro - <a href="/Barragens/EditPagSeguro" target="_blank">Clique aqui</a> para realizar sua integração.</small>
+                        </div>
+                    </div>
+                    <script>
+                        document.getElementById('isCartao').style.opacity = "0 !important";
+                        document.getElementById('isCartao').style.display = "none";
+                    </script>
+
+                    <br>
+
+                    <input type="checkbox" name="transferencia" id="transferencia" value="true" onclick="isTransferenciaBancaria()" @if (!string.IsNullOrEmpty(Model.dadosBancarios)) { @Html.Raw("checked") }><b> Usar transferência como forma de pagamento</b><br>
+                    <div id="isTransferencia" style="margin-bottom:-40px">
+                        @Html.Partial("_PartialDadosBancariosTorneio", Model)
+                    </div>
+                </div>
+            </div>
+
             <div class="box box-primary">
                 <div class="box-header with-border">
                     <h4 class="box-title">Configurações</h4>
@@ -276,29 +304,7 @@
                         </div>
                         @Html.ValidationMessageFor(model => model.observacao)
                     </div>
-                    @if ((ViewBag.tokenPagSeguro == "") || (ViewBag.tokenPagSeguro == null))
-                    {
-                        <br><input type="checkbox" name="cartao" id="cartao" value="true" onclick="isCartaoCredito()"> <b>Deseja aceitar inscrição via PIX com detecção automática de pagamento?</b><br>
-                        <div id="isCartao">
-                            <div class="editor-label">
-                                <small style="color:red">Você ainda não integrou o Pagseguro - <a class="" href="/Barragens/EditPagSeguro">Clique aqui</a> para realizar sua inscrição.</small>
-                            </div>
-                        </div>
-                        <script>
-                            document.getElementById('isCartao').style.opacity = "0 !important";
-                            document.getElementById('isCartao').style.display = "none";
-                        </script>
-                    }
-                    else
-                    {
-                        <div class="editor-label"> <b>Torneio configurado para receber pagamento Via PIX com detecção automática de pagamento.</b></div>
-                    }
-                    <br>
 
-                    <input type="checkbox" name="transferencia" id="transferencia" value="true" onclick="isTransferenciaBancaria()" @if (!string.IsNullOrEmpty(Model.dadosBancarios)) { @Html.Raw("checked") }><b> Usar transferência como forma de pagamento</b><br>
-                    <div id="isTransferencia" style="margin-bottom:-40px">
-                        @Html.Partial("_PartialDadosBancariosTorneio", Model)
-                    </div>
 
                 </div>
             </div>
@@ -656,10 +662,16 @@
         }
 
         function isCartaoCredito() {
-            if (document.getElementById('cartao').checked) {
-                document.getElementById('isCartao').style.opacity = "1";
-                document.getElementById('isCartao').style.display = "block";
-            } else {
+            if (document.getElementById("tokenPagSeguro").value == "") {
+                if (document.getElementById('cartao').checked) {
+                    document.getElementById('isCartao').style.opacity = "1";
+                    document.getElementById('isCartao').style.display = "block";
+                } else {
+                    document.getElementById('isCartao').style.opacity = "0 !important";
+                    document.getElementById('isCartao').style.display = "none";
+                }
+            }
+            else {
                 document.getElementById('isCartao').style.opacity = "0 !important";
                 document.getElementById('isCartao').style.display = "none";
             }
@@ -924,6 +936,7 @@
 
         habilitarComboPontuacao(validarCircuitosPermitemEdicaoPonto());
         isTransferenciaBancaria();
+        isCartaoCredito();
         habilibarValoresInscricao();
     </script>
 }

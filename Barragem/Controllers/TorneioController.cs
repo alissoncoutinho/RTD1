@@ -2312,7 +2312,7 @@ namespace Barragem.Controllers
         [Authorize(Roles = "admin, organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult EditTorneio(Torneio torneio, bool transferencia = false, string pontuacaoCircuito = "100")
+        public ActionResult EditTorneio(Torneio torneio, bool transferencia = false, bool cartao = false, string pontuacaoCircuito = "100")
         {
             torneio.inscricaoSoPeloSite = false;
             var userId = WebSecurity.GetUserId(User.Identity.Name);
@@ -4641,6 +4641,11 @@ namespace Barragem.Controllers
             {
                 var torneio = db.Torneio.Find(torneioId);
 
+                if ((statusInscricao == StatusInscricaoPainelTorneio.LIBERADA_ATE || statusInscricao == StatusInscricaoPainelTorneio.ABERTA) && string.IsNullOrEmpty(torneio.barragem.tokenPagSeguro))
+                {
+                    return Json(new { erro = "Não foi possível liberar inscrições, selecione uma forma de pagamento na aba Informações do torneio.", retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
+                }
+
                 if (statusInscricao == StatusInscricaoPainelTorneio.LIBERADA_ATE)
                 {
                     torneio.dataFimInscricoes = DateTime.ParseExact(dataFimInscricao, "dd/MM/yyyy", null);
@@ -5359,7 +5364,7 @@ namespace Barragem.Controllers
                     NomeCategoria = categoria.nome,
                     EhDupla = categoria.isDupla
                 };
-                var listaInscricoesCategoria = db.InscricaoTorneio.Include(i=>i.participante).Include(i=>i.parceiroDupla).Where(x => x.torneioId == torneioId && x.classe == categoria.Id);
+                var listaInscricoesCategoria = db.InscricaoTorneio.Include(i => i.participante).Include(i => i.parceiroDupla).Where(x => x.torneioId == torneioId && x.classe == categoria.Id);
                 var duplas = listaInscricoesCategoria.Where(x => x.isAtivo == false && x.parceiroDuplaId != null);
 
                 if (categoria.isDupla)
