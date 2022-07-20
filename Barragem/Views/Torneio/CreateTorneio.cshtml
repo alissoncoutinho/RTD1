@@ -633,7 +633,13 @@
                 toastr.error("Informe o nome da cidade onde ocorrerá o torneio.", "Erro");
                 $("#btnTab1").attr("href", "#tabPrimario");
                 erroValidacao = true;
-            } else {
+            }
+            else if (tinyMCE.get('contato').getContent() == '') {
+                toastr.error("Informe os dados de contato para o torneio.", "Erro");
+                $("#btnTab1").attr("href", "#tabPrimario");
+                erroValidacao = true;
+            }
+            else {
                 if (checkCity(document.forms[1].cidade)) {
                     $("#btnTab1").attr("href", "#tabInscricao");
                     document.getElementById('tab1').className = '';
