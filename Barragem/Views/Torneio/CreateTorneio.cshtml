@@ -300,30 +300,17 @@
                         </select>
                     </div>
                 </div>
-                @if (Roles.IsUserInRole("adminTorneio"))
-                {
-                    <div class="form-group" hidden>
-                        @Html.Label("Seu torneio terá repescagem?", new { @class = "col-xs-12 col-md-12" })
-                        <div class="col-xs-8 col-md-3 input-group">
-                            <select name="temRepescagem" id="temRepescagem" class="form-control">
-                                <option value=false selected>Não</option>
-                                <option value=true>Sim</option>
-                            </select>
-                        </div>
+                
+                <div class="form-group" hidden>
+                    @Html.Label("Seu torneio terá repescagem?", new { @class = "col-xs-12 col-md-12" })
+                    <div class="col-xs-8 col-md-3 input-group">
+                        <select name="temRepescagem" id="temRepescagem" class="form-control">
+                            <option value=false selected>Não</option>
+                            <option value=true>Sim</option>
+                        </select>
                     </div>
-                }
-                else
-                {
-                    <div class="form-group">
-                        @Html.Label("Seu torneio terá repescagem?", new { @class = "col-xs-12 col-md-12" })
-                        <div class="col-xs-8 col-md-3 input-group">
-                            <select name="temRepescagem" id="temRepescagem" class="form-control">
-                                <option value=false>Não</option>
-                                <option value=true>Sim</option>
-                            </select>
-                        </div>
-                    </div>
-                }
+                </div>
+
                 <div class="form-group">
                     @Html.Label("Seu torneio terá limite de quantidade de inscritos?", new { @class = "col-xs-12 col-md-12" })
                     <div class="col-xs-8 col-md-3 input-group">
