@@ -1610,7 +1610,7 @@ namespace Barragem.Controllers
                 {
                     user.situacao = "pendente";
                     user.logAlteracao = User.Identity.Name;
-                    
+
                     db.Entry(user).State = EntityState.Modified;
                     db.SaveChanges();
                     return Json(new { erro = "", retorno = 1 }, "text/plain", JsonRequestBehavior.AllowGet);
@@ -1884,28 +1884,7 @@ namespace Barragem.Controllers
                 if (filtroCategoria > 0)
                 {
                     var categoriaSelecionada = categorias.FirstOrDefault(x => x.Id == filtroCategoria);
-
-                    var idRodada = db.Rodada.Where(r => r.isRodadaCarga == false && r.barragemId == idBarragem).Max(r => r.Id);
-
-                    var listaJogosRodadaCategoria = db.Jogo.Where(x => x.rodada_id == idRodada && (x.desafiado.classe.nivel == categoriaSelecionada.nivel || (x.desafiado.classeId == null && categoriaSelecionada.nivel == 1)));
-                    if (listaJogosRodadaCategoria != null)
-                    {
-                        var listaUsuarios = new List<int>();
-                        foreach (var jogo in listaJogosRodadaCategoria)
-                        {
-                            listaUsuarios.Add(jogo.desafiante_id);
-                            listaUsuarios.Add(jogo.desafiado_id);
-                            if (jogo.desafiante2_id > 0)
-                            {
-                                listaUsuarios.Add(jogo.desafiante2_id.Value);
-                            }
-                            if (jogo.desafiado2_id > 0)
-                            {
-                                listaUsuarios.Add(jogo.desafiado2_id.Value);
-                            }
-                        }
-                        usuarios = consulta.Where(x => listaUsuarios.Contains(x.UserId)).OrderBy(u => u.nome).ToList();
-                    }
+                    usuarios = consulta.Where(x => x.classe.nivel == categoriaSelecionada.nivel || (x.classeId == null && categoriaSelecionada.nivel == 1)).OrderBy(u => u.nome).ToList();
                 }
             }
             else
