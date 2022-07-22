@@ -44,7 +44,8 @@ namespace Barragem.Controllers
                                 pontuacaoLiga = inscricao.torneio.TipoTorneio,
                                 inscricaoSoPeloSite = inscricao.torneio.inscricaoSoPeloSite,
                                 isBeachTennis = inscricao.torneio.barragem.isBeachTenis,
-                                temPIX = !String.IsNullOrEmpty(inscricao.torneio.barragem.tokenPagSeguro) ? true : false
+                                temPIX = inscricao.torneio.barragem.PagSeguroAtivo
+                                //temPIX = !String.IsNullOrEmpty(inscricao.torneio.barragem.tokenPagSeguro) ? true : false
                             }).Distinct<TorneioApp>().ToList();
 
             //Aplica data correta de fim das inscrições
@@ -935,7 +936,8 @@ namespace Barragem.Controllers
                                pontuacaoLiga = t.TipoTorneio,
                                inscricaoSoPeloSite = t.inscricaoSoPeloSite,
                                isBeachTennis = t.barragem.isBeachTenis,
-                               temPIX = !String.IsNullOrEmpty(t.barragem.tokenPagSeguro) ? true : false
+                               temPIX = t.barragem.PagSeguroAtivo
+                               //temPIX = !String.IsNullOrEmpty(t.barragem.tokenPagSeguro) ? true : false
                            }).Union(
                             from t in db.Torneio
                             where (t.StatusInscricao == (int)StatusInscricaoPainelTorneio.ABERTA || (t.StatusInscricao == (int)StatusInscricaoPainelTorneio.LIBERADA_ATE && t.dataFimInscricoes >= dataAtual)) && t.isAtivo && t.divulgaCidade
@@ -957,7 +959,8 @@ namespace Barragem.Controllers
                                 pontuacaoLiga = t.TipoTorneio,
                                 inscricaoSoPeloSite = t.inscricaoSoPeloSite,
                                 isBeachTennis = t.barragem.isBeachTenis,
-                                temPIX = !String.IsNullOrEmpty(t.barragem.tokenPagSeguro) ? true : false
+                                temPIX = t.barragem.PagSeguroAtivo
+                                //temPIX = !String.IsNullOrEmpty(t.barragem.tokenPagSeguro) ? true : false
                             }).Union(
                             from t in db.Torneio
                             where (t.StatusInscricao == (int)StatusInscricaoPainelTorneio.ABERTA || (t.StatusInscricao == (int)StatusInscricaoPainelTorneio.LIBERADA_ATE && t.dataFimInscricoes >= dataAtual)) && t.isAtivo && t.barragemId == rankingId
@@ -978,7 +981,8 @@ namespace Barragem.Controllers
                                 pontuacaoLiga = t.TipoTorneio,
                                 inscricaoSoPeloSite = t.inscricaoSoPeloSite,
                                 isBeachTennis = t.barragem.isBeachTenis,
-                                temPIX = !String.IsNullOrEmpty(t.barragem.tokenPagSeguro) ? true : false
+                                temPIX = t.barragem.PagSeguroAtivo
+                                //temPIX = !String.IsNullOrEmpty(t.barragem.tokenPagSeguro) ? true : false
                             }).Distinct<TorneioApp>().ToList();
 
             //Aplica regra de data final inscrições

@@ -220,7 +220,7 @@
                 </div>
                 <div class="box-body">
                     <input type="hidden" id="tokenPagSeguro" value="@ViewBag.tokenPagSeguro">
-                    <br><input type="checkbox" name="cartao" id="cartao" value="true" onclick="isCartaoCredito()" @if (!string.IsNullOrEmpty(ViewBag.tokenPagSeguro)) { @Html.Raw("checked") }> <b>Deseja aceitar inscrição via PIX com detecção automática de pagamento?</b><br>
+                    <br><input type="checkbox" name="cartao" id="cartao" value="true" onclick="isCartaoCredito()" @if (ViewBag.PagSeguroAtivo) { @Html.Raw("checked") }> <b>Deseja aceitar inscrição via PIX com detecção automática de pagamento?</b><br>
 
                     <div id="isCartao">
                         <div class="editor-label">
