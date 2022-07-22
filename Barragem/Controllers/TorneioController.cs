@@ -3288,7 +3288,14 @@ namespace Barragem.Controllers
         {
             try
             {
+                int perdedorWO = 0;
                 Jogo jogo = db.Jogo.Find(j.Id);
+
+                var jogoEraWO = jogo.situacao_Id == 5;
+                if (jogoEraWO)
+                {
+                    perdedorWO = jogo.idDoPerdedor;
+                }
 
                 jogo.situacao_Id = j.situacao_Id;
                 if (((j.situacao_Id == 1) || (j.situacao_Id == 2)) && ((j.qtddGames1setDesafiado != 0) || (j.qtddGames1setDesafiante != 0)))
@@ -3343,6 +3350,11 @@ namespace Barragem.Controllers
                 {
                     //Mensagem = "Não foi possível alterar os dados.";
                     return Json(new { erro = "Dados Inválidos.", retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
+                }
+
+                if (jogoEraWO)
+                {
+                    DesfazerWOFaseGrupo(perdedorWO, (int)jogo.classeTorneio, jogo.Id);
                 }
 
                 //calcula os pontos, posicao e monta proximo jogo
@@ -3422,6 +3434,7 @@ namespace Barragem.Controllers
         {
             try
             {
+                int perdedorWO = 0;
                 int vencedorDesistencia = 0;
                 TipoJogador tipoVencedor;
 
@@ -3431,6 +3444,12 @@ namespace Barragem.Controllers
                 }
 
                 Jogo jogo = db.Jogo.Find(jogoPlacar.Id);
+
+                var jogoEraWO = jogo.situacao_Id == 5;
+                if (jogoEraWO)
+                {
+                    perdedorWO = jogo.idDoPerdedor;
+                }
 
                 jogo.situacao_Id = jogoPlacar.situacao_Id;
                 if (jogo.desafiado_id == perdedorDesistencia)
@@ -3451,11 +3470,19 @@ namespace Barragem.Controllers
                     {
                         jogo.qtddGames1setDesafiante = jogoPlacar.qtddGames1setDesafiado == 6 ? 7 : 6;
                         jogo.qtddGames1setDesafiado = jogoPlacar.qtddGames1setDesafiado;
+                        jogo.qtddGames2setDesafiante = 0;
+                        jogo.qtddGames2setDesafiado = 0;
+                        jogo.qtddGames3setDesafiante = 0;
+                        jogo.qtddGames3setDesafiado = 0;
                     }
                     else
                     {
                         jogo.qtddGames1setDesafiante = jogoPlacar.qtddGames1setDesafiante;
                         jogo.qtddGames1setDesafiado = jogoPlacar.qtddGames1setDesafiante == 6 ? 7 : 6;
+                        jogo.qtddGames2setDesafiante = 0;
+                        jogo.qtddGames2setDesafiado = 0;
+                        jogo.qtddGames3setDesafiante = 0;
+                        jogo.qtddGames3setDesafiado = 0;
                     }
                 }
                 else
@@ -3491,6 +3518,11 @@ namespace Barragem.Controllers
 
                 db.Entry(jogo).State = EntityState.Modified;
                 db.SaveChanges();
+
+                if (jogoEraWO)
+                {
+                    DesfazerWOFaseGrupo(perdedorWO, (int)jogo.classeTorneio, jogo.Id);
+                }
 
                 tn.MontarProximoJogoTorneio(jogo);
                 tn.consolidarPontuacaoFaseGrupo(jogo);
@@ -3545,6 +3577,23 @@ namespace Barragem.Controllers
             }
             var inscrito = db.InscricaoTorneio.Where(i => i.userId == perdedorId && i.classe == classeId && i.isAtivo).ToList();
             inscrito[0].pontuacaoFaseGrupo = -100;
+            db.Entry(inscrito[0]).State = EntityState.Modified;
+            db.SaveChanges();
+        }
+
+        private void DesfazerWOFaseGrupo(int perdedorId, int classeId, int idJogo)
+        {
+            var jogos = db.Jogo.Where(j => j.classeTorneio == classeId && j.rodadaFaseGrupo != 0 && (j.desafiado_id == perdedorId || j.desafiante_id == perdedorId) && j.Id != idJogo).ToList();
+            foreach (var jogo in jogos)
+            {
+                jogo.situacao_Id = 1;
+                jogo.usuarioInformResultado = User.Identity.Name;
+                jogo.dataCadastroResultado = DateTime.Now;
+                db.Entry(jogo).State = EntityState.Modified;
+                db.SaveChanges();
+            }
+            var inscrito = db.InscricaoTorneio.Where(i => i.userId == perdedorId && i.classe == classeId && i.isAtivo).ToList();
+            inscrito[0].pontuacaoFaseGrupo = 0;
             db.Entry(inscrito[0]).State = EntityState.Modified;
             db.SaveChanges();
         }

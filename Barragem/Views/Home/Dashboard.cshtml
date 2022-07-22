@@ -56,13 +56,18 @@
                                     <div><a href="/Jogo/Index" style="font-size:12px; color:grey; text-decoration: underline;">@ViewBag.jogosEmAberto jogos em aberto</a></div>
                                 }
                                 <div>
-                                    <a class="btn btn-sm btn-success btn-flat botoesRodada" href="/Rodada/Create">Criar Rodada</a>
-                                    <a class="btn btn-sm btn-primary btn-flat botoesRodada" href="@Html.Raw("/Rodada/edit/" + rodada.Id)">Editar Rodada</a>
+                                    <a class="btn btn-sm btn-primary btn-flat botoesRodada" href="@Html.Raw("/Rodada/edit/" + rodada.Id)">Editar</a>
 
                                     <button data-link="@Url.Action("../Rodada/FecharRodada", new { id = rodada.Id })" data-id="@rodada.Id" data-title="Fechar Rodada!"
-                                            title="Fechar Rodada" class="btn btn-danger btn-flat btn-sm confirmDialog botoesRodada">
-                                        Fechar Rodada
+                                            title="Fechar Rodada" class="btn btn-warning btn-flat btn-sm confirmDialog botoesRodada">
+                                        Fechar
                                     </button>
+
+                                    <button data-link="@Url.Action("../Rodada/ExcluirRodada", new { id = rodada.Id })" data-id="@rodada.Id" data-title="Excluir Rodada!" 
+                                            title="Excluir Rodada" class="btn btn-danger btn-flat btn-sm confirmExclusaoRodada botoesRodada">Excluir
+                                    </button>
+
+                                    <a class="btn btn-sm btn-success btn-flat botoesRodada" href="/Rodada/Create">Gerar Nova Rodada</a>
                                 </div>
                                 <!-- /.info-box-content -->
                             </div>
@@ -184,7 +189,6 @@
         padding-bottom: 3px;
         font-size: 11px;
         margin-right: 7px;
-        margin-top:3px;
+        margin-top: 3px;
     }
-
 </style>
