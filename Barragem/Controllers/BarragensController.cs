@@ -130,7 +130,7 @@ namespace Barragem.Controllers
         {
             UserProfile usu = db.UserProfiles.Find(WebSecurity.GetUserId(User.Identity.Name));
             var barraAtual = db.Barragens.Find(usu.barragemId);
-            if (barraAtual != null && barraAtual.PagSeguroAtivo)
+            if (barraAtual != null && !String.IsNullOrEmpty(barraAtual.tokenPagSeguro))
             {
                 ViewBag.tokenPagSeguroConfigurado = "OK";
             }
@@ -232,7 +232,6 @@ namespace Barragem.Controllers
             }
             var barraAtual = db.Barragens.Find(barragens.Id);
 
-            barraAtual.PagSeguroAtivo = !string.IsNullOrEmpty(barragens.tokenPagSeguro);
             barraAtual.tokenPagSeguro = barragens.tokenPagSeguro;
             barraAtual.emailPagSeguro = barragens.emailPagSeguro;
 
@@ -400,7 +399,6 @@ namespace Barragem.Controllers
                     var result = streamReader.ReadToEnd();
                     var tokenParceiro = JsonConvert.DeserializeObject<TokenParceiro>(result);
                     ranking.tokenPagSeguro = tokenParceiro.token;
-                    ranking.PagSeguroAtivo = !string.IsNullOrEmpty(ranking.tokenPagSeguro);
                     db.Entry(ranking).State = EntityState.Modified;
                     db.SaveChanges();
                     var log2 = new Log();

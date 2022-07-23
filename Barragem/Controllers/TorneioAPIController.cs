@@ -44,7 +44,7 @@ namespace Barragem.Controllers
                                 pontuacaoLiga = inscricao.torneio.TipoTorneio,
                                 inscricaoSoPeloSite = inscricao.torneio.inscricaoSoPeloSite,
                                 isBeachTennis = inscricao.torneio.barragem.isBeachTenis,
-                                temPIX = inscricao.torneio.barragem.PagSeguroAtivo
+                                temPIX = inscricao.torneio.PagSeguroAtivo
                                 //temPIX = !String.IsNullOrEmpty(inscricao.torneio.barragem.tokenPagSeguro) ? true : false
                             }).Distinct<TorneioApp>().ToList();
 
@@ -936,7 +936,7 @@ namespace Barragem.Controllers
                                pontuacaoLiga = t.TipoTorneio,
                                inscricaoSoPeloSite = t.inscricaoSoPeloSite,
                                isBeachTennis = t.barragem.isBeachTenis,
-                               temPIX = t.barragem.PagSeguroAtivo
+                               temPIX = t.PagSeguroAtivo
                                //temPIX = !String.IsNullOrEmpty(t.barragem.tokenPagSeguro) ? true : false
                            }).Union(
                             from t in db.Torneio
@@ -959,7 +959,7 @@ namespace Barragem.Controllers
                                 pontuacaoLiga = t.TipoTorneio,
                                 inscricaoSoPeloSite = t.inscricaoSoPeloSite,
                                 isBeachTennis = t.barragem.isBeachTenis,
-                                temPIX = t.barragem.PagSeguroAtivo
+                                temPIX = t.PagSeguroAtivo
                                 //temPIX = !String.IsNullOrEmpty(t.barragem.tokenPagSeguro) ? true : false
                             }).Union(
                             from t in db.Torneio
@@ -981,7 +981,7 @@ namespace Barragem.Controllers
                                 pontuacaoLiga = t.TipoTorneio,
                                 inscricaoSoPeloSite = t.inscricaoSoPeloSite,
                                 isBeachTennis = t.barragem.isBeachTenis,
-                                temPIX = t.barragem.PagSeguroAtivo
+                                temPIX = t.PagSeguroAtivo
                                 //temPIX = !String.IsNullOrEmpty(t.barragem.tokenPagSeguro) ? true : false
                             }).Distinct<TorneioApp>().ToList();
 

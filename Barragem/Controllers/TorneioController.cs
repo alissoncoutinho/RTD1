@@ -1712,7 +1712,7 @@ namespace Barragem.Controllers
             }
             var barragem = db.BarragemView.Find(barragemId);
             ViewBag.isModeloTodosContraTodos = barragem.isModeloTodosContraTodos;
-            ViewBag.PagSeguroAtivo = barragem.PagSeguroAtivo;
+            ViewBag.PagSeguroAtivo = torneio.PagSeguroAtivo;
             ViewBag.tokenPagSeguro = barragem.tokenPagSeguro;
             ViewBag.barraId = barragemId;
             ViewBag.barragemId = new SelectList(db.BarragemView, "Id", "nome", barragemId);
@@ -1769,7 +1769,7 @@ namespace Barragem.Controllers
         {
             Torneio torneio = db.Torneio.Find(id);
             ViewBag.isAceitaCartao = false;
-            if (torneio.barragem.PagSeguroAtivo)
+            if (torneio.PagSeguroAtivo)
             {
                 ViewBag.isAceitaCartao = true;
             }
@@ -1840,7 +1840,7 @@ namespace Barragem.Controllers
             }
             var torneio = db.Torneio.Find(torneioId);
             ViewBag.isAceitaCartao = false;
-            if (torneio.barragem.PagSeguroAtivo)
+            if (torneio.PagSeguroAtivo)
             {
                 ViewBag.isAceitaCartao = true;
             }
@@ -2325,6 +2325,7 @@ namespace Barragem.Controllers
             torneio.TipoTorneio = pontuacaoCircuito;
 
             ValidarFormaPgtoTransferenciaBancaria(torneio, transferencia);
+            torneio.PagSeguroAtivo = cartao;
 
             if (torneio.divulgacao == "nao divulgar")
             {
@@ -2371,12 +2372,9 @@ namespace Barragem.Controllers
                 }
                 ValidarLimitadorInscricoesTorneio(torneio.temLimiteDeInscricao == true, torneio.Id);
                 var dadosBarragem = db.Barragens.Find(torneio.barragemId);
-                dadosBarragem.PagSeguroAtivo = cartao;
-                db.Entry(dadosBarragem).State = EntityState.Modified;
-                db.SaveChanges();
-
+                
                 ViewBag.tokenPagSeguro = dadosBarragem.tokenPagSeguro;
-                ViewBag.PagSeguroAtivo = dadosBarragem.PagSeguroAtivo;
+                ViewBag.PagSeguroAtivo = torneio.PagSeguroAtivo;
 
                 db.Entry(torneio).State = EntityState.Modified;
                 db.SaveChanges();
@@ -3914,7 +3912,7 @@ namespace Barragem.Controllers
             var barragem = db.BarragemView.Find(barragemId);
             ViewBag.isModeloTodosContraTodos = barragem.isModeloTodosContraTodos;
             ViewBag.tokenPagSeguro = barragem.tokenPagSeguro;
-            ViewBag.PagSeguroAtivo = barragem.PagSeguroAtivo;
+            
             List<BarragemLiga> ligasDoRanking = db.BarragemLiga.Include(l => l.Liga).Where(bl => bl.BarragemId == barragemId && bl.Liga.isAtivo).ToList();
 
             var qtddTorneios = db.Torneio.Where(r => r.barragemId == barragemId).Count();
@@ -4040,7 +4038,14 @@ namespace Barragem.Controllers
             ViewBag.circuitos = db.Liga.Where(b => b.barragemId == barragem.Id).OrderByDescending(b => b.Id).ToList();
             ViewBag.barragemId = barragem.Id;
             ViewBag.nomeAgremiacao = barragem.nome;
-            ViewBag.tokenPagSeguro = barragem.PagSeguroAtivo;
+            if (String.IsNullOrEmpty(barragem.tokenPagSeguro))
+            {
+                ViewBag.tokenPagSeguro = false;
+            }
+            else
+            {
+                ViewBag.tokenPagSeguro = true;
+            }
 
             return View(torneios);
         }

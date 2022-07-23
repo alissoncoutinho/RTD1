@@ -69,8 +69,7 @@ namespace Barragem.Models
 
         [Display(Name = "Página Especial")]
         public int? PaginaEspecialId { get; set; }
-        public bool PagSeguroAtivo { get; set; }
-
+        
         public PaginaEspecial PaginaEspecial { get; set; }
         public virtual ICollection<CalendarioTorneio> CalendarioTorneio { get; set; }
         public virtual ICollection<Patrocinio> Patrocinio { get; set; }
@@ -119,7 +118,6 @@ namespace Barragem.Models
         public bool isModeloTodosContraTodos { get; set; }
         public int? PaginaEspecialId { get; set; }
         public string PaginaEspecialNome { get; set; }
-        public bool PagSeguroAtivo { get; set; }
     }
 
     public class CreateBarragemLiga

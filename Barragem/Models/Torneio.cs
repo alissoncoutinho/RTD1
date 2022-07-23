@@ -175,6 +175,8 @@ namespace Barragem.Models
         public string ContatoOrganizador { get; set; }
         #endregion Dados Bancarios Transferencia
 
+        public bool PagSeguroAtivo { get; set; }
+
         [NotMapped]
         public DateTime DataFinalInscricoes 
         { 
