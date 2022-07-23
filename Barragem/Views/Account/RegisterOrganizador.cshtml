@@ -2,6 +2,7 @@
     Layout = "~/Views/Shared/_LayoutCadastroBT.cshtml";
 
 }
+@model Barragem.Models.RegisterModel
 
 @section Css_Cadastro{
     <link href="@Url.Content("/Content/css/cadastro-organizador.css")" rel="stylesheet" type="text/css" />
@@ -9,6 +10,15 @@
 
 <main class="row h-100 w-100 m-0">
     <section class="col-md-5 bg-light">
+
+        @if ((ViewBag.MsgErro != "") && (ViewBag.MsgErro != null))
+        {
+            <div class="alert alert-danger alert-dismissible" role="alert">
+                <strong>Erro!</strong> @ViewBag.MsgErro
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+
         <form action="/Account/RegisterOrganizador" method="post" class=" m-auto mt-4" id="form">
             @Html.AntiForgeryToken()
             @Html.ValidationSummary()
@@ -167,7 +177,7 @@
 
         function checkPasswordsMatch(input1, input2) {
             if (input1.value !== input2.value) {
-               return  showError(input2, 'A senha e a confirmação de senha não estão iguais.');
+                return showError(input2, 'A senha e a confirmação de senha não estão iguais.');
             } else {
                 return showSuccess(input2);
             }
