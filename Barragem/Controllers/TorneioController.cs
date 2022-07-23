@@ -4710,11 +4710,6 @@ namespace Barragem.Controllers
             {
                 var torneio = db.Torneio.Find(torneioId);
 
-                if ((statusInscricao == StatusInscricaoPainelTorneio.LIBERADA_ATE || statusInscricao == StatusInscricaoPainelTorneio.ABERTA) && !torneio.PagSeguroAtivo && string.IsNullOrEmpty(torneio.dadosBancarios) && !torneio.isGratuitoSocio)
-                {
-                    return Json(new { erro = "Não foi possível liberar inscrições, selecione uma forma de pagamento na aba Informações do torneio.", retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
-                }
-
                 if (statusInscricao == StatusInscricaoPainelTorneio.LIBERADA_ATE)
                 {
                     torneio.dataFimInscricoes = DateTime.ParseExact(dataFimInscricao, "dd/MM/yyyy", null);
@@ -4738,6 +4733,11 @@ namespace Barragem.Controllers
             try
             {
                 var torneio = db.Torneio.Find(torneioId);
+
+                if (!string.Equals(opcaoSelecionada, "nao divulgar", StringComparison.OrdinalIgnoreCase) && !torneio.PagSeguroAtivo && string.IsNullOrEmpty(torneio.dadosBancarios) && !torneio.isGratuitoSocio)
+                {
+                    return Json(new { erro = "Não foi possível liberar inscrições, selecione uma forma de pagamento na aba Informações do torneio.", retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
+                }
 
                 torneio.isAtivo = true;
                 torneio.divulgaCidade = false;
