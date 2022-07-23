@@ -51,18 +51,16 @@
                 </div>
             </div>
 
-            if (Roles.IsUserInRole("admin"))
-            {
-                <div class="row">
-                    <div class="col-xs-8 col-sm-8">
-                        @Html.Label("Valor p/usuário")
-                        <div class="input-group">
-                            @Html.TextBoxFor(model => model.valorPorUsuario, new { @class = "form-control" })
-                        </div>
-                        @Html.ValidationMessageFor(model => model.valorPorUsuario)
+            <div class="row" hidden>
+                <div class="col-xs-8 col-sm-8">
+                    @Html.Label("Valor p/usuário")
+                    <div class="input-group">
+                        @Html.TextBoxFor(model => model.valorPorUsuario, new { @class = "form-control" })
                     </div>
+                    @Html.ValidationMessageFor(model => model.valorPorUsuario)
                 </div>
-            }
+            </div>
+
             <div class="row">
                 <div class="col-xs-12 col-sm-8">
                     @Html.LabelFor(model => model.email)

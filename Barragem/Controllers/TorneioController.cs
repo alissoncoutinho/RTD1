@@ -4697,7 +4697,7 @@ namespace Barragem.Controllers
             {
                 var torneio = db.Torneio.Find(torneioId);
 
-                if ((statusInscricao == StatusInscricaoPainelTorneio.LIBERADA_ATE || statusInscricao == StatusInscricaoPainelTorneio.ABERTA) && string.IsNullOrEmpty(torneio.barragem.tokenPagSeguro))
+                if ((statusInscricao == StatusInscricaoPainelTorneio.LIBERADA_ATE || statusInscricao == StatusInscricaoPainelTorneio.ABERTA) && !torneio.PagSeguroAtivo && string.IsNullOrEmpty(torneio.dadosBancarios))
                 {
                     return Json(new { erro = "Não foi possível liberar inscrições, selecione uma forma de pagamento na aba Informações do torneio.", retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
                 }
