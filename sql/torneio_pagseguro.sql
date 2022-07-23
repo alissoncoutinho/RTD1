@@ -6,4 +6,9 @@ ALTER TABLE [dbo].[Torneio]
 GO
 
 
-update barragem set PagSeguroAtivo=1  where tokenPagSeguro is not null;
+update torneio set PagSeguroAtivo=1  where barragemId in (
+		select b.Id
+		from torneio t
+		inner join Barragem b
+		 on b.id =t.barragemId
+		 where  b.tokenPagSeguro is not null)
