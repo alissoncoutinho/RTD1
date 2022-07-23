@@ -320,11 +320,11 @@
                         </select>
                     </div>
                 </div>
-                <div class="form-group">
+                <div class="form-group" hidden>
                     @Html.Label("Onde gostaria de divulgar o torneio?", new { @class = "col-xs-12 col-md-12" })
                     <div class="col-xs-8 col-md-3 input-group">
                         <select name="divulgacao" id="divulgacao" class="form-control">
-                            <option value="nao divulgar">Não divulgar por enquanto</option>
+                            <option value="nao divulgar" selected>Não divulgar por enquanto</option>
                             <option value="ranking">no meu ranking</option>
                             <option value="cidade">na minha cidade</option>
                             <option value="brasil">no Brasil inteiro</option>
