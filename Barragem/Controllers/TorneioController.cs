@@ -168,6 +168,18 @@ namespace Barragem.Controllers
             }
         }
 
+        private void DesfazerDupla(InscricaoTorneio inscricao, int idTorneio)
+        {
+            //Verifica se o jogador é parceiro de dupla de alguém
+            var inscricoesParceiroDupla = db.InscricaoTorneio.FirstOrDefault(i => i.torneioId == idTorneio && i.parceiroDuplaId == inscricao.userId);
+            if (inscricoesParceiroDupla != null)
+            {
+                inscricoesParceiroDupla.parceiroDuplaId = null;
+                db.Entry(inscricoesParceiroDupla).State = EntityState.Modified;
+                db.SaveChanges();
+            }
+        }
+
         [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
         public ActionResult ExcluirInscricao(int Id)
         {
@@ -177,16 +189,11 @@ namespace Barragem.Controllers
                 InscricaoTorneio inscricao = db.InscricaoTorneio.Find(Id);
                 var userId = inscricao.userId;
                 torneioId = inscricao.torneioId;
+
+                DesfazerDupla(inscricao, torneioId);
+
                 db.InscricaoTorneio.Remove(inscricao);
                 db.SaveChanges();
-
-                var inscricoesParceiroDupla = db.InscricaoTorneio.FirstOrDefault(i => i.torneioId == torneioId && i.parceiroDuplaId == userId);
-                if (inscricoesParceiroDupla != null)
-                {
-                    inscricoesParceiroDupla.parceiroDuplaId = null;
-                    db.Entry(inscricoesParceiroDupla).State = EntityState.Modified;
-                    db.SaveChanges();
-                }
 
                 var inscricoes = db.InscricaoTorneio.Where(i => i.torneioId == torneioId && i.userId == userId).ToList();
                 if (inscricoes.Count() > 0)
@@ -1637,8 +1644,17 @@ namespace Barragem.Controllers
                 List<string> classesPagtoOk = new List<string>();
 
                 var inscricao = db.InscricaoTorneio.Find(Id);
+
+                var inscritoPossuiJogos = db.Jogo.Any(j => j.classeTorneio == inscricao.classe && (j.desafiado_id == inscricao.userId || j.desafiante_id == inscricao.userId));
+
+                if (inscricao.classe != classe && inscritoPossuiJogos)
+                {
+                    return Json(new { erro = "Não é possível alterar jogador que já tem jogos.", retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
+                }
+
                 inscricao.classe = classe;
                 inscricao.isAtivo = isAtivo;
+
                 if ((isAtivo) && (inscricao.statusPagamento != "3") && (inscricao.statusPagamento != "4"))
                 {
                     inscricao.statusPagamento = "0";
@@ -2372,7 +2388,7 @@ namespace Barragem.Controllers
                 }
                 ValidarLimitadorInscricoesTorneio(torneio.temLimiteDeInscricao == true, torneio.Id);
                 var dadosBarragem = db.Barragens.Find(torneio.barragemId);
-                
+
                 ViewBag.tokenPagSeguro = dadosBarragem.tokenPagSeguro;
                 ViewBag.PagSeguroAtivo = torneio.PagSeguroAtivo;
 
@@ -3912,7 +3928,7 @@ namespace Barragem.Controllers
             var barragem = db.BarragemView.Find(barragemId);
             ViewBag.isModeloTodosContraTodos = barragem.isModeloTodosContraTodos;
             ViewBag.tokenPagSeguro = barragem.tokenPagSeguro;
-            
+
             List<BarragemLiga> ligasDoRanking = db.BarragemLiga.Include(l => l.Liga).Where(bl => bl.BarragemId == barragemId && bl.Liga.isAtivo).ToList();
 
             var qtddTorneios = db.Torneio.Where(r => r.barragemId == barragemId).Count();

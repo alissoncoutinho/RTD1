@@ -210,13 +210,13 @@
                                                 <button title="salvar" data-valor="@Html.Raw(i)" name="@Html.Raw("button"+i)" id="@Html.Raw("button"+i)" class="btn btn-success btn-xs inscricaoButton">
                                                     Salvar
                                                 </button>
-                                                @if (!jaPossuiJogo)
+                                                @if (!jaPossuiJogo && isDupla)
                                                 {
                                                     <button title="Desfazer dupla" data-valor="@Html.Raw(i)" name="@Html.Raw("button" + i)" id="@Html.Raw("button" + i)" class="btn btn-warning btn-xs desfazerDupla">
                                                         Desfazer dupla
                                                     </button>
                                                 }
-                                                else
+                                                else if(isDupla)
                                                 {
                                                     <button type="button" name="@Html.Raw("btnAlterarParceiroDupla" + i)" id="@Html.Raw("btnAlterarParceiroDupla" + i)" class="btn btn-primary btn-xs" onclick="AlterarParceiroDupla(this)"
                                                             data-indice="@i" data-idInscricao="@item.Id" data-idTorneio="@ViewBag.TorneioId" data-idClasse="@ViewBag.filtroClasse" data-nomeJogador1="@nomeJogador1" data-nomeJogador2="@nomeJogador2" data-toggle="modal" data-target="#modalAlterarParceiroDupla">
