@@ -44,6 +44,9 @@
 
                     <div>
                         @Html.Label("Onde gostaria de divulgar o torneio?", new { @class = "col-sm-2 control-label" })
+                        
+                        <i class="col-sm-1 fa fa-info-circle" style="margin-left:-40px;width:12px;color:#3e64d6" data-toggle="tooltip" data-original-title="Sugerimos que inicie a divulgação do torneio somente quando já tiver feito todas as configurações prontas."></i>
+
                         <div class="col-md-3 input-group">
                             @Html.DropDownList("OpcoesDivulgacao", Model.ListaOpcoesDivulgacao, new { @id = "ddlOpcoesDivulgacao", @class = "col-md-1 form-control", onchange = "selectedOpcaoDivulgacao(this)" })
                         </div>
@@ -128,6 +131,10 @@
 
         var torneioId = @Model.TorneioId;
         var isAtivo = @Model.IsAtivo.ToString().ToLower();
+
+        $('[data-toggle="tooltip"]').tooltip({
+            placement : 'top'
+        });
 
         $("#dataFimInscricoes").datepicker({
             language: 'pt-BR',
