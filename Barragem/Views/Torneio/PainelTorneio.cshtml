@@ -44,7 +44,7 @@
 
                     <div>
                         @Html.Label("Onde gostaria de divulgar o torneio?", new { @class = "col-sm-2 control-label" })
-                        
+
                         <i class="col-sm-1 fa fa-info-circle" style="margin-left:-30px;margin-right:5px; width:12px;color:#3e64d6" data-toggle="tooltip" data-original-title="Sugerimos que inicie a divulgação do torneio somente quando já tiver feito todas as configurações prontas."></i>
 
                         <div class="col-md-3 input-group">
@@ -78,11 +78,18 @@
             </div>
             <div class="box-body" style="margin-left:40px">
                 <div class="row form-group">
-                    <label class="switch" style="vertical-align: middle;">
-                        <input type="checkbox" id="chkLiberaVisualizacaoTabela" @if (Model.LiberaVisualizacaoTabela) { @Html.Raw("checked") } onclick="liberarVisualizacaoTabela(this)">
-                        <span class="slider round"></span>
-                    </label>
-                    <label> Liberar visualização da tabela do torneio</label>
+                    <div style="display:flex">
+                        <div>
+                            <label class="switch" style="vertical-align: middle;">
+                                <input type="checkbox" id="chkLiberaVisualizacaoTabela" @if (Model.LiberaVisualizacaoTabela) { @Html.Raw("checked") } onclick="liberarVisualizacaoTabela(this)">
+                                <span class="slider round"></span>
+                            </label>
+                            <label> Liberar visualização da tabela do torneio</label>
+                        </div>
+
+                        <i class="col-sm-1 fa fa-info-circle" style="width:12px;color:#3e64d6" data-toggle="tooltip" data-original-title="Sugerimos que libere a tabela somente quando a tabela já estiver sido gerada e os horários e dias dos jogos já estiverem lançados no sistema."></i>
+
+                    </div>
                 </div>
                 <div class="row form-group">
                     <label class="switch" style="vertical-align: middle;">
