@@ -27,7 +27,7 @@
                 <div class="row form-group">
                     @Html.Label("Status da Inscrição", new { @class = "col-sm-2 control-label" })
 
-                    <div class="col-md-3 input-group" style="float:left !important">
+                    <div class="col-md-3 input-group" style="float:left !important; margin-left:5px">
                         @Html.DropDownList("StatusInscricao", Model.ListaOpcoesStatusInscricao, new { @id = "ddlStatusInscricao", @class = "col-md-1 form-control", onchange = "selectedStatusInscricao(this)" })
                     </div>
                     <div class="col-md-3 input-group date" id="dataFimInscricoes" data-date-format="dd/mm/yyyy" style="padding-left:20px">
@@ -45,7 +45,7 @@
                     <div>
                         @Html.Label("Onde gostaria de divulgar o torneio?", new { @class = "col-sm-2 control-label" })
                         
-                        <i class="col-sm-1 fa fa-info-circle" style="margin-left:-40px;width:12px;color:#3e64d6" data-toggle="tooltip" data-original-title="Sugerimos que inicie a divulgação do torneio somente quando já tiver feito todas as configurações prontas."></i>
+                        <i class="col-sm-1 fa fa-info-circle" style="margin-left:-30px;margin-right:5px; width:12px;color:#3e64d6" data-toggle="tooltip" data-original-title="Sugerimos que inicie a divulgação do torneio somente quando já tiver feito todas as configurações prontas."></i>
 
                         <div class="col-md-3 input-group">
                             @Html.DropDownList("OpcoesDivulgacao", Model.ListaOpcoesDivulgacao, new { @id = "ddlOpcoesDivulgacao", @class = "col-md-1 form-control", onchange = "selectedOpcaoDivulgacao(this)" })
