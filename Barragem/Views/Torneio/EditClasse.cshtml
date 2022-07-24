@@ -3,6 +3,13 @@
     int qtddClasses = Model.Count();
 }
 @model IEnumerable<Barragem.Models.ClasseTorneio>
+
+    <style>
+        .tooltip-inner {
+            white-space: pre-wrap;
+        }
+    </style>
+
     @Html.Partial("_PartialTabs")
 
     <div class="tab-content">
