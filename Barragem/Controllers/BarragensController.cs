@@ -68,6 +68,7 @@ namespace Barragem.Controllers
                     {
                         Id = barragem.Id,
                         Nome = barragem.nome,
+                        IsAtiva = barragem.isAtiva,
                         TipoBarragem = barragem.isBeachTenis ? "Beach Tennis" : "Tênis",
                         NomeUsuarioAdmin = adminBarragemTorneio?.userName,
                         TelefoneCelular = adminBarragemTorneio?.telefone
