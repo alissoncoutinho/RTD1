@@ -15,7 +15,10 @@
                 <th>
                     @Html.DisplayNameFor(model => model.Nome)
                 </th>
-                <th></th>
+                <th style="width:40%">
+                    Barragem
+                </th>
+                <th style="width:90px"></th>
             </tr>
             @foreach (var item in Model)
             {
@@ -25,24 +28,30 @@
                         <input type="text" class="col-md-6 form-control" name="@Html.Raw("nome" + i)" id="@Html.Raw("nome" + i)" value="@item.Nome">
                     </td>
                     <td>
+                        @if (item.barragem != null)
+                        {
+                            @Html.Raw(item.barragem.nome)
+                        }
+                    </td>
+                    <td>
                         <button title="salvar" data-valor="@Html.Raw(i)" data-ident="@item.Id" name="@Html.Raw("button" + i)" id="@Html.Raw("button" + i)" class="btn btn-default btn-xs editarNome">
-                        Salvar
+                            Salvar
                         </button>
-                            <a href="@Url.Action("EditClasses", new {idLiga = @item.Id })" title="Editar/Detalhar" class="btn btn-default btn-xs">
-                                <span class="glyphicon glyphicon-edit"></span>
-                            </a>
-</td>
+                        <a href="@Url.Action("EditClasses", new {idLiga = @item.Id })" title="Editar/Detalhar" class="btn btn-default btn-xs">
+                            <span class="glyphicon glyphicon-edit"></span>
+                        </a>
+                    </td>
                 </tr>
             }
         </table>
     </div>
-@section Scripts {
-    <script type="text/javascript">
+    @section Scripts {
+        <script type="text/javascript">
             $(document).ready(function () {
                 $(".editarNome").click(function (event) {
                     var i = $(this).data("valor");
                     var Id = $(this).data("ident");
-                    var nome = document.getElementById("nome"+i).value;
+                    var nome = document.getElementById("nome" + i).value;
                     event.preventDefault();
                     $.ajax({
                         url: "/Liga/EditNome?idLiga=" + Id + "&nomeLiga=" + nome,
@@ -63,5 +72,5 @@
                     });
                 });
             });
-    </script>
-}
+        </script>
+    }
