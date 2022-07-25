@@ -3,6 +3,13 @@
     int qtddClasses = Model.Count();
 }
 @model IEnumerable<Barragem.Models.ClasseTorneio>
+    <link rel="stylesheet" href="~/Content/jsuites/jsuites.css">
+    <style>
+        .tooltip-inner {
+            white-space: pre-wrap;
+        }
+    </style>
+
     @Html.Partial("_PartialTabs")
 
     <div class="tab-content">
@@ -29,6 +36,8 @@
                                 <tr>
                                     <th>
                                         <b>Ordem Exibição</b>
+                                        <i class="fa fa-question-circle" style="width:12px;color:#3e64d6" data-toggle="tooltip" data-original-title="Ordene as categorias abaixo na ordem que você gostaria que elas aparecessem para o jogador na hora da inscrição e salve clicando no botão “Salvar ordem de exibição”"></i>
+
                                     </th>
                                     @if (ViewBag.isLiga)
                                     {
@@ -43,6 +52,7 @@
                                     {
                                         <th>
                                             @Html.DisplayName("Limite de Jogadores")
+                                            <i class="fa fa-question-circle" style="width:12px;color:#3e64d6" data-toggle="tooltip" data-original-title="Insira nesta coluna a quantidade máxima de inscritos que você terá por categoria. Lembre-se que se for uma categoria de dupla você deve colocar a quantidade de inscritos. (ex: 12 duplas, você colocará 24 inscritos no campo correspondente). Não esqueça de salvar sua opção em cada categoria."></i>
                                         </th>
                                     }
                                     <th>
@@ -95,7 +105,7 @@
                                         @if (ViewBag.temLimiteDeInscricao != null && (bool)ViewBag.temLimiteDeInscricao)
                                         {
                                             <td>
-                                                <input type="text" class="col-md-6 form-control" name="@Html.Raw("maximoInscritos" + i)" id="@Html.Raw("maximoInscritos" + i)" value="@item.maximoInscritos">
+                                                <div id="@Html.Raw("maximoInscritos" + i)" class="escolhaLimiteJogadores" data-itemSelecionado="@item.maximoInscritos" data-categoriaId="@item.Id" data-indice="@i"></div>
                                             </td>
                                         }
                                         else
@@ -103,41 +113,20 @@
                                             <input type="hidden" name="@Html.Raw("maximoInscritos" + i)" id="@Html.Raw("maximoInscritos" + i)" value="@item.maximoInscritos" />
                                         }
                                         <td>
-                                            @if (item.isDupla)
-                                            {
-                                                <input type="checkbox" checked value="true" name="@Html.Raw("isDupla" + i)" id="@Html.Raw("isDupla" + i)" />
-                                            }
-                                            else
-                                            {
-                                                <input type="checkbox" value="true" name="@Html.Raw("isDupla" + i)" id="@Html.Raw("isDupla" + i)" />
-                                            }
+                                            <input type="checkbox" value="true" name="@Html.Raw("isDupla" + i)" id="@Html.Raw("isDupla" + i)" data-categoriaId="@item.Id" data-indice="@i" onclick="SalvarAlteracaoCategoria(this)" @if (item.isDupla) { @Html.Raw("checked") } />
                                         </td>
                                         @if (!ViewBag.isModeloTodosContraTodos)
                                         {
                                             <td>
-                                                @if (item.faseGrupo)
-                                                {
-                                                    <input type="checkbox" checked value="true" name="@Html.Raw("faseGrupo" + i)" id="@Html.Raw("faseGrupo" + i)" />
-                                                }
-                                                else
-                                                {
-                                                    <input type="checkbox" value="true" name="@Html.Raw("faseGrupo" + i)" id="@Html.Raw("faseGrupo" + i)" />
-                                                }
+                                                <input type="checkbox" value="true" name="@Html.Raw("faseGrupo" + i)" id="@Html.Raw("faseGrupo" + i)" data-categoriaId="@item.Id" data-indice="@i" onclick="SalvarAlteracaoCategoria(this)" @if (item.faseGrupo) { @Html.Raw("checked") } />
                                             </td>
                                             <td>
-                                                @if (item.faseMataMata)
-                                                {
-                                                    <input type="checkbox" checked value="true" name="@Html.Raw("faseMataMata" + i)" id="@Html.Raw("faseMataMata" + i)" />
-                                                }
-                                                else
-                                                {
-                                                    <input type="checkbox" value="true" name="@Html.Raw("faseMataMata" + i)" id="@Html.Raw("faseMataMata" + i)" />
-                                                }
+                                                <input type="checkbox" value="true" name="@Html.Raw("faseMataMata" + i)" id="@Html.Raw("faseMataMata" + i)" data-categoriaId="@item.Id" data-indice="@i" onclick="SalvarAlteracaoCategoria(this)" @if (item.faseMataMata) { @Html.Raw("checked") } />
                                             </td>
                                         }
                                         <td align="center">
                                             <form method="post" enctype="multipart/form-data" action="#" name="@Html.Raw("form" + i)" id="@Html.Raw("form" + i)" class="form">
-                                                <button title="salvar" data-valor="@Html.Raw(i)" data-ident="@item.Id" name="@Html.Raw("button" + i)" id="@Html.Raw("button" + i)" class="btn btn-default btn-xs inscricaoButton">
+                                                <button title="salvar" data-categoriaId="@item.Id" data-indice="@i" name="@Html.Raw("button" + i)" id="@Html.Raw("button" + i)" onclick="SalvarAlteracaoCategoria(this)" class="btn btn-default btn-xs inscricaoButton">
                                                     Salvar
                                                 </button>
                                                 <button title="excluir" data-valor="@item.Id" name="@Html.Raw("buttonEx" + i)" id="@Html.Raw("buttonEx" + i)" class="btn btn-danger btn-xs excluirButton">
@@ -191,47 +180,20 @@
         </div>
     </div>
 
+
+
     @section Scripts {
+        <script src="~/Content/jsuites/jsuites.js"></script>
         <script type="text/javascript">
+
+            var limiteJogadoresDropDownList = [];
+            var finalizouCarregamentoDados = false;
+
             $(document).ready(function () {
-                $(".inscricaoButton").click(function (event) {
-                    var i = $(this).data("valor");
-                    var Id = $(this).data("ident");
-                    var nome = document.getElementById("nome" + i).value;
-                    var maximoInscritos = document.getElementById("maximoInscritos" + i).value;
-                    var isDupla = document.getElementById("isDupla" + i).checked;
-                    var faseGrupo = false;
-                    var faseMataMata = false;
-                    var isModeloTodosContraTodos = false;
-                    try {
-                        faseGrupo = document.getElementById("faseGrupo" + i).checked;
-                        faseMataMata = document.getElementById("faseMataMata" + i).checked;
-                    } catch (err) {
-                        isModeloTodosContraTodos = true;
-                    }
-                    event.preventDefault();
-                    $.ajax({
-                        type: "POST",
-                        url: "/Torneio/EditClasse",
-                        dataType: "json",
-                        data: "{'Id':'" + Id + "', 'nome':'" + nome + "', 'isDupla':'" + isDupla + "', 'faseGrupo':'" + faseGrupo + "', 'faseMataMata':'" + faseMataMata + "', 'isModeloTodosContraTodos':'" + isModeloTodosContraTodos + "', 'maximoInscritos':'" + maximoInscritos + "'}",
-                        contentType: "application/json; charset=utf-8",
-                        success: function (response) {
-                            if (typeof response == "object") {
-                                if (response.retorno === 0) {
-                                    toastr.error(response.erro, "Erro");
-                                } else {
-                                    toastr.options = {
-                                        "positionClass": "toast-top-center"
-                                    }
-                                    toastr.success("Atualização realizada com sucesso.", "Aviso");
-                                }
-                            }
-                        },
-                        error: function (jqXHR, textStatus, errorThrown) {
-                            location.reload(true);
-                        }
-                    });
+
+
+                $('[data-toggle="tooltip"]').tooltip({
+                    placement: 'top'
                 });
 
                 $(".excluirButton").confirm({
@@ -295,10 +257,127 @@
                 });
             });
 
+            function SalvarAlteracaoCategoria(el) {
+                var i = el.dataset.indice;
+                var Id = el.dataset.categoriaid;
+
+                var nome = document.getElementById("nome" + i).value;
+                var maximoInscritos = document.getElementById("maximoInscritos" + i).value;
+                var isDupla = document.getElementById("isDupla" + i).checked;
+
+                var faseGrupo = false;
+                var faseMataMata = false;
+                var isModeloTodosContraTodos = false;
+                try {
+                    faseGrupo = document.getElementById("faseGrupo" + i).checked;
+                    faseMataMata = document.getElementById("faseMataMata" + i).checked;
+                } catch (err) {
+                    isModeloTodosContraTodos = true;
+                }
+
+                //event.preventDefault();
+                $.ajax({
+                    type: "POST",
+                    url: "/Torneio/EditClasse",
+                    dataType: "json",
+                    data: "{'Id':'" + Id + "', 'nome':'" + nome + "', 'isDupla':'" + isDupla + "', 'faseGrupo':'" + faseGrupo + "', 'faseMataMata':'" + faseMataMata + "', 'isModeloTodosContraTodos':'" + isModeloTodosContraTodos + "', 'maximoInscritos':'" + maximoInscritos + "'}",
+                    contentType: "application/json; charset=utf-8",
+                    success: function (response) {
+                        if (typeof response == "object") {
+                            if (response.retorno === 0) {
+                                toastr.error(response.erro, "Erro");
+                            } else {
+                                toastr.options = {
+                                    "positionClass": "toast-top-center"
+                                }
+                                toastr.success("Atualização realizada com sucesso.", "Aviso");
+                            }
+                        }
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        location.reload(true);
+                    }
+                });
+            }
+
             function abrirModalEditCatCircuito(idClasse, idTorneio) {
                 $("#idTorneio").val(idTorneio);
                 $("#idClasse").val(idClasse);
             }
 
+            function CarregarOpcoesLimiteJogadores() {
+                finalizouCarregamentoDados = false;
+                var dropdownsLimiteJogador = document.getElementsByClassName("escolhaLimiteJogadores");
+
+                for (var i = 0; i < dropdownsLimiteJogador.length; i++) {
+                    //obtém opções de jogadores para carregar cada combo
+                    var opcoesDisponiveis = ObterOpcoesLimiteJogadores();
+
+                    //Cria combos e mantem instancias na lista limiteJogadoresDropDownList
+                    limiteJogadoresDropDownList.push(
+                        [
+                            dropdownsLimiteJogador[i],
+                            jSuites.dropdown(dropdownsLimiteJogador[i], {
+                                data: opcoesDisponiveis,
+                                width: 'auto',
+                                autocomplete: true,
+                                onopen: function (el) {
+                                    for (var i = 0; i < limiteJogadoresDropDownList.length; i++) {
+                                        var dropItem = limiteJogadoresDropDownList[i][1];
+                                        if (el.id != limiteJogadoresDropDownList[i][0].id && dropItem.options.opened == true) {
+                                            dropItem.close();
+                                        }
+                                        else {
+                                            dropItem.options.opened = true;
+                                        }
+                                    }
+                                },
+                                onchange: function (el, val) {
+                                    if (finalizouCarregamentoDados) { 
+                                        SalvarAlteracaoCategoria(el);
+                                    }
+                                },
+                            })
+                        ]
+                    );
+
+                    //Seleciona jogador no combo
+                    limiteJogadoresDropDownList[i][1].setValue(limiteJogadoresDropDownList[i][0].dataset.itemselecionado)
+                }
+                finalizouCarregamentoDados = true;
+            }
+
+            function ObterOpcoesLimiteJogadores() {
+                var opcoes = [];
+
+                for (var i = 0; i <= 100; i++) {
+                    if (i == 0) {
+                        var opcao = { "text": "Sem Limite", "value": i.toString() };
+                        opcoes.push(opcao);
+                    }
+                    else {
+                        var opcao = { "text": i.toString(), "value": i.toString() };
+                        opcoes.push(opcao);
+                    }
+                }
+                return opcoes;
+            }
+
+
+            $(document).mouseup(function (el) {
+                if (el.target.classList.contains("jdropdown-header") == false && el.target.classList.contains("jdropdown-content") == false) {
+                    for (var i = 0; i < limiteJogadoresDropDownList.length; i++) {
+                        var dropdownItem = limiteJogadoresDropDownList[i][1];
+                        if (el.id != limiteJogadoresDropDownList[i][0].id && dropdownItem.options.opened == true) {
+                            dropdownItem.close();
+                        }
+                        else {
+                            dropdownItem.options.opened = true;
+                        }
+                    }
+                }
+            });
+
+            CarregarOpcoesLimiteJogadores();
         </script>
     }
