@@ -2324,8 +2324,10 @@ namespace Barragem.Controllers
             torneio.isOpen = false;
             torneio.TipoTorneio = pontuacaoCircuito;
 
+            var dadosBarragem = db.Barragens.Find(torneio.barragemId);
+
             ValidarFormaPgtoTransferenciaBancaria(torneio, transferencia);
-            torneio.PagSeguroAtivo = cartao;
+            ValidarFormaPgtoPix(torneio, cartao, dadosBarragem);
 
             if (torneio.divulgacao == "nao divulgar")
             {
@@ -2371,8 +2373,7 @@ namespace Barragem.Controllers
                     }
                 }
                 ValidarLimitadorInscricoesTorneio(torneio.temLimiteDeInscricao == true, torneio.Id);
-                var dadosBarragem = db.Barragens.Find(torneio.barragemId);
-                
+
                 ViewBag.tokenPagSeguro = dadosBarragem.tokenPagSeguro;
                 ViewBag.PagSeguroAtivo = torneio.PagSeguroAtivo;
 
@@ -2413,6 +2414,18 @@ namespace Barragem.Controllers
 
             CarregarDadosEssenciais(torneio.Id, "edit");
             return View(torneio);
+        }
+
+        private static void ValidarFormaPgtoPix(Torneio torneio, bool cartao, Barragens dadosBarragem)
+        {
+            if (string.IsNullOrEmpty(dadosBarragem.tokenPagSeguro) && cartao == true)
+            {
+                torneio.PagSeguroAtivo = false;
+            }
+            else
+            {
+                torneio.PagSeguroAtivo = cartao;
+            }
         }
 
         private static void ValidarFormaPgtoTransferenciaBancaria(Torneio torneio, bool transferencia)
@@ -3912,7 +3925,7 @@ namespace Barragem.Controllers
             var barragem = db.BarragemView.Find(barragemId);
             ViewBag.isModeloTodosContraTodos = barragem.isModeloTodosContraTodos;
             ViewBag.tokenPagSeguro = barragem.tokenPagSeguro;
-            
+
             List<BarragemLiga> ligasDoRanking = db.BarragemLiga.Include(l => l.Liga).Where(bl => bl.BarragemId == barragemId && bl.Liga.isAtivo).ToList();
 
             var qtddTorneios = db.Torneio.Where(r => r.barragemId == barragemId).Count();
@@ -4697,11 +4710,6 @@ namespace Barragem.Controllers
             {
                 var torneio = db.Torneio.Find(torneioId);
 
-                if ((statusInscricao == StatusInscricaoPainelTorneio.LIBERADA_ATE || statusInscricao == StatusInscricaoPainelTorneio.ABERTA) && !torneio.PagSeguroAtivo && string.IsNullOrEmpty(torneio.dadosBancarios))
-                {
-                    return Json(new { erro = "Não foi possível liberar inscrições, selecione uma forma de pagamento na aba Informações do torneio.", retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
-                }
-
                 if (statusInscricao == StatusInscricaoPainelTorneio.LIBERADA_ATE)
                 {
                     torneio.dataFimInscricoes = DateTime.ParseExact(dataFimInscricao, "dd/MM/yyyy", null);
@@ -4725,6 +4733,11 @@ namespace Barragem.Controllers
             try
             {
                 var torneio = db.Torneio.Find(torneioId);
+
+                if (!string.Equals(opcaoSelecionada, "nao divulgar", StringComparison.OrdinalIgnoreCase) && !torneio.PagSeguroAtivo && string.IsNullOrEmpty(torneio.dadosBancarios) && !torneio.isGratuitoSocio)
+                {
+                    return Json(new { erro = "Não foi possível liberar inscrições, selecione uma forma de pagamento na aba Informações do torneio.", retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
+                }
 
                 torneio.isAtivo = true;
                 torneio.divulgaCidade = false;
