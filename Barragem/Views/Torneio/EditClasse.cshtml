@@ -3,7 +3,7 @@
     int qtddClasses = Model.Count();
 }
 @model IEnumerable<Barragem.Models.ClasseTorneio>
-
+    <link rel="stylesheet" href="~/Content/jsuites/jsuites.css">
     <style>
         .tooltip-inner {
             white-space: pre-wrap;
@@ -105,7 +105,8 @@
                                         @if (ViewBag.temLimiteDeInscricao != null && (bool)ViewBag.temLimiteDeInscricao)
                                         {
                                             <td>
-                                                <input type="text" class="col-md-6 form-control" name="@Html.Raw("maximoInscritos" + i)" id="@Html.Raw("maximoInscritos" + i)" value="@item.maximoInscritos">
+                                                @*<input type="text" class="col-md-6 form-control" name="@Html.Raw("maximoInscritos" + i)" id="" value="">*@
+                                                <div id="@Html.Raw("maximoInscritos" + i)" class="escolhaLimiteJogadores" data-itemSelecionado="@item.maximoInscritos" data-categoriaId="@item.Id" data-indice="@i"></div>
                                             </td>
                                         }
                                         else
@@ -201,8 +202,14 @@
         </div>
     </div>
 
+
+
     @section Scripts {
+        <script src="~/Content/jsuites/jsuites.js"></script>
         <script type="text/javascript">
+
+            var limiteJogadoresDropDownList = [];
+
             $(document).ready(function () {
 
 
@@ -317,5 +324,73 @@
                 $("#idClasse").val(idClasse);
             }
 
+            function CarregarOpcoesLimiteJogadores() {
+                var dropdownsLimiteJogador = document.getElementsByClassName("escolhaLimiteJogadores");
+
+                for (var i = 0; i < dropdownsLimiteJogador.length; i++) {
+                    //obtém opções de jogadores para carregar cada combo
+                    var opcoesDisponiveis = ObterOpcoesLimiteJogadores();
+
+                    //Cria combos e mantem instancias na lista limiteJogadoresDropDownList
+                    limiteJogadoresDropDownList.push(
+                        [
+                            dropdownsLimiteJogador[i],
+                            jSuites.dropdown(dropdownsLimiteJogador[i], {
+                                data: opcoesDisponiveis,
+                                width: 'auto',
+                                autocomplete: true,
+                                onopen: function (el) {
+                                    for (var i = 0; i < limiteJogadoresDropDownList.length; i++) {
+                                        var dropItem = limiteJogadoresDropDownList[i][1];
+                                        if (el.id != limiteJogadoresDropDownList[i][0].id && dropItem.options.opened == true) {
+                                            dropItem.close();
+                                        }
+                                        else {
+                                            dropItem.options.opened = true;
+                                        }
+                                    }
+                                },
+                            })
+                        ]
+                    );
+
+                    //Seleciona jogador no combo
+                    limiteJogadoresDropDownList[i][1].setValue(limiteJogadoresDropDownList[i][0].dataset.itemselecionado)
+                }
+
+            }
+
+            function ObterOpcoesLimiteJogadores() {
+                var opcoes = [];
+
+                for (var i = 0; i <= 100; i++) {
+                    if (i == 0) {
+                        var opcao = { "text": "Sem Limite", "value": i.toString() };
+                        opcoes.push(opcao);
+                    }
+                    else {
+                        var opcao = { "text": i.toString(), "value": i.toString() };
+                        opcoes.push(opcao);
+                    }
+                }
+                return opcoes;
+            }
+
+
+            $(document).mouseup(function (el) {
+                if (el.target.classList.contains("jdropdown-header") == false && el.target.classList.contains("jdropdown-content") == false) {
+                    for (var i = 0; i < limiteJogadoresDropDownList.length; i++) {
+                        var dropdownItem = limiteJogadoresDropDownList[i][1];
+                        if (el.id != limiteJogadoresDropDownList[i][0].id && dropdownItem.options.opened == true) {
+                            dropdownItem.close();
+                        }
+                        else {
+                            dropdownItem.options.opened = true;
+                        }
+                    }
+                }
+            });
+
+            CarregarOpcoesLimiteJogadores();
         </script>
     }
