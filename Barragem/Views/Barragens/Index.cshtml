@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Barragem.Models.Barragens>
+﻿@model IEnumerable<Barragem.Models.ListagemBarragemModel>
 
     @{
         ViewBag.Title = "Index";
@@ -18,10 +18,13 @@
                 @Html.DisplayNameFor(model => model.Id)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.nome)
+                @Html.DisplayNameFor(model => model.Nome)
+            </th>
+            <th style="width: 110px;">
+                @Html.DisplayNameFor(model => model.TipoBarragem)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.isAtiva)
+                @Html.DisplayNameFor(model => model.IsAtiva)
             </th>
             <th></th>
         </tr>
@@ -33,16 +36,24 @@
                     @Html.DisplayFor(modelItem => item.Id)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.nome)
+                    @Html.DisplayFor(modelItem => item.Nome)
+                    <a href="@item.LinkWhatsApp" target="_blank"><img width="25" height="25" src="/Content/image/whatsapp.png"></a>
                 </td>
                 <td>
-                    @if (item.isAtiva)
-                    {@Html.Raw("Ativa")}
+                    @Html.DisplayFor(modelItem => item.TipoBarragem)
+                </td>
+                <td>
+                    @if (item.IsAtiva)
+                    {
+                        @Html.Raw("Ativa")
+                    }
                     else
-                    {@Html.Raw("Desativada")}
+                    {
+                        @Html.Raw("Desativada")
+                    }
                 </td>
                 <td>
-                    @if ((Roles.IsUserInRole("admin"))||(Roles.IsUserInRole("organizador")) || (Roles.IsUserInRole("parceiroBT")))
+                    @if ((Roles.IsUserInRole("admin")) || (Roles.IsUserInRole("organizador")) || (Roles.IsUserInRole("parceiroBT")))
                     {
                         <a href="@Url.Action("Edit", new {id = @item.Id })" title="Editar/Detalhar" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-edit"></span></a>
                     }
@@ -51,4 +62,4 @@
         }
 
     </table>
-    
+

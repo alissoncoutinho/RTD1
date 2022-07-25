@@ -326,6 +326,7 @@
     <Compile Include="Models\JogoCabecaChave.cs" />
     <Compile Include="Models\DadosAlteracaoParceiroDuplaModel.cs" />
     <Compile Include="Models\Liga.cs" />
+    <Compile Include="Models\ListagemBarragemModel.cs" />
     <Compile Include="Models\ListagemTorneioModel.cs" />
     <Compile Include="Models\ListaOpcoesJogadoresModel.cs" />
     <Compile Include="Models\Log.cs" />

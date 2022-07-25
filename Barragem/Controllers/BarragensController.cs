@@ -54,7 +54,28 @@ namespace Barragem.Controllers
             {
                 barragens = db.Barragens.ToList();
             }
-            return View(barragens);
+
+
+            List<ListagemBarragemModel> listagemBarragens = new List<ListagemBarragemModel>();
+
+            if (barragens != null)
+            {
+                var administradoresBarragem = db.AdministradorBarragemView.ToList();
+                foreach (var barragem in barragens)
+                {
+                    var adminBarragemTorneio = administradoresBarragem.FirstOrDefault(x => x.idBarragem == barragem.Id);
+                    listagemBarragens.Add(new ListagemBarragemModel()
+                    {
+                        Id = barragem.Id,
+                        Nome = barragem.nome,
+                        TipoBarragem = barragem.isBeachTenis ? "Beach Tennis" : "Tênis",
+                        NomeUsuarioAdmin = adminBarragemTorneio?.userName,
+                        TelefoneCelular = adminBarragemTorneio?.telefone
+                    });
+                }
+            }
+
+            return View(listagemBarragens);
         }
 
         [Authorize(Roles = "admin")]
