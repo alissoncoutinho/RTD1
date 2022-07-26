@@ -191,8 +191,9 @@ namespace Barragem.Controllers
                 torneioId = inscricao.torneioId;
 
                 var inscritoPossuiJogos = db.Jogo.Any(j => j.classeTorneio == inscricao.classe && (j.desafiado_id == inscricao.userId || j.desafiante_id == inscricao.userId));
+                var inscritoDuplaPossuiJogos = db.Jogo.Any(j => j.classeTorneio == inscricao.classe && (j.desafiado2_id == inscricao.userId || j.desafiante2_id == inscricao.userId));
 
-                if (inscritoPossuiJogos)
+                if (inscritoPossuiJogos || inscritoDuplaPossuiJogos)
                 {
                     return RedirectToAction("EditInscritos", new { torneioId = torneioId, Msg = "Não é possível excluir jogador que já tem jogos." });
                 }
@@ -1653,8 +1654,9 @@ namespace Barragem.Controllers
                 var inscricao = db.InscricaoTorneio.Find(Id);
 
                 var inscritoPossuiJogos = db.Jogo.Any(j => j.classeTorneio == inscricao.classe && (j.desafiado_id == inscricao.userId || j.desafiante_id == inscricao.userId));
+                var inscritoDuplaPossuiJogos = db.Jogo.Any(j => j.classeTorneio == inscricao.classe && (j.desafiado2_id == inscricao.userId || j.desafiante2_id == inscricao.userId));
 
-                if (inscricao.classe != classe && inscritoPossuiJogos)
+                if (inscricao.classe != classe && (inscritoPossuiJogos || inscritoDuplaPossuiJogos))
                 {
                     return Json(new { erro = "Não é possível alterar jogador que já tem jogos.", retorno = 0 }, "text/plain", JsonRequestBehavior.AllowGet);
                 }
