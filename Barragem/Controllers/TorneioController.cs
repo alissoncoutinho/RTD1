@@ -3338,7 +3338,12 @@ namespace Barragem.Controllers
                 var jogoEraWO = jogo.situacao_Id == 5;
                 if (jogoEraWO)
                 {
-                    if (jogo.desafiante_id == Constantes.Jogo.BYE)
+                    var usuarioPerdedorWo = db.InscricaoTorneio.FirstOrDefault(x => x.torneioId == jogo.torneioId && (x.userId == jogo.desafiante_id || x.userId == jogo.desafiado_id) && x.pontuacaoFaseGrupo == -100);
+                    if (usuarioPerdedorWo != null)
+                    {
+                        perdedorWO = usuarioPerdedorWo.userId;
+                    }
+                    else if (jogo.desafiante_id == Constantes.Jogo.BYE)
                     {
                         perdedorWO = jogo.desafiado_id;
                     }
@@ -3499,7 +3504,12 @@ namespace Barragem.Controllers
                 var jogoEraWO = jogo.situacao_Id == 5;
                 if (jogoEraWO)
                 {
-                    if (jogo.desafiante_id == Constantes.Jogo.BYE)
+                    var usuarioPerdedorWo = db.InscricaoTorneio.FirstOrDefault(x => x.torneioId == jogo.torneioId && (x.userId == jogo.desafiante_id || x.userId == jogo.desafiado_id) && x.pontuacaoFaseGrupo == -100);
+                    if (usuarioPerdedorWo != null)
+                    {
+                        perdedorWO = usuarioPerdedorWo.userId;
+                    }
+                    else if (jogo.desafiante_id == Constantes.Jogo.BYE)
                     {
                         perdedorWO = jogo.desafiado_id;
                     }
