@@ -190,6 +190,13 @@ namespace Barragem.Controllers
                 var userId = inscricao.userId;
                 torneioId = inscricao.torneioId;
 
+                var inscritoPossuiJogos = db.Jogo.Any(j => j.classeTorneio == inscricao.classe && (j.desafiado_id == inscricao.userId || j.desafiante_id == inscricao.userId));
+
+                if (inscritoPossuiJogos)
+                {
+                    return RedirectToAction("EditInscritos", new { torneioId = torneioId, Msg = "Não é possível excluir jogador que já tem jogos." });
+                }
+
                 DesfazerDupla(inscricao, torneioId);
 
                 db.InscricaoTorneio.Remove(inscricao);
@@ -3329,7 +3336,14 @@ namespace Barragem.Controllers
                 var jogoEraWO = jogo.situacao_Id == 5;
                 if (jogoEraWO)
                 {
-                    perdedorWO = jogo.idDoPerdedor;
+                    if (jogo.desafiante_id == Constantes.Jogo.BYE)
+                    {
+                        perdedorWO = jogo.desafiado_id;
+                    }
+                    else
+                    {
+                        perdedorWO = jogo.idDoPerdedor;
+                    }
                 }
 
                 jogo.situacao_Id = j.situacao_Id;
@@ -3483,7 +3497,14 @@ namespace Barragem.Controllers
                 var jogoEraWO = jogo.situacao_Id == 5;
                 if (jogoEraWO)
                 {
-                    perdedorWO = jogo.idDoPerdedor;
+                    if (jogo.desafiante_id == Constantes.Jogo.BYE)
+                    {
+                        perdedorWO = jogo.desafiado_id;
+                    }
+                    else
+                    {
+                        perdedorWO = jogo.idDoPerdedor;
+                    }
                 }
 
                 jogo.situacao_Id = jogoPlacar.situacao_Id;
