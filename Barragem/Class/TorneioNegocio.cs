@@ -571,6 +571,8 @@ namespace Barragem.Class
             else if (qtdeInscritosClasse >= 25 && qtdeInscritosClasse <= 32) return 8;
             else if (qtdeInscritosClasse >= 33 && qtdeInscritosClasse <= 48) return 16;
             else if (qtdeInscritosClasse >= 49 && qtdeInscritosClasse <= 64) return 16;
+            else if (qtdeInscritosClasse >= 65 && qtdeInscritosClasse <= 128) return 32;
+            else if (qtdeInscritosClasse > 128) return 32;
             else return 0;
         }
 
