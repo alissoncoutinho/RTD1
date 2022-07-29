@@ -473,7 +473,7 @@ namespace Barragem.Controllers
             ViewBag.torneio = db.Torneio.Find(torneioId);
             var classes = db.ClasseTorneio.Where(i => i.torneioId == torneioId).OrderBy(c => c.nivel).ToList();
             ViewBag.Classes = classes;
-            //var classes2Opcao = db.ClasseTorneio.Where(i => i.torneioId == torneioId && i.isSegundaOpcao).OrderBy(c => c.nivel).ToList();
+
             ViewBag.Classes2 = classes;
             foreach (var item in classes)
             {
@@ -2166,9 +2166,6 @@ namespace Barragem.Controllers
             return View();
         }
 
-        //
-        // POST: /Account/Login
-
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
@@ -2224,6 +2221,68 @@ namespace Barragem.Controllers
             ViewBag.userName = model.UserName;
             ViewBag.torneioId = torneioId;
             return View(model);
+        }
+
+        [HttpGet]
+        public ActionResult ValidarDisponibilidadeInscricao(int torneioId, int categoriaId)
+        {
+            var respostaValidacao = new ResponseMessageWithStatus();
+            try
+            {
+                var categoria = db.ClasseTorneio.Find(categoriaId);
+
+                if (categoria.maximoInscritos == 0)
+                {
+                    respostaValidacao.status = "OK";
+                }
+
+                var qtdInscritosCategoria = db.InscricaoTorneio.Count(x => x.torneio.Id == torneioId && x.classe == categoriaId);
+
+                if (categoria.isDupla)
+                {
+                    if (categoria.maximoInscritos > qtdInscritosCategoria)
+                    {
+                        respostaValidacao.status = "OK";
+                    }
+                    else
+                    {
+                        var inscricoes = db.InscricaoTorneio.Where(x => x.torneioId == torneioId && x.classe == categoriaId);
+
+                        var duplasFormadas = inscricoes.Where(x => x.parceiroDuplaId != null);
+                        var idsParceirosDupla = duplasFormadas.Select(s => s.parceiroDuplaId);
+
+                        var inscricoesSemParceiro = inscricoes.Where(x => x.parceiroDuplaId == null);
+                        var duplasNaoFormadas = inscricoesSemParceiro.Where(x => !idsParceirosDupla.Contains(x.userId)).ToList();
+
+                        if (!duplasNaoFormadas.Any())
+                        {
+                            respostaValidacao.status = "ESGOTADO";
+                        }
+                        else
+                        {
+                            respostaValidacao.status = "ESCOLHER_DUPLA";
+                            respostaValidacao.retorno = duplasNaoFormadas;
+                        }
+                    }
+                }
+                else
+                {
+                    if (categoria.maximoInscritos > qtdInscritosCategoria)
+                    {
+                        respostaValidacao.status = "OK";
+                    }
+                    else
+                    {
+                        respostaValidacao.status = "ESGOTADO";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                respostaValidacao = new ResponseMessageWithStatus { erro = ex.Message, status = "ERRO" };
+            }
+
+            return Json(respostaValidacao, "text/plain", JsonRequestBehavior.AllowGet);
         }
 
         private static string ErrorCodeToString(MembershipCreateStatus createStatus)
