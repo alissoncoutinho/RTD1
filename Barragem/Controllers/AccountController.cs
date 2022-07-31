@@ -2224,6 +2224,7 @@ namespace Barragem.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public ActionResult ValidarDisponibilidadeInscricao(int torneioId, int categoriaId)
         {
             var respostaValidacao = new ResponseMessageWithStatus();
@@ -2235,45 +2236,47 @@ namespace Barragem.Controllers
                 {
                     respostaValidacao.status = "OK";
                 }
-
-                var qtdInscritosCategoria = db.InscricaoTorneio.Count(x => x.torneio.Id == torneioId && x.classe == categoriaId);
-
-                if (categoria.isDupla)
+                else
                 {
-                    if (categoria.maximoInscritos > qtdInscritosCategoria)
+                    var qtdInscritosCategoria = db.InscricaoTorneio.Count(x => x.torneio.Id == torneioId && x.classe == categoriaId);
+
+                    if (categoria.isDupla)
                     {
-                        respostaValidacao.status = "OK";
-                    }
-                    else
-                    {
-                        var inscricoes = db.InscricaoTorneio.Where(x => x.torneioId == torneioId && x.classe == categoriaId);
-
-                        var duplasFormadas = inscricoes.Where(x => x.parceiroDuplaId != null);
-                        var idsParceirosDupla = duplasFormadas.Select(s => s.parceiroDuplaId);
-
-                        var inscricoesSemParceiro = inscricoes.Where(x => x.parceiroDuplaId == null);
-                        var duplasNaoFormadas = inscricoesSemParceiro.Where(x => !idsParceirosDupla.Contains(x.userId)).ToList();
-
-                        if (!duplasNaoFormadas.Any())
+                        if (categoria.maximoInscritos > qtdInscritosCategoria)
                         {
-                            respostaValidacao.status = "ESGOTADO";
+                            respostaValidacao.status = "OK";
                         }
                         else
                         {
-                            respostaValidacao.status = "ESCOLHER_DUPLA";
-                            respostaValidacao.retorno = duplasNaoFormadas;
+                            var inscricoes = db.InscricaoTorneio.Where(x => x.torneioId == torneioId && x.classe == categoriaId);
+
+                            var duplasFormadas = inscricoes.Where(x => x.parceiroDuplaId != null);
+                            var idsParceirosDupla = duplasFormadas.Select(s => s.parceiroDuplaId);
+
+                            var inscricoesSemParceiro = inscricoes.Where(x => x.parceiroDuplaId == null);
+                            var duplasNaoFormadas = inscricoesSemParceiro.Where(x => !idsParceirosDupla.Contains(x.userId)).ToList();
+
+                            if (!duplasNaoFormadas.Any())
+                            {
+                                respostaValidacao.status = "ESGOTADO";
+                            }
+                            else
+                            {
+                                respostaValidacao.status = "ESCOLHER_DUPLA";
+                                respostaValidacao.retorno = duplasNaoFormadas;
+                            }
                         }
-                    }
-                }
-                else
-                {
-                    if (categoria.maximoInscritos > qtdInscritosCategoria)
-                    {
-                        respostaValidacao.status = "OK";
                     }
                     else
                     {
-                        respostaValidacao.status = "ESGOTADO";
+                        if (categoria.maximoInscritos > qtdInscritosCategoria)
+                        {
+                            respostaValidacao.status = "OK";
+                        }
+                        else
+                        {
+                            respostaValidacao.status = "ESGOTADO";
+                        }
                     }
                 }
             }
