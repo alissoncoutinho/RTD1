@@ -244,6 +244,7 @@
     <Compile Include="Controllers\AguasClarasController.cs" />
     <Compile Include="Controllers\CalendarioTorneiosController.cs" />
     <Compile Include="Controllers\CidadeController.cs" />
+    <Compile Include="Controllers\FormacaoDuplaInscricao.cs" />
     <Compile Include="Controllers\InscricaoAPIController.cs" />
     <Compile Include="Controllers\JogoAPIController.cs" />
     <Compile Include="Controllers\PaginaEspecialController.cs" />

@@ -2263,7 +2263,7 @@ namespace Barragem.Controllers
                             else
                             {
                                 respostaValidacao.status = "ESCOLHER_DUPLA";
-                                respostaValidacao.retorno = duplasNaoFormadas;
+                                respostaValidacao.retorno = duplasNaoFormadas.Select(s => new FormacaoDuplaInscricao() { Id = s.Id, UserId = s.userId, Nome = s.participante.nome }).ToList();
                             }
                         }
                     }
