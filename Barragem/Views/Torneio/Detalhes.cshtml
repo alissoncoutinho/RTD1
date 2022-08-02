@@ -76,7 +76,7 @@
                     @Html.Hidden("torneioId", Model.Id)
                     @Html.Hidden("vrInscricao", Model.valor);
                     @Html.Hidden("userId", inscricao == null ? 0 : inscricao.userId);
-                    @Html.Hidden("isClasseDupla", false);
+               
                     <div class="box-body">
                         <div class="row">
                             @if (inscricao == null)

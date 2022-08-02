@@ -1893,9 +1893,9 @@ namespace Barragem.Controllers
         }
         [Authorize(Roles = "admin,usuario,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
         [HttpPost]
-        public ActionResult Inscricao(int torneioId, int classeInscricao = 0, string operacao = "", int classeInscricao2 = 0, int classeInscricao3 = 0, int classeInscricao4 = 0, string observacao = "", bool isSocio = false, bool isFederado = false, bool isClasseDupla = false, int userId = 0)
+        public ActionResult Inscricao(int torneioId, int classeInscricao = 0, string operacao = "", int classeInscricao2 = 0, int classeInscricao3 = 0, int classeInscricao4 = 0, string observacao = "", bool isSocio = false, bool isFederado = false, int userId = 0)
         {
-            var mensagemRetorno = InscricaoNegocio(torneioId, classeInscricao, operacao, classeInscricao2, classeInscricao3, classeInscricao4, observacao, isSocio, isClasseDupla, userId, isFederado);
+            var mensagemRetorno = InscricaoNegocio(torneioId, classeInscricao, operacao, classeInscricao2, classeInscricao3, classeInscricao4, observacao, isSocio, userId, isFederado);
             if (mensagemRetorno.nomePagina == "ConfirmacaoInscricao")
             {
                 return RedirectToAction(mensagemRetorno.nomePagina, new { torneioId = torneioId, msg = mensagemRetorno.mensagem, msgErro = "", userId = userId });
@@ -1921,7 +1921,7 @@ namespace Barragem.Controllers
             }
         }
 
-        public MensagemRetorno InscricaoNegocio(int torneioId, int classeInscricao = 0, string operacao = "", int classeInscricao2 = 0, int classeInscricao3 = 0, int classeInscricao4 = 0, string observacao = "", bool isSocio = false, bool isClasseDupla = false, int userId = 0, bool isFederado = false)
+        public MensagemRetorno InscricaoNegocio(int torneioId, int classeInscricao = 0, string operacao = "", int classeInscricao2 = 0, int classeInscricao3 = 0, int classeInscricao4 = 0, string observacao = "", bool isSocio = false, int userId = 0, bool isFederado = false)
         {
             var mensagemRetorno = new MensagemRetorno();
             try
@@ -2021,12 +2021,7 @@ namespace Barragem.Controllers
                                 db.InscricaoTorneio.Add(insc4);
                             }
                             db.SaveChanges();
-                            if (isClasseDupla)
-                            {
-                                mensagemRetorno.nomePagina = "EscolherDupla";
-                                mensagemRetorno.mensagem = "";
-                                return mensagemRetorno;
-                            }
+                            
                             if (valorPendente > 0)
                             {
                                 mensagemRetorno.nomePagina = "ConfirmacaoInscricao";
@@ -2088,12 +2083,6 @@ namespace Barragem.Controllers
                 {
                     mensagemRetorno.nomePagina = "Detalhes";
                     mensagemRetorno.mensagem = "OK";
-                    return mensagemRetorno;
-                }
-                if (isClasseDupla)
-                {
-                    mensagemRetorno.nomePagina = "EscolherDupla";
-                    mensagemRetorno.mensagem = "";
                     return mensagemRetorno;
                 }
                 mensagemRetorno.nomePagina = "ConfirmacaoInscricao";

@@ -508,7 +508,7 @@ namespace Barragem.Controllers
 
 
         [AllowAnonymous]
-        public MensagemRetorno RegisterTorneioNegocio(RegisterInscricao model, int torneioId, bool isSocio = false, bool isClasseDupla = false, bool isFederado = false)
+        public MensagemRetorno RegisterTorneioNegocio(RegisterInscricao model, int torneioId, bool isSocio = false, bool isFederado = false)
         {
             var torneioController = new TorneioController();
             var torneio = db.Torneio.Find(torneioId);
@@ -576,29 +576,31 @@ namespace Barragem.Controllers
 
                     InscricaoTorneio insc = torneioController.preencherInscricaoTorneio(model.inscricao.torneioId, model.inscricao.userId, model.inscricao.classe, valorInscricao, model.inscricao.observacao, isSocio, isFederado);
                     db.InscricaoTorneio.Add(insc);
+                    db.SaveChanges();
+                    ValidarCriacaoDupla(model.idInscricaoParceiroDupla, model.inscricao.userId, model.inscricao.torneioId, model.inscricao.classe);
+
                     if (model.classeInscricao2 > 0)
                     {
                         InscricaoTorneio insc2 = torneioController.preencherInscricaoTorneio(model.inscricao.torneioId, model.inscricao.userId, model.classeInscricao2, valorInscricao, model.inscricao.observacao, isSocio, isFederado);
                         db.InscricaoTorneio.Add(insc2);
+                        db.SaveChanges();
+                        ValidarCriacaoDupla(model.idInscricaoParceiroDupla2, model.inscricao.userId, model.inscricao.torneioId, model.classeInscricao2);
                     }
                     if (model.classeInscricao3 > 0)
                     {
                         InscricaoTorneio insc3 = torneioController.preencherInscricaoTorneio(model.inscricao.torneioId, model.inscricao.userId, model.classeInscricao3, valorInscricao, model.inscricao.observacao, isSocio, isFederado);
                         db.InscricaoTorneio.Add(insc3);
+                        db.SaveChanges();
+                        ValidarCriacaoDupla(model.idInscricaoParceiroDupla3, model.inscricao.userId, model.inscricao.torneioId, model.classeInscricao3);
                     }
                     if (model.classeInscricao4 > 0)
                     {
                         InscricaoTorneio insc4 = torneioController.preencherInscricaoTorneio(model.inscricao.torneioId, model.inscricao.userId, model.classeInscricao4, valorInscricao, model.inscricao.observacao, isSocio, isFederado);
                         db.InscricaoTorneio.Add(insc4);
+                        db.SaveChanges();
+                        ValidarCriacaoDupla(model.idInscricaoParceiroDupla4, model.inscricao.userId, model.inscricao.torneioId, model.classeInscricao4);
                     }
-                    db.SaveChanges();
-                    if (isClasseDupla)
-                    {
-                        mensagemRetorno.mensagem = "";
-                        mensagemRetorno.tipo = "redirect";
-                        mensagemRetorno.nomePagina = "EscolherDupla";
-                        return mensagemRetorno;
-                    }
+                    
                     mensagemRetorno.mensagem = "Inscrição realizada.";
                     mensagemRetorno.tipo = "redirect";
                     mensagemRetorno.nomePagina = "ConfirmacaoInscricao";
@@ -631,24 +633,45 @@ namespace Barragem.Controllers
             return View();
         }
 
+        private bool ValidarCriacaoDupla(int idInscricao, int userId, int torneioId, int classeId) 
+        {
+            if (idInscricao == 0) 
+            {
+                return true;
+            }
+
+            var inscricao = db.InscricaoTorneio.Find(idInscricao);
+
+            var jaTemDupla = db.InscricaoTorneio.Any(i => i.torneioId == torneioId && i.classe == classeId && ((i.userId == userId && i.parceiroDuplaId != null) || (i.parceiroDuplaId == userId)));
+            if (jaTemDupla)
+            {
+                inscricao.parceiroDuplaId = userId;
+                db.Entry(inscricao).State = EntityState.Modified;
+                db.SaveChanges();
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
 
         [HttpPost]
         [AllowAnonymous]
-        public ActionResult RegisterTorneio(RegisterInscricao model, int torneioId, bool isSocio = false, bool isClasseDupla = false, bool isFederado = false)
+        public ActionResult RegisterTorneio(RegisterInscricao model, int torneioId, bool isSocio = false, bool isFederado = false)
         {
             var torneio = db.Torneio.Find(torneioId);
             ViewBag.torneio = torneio;
             ViewBag.email = model.register.email;
             ViewBag.login = model.register.UserName;
             ViewBag.isSocio = isSocio;
-            ViewBag.isClasseDupla = isClasseDupla;
             ViewBag.ClasseInscricao = model.inscricao.classe;
             ViewBag.ClasseInscricao2 = model.classeInscricao2;
             var classes = db.ClasseTorneio.Where(i => i.torneioId == torneioId).OrderBy(c => c.nivel).ToList();
             ViewBag.Classes = classes;
             ViewBag.Classes2 = classes;
             ViewBag.qtddInscritos = new TorneioNegocio().qtddInscritosEmCadaClasse(classes, torneioId);
-            var mensagemRetorno = RegisterTorneioNegocio(model, torneioId, isSocio, isClasseDupla, isFederado);
+            var mensagemRetorno = RegisterTorneioNegocio(model, torneioId, isSocio, isFederado);
             if (mensagemRetorno.tipo == "erro")
             {
                 ViewBag.MsgErro = mensagemRetorno.mensagem;

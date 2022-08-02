@@ -376,10 +376,10 @@ namespace Barragem.Models
         public int classeInscricao3 { get; set; }
         public int classeInscricao4 { get; set; }
 
-        public int idParceiroDupla { get; set; }
-        public int idParceiroDupla2 { get; set; }
-        public int idParceiroDupla3 { get; set; }
-        public int idParceiroDupla4 { get; set; }
+        public int idInscricaoParceiroDupla { get; set; }
+        public int idInscricaoParceiroDupla2 { get; set; }
+        public int idInscricaoParceiroDupla3 { get; set; }
+        public int idInscricaoParceiroDupla4 { get; set; }
     }
 
     public class CabecalhoPerfil

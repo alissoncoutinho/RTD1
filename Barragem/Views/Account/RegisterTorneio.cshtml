@@ -245,7 +245,7 @@
 
                         <!--Inscrição 1ª Categoria-->
                         <div class="row">
-                            <input type="hidden" name="idParceiroDupla" id="idParceiroDupla">
+                            <input type="hidden" name="idInscricaoParceiroDupla" id="idInscricaoParceiroDupla">
                             @Html.Label("Categoria", new { @class = "col-sm-4" })
                             <div class="col-sm-8 info-box-text">
                                 <select name="inscricao.classe" id="inscricao.classe" data-totalCategorias="@torneio.qtddCategoriasPorJogador" data-numCategoria="1" data-torneioId="@torneio.Id" class="form-control" onchange="ValidarCategoriaSelecionada(this)">
@@ -274,10 +274,10 @@
                             </div>
                             <div class="row">
                                 <div id="segundaOpcaoClasse">
-                                    <input type="hidden" name="idParceiroDupla2" id="idParceiroDupla2">
+                                    <input type="hidden" name="idInscricaoParceiroDupla2" id="idInscricaoParceiroDupla2">
                                     @Html.Label("2ª Opção", new { @class = "col-sm-4" })
                                     <div class="col-sm-8 info-box-text">
-                                        <select name="classeInscricao2" class="form-control" data-totalCategorias="@torneio.qtddCategoriasPorJogador" data-numCategoria="2" data-torneioId="@torneio.Id" onchange="ValidarCategoriaSelecionada(this)">
+                                        <select name="classeInscricao2" id="classeInscricao3" class="form-control" data-totalCategorias="@torneio.qtddCategoriasPorJogador" data-numCategoria="2" data-torneioId="@torneio.Id" onchange="ValidarCategoriaSelecionada(this)">
                                             <option value="0">Selecione uma categoria...</option>
                                             @foreach (var item in ViewBag.Classes2)
                                             {
@@ -305,10 +305,10 @@
                             </div>
                             <div class="row">
                                 <div id="terceiraOpcaoClasse">
-                                    <input type="hidden" name="idParceiroDupla3" id="idParceiroDupla3">
+                                    <input type="hidden" name="idInscricaoParceiroDupla3" id="idInscricaoParceiroDupla3">
                                     @Html.Label("3ª Opção", new { @class = "col-sm-4" })
                                     <div class="col-sm-8 info-box-text">
-                                        <select name="classeInscricao3" class="form-control" data-totalCategorias="@torneio.qtddCategoriasPorJogador" data-numCategoria="3" data-torneioId="@torneio.Id" onchange="ValidarCategoriaSelecionada(this)">
+                                        <select name="classeInscricao3" id="classeInscricao3" class="form-control" data-totalCategorias="@torneio.qtddCategoriasPorJogador" data-numCategoria="3" data-torneioId="@torneio.Id" onchange="ValidarCategoriaSelecionada(this)">
                                             <option value="0">Selecione uma categoria...</option>
                                             @foreach (var item in ViewBag.Classes2)
                                             {
@@ -336,10 +336,10 @@
                             </div>
                             <div class="row">
                                 <div id="quartaOpcaoClasse">
-                                    <input type="hidden" name="idParceiroDupla4" id="idParceiroDupla4">
+                                    <input type="hidden" name="idInscricaoParceiroDupla4" id="idInscricaoParceiroDupla4">
                                     @Html.Label("4ª Opção", new { @class = "col-sm-4" })
                                     <div class="col-sm-8 info-box-text">
-                                        <select name="classeInscricao4" class="form-control" data-totalCategorias="@torneio.qtddCategoriasPorJogador" data-numCategoria="4" data-torneioId="@torneio.Id" onchange="ValidarCategoriaSelecionada(this)">
+                                        <select name="classeInscricao4" id="classeInscricao4" class="form-control" data-totalCategorias="@torneio.qtddCategoriasPorJogador" data-numCategoria="4" data-torneioId="@torneio.Id" onchange="ValidarCategoriaSelecionada(this)">
                                             <option value="0">Selecione uma categoria...</option>
                                             @foreach (var item in ViewBag.Classes2)
                                             {
@@ -460,7 +460,7 @@ jQuery(function ($) {
         });
 
         function ValidarCategoriaSelecionada(el) {
-            var categoriaSelecionada = document.getElementById("inscricao.classe").value;
+            var categoriaSelecionada = el.value;
             var torneioId = el.dataset.torneioid;
             if (categoriaSelecionada > 0) {
                 ValidarDisponibilidadeInscricao(torneioId, categoriaSelecionada, el);
@@ -492,8 +492,6 @@ jQuery(function ($) {
                             CarregarTabelaFormacaoDupla(response.retorno, dropDown);
                             document.getElementById("nomeSelectCategoria").value = dropDown.id;
                             $("#modalMontarDupla").modal('show');
-                            //SELECIONA PARCEIRO OU CANCELA ACAO
-                            //SE SELECIONOU?
                         }
                         else {
                             ValidarInscricaoMultiplasCategorias(dropDown);
@@ -512,7 +510,7 @@ jQuery(function ($) {
             var table = document.getElementById("tblFormacaoDupla");
             for (var i = 0; i < dados.length; i++) {
                 var row = table.insertRow(1);
-                row.innerHTML = "<td>" + dados[i].Nome + "</td><td>" + "<button title=\"Escolher dupla\"  data-numCategoria=\"" + el.dataset.numcategoria + "\" data-userid=\"" + dados[i].UserId + "\" id=\"" + dados[i].Id + "\" class=\"col-lg-12 col-xs-12 btn btn-primary btn-xs\" onclick=\"SelecionarParceiro(this)\">Escolher</button>" + "</td>";
+                row.innerHTML = "<td>" + dados[i].Nome + "</td><td>" + "<button title=\"Escolher dupla\" data-numCategoria=\"" + el.dataset.numcategoria + "\" data-userid=\"" + dados[i].UserId + "\" id=\"" + dados[i].Id + "\" class=\"col-lg-12 col-xs-12 btn btn-primary btn-xs\" onclick=\"SelecionarParceiro(this)\">Escolher</button>" + "</td>";
             }
         }
 
@@ -526,9 +524,12 @@ jQuery(function ($) {
 
         function SelecionarParceiro(el) {
             var idInscricao = el.dataset.id;
-            var userId = el.dataset.userid;
-            AplicarDuplaEscolhida(userId, el.dataset.numcategoria);
+            //var userId = el.dataset.userid;
+            AplicarDuplaEscolhida(idInscricao, el.dataset.numcategoria);
             $("#modalMontarDupla").modal('hide');
+
+            var nomeCombo = document.getElementById("nomeSelectCategoria").value;
+            ValidarInscricaoMultiplasCategorias(document.getElementById(nomeCombo));
         }
 
         function ValidarInscricaoMultiplasCategorias(el) {
@@ -566,18 +567,18 @@ jQuery(function ($) {
             });
         }
 
-        function AplicarDuplaEscolhida(userId, numCategoria) {
+        function AplicarDuplaEscolhida(idInscricao, numCategoria) {
             if (numCategoria == "1") {
-                document.getElementById('idParceiroDupla').value = userId;
+                document.getElementById('idInscricaoParceiroDupla').value = idInscricao;
             }
             else if (numCategoria == "2") {
-                document.getElementById('idParceiroDupla2').value = userId;
+                document.getElementById('idInscricaoParceiroDupla2').value = idInscricao;
             }
             else if (numCategoria == "3") {
-                document.getElementById('idParceiroDupla3').value = userId;
+                document.getElementById('idInscricaoParceiroDupla3').value = idInscricao;
             }
             else if (numCategoria == "4") {
-                document.getElementById('idParceiroDupla4').value = userId;
+                document.getElementById('idInscricaoParceiroDupla4').value = idInscricao;
             }
         }
 
