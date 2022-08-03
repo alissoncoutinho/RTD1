@@ -1977,7 +1977,7 @@ namespace Barragem.Controllers
                             }
                             else if (classeInscricao2 != 0)
                             {
-                                msgValidacaoClasse = validarLimiteDeInscricao(classeInscricao2);
+                                msgValidacaoClasse = validarLimiteDeInscricao(classeInscricao2, torneioId);
                                 if (msgValidacaoClasse != "")
                                 {
                                     mensagemRetorno.nomePagina = "Detalhes";
@@ -1994,7 +1994,7 @@ namespace Barragem.Controllers
                             }
                             else if (classeInscricao3 != 0)
                             {
-                                msgValidacaoClasse = validarLimiteDeInscricao(classeInscricao3);
+                                msgValidacaoClasse = validarLimiteDeInscricao(classeInscricao3, torneioId);
                                 if (msgValidacaoClasse != "")
                                 {
                                     mensagemRetorno.nomePagina = "Detalhes";
@@ -2010,7 +2010,7 @@ namespace Barragem.Controllers
                             }
                             else if (classeInscricao4 != 0)
                             {
-                                msgValidacaoClasse = validarLimiteDeInscricao(classeInscricao4);
+                                msgValidacaoClasse = validarLimiteDeInscricao(classeInscricao4, torneioId);
                                 if (msgValidacaoClasse != "")
                                 {
                                     mensagemRetorno.nomePagina = "Detalhes";
@@ -2021,7 +2021,7 @@ namespace Barragem.Controllers
                                 db.InscricaoTorneio.Add(insc4);
                             }
                             db.SaveChanges();
-                            
+
                             if (valorPendente > 0)
                             {
                                 mensagemRetorno.nomePagina = "ConfirmacaoInscricao";
@@ -2115,60 +2115,39 @@ namespace Barragem.Controllers
 
         public String validarLimiteDeInscricao(int classeInscricao, int classeInscricao2, int classeInscricao3, int classeInscricao4, int torneioId)
         {
-            var classes = db.ClasseTorneio.Where(c => c.torneioId == torneioId && c.maximoInscritos > 0).ToList();
-            for (int i = 0; i < 4; i++)
+            var listaCategorias = new List<int> { { classeInscricao }, { classeInscricao2 }, { classeInscricao3 }, { classeInscricao4 } };
+
+            foreach (var categoria in listaCategorias)
             {
-                var clInscrito = 0;
-                if (i == 0)
+                if (categoria <= 0)
                 {
-                    clInscrito = classeInscricao;
+                    continue;
                 }
-                else if (i == 1)
-                {
-                    clInscrito = classeInscricao2;
-                }
-                else if (i == 2)
-                {
-                    clInscrito = classeInscricao3;
-                }
-                else if (i == 3)
-                {
-                    clInscrito = classeInscricao4;
-                }
-                try
-                {
-                    var classeSelecionada = classes.Where(j => j.Id == clInscrito).First();
-                    var qtddInscritos = db.InscricaoTorneio.Where(j => j.classe == clInscrito).Count();
-                    if (qtddInscritos >= classeSelecionada.maximoInscritos)
-                    {
-                        return "Vagas esgotadas para a classe: " + classeSelecionada.nome + ".";
-                    }
-                }
-                catch (Exception e) { }
 
+                var resposta = tn.ValidarDisponibilidadeInscricoes(torneioId, categoria);
+                if (resposta.status == "ESGOTADO")
+                {
+                    var classeSelecionada = db.ClasseTorneio.Where(x => x.torneioId == torneioId && x.Id == categoria).FirstOrDefault();
+                    return "Vagas esgotadas para a classe: " + classeSelecionada?.nome + ".";
+                }
             }
-            return "";
-
+            return string.Empty;
         }
 
-        private String validarLimiteDeInscricao(int classeInscricao)
+        private String validarLimiteDeInscricao(int categoria, int torneioId)
         {
-
-            try
+            if (categoria <= 0)
             {
-                var classeSelecionada = db.ClasseTorneio.Find(classeInscricao);
-                if (classeSelecionada.maximoInscritos > 0)
-                {
-                    var qtddInscritos = db.InscricaoTorneio.Where(j => j.classe == classeInscricao).Count();
-                    if (qtddInscritos >= classeSelecionada.maximoInscritos)
-                    {
-                        return "Vagas esgotadas para a classe: " + classeSelecionada.nome + ".";
-                    }
-                }
+                return string.Empty;
             }
-            catch (Exception e) { }
 
-            return "";
+            var resposta = tn.ValidarDisponibilidadeInscricoes(torneioId, categoria);
+            if (resposta.status == "ESGOTADO")
+            {
+                var classeSelecionada = db.ClasseTorneio.Where(x => x.torneioId == torneioId && x.Id == categoria).FirstOrDefault();
+                return "Vagas esgotadas para a classe: " + classeSelecionada?.nome + ".";
+            }
+            return string.Empty;
 
         }
 

@@ -474,7 +474,6 @@ namespace Barragem.Controllers
             var classes = db.ClasseTorneio.Where(i => i.torneioId == torneioId).OrderBy(c => c.nivel).ToList();
             ViewBag.Classes = classes;
 
-            ViewBag.Classes2 = classes;
             foreach (var item in classes)
             {
                 if (item.maximoInscritos > 0)
@@ -600,7 +599,7 @@ namespace Barragem.Controllers
                         db.SaveChanges();
                         ValidarCriacaoDupla(model.idInscricaoParceiroDupla4, model.inscricao.userId, model.inscricao.torneioId, model.classeInscricao4);
                     }
-                    
+
                     mensagemRetorno.mensagem = "Inscrição realizada.";
                     mensagemRetorno.tipo = "redirect";
                     mensagemRetorno.nomePagina = "ConfirmacaoInscricao";
@@ -633,9 +632,9 @@ namespace Barragem.Controllers
             return View();
         }
 
-        private bool ValidarCriacaoDupla(int idInscricao, int userId, int torneioId, int classeId) 
+        private bool ValidarCriacaoDupla(int idInscricao, int userId, int torneioId, int classeId)
         {
-            if (idInscricao == 0) 
+            if (idInscricao == 0)
             {
                 return true;
             }
@@ -643,7 +642,7 @@ namespace Barragem.Controllers
             var inscricao = db.InscricaoTorneio.Find(idInscricao);
 
             var jaTemDupla = db.InscricaoTorneio.Any(i => i.torneioId == torneioId && i.classe == classeId && ((i.userId == userId && i.parceiroDuplaId != null) || (i.parceiroDuplaId == userId)));
-            if (jaTemDupla)
+            if (!jaTemDupla)
             {
                 inscricao.parceiroDuplaId = userId;
                 db.Entry(inscricao).State = EntityState.Modified;
@@ -669,7 +668,6 @@ namespace Barragem.Controllers
             ViewBag.ClasseInscricao2 = model.classeInscricao2;
             var classes = db.ClasseTorneio.Where(i => i.torneioId == torneioId).OrderBy(c => c.nivel).ToList();
             ViewBag.Classes = classes;
-            ViewBag.Classes2 = classes;
             ViewBag.qtddInscritos = new TorneioNegocio().qtddInscritosEmCadaClasse(classes, torneioId);
             var mensagemRetorno = RegisterTorneioNegocio(model, torneioId, isSocio, isFederado);
             if (mensagemRetorno.tipo == "erro")
@@ -2250,65 +2248,8 @@ namespace Barragem.Controllers
         [AllowAnonymous]
         public ActionResult ValidarDisponibilidadeInscricao(int torneioId, int categoriaId)
         {
-            var respostaValidacao = new ResponseMessageWithStatus();
-            try
-            {
-                var categoria = db.ClasseTorneio.Find(categoriaId);
-
-                if (categoria.maximoInscritos == 0)
-                {
-                    respostaValidacao.status = "OK";
-                }
-                else
-                {
-                    var qtdInscritosCategoria = db.InscricaoTorneio.Count(x => x.torneio.Id == torneioId && x.classe == categoriaId);
-
-                    if (categoria.isDupla)
-                    {
-                        if (categoria.maximoInscritos > qtdInscritosCategoria)
-                        {
-                            respostaValidacao.status = "OK";
-                        }
-                        else
-                        {
-                            var inscricoes = db.InscricaoTorneio.Where(x => x.torneioId == torneioId && x.classe == categoriaId);
-
-                            var duplasFormadas = inscricoes.Where(x => x.parceiroDuplaId != null);
-                            var idsParceirosDupla = duplasFormadas.Select(s => s.parceiroDuplaId);
-
-                            var inscricoesSemParceiro = inscricoes.Where(x => x.parceiroDuplaId == null);
-                            var duplasNaoFormadas = inscricoesSemParceiro.Where(x => !idsParceirosDupla.Contains(x.userId)).ToList();
-
-                            if (!duplasNaoFormadas.Any())
-                            {
-                                respostaValidacao.status = "ESGOTADO";
-                            }
-                            else
-                            {
-                                respostaValidacao.status = "ESCOLHER_DUPLA";
-                                respostaValidacao.retorno = duplasNaoFormadas.Select(s => new FormacaoDuplaInscricao() { Id = s.Id, UserId = s.userId, Nome = s.participante.nome }).ToList();
-                            }
-                        }
-                    }
-                    else
-                    {
-                        if (categoria.maximoInscritos > qtdInscritosCategoria)
-                        {
-                            respostaValidacao.status = "OK";
-                        }
-                        else
-                        {
-                            respostaValidacao.status = "ESGOTADO";
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                respostaValidacao = new ResponseMessageWithStatus { erro = ex.Message, status = "ERRO" };
-            }
-
-            return Json(respostaValidacao, "text/plain", JsonRequestBehavior.AllowGet);
+            var tn = new TorneioNegocio();
+            return Json(tn.ValidarDisponibilidadeInscricoes(torneioId, categoriaId), "text/plain", JsonRequestBehavior.AllowGet);
         }
 
         private static string ErrorCodeToString(MembershipCreateStatus createStatus)

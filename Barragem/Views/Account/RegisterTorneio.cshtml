@@ -116,7 +116,7 @@
                     </div>
                     <div class="box-body">
                         <div class="row">
-                            @Html.Label("Uma categoria", new { @class = "col-sm-5" })
+                            @Html.Label("Uma Categoria", new { @class = "col-sm-5" })
                             <div class="col-sm-7 info-box-text">
                                 @Html.Hidden("inscricao.torneioId", torneio.Id)
 
@@ -245,7 +245,7 @@
 
                         <!--Inscrição 1ª Categoria-->
                         <div class="row">
-                            <input type="hidden" name="idInscricaoParceiroDupla" id="idInscricaoParceiroDupla">
+                            <input type="hidden" name="idInscricaoParceiroDupla" id="idInscricaoParceiroDupla" value="0">
                             @Html.Label("Categoria", new { @class = "col-sm-4" })
                             <div class="col-sm-8 info-box-text">
                                 <select name="inscricao.classe" id="inscricao.classe" data-totalCategorias="@torneio.qtddCategoriasPorJogador" data-numCategoria="1" data-torneioId="@torneio.Id" class="form-control" onchange="ValidarCategoriaSelecionada(this)">
@@ -274,12 +274,12 @@
                             </div>
                             <div class="row">
                                 <div id="segundaOpcaoClasse">
-                                    <input type="hidden" name="idInscricaoParceiroDupla2" id="idInscricaoParceiroDupla2">
+                                    <input type="hidden" name="idInscricaoParceiroDupla2" id="idInscricaoParceiroDupla2" value="0">
                                     @Html.Label("2ª Opção", new { @class = "col-sm-4" })
                                     <div class="col-sm-8 info-box-text">
-                                        <select name="classeInscricao2" id="classeInscricao3" class="form-control" data-totalCategorias="@torneio.qtddCategoriasPorJogador" data-numCategoria="2" data-torneioId="@torneio.Id" onchange="ValidarCategoriaSelecionada(this)">
+                                        <select name="classeInscricao2" id="classeInscricao2" class="form-control" data-totalCategorias="@torneio.qtddCategoriasPorJogador" data-numCategoria="2" data-torneioId="@torneio.Id" onchange="ValidarCategoriaSelecionada(this)">
                                             <option value="0">Selecione uma categoria...</option>
-                                            @foreach (var item in ViewBag.Classes2)
+                                            @foreach (var item in ViewBag.Classes)
                                             {
                                                 <option value="@item.Id" data-isDupla="@item.isDupla">@item.nome</option>
                                             }
@@ -305,12 +305,12 @@
                             </div>
                             <div class="row">
                                 <div id="terceiraOpcaoClasse">
-                                    <input type="hidden" name="idInscricaoParceiroDupla3" id="idInscricaoParceiroDupla3">
+                                    <input type="hidden" name="idInscricaoParceiroDupla3" id="idInscricaoParceiroDupla3" value="0">
                                     @Html.Label("3ª Opção", new { @class = "col-sm-4" })
                                     <div class="col-sm-8 info-box-text">
                                         <select name="classeInscricao3" id="classeInscricao3" class="form-control" data-totalCategorias="@torneio.qtddCategoriasPorJogador" data-numCategoria="3" data-torneioId="@torneio.Id" onchange="ValidarCategoriaSelecionada(this)">
                                             <option value="0">Selecione uma categoria...</option>
-                                            @foreach (var item in ViewBag.Classes2)
+                                            @foreach (var item in ViewBag.Classes)
                                             {
                                                 <option value="@item.Id" data-isDupla="@item.isDupla">@item.nome</option>
                                             }
@@ -336,12 +336,12 @@
                             </div>
                             <div class="row">
                                 <div id="quartaOpcaoClasse">
-                                    <input type="hidden" name="idInscricaoParceiroDupla4" id="idInscricaoParceiroDupla4">
+                                    <input type="hidden" name="idInscricaoParceiroDupla4" id="idInscricaoParceiroDupla4" value="0">
                                     @Html.Label("4ª Opção", new { @class = "col-sm-4" })
                                     <div class="col-sm-8 info-box-text">
                                         <select name="classeInscricao4" id="classeInscricao4" class="form-control" data-totalCategorias="@torneio.qtddCategoriasPorJogador" data-numCategoria="4" data-torneioId="@torneio.Id" onchange="ValidarCategoriaSelecionada(this)">
                                             <option value="0">Selecione uma categoria...</option>
-                                            @foreach (var item in ViewBag.Classes2)
+                                            @foreach (var item in ViewBag.Classes)
                                             {
                                                 <option value="@item.Id" data-isDupla="@item.isDupla">@item.nome</option>
                                             }
@@ -510,7 +510,7 @@ jQuery(function ($) {
             var table = document.getElementById("tblFormacaoDupla");
             for (var i = 0; i < dados.length; i++) {
                 var row = table.insertRow(1);
-                row.innerHTML = "<td>" + dados[i].Nome + "</td><td>" + "<button title=\"Escolher dupla\" data-numCategoria=\"" + el.dataset.numcategoria + "\" data-userid=\"" + dados[i].UserId + "\" id=\"" + dados[i].Id + "\" class=\"col-lg-12 col-xs-12 btn btn-primary btn-xs\" onclick=\"SelecionarParceiro(this)\">Escolher</button>" + "</td>";
+                row.innerHTML = "<td>" + dados[i].Nome + "</td><td>" + "<button title=\"Escolher dupla\" data-numCategoria=\"" + el.dataset.numcategoria + "\" data-userid=\"" + dados[i].UserId + "\" data-id=\"" + dados[i].Id + "\" class=\"col-lg-12 col-xs-12 btn btn-primary btn-xs\" onclick=\"SelecionarParceiro(this)\">Escolher</button>" + "</td>";
             }
         }
 
@@ -605,6 +605,9 @@ jQuery(function ($) {
                 document.getElementById('segundaOpcaoClasse').style.opacity = "0 !important";
                 document.getElementById('segundaOpcaoClasse').style.display = "none";
             }
+
+            var categoria1Selecionada = document.getElementById("inscricao.classe").value;
+            $("#classeInscricao2").find('[value="' + categoria1Selecionada + '"]').remove();
         }
 
         function terceiraOpcaoDeClasse() {
@@ -615,6 +618,11 @@ jQuery(function ($) {
                 document.getElementById('terceiraOpcaoClasse').style.opacity = "0 !important";
                 document.getElementById('terceiraOpcaoClasse').style.display = "none";
             }
+
+            var categoria1Selecionada = document.getElementById("inscricao.classe").value;
+            var categoria2Selecionada = document.getElementById("classeInscricao2").value;
+            $("#classeInscricao3").find('[value="' + categoria1Selecionada + '"]').remove();
+            $("#classeInscricao3").find('[value="' + categoria2Selecionada + '"]').remove();
         }
 
         function quartaOpcaoDeClasse() {
@@ -625,6 +633,13 @@ jQuery(function ($) {
                 document.getElementById('quartaOpcaoClasse').style.opacity = "0 !important";
                 document.getElementById('quartaOpcaoClasse').style.display = "none";
             }
+
+            var categoria1Selecionada = document.getElementById("inscricao.classe").value;
+            var categoria2Selecionada = document.getElementById("classeInscricao2").value;
+            var categoria3Selecionada = document.getElementById("classeInscricao3").value;
+            $("#classeInscricao4").find('[value="' + categoria1Selecionada + '"]').remove();
+            $("#classeInscricao4").find('[value="' + categoria2Selecionada + '"]').remove();
+            $("#classeInscricao4").find('[value="' + categoria3Selecionada + '"]').remove();
         }
 
         function CancelarEscolhaDupla() {
