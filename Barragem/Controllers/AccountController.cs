@@ -509,6 +509,7 @@ namespace Barragem.Controllers
         [AllowAnonymous]
         public MensagemRetorno RegisterTorneioNegocio(RegisterInscricao model, int torneioId, bool isSocio = false, bool isFederado = false)
         {
+            var tn = new TorneioNegocio();
             var torneioController = new TorneioController();
             var torneio = db.Torneio.Find(torneioId);
             var classesBarragem = db.Classe.Where(c => c.barragemId == torneio.barragemId).ToList();
@@ -576,28 +577,28 @@ namespace Barragem.Controllers
                     InscricaoTorneio insc = torneioController.preencherInscricaoTorneio(model.inscricao.torneioId, model.inscricao.userId, model.inscricao.classe, valorInscricao, model.inscricao.observacao, isSocio, isFederado);
                     db.InscricaoTorneio.Add(insc);
                     db.SaveChanges();
-                    ValidarCriacaoDupla(model.idInscricaoParceiroDupla, model.inscricao.userId, model.inscricao.torneioId, model.inscricao.classe);
+                    tn.ValidarCriacaoDupla(model.idInscricaoParceiroDupla, model.inscricao.userId, model.inscricao.torneioId, model.inscricao.classe);
 
                     if (model.classeInscricao2 > 0)
                     {
                         InscricaoTorneio insc2 = torneioController.preencherInscricaoTorneio(model.inscricao.torneioId, model.inscricao.userId, model.classeInscricao2, valorInscricao, model.inscricao.observacao, isSocio, isFederado);
                         db.InscricaoTorneio.Add(insc2);
                         db.SaveChanges();
-                        ValidarCriacaoDupla(model.idInscricaoParceiroDupla2, model.inscricao.userId, model.inscricao.torneioId, model.classeInscricao2);
+                        tn.ValidarCriacaoDupla(model.idInscricaoParceiroDupla2, model.inscricao.userId, model.inscricao.torneioId, model.classeInscricao2);
                     }
                     if (model.classeInscricao3 > 0)
                     {
                         InscricaoTorneio insc3 = torneioController.preencherInscricaoTorneio(model.inscricao.torneioId, model.inscricao.userId, model.classeInscricao3, valorInscricao, model.inscricao.observacao, isSocio, isFederado);
                         db.InscricaoTorneio.Add(insc3);
                         db.SaveChanges();
-                        ValidarCriacaoDupla(model.idInscricaoParceiroDupla3, model.inscricao.userId, model.inscricao.torneioId, model.classeInscricao3);
+                        tn.ValidarCriacaoDupla(model.idInscricaoParceiroDupla3, model.inscricao.userId, model.inscricao.torneioId, model.classeInscricao3);
                     }
                     if (model.classeInscricao4 > 0)
                     {
                         InscricaoTorneio insc4 = torneioController.preencherInscricaoTorneio(model.inscricao.torneioId, model.inscricao.userId, model.classeInscricao4, valorInscricao, model.inscricao.observacao, isSocio, isFederado);
                         db.InscricaoTorneio.Add(insc4);
                         db.SaveChanges();
-                        ValidarCriacaoDupla(model.idInscricaoParceiroDupla4, model.inscricao.userId, model.inscricao.torneioId, model.classeInscricao4);
+                        tn.ValidarCriacaoDupla(model.idInscricaoParceiroDupla4, model.inscricao.userId, model.inscricao.torneioId, model.classeInscricao4);
                     }
 
                     mensagemRetorno.mensagem = "Inscrição realizada.";
@@ -630,29 +631,6 @@ namespace Barragem.Controllers
         {
             ViewBag.barragemId = new SelectList(db.BarragemView.ToList(), "Id", "nome");
             return View();
-        }
-
-        private bool ValidarCriacaoDupla(int idInscricao, int userId, int torneioId, int classeId)
-        {
-            if (idInscricao == 0)
-            {
-                return true;
-            }
-
-            var inscricao = db.InscricaoTorneio.Find(idInscricao);
-
-            var jaTemDupla = db.InscricaoTorneio.Any(i => i.torneioId == torneioId && i.classe == classeId && ((i.userId == userId && i.parceiroDuplaId != null) || (i.parceiroDuplaId == userId)));
-            if (!jaTemDupla)
-            {
-                inscricao.parceiroDuplaId = userId;
-                db.Entry(inscricao).State = EntityState.Modified;
-                db.SaveChanges();
-                return true;
-            }
-            else
-            {
-                return false;
-            }
         }
 
         [HttpPost]

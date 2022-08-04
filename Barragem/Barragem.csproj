@@ -1192,7 +1192,7 @@
     <Content Include="Views\Shared\_Rodape3.cshtml" />
     <Content Include="Views\Torneio\ImprimirGrupos.cshtml" />
     <Content Include="Views\Torneio\_PartialAcaoCategoriasInscricoesNaoPagas.cshtml" />
-    <Content Include="Views\Account\_PartialEscolhaDupla.cshtml" />
+    <Content Include="Views\Shared\_PartialEscolhaDupla.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

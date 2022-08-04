@@ -1893,9 +1893,9 @@ namespace Barragem.Controllers
         }
         [Authorize(Roles = "admin,usuario,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
         [HttpPost]
-        public ActionResult Inscricao(int torneioId, int classeInscricao = 0, string operacao = "", int classeInscricao2 = 0, int classeInscricao3 = 0, int classeInscricao4 = 0, string observacao = "", bool isSocio = false, bool isFederado = false, int userId = 0)
+        public ActionResult Inscricao(int torneioId, int classeInscricao = 0, string operacao = "", int classeInscricao2 = 0, int classeInscricao3 = 0, int classeInscricao4 = 0, string observacao = "", bool isSocio = false, bool isFederado = false, int userId = 0, int idInscricaoParceiroDupla = 0, int idInscricaoParceiroDupla2 = 0, int idInscricaoParceiroDupla3 = 0, int idInscricaoParceiroDupla4 = 0)
         {
-            var mensagemRetorno = InscricaoNegocio(torneioId, classeInscricao, operacao, classeInscricao2, classeInscricao3, classeInscricao4, observacao, isSocio, userId, isFederado);
+            var mensagemRetorno = InscricaoNegocio(torneioId, classeInscricao, operacao, classeInscricao2, classeInscricao3, classeInscricao4, observacao, isSocio, userId, isFederado, idInscricaoParceiroDupla, idInscricaoParceiroDupla2, idInscricaoParceiroDupla3, idInscricaoParceiroDupla4);
             if (mensagemRetorno.nomePagina == "ConfirmacaoInscricao")
             {
                 return RedirectToAction(mensagemRetorno.nomePagina, new { torneioId = torneioId, msg = mensagemRetorno.mensagem, msgErro = "", userId = userId });
@@ -1921,7 +1921,7 @@ namespace Barragem.Controllers
             }
         }
 
-        public MensagemRetorno InscricaoNegocio(int torneioId, int classeInscricao = 0, string operacao = "", int classeInscricao2 = 0, int classeInscricao3 = 0, int classeInscricao4 = 0, string observacao = "", bool isSocio = false, int userId = 0, bool isFederado = false)
+        public MensagemRetorno InscricaoNegocio(int torneioId, int classeInscricao = 0, string operacao = "", int classeInscricao2 = 0, int classeInscricao3 = 0, int classeInscricao4 = 0, string observacao = "", bool isSocio = false, int userId = 0, bool isFederado = false, int idInscricaoParceiroDupla = 0, int idInscricaoParceiroDupla2 = 0, int idInscricaoParceiroDupla3 = 0, int idInscricaoParceiroDupla4 = 0)
         {
             var mensagemRetorno = new MensagemRetorno();
             try
@@ -1987,6 +1987,9 @@ namespace Barragem.Controllers
 
                                 InscricaoTorneio insc2 = preencherInscricaoTorneio(torneioId, userId, classeInscricao2, valorInscricao, observacao, isSocio, isFederado, valorPendente, it[0].isAtivo);
                                 db.InscricaoTorneio.Add(insc2);
+                                db.SaveChanges();
+                                tn.ValidarCriacaoDupla(idInscricaoParceiroDupla2, userId, torneioId, classeInscricao2);
+
                             }
                             if (it.Count() > 2)
                             {
@@ -2003,6 +2006,8 @@ namespace Barragem.Controllers
                                 }
                                 InscricaoTorneio insc3 = preencherInscricaoTorneio(torneioId, userId, classeInscricao3, valorInscricao, observacao, isSocio, isFederado, valorPendente, it[0].isAtivo);
                                 db.InscricaoTorneio.Add(insc3);
+                                db.SaveChanges();
+                                tn.ValidarCriacaoDupla(idInscricaoParceiroDupla3, userId, torneioId, classeInscricao3);
                             }
                             if (it.Count() > 3)
                             {
@@ -2019,6 +2024,8 @@ namespace Barragem.Controllers
                                 }
                                 InscricaoTorneio insc4 = preencherInscricaoTorneio(torneioId, userId, classeInscricao4, valorInscricao, observacao, isSocio, isFederado, valorPendente, it[0].isAtivo);
                                 db.InscricaoTorneio.Add(insc4);
+                                db.SaveChanges();
+                                tn.ValidarCriacaoDupla(idInscricaoParceiroDupla4, userId, torneioId, classeInscricao4);
                             }
                             db.SaveChanges();
 
@@ -2055,20 +2062,29 @@ namespace Barragem.Controllers
 
                     inscricao = preencherInscricaoTorneio(torneioId, userId, classeInscricao, valorInscricao, observacao, isSocio, isFederado);
                     db.InscricaoTorneio.Add(inscricao);
+                    db.SaveChanges();
+                    tn.ValidarCriacaoDupla(idInscricaoParceiroDupla, userId, torneioId, classeInscricao);
+
                     if (classeInscricao2 > 0)
                     {
                         InscricaoTorneio insc2 = preencherInscricaoTorneio(torneioId, userId, classeInscricao2, valorInscricao, observacao, isSocio, isFederado);
                         db.InscricaoTorneio.Add(insc2);
+                        db.SaveChanges();
+                        tn.ValidarCriacaoDupla(idInscricaoParceiroDupla2, userId, torneioId, classeInscricao2);
                     }
                     if (classeInscricao3 > 0)
                     {
                         InscricaoTorneio insc3 = preencherInscricaoTorneio(torneioId, userId, classeInscricao3, valorInscricao, observacao, isSocio, isFederado);
                         db.InscricaoTorneio.Add(insc3);
+                        db.SaveChanges();
+                        tn.ValidarCriacaoDupla(idInscricaoParceiroDupla3, userId, torneioId, classeInscricao3);
                     }
                     if (classeInscricao4 > 0)
                     {
                         InscricaoTorneio insc4 = preencherInscricaoTorneio(torneioId, userId, classeInscricao4, valorInscricao, observacao, isSocio, isFederado);
                         db.InscricaoTorneio.Add(insc4);
+                        db.SaveChanges();
+                        tn.ValidarCriacaoDupla(idInscricaoParceiroDupla4, userId, torneioId, classeInscricao4);
                     }
                 }
                 db.SaveChanges();

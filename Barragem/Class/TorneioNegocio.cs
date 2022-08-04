@@ -1247,5 +1247,28 @@ namespace Barragem.Class
             return respostaValidacao;
         }
 
+        public bool ValidarCriacaoDupla(int idInscricao, int userId, int torneioId, int classeId)
+        {
+            if (idInscricao == 0)
+            {
+                return true;
+            }
+
+            var inscricao = db.InscricaoTorneio.Find(idInscricao);
+
+            var jaTemDupla = db.InscricaoTorneio.Any(i => i.torneioId == torneioId && i.classe == classeId && ((i.userId == userId && i.parceiroDuplaId != null) || (i.parceiroDuplaId == userId)));
+            if (!jaTemDupla)
+            {
+                inscricao.parceiroDuplaId = userId;
+                db.Entry(inscricao).State = EntityState.Modified;
+                db.SaveChanges();
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
     }
 }

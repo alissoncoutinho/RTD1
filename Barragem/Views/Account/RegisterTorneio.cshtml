@@ -252,7 +252,7 @@
                                     <option value="0">Selecione uma categoria...</option>
                                     @foreach (var item in ViewBag.Classes)
                                     {
-                                        <option value="@item.Id" data-isDupla="@item.isDupla">@item.nome</option>
+                                        <option value="@item.Id">@item.nome</option>
                                     }
                                 </select>
                             </div>
@@ -281,7 +281,7 @@
                                             <option value="0">Selecione uma categoria...</option>
                                             @foreach (var item in ViewBag.Classes)
                                             {
-                                                <option value="@item.Id" data-isDupla="@item.isDupla">@item.nome</option>
+                                                <option value="@item.Id">@item.nome</option>
                                             }
                                         </select>
                                     </div>
@@ -312,7 +312,7 @@
                                             <option value="0">Selecione uma categoria...</option>
                                             @foreach (var item in ViewBag.Classes)
                                             {
-                                                <option value="@item.Id" data-isDupla="@item.isDupla">@item.nome</option>
+                                                <option value="@item.Id">@item.nome</option>
                                             }
                                         </select>
                                     </div>
@@ -343,7 +343,7 @@
                                             <option value="0">Selecione uma categoria...</option>
                                             @foreach (var item in ViewBag.Classes)
                                             {
-                                                <option value="@item.Id" data-isDupla="@item.isDupla">@item.nome</option>
+                                                <option value="@item.Id">@item.nome</option>
                                             }
                                         </select>
                                     </div>
@@ -397,7 +397,7 @@
     @Scripts.Render("~/bundles/jqueryval")
     <script type="text/javascript">
 
-jQuery(function ($) {
+        jQuery(function ($) {
             $.validator.addMethod('date',
                 function (value, element) {
                     $.culture = Globalize.culture("pt-BR");
@@ -446,7 +446,16 @@ jQuery(function ($) {
             var radioButtonsFed = document.getElementsByName("isFederado");
             var labelisSocio = document.getElementById("labelIsSocio");
             var labelisFederado = document.getElementById("labelIsFederado");
-            if ((labelisSocio != null) && (radioButtons[0].checked == false) && (radioButtons[1].checked == false)) {
+            if ((document.getElementById('isSegundaOpcaoClasse') != null) && (document.getElementById('isSegundaOpcaoClasse').checked) && (document.getElementById('classeInscricao2').selectedIndex == 0)) {
+                alert("Favor informar a 2ª opção de classe.");
+                return false;
+            } else if ((document.getElementById('isTerceiraOpcaoClasse') != null) && (document.getElementById('isTerceiraOpcaoClasse').checked) && (document.getElementById('classeInscricao3').selectedIndex == 0)) {
+                alert("Favor informar a 3ª opção de classe.");
+                return false;
+            } else if ((document.getElementById('isQuartaOpcaoClasse') != null) && (document.getElementById('isQuartaOpcaoClasse').checked) && (document.getElementById('classeInscricao4').selectedIndex == 0)) {
+                alert("Favor informar a 4ª opção de classe.");
+                return false;
+            } else if ((labelisSocio != null) && (radioButtons[0].checked == false) && (radioButtons[1].checked == false)) {
                 alert("Favor informar se você é sócio ou não.");
                 labelisSocio.style.color = "red";
                 return false;
@@ -468,7 +477,6 @@ jQuery(function ($) {
         }
 
         function ValidarDisponibilidadeInscricao(torneioId, categoriaId, dropDown) {
-
             $.ajax({
                 type: "GET",
                 url: "/Account/ValidarDisponibilidadeInscricao?torneioId=" + torneioId + "&categoriaId=" + categoriaId,
@@ -502,7 +510,6 @@ jQuery(function ($) {
                     toastr.error(errorThrown, "Erro");
                 }
             });
-
         }
 
         function CarregarTabelaFormacaoDupla(dados, el) {
@@ -602,6 +609,7 @@ jQuery(function ($) {
                 document.getElementById('segundaOpcaoClasse').style.opacity = "1";
                 document.getElementById('segundaOpcaoClasse').style.display = "block";
             } else {
+                document.getElementById('classeInscricao2').selectedIndex = 0;
                 document.getElementById('segundaOpcaoClasse').style.opacity = "0 !important";
                 document.getElementById('segundaOpcaoClasse').style.display = "none";
             }
@@ -615,6 +623,7 @@ jQuery(function ($) {
                 document.getElementById('terceiraOpcaoClasse').style.opacity = "1";
                 document.getElementById('terceiraOpcaoClasse').style.display = "block";
             } else {
+                document.getElementById('classeInscricao3').selectedIndex = 0;
                 document.getElementById('terceiraOpcaoClasse').style.opacity = "0 !important";
                 document.getElementById('terceiraOpcaoClasse').style.display = "none";
             }
@@ -630,6 +639,7 @@ jQuery(function ($) {
                 document.getElementById('quartaOpcaoClasse').style.opacity = "1";
                 document.getElementById('quartaOpcaoClasse').style.display = "block";
             } else {
+                document.getElementById('classeInscricao4').selectedIndex = 0;
                 document.getElementById('quartaOpcaoClasse').style.opacity = "0 !important";
                 document.getElementById('quartaOpcaoClasse').style.display = "none";
             }
