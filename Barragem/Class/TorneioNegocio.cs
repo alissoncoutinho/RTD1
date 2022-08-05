@@ -723,7 +723,7 @@ namespace Barragem.Class
                     db.SaveChanges();
                 }
                 db.SaveChanges();
-                if (grupo > 0)
+                if (grupo > 1)
                 {
                     grupo--;
                 }
