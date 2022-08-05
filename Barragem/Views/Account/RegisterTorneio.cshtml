@@ -421,7 +421,7 @@
                     document.getElementById('checkSegundaOpcaoClasse').style.display = "none";
                 }
             }
-            else if (document.getElementById("totalCategoriasPorJogador").value > 2) {
+            if (document.getElementById("totalCategoriasPorJogador").value > 2) {
                 if (!document.getElementById('isTerceiraOpcaoClasse').checked) {
                     document.getElementById('terceiraOpcaoClasse').style.opacity = "0";
                     document.getElementById('terceiraOpcaoClasse').style.display = "none";
@@ -429,7 +429,7 @@
                     document.getElementById('checkTerceiraOpcaoClasse').style.display = "none";
                 }
             }
-            else if (document.getElementById("totalCategoriasPorJogador").value > 3) {
+            if (document.getElementById("totalCategoriasPorJogador").value > 3) {
                 if (!document.getElementById('isQuartaOpcaoClasse').checked) {
                     document.getElementById('quartaOpcaoClasse').style.opacity = "0";
                     document.getElementById('quartaOpcaoClasse').style.display = "none";
@@ -614,8 +614,7 @@
                 document.getElementById('segundaOpcaoClasse').style.display = "none";
             }
 
-            var categoria1Selecionada = document.getElementById("inscricao.classe").value;
-            $("#classeInscricao2").find('[value="' + categoria1Selecionada + '"]').remove();
+            RemoverCategoriaSelecionada();
         }
 
         function terceiraOpcaoDeClasse() {
@@ -628,10 +627,7 @@
                 document.getElementById('terceiraOpcaoClasse').style.display = "none";
             }
 
-            var categoria1Selecionada = document.getElementById("inscricao.classe").value;
-            var categoria2Selecionada = document.getElementById("classeInscricao2").value;
-            $("#classeInscricao3").find('[value="' + categoria1Selecionada + '"]').remove();
-            $("#classeInscricao3").find('[value="' + categoria2Selecionada + '"]').remove();
+            RemoverCategoriaSelecionada();
         }
 
         function quartaOpcaoDeClasse() {
@@ -644,12 +640,41 @@
                 document.getElementById('quartaOpcaoClasse').style.display = "none";
             }
 
+            RemoverCategoriaSelecionada();
+        }
+
+        function RemoverCategoriaSelecionada() {
             var categoria1Selecionada = document.getElementById("inscricao.classe").value;
             var categoria2Selecionada = document.getElementById("classeInscricao2").value;
             var categoria3Selecionada = document.getElementById("classeInscricao3").value;
-            $("#classeInscricao4").find('[value="' + categoria1Selecionada + '"]').remove();
-            $("#classeInscricao4").find('[value="' + categoria2Selecionada + '"]').remove();
-            $("#classeInscricao4").find('[value="' + categoria3Selecionada + '"]').remove();
+
+            var qtdeCategoriasTorneio = document.getElementById("totalCategoriasPorJogador").value;
+
+            if (qtdeCategoriasTorneio > 1) {
+                if (categoria1Selecionada != 0) {
+                    $("#classeInscricao2").find('[value="' + categoria1Selecionada + '"]').remove();
+                }
+            }
+            if (qtdeCategoriasTorneio > 2) {
+                if (categoria1Selecionada != 0) {
+                    $("#classeInscricao3").find('[value="' + categoria1Selecionada + '"]').remove();
+                }
+                if (categoria2Selecionada != 0) {
+                    $("#classeInscricao3").find('[value="' + categoria2Selecionada + '"]').remove();
+                }
+            }
+            if (qtdeCategoriasTorneio > 3) {
+                if (categoria1Selecionada != 0) {
+                    $("#classeInscricao4").find('[value="' + categoria1Selecionada + '"]').remove();
+                }
+                if (categoria2Selecionada != 0) {
+                    $("#classeInscricao4").find('[value="' + categoria2Selecionada + '"]').remove();
+                }
+                if (categoria3Selecionada != 0) {
+                    $("#classeInscricao4").find('[value="' + categoria3Selecionada + '"]').remove();
+                }
+            }
+
         }
 
         function CancelarEscolhaDupla() {

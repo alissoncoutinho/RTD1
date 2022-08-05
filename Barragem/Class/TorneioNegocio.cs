@@ -1213,11 +1213,11 @@ namespace Barragem.Class
 
                         var jogadoresAguardandoDupla = duplasNaoFormadas.Count;
 
-                        if (vagasRestantes <= 0) 
+                        if (vagasRestantes <= 0)
                         {
                             respostaValidacao.status = "ESGOTADO";
                         }
-                        else if (vagasRestantes - jogadoresAguardandoDupla > 0)
+                        else if (jogadoresAguardandoDupla == 0)
                         {
                             respostaValidacao.status = "OK";
                         }
