@@ -151,6 +151,8 @@
                             }
                         }
 
+                        <input type="hidden" name="totalCategoriasPorJogador" id="totalCategoriasPorJogador" value="@Model.qtddCategoriasPorJogador">
+
                         @if (inscricao == null)
                         {
                             if (Model.qtddCategoriasPorJogador > 1)
@@ -260,8 +262,6 @@
                                     </div>
                                 </div>
                             }
-
-                            <input type="hidden" name="totalCategoriasPorJogador" id="totalCategoriasPorJogador" value="@Model.qtddCategoriasPorJogador">
 
                             <!--Inscrição 1ª Categoria-->
                             <div class="row">
@@ -672,18 +672,31 @@
                             });
                         }
                         else if (response.status == "ESCOLHER_DUPLA") {
-                            CarregarTabelaFormacaoDupla(response.retorno, dropDown);
-                            document.getElementById("nomeSelectCategoria").value = dropDown.id;
-                            document.getElementById("temVagasLiberadas").value = "N";
-                            document.getElementById("tituloModalDupla").innerHTML = "Esta categoria já esta cheia, só é possível entrar caso o seu parceiro já esteja inscrito.";
-
-                            $("#modalMontarDupla").modal('show');
+                            $.alert({
+                                title: '<a style=\'color:red\'> ATENÇÃO! </a>',
+                                content: 'ATENÇÃO, esta categoria esta lotada, para entrar é necessário que o seu parceiro esteja inscrito.',
+                                buttons: {
+                                    confirm: {
+                                        text: 'Ciente',
+                                        btnClass: 'btn-blue',
+                                        action: function () {
+                                            CarregarTabelaFormacaoDupla(response.retorno, dropDown);
+                                            document.getElementById("nomeSelectCategoria").value = dropDown.id;
+                                            document.getElementById("temVagasLiberadas").value = "N";
+                                            document.getElementById("tituloModalDupla").innerHTML = "Agora só é possível inscrever na Categoria " + $('option:selected', dropDown).text() + " caso seu parceiro já esteja inscrito. Selecione uma das opções:";
+                                            document.getElementById("tituloAtencao").style.display = "block"
+                                            $("#modalMontarDupla").modal('show');
+                                        }
+                                    }
+                                }
+                            });
                         }
                         else if (response.status == "ESCOLHER_DUPLA_OK") {
                             CarregarTabelaFormacaoDupla(response.retorno, dropDown);
                             document.getElementById("nomeSelectCategoria").value = dropDown.id;
                             document.getElementById("temVagasLiberadas").value = "S";
-                            document.getElementById("tituloModalDupla").innerHTML = "Selecione o seu parceiro de dupla caso ele já esteja inscrito.";
+                            document.getElementById("tituloModalDupla").innerHTML = "Selecione seu parceiro de dupla para a Categoria " + $('option:selected', dropDown).text() + ".";
+                            document.getElementById("tituloAtencao").style.display = "none"
                             $("#modalMontarDupla").modal('show');
                         }
                         else {
@@ -863,7 +876,7 @@
 
         function CancelarEscolhaDupla() {
             var nomeCombo = document.getElementById("nomeSelectCategoria").value;
-            if (document.getElementById("temVagasLiberadas").value == "N") { 
+            if (document.getElementById("temVagasLiberadas").value == "N") {
                 document.getElementById(nomeCombo).value = "0";
             }
             else {
