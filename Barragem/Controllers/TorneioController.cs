@@ -2841,6 +2841,8 @@ namespace Barragem.Controllers
         {
             var inscricoes = db.InscricaoTorneio
                 .Include(i => i.torneio)
+                .Include(i => i.participante)
+                .Include(i => i.classeTorneio)
                 .Where(x => x.torneioId == torneioId && ((classeId > 0 && x.classe == classeId) || classeId == 0) && (x.participante.nome.ToUpper().Contains(jogador.ToUpper()) || string.IsNullOrEmpty(jogador)) && ((filtroStatusPagamento == -1) || x.isAtivo == (filtroStatusPagamento == 1)))
                 .OrderBy(o => o.participante.nome).ThenBy(o => o.classe).ToList();
 
