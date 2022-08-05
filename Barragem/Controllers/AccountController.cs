@@ -1884,7 +1884,7 @@ namespace Barragem.Controllers
                 if (filtroCategoria > 0)
                 {
                     var categoriaSelecionada = categorias.FirstOrDefault(x => x.Id == filtroCategoria);
-                    usuarios = consulta.Where(x => x.classe.nivel == categoriaSelecionada.nivel || (x.classeId == null && categoriaSelecionada.nivel == 1)).OrderBy(u => u.nome).ToList();
+                    usuarios = usuarios.Where(x => x.classe.nivel == categoriaSelecionada.nivel || (x.classeId == null && categoriaSelecionada.nivel == 1)).OrderBy(u => u.nome).ToList();
                 }
             }
             else
