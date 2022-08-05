@@ -1191,7 +1191,7 @@ namespace Barragem.Class
             {
                 var categoria = db.ClasseTorneio.Find(categoriaId);
 
-                if (categoria.maximoInscritos == 0)
+                if (categoria.maximoInscritos == 0 && !categoria.isDupla)
                 {
                     respostaValidacao.status = "OK";
                 }
@@ -1201,7 +1201,9 @@ namespace Barragem.Class
 
                     if (categoria.isDupla)
                     {
-                        var vagasRestantes = categoria.maximoInscritos - qtdInscritosCategoria;
+                        var limiteInscritos = categoria.maximoInscritos == 0 ? int.MaxValue : categoria.maximoInscritos;
+
+                        var vagasRestantes = limiteInscritos - qtdInscritosCategoria;
 
                         var inscricoes = db.InscricaoTorneio.Where(x => x.torneioId == torneioId && x.classe == categoriaId);
 
@@ -1223,7 +1225,7 @@ namespace Barragem.Class
                         }
                         else
                         {
-                            respostaValidacao.status = "ESCOLHER_DUPLA";
+                            respostaValidacao.status = (vagasRestantes - jogadoresAguardandoDupla > 0) ? "ESCOLHER_DUPLA_OK" : "ESCOLHER_DUPLA";
                             respostaValidacao.retorno = duplasNaoFormadas.Select(s => new FormacaoDuplaInscricao() { Id = s.Id, UserId = s.userId, Nome = s.participante.nome }).ToList();
                         }
                     }

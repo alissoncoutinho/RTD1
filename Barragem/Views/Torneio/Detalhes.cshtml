@@ -674,6 +674,16 @@
                         else if (response.status == "ESCOLHER_DUPLA") {
                             CarregarTabelaFormacaoDupla(response.retorno, dropDown);
                             document.getElementById("nomeSelectCategoria").value = dropDown.id;
+                            document.getElementById("temVagasLiberadas").value = "N";
+                            document.getElementById("tituloModalDupla").innerHTML = "Esta categoria já esta cheia, só é possível entrar caso o seu parceiro já esteja inscrito.";
+
+                            $("#modalMontarDupla").modal('show');
+                        }
+                        else if (response.status == "ESCOLHER_DUPLA_OK") {
+                            CarregarTabelaFormacaoDupla(response.retorno, dropDown);
+                            document.getElementById("nomeSelectCategoria").value = dropDown.id;
+                            document.getElementById("temVagasLiberadas").value = "S";
+                            document.getElementById("tituloModalDupla").innerHTML = "Selecione o seu parceiro de dupla caso ele já esteja inscrito.";
                             $("#modalMontarDupla").modal('show');
                         }
                         else {
@@ -853,7 +863,13 @@
 
         function CancelarEscolhaDupla() {
             var nomeCombo = document.getElementById("nomeSelectCategoria").value;
-            document.getElementById(nomeCombo).value = "0";
+            if (document.getElementById("temVagasLiberadas").value == "N") { 
+                document.getElementById(nomeCombo).value = "0";
+            }
+            else {
+                var nomeCombo = document.getElementById("nomeSelectCategoria").value;
+                ValidarInscricaoMultiplasCategorias(document.getElementById(nomeCombo));
+            }
             $("#modalMontarDupla").modal('hide');
         }
 
