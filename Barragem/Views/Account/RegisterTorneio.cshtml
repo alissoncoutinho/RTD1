@@ -5,6 +5,10 @@
     ViewBag.Title = "Inscrição Torneio ";
     Barragem.Models.Torneio torneio = ViewBag.Torneio;
 }
+<!--!!!!ATENÇÃO!!!ATENÇÃO!!!!ATENÇÃO!!!-->
+<!--ATENÇÃO - ALTERAÇÕES NESTA TELA DEVEM SER REPLICADAS NA TELA TORNEIO/DETALHES-->
+<!--!!!!ATENÇÃO!!!ATENÇÃO!!!!ATENÇÃO!!!-->
+
 <section class="content-header">
     <h1>Inscrição Torneio</h1>
 </section>
@@ -705,8 +709,7 @@
             if (document.getElementById("temVagasLiberadas").value == "N") {
                 document.getElementById(nomeCombo).value = "0";
             }
-            else
-            {
+            else {
                 var nomeCombo = document.getElementById("nomeSelectCategoria").value;
                 ValidarInscricaoMultiplasCategorias(document.getElementById(nomeCombo));
             }
