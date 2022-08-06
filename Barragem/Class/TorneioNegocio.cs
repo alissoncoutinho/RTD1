@@ -1,4 +1,6 @@
 ﻿using Barragem.Context;
+using Barragem.Controllers;
+using Barragem.Helper;
 using Barragem.Models;
 using System;
 using System.Collections.Generic;
@@ -1181,5 +1183,94 @@ namespace Barragem.Class
 
             return rankingJogadores.ToList();
         }
+
+        public ResponseMessageWithStatus ValidarDisponibilidadeInscricoes(int torneioId, int categoriaId)
+        {
+            var respostaValidacao = new ResponseMessageWithStatus();
+            try
+            {
+                var categoria = db.ClasseTorneio.Find(categoriaId);
+
+                if (categoria.maximoInscritos == 0 && !categoria.isDupla)
+                {
+                    respostaValidacao.status = "OK";
+                }
+                else
+                {
+                    var qtdInscritosCategoria = db.InscricaoTorneio.Count(x => x.torneio.Id == torneioId && x.classe == categoriaId);
+
+                    if (categoria.isDupla)
+                    {
+                        var limiteInscritos = categoria.maximoInscritos == 0 ? int.MaxValue : categoria.maximoInscritos;
+
+                        var vagasRestantes = limiteInscritos - qtdInscritosCategoria;
+
+                        var inscricoes = db.InscricaoTorneio.Where(x => x.torneioId == torneioId && x.classe == categoriaId);
+
+                        var duplasFormadas = inscricoes.Where(x => x.parceiroDuplaId != null);
+                        var idsParceirosDupla = duplasFormadas.Select(s => s.parceiroDuplaId);
+
+                        var inscricoesSemParceiro = inscricoes.Where(x => x.parceiroDuplaId == null);
+                        var duplasNaoFormadas = inscricoesSemParceiro.Where(x => !idsParceirosDupla.Contains(x.userId)).ToList();
+
+                        var jogadoresAguardandoDupla = duplasNaoFormadas.Count;
+
+                        if (vagasRestantes <= 0)
+                        {
+                            respostaValidacao.status = "ESGOTADO";
+                        }
+                        else if (jogadoresAguardandoDupla == 0)
+                        {
+                            respostaValidacao.status = "OK";
+                        }
+                        else
+                        {
+                            respostaValidacao.status = (vagasRestantes - jogadoresAguardandoDupla > 0) ? "ESCOLHER_DUPLA_OK" : "ESCOLHER_DUPLA";
+                            respostaValidacao.retorno = duplasNaoFormadas.Select(s => new FormacaoDuplaInscricao() { Id = s.Id, UserId = s.userId, Nome = s.participante.nome }).ToList();
+                        }
+                    }
+                    else
+                    {
+                        if (categoria.maximoInscritos > qtdInscritosCategoria)
+                        {
+                            respostaValidacao.status = "OK";
+                        }
+                        else
+                        {
+                            respostaValidacao.status = "ESGOTADO";
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                respostaValidacao = new ResponseMessageWithStatus { erro = ex.Message, status = "ERRO" };
+            }
+            return respostaValidacao;
+        }
+
+        public bool ValidarCriacaoDupla(int idInscricao, int userId, int torneioId, int classeId)
+        {
+            if (idInscricao == 0)
+            {
+                return true;
+            }
+
+            var inscricao = db.InscricaoTorneio.Find(idInscricao);
+
+            var jaTemDupla = db.InscricaoTorneio.Any(i => i.torneioId == torneioId && i.classe == classeId && ((i.userId == userId && i.parceiroDuplaId != null) || (i.parceiroDuplaId == userId)));
+            if (!jaTemDupla)
+            {
+                inscricao.parceiroDuplaId = userId;
+                db.Entry(inscricao).State = EntityState.Modified;
+                db.SaveChanges();
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
     }
 }

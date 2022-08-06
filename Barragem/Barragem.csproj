@@ -244,6 +244,7 @@
     <Compile Include="Controllers\AguasClarasController.cs" />
     <Compile Include="Controllers\CalendarioTorneiosController.cs" />
     <Compile Include="Controllers\CidadeController.cs" />
+    <Compile Include="Controllers\FormacaoDuplaInscricao.cs" />
     <Compile Include="Controllers\InscricaoAPIController.cs" />
     <Compile Include="Controllers\JogoAPIController.cs" />
     <Compile Include="Controllers\PaginaEspecialController.cs" />
@@ -1191,6 +1192,7 @@
     <Content Include="Views\Shared\_Rodape3.cshtml" />
     <Content Include="Views\Torneio\ImprimirGrupos.cshtml" />
     <Content Include="Views\Torneio\_PartialAcaoCategoriasInscricoesNaoPagas.cshtml" />
+    <Content Include="Views\Shared\_PartialEscolhaDupla.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

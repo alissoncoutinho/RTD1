@@ -427,7 +427,7 @@ namespace Barragem.Controllers
             {
                 return BadRequest("001-Você já possui uma inscrição neste torneio.");
             }
-            var mensagemRetorno = new TorneioController().InscricaoNegocio(torneioId, classe1, "", classe2, classe3, classe4, observacao, isSocio, false, userId, isFederado);
+            var mensagemRetorno = new TorneioController().InscricaoNegocio(torneioId, classe1, "", classe2, classe3, classe4, observacao, isSocio, userId, isFederado);
             if (mensagemRetorno.tipo == "erro")
             {
                 return BadRequest(mensagemRetorno.mensagem);

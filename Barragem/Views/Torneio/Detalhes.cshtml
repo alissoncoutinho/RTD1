@@ -76,7 +76,7 @@
                     @Html.Hidden("torneioId", Model.Id)
                     @Html.Hidden("vrInscricao", Model.valor);
                     @Html.Hidden("userId", inscricao == null ? 0 : inscricao.userId);
-                    @Html.Hidden("isClasseDupla", false);
+
                     <div class="box-body">
                         <div class="row">
                             @if (inscricao == null)
@@ -150,6 +150,9 @@
                                 </div>
                             }
                         }
+
+                        <input type="hidden" name="totalCategoriasPorJogador" id="totalCategoriasPorJogador" value="@Model.qtddCategoriasPorJogador">
+
                         @if (inscricao == null)
                         {
                             if (Model.qtddCategoriasPorJogador > 1)
@@ -259,36 +262,23 @@
                                     </div>
                                 </div>
                             }
+
+                            <!--Inscrição 1ª Categoria-->
                             <div class="row">
+                                <input type="hidden" name="idInscricaoParceiroDupla" id="idInscricaoParceiroDupla" value="0">
                                 @Html.Label("Categoria", new { @class = "col-sm-4" })
                                 <div class="col-sm-8 info-box-text">
-                                    <select name="classeInscricao" id="classeInscricao" data-classe2="@(Model.qtddCategoriasPorJogador>1)" class="form-control escolherSegundaOpcaoClasse">
+                                    <select name="classeInscricao" id="classeInscricao" data-totalCategorias="@Model.qtddCategoriasPorJogador" data-numCategoria="1" data-torneioId="@Model.Id" class="form-control" onchange="ValidarCategoriaSelecionada(this)">
                                         <option value="0">Selecione uma categoria...</option>
                                         @foreach (var item in ViewBag.Classes)
                                         {
-                                            if (item.maximoInscritos > 0)
-                                            {
-                                                var qtddInscritosClasse = 0;
-                                                List<Barragem.Models.ClasseTorneioQtddInscrito> listQtddInscritos = ViewBag.qtddInscritos;
-                                                try { qtddInscritosClasse = listQtddInscritos.Where(i => i.Id == item.Id).First().qtddInscritos; } catch (Exception e) { }
-                                                if (qtddInscritosClasse >= item.maximoInscritos)
-                                                {
-                                                    <option style="color:red" value="@item.Id" data-isDupla="@item.isDupla" @if (ViewBag.ClasseInscricao == item.Id) { @Html.Raw("selected") }>Esgotado - @item.nome</option>
-                                                }
-                                                else
-                                                {
-                                                    <option value="@item.Id" data-isDupla="@item.isDupla" @if (ViewBag.ClasseInscricao == item.Id) { @Html.Raw("selected") }>@item.nome</option>
-                                                }
-                                            }
-                                            else
-                                            {
-                                                <option value="@item.Id" data-isDupla="@item.isDupla" @if (ViewBag.ClasseInscricao == item.Id) { @Html.Raw("selected") }>@item.nome</option>
-                                            }
-
+                                            <option value="@item.Id" @if (ViewBag.ClasseInscricao == item.Id) { @Html.Raw("selected") }>@item.nome</option>
                                         }
                                     </select>
                                 </div>
                             </div>
+
+                            <!--Inscrição 2ª Categoria-->
                             if (Model.qtddCategoriasPorJogador > 1)
                             {
                                 <div id="checkSegundaOpcaoClasse" class="form-group">
@@ -301,37 +291,22 @@
                                     </div>
                                 </div>
                                 <div id="segundaOpcaoClasse" class="row">
+                                    <input type="hidden" name="idInscricaoParceiroDupla2" id="idInscricaoParceiroDupla2" value="0">
                                     @Html.Label("2ª Opção", new { @class = "col-sm-4" })
                                     <div class="col-sm-8 info-box-text">
-                                        <select id="classeInscricao2" name="classeInscricao2" class="form-control segundaOpcaoClasse escolherTerceiraOpcaoClasse" data-classe3="@(Model.qtddCategoriasPorJogador>2)">
-                                            <option value="0">Selecione uma classe...</option>
+                                        <select id="classeInscricao2" name="classeInscricao2" data-totalCategorias="@Model.qtddCategoriasPorJogador" data-numCategoria="2" data-torneioId="@Model.Id" class="form-control" onchange="ValidarCategoriaSelecionada(this)">
+                                            <option value="0">Selecione uma categoria...</option>
                                             @foreach (var item in ViewBag.Classes)
                                             {
-                                                if (item.maximoInscritos > 0)
-                                                {
-                                                    List<Barragem.Models.ClasseTorneioQtddInscrito> listQtddInscritos = ViewBag.qtddInscritos;
-                                                    var qtddInscritosClasse = 0;
-                                                    try { qtddInscritosClasse = listQtddInscritos.Where(i => i.Id == item.Id).First().qtddInscritos; } catch (Exception e) { }
-                                                    if (qtddInscritosClasse >= item.maximoInscritos)
-                                                    {
-                                                        <option style="color:red" value="@item.Id" data-isDupla="@item.isDupla" @if ((ViewBag.ClasseInscricao2 != null) && (ViewBag.ClasseInscricao2 == item.Id)) { @Html.Raw("selected") }>Esgotado - @item.nome</option>
-                                                    }
-                                                    else
-                                                    {
-                                                        <option value="@item.Id" data-isDupla="@item.isDupla" @if ((ViewBag.ClasseInscricao2 != null) && (ViewBag.ClasseInscricao2 == item.Id)) { @Html.Raw("selected") }>@item.nome</option>
-                                                    }
-                                                }
-                                                else
-                                                {
-                                                    <option value="@item.Id" data-isDupla="@item.isDupla" @if ((ViewBag.ClasseInscricao2 != null) && (ViewBag.ClasseInscricao2 == item.Id)) { @Html.Raw("selected") }>@item.nome</option>
-                                                }
-
+                                                <option value="@item.Id" @if ((ViewBag.ClasseInscricao2 != null) && (ViewBag.ClasseInscricao2 == item.Id)) { @Html.Raw("selected") }>@item.nome</option>
                                             }
                                         </select>
                                     </div>
                                 </div>
 
                             }
+
+                            <!--Inscrição 3ª Categoria-->
                             if (Model.qtddCategoriasPorJogador > 2)
                             {
                                 <div id="checkTerceiraOpcaoClasse" class="form-group">
@@ -344,36 +319,22 @@
                                     </div>
                                 </div>
                                 <div id="terceiraOpcaoClasse" class="row">
+                                    <input type="hidden" name="idInscricaoParceiroDupla3" id="idInscricaoParceiroDupla3" value="0">
                                     @Html.Label("3ª Opção", new { @class = "col-sm-4" })
                                     <div class="col-sm-8 info-box-text">
-                                        <select id="classeInscricao3" name="classeInscricao3" class="form-control terceiraOpcaoClasse escolherQuartaOpcaoClasse" data-classe3="@(Model.qtddCategoriasPorJogador>3)">
-                                            <option value="0">Selecione uma classe...</option>
+                                        <select id="classeInscricao3" name="classeInscricao3" data-totalCategorias="@Model.qtddCategoriasPorJogador" data-numCategoria="3" data-torneioId="@Model.Id" class="form-control" onchange="ValidarCategoriaSelecionada(this)">
+                                            <option value="0">Selecione uma categoria...</option>
                                             @foreach (var item in ViewBag.Classes)
                                             {
-                                                if (item.maximoInscritos > 0)
-                                                {
-                                                    List<Barragem.Models.ClasseTorneioQtddInscrito> listQtddInscritos = ViewBag.qtddInscritos;
-                                                    var qtddInscritosClasse = 0;
-                                                    try { qtddInscritosClasse = listQtddInscritos.Where(i => i.Id == item.Id).First().qtddInscritos; } catch (Exception e) { };
-                                                    if (qtddInscritosClasse >= item.maximoInscritos)
-                                                    {
-                                                        <option style="color:red" value="@item.Id" data-isDupla="@item.isDupla" @if ((ViewBag.ClasseInscricao3 != null) && (ViewBag.ClasseInscricao3 == item.Id)) { @Html.Raw("selected") }>Esgotado - @item.nome</option>
-                                                    }
-                                                    else
-                                                    {
-                                                        <option value="@item.Id" data-isDupla="@item.isDupla" @if ((ViewBag.ClasseInscricao3 != null) && (ViewBag.ClasseInscricao3 == item.Id)) { @Html.Raw("selected") }>@item.nome</option>
-                                                    }
-                                                }
-                                                else
-                                                {
-                                                    <option value="@item.Id" data-isDupla="@item.isDupla" @if ((ViewBag.ClasseInscricao3 != null) && (ViewBag.ClasseInscricao3 == item.Id)) { @Html.Raw("selected") }>@item.nome</option>
-                                                }
+                                                <option value="@item.Id" @if ((ViewBag.ClasseInscricao3 != null) && (ViewBag.ClasseInscricao3 == item.Id)) { @Html.Raw("selected") }>@item.nome</option>
                                             }
                                         </select>
                                     </div>
                                 </div>
 
                             }
+
+                            <!--Inscrição 4ª Categoria-->
                             if (Model.qtddCategoriasPorJogador > 3)
                             {
                                 <div id="checkQuartaOpcaoClasse" class="form-group">
@@ -386,30 +347,14 @@
                                     </div>
                                 </div>
                                 <div id="quartaOpcaoClasse" class="row">
+                                    <input type="hidden" name="idInscricaoParceiroDupla4" id="idInscricaoParceiroDupla4" value="0">
                                     @Html.Label("4ª Opção", new { @class = "col-sm-4" })
                                     <div class="col-sm-8 info-box-text">
-                                        <select name="classeInscricao4" id="classeInscricao4" class="form-control quartaOpcaoClasse">
-                                            <option value="0">Selecione uma classe...</option>
+                                        <select name="classeInscricao4" id="classeInscricao4" data-totalCategorias="@Model.qtddCategoriasPorJogador" data-numCategoria="4" data-torneioId="@Model.Id" class="form-control" onchange="ValidarCategoriaSelecionada(this)">
+                                            <option value="0">Selecione uma categoria...</option>
                                             @foreach (var item in ViewBag.Classes)
                                             {
-                                                if (item.maximoInscritos > 0)
-                                                {
-                                                    List<Barragem.Models.ClasseTorneioQtddInscrito> listQtddInscritos = ViewBag.qtddInscritos;
-                                                    var qtddInscritosClasse = 0;
-                                                    try { qtddInscritosClasse = listQtddInscritos.Where(i => i.Id == item.Id).First().qtddInscritos; } catch (Exception e) { };
-                                                    if (qtddInscritosClasse >= item.maximoInscritos)
-                                                    {
-                                                        <option style="color:red" value="@item.Id" data-isDupla="@item.isDupla" @if ((ViewBag.ClasseInscricao4 != null) && (ViewBag.ClasseInscricao4 == item.Id)) { @Html.Raw("selected") }>Esgotado - @item.nome</option>
-                                                    }
-                                                    else
-                                                    {
-                                                        <option value="@item.Id" data-isDupla="@item.isDupla" @if ((ViewBag.ClasseInscricao4 != null) && (ViewBag.ClasseInscricao4 == item.Id)) { @Html.Raw("selected") }>@item.nome</option>
-                                                    }
-                                                }
-                                                else
-                                                {
-                                                    <option value="@item.Id" data-isDupla="@item.isDupla" @if ((ViewBag.ClasseInscricao4 != null) && (ViewBag.ClasseInscricao4 == item.Id)) { @Html.Raw("selected") }>@item.nome</option>
-                                                }
+                                                <option value="@item.Id" @if ((ViewBag.ClasseInscricao4 != null) && (ViewBag.ClasseInscricao4 == item.Id)) { @Html.Raw("selected") }>@item.nome</option>
                                             }
                                         </select>
                                     </div>
@@ -420,38 +365,23 @@
                         else
                         {
                             <!--INSCRIÇÃO REALIZADA-->
+
+                            <!--Inscrição 1ª Categoria-->
                             <div class="row">
+                                <input type="hidden" name="idInscricaoParceiroDupla" id="idInscricaoParceiroDupla" value="0">
                                 @Html.Label("Categoria", new { @class = "col-sm-4" })
                                 <div class="col-sm-8 info-box-text">
-                                    <select name="classeInscricao" id="classeInscricao" class="form-control">
+                                    <select name="classeInscricao" id="classeInscricao" data-totalCategorias="@Model.qtddCategoriasPorJogador" data-numCategoria="1" data-torneioId="@Model.Id" class="form-control" onchange="ValidarCategoriaSelecionada(this)">
                                         <option value="0">Selecione uma categoria...</option>
                                         @foreach (var item in ViewBag.Classes)
                                         {
-                                            if (item.maximoInscritos > 0)
-                                            {
-                                                var qtddInscritosClasse = 0;
-                                                List<Barragem.Models.ClasseTorneioQtddInscrito> listQtddInscritos = ViewBag.qtddInscritos;
-                                                try { qtddInscritosClasse = listQtddInscritos.Where(i => i.Id == item.Id).First().qtddInscritos; } catch (Exception e) { }
-                                                if (qtddInscritosClasse >= item.maximoInscritos)
-                                                {
-                                                    <option style="color:red" value="@item.Id" data-isDupla="@item.isDupla" @if (ViewBag.ClasseInscricao == item.Id) { @Html.Raw("selected") }>Esgotado - @item.nome</option>
-                                                }
-                                                else
-                                                {
-                                                    <option value="@item.Id" data-isDupla="@item.isDupla" @if (ViewBag.ClasseInscricao == item.Id) { @Html.Raw("selected") }>@item.nome</option>
-                                                }
-                                            }
-                                            else
-                                            {
-                                                <option value="@item.Id" data-isDupla="@item.isDupla" @if (ViewBag.ClasseInscricao == item.Id) { @Html.Raw("selected") }>@item.nome</option>
-                                            }
-
+                                            <option value="@item.Id" @if (ViewBag.ClasseInscricao == item.Id) { @Html.Raw("selected") }>@item.nome</option>
                                         }
                                     </select>
                                 </div>
                             </div>
 
-                            //if (!String.IsNullOrEmpty(ViewBag.ClasseInscricao2)) {
+                            <!--Inscrição 2ª Categoria-->
                             if (Model.qtddCategoriasPorJogador > 1)
                             {
                                 <div id="checkSegundaOpcaoClasse" class="form-group">
@@ -470,36 +400,21 @@
                                 </div>
 
                                 <div id="segundaOpcaoClasse" class="row">
+                                    <input type="hidden" name="idInscricaoParceiroDupla2" id="idInscricaoParceiroDupla2" value="0">
                                     @Html.Label("2ª Opção", new { @class = "col-sm-4" })
                                     <div class="col-sm-8 info-box-text">
-                                        <select id="classeInscricao2" name="classeInscricao2" class="form-control segundaOpcaoClasse escolherTerceiraOpcaoClasse" data-classe3="@(Model.qtddCategoriasPorJogador>2)">
-                                            <option value="0">Selecione uma classe...</option>
+                                        <select id="classeInscricao2" name="classeInscricao2" data-totalCategorias="@Model.qtddCategoriasPorJogador" data-numCategoria="2" data-torneioId="@Model.Id" class="form-control" onchange="ValidarCategoriaSelecionada(this)">
+                                            <option value="0">Selecione uma categoria...</option>
                                             @foreach (var item in ViewBag.Classes)
                                             {
-                                                if (item.maximoInscritos > 0)
-                                                {
-                                                    List<Barragem.Models.ClasseTorneioQtddInscrito> listQtddInscritos = ViewBag.qtddInscritos;
-                                                    var qtddInscritosClasse = 0;
-                                                    try { qtddInscritosClasse = listQtddInscritos.Where(i => i.Id == item.Id).First().qtddInscritos; } catch (Exception e) { }
-                                                    if (qtddInscritosClasse >= item.maximoInscritos)
-                                                    {
-                                                        <option style="color:red" value="@item.Id" data-isDupla="@item.isDupla" @if ((ViewBag.ClasseInscricao2 != null) && (ViewBag.ClasseInscricao2 == item.Id)) { @Html.Raw("selected") }>Esgotado - @item.nome</option>
-                                                    }
-                                                    else
-                                                    {
-                                                        <option value="@item.Id" data-isDupla="@item.isDupla" @if ((ViewBag.ClasseInscricao2 != null) && (ViewBag.ClasseInscricao2 == item.Id)) { @Html.Raw("selected") }>@item.nome</option>
-                                                    }
-                                                }
-                                                else
-                                                {
-                                                    <option value="@item.Id" data-isDupla="@item.isDupla" @if ((ViewBag.ClasseInscricao2 != null) && (ViewBag.ClasseInscricao2 == item.Id)) { @Html.Raw("selected") }>@item.nome</option>
-                                                }
+                                                <option value="@item.Id" @if ((ViewBag.ClasseInscricao2 != null) && (ViewBag.ClasseInscricao2 == item.Id)) { @Html.Raw("selected") }>@item.nome</option>
                                             }
                                         </select>
                                     </div>
                                 </div>
                             }
-                            //if (!String.IsNullOrEmpty(ViewBag.ClasseInscricao3))
+
+                            <!--Inscrição 3ª Categoria-->
                             if (Model.qtddCategoriasPorJogador > 2)
                             {
                                 <div id="checkTerceiraOpcaoClasse" class="form-group">
@@ -517,35 +432,21 @@
 
                                 </div>
                                 <div id="terceiraOpcaoClasse" class="row">
+                                    <input type="hidden" name="idInscricaoParceiroDupla3" id="idInscricaoParceiroDupla3" value="0">
                                     @Html.Label("3ª Opção", new { @class = "col-sm-4" })
                                     <div class="col-sm-8 info-box-text">
-                                        <select name="classeInscricao3" id="classeInscricao3" class="form-control terceiraOpcaoClasse escolherQuartaOpcaoClasse" data-classe3="@(Model.qtddCategoriasPorJogador>3)">
-                                            <option value="0">Selecione uma classe...</option>
+                                        <select name="classeInscricao3" id="classeInscricao3" data-totalCategorias="@Model.qtddCategoriasPorJogador" data-numCategoria="3" data-torneioId="@Model.Id" class="form-control" onchange="ValidarCategoriaSelecionada(this)">
+                                            <option value="0">Selecione uma categoria...</option>
                                             @foreach (var item in ViewBag.Classes)
                                             {
-                                                if (item.maximoInscritos > 0)
-                                                {
-                                                    List<Barragem.Models.ClasseTorneioQtddInscrito> listQtddInscritos = ViewBag.qtddInscritos;
-                                                    var qtddInscritosClasse = 0;
-                                                    try { qtddInscritosClasse = listQtddInscritos.Where(i => i.Id == item.Id).First().qtddInscritos; } catch (Exception e) { }
-                                                    if (qtddInscritosClasse >= item.maximoInscritos)
-                                                    {
-                                                        <option style="color:red" value="@item.Id" data-isDupla="@item.isDupla" @if ((ViewBag.ClasseInscricao3 != null) && (ViewBag.ClasseInscricao3 == item.Id)) { @Html.Raw("selected") }>Esgotado - @item.nome</option>
-                                                    }
-                                                    else
-                                                    {
-                                                        <option value="@item.Id" data-isDupla="@item.isDupla" @if ((ViewBag.ClasseInscricao3 != null) && (ViewBag.ClasseInscricao3 == item.Id)) { @Html.Raw("selected") }>@item.nome</option>
-                                                    }
-                                                }
-                                                else
-                                                {
-                                                    <option value="@item.Id" data-isDupla="@item.isDupla" @if ((ViewBag.ClasseInscricao3 != null) && (ViewBag.ClasseInscricao3 == item.Id)) { @Html.Raw("selected") }>@item.nome</option>
-                                                }
+                                                <option value="@item.Id" @if ((ViewBag.ClasseInscricao3 != null) && (ViewBag.ClasseInscricao3 == item.Id)) { @Html.Raw("selected") }>@item.nome</option>
                                             }
                                         </select>
                                     </div>
                                 </div>
                             }
+
+                            <!--Inscrição 4ª Categoria-->
                             if (Model.qtddCategoriasPorJogador > 3)
                             {
                                 <div id="checkQuartaOpcaoClasse" class="form-group">
@@ -560,36 +461,21 @@
                                     </div>
                                 </div>
                                 <div id="quartaOpcaoClasse" class="row">
+                                    <input type="hidden" name="idInscricaoParceiroDupla4" id="idInscricaoParceiroDupla4" value="0">
                                     @Html.Label("4ª Opção", new { @class = "col-sm-4" })
                                     <div class="col-sm-8 info-box-text">
-                                        <select id="classeInscricao4" name="classeInscricao4" class="form-control quartaOpcaoClasse">
-                                            <option value="0">Selecione uma classe...</option>
+                                        <select id="classeInscricao4" name="classeInscricao4" data-totalCategorias="@Model.qtddCategoriasPorJogador" data-numCategoria="4" data-torneioId="@Model.Id" class="form-control" onchange="ValidarCategoriaSelecionada(this)">
+                                            <option value="0">Selecione uma categoria...</option>
                                             @foreach (var item in ViewBag.Classes)
                                             {
-                                                if (item.maximoInscritos > 0)
-                                                {
-                                                    List<Barragem.Models.ClasseTorneioQtddInscrito> listQtddInscritos = ViewBag.qtddInscritos;
-                                                    var qtddInscritosClasse = 0;
-                                                    try { qtddInscritosClasse = listQtddInscritos.Where(i => i.Id == item.Id).First().qtddInscritos; } catch (Exception e) { }
-                                                    if (qtddInscritosClasse >= item.maximoInscritos)
-                                                    {
-                                                        <option style="color:red" value="@item.Id" data-isDupla="@item.isDupla" @if ((ViewBag.ClasseInscricao4 != null) && (ViewBag.ClasseInscricao4 == item.Id)) { @Html.Raw("selected") }>Esgotado - @item.nome</option>
-                                                    }
-                                                    else
-                                                    {
-                                                        <option value="@item.Id" data-isDupla="@item.isDupla" @if ((ViewBag.ClasseInscricao4 != null) && (ViewBag.ClasseInscricao4 == item.Id)) { @Html.Raw("selected") }>@item.nome</option>
-                                                    }
-                                                }
-                                                else
-                                                {
-                                                    <option value="@item.Id" data-isDupla="@item.isDupla" @if ((ViewBag.ClasseInscricao4 != null) && (ViewBag.ClasseInscricao4 == item.Id)) { @Html.Raw("selected") }>@item.nome</option>
-                                                }
+                                                <option value="@item.Id" @if ((ViewBag.ClasseInscricao4 != null) && (ViewBag.ClasseInscricao4 == item.Id)) { @Html.Raw("selected") }>@item.nome</option>
                                             }
                                         </select>
                                     </div>
                                 </div>
                             }
                         }
+
                         @if (!String.IsNullOrEmpty(Model.observacao))
                         {
                             <br>
@@ -634,7 +520,7 @@
                                     {
                                         <button type="button" class="btn btn-danger col-xs-12 pull-right confirmCancel">Cancelar</button>
                                     }
-                                    <a href="@Url.Action("AlterarClasse", new { torneioId = Model.Id })" class="btn btn-info col-xs-12 confirmAlterarClasse" title="Salvar alterações">Salvar alterações</a>
+                                    <a href="@Url.Action("AlterarClasse", new { torneioId = Model.Id })" class="btn btn-info col-xs-12" title="Salvar alterações" onclick="AlterarCategoria()">Salvar alterações</a>
                                 </div>
                             }
                             else
@@ -696,15 +582,11 @@
     </div>
 </section>
 
-</div>
+@Html.Partial("_PartialEscolhaDupla")
+
 @section Scripts {
     <script type="text/javascript">
-        var isDupla = false;
-        var isDupla2 = false;
-        var isDupla3 = false;
-        var isDupla4 = false;
         $(document).ready(function () {
-
             $(".confirmCancel").confirm({
                 title: "Confirmação",
                 content: "Aperte SIM para confirmar o cancelamento da inscrição!",
@@ -723,147 +605,288 @@
                 }
             });
 
-            $(".escolherSegundaOpcaoClasse").change(function (event) {
-                event.preventDefault();
-                var classe2 = $(this).data("classe2");
-                isDupla = $(this).children(':selected').data("isdupla") == "True";
-                if ((isDupla) || (isDupla2)) {
-                    //$("#btnIncricao").text("Escolher Parceiro");
-                    document.formInscricao.isClasseDupla.value = true;
-                } else {
-                    $("#btnIncricao").text("Inscrever-me");
-                    document.formInscricao.isClasseDupla.value = false;
-                }
-                if (classe2 == "True") {
-                    document.getElementById('checkSegundaOpcaoClasse').style.opacity = "1";
-                    document.getElementById('checkSegundaOpcaoClasse').style.display = "block";
-                    $.confirm({
-                        title: "",
-                        content: "Deseja jogar em mais uma classe?",
-                        buttons: {
-                            sim: {
-                                text: 'Sim',
-                                btnClass: 'btn-primary',
-                                action: function () {
-                                    document.getElementById('isSegundaOpcaoClasse').checked = true;
-                                    segundaOpcaoDeClasse();
-                                }
-                            },
-                            cancelar: { text: 'Não' }
-                        }
-                    });
-                }
-            });
 
-            $(".escolherTerceiraOpcaoClasse").change(function (event) {
-                event.preventDefault();
-                var classe3 = $(this).data("classe3");
-                isDupla2 = $(this).children(':selected').data("isdupla") == "True";
-                if ((isDupla) || (isDupla2)) {
-                    //$("#btnIncricao").text("Escolher Parceiro");
-                    document.formInscricao.isClasseDupla.value = true;
-                } else {
-                    $("#btnIncricao").text("Inscrever-me");
-                    document.formInscricao.isClasseDupla.value = false;
+            if (document.getElementById("totalCategoriasPorJogador").value > 1) {
+                if (!document.getElementById('isSegundaOpcaoClasse').checked) {
+                    document.getElementById('segundaOpcaoClasse').style.opacity = "0";
+                    document.getElementById('segundaOpcaoClasse').style.display = "none";
+                    document.getElementById('checkSegundaOpcaoClasse').style.opacity = "0";
+                    document.getElementById('checkSegundaOpcaoClasse').style.display = "none";
                 }
-                if (classe3 == "True") {
-                    document.getElementById('checkTerceiraOpcaoClasse').style.opacity = "1";
-                    document.getElementById('checkTerceiraOpcaoClasse').style.display = "block";
-                    $.confirm({
-                        title: "",
-                        content: "Deseja jogar em mais uma classe?",
-                        buttons: {
-                            sim: {
-                                text: 'Sim',
-                                btnClass: 'btn-primary',
-                                action: function () {
-                                    document.getElementById('isTerceiraOpcaoClasse').checked = true;
-                                    terceiraOpcaoDeClasse();
-                                }
-                            },
-                            cancelar: { text: 'Não' }
-                        }
-                    });
+                @if (inscricao != null) {
+                    @Html.Raw("document.getElementById('checkSegundaOpcaoClasse').style.opacity = '1'; document.getElementById('checkSegundaOpcaoClasse').style.display = 'block'; ");
                 }
-            });
-
-            $(".escolherQuartaOpcaoClasse").change(function (event) {
-                event.preventDefault();
-                var classe3 = $(this).data("classe3");
-                isDupla3 = $(this).children(':selected').data("isdupla") == "True";
-                if ((isDupla) || (isDupla2) || (isDupla3)) {
-                    //$("#btnIncricao").text("Escolher Parceiro");
-                    document.formInscricao.isClasseDupla.value = true;
-                } else {
-                    $("#btnIncricao").text("Inscrever-me");
-                    document.formInscricao.isClasseDupla.value = false;
+            }
+            if (document.getElementById("totalCategoriasPorJogador").value > 2) {
+                if ((document.getElementById('isTerceiraOpcaoClasse') != null) && (!document.getElementById('isTerceiraOpcaoClasse').checked)) {
+                    document.getElementById('terceiraOpcaoClasse').style.opacity = "0";
+                    document.getElementById('terceiraOpcaoClasse').style.display = "none";
+                    document.getElementById('checkTerceiraOpcaoClasse').style.opacity = "0";
+                    document.getElementById('checkTerceiraOpcaoClasse').style.display = "none";
                 }
-                if (classe3 == "True") {
-                    document.getElementById('checkQuartaOpcaoClasse').style.opacity = "1";
-                    document.getElementById('checkQuartaOpcaoClasse').style.display = "block";
-                    $.confirm({
-                        title: "",
-                        content: "Deseja jogar em mais uma classe?",
-                        buttons: {
-                            sim: {
-                                text: 'Sim',
-                                btnClass: 'btn-primary',
-                                action: function () {
-                                    document.getElementById('isQuartaOpcaoClasse').checked = true;
-                                    quartaOpcaoDeClasse();
-                                }
-                            },
-                            cancelar: { text: 'Não' }
-                        }
-                    });
+                @if (inscricao != null) {
+                    @Html.Raw("if ((document.getElementById('isSegundaOpcaoClasse').checked)&&(document.getElementById('isTerceiraOpcaoClasse')!=null)) { document.getElementById('checkTerceiraOpcaoClasse').style.opacity = '1'; document.getElementById('checkTerceiraOpcaoClasse').style.display = 'block'; }");
                 }
-            });
-
-            $(".segundaOpcaoClasse").change(function (event) {
-                event.preventDefault();
-                isDupla2 = $(this).children(':selected').data("isdupla") == "True";
-                if ((isDupla) || (isDupla2)) {
-                    //$("#btnIncricao").text("Escolher Parceiro");
-                    document.formInscricao.isClasseDupla.value = true;
-                } else {
-                    $("#btnIncricao").text("Inscrever-me");
-                    document.formInscricao.isClasseDupla.value = false;
+            }
+            if (document.getElementById("totalCategoriasPorJogador").value > 3) {
+                if ((document.getElementById('isQuartaOpcaoClasse') != null) && (!document.getElementById('isQuartaOpcaoClasse').checked)) {
+                    document.getElementById('quartaOpcaoClasse').style.opacity = "0";
+                    document.getElementById('quartaOpcaoClasse').style.display = "none";
+                    document.getElementById('checkQuartaOpcaoClasse').style.opacity = "0";
+                    document.getElementById('checkQuartaOpcaoClasse').style.display = "none";
                 }
-
-            });
-
-            $(".terceiraOpcaoClasse").change(function (event) {
-                event.preventDefault();
-                isDupla3 = $(this).children(':selected').data("isdupla") == "True";
-                if ((isDupla) || (isDupla2) || (isDupla3)) {
-                    //$("#btnIncricao").text("Escolher Parceiro");
-                    document.formInscricao.isClasseDupla.value = true;
-                } else {
-                    $("#btnIncricao").text("Inscrever-me");
-                    document.formInscricao.isClasseDupla.value = false;
+                @if (inscricao != null) {
+                    @Html.Raw("if ((document.getElementById('isTerceiraOpcaoClasse')!=null) && (document.getElementById('isTerceiraOpcaoClasse').checked)&&(document.getElementById('isQuartaOpcaoClasse')!=null)) { document.getElementById('checkQuartaOpcaoClasse').style.opacity = '1'; document.getElementById('checkQuartaOpcaoClasse').style.display = 'block'; }");
                 }
-
-            });
-
-            $(".quartaOpcaoClasse").change(function (event) {
-                event.preventDefault();
-                isDupla4 = $(this).children(':selected').data("isdupla") == "True";
-                if ((isDupla) || (isDupla2) || (isDupla3) || (isDupla4)) {
-                    //$("#btnIncricao").text("Escolher Parceiro");
-                    document.formInscricao.isClasseDupla.value = true;
-                } else {
-                    $("#btnIncricao").text("Inscrever-me");
-                    document.formInscricao.isClasseDupla.value = false;
-                }
-
-            });
+            }
 
         });
 
+        function ValidarCategoriaSelecionada(el) {
+            var categoriaSelecionada = el.value;
+            var torneioId = el.dataset.torneioid;
+            if (categoriaSelecionada > 0) {
+                ValidarDisponibilidadeInscricao(torneioId, categoriaSelecionada, el);
+            }
+        }
 
-        $(".confirmAlterarClasse").click(function (event) {
-            event.preventDefault();
+        function ValidarDisponibilidadeInscricao(torneioId, categoriaId, dropDown) {
 
+            $.ajax({
+                type: "GET",
+                url: "/Account/ValidarDisponibilidadeInscricao?torneioId=" + torneioId + "&categoriaId=" + categoriaId,
+                dataType: "json",
+                traditional: true,
+                contentType: "application/json; charset=utf-8",
+                success: function (response) {
+                    if (typeof response == "object") {
+                        if (response.status == "ERRO") {
+                            toastr.error(response.erro, "Erro");
+                        }
+                        else if (response.status == "ESGOTADO") {
+                            dropDown.value = "0";
+
+                            $.alert({
+                                title: '<a style=\'color:red\'> ATENÇÃO! </a>',
+                                content: 'Não é possível se inscrever nesta categoria pois não há mais vagas.'
+                            });
+                        }
+                        else if (response.status == "ESCOLHER_DUPLA") {
+                            $.alert({
+                                title: '<a style=\'color:red\'> ATENÇÃO! </a>',
+                                content: 'ATENÇÃO, esta categoria esta lotada, para entrar é necessário que o seu parceiro esteja inscrito.',
+                                buttons: {
+                                    confirm: {
+                                        text: 'Ciente',
+                                        btnClass: 'btn-blue',
+                                        action: function () {
+                                            CarregarTabelaFormacaoDupla(response.retorno, dropDown);
+                                            document.getElementById("nomeSelectCategoria").value = dropDown.id;
+                                            document.getElementById("temVagasLiberadas").value = "N";
+                                            document.getElementById("tituloModalDupla").innerHTML = "Agora só é possível inscrever na Categoria " + $('option:selected', dropDown).text() + " caso seu parceiro já esteja inscrito. Selecione uma das opções:";
+                                            document.getElementById("tituloAtencao").style.display = "block"
+                                            $("#modalMontarDupla").modal('show');
+                                        }
+                                    }
+                                }
+                            });
+                        }
+                        else if (response.status == "ESCOLHER_DUPLA_OK") {
+                            CarregarTabelaFormacaoDupla(response.retorno, dropDown);
+                            document.getElementById("nomeSelectCategoria").value = dropDown.id;
+                            document.getElementById("temVagasLiberadas").value = "S";
+                            document.getElementById("tituloModalDupla").innerHTML = "Selecione seu parceiro de dupla para a Categoria " + $('option:selected', dropDown).text() + ".";
+                            document.getElementById("tituloAtencao").style.display = "none"
+                            $("#modalMontarDupla").modal('show');
+                        }
+                        else {
+                            ValidarInscricaoMultiplasCategorias(dropDown);
+                        }
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    toastr.error(errorThrown, "Erro");
+                }
+            });
+        }
+
+        function CarregarTabelaFormacaoDupla(dados, el) {
+            LimparTabelaFormacaoDupla();
+            var table = document.getElementById("tblFormacaoDupla");
+            for (var i = 0; i < dados.length; i++) {
+                var row = table.insertRow(1);
+                row.innerHTML = "<td>" + dados[i].Nome + "</td><td>" + "<button title=\"Escolher dupla\" data-numCategoria=\"" + el.dataset.numcategoria + "\" data-userid=\"" + dados[i].UserId + "\" data-id=\"" + dados[i].Id + "\" class=\"col-lg-12 col-xs-12 btn btn-primary btn-xs\" onclick=\"SelecionarParceiro(this)\">Escolher</button>" + "</td>";
+            }
+        }
+
+        function LimparTabelaFormacaoDupla() {
+            var linhas = document.getElementById("tblFormacaoDupla").rows;
+            var i = 0;
+            for (var i = linhas.length - 1; i > 0; i--) {
+                document.getElementById("tblFormacaoDupla").deleteRow(i);
+            }
+        }
+
+        function SelecionarParceiro(el) {
+            var idInscricao = el.dataset.id;
+            AplicarDuplaEscolhida(idInscricao, el.dataset.numcategoria);
+            $("#modalMontarDupla").modal('hide');
+
+            var nomeCombo = document.getElementById("nomeSelectCategoria").value;
+            ValidarInscricaoMultiplasCategorias(document.getElementById(nomeCombo));
+        }
+
+        function ValidarInscricaoMultiplasCategorias(el) {
+            if (el.dataset.totalcategorias > el.dataset.numcategoria && el.dataset.numcategoria == "1") {
+                document.getElementById('checkSegundaOpcaoClasse').style.opacity = "1";
+                document.getElementById('checkSegundaOpcaoClasse').style.display = "block";
+                PerguntarInscricaoNovaCategoria("1");
+            }
+            else if (el.dataset.totalcategorias > el.dataset.numcategoria && el.dataset.numcategoria == "2") {
+                document.getElementById('checkTerceiraOpcaoClasse').style.opacity = "1";
+                document.getElementById('checkTerceiraOpcaoClasse').style.display = "block";
+                PerguntarInscricaoNovaCategoria("2");
+            }
+            else if (el.dataset.totalcategorias > el.dataset.numcategoria && el.dataset.numcategoria == "3") {
+                document.getElementById('checkQuartaOpcaoClasse').style.opacity = "1";
+                document.getElementById('checkQuartaOpcaoClasse').style.display = "block";
+                PerguntarInscricaoNovaCategoria("3");
+            }
+        }
+
+        function PerguntarInscricaoNovaCategoria(numCategoria) {
+            $.confirm({
+                title: "",
+                content: "Deseja jogar em mais uma categoria?",
+                buttons: {
+                    sim: {
+                        text: 'Sim',
+                        btnClass: 'btn-primary',
+                        action: function () {
+                            ValidarRespostaPerguntaInscricaoNovaCategoria(numCategoria);
+                        }
+                    },
+                    cancelar: { text: 'Não' }
+                }
+            });
+        }
+
+        function AplicarDuplaEscolhida(idInscricao, numCategoria) {
+            if (numCategoria == "1") {
+                document.getElementById('idInscricaoParceiroDupla').value = idInscricao;
+            }
+            else if (numCategoria == "2") {
+                document.getElementById('idInscricaoParceiroDupla2').value = idInscricao;
+            }
+            else if (numCategoria == "3") {
+                document.getElementById('idInscricaoParceiroDupla3').value = idInscricao;
+            }
+            else if (numCategoria == "4") {
+                document.getElementById('idInscricaoParceiroDupla4').value = idInscricao;
+            }
+        }
+
+        function ValidarRespostaPerguntaInscricaoNovaCategoria(numCategoria) {
+            if (numCategoria == "1") {
+                document.getElementById('isSegundaOpcaoClasse').checked = true;
+                segundaOpcaoDeClasse();
+            }
+            else if (numCategoria == "2") {
+                document.getElementById('isTerceiraOpcaoClasse').checked = true;
+                terceiraOpcaoDeClasse();
+            }
+            else if (numCategoria == "3") {
+                document.getElementById('isQuartaOpcaoClasse').checked = true;
+                quartaOpcaoDeClasse();
+            }
+        }
+
+        function segundaOpcaoDeClasse() {
+            if (document.getElementById('isSegundaOpcaoClasse').checked) {
+                document.getElementById('segundaOpcaoClasse').style.opacity = "1";
+                document.getElementById('segundaOpcaoClasse').style.display = "block";
+            } else {
+                document.getElementById('classeInscricao2').selectedIndex = 0;
+                document.getElementById('segundaOpcaoClasse').style.opacity = "0 !important";
+                document.getElementById('segundaOpcaoClasse').style.display = "none";
+
+            }
+            RemoverCategoriaSelecionada();
+        }
+
+        function terceiraOpcaoDeClasse() {
+            if (document.getElementById('isTerceiraOpcaoClasse').checked) {
+                document.getElementById('terceiraOpcaoClasse').style.opacity = "1";
+                document.getElementById('terceiraOpcaoClasse').style.display = "block";
+            } else {
+                document.getElementById('classeInscricao3').selectedIndex = 0;
+                document.getElementById('terceiraOpcaoClasse').style.opacity = "0 !important";
+                document.getElementById('terceiraOpcaoClasse').style.display = "none";
+
+            }
+            RemoverCategoriaSelecionada();
+        }
+
+        function quartaOpcaoDeClasse() {
+            if (document.getElementById('isQuartaOpcaoClasse').checked) {
+                document.getElementById('quartaOpcaoClasse').style.opacity = "1";
+                document.getElementById('quartaOpcaoClasse').style.display = "block";
+            } else {
+                document.getElementById('classeInscricao4').selectedIndex = 0;
+                document.getElementById('quartaOpcaoClasse').style.opacity = "0 !important";
+                document.getElementById('quartaOpcaoClasse').style.display = "none";
+
+            }
+            RemoverCategoriaSelecionada();
+        }
+
+        function RemoverCategoriaSelecionada() {
+            var categoria1Selecionada = $("#classeInscricao").val();
+            var categoria2Selecionada = $("#classeInscricao2").val();
+            var categoria3Selecionada = $("#classeInscricao3").val();
+
+            var qtdeCategoriasTorneio = document.getElementById("totalCategoriasPorJogador").value;
+
+            if (qtdeCategoriasTorneio > 1) {
+                if (categoria1Selecionada != 0) {
+                    $("#classeInscricao2").find('[value="' + categoria1Selecionada + '"]').remove();
+                }
+            }
+            if (qtdeCategoriasTorneio > 2) {
+                if (categoria1Selecionada != 0) {
+                    $("#classeInscricao3").find('[value="' + categoria1Selecionada + '"]').remove();
+                }
+                if (categoria2Selecionada != 0) {
+                    $("#classeInscricao3").find('[value="' + categoria2Selecionada + '"]').remove();
+                }
+            }
+            if (qtdeCategoriasTorneio > 3) {
+                if (categoria1Selecionada != 0) {
+                    $("#classeInscricao4").find('[value="' + categoria1Selecionada + '"]').remove();
+                }
+                if (categoria2Selecionada != 0) {
+                    $("#classeInscricao4").find('[value="' + categoria2Selecionada + '"]').remove();
+                }
+                if (categoria3Selecionada != 0) {
+                    $("#classeInscricao4").find('[value="' + categoria3Selecionada + '"]').remove();
+                }
+            }
+
+        }
+
+        function CancelarEscolhaDupla() {
+            var nomeCombo = document.getElementById("nomeSelectCategoria").value;
+            if (document.getElementById("temVagasLiberadas").value == "N") {
+                document.getElementById(nomeCombo).value = "0";
+            }
+            else {
+                var nomeCombo = document.getElementById("nomeSelectCategoria").value;
+                ValidarInscricaoMultiplasCategorias(document.getElementById(nomeCombo));
+            }
+            $("#modalMontarDupla").modal('hide');
+        }
+
+        function AlterarCategoria() {
             $.confirm({
                 title: "Confirmação",
                 content: "Aperte SIM para confirmar a alteração de classe!",
@@ -881,88 +904,13 @@
                     }
                 }
             });
-
-        });
-
+        }
 
         $(".transferenciaButton").click(function (event) {
             event.preventDefault();
             var element = document.getElementById("dadosBancarios");
             element.classList.add("show");
         });
-
-        function segundaOpcaoDeClasse() {
-            if (document.getElementById('isSegundaOpcaoClasse').checked) {
-                document.getElementById('segundaOpcaoClasse').style.opacity = "1";
-                document.getElementById('segundaOpcaoClasse').style.display = "block";
-            } else {
-                document.getElementById('classeInscricao2').selectedIndex = 0;
-                document.getElementById('segundaOpcaoClasse').style.opacity = "0 !important";
-                document.getElementById('segundaOpcaoClasse').style.display = "none";
-
-                isDupla2 = false;
-                if ((isDupla) || (isDupla2)) {
-                   // $("#btnIncricao").text("Escolher Parceiro");
-                    document.formInscricao.isClasseDupla.value = true;
-                } else {
-                    $("#btnIncricao").text("Inscrever-me");
-                    document.formInscricao.isClasseDupla.value = false;
-                }
-            }
-
-            var categoria1Selecionada = $("#classeInscricao").val();
-            $("#classeInscricao2").find('[value="' + categoria1Selecionada +'"]').remove();
-        }
-
-        function terceiraOpcaoDeClasse() {
-            if (document.getElementById('isTerceiraOpcaoClasse').checked) {
-                document.getElementById('terceiraOpcaoClasse').style.opacity = "1";
-                document.getElementById('terceiraOpcaoClasse').style.display = "block";
-            } else {
-                document.getElementById('classeInscricao3').selectedIndex = 0;
-                document.getElementById('terceiraOpcaoClasse').style.opacity = "0 !important";
-                document.getElementById('terceiraOpcaoClasse').style.display = "none";
-                isDupla2 = false;
-                if ((isDupla) || (isDupla2) || (isDupla3)) {
-                    //$("#btnIncricao").text("Escolher Parceiro");
-                    document.formInscricao.isClasseDupla.value = true;
-                } else {
-                    $("#btnIncricao").text("Inscrever-me");
-                    document.formInscricao.isClasseDupla.value = false;
-                }
-            }
-
-            var categoria1Selecionada = $("#classeInscricao").val();
-            var categoria2Selecionada = $("#classeInscricao2").val();
-            $("#classeInscricao3").find('[value="' + categoria1Selecionada + '"]').remove();
-            $("#classeInscricao3").find('[value="' + categoria2Selecionada + '"]').remove();
-        }
-
-        function quartaOpcaoDeClasse() {
-            if (document.getElementById('isQuartaOpcaoClasse').checked) {
-                document.getElementById('quartaOpcaoClasse').style.opacity = "1";
-                document.getElementById('quartaOpcaoClasse').style.display = "block";
-            } else {
-                document.getElementById('classeInscricao4').selectedIndex = 0;
-                document.getElementById('quartaOpcaoClasse').style.opacity = "0 !important";
-                document.getElementById('quartaOpcaoClasse').style.display = "none";
-                isDupla2 = false;
-                if ((isDupla) || (isDupla2)) {
-                    //$("#btnIncricao").text("Escolher Parceiro");
-                    document.formInscricao.isClasseDupla.value = true;
-                } else {
-                    $("#btnIncricao").text("Inscrever-me");
-                    document.formInscricao.isClasseDupla.value = false;
-                }
-            }
-
-            var categoria1Selecionada = $("#classeInscricao").val();
-            var categoria2Selecionada = $("#classeInscricao2").val();
-            var categoria3Selecionada = $("#classeInscricao3").val();
-            $("#classeInscricao4").find('[value="' + categoria1Selecionada + '"]').remove();
-            $("#classeInscricao4").find('[value="' + categoria2Selecionada + '"]').remove();
-            $("#classeInscricao4").find('[value="' + categoria3Selecionada + '"]').remove();
-        }
 
 
         $(".validarSeSocioOuFederado").click(function (event) {
@@ -992,38 +940,5 @@
                 document.formInscricao.submit();
             }
         });
-
-        if (!document.getElementById('isSegundaOpcaoClasse').checked) {
-            document.getElementById('segundaOpcaoClasse').style.opacity = "0";
-            document.getElementById('segundaOpcaoClasse').style.display = "none";
-            document.getElementById('checkSegundaOpcaoClasse').style.opacity = "0";
-            document.getElementById('checkSegundaOpcaoClasse').style.display = "none";
-        }
-        @if (inscricao != null) {
-            @Html.Raw("document.getElementById('checkSegundaOpcaoClasse').style.opacity = '1'; document.getElementById('checkSegundaOpcaoClasse').style.display = 'block'; ");
-        }
-
-        if ((document.getElementById('isTerceiraOpcaoClasse')!=null) && (!document.getElementById('isTerceiraOpcaoClasse').checked)) {
-            document.getElementById('terceiraOpcaoClasse').style.opacity = "0";
-            document.getElementById('terceiraOpcaoClasse').style.display = "none";
-            document.getElementById('checkTerceiraOpcaoClasse').style.opacity = "0";
-            document.getElementById('checkTerceiraOpcaoClasse').style.display = "none";
-        }
-
-        @if (inscricao != null) {
-            @Html.Raw("if ((document.getElementById('isSegundaOpcaoClasse').checked)&&(document.getElementById('isTerceiraOpcaoClasse')!=null)) { document.getElementById('checkTerceiraOpcaoClasse').style.opacity = '1'; document.getElementById('checkTerceiraOpcaoClasse').style.display = 'block'; }");
-        }
-
-        if ((document.getElementById('isQuartaOpcaoClasse') != null) && (!document.getElementById('isQuartaOpcaoClasse').checked)) {
-            document.getElementById('quartaOpcaoClasse').style.opacity = "0";
-            document.getElementById('quartaOpcaoClasse').style.display = "none";
-            document.getElementById('checkQuartaOpcaoClasse').style.opacity = "0";
-            document.getElementById('checkQuartaOpcaoClasse').style.display = "none";
-        }
-        @if (inscricao != null) {
-            @Html.Raw("if ((document.getElementById('isTerceiraOpcaoClasse')!=null) && (document.getElementById('isTerceiraOpcaoClasse').checked)&&(document.getElementById('isQuartaOpcaoClasse')!=null)) { document.getElementById('checkQuartaOpcaoClasse').style.opacity = '1'; document.getElementById('checkQuartaOpcaoClasse').style.display = 'block'; }");
-        }
-
-
     </script>
 }

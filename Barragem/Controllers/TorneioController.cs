@@ -1898,9 +1898,9 @@ namespace Barragem.Controllers
         }
         [Authorize(Roles = "admin,usuario,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
         [HttpPost]
-        public ActionResult Inscricao(int torneioId, int classeInscricao = 0, string operacao = "", int classeInscricao2 = 0, int classeInscricao3 = 0, int classeInscricao4 = 0, string observacao = "", bool isSocio = false, bool isFederado = false, bool isClasseDupla = false, int userId = 0)
+        public ActionResult Inscricao(int torneioId, int classeInscricao = 0, string operacao = "", int classeInscricao2 = 0, int classeInscricao3 = 0, int classeInscricao4 = 0, string observacao = "", bool isSocio = false, bool isFederado = false, int userId = 0, int idInscricaoParceiroDupla = 0, int idInscricaoParceiroDupla2 = 0, int idInscricaoParceiroDupla3 = 0, int idInscricaoParceiroDupla4 = 0)
         {
-            var mensagemRetorno = InscricaoNegocio(torneioId, classeInscricao, operacao, classeInscricao2, classeInscricao3, classeInscricao4, observacao, isSocio, isClasseDupla, userId, isFederado);
+            var mensagemRetorno = InscricaoNegocio(torneioId, classeInscricao, operacao, classeInscricao2, classeInscricao3, classeInscricao4, observacao, isSocio, userId, isFederado, idInscricaoParceiroDupla, idInscricaoParceiroDupla2, idInscricaoParceiroDupla3, idInscricaoParceiroDupla4);
             if (mensagemRetorno.nomePagina == "ConfirmacaoInscricao")
             {
                 return RedirectToAction(mensagemRetorno.nomePagina, new { torneioId = torneioId, msg = mensagemRetorno.mensagem, msgErro = "", userId = userId });
@@ -1926,7 +1926,7 @@ namespace Barragem.Controllers
             }
         }
 
-        public MensagemRetorno InscricaoNegocio(int torneioId, int classeInscricao = 0, string operacao = "", int classeInscricao2 = 0, int classeInscricao3 = 0, int classeInscricao4 = 0, string observacao = "", bool isSocio = false, bool isClasseDupla = false, int userId = 0, bool isFederado = false)
+        public MensagemRetorno InscricaoNegocio(int torneioId, int classeInscricao = 0, string operacao = "", int classeInscricao2 = 0, int classeInscricao3 = 0, int classeInscricao4 = 0, string observacao = "", bool isSocio = false, int userId = 0, bool isFederado = false, int idInscricaoParceiroDupla = 0, int idInscricaoParceiroDupla2 = 0, int idInscricaoParceiroDupla3 = 0, int idInscricaoParceiroDupla4 = 0)
         {
             var mensagemRetorno = new MensagemRetorno();
             try
@@ -1982,7 +1982,7 @@ namespace Barragem.Controllers
                             }
                             else if (classeInscricao2 != 0)
                             {
-                                msgValidacaoClasse = validarLimiteDeInscricao(classeInscricao2);
+                                msgValidacaoClasse = validarLimiteDeInscricao(classeInscricao2, torneioId);
                                 if (msgValidacaoClasse != "")
                                 {
                                     mensagemRetorno.nomePagina = "Detalhes";
@@ -1992,6 +1992,9 @@ namespace Barragem.Controllers
 
                                 InscricaoTorneio insc2 = preencherInscricaoTorneio(torneioId, userId, classeInscricao2, valorInscricao, observacao, isSocio, isFederado, valorPendente, it[0].isAtivo);
                                 db.InscricaoTorneio.Add(insc2);
+                                db.SaveChanges();
+                                tn.ValidarCriacaoDupla(idInscricaoParceiroDupla2, userId, torneioId, classeInscricao2);
+
                             }
                             if (it.Count() > 2)
                             {
@@ -1999,7 +2002,7 @@ namespace Barragem.Controllers
                             }
                             else if (classeInscricao3 != 0)
                             {
-                                msgValidacaoClasse = validarLimiteDeInscricao(classeInscricao3);
+                                msgValidacaoClasse = validarLimiteDeInscricao(classeInscricao3, torneioId);
                                 if (msgValidacaoClasse != "")
                                 {
                                     mensagemRetorno.nomePagina = "Detalhes";
@@ -2008,6 +2011,8 @@ namespace Barragem.Controllers
                                 }
                                 InscricaoTorneio insc3 = preencherInscricaoTorneio(torneioId, userId, classeInscricao3, valorInscricao, observacao, isSocio, isFederado, valorPendente, it[0].isAtivo);
                                 db.InscricaoTorneio.Add(insc3);
+                                db.SaveChanges();
+                                tn.ValidarCriacaoDupla(idInscricaoParceiroDupla3, userId, torneioId, classeInscricao3);
                             }
                             if (it.Count() > 3)
                             {
@@ -2015,7 +2020,7 @@ namespace Barragem.Controllers
                             }
                             else if (classeInscricao4 != 0)
                             {
-                                msgValidacaoClasse = validarLimiteDeInscricao(classeInscricao4);
+                                msgValidacaoClasse = validarLimiteDeInscricao(classeInscricao4, torneioId);
                                 if (msgValidacaoClasse != "")
                                 {
                                     mensagemRetorno.nomePagina = "Detalhes";
@@ -2024,14 +2029,11 @@ namespace Barragem.Controllers
                                 }
                                 InscricaoTorneio insc4 = preencherInscricaoTorneio(torneioId, userId, classeInscricao4, valorInscricao, observacao, isSocio, isFederado, valorPendente, it[0].isAtivo);
                                 db.InscricaoTorneio.Add(insc4);
+                                db.SaveChanges();
+                                tn.ValidarCriacaoDupla(idInscricaoParceiroDupla4, userId, torneioId, classeInscricao4);
                             }
                             db.SaveChanges();
-                            if (isClasseDupla)
-                            {
-                                mensagemRetorno.nomePagina = "EscolherDupla";
-                                mensagemRetorno.mensagem = "";
-                                return mensagemRetorno;
-                            }
+
                             if (valorPendente > 0)
                             {
                                 mensagemRetorno.nomePagina = "ConfirmacaoInscricao";
@@ -2065,20 +2067,29 @@ namespace Barragem.Controllers
 
                     inscricao = preencherInscricaoTorneio(torneioId, userId, classeInscricao, valorInscricao, observacao, isSocio, isFederado);
                     db.InscricaoTorneio.Add(inscricao);
+                    db.SaveChanges();
+                    tn.ValidarCriacaoDupla(idInscricaoParceiroDupla, userId, torneioId, classeInscricao);
+
                     if (classeInscricao2 > 0)
                     {
                         InscricaoTorneio insc2 = preencherInscricaoTorneio(torneioId, userId, classeInscricao2, valorInscricao, observacao, isSocio, isFederado);
                         db.InscricaoTorneio.Add(insc2);
+                        db.SaveChanges();
+                        tn.ValidarCriacaoDupla(idInscricaoParceiroDupla2, userId, torneioId, classeInscricao2);
                     }
                     if (classeInscricao3 > 0)
                     {
                         InscricaoTorneio insc3 = preencherInscricaoTorneio(torneioId, userId, classeInscricao3, valorInscricao, observacao, isSocio, isFederado);
                         db.InscricaoTorneio.Add(insc3);
+                        db.SaveChanges();
+                        tn.ValidarCriacaoDupla(idInscricaoParceiroDupla3, userId, torneioId, classeInscricao3);
                     }
                     if (classeInscricao4 > 0)
                     {
                         InscricaoTorneio insc4 = preencherInscricaoTorneio(torneioId, userId, classeInscricao4, valorInscricao, observacao, isSocio, isFederado);
                         db.InscricaoTorneio.Add(insc4);
+                        db.SaveChanges();
+                        tn.ValidarCriacaoDupla(idInscricaoParceiroDupla4, userId, torneioId, classeInscricao4);
                     }
                 }
                 db.SaveChanges();
@@ -2093,12 +2104,6 @@ namespace Barragem.Controllers
                 {
                     mensagemRetorno.nomePagina = "Detalhes";
                     mensagemRetorno.mensagem = "OK";
-                    return mensagemRetorno;
-                }
-                if (isClasseDupla)
-                {
-                    mensagemRetorno.nomePagina = "EscolherDupla";
-                    mensagemRetorno.mensagem = "";
                     return mensagemRetorno;
                 }
                 mensagemRetorno.nomePagina = "ConfirmacaoInscricao";
@@ -2131,60 +2136,39 @@ namespace Barragem.Controllers
 
         public String validarLimiteDeInscricao(int classeInscricao, int classeInscricao2, int classeInscricao3, int classeInscricao4, int torneioId)
         {
-            var classes = db.ClasseTorneio.Where(c => c.torneioId == torneioId && c.maximoInscritos > 0).ToList();
-            for (int i = 0; i < 4; i++)
+            var listaCategorias = new List<int> { { classeInscricao }, { classeInscricao2 }, { classeInscricao3 }, { classeInscricao4 } };
+
+            foreach (var categoria in listaCategorias)
             {
-                var clInscrito = 0;
-                if (i == 0)
+                if (categoria <= 0)
                 {
-                    clInscrito = classeInscricao;
+                    continue;
                 }
-                else if (i == 1)
-                {
-                    clInscrito = classeInscricao2;
-                }
-                else if (i == 2)
-                {
-                    clInscrito = classeInscricao3;
-                }
-                else if (i == 3)
-                {
-                    clInscrito = classeInscricao4;
-                }
-                try
-                {
-                    var classeSelecionada = classes.Where(j => j.Id == clInscrito).First();
-                    var qtddInscritos = db.InscricaoTorneio.Where(j => j.classe == clInscrito).Count();
-                    if (qtddInscritos >= classeSelecionada.maximoInscritos)
-                    {
-                        return "Vagas esgotadas para a classe: " + classeSelecionada.nome + ".";
-                    }
-                }
-                catch (Exception e) { }
 
+                var resposta = tn.ValidarDisponibilidadeInscricoes(torneioId, categoria);
+                if (resposta.status == "ESGOTADO")
+                {
+                    var classeSelecionada = db.ClasseTorneio.Where(x => x.torneioId == torneioId && x.Id == categoria).FirstOrDefault();
+                    return "Vagas esgotadas para a classe: " + classeSelecionada?.nome + ".";
+                }
             }
-            return "";
-
+            return string.Empty;
         }
 
-        private String validarLimiteDeInscricao(int classeInscricao)
+        private String validarLimiteDeInscricao(int categoria, int torneioId)
         {
-
-            try
+            if (categoria <= 0)
             {
-                var classeSelecionada = db.ClasseTorneio.Find(classeInscricao);
-                if (classeSelecionada.maximoInscritos > 0)
-                {
-                    var qtddInscritos = db.InscricaoTorneio.Where(j => j.classe == classeInscricao).Count();
-                    if (qtddInscritos >= classeSelecionada.maximoInscritos)
-                    {
-                        return "Vagas esgotadas para a classe: " + classeSelecionada.nome + ".";
-                    }
-                }
+                return string.Empty;
             }
-            catch (Exception e) { }
 
-            return "";
+            var resposta = tn.ValidarDisponibilidadeInscricoes(torneioId, categoria);
+            if (resposta.status == "ESGOTADO")
+            {
+                var classeSelecionada = db.ClasseTorneio.Where(x => x.torneioId == torneioId && x.Id == categoria).FirstOrDefault();
+                return "Vagas esgotadas para a classe: " + classeSelecionada?.nome + ".";
+            }
+            return string.Empty;
 
         }
 
