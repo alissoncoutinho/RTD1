@@ -322,6 +322,7 @@
     <Compile Include="Models\ImpressaoInscritosModel.cs" />
     <Compile Include="Models\ImpressaoJogoFaseGrupoModel.cs" />
     <Compile Include="Models\ImprimirGruposModel.cs" />
+    <Compile Include="Models\InscricaoModel.cs" />
     <Compile Include="Models\InscricaoTorneio.cs" />
     <Compile Include="Models\InscricaoTorneioPagaModel.cs" />
     <Compile Include="Models\Jogo.cs" />

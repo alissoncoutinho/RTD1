@@ -442,7 +442,34 @@ namespace Barragem.Controllers
             {
                 return BadRequest("001-Você já possui uma inscrição neste torneio.");
             }
-            var mensagemRetorno = new TorneioController().InscricaoNegocio(torneioId, classe1, "", classe2, classe3, classe4, observacao, isSocio, userId, isFederado);
+
+            var inscricaoModel = new InscricaoModel() { UserId = userId, TorneioId = torneioId, IdCategoria1 = classe1, IdCategoria2 = classe2, IdCategoria3 = classe3, IdCategoria4 = classe4, Observacao = observacao, IsSocio = isSocio, IsFederado = isFederado };
+
+            var mensagemRetorno = new TorneioController().InscricaoNegocio(inscricaoModel, "");
+            if (mensagemRetorno.tipo == "erro")
+            {
+                return BadRequest(mensagemRetorno.mensagem);
+            }
+            else
+            {
+                var inscricao = new InscricaoTorneio();
+                inscricao.Id = mensagemRetorno.id;
+                return Ok(inscricao);
+            }
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("api/InscricaoAPI/RealizarInscricao")]
+        public IHttpActionResult RealizarInscricao(InscricaoModel inscricaoModel)
+        {
+            // validar se já houve inscrição:
+            var temInscricao = db.InscricaoTorneio.Count(i => i.userId == inscricaoModel.UserId && i.torneioId == inscricaoModel.TorneioId);
+            if (temInscricao > 0)
+            {
+                return BadRequest("001-Você já possui uma inscrição neste torneio.");
+            }
+            var mensagemRetorno = new TorneioController().InscricaoNegocio(inscricaoModel, "");
             if (mensagemRetorno.tipo == "erro")
             {
                 return BadRequest(mensagemRetorno.mensagem);

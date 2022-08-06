@@ -1900,7 +1900,9 @@ namespace Barragem.Controllers
         [HttpPost]
         public ActionResult Inscricao(int torneioId, int classeInscricao = 0, string operacao = "", int classeInscricao2 = 0, int classeInscricao3 = 0, int classeInscricao4 = 0, string observacao = "", bool isSocio = false, bool isFederado = false, int userId = 0, int idInscricaoParceiroDupla = 0, int idInscricaoParceiroDupla2 = 0, int idInscricaoParceiroDupla3 = 0, int idInscricaoParceiroDupla4 = 0)
         {
-            var mensagemRetorno = InscricaoNegocio(torneioId, classeInscricao, operacao, classeInscricao2, classeInscricao3, classeInscricao4, observacao, isSocio, userId, isFederado, idInscricaoParceiroDupla, idInscricaoParceiroDupla2, idInscricaoParceiroDupla3, idInscricaoParceiroDupla4);
+            var inscricaoModel = new InscricaoModel() { UserId = userId, TorneioId = torneioId, IdCategoria1 = classeInscricao, IdCategoria2 = classeInscricao2, IdCategoria3 = classeInscricao3, IdCategoria4 = classeInscricao4, Observacao = observacao, IsSocio = isSocio, IsFederado = isFederado };
+
+            var mensagemRetorno = InscricaoNegocio(inscricaoModel, operacao);
             if (mensagemRetorno.nomePagina == "ConfirmacaoInscricao")
             {
                 return RedirectToAction(mensagemRetorno.nomePagina, new { torneioId = torneioId, msg = mensagemRetorno.mensagem, msgErro = "", userId = userId });
@@ -1926,27 +1928,27 @@ namespace Barragem.Controllers
             }
         }
 
-        public MensagemRetorno InscricaoNegocio(int torneioId, int classeInscricao = 0, string operacao = "", int classeInscricao2 = 0, int classeInscricao3 = 0, int classeInscricao4 = 0, string observacao = "", bool isSocio = false, int userId = 0, bool isFederado = false, int idInscricaoParceiroDupla = 0, int idInscricaoParceiroDupla2 = 0, int idInscricaoParceiroDupla3 = 0, int idInscricaoParceiroDupla4 = 0)
+        public MensagemRetorno InscricaoNegocio(InscricaoModel inscricaoModel, string operacao = "")
         {
             var mensagemRetorno = new MensagemRetorno();
             try
             {
                 var gratuidade = false;
-                if (userId == 0)
+                if (inscricaoModel.UserId == 0)
                 {
                     string perfil = Roles.GetRolesForUser(User.Identity.Name)[0];
                     if (!perfil.Equals(""))
                     {
-                        userId = WebSecurity.GetUserId(User.Identity.Name);
+                        inscricaoModel.UserId = WebSecurity.GetUserId(User.Identity.Name);
                     }
                 }
-                mudarStatusSeDesativadoParaStatusTorneio(userId);
-                var torneio = db.Torneio.Find(torneioId);
-                var isInscricao = db.InscricaoTorneio.Where(i => i.torneioId == torneioId && i.userId == userId).Count();
+                mudarStatusSeDesativadoParaStatusTorneio(inscricaoModel.UserId);
+                var torneio = db.Torneio.Find(inscricaoModel.TorneioId);
+                var isInscricao = db.InscricaoTorneio.Count(i => i.torneioId == inscricaoModel.TorneioId && i.userId == inscricaoModel.UserId);
                 InscricaoTorneio inscricao = null;
                 if (isInscricao > 0)
                 {
-                    var it = db.InscricaoTorneio.Where(i => i.torneioId == torneioId && i.userId == userId).ToList();
+                    var it = db.InscricaoTorneio.Where(i => i.torneioId == inscricaoModel.TorneioId && i.userId == inscricaoModel.UserId).ToList();
                     if (operacao == "cancelar")
                     {
                         foreach (var item in it)
@@ -1956,15 +1958,15 @@ namespace Barragem.Controllers
                     }
                     else
                     {
-                        string msgValidacaoClasse = validarEscolhasDeClasses(classeInscricao, classeInscricao2, classeInscricao3, classeInscricao4);
+                        string msgValidacaoClasse = validarEscolhasDeClasses(inscricaoModel.IdCategoria1, inscricaoModel.IdCategoria2, inscricaoModel.IdCategoria3, inscricaoModel.IdCategoria4);
 
-                        isSocio = (it[0].isSocio == null) ? false : (bool)it[0].isSocio;
-                        isFederado = (it[0].isFederado == null) ? false : (bool)it[0].isFederado;
-                        var valorInscricao = calcularValorInscricao(classeInscricao2, classeInscricao3, classeInscricao4, isSocio, torneio, userId, isFederado);
+                        inscricaoModel.IsSocio = (it[0].isSocio == null) ? false : (bool)it[0].isSocio;
+                        inscricaoModel.IsFederado = (it[0].isFederado == null) ? false : (bool)it[0].isFederado;
+                        var valorInscricao = calcularValorInscricao(inscricaoModel.IdCategoria2, inscricaoModel.IdCategoria3, inscricaoModel.IdCategoria4, inscricaoModel.IsSocio, torneio, inscricaoModel.UserId, inscricaoModel.IsFederado);
                         if (operacao == "alterarClasse")
                         {
                             double valorPendente = 0;
-                            it[0].classe = classeInscricao;
+                            it[0].classe = inscricaoModel.IdCategoria1;
                             if ((valorInscricao > it[0].valor) && (it[0].isAtivo))
                             {
                                 valorPendente = valorInscricao - (double)it[0].valor;
@@ -1978,11 +1980,11 @@ namespace Barragem.Controllers
                             db.Entry(it[0]).State = EntityState.Modified;
                             if (it.Count() > 1)
                             {
-                                alterarClasseInscricao(it[1], classeInscricao2, valorInscricao, valorPendente);
+                                alterarClasseInscricao(it[1], inscricaoModel.IdCategoria2, valorInscricao, valorPendente);
                             }
-                            else if (classeInscricao2 != 0)
+                            else if (inscricaoModel.IdCategoria2 != 0)
                             {
-                                msgValidacaoClasse = validarLimiteDeInscricao(classeInscricao2, torneioId);
+                                msgValidacaoClasse = validarLimiteDeInscricao(inscricaoModel.IdCategoria2, inscricaoModel.TorneioId);
                                 if (msgValidacaoClasse != "")
                                 {
                                     mensagemRetorno.nomePagina = "Detalhes";
@@ -1990,47 +1992,47 @@ namespace Barragem.Controllers
                                     return mensagemRetorno;
                                 }
 
-                                InscricaoTorneio insc2 = preencherInscricaoTorneio(torneioId, userId, classeInscricao2, valorInscricao, observacao, isSocio, isFederado, valorPendente, it[0].isAtivo);
+                                InscricaoTorneio insc2 = preencherInscricaoTorneio(inscricaoModel.TorneioId, inscricaoModel.UserId, inscricaoModel.IdCategoria2, valorInscricao, inscricaoModel.Observacao, inscricaoModel.IsSocio, inscricaoModel.IsFederado, valorPendente, it[0].isAtivo);
                                 db.InscricaoTorneio.Add(insc2);
                                 db.SaveChanges();
-                                tn.ValidarCriacaoDupla(idInscricaoParceiroDupla2, userId, torneioId, classeInscricao2);
+                                tn.ValidarCriacaoDupla(inscricaoModel.IdInscricaoParceiroDupla2, inscricaoModel.UserId, inscricaoModel.TorneioId, inscricaoModel.IdCategoria2);
 
                             }
                             if (it.Count() > 2)
                             {
-                                alterarClasseInscricao(it[2], classeInscricao3, valorInscricao);
+                                alterarClasseInscricao(it[2], inscricaoModel.IdCategoria3, valorInscricao);
                             }
-                            else if (classeInscricao3 != 0)
+                            else if (inscricaoModel.IdCategoria3 != 0)
                             {
-                                msgValidacaoClasse = validarLimiteDeInscricao(classeInscricao3, torneioId);
+                                msgValidacaoClasse = validarLimiteDeInscricao(inscricaoModel.IdCategoria3, inscricaoModel.TorneioId);
                                 if (msgValidacaoClasse != "")
                                 {
                                     mensagemRetorno.nomePagina = "Detalhes";
                                     mensagemRetorno.mensagem = msgValidacaoClasse;
                                     return mensagemRetorno;
                                 }
-                                InscricaoTorneio insc3 = preencherInscricaoTorneio(torneioId, userId, classeInscricao3, valorInscricao, observacao, isSocio, isFederado, valorPendente, it[0].isAtivo);
+                                InscricaoTorneio insc3 = preencherInscricaoTorneio(inscricaoModel.TorneioId, inscricaoModel.UserId, inscricaoModel.IdCategoria3, valorInscricao, inscricaoModel.Observacao, inscricaoModel.IsSocio, inscricaoModel.IsFederado, valorPendente, it[0].isAtivo);
                                 db.InscricaoTorneio.Add(insc3);
                                 db.SaveChanges();
-                                tn.ValidarCriacaoDupla(idInscricaoParceiroDupla3, userId, torneioId, classeInscricao3);
+                                tn.ValidarCriacaoDupla(inscricaoModel.IdInscricaoParceiroDupla3, inscricaoModel.UserId, inscricaoModel.TorneioId, inscricaoModel.IdCategoria3);
                             }
                             if (it.Count() > 3)
                             {
-                                alterarClasseInscricao(it[3], classeInscricao4, valorInscricao);
+                                alterarClasseInscricao(it[3], inscricaoModel.IdCategoria4, valorInscricao);
                             }
-                            else if (classeInscricao4 != 0)
+                            else if (inscricaoModel.IdCategoria4 != 0)
                             {
-                                msgValidacaoClasse = validarLimiteDeInscricao(classeInscricao4, torneioId);
+                                msgValidacaoClasse = validarLimiteDeInscricao(inscricaoModel.IdCategoria4, inscricaoModel.TorneioId);
                                 if (msgValidacaoClasse != "")
                                 {
                                     mensagemRetorno.nomePagina = "Detalhes";
                                     mensagemRetorno.mensagem = msgValidacaoClasse;
                                     return mensagemRetorno;
                                 }
-                                InscricaoTorneio insc4 = preencherInscricaoTorneio(torneioId, userId, classeInscricao4, valorInscricao, observacao, isSocio, isFederado, valorPendente, it[0].isAtivo);
+                                InscricaoTorneio insc4 = preencherInscricaoTorneio(inscricaoModel.TorneioId, inscricaoModel.UserId, inscricaoModel.IdCategoria4, valorInscricao, inscricaoModel.Observacao, inscricaoModel.IsSocio, inscricaoModel.IsFederado, valorPendente, it[0].isAtivo);
                                 db.InscricaoTorneio.Add(insc4);
                                 db.SaveChanges();
-                                tn.ValidarCriacaoDupla(idInscricaoParceiroDupla4, userId, torneioId, classeInscricao4);
+                                tn.ValidarCriacaoDupla(inscricaoModel.IdInscricaoParceiroDupla4, inscricaoModel.UserId, inscricaoModel.TorneioId, inscricaoModel.IdCategoria4);
                             }
                             db.SaveChanges();
 
@@ -2049,53 +2051,53 @@ namespace Barragem.Controllers
                 }
                 else
                 {
-                    string msgValidacaoClasse = validarEscolhasDeClasses(classeInscricao, classeInscricao2, classeInscricao3, classeInscricao4);
+                    string msgValidacaoClasse = validarEscolhasDeClasses(inscricaoModel.IdCategoria1, inscricaoModel.IdCategoria2, inscricaoModel.IdCategoria3, inscricaoModel.IdCategoria4);
                     if (msgValidacaoClasse != "")
                     {
                         mensagemRetorno.nomePagina = "Detalhes";
                         mensagemRetorno.mensagem = msgValidacaoClasse;
                         return mensagemRetorno;
                     }
-                    msgValidacaoClasse = validarLimiteDeInscricao(classeInscricao, classeInscricao2, classeInscricao3, classeInscricao4, torneio.Id);
+                    msgValidacaoClasse = validarLimiteDeInscricao(inscricaoModel.IdCategoria1, inscricaoModel.IdCategoria2, inscricaoModel.IdCategoria3, inscricaoModel.IdCategoria4, torneio.Id);
                     if (msgValidacaoClasse != "")
                     {
                         mensagemRetorno.nomePagina = "Detalhes";
                         mensagemRetorno.mensagem = msgValidacaoClasse;
                         return mensagemRetorno;
                     }
-                    double valorInscricao = calcularValorInscricao(classeInscricao2, classeInscricao3, classeInscricao4, isSocio, torneio, userId, isFederado);
+                    double valorInscricao = calcularValorInscricao(inscricaoModel.IdCategoria2, inscricaoModel.IdCategoria3, inscricaoModel.IdCategoria4, inscricaoModel.IsSocio, torneio, inscricaoModel.UserId, inscricaoModel.IsFederado);
 
-                    inscricao = preencherInscricaoTorneio(torneioId, userId, classeInscricao, valorInscricao, observacao, isSocio, isFederado);
+                    inscricao = preencherInscricaoTorneio(inscricaoModel.TorneioId, inscricaoModel.UserId, inscricaoModel.IdCategoria1, valorInscricao, inscricaoModel.Observacao, inscricaoModel.IsSocio, inscricaoModel.IsFederado);
                     db.InscricaoTorneio.Add(inscricao);
                     db.SaveChanges();
-                    tn.ValidarCriacaoDupla(idInscricaoParceiroDupla, userId, torneioId, classeInscricao);
+                    tn.ValidarCriacaoDupla(inscricaoModel.IdInscricaoParceiroDupla1, inscricaoModel.UserId, inscricaoModel.TorneioId, inscricaoModel.IdCategoria1);
 
-                    if (classeInscricao2 > 0)
+                    if (inscricaoModel.IdCategoria2 > 0)
                     {
-                        InscricaoTorneio insc2 = preencherInscricaoTorneio(torneioId, userId, classeInscricao2, valorInscricao, observacao, isSocio, isFederado);
+                        InscricaoTorneio insc2 = preencherInscricaoTorneio(inscricaoModel.TorneioId, inscricaoModel.UserId, inscricaoModel.IdCategoria2, valorInscricao, inscricaoModel.Observacao, inscricaoModel.IsSocio, inscricaoModel.IsFederado);
                         db.InscricaoTorneio.Add(insc2);
                         db.SaveChanges();
-                        tn.ValidarCriacaoDupla(idInscricaoParceiroDupla2, userId, torneioId, classeInscricao2);
+                        tn.ValidarCriacaoDupla(inscricaoModel.IdInscricaoParceiroDupla2, inscricaoModel.UserId, inscricaoModel.TorneioId, inscricaoModel.IdCategoria2);
                     }
-                    if (classeInscricao3 > 0)
+                    if (inscricaoModel.IdCategoria3 > 0)
                     {
-                        InscricaoTorneio insc3 = preencherInscricaoTorneio(torneioId, userId, classeInscricao3, valorInscricao, observacao, isSocio, isFederado);
+                        InscricaoTorneio insc3 = preencherInscricaoTorneio(inscricaoModel.TorneioId, inscricaoModel.UserId, inscricaoModel.IdCategoria3, valorInscricao, inscricaoModel.Observacao, inscricaoModel.IsSocio, inscricaoModel.IsFederado);
                         db.InscricaoTorneio.Add(insc3);
                         db.SaveChanges();
-                        tn.ValidarCriacaoDupla(idInscricaoParceiroDupla3, userId, torneioId, classeInscricao3);
+                        tn.ValidarCriacaoDupla(inscricaoModel.IdInscricaoParceiroDupla3, inscricaoModel.UserId, inscricaoModel.TorneioId, inscricaoModel.IdCategoria3);
                     }
-                    if (classeInscricao4 > 0)
+                    if (inscricaoModel.IdCategoria4 > 0)
                     {
-                        InscricaoTorneio insc4 = preencherInscricaoTorneio(torneioId, userId, classeInscricao4, valorInscricao, observacao, isSocio, isFederado);
+                        InscricaoTorneio insc4 = preencherInscricaoTorneio(inscricaoModel.TorneioId, inscricaoModel.UserId, inscricaoModel.IdCategoria4, valorInscricao, inscricaoModel.Observacao, inscricaoModel.IsSocio, inscricaoModel.IsFederado);
                         db.InscricaoTorneio.Add(insc4);
                         db.SaveChanges();
-                        tn.ValidarCriacaoDupla(idInscricaoParceiroDupla4, userId, torneioId, classeInscricao4);
+                        tn.ValidarCriacaoDupla(inscricaoModel.IdInscricaoParceiroDupla4, inscricaoModel.UserId, inscricaoModel.TorneioId, inscricaoModel.IdCategoria4);
                     }
                 }
                 db.SaveChanges();
                 mensagemRetorno.id = inscricao.Id;
                 mensagemRetorno.mensagem = "Inscrição recebida.";
-                gratuidade = VerificarGratuidade(torneio, userId);
+                gratuidade = VerificarGratuidade(torneio, inscricaoModel.UserId);
                 if ((torneio.valor == 0) || (gratuidade))
                 {
                     mensagemRetorno.mensagem = "Inscrição realizada com sucesso.";
