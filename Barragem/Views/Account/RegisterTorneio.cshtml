@@ -505,7 +505,7 @@
                                         text: 'Ciente',
                                         btnClass: 'btn-blue',
                                         action: function () {
-                                            CarregarTabelaFormacaoDupla(response.retorno, dropDown);
+                                            CarregarTabelaFormacaoDupla(response.conteudo, dropDown);
                                             document.getElementById("nomeSelectCategoria").value = dropDown.id;
                                             document.getElementById("temVagasLiberadas").value = "N";
                                             document.getElementById("tituloModalDupla").innerHTML = "Agora só é possível inscrever na Categoria " + $('option:selected', dropDown).text() + " caso seu parceiro já esteja inscrito. Selecione uma das opções:";
@@ -517,7 +517,7 @@
                             });
                         }
                         else if (response.status == "ESCOLHER_DUPLA_OK") {
-                            CarregarTabelaFormacaoDupla(response.retorno, dropDown);
+                            CarregarTabelaFormacaoDupla(response.conteudo, dropDown);
                             document.getElementById("nomeSelectCategoria").value = dropDown.id;
                             document.getElementById("temVagasLiberadas").value = "S";
                             document.getElementById("tituloModalDupla").innerHTML = "Selecione seu parceiro de dupla para a Categoria " + $('option:selected', dropDown).text() + ".";

@@ -1184,16 +1184,22 @@ namespace Barragem.Class
             return rankingJogadores.ToList();
         }
 
-        public ResponseMessageWithStatus ValidarDisponibilidadeInscricoes(int torneioId, int categoriaId)
+        public RetornoValidacaoDisponibInscricaoModel ValidarDisponibilidadeInscricoes(int torneioId, int categoriaId)
         {
-            var respostaValidacao = new ResponseMessageWithStatus();
+            var respostaValidacao = new RetornoValidacaoDisponibInscricaoModel();
             try
             {
-                var categoria = db.ClasseTorneio.Find(categoriaId);
+                var categoria = db.ClasseTorneio.FirstOrDefault(x => x.torneioId == torneioId && x.Id == categoriaId);
+
+                if (categoria == null)
+                {
+                    respostaValidacao.AplicarStatusErro("Categoria do torneio não encontrada.");
+                    return respostaValidacao;
+                }
 
                 if (categoria.maximoInscritos == 0 && !categoria.isDupla)
                 {
-                    respostaValidacao.status = "OK";
+                    respostaValidacao.AplicarStatusOk();
                 }
                 else
                 {
@@ -1217,34 +1223,34 @@ namespace Barragem.Class
 
                         if (vagasRestantes <= 0)
                         {
-                            respostaValidacao.status = "ESGOTADO";
+                            respostaValidacao.AplicarStatusEsgotado();
                         }
                         else if (jogadoresAguardandoDupla == 0)
                         {
-                            respostaValidacao.status = "OK";
+                            respostaValidacao.AplicarStatusOk();
                         }
                         else
                         {
-                            respostaValidacao.status = (vagasRestantes - jogadoresAguardandoDupla > 0) ? "ESCOLHER_DUPLA_OK" : "ESCOLHER_DUPLA";
-                            respostaValidacao.retorno = duplasNaoFormadas.Select(s => new FormacaoDuplaInscricao() { Id = s.Id, UserId = s.userId, Nome = s.participante.nome }).ToList();
+                            respostaValidacao.AplicarStatusEscolhaDupla(vagasRestantes - jogadoresAguardandoDupla > 0);
+                            respostaValidacao.conteudo = duplasNaoFormadas.Select(s => new FormacaoDuplaInscricao() { Id = s.Id, UserId = s.userId, Nome = s.participante.nome }).ToList();
                         }
                     }
                     else
                     {
                         if (categoria.maximoInscritos > qtdInscritosCategoria)
                         {
-                            respostaValidacao.status = "OK";
+                            respostaValidacao.AplicarStatusOk();
                         }
                         else
                         {
-                            respostaValidacao.status = "ESGOTADO";
+                            respostaValidacao.AplicarStatusEsgotado();
                         }
                     }
                 }
             }
             catch (Exception ex)
             {
-                respostaValidacao = new ResponseMessageWithStatus { erro = ex.Message, status = "ERRO" };
+                respostaValidacao.AplicarStatusErro(ex.Message);
             }
             return respostaValidacao;
         }

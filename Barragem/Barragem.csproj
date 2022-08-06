@@ -272,6 +272,7 @@
     <Compile Include="Controllers\RankingController.cs" />
     <Compile Include="Controllers\RankingAPIController.cs" />
     <Compile Include="Controllers\RegraController.cs" />
+    <Compile Include="Controllers\RetornoValidacaoDisponibInscricaoModel.cs" />
     <Compile Include="Controllers\RodadaController.cs" />
     <Compile Include="Controllers\TemporadaController.cs" />
     <Compile Include="Controllers\TorneioAPIController.cs" />

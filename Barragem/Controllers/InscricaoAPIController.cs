@@ -25,6 +25,21 @@ namespace Barragem.Controllers
         private BarragemDbContext db = new BarragemDbContext();
         private TorneioNegocio tn = new TorneioNegocio();
 
+        [HttpGet]
+        [Route("api/InscricaoAPI/ValidarDisponibilidadeInscricoes")]
+        public IHttpActionResult ValidarDisponibilidadeInscricoes(int torneioId, int categoriaId)
+        {
+            if (torneioId <= 0)
+            {
+                return Ok(new RetornoValidacaoDisponibInscricaoModel("Id do torneio é obrigatório"));
+            }
+            else if (categoriaId <= 0)
+            {
+                return Ok(new RetornoValidacaoDisponibInscricaoModel("Id da categoria é obrigatória"));
+            }
+            return Ok(tn.ValidarDisponibilidadeInscricoes(torneioId, categoriaId));
+        }
+
         // GET: api/InscricaoAPI
         [HttpGet]
         [Route("api/InscricaoAPI/PrepararInscricao/{torneioId}")]
