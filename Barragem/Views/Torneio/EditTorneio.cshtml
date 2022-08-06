@@ -305,7 +305,7 @@
                         <div class="col-sm-3">
                             <div class="checkbox">
                                 <label>
-                                    @Html.CheckBoxFor(model => model.torneioFoiPago) @Html.Raw(" Torneio Foi Pago: R$ " + cobrancaTorneio.valorASerPago + ",00 ?")
+                                    @Html.CheckBoxFor(model => model.torneioFoiPago) @Html.Raw(" Torneio Foi Pago: " + string.Format(new System.Globalization.CultureInfo("pt-BR"), "{0:C}", cobrancaTorneio.valorASerPago) + " ?")
                                 </label>
                             </div>
                         </div>

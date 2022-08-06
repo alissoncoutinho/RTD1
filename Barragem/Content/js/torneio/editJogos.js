@@ -216,7 +216,9 @@ function ValidarPagamentoTorneio(idTorneio) {
                             document.getElementById("divDescRankingPagtoPend").style.display = "none";
                             document.getElementById("lblDescRankingPagtoPend").textContent = "";
                         }
-                        document.getElementById("lblValorFinalPagtoPend").textContent = "Valor final a pagar: " + response.retorno.valorASerPago + ",00";
+
+                        document.getElementById("lblValorPorUsuario").textContent = "Valor por inscrito: " + (response.retorno.valorPorUsuario).toLocaleString('en-US', { style: 'currency', currency: 'BRL' });;
+                        document.getElementById("lblValorFinalPagtoPend").textContent = "Valor final a pagar: " + (response.retorno.valorASerPago).toLocaleString('en-US', { style: 'currency', currency: 'BRL' });
 
                         if (response.status == "ERRO_QRCODE") {
                             document.getElementById("lblDescErroPagtoPend").textContent = response.retorno.qrCode.erroGerarQrCode;

@@ -1310,12 +1310,17 @@ namespace Barragem.Controllers
             var suspenso = Tipos.Situacao.suspenso.ToString();
             var suspensoWO = Tipos.Situacao.suspensoWO.ToString();
 
-            //cobrancaTorneio.qtddInscritosPagantes = db.InscricaoTorneio.Where(i => i.torneioId == torneioId && i.valor>0 && i.isAtivo).Select(i => (int)i.userId).Distinct().Count();
+            var torneio = db.Torneio.Find(torneioId);
+            var barragem = db.Barragens.Find(torneio.barragemId);
+
+            decimal valorPorUsuario = barragem.valorPorUsuario.HasValue ? (decimal)barragem.valorPorUsuario : 5;
+
             cobrancaTorneio.qtddInscritos = db.InscricaoTorneio.Where(i => i.torneioId == torneioId && i.isAtivo).Select(i => (int)i.userId).Distinct().Count();
             var inscritosNaoPagantes = db.InscricaoTorneio.Where(i => i.torneioId == torneioId && i.isAtivo && i.torneio.barragemId == i.participante.barragemId
             && (i.participante.situacao == ativo || i.participante.situacao == suspenso || i.participante.situacao == licenciado || i.participante.situacao == suspensoWO)).Select(i => (int)i.userId).Distinct().Count();
-            cobrancaTorneio.valorDescontoParaRanking = inscritosNaoPagantes * 5;
-            cobrancaTorneio.valorASerPago = (cobrancaTorneio.qtddInscritos * 5) - cobrancaTorneio.valorDescontoParaRanking;
+            cobrancaTorneio.valorDescontoParaRanking = inscritosNaoPagantes * valorPorUsuario;
+            cobrancaTorneio.valorASerPago = (cobrancaTorneio.qtddInscritos * valorPorUsuario) - cobrancaTorneio.valorDescontoParaRanking;
+            cobrancaTorneio.valorPorUsuario = valorPorUsuario;
             return cobrancaTorneio;
         }
 
@@ -4234,12 +4239,12 @@ namespace Barragem.Controllers
             item.reference_id = torneio.Id + "";
             item.name = torneio.nome;
             item.quantity = 1;
-            item.unit_amount = cobrancaTorneio.valorASerPago * 100;
+            item.unit_amount = (int)cobrancaTorneio.valorASerPago * 100;
             order.items = new List<ItemPedido>();
             order.items.Add(item);
             var qr_code = new QrCode();
             var amount = new Amount();
-            amount.value = cobrancaTorneio.valorASerPago * 100;
+            amount.value = (int)cobrancaTorneio.valorASerPago * 100;
             qr_code.amount = amount;
             order.qr_codes = new List<QrCode>();
             order.qr_codes.Add(qr_code);
