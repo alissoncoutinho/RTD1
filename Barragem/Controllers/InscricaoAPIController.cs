@@ -430,6 +430,7 @@ namespace Barragem.Controllers
             //return Ok("00020126830014br.gov.bcb.pix2561api.pagseguro.com/pix/v2/210387E0-A6BF-45D1-80B5-CFEB9BBCEE2F5204899953039865802BR5921Pagseguro Internet SA6009SAO PAULO62070503***63047E6D");
         }
 
+        [Obsolete("Utilizar o endpoint RealizarInscricao")]
         [ResponseType(typeof(void))]
         [HttpPost]
         [AllowAnonymous]
