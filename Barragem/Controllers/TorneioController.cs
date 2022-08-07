@@ -4103,7 +4103,7 @@ namespace Barragem.Controllers
                     notification = new NotificationModel() { title = titulo, body = conteudo },
                     data = new DataModel() { title = titulo, body = conteudo, type = "tabela_liberada", idRanking = torneio.barragemId, torneioId = torneio.Id }
                 };
-                //new FirebaseNotification().SendNotification(fbmodel);
+                new FirebaseNotification().SendNotification(fbmodel);
                 return Json(new { erro = "", retorno = 1, segmento = segmentacao }, "application/json", JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
