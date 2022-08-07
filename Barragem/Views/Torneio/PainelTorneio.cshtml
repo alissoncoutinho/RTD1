@@ -11,6 +11,7 @@
         font-size: small;
         color: #3c8dbc;
     }
+
     .tooltip-inner {
         white-space: pre-wrap;
     }
@@ -68,7 +69,7 @@
                 <div id="divNotificarApp" class="row form-group" style="margin-top:10px;">
                     @Html.Label("Divulgar no app", new { @class = "col-sm-2 control-label" })
                     <div class="col-md-3 input-group">
-                        <button id="btnNotificarApp" class="btn btn-default" onclick="divulgarTorneioApp(@Model.TorneioId)">Enviar Notificação</button>
+                        <button id="btnNotificarApp" class="btn btn-default" onclick="divulgarTorneioApp(@Model.TorneioId)"><span class="glyphicon glyphicon-phone"></span>Enviar Notificação</button>
                     </div>
                 </div>
 
@@ -91,7 +92,9 @@
                         </div>
 
                         <i class="col-sm-1 fa fa-info-circle" style="width:12px;color:#3e64d6" data-toggle="tooltip" data-original-title="Sugerimos que libere a tabela somente quando a tabela já estiver sido gerada e os horários e dias dos jogos já estiverem lançados no sistema."></i>
-
+                        <div id="divNotificarAppLiberacaoTabela" class="col-md-3 input-group" style="margin-left:5px">
+                            <button id="btnNotificarAppLiberacaoTabela"><span class="glyphicon glyphicon-phone" onclick="NotificarAppLiberacaoTabela()" /></button>
+                        </div>
                     </div>
                 </div>
                 <div class="row form-group">
@@ -168,6 +171,7 @@
                         if (response.retorno === 0) {
                             toastr.error(response.erro, "Erro");
                         } else {
+                            MostrarBotaoNotificarAppLibTabela(el.checked);
                             toastr.success("Atualização realizada com sucesso.", "Aviso");
                         }
                     }
@@ -176,6 +180,15 @@
                     location.reload(true);
                 }
             });
+        }
+
+        function MostrarBotaoNotificarAppLibTabela(mostrar) {
+            if (mostrar) {
+                document.getElementById("divNotificarAppLiberacaoTabela").style.display = 'block';
+            }
+            else {
+                document.getElementById("divNotificarAppLiberacaoTabela").style.display = 'none';
+            }
         }
 
         function liberarVisualizacaoInscritos(el) {
@@ -332,8 +345,32 @@
                 document.getElementById("dataFimInscricoes").style.display = 'none';
             }
         }
+        function NotificarAppLiberacaoTabela() {
+            event.preventDefault();
+            $.ajax(
+                {
+                    type: 'GET',
+                    url: '/Torneio/NotificarTabelaLiberadaViaApp',
+                    data: "torneioId=" + torneioId,
+                    contentType: "application/json; charset=utf-8",
+                    success: function (response) {
+                        if (typeof response == "object") {
+                            if (response.retorno === 1) {
+                                toastr.success("Notificação enviada com sucesso: " + response.segmento, "Aviso");
+                            } else {
+                                toastr.error("Erro ao enviar notificação via APP.", "Erro");
+                            }
+                        }
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        toastr.error("Erro ao enviar notificação via APP.", "Erro");
+                    }
+                }
+            );
+        }
 
         AtualizarLabelOpcaoDivulgacao($("#ddlOpcoesDivulgacao").val());
         AtualizarStatusInscricao($("#ddlStatusInscricao").val());
+        MostrarBotaoNotificarAppLibTabela(document.getElementById("chkLiberaVisualizacaoTabela").checked);
     </script>
 }

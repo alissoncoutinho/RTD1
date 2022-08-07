@@ -4082,6 +4082,36 @@ namespace Barragem.Controllers
 
         }
 
+        [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
+        public ActionResult NotificarTabelaLiberadaViaApp(int torneioId)
+        {
+            try
+            {
+                var torneio = db.Torneio.Find(torneioId);
+                if (!torneio.liberarTabela)
+                {
+                    return Json(new { erro = "Libere a tabela para notificar os jogadores.", retorno = 0 }, "application/json", JsonRequestBehavior.AllowGet);
+                }
+
+                var segmentacao = "torneio_tabela_liberada";
+                var titulo = "Tabela de torneio liberada!";
+                var conteudo = $"Confira seus jogos no Torneio {torneio.nome}";
+
+                var fbmodel = new FirebaseNotificationModel()
+                {
+                    to = "/topics/" + segmentacao,
+                    notification = new NotificationModel() { title = titulo, body = conteudo },
+                    data = new DataModel() { title = titulo, body = conteudo, type = "tabela_liberada", idRanking = torneio.barragemId, torneioId = torneio.Id }
+                };
+                //new FirebaseNotification().SendNotification(fbmodel);
+                return Json(new { erro = "", retorno = 1, segmento = segmentacao }, "application/json", JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { erro = ex.Message, retorno = 0 }, "application/json", JsonRequestBehavior.AllowGet);
+            }
+        }
+
         [Authorize(Roles = "admin,organizador, adminTorneio, adminTorneioTenis")]
         public ActionResult PainelControle(string msg = "")
         {
