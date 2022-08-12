@@ -21,76 +21,97 @@ namespace Barragem.Controllers
         //
         // GET: /Rancking/
         [AllowAnonymous]
-        public ActionResult Index(int id=0, string nome="")
+        public ActionResult Index(int id = 0, string nome = "")
         {
             List<Rancking> rancking;
             BarragemView bV = null;
-            try{
-                if ((id == 0) && (nome == "") && (User.Identity.Name != "")){
+            try
+            {
+                if ((id == 0) && (nome == "") && (User.Identity.Name != ""))
+                {
                     UserProfile usuario = db.UserProfiles.Find(WebSecurity.GetUserId(User.Identity.Name));
                     bV = usuario.barragem;
                     id = db.Rodada.Where(r => r.isAberta == false && r.isRodadaCarga == false && r.barragemId == bV.Id).Max(r => r.Id);
                     ViewBag.IdBarragem = bV.Id;
                     ViewBag.NomeBarragem = bV.nome;
-                }else if (nome != ""){
-                    if (nome.All(char.IsDigit)){
+                }
+                else if (nome != "")
+                {
+                    if (nome.All(char.IsDigit))
+                    {
                         var barragemId = Int32.Parse(nome);
                         bV = db.BarragemView.Find(barragemId);
                     }
-                    else{
+                    else
+                    {
                         bV = db.BarragemView.Where(b => b.dominio == nome).FirstOrDefault();
                     }
                     //id = db.Rancking.Where(r => r.rodada.isAberta == false && r.rodada.isRodadaCarga == false && r.rodada.barragemId == bV.Id).Max(r => r.rodada_id);
                     ViewBag.IdBarragem = bV.Id;
                     ViewBag.NomeBarragem = bV.nome;
-                }else if (id == 0){
+                }
+                else if (id == 0)
+                {
                     return RedirectToAction("Login", "Account");
-                }else{
+                }
+                else
+                {
                     HttpCookie cookie = new HttpCookie("_barragemId");
                     var barragemId = Convert.ToInt32(cookie.Value.ToString());
                     bV = db.BarragemView.Find(barragemId);
                 }
             }
-            catch (Exception e){
+            catch (Exception e)
+            {
                 return RedirectToAction("Login", "Account");
             }
             rancking = db.Rancking.Include(r => r.userProfile).Include(r => r.rodada).
-                Where(r => r.rodada_id == id && r.posicao > 0 && r.userProfile.situacao != "desativado" && r.userProfile.situacao != "inativo").OrderBy(r=>r.classe.nivel).ThenBy(r => r.posicaoClasse).ToList();
-            ViewBag.Classes = db.Classe.Where(c => c.barragemId == bV.Id && c.ativa == true).OrderBy(c=> c.nivel).ToList();
-            if (rancking.Count() > 0){
+                Where(r => r.rodada_id == id && r.posicao > 0 && r.userProfile.situacao != "desativado" && r.userProfile.situacao != "inativo").OrderBy(r => r.classe.nivel).ThenBy(r => r.posicaoClasse).ToList();
+            ViewBag.Classes = db.Classe.Where(c => c.barragemId == bV.Id && c.ativa == true).OrderBy(c => c.nivel).ToList();
+            if (rancking.Count() > 0)
+            {
                 var barragem = rancking[0].rodada.barragemId;
                 ViewBag.Rodada = rancking[0].rodada.codigoSeq;
                 ViewBag.RodadaId = rancking[0].rodada.Id;
                 ViewBag.dataRodada = (rancking[0].rodada.dataFim + "").Substring(0, 10);
 
-                if (rancking[0].rodada.temporadaId != null){
+                if (rancking[0].rodada.temporadaId != null)
+                {
                     var temporadaId = rancking[0].rodada.temporadaId;
                     var rodadaId = rancking[0].rodada.Id;
-                    var qtddRodada = db.Rodada.Where(r => r.temporadaId == temporadaId && r.Id <= rodadaId && r.barragemId==barragem).Count();
-                    ViewBag.Temporada = rancking[0].rodada.temporada.nome + " - Rodada " + qtddRodada + " de " + 
+                    var qtddRodada = db.Rodada.Where(r => r.temporadaId == temporadaId && r.Id <= rodadaId && r.barragemId == barragem).Count();
+                    ViewBag.Temporada = rancking[0].rodada.temporada.nome + " - Rodada " + qtddRodada + " de " +
                         rancking[0].rodada.temporada.qtddRodadas;
-                } else { ViewBag.Temporada = ""; }
+                }
+                else { ViewBag.Temporada = ""; }
             }
 
             return View(rancking);
         }
 
-        
-       public ActionResult listarRancking(int idRodadaAtual) {
-           UserProfile usuario = db.UserProfiles.Find(WebSecurity.GetUserId(User.Identity.Name));
-           int barragemId = 0;
-           if (usuario==null){
-               if (Request.Cookies["_barragemId"] != null){
-                   HttpCookie cookie = new HttpCookie("_barragemId");
-                   barragemId = Convert.ToInt32(cookie.Value.ToString());
-               } else {
-                   barragemId = 1; 
-               }
-           } else {
-               barragemId = usuario.barragemId;
-           }
-           var listaRancking = db.Rodada.Where(c=>c.isAberta==false && c.isRodadaCarga==false && c.Id!=idRodadaAtual && c.barragemId == barragemId).OrderByDescending(c=>c.Id).ToList();
-           return View(listaRancking);
+
+        public ActionResult listarRancking(int idRodadaAtual)
+        {
+            UserProfile usuario = db.UserProfiles.Find(WebSecurity.GetUserId(User.Identity.Name));
+            int barragemId = 0;
+            if (usuario == null)
+            {
+                if (Request.Cookies["_barragemId"] != null)
+                {
+                    HttpCookie cookie = new HttpCookie("_barragemId");
+                    barragemId = Convert.ToInt32(cookie.Value.ToString());
+                }
+                else
+                {
+                    barragemId = 1;
+                }
+            }
+            else
+            {
+                barragemId = usuario.barragemId;
+            }
+            var listaRancking = db.Rodada.Where(c => c.isAberta == false && c.isRodadaCarga == false && c.Id != idRodadaAtual && c.barragemId == barragemId).OrderByDescending(c => c.Id).ToList();
+            return View(listaRancking);
         }
 
         public ActionResult historicoRanking(int idJogador)
@@ -119,7 +140,9 @@ namespace Barragem.Controllers
             if (showOneLiga)
             {
                 ligas = db.Liga.Where(l => l.Id == idLiga).OrderBy(l => l.Nome).ToList();
-            } else {
+            }
+            else
+            {
                 ligas = db.Liga.Where(l => l.isAtivo).OrderBy(l => l.Nome).ToList();
             }
             //else
@@ -132,16 +155,16 @@ namespace Barragem.Controllers
             //             where it.userId == usuario.UserId
             //    select liga).ToList();
             //}
-            if (idLiga == 0 && ligas.Count()>0)
+            if (idLiga == 0 && ligas.Count() > 0)
             {
                 idLiga = ligas.First().Id;
             }
-            List<Snapshot> snapshotsDaLiga = db.Snapshot.Where(snap => snap.LigaId == idLiga).OrderByDescending(s=>s.Id).ToList();
+            List<Snapshot> snapshotsDaLiga = db.Snapshot.Where(snap => snap.LigaId == idLiga).OrderByDescending(s => s.Id).ToList();
             List<SnapshotRanking> ranking = new List<SnapshotRanking>();
             List<Categoria> categorias = new List<Categoria>();
-            if (snapshotsDaLiga.Count()>0)
+            if (snapshotsDaLiga.Count() > 0)
             {
-                if ((idSnapshot == 0) || (snapshotsDaLiga.Where(s=>s.Id==idSnapshot).Count()==0))
+                if ((idSnapshot == 0) || (snapshotsDaLiga.Where(s => s.Id == idSnapshot).Count() == 0))
                 {
                     idSnapshot = snapshotsDaLiga.First().Id;
                 }
@@ -150,13 +173,16 @@ namespace Barragem.Controllers
                 .OrderBy(snap => snap.Categoria.Nome).ThenBy(snap => snap.Posicao).ThenBy(snap => snap.Jogador.nome)
                 .ToList();
                 categorias = db.SnapshotRanking.Where(sr => sr.SnapshotId == idSnapshot)
-                    .Include(sr => sr.Categoria).Select(sr => sr.Categoria).OrderBy(sr=> sr.ordemExibicao).Distinct().ToList();
+                    .Include(sr => sr.Categoria).Select(sr => sr.Categoria).OrderBy(sr => sr.ordemExibicao).Distinct().ToList();
             }
             var classesLg = db.ClasseLiga.Where(c => c.LigaId == idLiga).ToList();
-            foreach (var cat in categorias){
-                try{
+            foreach (var cat in categorias)
+            {
+                try
+                {
                     cat.Nome = classesLg.Where(c => c.CategoriaId == cat.Id).SingleOrDefault().Nome; //cat.Nome;
-                }catch (Exception e){}
+                }
+                catch (Exception e) { }
             }
             ViewBag.Ligas = ligas;
             ViewBag.SnapshotsDaLiga = snapshotsDaLiga;
@@ -205,7 +231,8 @@ namespace Barragem.Controllers
         }
 
         [HttpPost]
-        public ActionResult uploadLogoMarca(int Id) {
+        public ActionResult uploadLogoMarca(int Id)
+        {
             HttpPostedFileBase filePosted = Request.Files["fileLogo"];
             if (filePosted != null && filePosted.ContentLength > 0)
             {
@@ -225,6 +252,32 @@ namespace Barragem.Controllers
                 }
             }
             return RedirectToAction("PainelControle", "Torneio");
+        }
+
+        [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
+        public ActionResult NotificarAppRankingLiga(int ligaId)
+        {
+            try
+            {
+                var liga = db.Liga.Find(ligaId);
+
+                var segmentacao = "liga_classificacao";
+                var titulo = "Classificação do ranking atualizada!";
+                var conteudo = $"Confira as novas pontuações do Ranking {liga.Nome}.";
+
+                var fbmodel = new FirebaseNotificationModel<DataLigaModel>()
+                {
+                    to = "/topics/" + segmentacao,
+                    notification = new NotificationModel() { title = titulo, body = conteudo },
+                    data = new DataLigaModel() { title = titulo, body = conteudo, type = "tabela_liberada", idRanking = liga.barragemId ?? 0, ligaId = ligaId }
+                };
+                new FirebaseNotification().SendNotification(fbmodel);
+                return Json(new { erro = "", retorno = 1, segmento = segmentacao }, "application/json", JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                return Json(new { erro = ex.Message, retorno = 0 }, "application/json", JsonRequestBehavior.AllowGet);
+            }
         }
     }
 }

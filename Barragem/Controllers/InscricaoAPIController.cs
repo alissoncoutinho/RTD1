@@ -535,7 +535,7 @@ namespace Barragem.Controllers
             if (userFb == null)
                 return;
 
-            var dadosMensagemUsuario = new FirebaseNotificationModel() { to = userFb.Token, notification = new NotificationModel() { title = titulo, body = msgConfirmacao }, data = new DataModel() { torneioId = torneioId } };
+            var dadosMensagemUsuario = new FirebaseNotificationModel<DataToneioModel>() { to = userFb.Token, notification = new NotificationModel() { title = titulo, body = msgConfirmacao }, data = new DataToneioModel() { torneioId = torneioId } };
             new FirebaseNotification().SendNotification(dadosMensagemUsuario);
         }
     }

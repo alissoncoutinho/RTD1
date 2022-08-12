@@ -329,7 +329,7 @@ namespace Barragem.Controllers
                 var titulo = nomeRanking + ": classificação atualizada e nova rodada gerada!";
                 var conteudo = "Clique aqui e entre em contato com seu adversário o mais breve possível e bom jogo.";
 
-                var fbmodel = new FirebaseNotificationModel() { to = "/topics/ranking8", notification = new NotificationModel() { title = titulo, body = conteudo }, data = new DataModel() { title = titulo, body = conteudo, type = "nova_rodada_aberta", idRanking = 8 } };
+                var fbmodel = new FirebaseNotificationModel<DataToneioModel>() { to = "/topics/ranking8", notification = new NotificationModel() { title = titulo, body = conteudo }, data = new DataToneioModel() { title = titulo, body = conteudo, type = "nova_rodada_aberta", idRanking = 8 } };
                 new FirebaseNotification().SendNotification(fbmodel);
 
             }

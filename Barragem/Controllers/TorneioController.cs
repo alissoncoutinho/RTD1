@@ -1721,7 +1721,7 @@ namespace Barragem.Controllers
             if (userFb == null)
                 return;
 
-            var dadosMensagemUsuario = new FirebaseNotificationModel() { to = userFb.Token, notification = new NotificationModel() { title = titulo, body = msgConfirmacao }, data = new DataModel() { torneioId = torneioId } };
+            var dadosMensagemUsuario = new FirebaseNotificationModel<DataToneioModel>() { to = userFb.Token, notification = new NotificationModel() { title = titulo, body = msgConfirmacao }, data = new DataToneioModel() { torneioId = torneioId } };
             new FirebaseNotification().SendNotification(dadosMensagemUsuario);
         }
 
@@ -4066,11 +4066,11 @@ namespace Barragem.Controllers
                 }
 
 
-                var fbmodel = new FirebaseNotificationModel()
+                var fbmodel = new FirebaseNotificationModel<DataToneioModel>()
                 {
                     to = "/topics/" + segmentacao,
                     notification = new NotificationModel() { title = titulo, body = conteudo },
-                    data = new DataModel() { title = titulo, body = conteudo, type = "novo_torneio_aberto", idRanking = torneio.barragemId }
+                    data = new DataToneioModel() { title = titulo, body = conteudo, type = "novo_torneio_aberto", idRanking = torneio.barragemId }
                 };
                 new FirebaseNotification().SendNotification(fbmodel);
                 return Json(new { erro = "", retorno = 1, segmento = segmentacao }, "application/json", JsonRequestBehavior.AllowGet);

@@ -919,7 +919,7 @@ namespace Barragem.Class
                 var titulo = nomeRanking + ": Classificação atualizada e nova rodada gerada!";
                 var conteudo = "Clique aqui e entre em contato com seu adversário o mais breve possível e bom jogo.";
 
-                var fbmodel = new FirebaseNotificationModel() { to = "/topics/ranking" + barragemId, notification = new NotificationModel() { title = titulo, body = conteudo }, data = new DataModel() { title = titulo, body = conteudo, type = "nova_rodada_aberta", idRanking = barragemId } };
+                var fbmodel = new FirebaseNotificationModel<DataToneioModel>() { to = "/topics/ranking" + barragemId, notification = new NotificationModel() { title = titulo, body = conteudo }, data = new DataToneioModel() { title = titulo, body = conteudo, type = "nova_rodada_aberta", idRanking = barragemId } };
                 new FirebaseNotification().SendNotification(fbmodel);
             }
             catch (Exception e)
