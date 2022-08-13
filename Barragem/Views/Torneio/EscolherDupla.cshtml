@@ -114,32 +114,32 @@
 
                 });
 
-                $(".naoEncontreiParceio").click(function (event) {
-                    event.preventDefault();
-                    var torneio = $(this).data("torneio");
-                    var proximaClasseDupla = $(this).data("maisduplas");
-                    var userId = $(this).data("userid");
-                    var textoButton = "Ok. Finalizar inscrição."
-                    var url = "/Torneio/ConfirmacaoInscricao?torneioId=" + torneio + "&msg=Inscrição realizada com sucesso&userId=" + userId;
-                    if (proximaClasseDupla!="0") {
-                        textoButton = "Ok. Escolher parceiro da outra categoria."
-                        url = "/Torneio/EscolherDupla?id=" + torneio + "&classe=" + proximaClasseDupla + "&userId=" + userId;
-                    }
-                    $.confirm({
-                        title: "",
-                        content: "Isso acontece porque o seu parceiro ainda não se inscreveu. Não se preocupe, ele poderá te escolher como parceiro no momento da inscrição dele.",
-                        buttons: {
-                            sim: {
-                                text: textoButton,
-                                btnClass: 'btn-primary',
-                                action: function () {
-                                    window.location.href = url;
-                                }
-                            },
-                            cancelar: { text: "Voltar" }
-                        }
-                    });
-                });
+                //$(".naoEncontreiParceio").click(function (event) {
+                //    event.preventDefault();
+                //    var torneio = $(this).data("torneio");
+                //    var proximaClasseDupla = $(this).data("maisduplas");
+                //    var userId = $(this).data("userid");
+                //    var textoButton = "Ok. Finalizar inscrição."
+                //    var url = "/Torneio/ConfirmacaoInscricao?torneioId=" + torneio + "&msg=Inscrição realizada com sucesso&userId=" + userId;
+                //    if (proximaClasseDupla!="0") {
+                //        textoButton = "Ok. Escolher parceiro da outra categoria."
+                //        url = "/Torneio/EscolherDupla?id=" + torneio + "&classe=" + proximaClasseDupla + "&userId=" + userId;
+                //    }
+                //    $.confirm({
+                //        title: "",
+                //        content: "Isso acontece porque o seu parceiro ainda não se inscreveu. Não se preocupe, ele poderá te escolher como parceiro no momento da inscrição dele.",
+                //        buttons: {
+                //            sim: {
+                //                text: textoButton,
+                //                btnClass: 'btn-primary',
+                //                action: function () {
+                //                    window.location.href = url;
+                //                }
+                //            },
+                //            cancelar: { text: "Voltar" }
+                //        }
+                //    });
+                //});
             });
 
         </script>

@@ -1,0 +1,38 @@
+﻿<div class="modal fade" id="modalMontarDupla" style="z-index: 99999999999999; " role="dialog" aria-labelledby="modalMontarDupla" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" style="margin:20px">
+            <div class="modal-header">
+
+                <button type="button" style="margin-left:10px" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h5 id="tituloAtencao" class="modal-title" style="font-size:large"><a style='color:red'><b>ATENÇÃO: Categoria lotada!</b></a></h5>
+                <h5 class="modal-title" style="font-size:large"><b id="tituloModalDupla">Esta categoria já esta cheia, só é possível entrar caso o seu parceiro já esteja inscrito.</b></h5>
+            </div>
+
+            <div class="modal-body">
+                <input type="hidden" id="nomeSelectCategoria" class="form-control">
+                <input type="hidden" id="temVagasLiberadas" class="form-control">
+
+                <table id="tblFormacaoDupla" class="table table-striped table-condensed table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Selecionar Parceiro</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tblBodyFormacaoDupla">
+                        <!--MONTAGEM DAS LINHAS REALIZADA VIA JS-->
+                    </tbody>
+                </table>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" title="Não encontrei meu parceiro" class="col-lg-12 col-xs-12 btn btn-danger btn-sm" style="float:right" onclick="CancelarEscolhaDupla()">
+                    Meu parceiro ainda não está na lista
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
