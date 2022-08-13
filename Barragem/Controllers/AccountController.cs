@@ -473,8 +473,7 @@ namespace Barragem.Controllers
             ViewBag.torneio = db.Torneio.Find(torneioId);
             var classes = db.ClasseTorneio.Where(i => i.torneioId == torneioId).OrderBy(c => c.nivel).ToList();
             ViewBag.Classes = classes;
-            //var classes2Opcao = db.ClasseTorneio.Where(i => i.torneioId == torneioId && i.isSegundaOpcao).OrderBy(c => c.nivel).ToList();
-            ViewBag.Classes2 = classes;
+
             foreach (var item in classes)
             {
                 if (item.maximoInscritos > 0)
@@ -508,8 +507,9 @@ namespace Barragem.Controllers
 
 
         [AllowAnonymous]
-        public MensagemRetorno RegisterTorneioNegocio(RegisterInscricao model, int torneioId, bool isSocio = false, bool isClasseDupla = false, bool isFederado = false)
+        public MensagemRetorno RegisterTorneioNegocio(RegisterInscricao model, int torneioId, bool isSocio = false, bool isFederado = false)
         {
+            var tn = new TorneioNegocio();
             var torneioController = new TorneioController();
             var torneio = db.Torneio.Find(torneioId);
             var classesBarragem = db.Classe.Where(c => c.barragemId == torneio.barragemId).ToList();
@@ -576,29 +576,31 @@ namespace Barragem.Controllers
 
                     InscricaoTorneio insc = torneioController.preencherInscricaoTorneio(model.inscricao.torneioId, model.inscricao.userId, model.inscricao.classe, valorInscricao, model.inscricao.observacao, isSocio, isFederado);
                     db.InscricaoTorneio.Add(insc);
+                    db.SaveChanges();
+                    tn.ValidarCriacaoDupla(model.idInscricaoParceiroDupla, model.inscricao.userId, model.inscricao.torneioId, model.inscricao.classe);
+
                     if (model.classeInscricao2 > 0)
                     {
                         InscricaoTorneio insc2 = torneioController.preencherInscricaoTorneio(model.inscricao.torneioId, model.inscricao.userId, model.classeInscricao2, valorInscricao, model.inscricao.observacao, isSocio, isFederado);
                         db.InscricaoTorneio.Add(insc2);
+                        db.SaveChanges();
+                        tn.ValidarCriacaoDupla(model.idInscricaoParceiroDupla2, model.inscricao.userId, model.inscricao.torneioId, model.classeInscricao2);
                     }
                     if (model.classeInscricao3 > 0)
                     {
                         InscricaoTorneio insc3 = torneioController.preencherInscricaoTorneio(model.inscricao.torneioId, model.inscricao.userId, model.classeInscricao3, valorInscricao, model.inscricao.observacao, isSocio, isFederado);
                         db.InscricaoTorneio.Add(insc3);
+                        db.SaveChanges();
+                        tn.ValidarCriacaoDupla(model.idInscricaoParceiroDupla3, model.inscricao.userId, model.inscricao.torneioId, model.classeInscricao3);
                     }
                     if (model.classeInscricao4 > 0)
                     {
                         InscricaoTorneio insc4 = torneioController.preencherInscricaoTorneio(model.inscricao.torneioId, model.inscricao.userId, model.classeInscricao4, valorInscricao, model.inscricao.observacao, isSocio, isFederado);
                         db.InscricaoTorneio.Add(insc4);
+                        db.SaveChanges();
+                        tn.ValidarCriacaoDupla(model.idInscricaoParceiroDupla4, model.inscricao.userId, model.inscricao.torneioId, model.classeInscricao4);
                     }
-                    db.SaveChanges();
-                    if (isClasseDupla)
-                    {
-                        mensagemRetorno.mensagem = "";
-                        mensagemRetorno.tipo = "redirect";
-                        mensagemRetorno.nomePagina = "EscolherDupla";
-                        return mensagemRetorno;
-                    }
+
                     mensagemRetorno.mensagem = "Inscrição realizada.";
                     mensagemRetorno.tipo = "redirect";
                     mensagemRetorno.nomePagina = "ConfirmacaoInscricao";
@@ -631,24 +633,21 @@ namespace Barragem.Controllers
             return View();
         }
 
-
         [HttpPost]
         [AllowAnonymous]
-        public ActionResult RegisterTorneio(RegisterInscricao model, int torneioId, bool isSocio = false, bool isClasseDupla = false, bool isFederado = false)
+        public ActionResult RegisterTorneio(RegisterInscricao model, int torneioId, bool isSocio = false, bool isFederado = false)
         {
             var torneio = db.Torneio.Find(torneioId);
             ViewBag.torneio = torneio;
             ViewBag.email = model.register.email;
             ViewBag.login = model.register.UserName;
             ViewBag.isSocio = isSocio;
-            ViewBag.isClasseDupla = isClasseDupla;
             ViewBag.ClasseInscricao = model.inscricao.classe;
             ViewBag.ClasseInscricao2 = model.classeInscricao2;
             var classes = db.ClasseTorneio.Where(i => i.torneioId == torneioId).OrderBy(c => c.nivel).ToList();
             ViewBag.Classes = classes;
-            ViewBag.Classes2 = classes;
             ViewBag.qtddInscritos = new TorneioNegocio().qtddInscritosEmCadaClasse(classes, torneioId);
-            var mensagemRetorno = RegisterTorneioNegocio(model, torneioId, isSocio, isClasseDupla, isFederado);
+            var mensagemRetorno = RegisterTorneioNegocio(model, torneioId, isSocio, isFederado);
             if (mensagemRetorno.tipo == "erro")
             {
                 ViewBag.MsgErro = mensagemRetorno.mensagem;
@@ -2166,9 +2165,6 @@ namespace Barragem.Controllers
             return View();
         }
 
-        //
-        // POST: /Account/Login
-
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
@@ -2224,6 +2220,14 @@ namespace Barragem.Controllers
             ViewBag.userName = model.UserName;
             ViewBag.torneioId = torneioId;
             return View(model);
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public ActionResult ValidarDisponibilidadeInscricao(int torneioId, int categoriaId)
+        {
+            var tn = new TorneioNegocio();
+            return Json(tn.ValidarDisponibilidadeInscricoes(torneioId, categoriaId), "text/plain", JsonRequestBehavior.AllowGet);
         }
 
         private static string ErrorCodeToString(MembershipCreateStatus createStatus)
