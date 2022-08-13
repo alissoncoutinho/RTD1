@@ -1951,6 +1951,7 @@ namespace Barragem.Controllers
                     {
                         foreach (var item in it)
                         {
+                            DesfazerDupla(item, torneioId);
                             db.InscricaoTorneio.Remove(item);
                         }
                     }
@@ -2081,10 +2082,15 @@ namespace Barragem.Controllers
                         db.InscricaoTorneio.Add(insc4);
                     }
                 }
+                
                 db.SaveChanges();
-                mensagemRetorno.id = inscricao.Id;
-                mensagemRetorno.mensagem = "Inscrição recebida.";
-                gratuidade = VerificarGratuidade(torneio, userId);
+
+                if (operacao != "cancelar")
+                {
+                    mensagemRetorno.id = inscricao.Id;
+                    mensagemRetorno.mensagem = "Inscrição recebida.";
+                    gratuidade = VerificarGratuidade(torneio, userId);
+                }
                 if ((torneio.valor == 0) || (gratuidade))
                 {
                     mensagemRetorno.mensagem = "Inscrição realizada com sucesso.";
