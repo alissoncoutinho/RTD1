@@ -1963,7 +1963,7 @@ namespace Barragem.Controllers
                     {
                         foreach (var item in it)
                         {
-                            DesfazerDupla(item, torneioId);
+                            DesfazerDupla(item, inscricaoModel.TorneioId);
                             db.InscricaoTorneio.Remove(item);
                         }
                     }
