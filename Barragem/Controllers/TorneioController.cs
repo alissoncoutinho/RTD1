@@ -1311,7 +1311,7 @@ namespace Barragem.Controllers
         private CobrancaTorneio ObterDadosCobrancaTorneio(Torneio torneio)
         {
             var cobrancaTorneio = new CobrancaTorneio();
-            
+
             var ativo = Tipos.Situacao.ativo.ToString();
             var licenciado = Tipos.Situacao.licenciado.ToString();
             var suspenso = Tipos.Situacao.suspenso.ToString();
@@ -1327,7 +1327,7 @@ namespace Barragem.Controllers
 
             var inscritosNaoPagantes = inscritosPagtoOk.Where(i => i.torneio.barragemId == i.participante.barragemId
                     && (i.participante.situacao == ativo || i.participante.situacao == suspenso || i.participante.situacao == licenciado || i.participante.situacao == suspensoWO)).Select(i => (int)i.userId).Distinct().Count();
-            
+
             cobrancaTorneio.valorDescontoParaRanking = inscritosNaoPagantes * valorPorUsuario;
             cobrancaTorneio.valorASerPago = (cobrancaTorneio.qtddInscritos * valorPorUsuario) - cobrancaTorneio.valorDescontoParaRanking;
             cobrancaTorneio.valorPorUsuario = valorPorUsuario;
@@ -1910,7 +1910,7 @@ namespace Barragem.Controllers
         [HttpPost]
         public ActionResult Inscricao(int torneioId, int classeInscricao = 0, string operacao = "", int classeInscricao2 = 0, int classeInscricao3 = 0, int classeInscricao4 = 0, string observacao = "", bool isSocio = false, bool isFederado = false, int userId = 0, int idInscricaoParceiroDupla = 0, int idInscricaoParceiroDupla2 = 0, int idInscricaoParceiroDupla3 = 0, int idInscricaoParceiroDupla4 = 0)
         {
-            var inscricaoModel = new InscricaoModel() { UserId = userId, TorneioId = torneioId, IdCategoria1 = classeInscricao, IdCategoria2 = classeInscricao2, IdCategoria3 = classeInscricao3, IdCategoria4 = classeInscricao4, Observacao = observacao, IsSocio = isSocio, IsFederado = isFederado };
+            var inscricaoModel = new InscricaoModel() { UserId = userId, TorneioId = torneioId, IdCategoria1 = classeInscricao, IdCategoria2 = classeInscricao2, IdCategoria3 = classeInscricao3, IdCategoria4 = classeInscricao4, Observacao = observacao, IsSocio = isSocio, IsFederado = isFederado, IdInscricaoParceiroDupla1 = idInscricaoParceiroDupla, IdInscricaoParceiroDupla2 = idInscricaoParceiroDupla2, IdInscricaoParceiroDupla3 = idInscricaoParceiroDupla3, IdInscricaoParceiroDupla4 = idInscricaoParceiroDupla4 };
 
             var mensagemRetorno = InscricaoNegocio(inscricaoModel, operacao);
             if (mensagemRetorno.nomePagina == "ConfirmacaoInscricao")
@@ -2105,14 +2105,14 @@ namespace Barragem.Controllers
                         tn.ValidarCriacaoDupla(inscricaoModel.IdInscricaoParceiroDupla4, inscricaoModel.UserId, inscricaoModel.TorneioId, inscricaoModel.IdCategoria4);
                     }
                 }
-                
+
                 db.SaveChanges();
 
                 if (operacao != "cancelar")
                 {
                     mensagemRetorno.id = inscricao.Id;
                     mensagemRetorno.mensagem = "Inscrição recebida.";
-                gratuidade = VerificarGratuidade(torneio, inscricaoModel.UserId);
+                    gratuidade = VerificarGratuidade(torneio, inscricaoModel.UserId);
                 }
                 if ((torneio.valor == 0) || (gratuidade))
                 {
