@@ -244,6 +244,7 @@
     <Compile Include="Controllers\AguasClarasController.cs" />
     <Compile Include="Controllers\CalendarioTorneiosController.cs" />
     <Compile Include="Controllers\CidadeController.cs" />
+    <Compile Include="Controllers\FormacaoDuplaInscricao.cs" />
     <Compile Include="Controllers\InscricaoAPIController.cs" />
     <Compile Include="Controllers\JogoAPIController.cs" />
     <Compile Include="Controllers\PaginaEspecialController.cs" />
@@ -271,6 +272,7 @@
     <Compile Include="Controllers\RankingController.cs" />
     <Compile Include="Controllers\RankingAPIController.cs" />
     <Compile Include="Controllers\RegraController.cs" />
+    <Compile Include="Controllers\RetornoValidacaoDisponibInscricaoModel.cs" />
     <Compile Include="Controllers\RodadaController.cs" />
     <Compile Include="Controllers\TemporadaController.cs" />
     <Compile Include="Controllers\TorneioAPIController.cs" />
@@ -320,6 +322,7 @@
     <Compile Include="Models\ImpressaoInscritosModel.cs" />
     <Compile Include="Models\ImpressaoJogoFaseGrupoModel.cs" />
     <Compile Include="Models\ImprimirGruposModel.cs" />
+    <Compile Include="Models\InscricaoModel.cs" />
     <Compile Include="Models\InscricaoTorneio.cs" />
     <Compile Include="Models\InscricaoTorneioPagaModel.cs" />
     <Compile Include="Models\Jogo.cs" />
@@ -1192,6 +1195,7 @@
     <Content Include="Views\Shared\_Rodape3.cshtml" />
     <Content Include="Views\Torneio\ImprimirGrupos.cshtml" />
     <Content Include="Views\Torneio\_PartialAcaoCategoriasInscricoesNaoPagas.cshtml" />
+    <Content Include="Views\Shared\_PartialEscolhaDupla.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

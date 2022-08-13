@@ -1,4 +1,6 @@
 ﻿using Barragem.Context;
+using Barragem.Controllers;
+using Barragem.Helper;
 using Barragem.Models;
 using System;
 using System.Collections.Generic;
@@ -1181,5 +1183,100 @@ namespace Barragem.Class
 
             return rankingJogadores.ToList();
         }
+
+        public RetornoValidacaoDisponibInscricaoModel ValidarDisponibilidadeInscricoes(int torneioId, int categoriaId)
+        {
+            var respostaValidacao = new RetornoValidacaoDisponibInscricaoModel();
+            try
+            {
+                var categoria = db.ClasseTorneio.FirstOrDefault(x => x.torneioId == torneioId && x.Id == categoriaId);
+
+                if (categoria == null)
+                {
+                    respostaValidacao.AplicarStatusErro("Categoria do torneio não encontrada.");
+                    return respostaValidacao;
+                }
+
+                if (categoria.maximoInscritos == 0 && !categoria.isDupla)
+                {
+                    respostaValidacao.AplicarStatusOk();
+                }
+                else
+                {
+                    var qtdInscritosCategoria = db.InscricaoTorneio.Count(x => x.torneio.Id == torneioId && x.classe == categoriaId);
+
+                    if (categoria.isDupla)
+                    {
+                        var limiteInscritos = categoria.maximoInscritos == 0 ? int.MaxValue : categoria.maximoInscritos;
+
+                        var vagasRestantes = limiteInscritos - qtdInscritosCategoria;
+
+                        var inscricoes = db.InscricaoTorneio.Where(x => x.torneioId == torneioId && x.classe == categoriaId);
+
+                        var duplasFormadas = inscricoes.Where(x => x.parceiroDuplaId != null);
+                        var idsParceirosDupla = duplasFormadas.Select(s => s.parceiroDuplaId);
+
+                        var inscricoesSemParceiro = inscricoes.Where(x => x.parceiroDuplaId == null);
+                        var duplasNaoFormadas = inscricoesSemParceiro.Where(x => !idsParceirosDupla.Contains(x.userId)).ToList();
+
+                        var jogadoresAguardandoDupla = duplasNaoFormadas.Count;
+
+                        if (vagasRestantes <= 0)
+                        {
+                            respostaValidacao.AplicarStatusEsgotado();
+                        }
+                        else if (jogadoresAguardandoDupla == 0)
+                        {
+                            respostaValidacao.AplicarStatusOk();
+                        }
+                        else
+                        {
+                            respostaValidacao.AplicarStatusEscolhaDupla(vagasRestantes - jogadoresAguardandoDupla > 0);
+                            respostaValidacao.conteudo = duplasNaoFormadas.Select(s => new FormacaoDuplaInscricao() { Id = s.Id, UserId = s.userId, Nome = s.participante.nome }).ToList();
+                        }
+                    }
+                    else
+                    {
+                        if (categoria.maximoInscritos > qtdInscritosCategoria)
+                        {
+                            respostaValidacao.AplicarStatusOk();
+                        }
+                        else
+                        {
+                            respostaValidacao.AplicarStatusEsgotado();
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                respostaValidacao.AplicarStatusErro(ex.Message);
+            }
+            return respostaValidacao;
+        }
+
+        public bool ValidarCriacaoDupla(int idInscricao, int userId, int torneioId, int classeId)
+        {
+            if (idInscricao == 0)
+            {
+                return true;
+            }
+
+            var inscricao = db.InscricaoTorneio.Find(idInscricao);
+
+            var jaTemDupla = db.InscricaoTorneio.Any(i => i.torneioId == torneioId && i.classe == classeId && ((i.userId == userId && i.parceiroDuplaId != null) || (i.parceiroDuplaId == userId)));
+            if (!jaTemDupla)
+            {
+                inscricao.parceiroDuplaId = userId;
+                db.Entry(inscricao).State = EntityState.Modified;
+                db.SaveChanges();
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
     }
 }
