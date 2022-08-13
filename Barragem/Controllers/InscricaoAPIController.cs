@@ -25,6 +25,21 @@ namespace Barragem.Controllers
         private BarragemDbContext db = new BarragemDbContext();
         private TorneioNegocio tn = new TorneioNegocio();
 
+        [HttpGet]
+        [Route("api/InscricaoAPI/ValidarDisponibilidadeInscricoes")]
+        public IHttpActionResult ValidarDisponibilidadeInscricoes(int torneioId, int categoriaId)
+        {
+            if (torneioId <= 0)
+            {
+                return Ok(new RetornoValidacaoDisponibInscricaoModel("Id do torneio é obrigatório"));
+            }
+            else if (categoriaId <= 0)
+            {
+                return Ok(new RetornoValidacaoDisponibInscricaoModel("Id da categoria é obrigatória"));
+            }
+            return Ok(tn.ValidarDisponibilidadeInscricoes(torneioId, categoriaId));
+        }
+
         // GET: api/InscricaoAPI
         [HttpGet]
         [Route("api/InscricaoAPI/PrepararInscricao/{torneioId}")]
@@ -415,6 +430,7 @@ namespace Barragem.Controllers
             //return Ok("00020126830014br.gov.bcb.pix2561api.pagseguro.com/pix/v2/210387E0-A6BF-45D1-80B5-CFEB9BBCEE2F5204899953039865802BR5921Pagseguro Internet SA6009SAO PAULO62070503***63047E6D");
         }
 
+        [Obsolete("Utilizar o endpoint RealizarInscricao")]
         [ResponseType(typeof(void))]
         [HttpPost]
         [AllowAnonymous]
@@ -427,7 +443,34 @@ namespace Barragem.Controllers
             {
                 return BadRequest("001-Você já possui uma inscrição neste torneio.");
             }
-            var mensagemRetorno = new TorneioController().InscricaoNegocio(torneioId, classe1, "", classe2, classe3, classe4, observacao, isSocio, false, userId, isFederado);
+
+            var inscricaoModel = new InscricaoModel() { UserId = userId, TorneioId = torneioId, IdCategoria1 = classe1, IdCategoria2 = classe2, IdCategoria3 = classe3, IdCategoria4 = classe4, Observacao = observacao, IsSocio = isSocio, IsFederado = isFederado };
+
+            var mensagemRetorno = new TorneioController().InscricaoNegocio(inscricaoModel, "");
+            if (mensagemRetorno.tipo == "erro")
+            {
+                return BadRequest(mensagemRetorno.mensagem);
+            }
+            else
+            {
+                var inscricao = new InscricaoTorneio();
+                inscricao.Id = mensagemRetorno.id;
+                return Ok(inscricao);
+            }
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("api/InscricaoAPI/RealizarInscricao")]
+        public IHttpActionResult RealizarInscricao(InscricaoModel inscricaoModel)
+        {
+            // validar se já houve inscrição:
+            var temInscricao = db.InscricaoTorneio.Count(i => i.userId == inscricaoModel.UserId && i.torneioId == inscricaoModel.TorneioId);
+            if (temInscricao > 0)
+            {
+                return BadRequest("001-Você já possui uma inscrição neste torneio.");
+            }
+            var mensagemRetorno = new TorneioController().InscricaoNegocio(inscricaoModel, "");
             if (mensagemRetorno.tipo == "erro")
             {
                 return BadRequest(mensagemRetorno.mensagem);
