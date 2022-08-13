@@ -50,7 +50,7 @@
                             <div class="row form-group">
                                 @Html.LabelFor(m => m.register.UserName, new { @class = "control-label col-md-4" })*
                                 <div class="col-md-6 input-group-sm">
-                                    @Html.TextBoxFor(m => m.register.UserName, new { @class = "form-control", placeholder = "ex.: nome.sobrenome ou email", Value = ViewBag.login })
+                                    @Html.TextBoxFor(m => m.register.UserName, new { @class = "form-control", placeholder = "ex.: nome.sobrenome", Value = ViewBag.login })
                                     @Html.ValidationMessageFor(m => m.register.UserName, "", new { @class = "alert-danger" })
                                 </div>
                             </div>
