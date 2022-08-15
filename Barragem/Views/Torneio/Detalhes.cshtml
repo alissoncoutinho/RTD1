@@ -393,7 +393,7 @@
                                         <div class="checkbox">
                                             <label>
                                                 <input type="checkbox" value="true" name="isSegundaOpcaoClasse" id="isSegundaOpcaoClasse" onclick="segundaOpcaoDeClasse()"
-                                                       @if (ViewBag.ClasseInscricao2 != null) { @Html.Raw("checked") } />
+                                                       @if (ViewBag.ClasseInscricao2 != null  && ViewBag.ClasseInscricao2 > 0) { @Html.Raw("checked") } />
                                                 @Html.Raw("Quero escolher mais uma categoria")
                                             </label>
 
@@ -426,7 +426,7 @@
                                         <div class="checkbox">
                                             <label>
                                                 <input type="checkbox" value="true" name="isTerceiraOpcaoClasse" id="isTerceiraOpcaoClasse" onclick="terceiraOpcaoDeClasse()"
-                                                       @if (ViewBag.ClasseInscricao3 != null) { @Html.Raw("checked") } />
+                                                       @if (ViewBag.ClasseInscricao3 != null && ViewBag.ClasseInscricao3 > 0) { @Html.Raw("checked") } />
                                                 @Html.Raw("Quero escolher mais uma categoria")
                                             </label>
 
@@ -458,7 +458,7 @@
                                         <div class="checkbox">
                                             <label>
                                                 <input type="checkbox" value="true" name="isQuartaOpcaoClasse" id="isQuartaOpcaoClasse" onclick="quartaOpcaoDeClasse()"
-                                                       @if (ViewBag.ClasseInscricao4 != null) { @Html.Raw("checked") } />
+                                                       @if (ViewBag.ClasseInscricao4 != null && ViewBag.ClasseInscricao4 > 0) { @Html.Raw("checked") } />
                                                 @Html.Raw("Quero escolher mais uma categoria")
                                             </label>
                                         </div>
