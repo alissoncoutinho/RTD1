@@ -1232,7 +1232,7 @@ namespace Barragem.Class
                         else
                         {
                             respostaValidacao.AplicarStatusEscolhaDupla(vagasRestantes - jogadoresAguardandoDupla > 0);
-                            respostaValidacao.conteudo = duplasNaoFormadas.Select(s => new FormacaoDuplaInscricao() { Id = s.Id, UserId = s.userId, Nome = s.participante.nome }).ToList();
+                            respostaValidacao.conteudo = duplasNaoFormadas.Select(s => new FormacaoDuplaInscricao() { Id = s.Id, UserId = s.userId, Nome = s.participante.nome }).OrderBy(o => o.Nome).ToList();
                         }
                     }
                     else
