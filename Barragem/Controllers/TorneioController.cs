@@ -3556,10 +3556,10 @@ namespace Barragem.Controllers
                     {
                         jogo.qtddGames1setDesafiante = jogoPlacar.qtddGames1setDesafiante;
                         jogo.qtddGames1setDesafiado = jogoPlacar.qtddGames1setDesafiante == 6 ? 7 : 6;
-                        jogo.qtddGames2setDesafiante = 6;
-                        jogo.qtddGames2setDesafiado = 0;
-                        jogo.qtddGames3setDesafiante = 6;
-                        jogo.qtddGames3setDesafiado = 0;
+                        jogo.qtddGames2setDesafiante = 0;
+                        jogo.qtddGames2setDesafiado = 6;
+                        jogo.qtddGames3setDesafiante = 0;
+                        jogo.qtddGames3setDesafiado = 6;
                     }
                 }
                 else
