@@ -717,7 +717,7 @@
         function CarregarTabelaFormacaoDupla(dados, el) {
             LimparTabelaFormacaoDupla();
             var table = document.getElementById("tblFormacaoDupla");
-            for (var i = 0; i < dados.length; i++) {
+            for (var i = dados.length-1; i >= 0; i--) {
                 var row = table.insertRow(1);
                 row.innerHTML = "<td>" + dados[i].Nome + "</td><td>" + "<button title=\"Escolher dupla\" data-numCategoria=\"" + el.dataset.numcategoria + "\" data-userid=\"" + dados[i].UserId + "\" data-id=\"" + dados[i].Id + "\" class=\"col-lg-12 col-xs-12 btn btn-primary btn-xs\" onclick=\"SelecionarParceiro(this)\">Escolher</button>" + "</td>";
             }
