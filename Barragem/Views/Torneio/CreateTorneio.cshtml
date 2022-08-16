@@ -291,11 +291,12 @@
                         </select>
                     </div>
                 </div>
-                <div class="form-group">
+
+                <div class="form-group" hidden>
                     @Html.Label("Seu torneio será gratuito para associado?", new { @class = "col-xs-12 col-md-12" })
                     <div class="col-xs-8 col-md-3 input-group">
                         <select name="isGratuitoSocio" id="isGratuitoSocio" class="form-control">
-                            <option value=false>Não</option>
+                            <option value=false selected>Não</option>
                             <option value=true>Sim</option>
                         </select>
                     </div>
@@ -311,15 +312,16 @@
                     </div>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group" hidden>
                     @Html.Label("Seu torneio terá limite de quantidade de inscritos?", new { @class = "col-xs-12 col-md-12" })
                     <div class="col-xs-8 col-md-3 input-group">
                         <select name="temLimiteDeInscricao" id="temLimiteDeInscricao" class="form-control">
                             <option value=false>Não</option>
-                            <option value=true>Sim</option>
+                            <option value=true selected>Sim</option>
                         </select>
                     </div>
                 </div>
+
                 <div class="form-group" hidden>
                     @Html.Label("Onde gostaria de divulgar o torneio?", new { @class = "col-xs-12 col-md-12" })
                     <div class="col-xs-8 col-md-3 input-group">
@@ -331,6 +333,7 @@
                         </select>
                     </div>
                 </div>
+
                 <div class="form-group">
                     @Html.Label("Caso queira colocar uma pergunta personalizada na ficha de inscrição, insira abaixo:", new { @class = "col-xs-12 col-md-12" })
                     <div class="col-sm-8 input-group">
