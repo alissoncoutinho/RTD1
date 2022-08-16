@@ -1304,20 +1304,30 @@ namespace Barragem.Controllers
 
         private CobrancaTorneio getDadosDeCobrancaTorneio(int torneioId)
         {
+            var torneio = db.Torneio.Find(torneioId);
+            return ObterDadosCobrancaTorneio(torneio);
+        }
+
+        private CobrancaTorneio ObterDadosCobrancaTorneio(Torneio torneio)
+        {
             var cobrancaTorneio = new CobrancaTorneio();
+
             var ativo = Tipos.Situacao.ativo.ToString();
             var licenciado = Tipos.Situacao.licenciado.ToString();
             var suspenso = Tipos.Situacao.suspenso.ToString();
             var suspensoWO = Tipos.Situacao.suspensoWO.ToString();
 
-            var torneio = db.Torneio.Find(torneioId);
             var barragem = db.Barragens.Find(torneio.barragemId);
 
             decimal valorPorUsuario = barragem.valorPorUsuario.HasValue ? (decimal)barragem.valorPorUsuario : 5;
 
-            cobrancaTorneio.qtddInscritos = db.InscricaoTorneio.Where(i => i.torneioId == torneioId && i.isAtivo).Select(i => (int)i.userId).Distinct().Count();
-            var inscritosNaoPagantes = db.InscricaoTorneio.Where(i => i.torneioId == torneioId && i.isAtivo && i.torneio.barragemId == i.participante.barragemId
-            && (i.participante.situacao == ativo || i.participante.situacao == suspenso || i.participante.situacao == licenciado || i.participante.situacao == suspensoWO)).Select(i => (int)i.userId).Distinct().Count();
+            var inscritosPagtoOk = db.InscricaoTorneio.Where(i => i.torneioId == torneio.Id && i.isAtivo);
+
+            cobrancaTorneio.qtddInscritos = inscritosPagtoOk.Select(i => (int)i.userId).Distinct().Count();
+
+            var inscritosNaoPagantes = inscritosPagtoOk.Where(i => i.torneio.barragemId == i.participante.barragemId
+                    && (i.participante.situacao == ativo || i.participante.situacao == suspenso || i.participante.situacao == licenciado || i.participante.situacao == suspensoWO)).Select(i => (int)i.userId).Distinct().Count();
+
             cobrancaTorneio.valorDescontoParaRanking = inscritosNaoPagantes * valorPorUsuario;
             cobrancaTorneio.valorASerPago = (cobrancaTorneio.qtddInscritos * valorPorUsuario) - cobrancaTorneio.valorDescontoParaRanking;
             cobrancaTorneio.valorPorUsuario = valorPorUsuario;
@@ -1900,7 +1910,7 @@ namespace Barragem.Controllers
         [HttpPost]
         public ActionResult Inscricao(int torneioId, int classeInscricao = 0, string operacao = "", int classeInscricao2 = 0, int classeInscricao3 = 0, int classeInscricao4 = 0, string observacao = "", bool isSocio = false, bool isFederado = false, int userId = 0, int idInscricaoParceiroDupla = 0, int idInscricaoParceiroDupla2 = 0, int idInscricaoParceiroDupla3 = 0, int idInscricaoParceiroDupla4 = 0)
         {
-            var inscricaoModel = new InscricaoModel() { UserId = userId, TorneioId = torneioId, IdCategoria1 = classeInscricao, IdCategoria2 = classeInscricao2, IdCategoria3 = classeInscricao3, IdCategoria4 = classeInscricao4, Observacao = observacao, IsSocio = isSocio, IsFederado = isFederado };
+            var inscricaoModel = new InscricaoModel() { UserId = userId, TorneioId = torneioId, IdCategoria1 = classeInscricao, IdCategoria2 = classeInscricao2, IdCategoria3 = classeInscricao3, IdCategoria4 = classeInscricao4, Observacao = observacao, IsSocio = isSocio, IsFederado = isFederado, IdInscricaoParceiroDupla1 = idInscricaoParceiroDupla, IdInscricaoParceiroDupla2 = idInscricaoParceiroDupla2, IdInscricaoParceiroDupla3 = idInscricaoParceiroDupla3, IdInscricaoParceiroDupla4 = idInscricaoParceiroDupla4 };
 
             var mensagemRetorno = InscricaoNegocio(inscricaoModel, operacao);
             if (mensagemRetorno.nomePagina == "ConfirmacaoInscricao")
@@ -1953,6 +1963,7 @@ namespace Barragem.Controllers
                     {
                         foreach (var item in it)
                         {
+                            DesfazerDupla(item, inscricaoModel.TorneioId);
                             db.InscricaoTorneio.Remove(item);
                         }
                     }
@@ -2094,10 +2105,15 @@ namespace Barragem.Controllers
                         tn.ValidarCriacaoDupla(inscricaoModel.IdInscricaoParceiroDupla4, inscricaoModel.UserId, inscricaoModel.TorneioId, inscricaoModel.IdCategoria4);
                     }
                 }
+
                 db.SaveChanges();
-                mensagemRetorno.id = inscricao.Id;
-                mensagemRetorno.mensagem = "Inscrição recebida.";
-                gratuidade = VerificarGratuidade(torneio, inscricaoModel.UserId);
+
+                if (operacao != "cancelar")
+                {
+                    mensagemRetorno.id = inscricao.Id;
+                    mensagemRetorno.mensagem = "Inscrição recebida.";
+                    gratuidade = VerificarGratuidade(torneio, inscricaoModel.UserId);
+                }
                 if ((torneio.valor == 0) || (gratuidade))
                 {
                     mensagemRetorno.mensagem = "Inscrição realizada com sucesso.";
@@ -2724,7 +2740,7 @@ namespace Barragem.Controllers
 
                 if (temPendenciaDePagamentoTorneio(torneio))
                 {
-                    cobrancaTorneio = getDadosDeCobrancaTorneio(torneioId);
+                    cobrancaTorneio = ObterDadosCobrancaTorneio(torneio);
                     if (cobrancaTorneio.valorASerPago > 0)
                     {
                         pendenciaDePagamento = true;
@@ -2745,7 +2761,7 @@ namespace Barragem.Controllers
                             //dados ok, então gerar qr code para pagamento
                             try
                             {
-                                cobrancaTorneio.qrCode = GetQrCodeCobrancaPIX(torneioId);
+                                cobrancaTorneio.qrCode = GetQrCodeCobrancaPIX(torneio, cobrancaTorneio);
                                 return Json(new { erro = "", retorno = cobrancaTorneio, status = "PENDENCIA_PAGAMENTO" }, "text/plain", JsonRequestBehavior.AllowGet);
                             }
                             catch (Exception e)
@@ -3531,9 +3547,9 @@ namespace Barragem.Controllers
                     {
                         jogo.qtddGames1setDesafiante = jogoPlacar.qtddGames1setDesafiado == 6 ? 7 : 6;
                         jogo.qtddGames1setDesafiado = jogoPlacar.qtddGames1setDesafiado;
-                        jogo.qtddGames2setDesafiante = 0;
+                        jogo.qtddGames2setDesafiante = 6;
                         jogo.qtddGames2setDesafiado = 0;
-                        jogo.qtddGames3setDesafiante = 0;
+                        jogo.qtddGames3setDesafiante = 6;
                         jogo.qtddGames3setDesafiado = 0;
                     }
                     else
@@ -3541,9 +3557,9 @@ namespace Barragem.Controllers
                         jogo.qtddGames1setDesafiante = jogoPlacar.qtddGames1setDesafiante;
                         jogo.qtddGames1setDesafiado = jogoPlacar.qtddGames1setDesafiante == 6 ? 7 : 6;
                         jogo.qtddGames2setDesafiante = 0;
-                        jogo.qtddGames2setDesafiado = 0;
+                        jogo.qtddGames2setDesafiado = 6;
                         jogo.qtddGames3setDesafiante = 0;
-                        jogo.qtddGames3setDesafiado = 0;
+                        jogo.qtddGames3setDesafiado = 6;
                     }
                 }
                 else
@@ -4189,13 +4205,11 @@ namespace Barragem.Controllers
             return View();
         }
 
-        private QrCodeCobrancaTorneio GetQrCodeCobrancaPIX(int torneioId)
+        private QrCodeCobrancaTorneio GetQrCodeCobrancaPIX(Torneio torneio, CobrancaTorneio cobrancaTorneio)
         {
             try
             {
-                var torneio = db.Torneio.Find(torneioId);
-
-                var order = montarPedidoPIX(torneio);
+                var order = montarPedidoPIX(torneio, cobrancaTorneio);
 
                 var cobrancaPix = new PIXPagSeguro().CriarPedido(order);
                 var qrcode = new QrCodeCobrancaTorneio();
@@ -4212,9 +4226,8 @@ namespace Barragem.Controllers
             }
         }
 
-        private Order montarPedidoPIX(Torneio torneio)
+        private Order montarPedidoPIX(Torneio torneio, CobrancaTorneio cobrancaTorneio)
         {
-            var cobrancaTorneio = getDadosDeCobrancaTorneio(torneio.Id);
             var order = new Order();
             order.reference_id = "COB-" + torneio.Id;
             order.customer = new Customer();

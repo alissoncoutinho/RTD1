@@ -255,7 +255,8 @@
                             </select>
                         </div>
                     </div>
-                    <div class="form-group">
+
+                    <div class="form-group" hidden>
                         @Html.Label("Seu torneio será gratuito para associado?", new { @class = "col-sm-3 control-label" })
                         <div class="col-sm-2 input-group">
                             <select name="isGratuitoSocio" id="isGratuitoSocio" class="form-control">
@@ -275,7 +276,7 @@
                         </div>
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group" hidden>
                         @Html.Label("Seu torneio terá limite de quantidade de inscritos?", new { @class = "col-sm-3 control-label" })
                         <div class="col-sm-2 input-group">
                             <select name="temLimiteDeInscricao" id="temLimiteDeInscricao" class="form-control">
@@ -284,6 +285,7 @@
                             </select>
                         </div>
                     </div>
+
                     <div class="form-group">
                         @Html.Label("Pergunta personalizada que aparecerá na ficha de inscrição", new { @class = "col-sm-3 control-label" })
                         <div class="col-sm-8 col-xs-12 input-group">

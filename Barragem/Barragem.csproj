@@ -340,6 +340,7 @@
     <Compile Include="Models\PaginaEspecialModel.cs" />
     <Compile Include="Models\PainelTorneioModel.cs" />
     <Compile Include="Models\Patrocinio.cs" />
+    <Compile Include="Models\PontuacaoLigaTorneioModel.cs" />
     <Compile Include="Models\Rancking.cs" />
     <Compile Include="Models\RankingView.cs" />
     <Compile Include="Models\Regra.cs" />

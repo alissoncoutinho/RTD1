@@ -703,5 +703,25 @@ namespace Barragem.Controllers
             listaContatos.Add(new ContatoOrganizador("ORGANIZADOR_TENIS", ConfigurationManager.AppSettings["TELEFONE_CONTATO_ORGANIZADOR_TENIS"]));
             return Ok(listaContatos);
         }
+
+        [ResponseType(typeof(ICollection<PontuacaoLigaTorneioModel>))]
+        [HttpGet]
+        [Route("api/PerfilAPI/ObterPontuacaoDetalhadaJogador")]
+        public ICollection<PontuacaoLigaTorneioModel> ValidarInscricaoPaga(int userId, int ligaId, int categoriaId)
+        {
+            var pontuacoesJogadorLiga = from inscricao in db.InscricaoTorneio
+                                        join tl in db.TorneioLiga on inscricao.torneioId equals tl.TorneioId
+                                        join torneio in db.Torneio on inscricao.torneioId equals torneio.Id
+                                        join ct in db.ClasseTorneio on new { torneioId = inscricao.torneioId, categoriaId = inscricao.classe } equals new { torneioId = ct.torneioId, categoriaId = ct.Id }
+                                        join categoria in db.Categoria on ct.categoriaId equals categoria.Id
+                                        where inscricao.userId == userId
+                                        where categoria.Id == categoriaId
+                                        where tl.LigaId == ligaId
+                                        where tl.snapshotId > 0
+                                        orderby torneio.dataInicio descending, torneio.dataFim descending
+                                        select new PontuacaoLigaTorneioModel { IdTorneio = inscricao.torneioId, NomeTorneio = torneio.nome, Pontuacao = inscricao.Pontuacao ?? 0 };
+
+            return pontuacoesJogadorLiga.ToList();
+        }
     }
 }
