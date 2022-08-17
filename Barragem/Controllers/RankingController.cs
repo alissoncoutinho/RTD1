@@ -269,7 +269,7 @@ namespace Barragem.Controllers
                 {
                     to = "/topics/" + segmentacao,
                     notification = new NotificationModel() { title = titulo, body = conteudo },
-                    data = new DataLigaModel() { title = titulo, body = conteudo, type = "tabela_liberada", idRanking = liga.barragemId ?? 0, ligaId = ligaId }
+                    data = new DataLigaModel() { title = titulo, body = conteudo, type = "classificacao_ranking_atualizada", idRanking = liga.barragemId ?? 0, ligaId = ligaId }
                 };
                 new FirebaseNotification().SendNotification(fbmodel);
                 return Json(new { erro = "", retorno = 1, segmento = segmentacao }, "application/json", JsonRequestBehavior.AllowGet);
