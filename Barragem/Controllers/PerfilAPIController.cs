@@ -718,8 +718,9 @@ namespace Barragem.Controllers
                                         where categoria.Id == categoriaId
                                         where tl.LigaId == ligaId
                                         where tl.snapshotId > 0
+                                        where inscricao.isAtivo
                                         orderby torneio.dataInicio descending, torneio.dataFim descending
-                                        select new PontuacaoLigaTorneioModel { IdTorneio = inscricao.torneioId, NomeTorneio = torneio.nome, Pontuacao = inscricao.Pontuacao ?? 0 };
+                                        select new PontuacaoLigaTorneioModel { IdTorneio = inscricao.torneioId, NomeTorneio = torneio.nome, Pontuacao = inscricao.Pontuacao ?? 0, LogoId = torneio.barragemId };
 
             return pontuacoesJogadorLiga.ToList();
         }
