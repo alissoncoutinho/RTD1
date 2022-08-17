@@ -4095,22 +4095,38 @@ namespace Barragem.Controllers
                     return Json(new { erro = "Libere a tabela para notificar os jogadores.", retorno = 0 }, "application/json", JsonRequestBehavior.AllowGet);
                 }
 
-                var segmentacao = "torneio_tabela_liberada";
-                var titulo = "Tabela de torneio liberada!";
-                var conteudo = $"Confira seus jogos no Torneio {torneio.nome}";
+                var usuariosReceberNotificacao = db.InscricaoTorneio.Where(x => x.torneioId == torneioId && x.isAtivo).Select(s => s.userId).Distinct().ToList();
 
-                var fbmodel = new FirebaseNotificationModel()
-                {
-                    to = "/topics/" + segmentacao,
-                    notification = new NotificationModel() { title = titulo, body = conteudo },
-                    data = new DataModel() { title = titulo, body = conteudo, type = "tabela_liberada", idRanking = torneio.barragemId, torneioId = torneio.Id }
-                };
-                new FirebaseNotification().SendNotification(fbmodel);
-                return Json(new { erro = "", retorno = 1, segmento = segmentacao }, "application/json", JsonRequestBehavior.AllowGet);
+                NotificarUsuariosTabelaLiberada(usuariosReceberNotificacao, torneio);
+
+                return Json(new { erro = "", retorno = 1, segmento = "tabela liberada" }, "application/json", JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {
                 return Json(new { erro = ex.Message, retorno = 0 }, "application/json", JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        private void NotificarUsuariosTabelaLiberada(List<int> userIds, Torneio torneio)
+        {
+            var titulo = "Tabela de torneio liberada!";
+            var conteudo = $"Confira seus jogos no Torneio {torneio.nome}";
+
+            var userList = db.UsuarioFirebase.Where(x => userIds.Contains(x.UserId));
+            
+            if (userList == null)
+                return;
+
+            foreach (var userFb in userList)
+            {    
+                var fbmodel = new FirebaseNotificationModel()
+                {
+                    to = userFb.Token,
+                    notification = new NotificationModel() { title = titulo, body = conteudo },
+                    data = new DataModel() { title = titulo, body = conteudo, type = "tabela_liberada", idRanking = torneio.barragemId, torneioId = torneio.Id }
+                };
+
+                new FirebaseNotification().SendNotification(fbmodel);
             }
         }
 
