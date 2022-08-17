@@ -261,22 +261,40 @@ namespace Barragem.Controllers
             {
                 var liga = db.Liga.Find(ligaId);
 
-                var segmentacao = "liga_classificacao";
-                var titulo = "Classificação do ranking atualizada!";
-                var conteudo = $"Confira as novas pontuações do Ranking {liga.Nome}.";
+                var snapshotsDaLiga = db.Snapshot.Where(snap => snap.LigaId == ligaId).OrderByDescending(s => s.Id).FirstOrDefault();
 
-                var fbmodel = new FirebaseNotificationModel<DataLigaModel>()
-                {
-                    to = "/topics/" + segmentacao,
-                    notification = new NotificationModel() { title = titulo, body = conteudo },
-                    data = new DataLigaModel() { title = titulo, body = conteudo, type = "classificacao_ranking_atualizada", idRanking = liga.barragemId ?? 0, ligaId = ligaId }
-                };
-                new FirebaseNotification().SendNotification(fbmodel);
-                return Json(new { erro = "", retorno = 1, segmento = segmentacao }, "application/json", JsonRequestBehavior.AllowGet);
+                var usuarios = db.SnapshotRanking.Where(x => x.SnapshotId == snapshotsDaLiga.Id).Select(s => s.UserId).Distinct().ToList();
+
+                NotificarUsuariosClassificacaoAtualizada(usuarios, liga);
+
+                return Json(new { erro = "", retorno = 1, segmento = "classificação ranking atualizada" }, "application/json", JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {
                 return Json(new { erro = ex.Message, retorno = 0 }, "application/json", JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        private void NotificarUsuariosClassificacaoAtualizada(List<int> userIds, Liga liga)
+        {
+            var titulo = "Classificação do ranking atualizada!";
+            var conteudo = $"Confira as novas pontuações do Ranking {liga.Nome}.";
+
+            var userList = db.UsuarioFirebase.Where(x => userIds.Contains(x.UserId));
+
+            if (userList == null)
+                return;
+
+            foreach (var userFb in userList)
+            {
+                var fbmodel = new FirebaseNotificationModel<DataLigaModel>()
+                {
+                    to = userFb.Token,
+                    notification = new NotificationModel() { title = titulo, body = conteudo },
+                    data = new DataLigaModel() { title = titulo, body = conteudo, type = "classificacao_ranking_atualizada", idRanking = liga.barragemId ?? 0, ligaId = liga.Id }
+                };
+
+                new FirebaseNotification().SendNotification(fbmodel);
             }
         }
     }

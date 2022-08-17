@@ -4119,11 +4119,11 @@ namespace Barragem.Controllers
 
             foreach (var userFb in userList)
             {    
-                var fbmodel = new FirebaseNotificationModel()
+                var fbmodel = new FirebaseNotificationModel<DataToneioModel>()
                 {
                     to = userFb.Token,
                     notification = new NotificationModel() { title = titulo, body = conteudo },
-                    data = new DataModel() { title = titulo, body = conteudo, type = "tabela_liberada", idRanking = torneio.barragemId, torneioId = torneio.Id }
+                    data = new DataToneioModel() { title = titulo, body = conteudo, type = "tabela_liberada", idRanking = torneio.barragemId, torneioId = torneio.Id }
                 };
 
                 new FirebaseNotification().SendNotification(fbmodel);
