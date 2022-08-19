@@ -355,19 +355,25 @@
                             </div>
                         }
 
+                        <input type="hidden" name="perguntaTorneio" id="perguntaTorneio" value="@torneio.observacao">
+
                         @if (!String.IsNullOrEmpty(torneio.observacao))
                         {
                             <br>
                             <div class="boxPadrao">
                                 <div class="row">
-                                    <div class="col-sm-12">@Html.Raw(torneio.observacao)</div>
+                                    <div id="textoPergunta" class="col-sm-12">@Html.Raw(torneio.observacao)</div>
                                 </div>
                                 <div class="row form-group input-group-sm">
                                     <div class="col-sm-12">
-                                        @Html.TextBoxFor(m => m.inscricao.observacao, new { @class = "form-control", placeholder = "Responda aqui..." })
+                                        @Html.TextBoxFor(m => m.inscricao.observacao, new { @id = "observacao", @class = "form-control", placeholder = "Responda aqui..." })
                                     </div>
                                 </div>
                             </div>
+                        }
+                        else
+                        {
+                            <input type="hidden" name="observacao" id="observacao" value="">
                         }
                     </div>
 
@@ -467,6 +473,9 @@
                 alert("Favor informar se você é federado ou não.");
                 labelisFederado.style.color = "red";
                 return false;
+            } else if (document.getElementById("perguntaTorneio").value.length > 0 && document.getElementById("observacao").value.length == 0) {
+                alert("Favor responder a pergunta.");
+                document.getElementById("textoPergunta").style.color = "red";
             } else {
                 document.forms[0].submit();
             }
