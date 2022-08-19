@@ -975,7 +975,11 @@ namespace Barragem.Controllers
                 var classificacaoGrupo = tn.ordenarClassificacaoFaseGrupo(classe, grupo);
                 ViewBag.classificacaoGrupo = classificacaoGrupo;
                 ViewBag.InscritosWO = ObterInscritosComWO(classe, grupo);
-                ViewBag.EhTriploEmpate = ValidaTriploEmpate(classificacaoGrupo);
+
+                var criterioEmpate = ValidarCriterioEmpate(classificacaoGrupo);
+                ViewBag.EhTriploEmpate = criterioEmpate.EhTriploEmpate;
+                ViewBag.EhDuploEmpate = criterioEmpate.EhDuploEmpate;
+
                 var qtddJogosPorRodada = (classificacaoGrupo.Count() > 0) ? (int)classificacaoGrupo.Count() / 2 : 2;
                 qtddJogosPorRodada = (qtddJogosPorRodada % 2 != 0) ? qtddJogosPorRodada + 1 : qtddJogosPorRodada;
 
@@ -1007,7 +1011,11 @@ namespace Barragem.Controllers
                     var classificacaoGrupo = tn.ordenarClassificacaoFaseGrupo(classe, grupo);
                     ViewBag.classificacaoGrupo = classificacaoGrupo;
                     ViewBag.InscritosWO = ObterInscritosComWO(classe, grupo);
-                    ViewBag.EhTriploEmpate = ValidaTriploEmpate(classificacaoGrupo);
+                    
+                    var criterioEmpate = ValidarCriterioEmpate(classificacaoGrupo);
+                    ViewBag.EhTriploEmpate = criterioEmpate.EhTriploEmpate;
+                    ViewBag.EhDuploEmpate = criterioEmpate.EhDuploEmpate;
+
                     var qtddJogosPorRodada = (classificacaoGrupo.Count() > 0) ? (int)classificacaoGrupo.Count() / 2 : 2;
                     qtddJogosPorRodada = (qtddJogosPorRodada % 2 != 0) ? qtddJogosPorRodada + 1 : qtddJogosPorRodada;
                     ViewBag.grupo = grupo;
@@ -1031,6 +1039,7 @@ namespace Barragem.Controllers
                 && r.faseTorneio != 100 && r.faseTorneio != 101 && r.rodadaFaseGrupo == 0).OrderByDescending(r => r.faseTorneio).ThenBy(r => r.ordemJogo).ToList();
             }
 
+            ViewBag.Regra = db.Regra.Find(1).descricao;
             ViewBag.Classes = db.ClasseTorneio.Where(c => c.torneioId == torneioId).OrderBy(c => c.nivel).ToList();
             ViewBag.TorneioId = torneioId;
             ViewBag.nomeTorneio = torneio.nome;
@@ -1082,10 +1091,14 @@ namespace Barragem.Controllers
             }
         }
 
-        private bool ValidaTriploEmpate(List<ClassificacaoFaseGrupo> classificacao)
+        private ValidacaoEmpateResponseModel ValidarCriterioEmpate(List<ClassificacaoFaseGrupo> classificacao)
         {
             var gruposClassificatorios = classificacao.Where(x => x.saldoSets != 0 || x.saldoGames != 0 || x.averageGames != 0).GroupBy(g => new { g.saldoSets, g.saldoGames, g.averageGames });
-            return gruposClassificatorios.Any(x => x.Count() == 3);
+            return new ValidacaoEmpateResponseModel()
+            {
+                EhDuploEmpate = gruposClassificatorios.Any(x => x.Count() == 2),
+                EhTriploEmpate = gruposClassificatorios.Any(x => x.Count() == 3)
+            };
         }
 
         public ActionResult InscricoesTorneio2(int torneioId = 0, string Msg = "", string Url = "", int barra = 0)
@@ -3180,7 +3193,7 @@ namespace Barragem.Controllers
             var classe = db.ClasseTorneio.Find(filtroClasse);
             inscritos = tn.getInscritosPorClasse(classe).OrderBy(i => i.grupo).ToList();
             ViewBag.Inscritos = db.InscricaoTorneio.Where(c => c.torneioId == torneioId && c.classe == filtroClasse).ToList();
-
+            ViewBag.Regra = db.Regra.Find(2).descricao;
             if (verificarSeAFaseDeGrupoFoiFinalizada(classe))
             {
                 ViewBag.Classificados = tn.getClassificadosEmCadaGrupo(classe);
