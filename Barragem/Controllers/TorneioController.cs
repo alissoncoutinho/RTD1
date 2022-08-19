@@ -1039,6 +1039,7 @@ namespace Barragem.Controllers
                 && r.faseTorneio != 100 && r.faseTorneio != 101 && r.rodadaFaseGrupo == 0).OrderByDescending(r => r.faseTorneio).ThenBy(r => r.ordemJogo).ToList();
             }
 
+            ViewBag.Regra = db.Regra.Find(1).descricao;
             ViewBag.Classes = db.ClasseTorneio.Where(c => c.torneioId == torneioId).OrderBy(c => c.nivel).ToList();
             ViewBag.TorneioId = torneioId;
             ViewBag.nomeTorneio = torneio.nome;
@@ -3170,7 +3171,7 @@ namespace Barragem.Controllers
             var classe = db.ClasseTorneio.Find(filtroClasse);
             inscritos = tn.getInscritosPorClasse(classe).OrderBy(i => i.grupo).ToList();
             ViewBag.Inscritos = db.InscricaoTorneio.Where(c => c.torneioId == torneioId && c.classe == filtroClasse).ToList();
-
+            ViewBag.Regra = db.Regra.Find(2).descricao;
             if (verificarSeAFaseDeGrupoFoiFinalizada(classe))
             {
                 ViewBag.Classificados = tn.getClassificadosEmCadaGrupo(classe);

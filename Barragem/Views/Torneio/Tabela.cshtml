@@ -265,10 +265,7 @@
                             <h4 class="modal-title" id="myModalLabel">Critério Desempate</h4>
                         </div>
                         <div class="modal-body">
-                            <p style="font-size: 36px; font-family: 'open sans'; text-align: center;" data-mce-style="font-size: 36px; font-family: 'open sans'; text-align: center;"><span style="color: #008000;" data-mce-style="color: #008000;"><strong>Critério de Desempate</strong></span></p>
-                            <p style="font-size: 36px; font-family: open sans;" data-mce-style="font-size: 36px; font-family: open sans;">Em caso de empate em vitórias, a posição será determinada pelos seguintes critérios de desempate:</p>
-                            <p style="font-size: 36px; font-family: open sans;" data-mce-style="font-size: 36px; font-family: open sans;"><span style="text-decoration: underline;" data-mce-style="text-decoration: underline;">Empate com 2 duplas/atletas`</span><br>a) Confronto direto (CD).</p>
-                            <p style="font-size: 36px; font-family: open sans;" data-mce-style="font-size: 36px; font-family: open sans;"><span style="text-decoration: underline;" data-mce-style="text-decoration: underline;">Empate com 3 duplas / atletas</span><br>a) Saldo de sets; (SS)<br>b) Saldo dos games; (SG)<br>c) Game average*;<br><br>* Soma dos games ganhos divididos pelos games jogados. Ex: Em um grupo uma dupla jogou duas&nbsp;vezes e ganhou&nbsp;as duas&nbsp;de 6x4, portanto a dupla jogou 20 games e ganhou 12 deles. O game averege da dupla será 12 dividido por 20, ou seja, 0,6. Esse valor é multiplicado por mil para evitar problemas de arredondamento. No exemplo acima, o game average seria 600.</p>
+                            @Html.Raw(ViewBag.Regra)
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
