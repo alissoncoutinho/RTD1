@@ -81,425 +81,431 @@
                     @Html.Hidden("vrInscricao", Model.valor);
                     @Html.Hidden("userId", inscricao == null ? 0 : inscricao.userId);
 
-                    <div class="box-body">
-                        <div class="row">
-                            @if (inscricao == null)
+            <div class="box-body">
+                <div class="row">
+                    @if (inscricao == null)
+                    {
+                        @Html.Label("Uma Categoria", new { @class = "col-sm-5" })
+                        <div class="col-sm-7 info-box-text">
+                            @if ((Model.valor == 0) || (ViewBag.isGratuito))
                             {
-                                @Html.Label("Uma Categoria", new { @class = "col-sm-5" })
-                                <div class="col-sm-7 info-box-text">
-                                    @if ((Model.valor == 0) || (ViewBag.isGratuito))
-                                    {
-                                        @Html.Raw("gratuito")
-                                    }
-                                    else
-                                    {
-                                        @Html.Raw("R$ " + Model.valor + ",00")
-                                    }
-                                </div>
+                                @Html.Raw("gratuito")
                             }
                             else
                             {
-                                @Html.Label("Valor Inscrição", new { @class = "col-sm-5" })
-                                <div class="col-sm-7 info-box-text">
-                                    @if ((Model.valor != 0) && (!ViewBag.isGratuito))
-                                    {
-                                        if ((inscricao.valorPendente != null) && (inscricao.valorPendente != 0))
-                                        {
-                                            @Html.Raw("R$ " + (inscricao.valor + inscricao.valorPendente) + ",00")
-                                        }
-                                        else
-                                        {
-                                            @Html.Raw("R$ " + inscricao.valor + ",00")
-                                        }
-                                    }
-                                    else
-                                    {
-                                        @Html.Raw("gratuito")
-                                    }
-                                </div>
+                                @Html.Raw("R$ " + Model.valor + ",00")
                             }
                         </div>
-                        @if (inscricao != null)
-                        {
-                            <div class="row">
-                                @Html.Label("Status Inscrição", new { @class = "col-sm-5" })
-                                <div class="col-sm-7 info-box-text">
-                                    @if ((Model.valor != 0) && (!ViewBag.isGratuito))
-                                    {
-                                        if ((inscricao.isAtivo) && ((inscricao.valorPendente == null) || (inscricao.valorPendente == 0)))
-                                        {
-                                            @Html.Raw(" Ativa")
-                                        }
-                                        else
-                                        {
-                                            @Html.Raw(inscricao.descricaoStatusPag + " Pendente")
-                                        }
-                                    }
-                                </div>
-                            </div>
-                            if ((inscricao.valorPendente != null) && (inscricao.valorPendente != 0))
+                    }
+                    else
+                    {
+                        @Html.Label("Valor Inscrição", new { @class = "col-sm-5" })
+                        <div class="col-sm-7 info-box-text">
+                            @if ((Model.valor != 0) && (!ViewBag.isGratuito))
                             {
-                                <div class="row">
-                                    @Html.Label("Valor Pendente", new { @class = "col-sm-5" })
-                                    <div class="col-sm-7 info-box-text">
-                                        @if ((Model.valor != 0) && (!ViewBag.isGratuito))
-                                        {
-                                            @Html.Raw("R$ " + inscricao.valorPendente + ",00")
-                                        }
-                                        else
-                                        {
-                                            @Html.Raw("gratuito")
-                                        }
-                                    </div>
-                                </div>
-                            }
-                        }
-
-                        <input type="hidden" name="totalCategoriasPorJogador" id="totalCategoriasPorJogador" value="@Model.qtddCategoriasPorJogador">
-
-                        @if (inscricao == null)
-                        {
-                            if (Model.qtddCategoriasPorJogador > 1)
-                            {
-                                <div class="row">
-                                    @Html.Label("Duas Categorias", new { @class = "col-sm-5" })
-                                    <div class="col-sm-7 info-box-text">
-                                        @if ((Model.valor == 0) || (ViewBag.isGratuito))
-                                        {
-                                            @Html.Raw("gratuito")
-                                        }
-                                        else
-                                        {
-                                            @Html.Raw("R$ " + Model.valor2 + ",00")
-                                        }
-                                    </div>
-                                </div>
-                            }
-                            if (Model.qtddCategoriasPorJogador > 2)
-                            {
-                                <div class="row">
-                                    @Html.Label("Três Categorias", new { @class = "col-sm-5" })
-                                    <div class="col-sm-7 info-box-text">
-                                        @if ((Model.valor == 0) || (ViewBag.isGratuito))
-                                        {
-                                            @Html.Raw("gratuito")
-                                        }
-                                        else
-                                        {
-                                            @Html.Raw("R$ " + Model.valor3 + ",00")
-                                        }
-                                    </div>
-                                </div>
-                            }
-                            if (Model.qtddCategoriasPorJogador > 3)
-                            {
-                                <div class="row">
-                                    @Html.Label("Quatro Categorias", new { @class = "col-sm-5" })
-                                    <div class="col-sm-7 info-box-text">
-                                        @if ((Model.valor == 0) || (ViewBag.isGratuito))
-                                        {
-                                            @Html.Raw("gratuito")
-                                        }
-                                        else
-                                        {
-                                            @Html.Raw("R$ " + Model.valor4 + ",00")
-                                        }
-                                    </div>
-                                </div>
-                            }
-                            if ((Model.isDesconto != null && (bool)Model.isDesconto) && (inscricao == null))
-                            {
-                                <div class="row">
-                                    @Html.Label("Desconto p/ " + Model.descontoPara + " de", new { @class = "col-sm-5" })
-                                    <div class="col-sm-7 info-box-text">
-                                        @Html.Raw("R$ " + Model.valorSocio + ",00")
-                                    </div>
-                                </div>
-                            }
-                            if ((Model.valorDescontoFederado != null) && (Model.valorDescontoFederado > 0))
-                            {
-                                <div class="row">
-                                    @Html.Label("Desconto p/ federado de", new { @class = "col-sm-5" })
-                                    <div class="col-sm-7 info-box-text">
-                                        @Html.Raw("R$ " + Model.valorDescontoFederado + ",00")
-                                    </div>
-                                </div>
-                            }
-                            <div class="row">
-                                @if (Model.StatusInscricao == (int)StatusInscricaoPainelTorneio.ABERTA)
+                                if ((inscricao.valorPendente != null) && (inscricao.valorPendente != 0))
                                 {
-                                    @Html.Label("Inscrições abertas", new { @class = "col-sm-5" })
-                                }
-                                else if (Model.StatusInscricao == (int)StatusInscricaoPainelTorneio.ENCERRADA)
-                                {
-                                    @Html.Label("Inscrições encerradas", new { @class = "col-sm-5" })
+                                    @Html.Raw("R$ " + (inscricao.valor + inscricao.valorPendente) + ",00")
                                 }
                                 else
                                 {
-                                    @Html.Label("Inscrições até", new { @class = "col-sm-5" })
-                                    <div class="col-sm-7 info-box-text">
-                                        @Html.Raw(Model.DataFinalInscricoes.ToShortDateString())
-                                    </div>
+                                    @Html.Raw("R$ " + inscricao.valor + ",00")
+                                }
+                            }
+                            else
+                            {
+                                @Html.Raw("gratuito")
+                            }
+                        </div>
+                    }
+                </div>
+                @if (inscricao != null)
+                {
+                    <div class="row">
+                        @Html.Label("Status Inscrição", new { @class = "col-sm-5" })
+                        <div class="col-sm-7 info-box-text">
+                            @if ((Model.valor != 0) && (!ViewBag.isGratuito))
+                            {
+                                if ((inscricao.isAtivo) && ((inscricao.valorPendente == null) || (inscricao.valorPendente == 0)))
+                                {
+                                    @Html.Raw(" Ativa")
+                                }
+                                else
+                                {
+                                    @Html.Raw(inscricao.descricaoStatusPag + " Pendente")
+                                }
+                            }
+                        </div>
+                    </div>
+                    if ((inscricao.valorPendente != null) && (inscricao.valorPendente != 0))
+                    {
+                        <div class="row">
+                            @Html.Label("Valor Pendente", new { @class = "col-sm-5" })
+                            <div class="col-sm-7 info-box-text">
+                                @if ((Model.valor != 0) && (!ViewBag.isGratuito))
+                                {
+                                    @Html.Raw("R$ " + inscricao.valorPendente + ",00")
+                                }
+                                else
+                                {
+                                    @Html.Raw("gratuito")
                                 }
                             </div>
-                            if (Model.isDesconto != null && (bool)Model.isDesconto)
-                            {
-                                <div class="row">
-                                    <label id="labelIsSocio" class="col-sm-5">
-                                        @Html.Raw("É " + Model.descontoPara + "? *")
-                                    </label>
-                                    <div class="col-sm-7 info-box-text">
-                                        <input type="radio" name="isSocio" id="isSocio" value="true">Sim
-                                        <input type="radio" name="isSocio" id="isSocio" value="false">Não
-                                    </div>
-                                </div>
-                            }
-                            if ((Model.valorDescontoFederado != null) && (Model.valorDescontoFederado > 0))
-                            {
-                                <div class="row">
-                                    <label id="labelIsFederado" class="col-sm-5">
-                                        @Html.Raw("É Federado? *")
-                                    </label>
-                                    <div class="col-sm-7 info-box-text">
-                                        <input type="radio" name="isFederado" id="isFederado" value="true">Sim
-                                        <input type="radio" name="isFederado" id="isFederado" value="false">Não
-                                    </div>
-                                </div>
-                            }
+                        </div>
+                    }
+                }
 
-                            <!--Inscrição 1ª Categoria-->
-                            <div class="row">
-                                <input type="hidden" name="idInscricaoParceiroDupla" id="idInscricaoParceiroDupla" value="0">
-                                @Html.Label("Categoria", new { @class = "col-sm-4" })
-                                <div class="col-sm-8 info-box-text">
-                                    <select name="classeInscricao" id="classeInscricao" data-totalCategorias="@Model.qtddCategoriasPorJogador" data-numCategoria="1" data-torneioId="@Model.Id" class="form-control" onchange="ValidarCategoriaSelecionada(this)">
-                                        <option value="0">Selecione uma categoria...</option>
-                                        @foreach (var item in ViewBag.Classes)
-                                        {
-                                            <option value="@item.Id" @if (ViewBag.ClasseInscricao == item.Id) { @Html.Raw("selected") }>@item.nome</option>
-                                        }
-                                    </select>
-                                </div>
+                <input type="hidden" name="totalCategoriasPorJogador" id="totalCategoriasPorJogador" value="@Model.qtddCategoriasPorJogador">
+
+                @if (inscricao == null)
+                {
+                    if (Model.qtddCategoriasPorJogador > 1)
+                    {
+                        <div class="row">
+                            @Html.Label("Duas Categorias", new { @class = "col-sm-5" })
+                            <div class="col-sm-7 info-box-text">
+                                @if ((Model.valor == 0) || (ViewBag.isGratuito))
+                                {
+                                    @Html.Raw("gratuito")
+                                }
+                                else
+                                {
+                                    @Html.Raw("R$ " + Model.valor2 + ",00")
+                                }
                             </div>
-
-                            <!--Inscrição 2ª Categoria-->
-                            if (Model.qtddCategoriasPorJogador > 1)
-                            {
-                                <div id="checkSegundaOpcaoClasse" class="form-group">
-                                    <div class="col-sm-8">
-                                        <div class="checkbox">
-                                            <label>
-                                                <input type="checkbox" value="true" name="isSegundaOpcaoClasse" id="isSegundaOpcaoClasse" onclick="segundaOpcaoDeClasse()" /> @Html.Raw("Quero escolher mais uma categoria")
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div id="segundaOpcaoClasse" class="row">
-                                    <input type="hidden" name="idInscricaoParceiroDupla2" id="idInscricaoParceiroDupla2" value="0">
-                                    @Html.Label("2ª Opção", new { @class = "col-sm-4" })
-                                    <div class="col-sm-8 info-box-text">
-                                        <select id="classeInscricao2" name="classeInscricao2" data-totalCategorias="@Model.qtddCategoriasPorJogador" data-numCategoria="2" data-torneioId="@Model.Id" class="form-control" onchange="ValidarCategoriaSelecionada(this)">
-                                            <option value="0">Selecione uma categoria...</option>
-                                            @foreach (var item in ViewBag.Classes)
-                                            {
-                                                <option value="@item.Id" @if ((ViewBag.ClasseInscricao2 != null) && (ViewBag.ClasseInscricao2 == item.Id)) { @Html.Raw("selected") }>@item.nome</option>
-                                            }
-                                        </select>
-                                    </div>
-                                </div>
-
-                            }
-
-                            <!--Inscrição 3ª Categoria-->
-                            if (Model.qtddCategoriasPorJogador > 2)
-                            {
-                                <div id="checkTerceiraOpcaoClasse" class="form-group">
-                                    <div class="col-sm-8">
-                                        <div class="checkbox">
-                                            <label>
-                                                <input type="checkbox" value="true" name="isTerceiraOpcaoClasse" id="isTerceiraOpcaoClasse" onclick="terceiraOpcaoDeClasse()" /> @Html.Raw("Quero escolher mais uma categoria")
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div id="terceiraOpcaoClasse" class="row">
-                                    <input type="hidden" name="idInscricaoParceiroDupla3" id="idInscricaoParceiroDupla3" value="0">
-                                    @Html.Label("3ª Opção", new { @class = "col-sm-4" })
-                                    <div class="col-sm-8 info-box-text">
-                                        <select id="classeInscricao3" name="classeInscricao3" data-totalCategorias="@Model.qtddCategoriasPorJogador" data-numCategoria="3" data-torneioId="@Model.Id" class="form-control" onchange="ValidarCategoriaSelecionada(this)">
-                                            <option value="0">Selecione uma categoria...</option>
-                                            @foreach (var item in ViewBag.Classes)
-                                            {
-                                                <option value="@item.Id" @if ((ViewBag.ClasseInscricao3 != null) && (ViewBag.ClasseInscricao3 == item.Id)) { @Html.Raw("selected") }>@item.nome</option>
-                                            }
-                                        </select>
-                                    </div>
-                                </div>
-
-                            }
-
-                            <!--Inscrição 4ª Categoria-->
-                            if (Model.qtddCategoriasPorJogador > 3)
-                            {
-                                <div id="checkQuartaOpcaoClasse" class="form-group">
-                                    <div class="col-sm-8">
-                                        <div class="checkbox">
-                                            <label>
-                                                <input type="checkbox" value="true" name="isQuartaOpcaoClasse" id="isQuartaOpcaoClasse" onclick="quartaOpcaoDeClasse()" /> @Html.Raw("Quero escolher mais uma categoria")
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div id="quartaOpcaoClasse" class="row">
-                                    <input type="hidden" name="idInscricaoParceiroDupla4" id="idInscricaoParceiroDupla4" value="0">
-                                    @Html.Label("4ª Opção", new { @class = "col-sm-4" })
-                                    <div class="col-sm-8 info-box-text">
-                                        <select name="classeInscricao4" id="classeInscricao4" data-totalCategorias="@Model.qtddCategoriasPorJogador" data-numCategoria="4" data-torneioId="@Model.Id" class="form-control" onchange="ValidarCategoriaSelecionada(this)">
-                                            <option value="0">Selecione uma categoria...</option>
-                                            @foreach (var item in ViewBag.Classes)
-                                            {
-                                                <option value="@item.Id" @if ((ViewBag.ClasseInscricao4 != null) && (ViewBag.ClasseInscricao4 == item.Id)) { @Html.Raw("selected") }>@item.nome</option>
-                                            }
-                                        </select>
-                                    </div>
-                                </div>
-
-                            }
+                        </div>
+                    }
+                    if (Model.qtddCategoriasPorJogador > 2)
+                    {
+                        <div class="row">
+                            @Html.Label("Três Categorias", new { @class = "col-sm-5" })
+                            <div class="col-sm-7 info-box-text">
+                                @if ((Model.valor == 0) || (ViewBag.isGratuito))
+                                {
+                                    @Html.Raw("gratuito")
+                                }
+                                else
+                                {
+                                    @Html.Raw("R$ " + Model.valor3 + ",00")
+                                }
+                            </div>
+                        </div>
+                    }
+                    if (Model.qtddCategoriasPorJogador > 3)
+                    {
+                        <div class="row">
+                            @Html.Label("Quatro Categorias", new { @class = "col-sm-5" })
+                            <div class="col-sm-7 info-box-text">
+                                @if ((Model.valor == 0) || (ViewBag.isGratuito))
+                                {
+                                    @Html.Raw("gratuito")
+                                }
+                                else
+                                {
+                                    @Html.Raw("R$ " + Model.valor4 + ",00")
+                                }
+                            </div>
+                        </div>
+                    }
+                    if ((Model.isDesconto != null && (bool)Model.isDesconto) && (inscricao == null))
+                    {
+                        <div class="row">
+                            @Html.Label("Desconto p/ " + Model.descontoPara + " de", new { @class = "col-sm-5" })
+                            <div class="col-sm-7 info-box-text">
+                                @Html.Raw("R$ " + Model.valorSocio + ",00")
+                            </div>
+                        </div>
+                    }
+                    if ((Model.valorDescontoFederado != null) && (Model.valorDescontoFederado > 0))
+                    {
+                        <div class="row">
+                            @Html.Label("Desconto p/ federado de", new { @class = "col-sm-5" })
+                            <div class="col-sm-7 info-box-text">
+                                @Html.Raw("R$ " + Model.valorDescontoFederado + ",00")
+                            </div>
+                        </div>
+                    }
+                    <div class="row">
+                        @if (Model.StatusInscricao == (int)StatusInscricaoPainelTorneio.ABERTA)
+                        {
+                            @Html.Label("Inscrições abertas", new { @class = "col-sm-5" })
+                        }
+                        else if (Model.StatusInscricao == (int)StatusInscricaoPainelTorneio.ENCERRADA)
+                        {
+                            @Html.Label("Inscrições encerradas", new { @class = "col-sm-5" })
                         }
                         else
                         {
-                            <!--INSCRIÇÃO REALIZADA-->
-
-                            <!--Inscrição 1ª Categoria-->
-                            <div class="row">
-                                <input type="hidden" name="idInscricaoParceiroDupla" id="idInscricaoParceiroDupla" value="0">
-                                @Html.Label("Categoria", new { @class = "col-sm-4" })
-                                <div class="col-sm-8 info-box-text">
-                                    <select name="classeInscricao" id="classeInscricao" data-totalCategorias="@Model.qtddCategoriasPorJogador" data-numCategoria="1" data-torneioId="@Model.Id" class="form-control" onchange="ValidarCategoriaSelecionada(this)">
-                                        <option value="0">Selecione uma categoria...</option>
-                                        @foreach (var item in ViewBag.Classes)
-                                        {
-                                            <option value="@item.Id" @if (ViewBag.ClasseInscricao == item.Id) { @Html.Raw("selected") }>@item.nome</option>
-                                        }
-                                    </select>
-                                </div>
-                            </div>
-
-                            <!--Inscrição 2ª Categoria-->
-                            if (Model.qtddCategoriasPorJogador > 1)
-                            {
-                                <div id="checkSegundaOpcaoClasse" class="form-group">
-                                    <div class="col-sm-8">
-                                        <div class="checkbox">
-                                            <label>
-                                                <input type="checkbox" value="true" name="isSegundaOpcaoClasse" id="isSegundaOpcaoClasse" onclick="segundaOpcaoDeClasse()"
-                                                       @if (ViewBag.ClasseInscricao2 != null  && ViewBag.ClasseInscricao2 > 0) { @Html.Raw("checked") } />
-                                                @Html.Raw("Quero escolher mais uma categoria")
-                                            </label>
-
-                                        </div>
-
-                                    </div>
-
-                                </div>
-
-                                <div id="segundaOpcaoClasse" class="row">
-                                    <input type="hidden" name="idInscricaoParceiroDupla2" id="idInscricaoParceiroDupla2" value="0">
-                                    @Html.Label("2ª Opção", new { @class = "col-sm-4" })
-                                    <div class="col-sm-8 info-box-text">
-                                        <select id="classeInscricao2" name="classeInscricao2" data-totalCategorias="@Model.qtddCategoriasPorJogador" data-numCategoria="2" data-torneioId="@Model.Id" class="form-control" onchange="ValidarCategoriaSelecionada(this)">
-                                            <option value="0">Selecione uma categoria...</option>
-                                            @foreach (var item in ViewBag.Classes)
-                                            {
-                                                <option value="@item.Id" @if ((ViewBag.ClasseInscricao2 != null) && (ViewBag.ClasseInscricao2 == item.Id)) { @Html.Raw("selected") }>@item.nome</option>
-                                            }
-                                        </select>
-                                    </div>
-                                </div>
-                            }
-
-                            <!--Inscrição 3ª Categoria-->
-                            if (Model.qtddCategoriasPorJogador > 2)
-                            {
-                                <div id="checkTerceiraOpcaoClasse" class="form-group">
-                                    <div class="col-sm-8">
-                                        <div class="checkbox">
-                                            <label>
-                                                <input type="checkbox" value="true" name="isTerceiraOpcaoClasse" id="isTerceiraOpcaoClasse" onclick="terceiraOpcaoDeClasse()"
-                                                       @if (ViewBag.ClasseInscricao3 != null && ViewBag.ClasseInscricao3 > 0) { @Html.Raw("checked") } />
-                                                @Html.Raw("Quero escolher mais uma categoria")
-                                            </label>
-
-                                        </div>
-
-                                    </div>
-
-                                </div>
-                                <div id="terceiraOpcaoClasse" class="row">
-                                    <input type="hidden" name="idInscricaoParceiroDupla3" id="idInscricaoParceiroDupla3" value="0">
-                                    @Html.Label("3ª Opção", new { @class = "col-sm-4" })
-                                    <div class="col-sm-8 info-box-text">
-                                        <select name="classeInscricao3" id="classeInscricao3" data-totalCategorias="@Model.qtddCategoriasPorJogador" data-numCategoria="3" data-torneioId="@Model.Id" class="form-control" onchange="ValidarCategoriaSelecionada(this)">
-                                            <option value="0">Selecione uma categoria...</option>
-                                            @foreach (var item in ViewBag.Classes)
-                                            {
-                                                <option value="@item.Id" @if ((ViewBag.ClasseInscricao3 != null) && (ViewBag.ClasseInscricao3 == item.Id)) { @Html.Raw("selected") }>@item.nome</option>
-                                            }
-                                        </select>
-                                    </div>
-                                </div>
-                            }
-
-                            <!--Inscrição 4ª Categoria-->
-                            if (Model.qtddCategoriasPorJogador > 3)
-                            {
-                                <div id="checkQuartaOpcaoClasse" class="form-group">
-                                    <div class="col-sm-8">
-                                        <div class="checkbox">
-                                            <label>
-                                                <input type="checkbox" value="true" name="isQuartaOpcaoClasse" id="isQuartaOpcaoClasse" onclick="quartaOpcaoDeClasse()"
-                                                       @if (ViewBag.ClasseInscricao4 != null && ViewBag.ClasseInscricao4 > 0) { @Html.Raw("checked") } />
-                                                @Html.Raw("Quero escolher mais uma categoria")
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div id="quartaOpcaoClasse" class="row">
-                                    <input type="hidden" name="idInscricaoParceiroDupla4" id="idInscricaoParceiroDupla4" value="0">
-                                    @Html.Label("4ª Opção", new { @class = "col-sm-4" })
-                                    <div class="col-sm-8 info-box-text">
-                                        <select id="classeInscricao4" name="classeInscricao4" data-totalCategorias="@Model.qtddCategoriasPorJogador" data-numCategoria="4" data-torneioId="@Model.Id" class="form-control" onchange="ValidarCategoriaSelecionada(this)">
-                                            <option value="0">Selecione uma categoria...</option>
-                                            @foreach (var item in ViewBag.Classes)
-                                            {
-                                                <option value="@item.Id" @if ((ViewBag.ClasseInscricao4 != null) && (ViewBag.ClasseInscricao4 == item.Id)) { @Html.Raw("selected") }>@item.nome</option>
-                                            }
-                                        </select>
-                                    </div>
-                                </div>
-                            }
-                        }
-
-                        @if (!String.IsNullOrEmpty(Model.observacao))
-                        {
-                            <br>
-                            <div class="boxPadrao">
-                                <div class="row">
-                                    <div class="col-sm-12">@Html.Raw(Model.observacao)</div>
-                                </div>
-                                <div class="row form-group">
-                                    @if (inscricao == null)
-                                    {
-                                        <div class="col-sm-12"><input type="text" placeholder="Responda aqui..." name="observacao" class="form-control"></div>
-                                    }
-                                    else
-                                    {
-                                        <div class="col-sm-12">@Html.Raw(inscricao.observacao)</div>
-                                    }
-                                </div>
+                            @Html.Label("Inscrições até", new { @class = "col-sm-5" })
+                            <div class="col-sm-7 info-box-text">
+                                @Html.Raw(Model.DataFinalInscricoes.ToShortDateString())
                             </div>
                         }
                     </div>
+                    if (Model.isDesconto != null && (bool)Model.isDesconto)
+                    {
+                        <div class="row">
+                            <label id="labelIsSocio" class="col-sm-5">
+                                @Html.Raw("É " + Model.descontoPara + "? *")
+                            </label>
+                            <div class="col-sm-7 info-box-text">
+                                <input type="radio" name="isSocio" id="isSocio" value="true">Sim
+                                <input type="radio" name="isSocio" id="isSocio" value="false">Não
+                            </div>
+                        </div>
+                    }
+                    if ((Model.valorDescontoFederado != null) && (Model.valorDescontoFederado > 0))
+                    {
+                        <div class="row">
+                            <label id="labelIsFederado" class="col-sm-5">
+                                @Html.Raw("É Federado? *")
+                            </label>
+                            <div class="col-sm-7 info-box-text">
+                                <input type="radio" name="isFederado" id="isFederado" value="true">Sim
+                                <input type="radio" name="isFederado" id="isFederado" value="false">Não
+                            </div>
+                        </div>
+                    }
+
+                    <!--Inscrição 1ª Categoria-->
+                    <div class="row">
+                        <input type="hidden" name="idInscricaoParceiroDupla" id="idInscricaoParceiroDupla" value="0">
+                        @Html.Label("Categoria", new { @class = "col-sm-4" })
+                        <div class="col-sm-8 info-box-text">
+                            <select name="classeInscricao" id="classeInscricao" data-totalCategorias="@Model.qtddCategoriasPorJogador" data-numCategoria="1" data-torneioId="@Model.Id" class="form-control" onchange="ValidarCategoriaSelecionada(this)">
+                                <option value="0">Selecione uma categoria...</option>
+                                @foreach (var item in ViewBag.Classes)
+                                {
+                                    <option value="@item.Id" @if (ViewBag.ClasseInscricao == item.Id) { @Html.Raw("selected") }>@item.nome</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <!--Inscrição 2ª Categoria-->
+                    if (Model.qtddCategoriasPorJogador > 1)
+                    {
+                        <div id="checkSegundaOpcaoClasse" class="form-group">
+                            <div class="col-sm-8">
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" value="true" name="isSegundaOpcaoClasse" id="isSegundaOpcaoClasse" onclick="segundaOpcaoDeClasse()" /> @Html.Raw("Quero escolher mais uma categoria")
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="segundaOpcaoClasse" class="row">
+                            <input type="hidden" name="idInscricaoParceiroDupla2" id="idInscricaoParceiroDupla2" value="0">
+                            @Html.Label("2ª Opção", new { @class = "col-sm-4" })
+                            <div class="col-sm-8 info-box-text">
+                                <select id="classeInscricao2" name="classeInscricao2" data-totalCategorias="@Model.qtddCategoriasPorJogador" data-numCategoria="2" data-torneioId="@Model.Id" class="form-control" onchange="ValidarCategoriaSelecionada(this)">
+                                    <option value="0">Selecione uma categoria...</option>
+                                    @foreach (var item in ViewBag.Classes)
+                                    {
+                                        <option value="@item.Id" @if ((ViewBag.ClasseInscricao2 != null) && (ViewBag.ClasseInscricao2 == item.Id)) { @Html.Raw("selected") }>@item.nome</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+
+                    }
+
+                    <!--Inscrição 3ª Categoria-->
+                    if (Model.qtddCategoriasPorJogador > 2)
+                    {
+                        <div id="checkTerceiraOpcaoClasse" class="form-group">
+                            <div class="col-sm-8">
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" value="true" name="isTerceiraOpcaoClasse" id="isTerceiraOpcaoClasse" onclick="terceiraOpcaoDeClasse()" /> @Html.Raw("Quero escolher mais uma categoria")
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="terceiraOpcaoClasse" class="row">
+                            <input type="hidden" name="idInscricaoParceiroDupla3" id="idInscricaoParceiroDupla3" value="0">
+                            @Html.Label("3ª Opção", new { @class = "col-sm-4" })
+                            <div class="col-sm-8 info-box-text">
+                                <select id="classeInscricao3" name="classeInscricao3" data-totalCategorias="@Model.qtddCategoriasPorJogador" data-numCategoria="3" data-torneioId="@Model.Id" class="form-control" onchange="ValidarCategoriaSelecionada(this)">
+                                    <option value="0">Selecione uma categoria...</option>
+                                    @foreach (var item in ViewBag.Classes)
+                                    {
+                                        <option value="@item.Id" @if ((ViewBag.ClasseInscricao3 != null) && (ViewBag.ClasseInscricao3 == item.Id)) { @Html.Raw("selected") }>@item.nome</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+
+                    }
+
+                    <!--Inscrição 4ª Categoria-->
+                    if (Model.qtddCategoriasPorJogador > 3)
+                    {
+                        <div id="checkQuartaOpcaoClasse" class="form-group">
+                            <div class="col-sm-8">
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" value="true" name="isQuartaOpcaoClasse" id="isQuartaOpcaoClasse" onclick="quartaOpcaoDeClasse()" /> @Html.Raw("Quero escolher mais uma categoria")
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="quartaOpcaoClasse" class="row">
+                            <input type="hidden" name="idInscricaoParceiroDupla4" id="idInscricaoParceiroDupla4" value="0">
+                            @Html.Label("4ª Opção", new { @class = "col-sm-4" })
+                            <div class="col-sm-8 info-box-text">
+                                <select name="classeInscricao4" id="classeInscricao4" data-totalCategorias="@Model.qtddCategoriasPorJogador" data-numCategoria="4" data-torneioId="@Model.Id" class="form-control" onchange="ValidarCategoriaSelecionada(this)">
+                                    <option value="0">Selecione uma categoria...</option>
+                                    @foreach (var item in ViewBag.Classes)
+                                    {
+                                        <option value="@item.Id" @if ((ViewBag.ClasseInscricao4 != null) && (ViewBag.ClasseInscricao4 == item.Id)) { @Html.Raw("selected") }>@item.nome</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+
+                    }
+                }
+                else
+                {
+                    <!--INSCRIÇÃO REALIZADA-->
+
+                    <!--Inscrição 1ª Categoria-->
+                    <div class="row">
+                        <input type="hidden" name="idInscricaoParceiroDupla" id="idInscricaoParceiroDupla" value="0">
+                        @Html.Label("Categoria", new { @class = "col-sm-4" })
+                        <div class="col-sm-8 info-box-text">
+                            <select name="classeInscricao" id="classeInscricao" data-totalCategorias="@Model.qtddCategoriasPorJogador" data-numCategoria="1" data-torneioId="@Model.Id" class="form-control" onchange="ValidarCategoriaSelecionada(this)">
+                                <option value="0">Selecione uma categoria...</option>
+                                @foreach (var item in ViewBag.Classes)
+                                {
+                                    <option value="@item.Id" @if (ViewBag.ClasseInscricao == item.Id) { @Html.Raw("selected") }>@item.nome</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <!--Inscrição 2ª Categoria-->
+                    if (Model.qtddCategoriasPorJogador > 1)
+                    {
+                        <div id="checkSegundaOpcaoClasse" class="form-group">
+                            <div class="col-sm-8">
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" value="true" name="isSegundaOpcaoClasse" id="isSegundaOpcaoClasse" onclick="segundaOpcaoDeClasse()"
+                                               @if (ViewBag.ClasseInscricao2 != null && ViewBag.ClasseInscricao2 > 0) { @Html.Raw("checked") } />
+                                        @Html.Raw("Quero escolher mais uma categoria")
+                                    </label>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div id="segundaOpcaoClasse" class="row">
+                            <input type="hidden" name="idInscricaoParceiroDupla2" id="idInscricaoParceiroDupla2" value="0">
+                            @Html.Label("2ª Opção", new { @class = "col-sm-4" })
+                            <div class="col-sm-8 info-box-text">
+                                <select id="classeInscricao2" name="classeInscricao2" data-totalCategorias="@Model.qtddCategoriasPorJogador" data-numCategoria="2" data-torneioId="@Model.Id" class="form-control" onchange="ValidarCategoriaSelecionada(this)">
+                                    <option value="0">Selecione uma categoria...</option>
+                                    @foreach (var item in ViewBag.Classes)
+                                    {
+                                        <option value="@item.Id" @if ((ViewBag.ClasseInscricao2 != null) && (ViewBag.ClasseInscricao2 == item.Id)) { @Html.Raw("selected") }>@item.nome</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    }
+
+                    <!--Inscrição 3ª Categoria-->
+                    if (Model.qtddCategoriasPorJogador > 2)
+                    {
+                        <div id="checkTerceiraOpcaoClasse" class="form-group">
+                            <div class="col-sm-8">
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" value="true" name="isTerceiraOpcaoClasse" id="isTerceiraOpcaoClasse" onclick="terceiraOpcaoDeClasse()"
+                                               @if (ViewBag.ClasseInscricao3 != null && ViewBag.ClasseInscricao3 > 0) { @Html.Raw("checked") } />
+                                        @Html.Raw("Quero escolher mais uma categoria")
+                                    </label>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                        <div id="terceiraOpcaoClasse" class="row">
+                            <input type="hidden" name="idInscricaoParceiroDupla3" id="idInscricaoParceiroDupla3" value="0">
+                            @Html.Label("3ª Opção", new { @class = "col-sm-4" })
+                            <div class="col-sm-8 info-box-text">
+                                <select name="classeInscricao3" id="classeInscricao3" data-totalCategorias="@Model.qtddCategoriasPorJogador" data-numCategoria="3" data-torneioId="@Model.Id" class="form-control" onchange="ValidarCategoriaSelecionada(this)">
+                                    <option value="0">Selecione uma categoria...</option>
+                                    @foreach (var item in ViewBag.Classes)
+                                    {
+                                        <option value="@item.Id" @if ((ViewBag.ClasseInscricao3 != null) && (ViewBag.ClasseInscricao3 == item.Id)) { @Html.Raw("selected") }>@item.nome</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    }
+
+                    <!--Inscrição 4ª Categoria-->
+                    if (Model.qtddCategoriasPorJogador > 3)
+                    {
+                        <div id="checkQuartaOpcaoClasse" class="form-group">
+                            <div class="col-sm-8">
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" value="true" name="isQuartaOpcaoClasse" id="isQuartaOpcaoClasse" onclick="quartaOpcaoDeClasse()"
+                                               @if (ViewBag.ClasseInscricao4 != null && ViewBag.ClasseInscricao4 > 0) { @Html.Raw("checked") } />
+                                        @Html.Raw("Quero escolher mais uma categoria")
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="quartaOpcaoClasse" class="row">
+                            <input type="hidden" name="idInscricaoParceiroDupla4" id="idInscricaoParceiroDupla4" value="0">
+                            @Html.Label("4ª Opção", new { @class = "col-sm-4" })
+                            <div class="col-sm-8 info-box-text">
+                                <select id="classeInscricao4" name="classeInscricao4" data-totalCategorias="@Model.qtddCategoriasPorJogador" data-numCategoria="4" data-torneioId="@Model.Id" class="form-control" onchange="ValidarCategoriaSelecionada(this)">
+                                    <option value="0">Selecione uma categoria...</option>
+                                    @foreach (var item in ViewBag.Classes)
+                                    {
+                                        <option value="@item.Id" @if ((ViewBag.ClasseInscricao4 != null) && (ViewBag.ClasseInscricao4 == item.Id)) { @Html.Raw("selected") }>@item.nome</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    }
+                }
+                
+                <input type="hidden" name="perguntaTorneio" id="perguntaTorneio" value="@Model.observacao">
+
+                @if (!String.IsNullOrEmpty(Model.observacao))
+                {
+                    <br>
+                    <div class="boxPadrao">
+                        <div class="row">
+                            <div id="textoPergunta" class="col-sm-12">@Html.Raw(Model.observacao)</div>
+                        </div>
+                        <div class="row form-group">
+                            @if (inscricao == null)
+                            {
+                                <div class="col-sm-12"><input type="text" placeholder="Responda aqui..." id="observacao" name="observacao" class="form-control"></div>
+                            }
+                            else
+                            {
+                                <div class="col-sm-12">@Html.Raw(inscricao.observacao)</div>
+                            }
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <input type="hidden" name="observacao" id="observacao" value="">
+                }
+            </div>
                     <!-- /.box-body -->
                     <div class="box-footer">
                         @if (Model.PermitirInscricoes)
@@ -940,6 +946,10 @@
                 alert("Favor informar se você é federado ou não.");
                 labelisFederado.style.color = "red";
                 return false;
+            } 
+            else if (document.getElementById("perguntaTorneio").value.length > 0 && document.getElementById("observacao").value.length == 0) {
+                alert("Favor responder a pergunta.");
+                document.getElementById("textoPergunta").style.color = "red";
             } else {
                 document.formInscricao.submit();
             }

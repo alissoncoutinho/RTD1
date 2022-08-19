@@ -1,0 +1,73 @@
+﻿@model IEnumerable<Barragem.Models.RespostaPerguntaTorneioModel>
+
+    @{
+        Layout = null;
+        int i = 0;
+    }
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Respostas da ficha de inscrição</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="">
+        <meta name="author" content="">
+
+        @Styles.Render("~/css")
+        <style type="text/css">
+            body {
+                margin: 10px;
+            }
+        </style>
+
+    </head>
+
+    <body>
+        <br>
+        <h3>@ViewBag.NomeTorneio</h3>
+        <br>
+
+
+        <div class="box box-primary">
+            @if (ViewBag.PossuiPergunta)
+            {
+                <div class="box-header">
+                    <h4 class="box-title">@ViewBag.Pergunta</h4>
+                </div>
+                <table class="table table-striped table-condensed table-bordered">
+                    <tr>
+                        <th>
+                            <b>#</b>
+                        </th>
+                        <th>Nome</th>
+                        <th>Resposta</th>
+                    </tr>
+                    @foreach (var item in Model)
+                    {
+                        i++;
+                        <tr>
+                            <td>
+                                @i
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Nome)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Resposta)
+                            </td>
+                        </tr>
+                    }
+                </table>
+            }
+            else
+            {
+                <p style="margin-left: 10px; padding-top: 10px; padding-bottom: 10px;">Nenhuma pergunta cadastrada. Cadastre na aba informações.</p>
+            }
+        </div>
+
+        <script>
+            window.print();
+        </script>
+    </body>
+</html>

@@ -1356,8 +1356,14 @@ namespace Barragem.Controllers
         [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
         public ActionResult EditObs(int torneioId)
         {
-            List<InscricaoTorneio> inscricao = db.InscricaoTorneio.Where(i => i.torneioId == torneioId && i.observacao != null && i.observacao != "").ToList();
-
+            List<RespostaPerguntaTorneioModel> inscricao = new List<RespostaPerguntaTorneioModel>();
+            var torneio = db.Torneio.Find(torneioId);
+            if (!string.IsNullOrEmpty(torneio.observacao))
+            {
+                inscricao = db.InscricaoTorneio.Where(i => i.torneioId == torneioId && i.observacao != null && i.observacao != "undefined" && i.observacao != "").Select(s => new RespostaPerguntaTorneioModel() { Nome = s.participante.nome, UserName = s.participante.UserName, TelefoneCelular = s.participante.telefoneCelular, Resposta = s.observacao }).Distinct().OrderBy(o=>o.Nome).ToList();
+            }
+            ViewBag.PossuiPergunta = !string.IsNullOrEmpty(torneio.observacao);
+            ViewBag.Pergunta = torneio.observacao;
             CarregarDadosEssenciais(torneioId, "obs");
             return View(inscricao);
         }
@@ -2905,6 +2911,22 @@ namespace Barragem.Controllers
                 dadosImpressao.Categorias.Add(dadosCategoria);
             }
             return View(dadosImpressao);
+        }
+
+        [Authorize(Roles = "admin,organizador,adminTorneio,adminTorneioTenis,parceiroBT")]
+        public ActionResult ImprimirRespostas(int torneioId)
+        {
+            var torneio = db.Torneio.Find(torneioId);
+            List<RespostaPerguntaTorneioModel> inscricao = new List<RespostaPerguntaTorneioModel>();
+            if (!string.IsNullOrEmpty(torneio.observacao))
+            {
+                inscricao = db.InscricaoTorneio.Where(i => i.torneioId == torneioId && i.observacao != null && i.observacao != "undefined" && i.observacao != "").Select(s => new RespostaPerguntaTorneioModel() { Nome = s.participante.nome, UserName = s.participante.UserName, TelefoneCelular = s.participante.telefoneCelular, Resposta = s.observacao }).Distinct().OrderBy(o => o.Nome).ToList();
+
+            }
+            ViewBag.NomeTorneio = torneio.nome;
+            ViewBag.PossuiPergunta = !string.IsNullOrEmpty(torneio.observacao);
+            ViewBag.Pergunta = torneio.observacao;
+            return View(inscricao);
         }
 
         private List<Jogo> filtrarJogos(IQueryable<Jogo> jogos, int classe, string data, string grupo, int fase, Boolean isImprimir = false, string nomeJogador = "")

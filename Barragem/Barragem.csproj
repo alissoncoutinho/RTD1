@@ -344,6 +344,7 @@
     <Compile Include="Models\Rancking.cs" />
     <Compile Include="Models\RankingView.cs" />
     <Compile Include="Models\Regra.cs" />
+    <Compile Include="Models\RespostaPerguntaTorneioModel.cs" />
     <Compile Include="Models\Rodada.cs" />
     <Compile Include="Models\SituacaoJogo.cs" />
     <Compile Include="Models\Snapshot.cs" />
@@ -1196,6 +1197,7 @@
     <Content Include="Views\Torneio\ImprimirGrupos.cshtml" />
     <Content Include="Views\Torneio\_PartialAcaoCategoriasInscricoesNaoPagas.cshtml" />
     <Content Include="Views\Shared\_PartialEscolhaDupla.cshtml" />
+    <Content Include="Views\Torneio\ImprimirRespostas.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
