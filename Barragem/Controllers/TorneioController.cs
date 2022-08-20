@@ -4875,14 +4875,23 @@ namespace Barragem.Controllers
         {
             var hoje = DateTime.Now.Date;
             var qtdeTorneiosEmAndamento = db.Torneio.Count(t => t.dataFim >= hoje && t.barragemId == barragemId);
-
-            if (qtdeTorneiosEmAndamento == 1 && !string.IsNullOrEmpty(torneio.barragem.dominio))
+            string host;
+            if (torneio.barragem.isBeachTenis)
             {
-                return "https://" + HttpContext.Request.Url.Host + "/torneio-" + torneio.barragem.dominio;
+                host = "www.rankingbeachtennis.com";
             }
             else
             {
-                return "https://" + HttpContext.Request.Url.Host + "/torneio-" + torneio.Id;
+                host = "www.rankingdetenis.com";
+            }
+
+            if (qtdeTorneiosEmAndamento == 1 && !string.IsNullOrEmpty(torneio.barragem.dominio))
+            {
+                return "https://" + host + "/torneio-" + torneio.barragem.dominio;
+            }
+            else
+            {
+                return "https://" + host + "/torneio-" + torneio.Id;
             }
         }
 
