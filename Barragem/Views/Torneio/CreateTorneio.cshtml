@@ -73,7 +73,7 @@
                     @Html.ValidationMessageFor(model => model.premiacao)
                 </div>
                 <div class="form-group">
-                    @Html.LabelFor(model => model.contato, new { @class = "col-sm-2 control-label" })
+                    @Html.Label("Insira o nome e telefone do organizador", new { @class = "col-sm-2 control-label" })
                     <div class="col-sm-8 col-xs-12 input-group">
                         @Html.TextAreaFor(model => model.contato)
                     </div>
