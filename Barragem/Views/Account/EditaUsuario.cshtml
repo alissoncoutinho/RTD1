@@ -67,12 +67,24 @@
                 <div class="form-group">
                     @Html.HiddenFor(m => m.UserId)
                     @Html.HiddenFor(m => m.isRanckingGerado)
-                    @Html.HiddenFor(m => m.UserName)
                     @Html.HiddenFor(m => m.barragemId)
-                    @Html.LabelFor(m => m.UserName, new { @class = "col-md-2" })
-                    <div class="col-md-5">
-                        @Html.Raw(Model.UserName)
-                    </div>
+
+                    @if (Roles.IsUserInRole("admin"))
+                    {
+                        @Html.LabelFor(m => m.UserName, new { @class = "col-md-2" })
+                        <div class="col-md-6">
+                            @Html.TextBoxFor(m => m.UserName, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.UserName, "", new { @class = "alert-danger" })
+                        </div>
+                    }
+                    else
+                    {
+                        @Html.HiddenFor(m => m.UserName)
+                        @Html.LabelFor(m => m.UserName, new { @class = "col-md-2" })
+                        <div class="col-md-5">
+                            @Html.Raw(Model.UserName)
+                        </div>
+                    }
                 </div>
                 <div class="form-group">
                     <label class="col-md-2">Barragem</label>
@@ -241,26 +253,27 @@
                             <canvas id="canvas" height="5" width="5" style="vertical-align:top;"></canvas>
                         </div>
                         <br>
-                            <div class="row">
-                                <div class="col-md-2 col-xs-6">
-                                    <input type="submit" style="display:none" class="btn btn-info" value="Salvar" id="salvarFoto" />
-                                </div>
+                        <div class="row">
+                            <div class="col-md-2 col-xs-6">
+                                <input type="submit" style="display:none" class="btn btn-info" value="Salvar" id="salvarFoto" />
                             </div>
+                        </div>
 
                         <table>
                             <tr>
                                 <td>
                                     <p id="informacao" style="font-size:12px;display:none">Para alterar foto, arraste a região abaixo e clique em "Recortar" e depois em "Salvar"</p>
-                                    @if ((Roles.IsUserInRole("admin")) || (Roles.IsUserInRole("organizador")) || (User.Identity.Name.ToLower().Equals(Model.UserName.ToLower()))){
+                                    @if ((Roles.IsUserInRole("admin")) || (Roles.IsUserInRole("organizador")) || (User.Identity.Name.ToLower().Equals(Model.UserName.ToLower())))
+                                    {
                                         <input type="button" style="display:none" value="Recortar foto" class="btn btn-default col-xs-6" id="hlcropImage" />
                                         <br>
                                     }
                                 </td>
                             </tr>
                             <tr>
-                                <td> 
+                                <td>
                                     <div id="imgPerfilScrollbar" style="height:413px; width:318px; overflow:auto; border:dashed">
-                                       <img id="imgEmpPhoto" src="@Model.fotoURL" alt="Perfil Image" />
+                                        <img id="imgEmpPhoto" src="@Model.fotoURL" alt="Perfil Image" />
                                     </div>
                                 </td>
                             </tr>
@@ -269,19 +282,19 @@
                     </div>
 
                 </div>
-                
+
 
             </div>
-            
+
         </div>
     </div>
-            }
+}
 
-            @section Scripts {
-                @Scripts.Render("~/bundles/jcrop")
-                @Scripts.Render("~/bundles/jqueryform")
-                @Scripts.Render("~/bundles/compress")
-                <script type="text/javascript">
+@section Scripts {
+    @Scripts.Render("~/bundles/jcrop")
+    @Scripts.Render("~/bundles/jqueryform")
+    @Scripts.Render("~/bundles/compress")
+    <script type="text/javascript">
 
                     @if ((ViewBag.isAlterarFoto!=null) && (ViewBag.isAlterarFoto)){
                         @Html.Raw("$('.nav-tabs a:last').tab('show');");
@@ -426,7 +439,7 @@
                     }, false)
 
 
-                </script>
+    </script>
 
-            }
+}
 
