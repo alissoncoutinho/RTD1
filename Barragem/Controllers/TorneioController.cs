@@ -1011,7 +1011,7 @@ namespace Barragem.Controllers
                     var classificacaoGrupo = tn.ordenarClassificacaoFaseGrupo(classe, grupo);
                     ViewBag.classificacaoGrupo = classificacaoGrupo;
                     ViewBag.InscritosWO = ObterInscritosComWO(classe, grupo);
-                    
+
                     var criterioEmpate = ValidarCriterioEmpate(classificacaoGrupo);
                     ViewBag.EhTriploEmpate = criterioEmpate.EhTriploEmpate;
                     ViewBag.EhDuploEmpate = criterioEmpate.EhDuploEmpate;
@@ -1373,7 +1373,7 @@ namespace Barragem.Controllers
             var torneio = db.Torneio.Find(torneioId);
             if (!string.IsNullOrEmpty(torneio.observacao))
             {
-                inscricao = db.InscricaoTorneio.Where(i => i.torneioId == torneioId && i.observacao != null && i.observacao != "undefined" && i.observacao != "").Select(s => new RespostaPerguntaTorneioModel() { Nome = s.participante.nome, UserName = s.participante.UserName, TelefoneCelular = s.participante.telefoneCelular, Resposta = s.observacao }).Distinct().OrderBy(o=>o.Nome).ToList();
+                inscricao = db.InscricaoTorneio.Where(i => i.torneioId == torneioId && i.observacao != null && i.observacao != "undefined" && i.observacao != "").Select(s => new RespostaPerguntaTorneioModel() { Nome = s.participante.nome, UserName = s.participante.UserName, TelefoneCelular = s.participante.telefoneCelular, Resposta = s.observacao }).Distinct().OrderBy(o => o.Nome).ToList();
             }
             ViewBag.PossuiPergunta = !string.IsNullOrEmpty(torneio.observacao);
             ViewBag.Pergunta = torneio.observacao;
@@ -1471,6 +1471,24 @@ namespace Barragem.Controllers
                         item.categoriaId = classesLiga[0].CategoriaId;
                         break;
                     }
+                }
+
+                var resultadoValidacaoVagas = tn.ValidarDisponibilidadeInscricoes(torneioId, item.Id);
+                if (item.maximoInscritos == 0)
+                {
+                    item.SinalizacaoVagas = SinalizacaoVagasCategoria.SemLimite;
+                }
+                else if (resultadoValidacaoVagas.status == "OK" || resultadoValidacaoVagas.status == "ESCOLHER_DUPLA_OK")
+                {
+                    item.SinalizacaoVagas = SinalizacaoVagasCategoria.PossuiVagas;
+                }
+                else if (resultadoValidacaoVagas.status == "ESCOLHER_DUPLA")
+                {
+                    item.SinalizacaoVagas = SinalizacaoVagasCategoria.ParcialmenteLotada;
+                }
+                else if (resultadoValidacaoVagas.status == "ESGOTADO")
+                {
+                    item.SinalizacaoVagas = SinalizacaoVagasCategoria.Esgotada;
                 }
             }
 

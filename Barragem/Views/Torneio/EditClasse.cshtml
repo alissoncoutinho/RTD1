@@ -1,4 +1,7 @@
-﻿@{
+﻿
+@using Barragem.Models;
+ 
+@{
     int i = 0;
     int qtddClasses = Model.Count();
 }
@@ -7,6 +10,14 @@
     <style>
         .tooltip-inner {
             white-space: pre-wrap;
+        }
+
+        .circle {
+            vertical-align:middle;
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            display: inline-block;
         }
     </style>
 
@@ -106,11 +117,25 @@
                                         {
                                             <td>
                                                 <div id="@Html.Raw("maximoInscritos" + i)" class="escolhaLimiteJogadores" data-itemSelecionado="@item.maximoInscritos" data-categoriaId="@item.Id" data-indice="@i"></div>
+                                                @if (item.SinalizacaoVagas == SinalizacaoVagasCategoria.Esgotada)
+                                                {
+                                                    <span class="circle" style="background-color:red" data-toggle="tooltip" data-original-title="Categoria lotada. Não é possível novas inscrições."></span>
+                                                }
+                                                else if (item.SinalizacaoVagas == SinalizacaoVagasCategoria.ParcialmenteLotada)
+                                                {
+                                                    <span class="circle" style="background-color:orange" data-toggle="tooltip" data-original-title="Parcialmente lotado. A partir de agora só consegue se inscrever nesta categoria o jogador cujo parceiro já se inscreveu."></span>
+                                                }
+                                                else if (item.SinalizacaoVagas == SinalizacaoVagasCategoria.PossuiVagas)
+                                                {
+                                                    <span class="circle" style="background-color:green" data-toggle="tooltip" data-original-title="Possui vagas para novas inscrições."></span>
+                                                }
                                             </td>
                                         }
                                         else
                                         {
-                                            <input type="hidden" name="@Html.Raw("maximoInscritos" + i)" id="@Html.Raw("maximoInscritos" + i)" value="@item.maximoInscritos" />
+                                            <td>
+                                                <input type="hidden" name="@Html.Raw("maximoInscritos" + i)" id="@Html.Raw("maximoInscritos" + i)" value="@item.maximoInscritos" />
+                                            </td>
                                         }
                                         <td>
                                             <input type="checkbox" value="true" name="@Html.Raw("isDupla" + i)" id="@Html.Raw("isDupla" + i)" data-categoriaId="@item.Id" data-indice="@i" onclick="SalvarAlteracaoCategoria(this)" @if (item.isDupla) { @Html.Raw("checked") } />
@@ -317,7 +342,7 @@
                             dropdownsLimiteJogador[i],
                             jSuites.dropdown(dropdownsLimiteJogador[i], {
                                 data: opcoesDisponiveis,
-                                width: '167px',
+                                width: '127px',
                                 autocomplete: true,
                                 onopen: function (el) {
                                     for (var i = 0; i < limiteJogadoresDropDownList.length; i++) {

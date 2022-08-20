@@ -30,6 +30,9 @@ namespace Barragem.Models
         public int? categoriaId { get; set; }
         [ForeignKey("categoriaId")]
         public virtual Categoria Categoria { get; set; }
+
+        [NotMapped]
+        public SinalizacaoVagasCategoria SinalizacaoVagas { get; set; }
     }
 
     public class ClasseTorneioApp
@@ -49,5 +52,13 @@ namespace Barragem.Models
     {
         public int Id { get; set; }
         public int qtddInscritos { get; set; }
+    }
+
+    public enum SinalizacaoVagasCategoria
+    {
+        SemLimite = 0,
+        PossuiVagas = 1,
+        ParcialmenteLotada = 2,
+        Esgotada = 3
     }
 }
