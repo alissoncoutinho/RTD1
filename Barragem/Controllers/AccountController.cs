@@ -1362,6 +1362,7 @@ namespace Barragem.Controllers
                 model.barragem = db.BarragemView.Find(model.barragemId);
             }
 
+
             if ((!perfil.Equals("admin")) && (!perfil.Equals("organizador")) && (WebSecurity.GetUserId(User.Identity.Name) != model.UserId))
             {
                 ViewBag.MsgErro = string.Format("Você não tem permissão para alterar este usuário '{0}'", model.nome);
@@ -1379,6 +1380,17 @@ namespace Barragem.Controllers
                     return View(model);
                 }
             }
+            if (perfil.Equals("admin"))
+            {
+                var userNameJaUtilizado = db.UserProfiles.Any(x => x.UserName.ToLower() == model.UserName.ToLower() && x.UserId != model.UserId);
+                if (userNameJaUtilizado)
+                {
+                    ViewBag.MsgErro = $"O Login informado já esta em uso, informe outro nome de login. Login: {model.UserName}";
+                    ViewBag.classeId = new SelectList(db.Classe.Where(c => c.barragemId == model.barragemId && c.ativa == true).ToList(), "Id", "nome");
+                    return View(model);
+                }
+            }
+
             if (ModelState.IsValid)
             {
                 //UserProfile usuario = null;
